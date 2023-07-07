@@ -1,0 +1,37 @@
+[
+  {
+    "end": 5,
+    "escaped": false,
+    "kind": "AtKeyword",
+    "start": 0,
+    "value": "page"
+  },
+  {
+    "end": 6,
+    "escaped": false,
+    "kind": "LeftCurly",
+    "start": 5,
+    "value": null
+  },
+  {
+    "end": 7,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 6,
+    "value": null
+  },
+  {
+    "end": 8,
+    "escaped": false,
+    "kind": "RightCurly",
+    "start": 7,
+    "value": null
+  },
+  {
+    "end": 9,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 8,
+    "value": null
+  }
+]

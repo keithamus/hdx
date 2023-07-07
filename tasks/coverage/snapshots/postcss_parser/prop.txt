@@ -1,0 +1,11 @@
+hdx_parser::Unimplemented
+
+  × This block cannot yet be parsed by the parser :(
+   ╭─[tasks/coverage/postcss-parser-tests/cases/prop.css:1:1]
+ 1 │ a {
+ 2 │     *color : black;
+   ·     ┬
+   ·     ╰── Didn't recognise this bit
+ 3 │     _background: white;
+   ╰────
+  help: This feature needs to be implemented within hdx. This file won't parse without it.

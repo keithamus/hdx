@@ -1,0 +1,19 @@
+{
+  "end": 43,
+  "rules": [
+    {
+      "end": 23,
+      "start": 0,
+      "str": "",
+      "type": "QualifiedRule"
+    },
+    {
+      "end": 43,
+      "start": 26,
+      "str": "",
+      "type": "QualifiedRule"
+    }
+  ],
+  "start": 0,
+  "type": "Stylesheet"
+}

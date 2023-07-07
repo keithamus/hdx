@@ -1,0 +1,94 @@
+body {
+	height: 100vh;
+}
+
+hdx-editor,
+hdx-viewer {
+	font-family: monospace;
+	font-size: 16px;
+	margin: 0;
+}
+
+wasm-loader {
+	background: url("/images/background.svg") center/200px var(--sand-0);
+	position: fixed;
+	inset: 0;
+	z-index: 1;
+	display: flex;
+	font-weight: bold;
+	text-align: center;
+	align-items: center;
+	margin: 0;
+	color: var(--yellow-6);
+	--text-shadow: var(--sand-0);
+	text-shadow: 3px 3px 0 var(--pink-6), 7px 7px 0 var(--text-shadow),
+		-7px -7px 0 var(--text-shadow), 7px -7px 0 var(--text-shadow),
+		-7px 7px 0 var(--text-shadow);
+	font-size: 90px;
+}
+
+body > row-stack > :first-child {
+	border-right: 1px solid var(--cyan-6);
+}
+
+hdx-editor,
+hdx-viewer {
+	flex: 2;
+	overflow-y: auto;
+}
+
+.controls,
+.status {
+	flex: 0;
+	min-height: 50px;
+	height: 50px;
+	color: white;
+	flex: 0;
+	background: var(--cyan-6);
+	padding: 0.8em 0.5em;
+	border-bottom: 1px solid var(--indigo-6);
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+metric-observer {
+	text-align: right;
+}
+
+metric-observer::part(value) {
+	margin-left: 1em;
+}
+
+radiogroup label {
+	margin-inline: 1rem;
+}
+
+error-diagnostic-count {
+	background: var(--red-7);
+	border-radius: var(--radius-round);
+	color: var(--stone-1);
+	aspect-ratio: 1;
+	display: inline-block;
+	height: 20px;
+	text-align: center;
+	border: 1px solid var(--red-4);
+	margin-left: 0.5em;
+}
+
+error-diagnostic-count[count="0"] {
+	visibility: hidden;
+}
+
+body:has(input[name="format"][value="minify"]:not(:checked))
+	metric-observer[name="minify"] {
+	display: none;
+}
+
+:where(
+		textarea,
+		select,
+		input:not([type="button"], [type="submit"], [type="reset"])
+	) {
+	background-color: var(--gray-7);
+}

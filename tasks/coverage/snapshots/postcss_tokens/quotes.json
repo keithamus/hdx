@@ -1,0 +1,149 @@
+[
+  {
+    "end": 1,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 0,
+    "value": "a"
+  },
+  {
+    "end": 2,
+    "escaped": false,
+    "kind": "Colon",
+    "start": 1,
+    "value": null
+  },
+  {
+    "end": 3,
+    "escaped": false,
+    "kind": "Colon",
+    "start": 2,
+    "value": null
+  },
+  {
+    "end": 9,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 3,
+    "value": "before"
+  },
+  {
+    "end": 10,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 9,
+    "value": null
+  },
+  {
+    "end": 11,
+    "escaped": false,
+    "kind": "LeftCurly",
+    "start": 10,
+    "value": null
+  },
+  {
+    "end": 16,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 11,
+    "value": null
+  },
+  {
+    "end": 23,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 16,
+    "value": "content"
+  },
+  {
+    "end": 24,
+    "escaped": false,
+    "kind": "Colon",
+    "start": 23,
+    "value": null
+  },
+  {
+    "end": 25,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 24,
+    "value": null
+  },
+  {
+    "end": 37,
+    "escaped": true,
+    "kind": "String",
+    "start": 25,
+    "value": ";'@ /**/\""
+  },
+  {
+    "end": 38,
+    "escaped": false,
+    "kind": "Semicolon",
+    "start": 37,
+    "value": null
+  },
+  {
+    "end": 43,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 38,
+    "value": null
+  },
+  {
+    "end": 50,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 43,
+    "value": "content"
+  },
+  {
+    "end": 51,
+    "escaped": false,
+    "kind": "Colon",
+    "start": 50,
+    "value": null
+  },
+  {
+    "end": 52,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 51,
+    "value": null
+  },
+  {
+    "end": 59,
+    "escaped": true,
+    "kind": "String",
+    "start": 52,
+    "value": "'\"\\"
+  },
+  {
+    "end": 60,
+    "escaped": false,
+    "kind": "Semicolon",
+    "start": 59,
+    "value": null
+  },
+  {
+    "end": 61,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 60,
+    "value": null
+  },
+  {
+    "end": 62,
+    "escaped": false,
+    "kind": "RightCurly",
+    "start": 61,
+    "value": null
+  },
+  {
+    "end": 63,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 62,
+    "value": null
+  }
+]

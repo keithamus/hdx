@@ -1,0 +1,9 @@
+hdx_parser::NoSelector
+
+  × This block uses an invalid selector, so the whole block would be discarded.
+   ╭─[tasks/coverage/postcss-parser-tests/cases/no-selector.css:1:1]
+ 1 │ {}
+   · ▲
+   · ╰── This selector isn't valid
+   ╰────
+  help: Try adding a selector to this style rule

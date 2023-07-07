@@ -1,0 +1,44 @@
+[
+  {
+    "end": 1,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 0,
+    "value": "a"
+  },
+  {
+    "end": 5,
+    "escaped": false,
+    "kind": "Comment",
+    "start": 1,
+    "value": null
+  },
+  {
+    "end": 6,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 5,
+    "value": null
+  },
+  {
+    "end": 7,
+    "escaped": false,
+    "kind": "LeftCurly",
+    "start": 6,
+    "value": null
+  },
+  {
+    "end": 8,
+    "escaped": false,
+    "kind": "RightCurly",
+    "start": 7,
+    "value": null
+  },
+  {
+    "end": 9,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 8,
+    "value": null
+  }
+]

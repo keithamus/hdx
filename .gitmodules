@@ -1,0 +1,6 @@
+[submodule "tasks/coverage/css-tokenizer-tests"]
+	path = tasks/coverage/css-tokenizer-tests
+	url = https://github.com/romainmenke/css-tokenizer-tests
+[submodule "tasks/coverage/postcss-parser-tests"]
+	path = tasks/coverage/postcss-parser-tests
+	url = https://github.com/postcss/postcss-parser-tests

@@ -1,0 +1,248 @@
+[
+  {
+    "end": 1,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 0,
+    "value": "a"
+  },
+  {
+    "end": 2,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 1,
+    "value": null
+  },
+  {
+    "end": 3,
+    "escaped": false,
+    "kind": "LeftCurly",
+    "start": 2,
+    "value": null
+  },
+  {
+    "end": 8,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 3,
+    "value": null
+  },
+  {
+    "end": 14,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 8,
+    "value": "filter"
+  },
+  {
+    "end": 15,
+    "escaped": false,
+    "kind": "Colon",
+    "start": 14,
+    "value": null
+  },
+  {
+    "end": 16,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 15,
+    "value": null
+  },
+  {
+    "end": 22,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 16,
+    "value": "progid"
+  },
+  {
+    "end": 23,
+    "escaped": false,
+    "kind": "Colon",
+    "start": 22,
+    "value": null
+  },
+  {
+    "end": 39,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 23,
+    "value": "DXImageTransform"
+  },
+  {
+    "end": 40,
+    "escaped": false,
+    "kind": "Delim",
+    "start": 39,
+    "value": "."
+  },
+  {
+    "end": 49,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 40,
+    "value": "Microsoft"
+  },
+  {
+    "end": 50,
+    "escaped": false,
+    "kind": "Delim",
+    "start": 49,
+    "value": "."
+  },
+  {
+    "end": 55,
+    "escaped": false,
+    "kind": "Function",
+    "start": 50,
+    "value": "Blur"
+  },
+  {
+    "end": 66,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 55,
+    "value": "pixelradius"
+  },
+  {
+    "end": 67,
+    "escaped": false,
+    "kind": "Delim",
+    "start": 66,
+    "value": "="
+  },
+  {
+    "end": 68,
+    "escaped": false,
+    "kind": "Number",
+    "start": 67,
+    "value": {
+      "int": true,
+      "signed": false,
+      "value": 2.0
+    }
+  },
+  {
+    "end": 69,
+    "escaped": false,
+    "kind": "RightParen",
+    "start": 68,
+    "value": null
+  },
+  {
+    "end": 70,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 69,
+    "value": null
+  },
+  {
+    "end": 76,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 70,
+    "value": "progid"
+  },
+  {
+    "end": 77,
+    "escaped": false,
+    "kind": "Colon",
+    "start": 76,
+    "value": null
+  },
+  {
+    "end": 93,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 77,
+    "value": "DXImageTransform"
+  },
+  {
+    "end": 94,
+    "escaped": false,
+    "kind": "Delim",
+    "start": 93,
+    "value": "."
+  },
+  {
+    "end": 103,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 94,
+    "value": "Microsoft"
+  },
+  {
+    "end": 104,
+    "escaped": false,
+    "kind": "Delim",
+    "start": 103,
+    "value": "."
+  },
+  {
+    "end": 110,
+    "escaped": false,
+    "kind": "Function",
+    "start": 104,
+    "value": "Wheel"
+  },
+  {
+    "end": 118,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 110,
+    "value": "duration"
+  },
+  {
+    "end": 119,
+    "escaped": false,
+    "kind": "Delim",
+    "start": 118,
+    "value": "="
+  },
+  {
+    "end": 120,
+    "escaped": false,
+    "kind": "Number",
+    "start": 119,
+    "value": {
+      "int": true,
+      "signed": false,
+      "value": 3.0
+    }
+  },
+  {
+    "end": 121,
+    "escaped": false,
+    "kind": "RightParen",
+    "start": 120,
+    "value": null
+  },
+  {
+    "end": 122,
+    "escaped": false,
+    "kind": "Semicolon",
+    "start": 121,
+    "value": null
+  },
+  {
+    "end": 123,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 122,
+    "value": null
+  },
+  {
+    "end": 124,
+    "escaped": false,
+    "kind": "RightCurly",
+    "start": 123,
+    "value": null
+  },
+  {
+    "end": 125,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 124,
+    "value": null
+  }
+]

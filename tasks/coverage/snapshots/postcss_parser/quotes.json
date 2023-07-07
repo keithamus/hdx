@@ -1,0 +1,96 @@
+{
+  "end": 63,
+  "rules": [
+    {
+      "end": 62,
+      "prelude": {
+        "end": 10,
+        "start": 0,
+        "value": [
+          {
+            "end": 1,
+            "escaped": false,
+            "kind": "Ident",
+            "start": 0,
+            "value": "a"
+          },
+          {
+            "end": 2,
+            "escaped": false,
+            "kind": "Colon",
+            "start": 1,
+            "value": null
+          },
+          {
+            "end": 3,
+            "escaped": false,
+            "kind": "Colon",
+            "start": 2,
+            "value": null
+          },
+          {
+            "end": 9,
+            "escaped": false,
+            "kind": "Ident",
+            "start": 3,
+            "value": "before"
+          },
+          {
+            "end": 10,
+            "escaped": false,
+            "kind": "Whitespace",
+            "start": 9,
+            "value": null
+          }
+        ]
+      },
+      "properties": [
+        {
+          "end": 38,
+          "important": false,
+          "name": "content",
+          "start": 16,
+          "type": "UnknownDeclaration",
+          "value": {
+            "end": 37,
+            "start": 25,
+            "value": [
+              {
+                "end": 37,
+                "escaped": true,
+                "kind": "String",
+                "start": 25,
+                "value": ";'@ /**/\""
+              }
+            ]
+          }
+        },
+        {
+          "end": 60,
+          "important": false,
+          "name": "content",
+          "start": 43,
+          "type": "UnknownDeclaration",
+          "value": {
+            "end": 59,
+            "start": 52,
+            "value": [
+              {
+                "end": 59,
+                "escaped": true,
+                "kind": "String",
+                "start": 52,
+                "value": "'\"\\"
+              }
+            ]
+          }
+        }
+      ],
+      "rules": [],
+      "start": 0,
+      "type": "UnknownRule"
+    }
+  ],
+  "start": 0,
+  "type": "Stylesheet"
+}

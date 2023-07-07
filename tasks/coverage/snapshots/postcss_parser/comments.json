@@ -1,0 +1,199 @@
+{
+  "end": 267,
+  "rules": [
+    {
+      "end": 139,
+      "properties": [
+        {
+          "end": 76,
+          "important": false,
+          "start": 63,
+          "type": "Color",
+          "value": {
+            "name": "black",
+            "type": "NamedColor"
+          }
+        },
+        {
+          "end": 123,
+          "important": false,
+          "name": "",
+          "start": 114,
+          "type": "UnknownDeclaration",
+          "value": {
+            "end": 123,
+            "start": 114,
+            "value": [
+              {
+                "end": 117,
+                "escaped": false,
+                "kind": "Dimension",
+                "start": 114,
+                "value": {
+                  "int": true,
+                  "signed": false,
+                  "unit": "px",
+                  "value": 3.0
+                }
+              },
+              {
+                "end": 119,
+                "escaped": false,
+                "kind": "Delim",
+                "start": 118,
+                "value": "/"
+              },
+              {
+                "end": 123,
+                "escaped": false,
+                "kind": "Dimension",
+                "start": 120,
+                "value": {
+                  "int": true,
+                  "signed": false,
+                  "unit": "px",
+                  "value": 7.0
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "rules": [],
+      "selectors": [
+        {
+          "components": [
+            {
+              "type": "Type",
+              "value": "div"
+            }
+          ],
+          "end": 39,
+          "start": 36,
+          "type": "Selector"
+        }
+      ],
+      "start": 36,
+      "type": "StyleRule"
+    },
+    {
+      "end": 184,
+      "properties": [
+        {
+          "end": 170,
+          "important": false,
+          "start": 157,
+          "type": "Color",
+          "value": {
+            "name": "black",
+            "type": "NamedColor"
+          }
+        }
+      ],
+      "rules": [],
+      "selectors": [
+        {
+          "components": [
+            {
+              "type": "Type",
+              "value": "a"
+            }
+          ],
+          "end": 150,
+          "start": 149,
+          "type": "Selector"
+        }
+      ],
+      "start": 149,
+      "type": "StyleRule"
+    },
+    {
+      "end": 266,
+      "properties": [
+        {
+          "end": 226,
+          "important": false,
+          "name": "",
+          "start": 216,
+          "type": "UnknownDeclaration",
+          "value": {
+            "end": 226,
+            "start": 216,
+            "value": [
+              {
+                "end": 226,
+                "start": 216,
+                "type": "SimpleBlock",
+                "value": [
+                  {
+                    "end": 225,
+                    "escaped": false,
+                    "kind": "Ident",
+                    "start": 217,
+                    "value": "--broken"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "end": 263,
+          "important": false,
+          "name": "",
+          "start": 243,
+          "type": "UnknownDeclaration",
+          "value": {
+            "end": 263,
+            "start": 243,
+            "value": [
+              {
+                "end": 253,
+                "escaped": false,
+                "kind": "Ident",
+                "start": 243,
+                "value": "sans-serif"
+              },
+              {
+                "end": 254,
+                "escaped": false,
+                "kind": "Comma",
+                "start": 253,
+                "value": null
+              },
+              {
+                "end": 263,
+                "escaped": false,
+                "kind": "Ident",
+                "start": 258,
+                "value": "serif"
+              }
+            ]
+          }
+        }
+      ],
+      "rules": [],
+      "selectors": [
+        {
+          "components": [
+            {
+              "type": "Class",
+              "value": "in"
+            },
+            {
+              "type": "Type",
+              "value": "side"
+            }
+          ],
+          "end": 197,
+          "start": 186,
+          "type": "Selector"
+        }
+      ],
+      "start": 186,
+      "type": "StyleRule"
+    }
+  ],
+  "start": 0,
+  "type": "Stylesheet"
+}

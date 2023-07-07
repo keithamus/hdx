@@ -1,0 +1,551 @@
+[
+  {
+    "end": 24,
+    "escaped": false,
+    "kind": "Comment",
+    "start": 0,
+    "value": null
+  },
+  {
+    "end": 25,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 24,
+    "value": null
+  },
+  {
+    "end": 29,
+    "escaped": false,
+    "kind": "Comment",
+    "start": 25,
+    "value": null
+  },
+  {
+    "end": 30,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 29,
+    "value": null
+  },
+  {
+    "end": 35,
+    "escaped": false,
+    "kind": "Comment",
+    "start": 30,
+    "value": null
+  },
+  {
+    "end": 36,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 35,
+    "value": null
+  },
+  {
+    "end": 39,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 36,
+    "value": "div"
+  },
+  {
+    "end": 40,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 39,
+    "value": null
+  },
+  {
+    "end": 41,
+    "escaped": false,
+    "kind": "LeftCurly",
+    "start": 40,
+    "value": null
+  },
+  {
+    "end": 46,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 41,
+    "value": null
+  },
+  {
+    "end": 58,
+    "escaped": false,
+    "kind": "Comment",
+    "start": 46,
+    "value": null
+  },
+  {
+    "end": 63,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 58,
+    "value": null
+  },
+  {
+    "end": 68,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 63,
+    "value": "color"
+  },
+  {
+    "end": 69,
+    "escaped": false,
+    "kind": "Colon",
+    "start": 68,
+    "value": null
+  },
+  {
+    "end": 70,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 69,
+    "value": null
+  },
+  {
+    "end": 75,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 70,
+    "value": "black"
+  },
+  {
+    "end": 76,
+    "escaped": false,
+    "kind": "Semicolon",
+    "start": 75,
+    "value": null
+  },
+  {
+    "end": 81,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 76,
+    "value": null
+  },
+  {
+    "end": 94,
+    "escaped": false,
+    "kind": "Comment",
+    "start": 81,
+    "value": null
+  },
+  {
+    "end": 99,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 94,
+    "value": null
+  },
+  {
+    "end": 112,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 99,
+    "value": "border-radius"
+  },
+  {
+    "end": 113,
+    "escaped": false,
+    "kind": "Colon",
+    "start": 112,
+    "value": null
+  },
+  {
+    "end": 114,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 113,
+    "value": null
+  },
+  {
+    "end": 117,
+    "escaped": false,
+    "kind": "Dimension",
+    "start": 114,
+    "value": {
+      "int": true,
+      "signed": false,
+      "unit": "px",
+      "value": 3.0
+    }
+  },
+  {
+    "end": 118,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 117,
+    "value": null
+  },
+  {
+    "end": 119,
+    "escaped": false,
+    "kind": "Delim",
+    "start": 118,
+    "value": "/"
+  },
+  {
+    "end": 120,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 119,
+    "value": null
+  },
+  {
+    "end": 123,
+    "escaped": false,
+    "kind": "Dimension",
+    "start": 120,
+    "value": {
+      "int": true,
+      "signed": false,
+      "unit": "px",
+      "value": 7.0
+    }
+  },
+  {
+    "end": 128,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 123,
+    "value": null
+  },
+  {
+    "end": 137,
+    "escaped": false,
+    "kind": "Comment",
+    "start": 128,
+    "value": null
+  },
+  {
+    "end": 138,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 137,
+    "value": null
+  },
+  {
+    "end": 139,
+    "escaped": false,
+    "kind": "RightCurly",
+    "start": 138,
+    "value": null
+  },
+  {
+    "end": 140,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 139,
+    "value": null
+  },
+  {
+    "end": 147,
+    "escaped": false,
+    "kind": "Comment",
+    "start": 140,
+    "value": null
+  },
+  {
+    "end": 149,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 147,
+    "value": null
+  },
+  {
+    "end": 150,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 149,
+    "value": "a"
+  },
+  {
+    "end": 151,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 150,
+    "value": null
+  },
+  {
+    "end": 152,
+    "escaped": false,
+    "kind": "LeftCurly",
+    "start": 151,
+    "value": null
+  },
+  {
+    "end": 157,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 152,
+    "value": null
+  },
+  {
+    "end": 162,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 157,
+    "value": "color"
+  },
+  {
+    "end": 163,
+    "escaped": false,
+    "kind": "Colon",
+    "start": 162,
+    "value": null
+  },
+  {
+    "end": 164,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 163,
+    "value": null
+  },
+  {
+    "end": 169,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 164,
+    "value": "black"
+  },
+  {
+    "end": 170,
+    "escaped": false,
+    "kind": "Semicolon",
+    "start": 169,
+    "value": null
+  },
+  {
+    "end": 175,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 170,
+    "value": null
+  },
+  {
+    "end": 182,
+    "escaped": false,
+    "kind": "Comment",
+    "start": 175,
+    "value": null
+  },
+  {
+    "end": 183,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 182,
+    "value": null
+  },
+  {
+    "end": 184,
+    "escaped": false,
+    "kind": "RightCurly",
+    "start": 183,
+    "value": null
+  },
+  {
+    "end": 186,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 184,
+    "value": null
+  },
+  {
+    "end": 187,
+    "escaped": false,
+    "kind": "Delim",
+    "start": 186,
+    "value": "."
+  },
+  {
+    "end": 189,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 187,
+    "value": "in"
+  },
+  {
+    "end": 193,
+    "escaped": false,
+    "kind": "Comment",
+    "start": 189,
+    "value": null
+  },
+  {
+    "end": 197,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 193,
+    "value": "side"
+  },
+  {
+    "end": 198,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 197,
+    "value": null
+  },
+  {
+    "end": 199,
+    "escaped": false,
+    "kind": "LeftCurly",
+    "start": 198,
+    "value": null
+  },
+  {
+    "end": 202,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 199,
+    "value": null
+  },
+  {
+    "end": 207,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 202,
+    "value": "color"
+  },
+  {
+    "end": 208,
+    "escaped": false,
+    "kind": "Colon",
+    "start": 207,
+    "value": null
+  },
+  {
+    "end": 209,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 208,
+    "value": null
+  },
+  {
+    "end": 212,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 209,
+    "value": "var"
+  },
+  {
+    "end": 216,
+    "escaped": false,
+    "kind": "Comment",
+    "start": 212,
+    "value": null
+  },
+  {
+    "end": 217,
+    "escaped": false,
+    "kind": "LeftParen",
+    "start": 216,
+    "value": null
+  },
+  {
+    "end": 225,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 217,
+    "value": "--broken"
+  },
+  {
+    "end": 226,
+    "escaped": false,
+    "kind": "RightParen",
+    "start": 225,
+    "value": null
+  },
+  {
+    "end": 227,
+    "escaped": false,
+    "kind": "Semicolon",
+    "start": 226,
+    "value": null
+  },
+  {
+    "end": 230,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 227,
+    "value": null
+  },
+  {
+    "end": 241,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 230,
+    "value": "font-family"
+  },
+  {
+    "end": 242,
+    "escaped": false,
+    "kind": "Colon",
+    "start": 241,
+    "value": null
+  },
+  {
+    "end": 243,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 242,
+    "value": null
+  },
+  {
+    "end": 253,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 243,
+    "value": "sans-serif"
+  },
+  {
+    "end": 254,
+    "escaped": false,
+    "kind": "Comma",
+    "start": 253,
+    "value": null
+  },
+  {
+    "end": 258,
+    "escaped": false,
+    "kind": "Comment",
+    "start": 254,
+    "value": null
+  },
+  {
+    "end": 263,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 258,
+    "value": "serif"
+  },
+  {
+    "end": 264,
+    "escaped": false,
+    "kind": "Semicolon",
+    "start": 263,
+    "value": null
+  },
+  {
+    "end": 265,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 264,
+    "value": null
+  },
+  {
+    "end": 266,
+    "escaped": false,
+    "kind": "RightCurly",
+    "start": 265,
+    "value": null
+  },
+  {
+    "end": 267,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 266,
+    "value": null
+  }
+]

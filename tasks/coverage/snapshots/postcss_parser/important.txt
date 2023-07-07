@@ -1,0 +1,11 @@
+hdx_parser::ExpectToken
+
+  × Expected `Ident` but found `Whitespace`
+   ╭─[tasks/coverage/postcss-parser-tests/cases/important.css:6:1]
+ 6 │ p {
+ 7 │     prop: important;
+   ·          ┬
+   ·          ╰── `Ident` expected
+ 8 │     color: red important;
+   ╰────
+  help: This is not correct CSS syntax.

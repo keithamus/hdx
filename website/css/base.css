@@ -1,0 +1,168 @@
+@import url("open-props/normalize.min.css");
+@import url("open-props/open-props.min.css");
+@import url("open-props/media.min.css");
+@import url("open-props/masks.edges.min.css");
+
+html {
+	background: url("/images/background.svg") center/200px var(--sand-0);
+	font-family: sans-serif;
+}
+
+body > :where(row-stack, col-stack) {
+	height: 100vh;
+}
+
+nav ol {
+	list-style: none;
+}
+
+row-stack,
+col-stack {
+	display: flex;
+}
+
+:where(col-stack) > :not([height]) {
+	flex: 2;
+}
+
+:where(row-stack) > :not([width], a) {
+	flex: 2;
+}
+
+row-stack {
+	flex-direction: row;
+	height: 100%;
+}
+
+col-stack {
+	flex-direction: column;
+	width: 100%;
+}
+
+.page-head {
+	height: 80px;
+	flex: 0;
+	background: var(--stone-0);
+	box-shadow: var(--shadow-2);
+	border-bottom: 1px solid var(--stone-3);
+}
+
+.page-head header {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
+
+.page-head header span {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	color: var(--yellow-6);
+	text-shadow: 1px 1px 0 var(--pink-6);
+	font-size: 1.5rem;
+	rotate: 0.5deg;
+	margin: 2rem 0;
+	font-weight: var(--font-weight-7);
+}
+
+.page-head header a {
+	display: block;
+	margin: 5px 10px;
+}
+
+.page-head nav {
+	display: flex;
+	align-items: center;
+	justify-content: end;
+	margin: 0 2rem 0 0;
+}
+
+.page-head nav ol {
+	display: flex;
+	flex-direction: row;
+	gap: 1rem;
+	align-items: center;
+}
+
+.page-head a {
+	color: var(--stone-11);
+}
+
+main {
+	background: #f8fafbf2;
+}
+
+.side-nav {
+	width: 12rem;
+	flex: initial;
+	border-right: 1px solid var(--stone-3);
+}
+
+.side-nav nav ol {
+	padding: 1rem 1rem 1rem 0.5rem;
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	align-items: center;
+}
+
+.side-nav nav :where(a, li) {
+	display: block;
+	padding: 0;
+	width: 100%;
+}
+
+.side-nav nav li {
+	margin-left: 0.7rem;
+}
+
+.side-nav nav a {
+	color: var(--stone-11);
+	padding: 0.5rem 1rem;
+	margin-left: 0.5rem;
+	border-radius: var(--radius-2);
+}
+
+.side-nav nav [active] {
+	margin-left: 0;
+	border-left: 0.5rem solid var(--orange-3);
+}
+
+.side-nav nav [active] a {
+	background: var(--stone-2);
+}
+
+.side-nav nav a:hover {
+	background: white;
+	text-decoration: none;
+}
+
+.markdown {
+	padding: 2rem;
+}
+
+.markdown h1 {
+	color: var(--yellow-6);
+	text-shadow: 2px 2px 0 var(--pink-6);
+	font-size: 4rem;
+	rotate: 0.5deg;
+	margin: 0 0 2rem 0;
+}
+
+.markdown :where(h2, h3, h4, h5, h6) {
+	color: var(--yellow-6);
+	text-shadow: 2px 2px 0 var(--pink-6);
+	font-size: 3rem;
+	rotate: -0.5deg;
+	margin: 2rem 0;
+}
+
+.markdown pre {
+	background: white;
+	display: block;
+	-webkit-mask: var(--mask-edge-zig-zag-vertical);
+	padding: 4rem 2rem;
+	max-inline-size: none;
+	width: calc(100% + 4rem);
+	margin: 2rem 0 2rem -2rem;
+}

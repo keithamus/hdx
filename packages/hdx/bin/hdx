@@ -1,0 +1,39 @@
+#!/usr/bin/env node
+const { platform, arch, env, version, release } = process;
+
+const PLATFORMS = {
+  win32: {
+    x64: "hdx-win32-x64.exe",
+    arm64: "hdx-win32-arm64.exe",
+  },
+  darwin: {
+    x64: "hdx-darwin-x64",
+    arm64: "hdx-darwin-arm64",
+  },
+  linux: {
+    x64: "hdx-linux-x64",
+    arm64: "hdx-linux-arm64",
+  },
+};
+
+const binPath = PLATFORMS?.[platform]?.[arch];
+if (binPath) {
+  const result = require("child_process").spawnSync(
+    require.resolve(binPath),
+    process.argv.slice(2),
+    {
+      shell: false,
+      stdio: "inherit",
+      env,
+    }
+  );
+
+  if (result.error) {
+    throw result.error;
+  }
+
+  process.exitCode = result.status;
+} else {
+  console.error(`Unsupported platform ${platform}-${arch}`);
+  process.exitCode = 1;
+}

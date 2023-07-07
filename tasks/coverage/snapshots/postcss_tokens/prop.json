@@ -1,0 +1,265 @@
+[
+  {
+    "end": 1,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 0,
+    "value": "a"
+  },
+  {
+    "end": 2,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 1,
+    "value": null
+  },
+  {
+    "end": 3,
+    "escaped": false,
+    "kind": "LeftCurly",
+    "start": 2,
+    "value": null
+  },
+  {
+    "end": 8,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 3,
+    "value": null
+  },
+  {
+    "end": 9,
+    "escaped": false,
+    "kind": "Delim",
+    "start": 8,
+    "value": "*"
+  },
+  {
+    "end": 14,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 9,
+    "value": "color"
+  },
+  {
+    "end": 15,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 14,
+    "value": null
+  },
+  {
+    "end": 16,
+    "escaped": false,
+    "kind": "Colon",
+    "start": 15,
+    "value": null
+  },
+  {
+    "end": 17,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 16,
+    "value": null
+  },
+  {
+    "end": 22,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 17,
+    "value": "black"
+  },
+  {
+    "end": 23,
+    "escaped": false,
+    "kind": "Semicolon",
+    "start": 22,
+    "value": null
+  },
+  {
+    "end": 28,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 23,
+    "value": null
+  },
+  {
+    "end": 39,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 28,
+    "value": "_background"
+  },
+  {
+    "end": 40,
+    "escaped": false,
+    "kind": "Colon",
+    "start": 39,
+    "value": null
+  },
+  {
+    "end": 41,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 40,
+    "value": null
+  },
+  {
+    "end": 46,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 41,
+    "value": "white"
+  },
+  {
+    "end": 47,
+    "escaped": false,
+    "kind": "Semicolon",
+    "start": 46,
+    "value": null
+  },
+  {
+    "end": 52,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 47,
+    "value": null
+  },
+  {
+    "end": 61,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 52,
+    "value": "font-size"
+  },
+  {
+    "end": 65,
+    "escaped": false,
+    "kind": "Comment",
+    "start": 61,
+    "value": null
+  },
+  {
+    "end": 66,
+    "escaped": false,
+    "kind": "Colon",
+    "start": 65,
+    "value": null
+  },
+  {
+    "end": 67,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 66,
+    "value": null
+  },
+  {
+    "end": 70,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 67,
+    "value": "big"
+  },
+  {
+    "end": 71,
+    "escaped": false,
+    "kind": "Semicolon",
+    "start": 70,
+    "value": null
+  },
+  {
+    "end": 76,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 71,
+    "value": null
+  },
+  {
+    "end": 77,
+    "escaped": false,
+    "kind": "Delim",
+    "start": 76,
+    "value": "$"
+  },
+  {
+    "end": 78,
+    "escaped": false,
+    "kind": "LeftParen",
+    "start": 77,
+    "value": null
+  },
+  {
+    "end": 81,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 78,
+    "value": "var"
+  },
+  {
+    "end": 82,
+    "escaped": false,
+    "kind": "RightParen",
+    "start": 81,
+    "value": null
+  },
+  {
+    "end": 87,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 82,
+    "value": "-size"
+  },
+  {
+    "end": 88,
+    "escaped": false,
+    "kind": "Colon",
+    "start": 87,
+    "value": null
+  },
+  {
+    "end": 89,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 88,
+    "value": null
+  },
+  {
+    "end": 93,
+    "escaped": false,
+    "kind": "Percentage",
+    "start": 89,
+    "value": {
+      "int": true,
+      "signed": false,
+      "value": 100.0
+    }
+  },
+  {
+    "end": 94,
+    "escaped": false,
+    "kind": "Semicolon",
+    "start": 93,
+    "value": null
+  },
+  {
+    "end": 95,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 94,
+    "value": null
+  },
+  {
+    "end": 96,
+    "escaped": false,
+    "kind": "RightCurly",
+    "start": 95,
+    "value": null
+  },
+  {
+    "end": 97,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 96,
+    "value": null
+  }
+]

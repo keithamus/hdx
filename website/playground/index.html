@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="stylesheet" href="/css/base.css" />
+		<link rel="stylesheet" href="/css/playground.css" />
+		<title>hdx Playground</title>
+	</head>
+	<body>
+		<script type="module" src="/script/index.js"></script>
+		<wasm-loader>Loading Wasm</wasm-loader>
+
+		<row-stack>
+			<col-stack>
+				<row-stack class="controls">
+					<a style="width: 75px" href="/"
+						><img width="75" src="/images/logo.svg"
+					/></a>
+					<example-picker>
+						<form>
+							<label>
+								Examples:
+								<select name="example">
+									<option value="">(Blank)</option>
+									<option value="/examples/960.css">960.gs</option>
+									<option value="/examples/animate.4.1.1.css">
+										animate 4.1.1
+									</option>
+									<option value="/examples/blueprint.1.0.1.css">
+										blueprint 1.0.1
+									</option>
+									<option value="/examples/bootstrap.4.6.2.css">
+										bootstrap 4.6.2
+									</option>
+									<option value="/examples/bootstrap.5.3.0.css">
+										bootstrap 5.3.0
+									</option>
+									<option value="/examples/font-awesome-all.5.15.4.css">
+										font-awesome (all) 5.15.4
+									</option>
+									<option value="/examples/foundation.6.7.5.css">
+										foundation 6.7.5
+									</option>
+									<option value="/examples/inuitcss.6.0.0.css">
+										inuit 6.0.0
+									</option>
+									<option value="/examples/mini.css.3.0.1.css">
+										mini.css 3.0.1
+									</option>
+									<option value="/examples/foundation.6.7.5.css">
+										foundation 6.7.5
+									</option>
+									<option value="/examples/open-props.1.5.10.min.css">
+										open-props 1.5.10
+									</option>
+									<option value="/examples/pure.2.0.3.css">pure 2.0.3</option>
+									<option value="/examples/reset.2.0.css">reset 2.0</option>
+									<option value="/examples/tailwind.2.2.19.min.css">
+										tailwind 2.2.19
+									</option>
+								</select>
+							</label>
+						</form>
+					</example-picker>
+				</row-stack>
+				<hdx-editor id="editor"
+					>.card { border-radius: var(--radius-2); padding: var(--size-fluid-3);
+					box-shadow: var(--shadow-2); &:hover { box-shadow: var(--shadow-3); }
+					@media (--motionOK) { animation: var(--animation-fade-in); }
+					}</hdx-editor
+				>
+				<row-stack class="status">
+					<metric-observer name="minify">Minified to</metric-observer>
+					<metric-observer name="parseend">Parsed in</metric-observer>
+				</row-stack>
+			</col-stack>
+			<col-stack>
+				<row-stack class="controls">
+					<form id="format">
+						<radiogroup>
+							<view-options>
+								<label>
+									<input type="radio" name="format" value="ast" checked />
+									AST
+								</label>
+								<label>
+									<input type="radio" name="format" value="lex" />
+									Tokens
+								</label>
+								<label>
+									<input type="radio" name="format" value="minify" />
+									Minify
+								</label>
+								<label>
+									<input type="radio" name="format" value="errors" checked />
+									Errors
+									<error-diagnostic-count count="0"></error-diagnostic-count>
+								</label>
+							</view-options>
+						</radiogroup>
+					</form>
+				</row-stack>
+				<hdx-viewer
+					id="viewer"
+					for-editor="editor"
+					for-format="format"
+				></hdx-viewer>
+			</col-stack>
+		</row-stack>
+	</body>
+</html>

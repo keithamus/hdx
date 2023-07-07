@@ -1,0 +1,1124 @@
+{
+  "end": 544,
+  "rules": [
+    {
+      "end": 477,
+      "prelude": {
+        "end": 5,
+        "start": 0,
+        "value": [
+          {
+            "end": 1,
+            "escaped": false,
+            "kind": "Colon",
+            "start": 0,
+            "value": null
+          },
+          {
+            "end": 5,
+            "escaped": false,
+            "kind": "Ident",
+            "start": 1,
+            "value": "root"
+          }
+        ]
+      },
+      "properties": [
+        {
+          "end": 21,
+          "important": false,
+          "name": "",
+          "start": 10,
+          "type": "UnknownDeclaration",
+          "value": {
+            "end": 21,
+            "start": 10,
+            "value": [
+              {
+                "end": 18,
+                "escaped": false,
+                "kind": "Ident",
+                "start": 10,
+                "value": "--number"
+              },
+              {
+                "end": 19,
+                "escaped": false,
+                "kind": "Colon",
+                "start": 18,
+                "value": null
+              },
+              {
+                "end": 21,
+                "escaped": false,
+                "kind": "Number",
+                "start": 20,
+                "value": {
+                  "int": true,
+                  "signed": false,
+                  "value": 1.0
+                }
+              }
+            ]
+          }
+        },
+        {
+          "end": 38,
+          "important": false,
+          "name": "",
+          "start": 25,
+          "type": "UnknownDeclaration",
+          "value": {
+            "end": 38,
+            "start": 25,
+            "value": [
+              {
+                "end": 31,
+                "escaped": false,
+                "kind": "Ident",
+                "start": 25,
+                "value": "--unit"
+              },
+              {
+                "end": 32,
+                "escaped": false,
+                "kind": "Colon",
+                "start": 31,
+                "value": null
+              },
+              {
+                "end": 38,
+                "escaped": false,
+                "kind": "Dimension",
+                "start": 33,
+                "value": {
+                  "int": true,
+                  "signed": false,
+                  "unit": "vw",
+                  "value": 100.0
+                }
+              }
+            ]
+          }
+        },
+        {
+          "end": 55,
+          "important": false,
+          "name": "",
+          "start": 42,
+          "type": "UnknownDeclaration",
+          "value": {
+            "end": 55,
+            "start": 42,
+            "value": [
+              {
+                "end": 49,
+                "escaped": false,
+                "kind": "Ident",
+                "start": 42,
+                "value": "--color"
+              },
+              {
+                "end": 50,
+                "escaped": false,
+                "kind": "Colon",
+                "start": 49,
+                "value": null
+              },
+              {
+                "end": 55,
+                "escaped": false,
+                "kind": "Hash",
+                "start": 51,
+                "value": "06c"
+              }
+            ]
+          }
+        },
+        {
+          "end": 83,
+          "important": false,
+          "name": "",
+          "start": 60,
+          "type": "UnknownDeclaration",
+          "value": {
+            "end": 83,
+            "start": 60,
+            "value": [
+              {
+                "end": 70,
+                "escaped": false,
+                "kind": "Ident",
+                "start": 60,
+                "value": "--function"
+              },
+              {
+                "end": 71,
+                "escaped": false,
+                "kind": "Colon",
+                "start": 70,
+                "value": null
+              },
+              {
+                "end": 83,
+                "name": "calc",
+                "start": 72,
+                "type": "Function",
+                "value": [
+                  {
+                    "end": 78,
+                    "escaped": false,
+                    "kind": "Number",
+                    "start": 77,
+                    "value": {
+                      "int": true,
+                      "signed": false,
+                      "value": 1.0
+                    }
+                  },
+                  {
+                    "end": 80,
+                    "escaped": false,
+                    "kind": "Delim",
+                    "start": 79,
+                    "value": "+"
+                  },
+                  {
+                    "end": 82,
+                    "escaped": false,
+                    "kind": "Number",
+                    "start": 81,
+                    "value": {
+                      "int": true,
+                      "signed": false,
+                      "value": 1.0
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "end": 110,
+          "important": false,
+          "name": "",
+          "start": 87,
+          "type": "UnknownDeclaration",
+          "value": {
+            "end": 110,
+            "start": 87,
+            "value": [
+              {
+                "end": 97,
+                "escaped": false,
+                "kind": "Ident",
+                "start": 87,
+                "value": "--variable"
+              },
+              {
+                "end": 98,
+                "escaped": false,
+                "kind": "Colon",
+                "start": 97,
+                "value": null
+              },
+              {
+                "end": 110,
+                "name": "var",
+                "start": 99,
+                "type": "Function",
+                "value": [
+                  {
+                    "end": 109,
+                    "escaped": false,
+                    "kind": "Ident",
+                    "start": 103,
+                    "value": "--unit"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "end": 147,
+          "important": false,
+          "name": "",
+          "start": 115,
+          "type": "UnknownDeclaration",
+          "value": {
+            "end": 147,
+            "start": 115,
+            "value": [
+              {
+                "end": 123,
+                "escaped": false,
+                "kind": "Ident",
+                "start": 115,
+                "value": "--string"
+              },
+              {
+                "end": 124,
+                "escaped": false,
+                "kind": "Colon",
+                "start": 123,
+                "value": null
+              },
+              {
+                "end": 147,
+                "escaped": false,
+                "kind": "String",
+                "start": 125,
+                "value": "single quoted string"
+              }
+            ]
+          }
+        },
+        {
+          "end": 183,
+          "important": false,
+          "name": "",
+          "start": 151,
+          "type": "UnknownDeclaration",
+          "value": {
+            "end": 183,
+            "start": 151,
+            "value": [
+              {
+                "end": 159,
+                "escaped": false,
+                "kind": "Ident",
+                "start": 151,
+                "value": "--string"
+              },
+              {
+                "end": 160,
+                "escaped": false,
+                "kind": "Colon",
+                "start": 159,
+                "value": null
+              },
+              {
+                "end": 183,
+                "escaped": false,
+                "kind": "String",
+                "start": 161,
+                "value": "double quoted string"
+              }
+            ]
+          }
+        },
+        {
+          "end": 213,
+          "important": false,
+          "name": "",
+          "start": 188,
+          "type": "UnknownDeclaration",
+          "value": {
+            "end": 213,
+            "start": 188,
+            "value": [
+              {
+                "end": 202,
+                "escaped": false,
+                "kind": "Ident",
+                "start": 188,
+                "value": "--square-block"
+              },
+              {
+                "end": 203,
+                "escaped": false,
+                "kind": "Colon",
+                "start": 202,
+                "value": null
+              },
+              {
+                "end": 213,
+                "start": 204,
+                "type": "SimpleBlock",
+                "value": [
+                  {
+                    "end": 206,
+                    "escaped": false,
+                    "kind": "Number",
+                    "start": 205,
+                    "value": {
+                      "int": true,
+                      "signed": false,
+                      "value": 1.0
+                    }
+                  },
+                  {
+                    "end": 207,
+                    "escaped": false,
+                    "kind": "Comma",
+                    "start": 206,
+                    "value": null
+                  },
+                  {
+                    "end": 209,
+                    "escaped": false,
+                    "kind": "Number",
+                    "start": 208,
+                    "value": {
+                      "int": true,
+                      "signed": false,
+                      "value": 2.0
+                    }
+                  },
+                  {
+                    "end": 210,
+                    "escaped": false,
+                    "kind": "Comma",
+                    "start": 209,
+                    "value": null
+                  },
+                  {
+                    "end": 212,
+                    "escaped": false,
+                    "kind": "Number",
+                    "start": 211,
+                    "value": {
+                      "int": true,
+                      "signed": false,
+                      "value": 3.0
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "end": 241,
+          "important": false,
+          "name": "",
+          "start": 217,
+          "type": "UnknownDeclaration",
+          "value": {
+            "end": 241,
+            "start": 217,
+            "value": [
+              {
+                "end": 230,
+                "escaped": false,
+                "kind": "Ident",
+                "start": 217,
+                "value": "--round-block"
+              },
+              {
+                "end": 231,
+                "escaped": false,
+                "kind": "Colon",
+                "start": 230,
+                "value": null
+              },
+              {
+                "end": 241,
+                "start": 232,
+                "type": "SimpleBlock",
+                "value": [
+                  {
+                    "end": 234,
+                    "escaped": false,
+                    "kind": "Number",
+                    "start": 233,
+                    "value": {
+                      "int": true,
+                      "signed": false,
+                      "value": 1.0
+                    }
+                  },
+                  {
+                    "end": 235,
+                    "escaped": false,
+                    "kind": "Comma",
+                    "start": 234,
+                    "value": null
+                  },
+                  {
+                    "end": 237,
+                    "escaped": false,
+                    "kind": "Number",
+                    "start": 236,
+                    "value": {
+                      "int": true,
+                      "signed": false,
+                      "value": 2.0
+                    }
+                  },
+                  {
+                    "end": 238,
+                    "escaped": false,
+                    "kind": "Comma",
+                    "start": 237,
+                    "value": null
+                  },
+                  {
+                    "end": 240,
+                    "escaped": false,
+                    "kind": "Number",
+                    "start": 239,
+                    "value": {
+                      "int": true,
+                      "signed": false,
+                      "value": 3.0
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "end": 255,
+          "important": false,
+          "name": "",
+          "start": 246,
+          "type": "UnknownDeclaration",
+          "value": {
+            "end": 255,
+            "start": 246,
+            "value": [
+              {
+                "end": 254,
+                "escaped": false,
+                "kind": "Ident",
+                "start": 246,
+                "value": "--empty1"
+              },
+              {
+                "end": 255,
+                "escaped": false,
+                "kind": "Colon",
+                "start": 254,
+                "value": null
+              }
+            ]
+          }
+        },
+        {
+          "end": 269,
+          "important": false,
+          "name": "",
+          "start": 260,
+          "type": "UnknownDeclaration",
+          "value": {
+            "end": 269,
+            "start": 260,
+            "value": [
+              {
+                "end": 268,
+                "escaped": false,
+                "kind": "Ident",
+                "start": 260,
+                "value": "--empty2"
+              },
+              {
+                "end": 269,
+                "escaped": false,
+                "kind": "Colon",
+                "start": 268,
+                "value": null
+              }
+            ]
+          }
+        },
+        {
+          "end": 298,
+          "important": false,
+          "name": "",
+          "start": 278,
+          "type": "UnknownDeclaration",
+          "value": {
+            "end": 298,
+            "start": 278,
+            "value": [
+              {
+                "end": 286,
+                "escaped": false,
+                "kind": "Ident",
+                "start": 278,
+                "value": "--empty3"
+              },
+              {
+                "end": 287,
+                "escaped": false,
+                "kind": "Colon",
+                "start": 286,
+                "value": null
+              },
+              {
+                "end": 289,
+                "escaped": false,
+                "kind": "Delim",
+                "start": 288,
+                "value": "!"
+              },
+              {
+                "end": 298,
+                "escaped": false,
+                "kind": "Ident",
+                "start": 289,
+                "value": "important"
+              }
+            ]
+          }
+        },
+        {
+          "end": 326,
+          "important": false,
+          "name": "",
+          "start": 302,
+          "type": "UnknownDeclaration",
+          "value": {
+            "end": 326,
+            "start": 302,
+            "value": [
+              {
+                "end": 310,
+                "escaped": false,
+                "kind": "Ident",
+                "start": 302,
+                "value": "--empty4"
+              },
+              {
+                "end": 311,
+                "escaped": false,
+                "kind": "Colon",
+                "start": 310,
+                "value": null
+              },
+              {
+                "end": 317,
+                "escaped": false,
+                "kind": "Delim",
+                "start": 316,
+                "value": "!"
+              },
+              {
+                "end": 326,
+                "escaped": false,
+                "kind": "Ident",
+                "start": 317,
+                "value": "important"
+              }
+            ]
+          }
+        },
+        {
+          "end": 339,
+          "important": false,
+          "name": "",
+          "start": 330,
+          "type": "UnknownDeclaration",
+          "value": {
+            "end": 339,
+            "start": 330,
+            "value": [
+              {
+                "end": 338,
+                "escaped": false,
+                "kind": "Ident",
+                "start": 330,
+                "value": "--empty5"
+              },
+              {
+                "end": 339,
+                "escaped": false,
+                "kind": "Colon",
+                "start": 338,
+                "value": null
+              }
+            ]
+          }
+        },
+        {
+          "end": 375,
+          "important": false,
+          "name": "",
+          "start": 349,
+          "type": "UnknownDeclaration",
+          "value": {
+            "end": 375,
+            "start": 349,
+            "value": [
+              {
+                "end": 364,
+                "escaped": false,
+                "kind": "Ident",
+                "start": 349,
+                "value": "--bracket-block"
+              },
+              {
+                "end": 365,
+                "escaped": false,
+                "kind": "Colon",
+                "start": 364,
+                "value": null
+              },
+              {
+                "end": 375,
+                "start": 366,
+                "type": "SimpleBlock",
+                "value": [
+                  {
+                    "end": 368,
+                    "escaped": false,
+                    "kind": "Number",
+                    "start": 367,
+                    "value": {
+                      "int": true,
+                      "signed": false,
+                      "value": 1.0
+                    }
+                  },
+                  {
+                    "end": 369,
+                    "escaped": false,
+                    "kind": "Comma",
+                    "start": 368,
+                    "value": null
+                  },
+                  {
+                    "end": 371,
+                    "escaped": false,
+                    "kind": "Number",
+                    "start": 370,
+                    "value": {
+                      "int": true,
+                      "signed": false,
+                      "value": 2.0
+                    }
+                  },
+                  {
+                    "end": 372,
+                    "escaped": false,
+                    "kind": "Comma",
+                    "start": 371,
+                    "value": null
+                  },
+                  {
+                    "end": 374,
+                    "escaped": false,
+                    "kind": "Number",
+                    "start": 373,
+                    "value": {
+                      "int": true,
+                      "signed": false,
+                      "value": 3.0
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "end": 420,
+          "important": false,
+          "name": "",
+          "start": 379,
+          "type": "UnknownDeclaration",
+          "value": {
+            "end": 420,
+            "start": 379,
+            "value": [
+              {
+                "end": 385,
+                "escaped": false,
+                "kind": "Ident",
+                "start": 379,
+                "value": "--JSON"
+              },
+              {
+                "end": 386,
+                "escaped": false,
+                "kind": "Colon",
+                "start": 385,
+                "value": null
+              },
+              {
+                "end": 420,
+                "start": 387,
+                "type": "SimpleBlock",
+                "value": [
+                  {
+                    "end": 389,
+                    "escaped": false,
+                    "kind": "Number",
+                    "start": 388,
+                    "value": {
+                      "int": true,
+                      "signed": false,
+                      "value": 1.0
+                    }
+                  },
+                  {
+                    "end": 390,
+                    "escaped": false,
+                    "kind": "Comma",
+                    "start": 389,
+                    "value": null
+                  },
+                  {
+                    "end": 394,
+                    "escaped": false,
+                    "kind": "String",
+                    "start": 391,
+                    "value": "2"
+                  },
+                  {
+                    "end": 395,
+                    "escaped": false,
+                    "kind": "Comma",
+                    "start": 394,
+                    "value": null
+                  },
+                  {
+                    "end": 414,
+                    "start": 396,
+                    "type": "SimpleBlock",
+                    "value": [
+                      {
+                        "end": 404,
+                        "escaped": false,
+                        "kind": "String",
+                        "start": 397,
+                        "value": "three"
+                      },
+                      {
+                        "end": 405,
+                        "escaped": false,
+                        "kind": "Colon",
+                        "start": 404,
+                        "value": null
+                      },
+                      {
+                        "end": 413,
+                        "start": 406,
+                        "type": "SimpleBlock",
+                        "value": [
+                          {
+                            "end": 410,
+                            "escaped": false,
+                            "kind": "String",
+                            "start": 407,
+                            "value": "a"
+                          },
+                          {
+                            "end": 411,
+                            "escaped": false,
+                            "kind": "Colon",
+                            "start": 410,
+                            "value": null
+                          },
+                          {
+                            "end": 412,
+                            "escaped": false,
+                            "kind": "Number",
+                            "start": 411,
+                            "value": {
+                              "int": true,
+                              "signed": false,
+                              "value": 1.0
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "end": 415,
+                    "escaped": false,
+                    "kind": "Comma",
+                    "start": 414,
+                    "value": null
+                  },
+                  {
+                    "end": 419,
+                    "start": 416,
+                    "type": "SimpleBlock",
+                    "value": [
+                      {
+                        "end": 418,
+                        "escaped": false,
+                        "kind": "Number",
+                        "start": 417,
+                        "value": {
+                          "int": true,
+                          "signed": false,
+                          "value": 4.0
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "end": 474,
+          "important": false,
+          "name": "",
+          "start": 424,
+          "type": "UnknownDeclaration",
+          "value": {
+            "end": 474,
+            "start": 424,
+            "value": [
+              {
+                "end": 436,
+                "escaped": false,
+                "kind": "Ident",
+                "start": 424,
+                "value": "--javascript"
+              },
+              {
+                "end": 437,
+                "escaped": false,
+                "kind": "Colon",
+                "start": 436,
+                "value": null
+              },
+              {
+                "end": 452,
+                "name": "function",
+                "start": 438,
+                "type": "Function",
+                "value": [
+                  {
+                    "end": 451,
+                    "escaped": false,
+                    "kind": "Ident",
+                    "start": 447,
+                    "value": "rule"
+                  }
+                ]
+              },
+              {
+                "end": 474,
+                "start": 453,
+                "type": "SimpleBlock",
+                "value": [
+                  {
+                    "end": 462,
+                    "escaped": false,
+                    "kind": "Ident",
+                    "start": 455,
+                    "value": "console"
+                  },
+                  {
+                    "end": 463,
+                    "escaped": false,
+                    "kind": "Delim",
+                    "start": 462,
+                    "value": "."
+                  },
+                  {
+                    "end": 472,
+                    "name": "log",
+                    "start": 463,
+                    "type": "Function",
+                    "value": [
+                      {
+                        "end": 471,
+                        "escaped": false,
+                        "kind": "Ident",
+                        "start": 467,
+                        "value": "rule"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "rules": [],
+      "start": 0,
+      "type": "UnknownRule"
+    },
+    {
+      "end": 491,
+      "prelude": {
+        "end": 484,
+        "start": 479,
+        "value": [
+          {
+            "end": 480,
+            "escaped": false,
+            "kind": "Colon",
+            "start": 479,
+            "value": null
+          },
+          {
+            "end": 484,
+            "escaped": false,
+            "kind": "Ident",
+            "start": 480,
+            "value": "root"
+          }
+        ]
+      },
+      "properties": [
+        {
+          "end": 490,
+          "important": false,
+          "name": "",
+          "start": 485,
+          "type": "UnknownDeclaration",
+          "value": {
+            "end": 490,
+            "start": 485,
+            "value": [
+              {
+                "end": 488,
+                "escaped": false,
+                "kind": "Ident",
+                "start": 485,
+                "value": "--a"
+              },
+              {
+                "end": 489,
+                "escaped": false,
+                "kind": "Colon",
+                "start": 488,
+                "value": null
+              },
+              {
+                "end": 490,
+                "escaped": false,
+                "kind": "Number",
+                "start": 489,
+                "value": {
+                  "int": true,
+                  "signed": false,
+                  "value": 1.0
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "rules": [],
+      "start": 479,
+      "type": "UnknownRule"
+    },
+    {
+      "end": 528,
+      "prelude": {
+        "end": 508,
+        "start": 493,
+        "value": [
+          {
+            "end": 494,
+            "escaped": false,
+            "kind": "Delim",
+            "start": 493,
+            "value": "."
+          },
+          {
+            "end": 508,
+            "escaped": false,
+            "kind": "Ident",
+            "start": 494,
+            "value": "semicolon-less"
+          }
+        ]
+      },
+      "properties": [
+        {
+          "end": 522,
+          "important": false,
+          "name": "",
+          "start": 510,
+          "type": "UnknownDeclaration",
+          "value": {
+            "end": 522,
+            "start": 510,
+            "value": [
+              {
+                "end": 521,
+                "escaped": false,
+                "kind": "Ident",
+                "start": 510,
+                "value": "--empty-end"
+              },
+              {
+                "end": 522,
+                "escaped": false,
+                "kind": "Colon",
+                "start": 521,
+                "value": null
+              }
+            ]
+          }
+        }
+      ],
+      "rules": [],
+      "start": 493,
+      "type": "UnknownRule"
+    },
+    {
+      "end": 543,
+      "prelude": {
+        "end": 536,
+        "start": 530,
+        "value": [
+          {
+            "end": 531,
+            "escaped": false,
+            "kind": "Delim",
+            "start": 530,
+            "value": "."
+          },
+          {
+            "end": 536,
+            "escaped": false,
+            "kind": "Ident",
+            "start": 531,
+            "value": "empty"
+          }
+        ]
+      },
+      "properties": [
+        {
+          "end": 541,
+          "important": false,
+          "name": "",
+          "start": 537,
+          "type": "UnknownDeclaration",
+          "value": {
+            "end": 541,
+            "start": 537,
+            "value": [
+              {
+                "end": 540,
+                "escaped": false,
+                "kind": "Ident",
+                "start": 537,
+                "value": "--a"
+              },
+              {
+                "end": 541,
+                "escaped": false,
+                "kind": "Colon",
+                "start": 540,
+                "value": null
+              }
+            ]
+          }
+        }
+      ],
+      "rules": [],
+      "start": 530,
+      "type": "UnknownRule"
+    }
+  ],
+  "start": 0,
+  "type": "Stylesheet"
+}

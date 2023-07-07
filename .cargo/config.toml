@@ -1,0 +1,4 @@
+[alias]
+coverage = "run -p hdx_coverage --release --"
+benchmark = "run -p hdx_benchmark --release --"
+lint = "clippy --workspace --all-targets --all-features"

@@ -1,0 +1,79 @@
+[
+  {
+    "end": 1,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 0,
+    "value": "a"
+  },
+  {
+    "end": 2,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 1,
+    "value": null
+  },
+  {
+    "end": 3,
+    "escaped": false,
+    "kind": "LeftCurly",
+    "start": 2,
+    "value": null
+  },
+  {
+    "end": 5,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 3,
+    "value": null
+  },
+  {
+    "end": 10,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 5,
+    "value": "color"
+  },
+  {
+    "end": 11,
+    "escaped": false,
+    "kind": "Colon",
+    "start": 10,
+    "value": null
+  },
+  {
+    "end": 12,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 11,
+    "value": null
+  },
+  {
+    "end": 17,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 12,
+    "value": "black"
+  },
+  {
+    "end": 18,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 17,
+    "value": null
+  },
+  {
+    "end": 19,
+    "escaped": false,
+    "kind": "RightCurly",
+    "start": 18,
+    "value": null
+  },
+  {
+    "end": 20,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 19,
+    "value": null
+  }
+]

@@ -1,0 +1,28 @@
+{
+  "end": 17,
+  "rules": [
+    {
+      "end": 17,
+      "name": "charset",
+      "prelude": {
+        "end": 16,
+        "start": 9,
+        "value": [
+          {
+            "end": 16,
+            "escaped": false,
+            "kind": "String",
+            "start": 9,
+            "value": "UTF-8"
+          }
+        ]
+      },
+      "properties": [],
+      "rules": [],
+      "start": 0,
+      "type": "UnknownAtRule"
+    }
+  ],
+  "start": 0,
+  "type": "Stylesheet"
+}

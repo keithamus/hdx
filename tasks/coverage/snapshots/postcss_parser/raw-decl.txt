@@ -1,0 +1,18 @@
+hdx_parser::UnknownColor
+
+  × Unknown named color 'a'
+   ╭─[tasks/coverage/postcss-parser-tests/cases/raw-decl.css:1:1]
+ 1 │ a { color: a/* ; */ b  ; }
+   ·            ┬
+   ·            ╰── This isn't a known color
+   ╰────
+  help: Replace this unknown color with a known named color or a valid color value.
+hdx_parser::UnknownDeclaration
+
+  × Ignored property due to parse error.
+   ╭─[tasks/coverage/postcss-parser-tests/cases/raw-decl.css:1:1]
+ 1 │ a { color: a/* ; */ b  ; }
+   ·     ─────────┬─────────
+   ·              ╰── This property was ignored.
+   ╰────
+  help: This property is going to be ignored because it doesn't look valid. If it is valid, please file an issue!

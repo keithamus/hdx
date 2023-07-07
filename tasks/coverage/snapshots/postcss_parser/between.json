@@ -1,0 +1,27 @@
+{
+  "end": 9,
+  "rules": [
+    {
+      "end": 8,
+      "properties": [],
+      "rules": [],
+      "selectors": [
+        {
+          "components": [
+            {
+              "type": "Type",
+              "value": "a"
+            }
+          ],
+          "end": 5,
+          "start": 0,
+          "type": "Selector"
+        }
+      ],
+      "start": 0,
+      "type": "StyleRule"
+    }
+  ],
+  "start": 0,
+  "type": "Stylesheet"
+}

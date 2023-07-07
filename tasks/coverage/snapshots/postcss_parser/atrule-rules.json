@@ -1,0 +1,260 @@
+{
+  "end": 258,
+  "rules": [
+    {
+      "end": 170,
+      "name": "supports",
+      "prelude": {
+        "end": 32,
+        "start": 10,
+        "value": [
+          {
+            "end": 32,
+            "start": 10,
+            "type": "SimpleBlock",
+            "value": [
+              {
+                "end": 25,
+                "escaped": false,
+                "kind": "Ident",
+                "start": 11,
+                "value": "animation-name"
+              },
+              {
+                "end": 26,
+                "escaped": false,
+                "kind": "Colon",
+                "start": 25,
+                "value": null
+              },
+              {
+                "end": 31,
+                "escaped": false,
+                "kind": "Ident",
+                "start": 27,
+                "value": "test"
+              }
+            ]
+          }
+        ]
+      },
+      "properties": [],
+      "rules": [
+        {
+          "end": 168,
+          "prelude": {
+            "end": 61,
+            "start": 39,
+            "value": [
+              {
+                "end": 56,
+                "escaped": false,
+                "kind": "AtKeyword",
+                "start": 39,
+                "value": "-custom-keyframe"
+              },
+              {
+                "end": 61,
+                "escaped": false,
+                "kind": "Ident",
+                "start": 57,
+                "value": "anim"
+              }
+            ]
+          },
+          "properties": [
+            {
+              "end": 162,
+              "important": false,
+              "name": "",
+              "start": 72,
+              "type": "UnknownDeclaration",
+              "value": {
+                "end": 162,
+                "start": 72,
+                "value": [
+                  {
+                    "end": 76,
+                    "escaped": false,
+                    "kind": "Ident",
+                    "start": 72,
+                    "value": "from"
+                  },
+                  {
+                    "end": 114,
+                    "start": 77,
+                    "type": "SimpleBlock",
+                    "value": [
+                      {
+                        "end": 96,
+                        "escaped": false,
+                        "kind": "Ident",
+                        "start": 91,
+                        "value": "color"
+                      },
+                      {
+                        "end": 97,
+                        "escaped": false,
+                        "kind": "Colon",
+                        "start": 96,
+                        "value": null
+                      },
+                      {
+                        "end": 103,
+                        "escaped": false,
+                        "kind": "Ident",
+                        "start": 98,
+                        "value": "black"
+                      },
+                      {
+                        "end": 104,
+                        "escaped": false,
+                        "kind": "Semicolon",
+                        "start": 103,
+                        "value": null
+                      }
+                    ]
+                  },
+                  {
+                    "end": 125,
+                    "escaped": false,
+                    "kind": "Ident",
+                    "start": 123,
+                    "value": "to"
+                  },
+                  {
+                    "end": 162,
+                    "start": 126,
+                    "type": "SimpleBlock",
+                    "value": [
+                      {
+                        "end": 145,
+                        "escaped": false,
+                        "kind": "Ident",
+                        "start": 140,
+                        "value": "color"
+                      },
+                      {
+                        "end": 146,
+                        "escaped": false,
+                        "kind": "Colon",
+                        "start": 145,
+                        "value": null
+                      },
+                      {
+                        "end": 152,
+                        "escaped": false,
+                        "kind": "Ident",
+                        "start": 147,
+                        "value": "white"
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          ],
+          "rules": [],
+          "start": 39,
+          "type": "UnknownRule"
+        }
+      ],
+      "start": 0,
+      "type": "UnknownAtRule"
+    },
+    {
+      "end": 257,
+      "name": "support",
+      "prelude": {
+        "end": 205,
+        "start": 181,
+        "value": [
+          {
+            "end": 205,
+            "name": "selector",
+            "start": 181,
+            "type": "Function",
+            "value": [
+              {
+                "end": 191,
+                "escaped": false,
+                "kind": "Colon",
+                "start": 190,
+                "value": null
+              },
+              {
+                "end": 204,
+                "escaped": false,
+                "kind": "Ident",
+                "start": 191,
+                "value": "focus-visible"
+              }
+            ]
+          }
+        ]
+      },
+      "properties": [
+        {
+          "end": 255,
+          "important": false,
+          "name": "a",
+          "start": 210,
+          "type": "UnknownDeclaration",
+          "value": {
+            "end": 255,
+            "start": 212,
+            "value": [
+              {
+                "end": 225,
+                "escaped": false,
+                "kind": "Ident",
+                "start": 212,
+                "value": "focus-visible"
+              },
+              {
+                "end": 255,
+                "start": 226,
+                "type": "SimpleBlock",
+                "value": [
+                  {
+                    "end": 242,
+                    "escaped": false,
+                    "kind": "Ident",
+                    "start": 232,
+                    "value": "background"
+                  },
+                  {
+                    "end": 243,
+                    "escaped": false,
+                    "kind": "Colon",
+                    "start": 242,
+                    "value": null
+                  },
+                  {
+                    "end": 250,
+                    "escaped": false,
+                    "kind": "Ident",
+                    "start": 244,
+                    "value": "yellow"
+                  },
+                  {
+                    "end": 251,
+                    "escaped": false,
+                    "kind": "Semicolon",
+                    "start": 250,
+                    "value": null
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "rules": [],
+      "start": 172,
+      "type": "UnknownAtRule"
+    }
+  ],
+  "start": 0,
+  "type": "Stylesheet"
+}

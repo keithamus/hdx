@@ -1,0 +1,78 @@
+{
+  "end": 34,
+  "rules": [
+    {
+      "end": 16,
+      "properties": [],
+      "rules": [],
+      "selectors": [
+        {
+          "components": [
+            {
+              "type": "Type",
+              "value": "a"
+            },
+            {
+              "type": "Combinator",
+              "value": {
+                "type": "Descendant"
+              }
+            },
+            {
+              "type": "Type",
+              "value": "b"
+            }
+          ],
+          "end": 13,
+          "start": 1,
+          "type": "Selector"
+        }
+      ],
+      "start": 1,
+      "type": "StyleRule"
+    },
+    {
+      "end": 33,
+      "prelude": {
+        "end": 31,
+        "start": 18,
+        "value": [
+          {
+            "end": 19,
+            "escaped": false,
+            "kind": "Ident",
+            "start": 18,
+            "value": "a"
+          },
+          {
+            "end": 29,
+            "escaped": false,
+            "kind": "Comment",
+            "start": 19,
+            "value": null
+          },
+          {
+            "end": 30,
+            "escaped": false,
+            "kind": "Ident",
+            "start": 29,
+            "value": "b"
+          },
+          {
+            "end": 31,
+            "escaped": false,
+            "kind": "Whitespace",
+            "start": 30,
+            "value": null
+          }
+        ]
+      },
+      "properties": [],
+      "rules": [],
+      "start": 18,
+      "type": "UnknownRule"
+    }
+  ],
+  "start": 0,
+  "type": "Stylesheet"
+}

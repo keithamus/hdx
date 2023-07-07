@@ -1,0 +1,50 @@
+{
+	"name": "hdx-website",
+	"private": true,
+	"version": "0.0.0-development",
+	"scripts": {
+		"postinstall": "[ \"$NODE_ENV\" = \"production\" ] && npm run build || npm run build:dev",
+		"clean-old": "ls -t playground/hdx* | tail -n +2 | xargs rm -f",
+		"postbuild": "npm run clean-old",
+		"prestart": "npm run wasm-build:dev",
+		"postbuild:dev": "npm run clean-old",
+		"prebuild": "npm run wasm-build",
+		"prebuild:dev": "npm run wasm-build:dev",
+		"wasm-build:dev": "wasm-pack build --dev ../crates/hdx_wasm",
+		"wasm-build": "wasm-pack build --release ../crates/hdx_wasm",
+		"build:dev": "eleventy",
+		"build": "eleventy",
+		"start": "eleventy --serve"
+	},
+	"dependencies": {
+		"@codemirror/lang-css": "^6.2.0",
+		"@codemirror/lang-json": "^6.0.1",
+		"@codemirror/lang-rust": "^6.0.1",
+		"@codemirror/lang-sass": "^6.0.2",
+		"@codemirror/language": "^6.8.0",
+		"@codemirror/lint": "^6.4.0",
+		"@codemirror/state": "^6.2.1",
+		"@codemirror/view": "^6.15.3",
+		"codemirror": "^6.0.1",
+		"hdx_wasm": "../crates/hdx_wasm/pkg/"
+	},
+	"devDependencies": {
+		"@11ty/eleventy": "^2.0.1",
+		"@11ty/eleventy-plugin-rss": "^1.2.0",
+		"@11ty/eleventy-plugin-syntaxhighlight": "^5.0.0",
+		"@manustays/eleventy-plugin-generate-social-images": "^4.1.0",
+		"cssnano": "^6.0.1",
+		"eleventy-postcss-extension": "^1.0.0",
+		"esbuild": "^0.18.17",
+		"esbuild-plugin-wasm": "^1.1.0",
+		"glob": "^10.3.3",
+		"html-minifier": "^4.0.0",
+		"open-props": "^1.5.10",
+		"postcss-combine-duplicated-selectors": "^10.0.3",
+		"postcss-import": "^15.1.0",
+		"postcss-jit-props": "^1.0.13",
+		"postcss-preset-env": "^9.1.0",
+		"sharp": "^0.32.4",
+		"wasm-pack": "^0.12.1"
+	}
+}

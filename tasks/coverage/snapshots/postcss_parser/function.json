@@ -1,0 +1,104 @@
+{
+  "end": 207,
+  "rules": [
+    {
+      "end": 206,
+      "properties": [
+        {
+          "end": 109,
+          "important": false,
+          "name": "",
+          "start": 26,
+          "type": "UnknownDeclaration",
+          "value": {
+            "end": 109,
+            "start": 26,
+            "value": [
+              {
+                "end": 109,
+                "escaped": false,
+                "kind": "Url",
+                "start": 26,
+                "value": "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+              }
+            ]
+          }
+        },
+        {
+          "end": 155,
+          "important": false,
+          "name": "",
+          "start": 133,
+          "type": "UnknownDeclaration",
+          "value": {
+            "end": 155,
+            "start": 133,
+            "value": [
+              {
+                "end": 155,
+                "name": "url",
+                "start": 133,
+                "type": "Function",
+                "value": [
+                  {
+                    "end": 154,
+                    "escaped": false,
+                    "kind": "String",
+                    "start": 137,
+                    "value": "./image (1).jpg"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "end": 203,
+          "important": false,
+          "name": "",
+          "start": 179,
+          "type": "UnknownDeclaration",
+          "value": {
+            "end": 203,
+            "start": 179,
+            "value": [
+              {
+                "end": 203,
+                "name": "url",
+                "start": 179,
+                "type": "Function",
+                "value": [
+                  {
+                    "end": 201,
+                    "escaped": false,
+                    "kind": "String",
+                    "start": 184,
+                    "value": "./image (1).jpg"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "rules": [],
+      "selectors": [
+        {
+          "components": [
+            {
+              "type": "Type",
+              "value": "a"
+            }
+          ],
+          "end": 1,
+          "start": 0,
+          "type": "Selector"
+        }
+      ],
+      "start": 0,
+      "type": "StyleRule"
+    }
+  ],
+  "start": 0,
+  "type": "Stylesheet"
+}

@@ -1,0 +1,23 @@
+[
+  {
+    "end": 1,
+    "escaped": false,
+    "kind": "LeftCurly",
+    "start": 0,
+    "value": null
+  },
+  {
+    "end": 2,
+    "escaped": false,
+    "kind": "RightCurly",
+    "start": 1,
+    "value": null
+  },
+  {
+    "end": 3,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 2,
+    "value": null
+  }
+]

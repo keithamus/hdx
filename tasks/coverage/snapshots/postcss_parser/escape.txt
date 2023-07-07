@@ -1,0 +1,209 @@
+hdx_parser::Unimplemented
+
+  × This block cannot yet be parsed by the parser :(
+   ╭─[tasks/coverage/postcss-parser-tests/cases/escape.css:1:1]
+ 1 │ a {
+ 2 │     background: url("a).png");
+   ·                 ──┬─
+   ·                   ╰── Didn't recognise this bit
+ 3 │     background: url(a;a);
+   ╰────
+  help: This feature needs to be implemented within hdx. This file won't parse without it.
+hdx_parser::UnknownDeclaration
+
+  × Ignored property due to parse error.
+   ╭─[tasks/coverage/postcss-parser-tests/cases/escape.css:1:1]
+ 1 │ a {
+ 2 │     background: url("a).png");
+   ·     ────────────┬────────────
+   ·                 ╰── This property was ignored.
+ 3 │     background: url(a;a);
+   ╰────
+  help: This property is going to be ignored because it doesn't look valid. If it is valid, please file an issue!
+hdx_parser::Unimplemented
+
+  × This block cannot yet be parsed by the parser :(
+   ╭─[tasks/coverage/postcss-parser-tests/cases/escape.css:2:1]
+ 2 │     background: url("a).png");
+ 3 │     background: url(a;a);
+   ·                 ────┬───
+   ·                     ╰── Didn't recognise this bit
+ 4 │     background: url(a/*);
+   ╰────
+  help: This feature needs to be implemented within hdx. This file won't parse without it.
+hdx_parser::UnknownDeclaration
+
+  × Ignored property due to parse error.
+   ╭─[tasks/coverage/postcss-parser-tests/cases/escape.css:2:1]
+ 2 │     background: url("a).png");
+ 3 │     background: url(a;a);
+   ·     ──────────┬─────────
+   ·               ╰── This property was ignored.
+ 4 │     background: url(a/*);
+   ╰────
+  help: This property is going to be ignored because it doesn't look valid. If it is valid, please file an issue!
+hdx_parser::Unimplemented
+
+  × This block cannot yet be parsed by the parser :(
+   ╭─[tasks/coverage/postcss-parser-tests/cases/escape.css:3:1]
+ 3 │     background: url(a;a);
+ 4 │     background: url(a/*);
+   ·                 ────┬───
+   ·                     ╰── Didn't recognise this bit
+ 5 │     background: \;a;
+   ╰────
+  help: This feature needs to be implemented within hdx. This file won't parse without it.
+hdx_parser::UnknownDeclaration
+
+  × Ignored property due to parse error.
+   ╭─[tasks/coverage/postcss-parser-tests/cases/escape.css:3:1]
+ 3 │     background: url(a;a);
+ 4 │     background: url(a/*);
+   ·     ──────────┬─────────
+   ·               ╰── This property was ignored.
+ 5 │     background: \;a;
+   ╰────
+  help: This property is going to be ignored because it doesn't look valid. If it is valid, please file an issue!
+hdx_parser::UnknownColor
+
+  × Unknown named color ';a'
+   ╭─[tasks/coverage/postcss-parser-tests/cases/escape.css:4:1]
+ 4 │     background: url(a/*);
+ 5 │     background: \;a;
+   ·                    ┬
+   ·                    ╰── This isn't a known color
+ 6 │ }
+   ╰────
+  help: Replace this unknown color with a known named color or a valid color value.
+hdx_parser::UnknownDeclaration
+
+  × Ignored property due to parse error.
+   ╭─[tasks/coverage/postcss-parser-tests/cases/escape.css:4:1]
+ 4 │     background: url(a/*);
+ 5 │     background: \;a;
+   ·     ───────┬───────
+   ·            ╰── This property was ignored.
+ 6 │ }
+   ╰────
+  help: This property is going to be ignored because it doesn't look valid. If it is valid, please file an issue!
+hdx_parser::ExpectToken
+
+  × Expected `Ident` but found `Function`
+   ╭─[tasks/coverage/postcss-parser-tests/cases/escape.css:7:1]
+ 7 │ 
+ 8 │ :not([foo=")"]) { }
+   ·  ──┬─
+   ·    ╰── `Ident` expected
+ 9 │ :not(div/*)*/) { }
+   ╰────
+  help: This is not correct CSS syntax.
+hdx_parser::ExpectToken
+
+  × Expected `Ident` but found `Function`
+    ╭─[tasks/coverage/postcss-parser-tests/cases/escape.css:8:1]
+  8 │ :not([foo=")"]) { }
+  9 │ :not(div/*)*/) { }
+    ·  ──┬─
+    ·    ╰── `Ident` expected
+ 10 │ :not(:nth-child(2n of [foo=")"])) { }
+    ╰────
+  help: This is not correct CSS syntax.
+hdx_parser::ExpectToken
+
+  × Expected `Ident` but found `Function`
+    ╭─[tasks/coverage/postcss-parser-tests/cases/escape.css:9:1]
+  9 │ :not(div/*)*/) { }
+ 10 │ :not(:nth-child(2n of [foo=")"])) { }
+    ·  ──┬─
+    ·    ╰── `Ident` expected
+ 11 │ [foo=\"] { }
+    ╰────
+  help: This is not correct CSS syntax.
+hdx_parser::Unimplemented
+
+  × This block cannot yet be parsed by the parser :(
+    ╭─[tasks/coverage/postcss-parser-tests/cases/escape.css:10:1]
+ 10 │ :not(:nth-child(2n of [foo=")"])) { }
+ 11 │ [foo=\"] { }
+    · ┬
+    · ╰── Didn't recognise this bit
+ 12 │ [foo=\{] { }
+    ╰────
+  help: This feature needs to be implemented within hdx. This file won't parse without it.
+hdx_parser::Unimplemented
+
+  × This block cannot yet be parsed by the parser :(
+    ╭─[tasks/coverage/postcss-parser-tests/cases/escape.css:11:1]
+ 11 │ [foo=\"] { }
+ 12 │ [foo=\{] { }
+    · ┬
+    · ╰── Didn't recognise this bit
+ 13 │ [foo=\(] { }
+    ╰────
+  help: This feature needs to be implemented within hdx. This file won't parse without it.
+hdx_parser::Unimplemented
+
+  × This block cannot yet be parsed by the parser :(
+    ╭─[tasks/coverage/postcss-parser-tests/cases/escape.css:12:1]
+ 12 │ [foo=\{] { }
+ 13 │ [foo=\(] { }
+    · ┬
+    · ╰── Didn't recognise this bit
+ 14 │ [foo=yes\:\(it\'s\ work\)] { }
+    ╰────
+  help: This feature needs to be implemented within hdx. This file won't parse without it.
+hdx_parser::Unimplemented
+
+  × This block cannot yet be parsed by the parser :(
+    ╭─[tasks/coverage/postcss-parser-tests/cases/escape.css:13:1]
+ 13 │ [foo=\(] { }
+ 14 │ [foo=yes\:\(it\'s\ work\)] { }
+    · ┬
+    · ╰── Didn't recognise this bit
+ 15 │ 
+    ╰────
+  help: This feature needs to be implemented within hdx. This file won't parse without it.
+hdx_parser::UnknownColor
+
+  × Unknown named color '\'
+    ╭─[tasks/coverage/postcss-parser-tests/cases/escape.css:18:1]
+ 18 │ h1\\{
+ 19 │     color: \\;
+    ·              ┬
+    ·              ╰── This isn't a known color
+ 20 │ }
+    ╰────
+  help: Replace this unknown color with a known named color or a valid color value.
+hdx_parser::UnknownDeclaration
+
+  × Ignored property due to parse error.
+    ╭─[tasks/coverage/postcss-parser-tests/cases/escape.css:18:1]
+ 18 │ h1\\{
+ 19 │     color: \\;
+    ·     ────┬────
+    ·         ╰── This property was ignored.
+ 20 │ }
+    ╰────
+  help: This property is going to be ignored because it doesn't look valid. If it is valid, please file an issue!
+hdx_parser::Unimplemented
+
+  × This block cannot yet be parsed by the parser :(
+    ╭─[tasks/coverage/postcss-parser-tests/cases/escape.css:21:1]
+ 21 │ 
+ 22 │ [attr=;] { }
+    · ┬
+    · ╰── Didn't recognise this bit
+ 23 │ 
+    ╰────
+  help: This feature needs to be implemented within hdx. This file won't parse without it.
+hdx_parser::ExpectToken
+
+  × Expected `Ident` but found `Whitespace`
+    ╭─[tasks/coverage/postcss-parser-tests/cases/escape.css:24:1]
+ 24 │ .prop {
+ 25 │     \62 olor: red
+    ·              ┬
+    ·              ╰── `Ident` expected
+ 26 │ }
+    ╰────
+  help: This is not correct CSS syntax.

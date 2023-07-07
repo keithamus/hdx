@@ -1,0 +1,128 @@
+[
+  {
+    "end": 1,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 0,
+    "value": "a"
+  },
+  {
+    "end": 2,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 1,
+    "value": null
+  },
+  {
+    "end": 3,
+    "escaped": false,
+    "kind": "LeftCurly",
+    "start": 2,
+    "value": null
+  },
+  {
+    "end": 8,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 3,
+    "value": null
+  },
+  {
+    "end": 13,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 8,
+    "value": "color"
+  },
+  {
+    "end": 14,
+    "escaped": false,
+    "kind": "Colon",
+    "start": 13,
+    "value": null
+  },
+  {
+    "end": 15,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 14,
+    "value": null
+  },
+  {
+    "end": 20,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 15,
+    "value": "black"
+  },
+  {
+    "end": 21,
+    "escaped": false,
+    "kind": "Semicolon",
+    "start": 20,
+    "value": null
+  },
+  {
+    "end": 26,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 21,
+    "value": null
+  },
+  {
+    "end": 36,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 26,
+    "value": "background"
+  },
+  {
+    "end": 37,
+    "escaped": false,
+    "kind": "Colon",
+    "start": 36,
+    "value": null
+  },
+  {
+    "end": 38,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 37,
+    "value": null
+  },
+  {
+    "end": 43,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 38,
+    "value": "white"
+  },
+  {
+    "end": 44,
+    "escaped": false,
+    "kind": "Semicolon",
+    "start": 43,
+    "value": null
+  },
+  {
+    "end": 45,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 44,
+    "value": null
+  },
+  {
+    "end": 46,
+    "escaped": false,
+    "kind": "RightCurly",
+    "start": 45,
+    "value": null
+  },
+  {
+    "end": 47,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 46,
+    "value": null
+  }
+]

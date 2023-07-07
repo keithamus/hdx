@@ -1,0 +1,114 @@
+[
+  {
+    "end": 1,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 0,
+    "value": "a"
+  },
+  {
+    "end": 2,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 1,
+    "value": null
+  },
+  {
+    "end": 3,
+    "escaped": false,
+    "kind": "LeftCurly",
+    "start": 2,
+    "value": null
+  },
+  {
+    "end": 4,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 3,
+    "value": null
+  },
+  {
+    "end": 9,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 4,
+    "value": "color"
+  },
+  {
+    "end": 10,
+    "escaped": false,
+    "kind": "Colon",
+    "start": 9,
+    "value": null
+  },
+  {
+    "end": 11,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 10,
+    "value": null
+  },
+  {
+    "end": 12,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 11,
+    "value": "a"
+  },
+  {
+    "end": 19,
+    "escaped": false,
+    "kind": "Comment",
+    "start": 12,
+    "value": null
+  },
+  {
+    "end": 20,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 19,
+    "value": null
+  },
+  {
+    "end": 21,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 20,
+    "value": "b"
+  },
+  {
+    "end": 23,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 21,
+    "value": null
+  },
+  {
+    "end": 24,
+    "escaped": false,
+    "kind": "Semicolon",
+    "start": 23,
+    "value": null
+  },
+  {
+    "end": 25,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 24,
+    "value": null
+  },
+  {
+    "end": 26,
+    "escaped": false,
+    "kind": "RightCurly",
+    "start": 25,
+    "value": null
+  },
+  {
+    "end": 27,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 26,
+    "value": null
+  }
+]

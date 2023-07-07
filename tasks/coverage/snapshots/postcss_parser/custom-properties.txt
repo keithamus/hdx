@@ -1,0 +1,43 @@
+hdx_parser::ExpectToken
+
+  × Expected `Ident` but found `Whitespace`
+   ╭─[tasks/coverage/postcss-parser-tests/cases/custom-properties.css:1:1]
+ 1 │ :root {
+ 2 │   --number: 1;
+   ·            ┬
+   ·            ╰── `Ident` expected
+ 3 │   --unit: 100vw;
+   ╰────
+  help: This is not correct CSS syntax.
+hdx_parser::ExpectToken
+
+  × Expected `Ident` but found `Number`
+    ╭─[tasks/coverage/postcss-parser-tests/cases/custom-properties.css:25:1]
+ 25 │ 
+ 26 │ :root{--a:1}
+    ·           ┬
+    ·           ╰── `Ident` expected
+ 27 │ 
+    ╰────
+  help: This is not correct CSS syntax.
+hdx_parser::ExpectToken
+
+  × Expected `Ident` but found `Comment`
+    ╭─[tasks/coverage/postcss-parser-tests/cases/custom-properties.css:27:1]
+ 27 │ 
+ 28 │ .semicolon-less {--empty-end:/**/ }
+    ·                              ──┬─
+    ·                                ╰── `Ident` expected
+ 29 │ 
+    ╰────
+  help: This is not correct CSS syntax.
+hdx_parser::ExpectToken
+
+  × Expected `Ident` but found `Whitespace`
+    ╭─[tasks/coverage/postcss-parser-tests/cases/custom-properties.css:29:1]
+ 29 │ 
+ 30 │ .empty{--a: }
+    ·            ┬
+    ·            ╰── `Ident` expected
+    ╰────
+  help: This is not correct CSS syntax.

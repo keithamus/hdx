@@ -1,0 +1,11 @@
+hdx_parser::ExpectToken
+
+  × Expected `Ident` but found `Whitespace`
+   ╭─[tasks/coverage/postcss-parser-tests/cases/ie-progid.css:1:1]
+ 1 │ a {
+ 2 │     filter: progid:DXImageTransform.Microsoft.Blur(pixelradius=2) progid:DXImageTransform.Microsoft.Wheel(duration=3);
+   ·            ┬
+   ·            ╰── `Ident` expected
+ 3 │ }
+   ╰────
+  help: This is not correct CSS syntax.

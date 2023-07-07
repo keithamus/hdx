@@ -1,0 +1,38 @@
+{
+  "end": 15,
+  "rules": [
+    {
+      "end": 14,
+      "properties": [
+        {
+          "end": 13,
+          "important": false,
+          "start": 2,
+          "type": "Color",
+          "value": {
+            "name": "black",
+            "type": "NamedColor"
+          }
+        }
+      ],
+      "rules": [],
+      "selectors": [
+        {
+          "components": [
+            {
+              "type": "Type",
+              "value": "a"
+            }
+          ],
+          "end": 1,
+          "start": 0,
+          "type": "Selector"
+        }
+      ],
+      "start": 0,
+      "type": "StyleRule"
+    }
+  ],
+  "start": 0,
+  "type": "Stylesheet"
+}

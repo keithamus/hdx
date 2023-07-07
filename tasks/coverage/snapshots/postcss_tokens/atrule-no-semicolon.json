@@ -1,0 +1,86 @@
+[
+  {
+    "end": 6,
+    "escaped": false,
+    "kind": "AtKeyword",
+    "start": 0,
+    "value": "media"
+  },
+  {
+    "end": 7,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 6,
+    "value": null
+  },
+  {
+    "end": 13,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 7,
+    "value": "screen"
+  },
+  {
+    "end": 14,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 13,
+    "value": null
+  },
+  {
+    "end": 15,
+    "escaped": false,
+    "kind": "LeftCurly",
+    "start": 14,
+    "value": null
+  },
+  {
+    "end": 23,
+    "escaped": false,
+    "kind": "AtKeyword",
+    "start": 15,
+    "value": "content"
+  },
+  {
+    "end": 24,
+    "escaped": false,
+    "kind": "RightCurly",
+    "start": 23,
+    "value": null
+  },
+  {
+    "end": 26,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 24,
+    "value": null
+  },
+  {
+    "end": 34,
+    "escaped": false,
+    "kind": "AtKeyword",
+    "start": 26,
+    "value": "charset"
+  },
+  {
+    "end": 35,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 34,
+    "value": null
+  },
+  {
+    "end": 42,
+    "escaped": false,
+    "kind": "String",
+    "start": 35,
+    "value": "UTF-8"
+  },
+  {
+    "end": 43,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 42,
+    "value": null
+  }
+]

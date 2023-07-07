@@ -1,0 +1,900 @@
+{
+  "end": 508,
+  "rules": [
+    {
+      "end": 105,
+      "name": "supports",
+      "prelude": {
+        "end": 55,
+        "start": 10,
+        "value": [
+          {
+            "end": 55,
+            "start": 10,
+            "type": "SimpleBlock",
+            "value": [
+              {
+                "end": 54,
+                "name": "--element",
+                "start": 11,
+                "type": "Function",
+                "value": [
+                  {
+                    "end": 32,
+                    "escaped": false,
+                    "kind": "String",
+                    "start": 21,
+                    "value": ".minwidth"
+                  },
+                  {
+                    "end": 33,
+                    "escaped": false,
+                    "kind": "Comma",
+                    "start": 32,
+                    "value": null
+                  },
+                  {
+                    "end": 53,
+                    "start": 34,
+                    "type": "SimpleBlock",
+                    "value": [
+                      {
+                        "end": 46,
+                        "escaped": false,
+                        "kind": "String",
+                        "start": 36,
+                        "value": "minWidth"
+                      },
+                      {
+                        "end": 47,
+                        "escaped": false,
+                        "kind": "Colon",
+                        "start": 46,
+                        "value": null
+                      },
+                      {
+                        "end": 51,
+                        "escaped": false,
+                        "kind": "Number",
+                        "start": 48,
+                        "value": {
+                          "int": true,
+                          "signed": false,
+                          "value": 300.0
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "properties": [
+        {
+          "end": 103,
+          "important": false,
+          "name": "",
+          "start": 60,
+          "type": "UnknownDeclaration",
+          "value": {
+            "end": 103,
+            "start": 60,
+            "value": [
+              {
+                "end": 68,
+                "start": 60,
+                "type": "SimpleBlock",
+                "value": [
+                  {
+                    "end": 67,
+                    "escaped": false,
+                    "kind": "Ident",
+                    "start": 61,
+                    "value": "--self"
+                  }
+                ]
+              },
+              {
+                "end": 103,
+                "start": 69,
+                "type": "SimpleBlock",
+                "value": [
+                  {
+                    "end": 85,
+                    "escaped": false,
+                    "kind": "Ident",
+                    "start": 75,
+                    "value": "background"
+                  },
+                  {
+                    "end": 86,
+                    "escaped": false,
+                    "kind": "Colon",
+                    "start": 85,
+                    "value": null
+                  },
+                  {
+                    "end": 98,
+                    "escaped": false,
+                    "kind": "Ident",
+                    "start": 87,
+                    "value": "greenyellow"
+                  },
+                  {
+                    "end": 99,
+                    "escaped": false,
+                    "kind": "Semicolon",
+                    "start": 98,
+                    "value": null
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "rules": [],
+      "start": 0,
+      "type": "UnknownAtRule"
+    },
+    {
+      "end": 162,
+      "name": "supports",
+      "prelude": {
+        "end": 133,
+        "start": 117,
+        "value": [
+          {
+            "end": 133,
+            "start": 117,
+            "type": "SimpleBlock",
+            "value": [
+              {
+                "end": 132,
+                "start": 118,
+                "type": "SimpleBlock",
+                "value": [
+                  {
+                    "end": 128,
+                    "escaped": false,
+                    "kind": "String",
+                    "start": 119,
+                    "value": "example"
+                  },
+                  {
+                    "end": 129,
+                    "escaped": false,
+                    "kind": "Colon",
+                    "start": 128,
+                    "value": null
+                  },
+                  {
+                    "end": 131,
+                    "escaped": false,
+                    "kind": "Number",
+                    "start": 130,
+                    "value": {
+                      "int": true,
+                      "signed": false,
+                      "value": 1.0
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "properties": [
+        {
+          "end": 160,
+          "important": false,
+          "name": "",
+          "start": 138,
+          "type": "UnknownDeclaration",
+          "value": {
+            "end": 160,
+            "start": 138,
+            "value": [
+              {
+                "end": 139,
+                "escaped": false,
+                "kind": "Delim",
+                "start": 138,
+                "value": "*"
+              },
+              {
+                "end": 160,
+                "start": 140,
+                "type": "SimpleBlock",
+                "value": [
+                  {
+                    "end": 152,
+                    "escaped": false,
+                    "kind": "Ident",
+                    "start": 142,
+                    "value": "background"
+                  },
+                  {
+                    "end": 153,
+                    "escaped": false,
+                    "kind": "Colon",
+                    "start": 152,
+                    "value": null
+                  },
+                  {
+                    "end": 157,
+                    "escaped": false,
+                    "kind": "Ident",
+                    "start": 154,
+                    "value": "red"
+                  },
+                  {
+                    "end": 158,
+                    "escaped": false,
+                    "kind": "Semicolon",
+                    "start": 157,
+                    "value": null
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "rules": [],
+      "start": 107,
+      "type": "UnknownAtRule"
+    },
+    {
+      "end": 219,
+      "name": "supports",
+      "prelude": {
+        "end": 190,
+        "start": 174,
+        "value": [
+          {
+            "end": 190,
+            "start": 174,
+            "type": "SimpleBlock",
+            "value": [
+              {
+                "end": 189,
+                "start": 175,
+                "type": "SimpleBlock",
+                "value": [
+                  {
+                    "end": 185,
+                    "escaped": false,
+                    "kind": "String",
+                    "start": 176,
+                    "value": "example"
+                  },
+                  {
+                    "end": 186,
+                    "escaped": false,
+                    "kind": "Colon",
+                    "start": 185,
+                    "value": null
+                  },
+                  {
+                    "end": 188,
+                    "escaped": false,
+                    "kind": "Number",
+                    "start": 187,
+                    "value": {
+                      "int": true,
+                      "signed": false,
+                      "value": 1.0
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "properties": [
+        {
+          "end": 217,
+          "important": false,
+          "name": "",
+          "start": 195,
+          "type": "UnknownDeclaration",
+          "value": {
+            "end": 217,
+            "start": 195,
+            "value": [
+              {
+                "end": 196,
+                "escaped": false,
+                "kind": "Delim",
+                "start": 195,
+                "value": "*"
+              },
+              {
+                "end": 217,
+                "start": 197,
+                "type": "SimpleBlock",
+                "value": [
+                  {
+                    "end": 209,
+                    "escaped": false,
+                    "kind": "Ident",
+                    "start": 199,
+                    "value": "background"
+                  },
+                  {
+                    "end": 210,
+                    "escaped": false,
+                    "kind": "Colon",
+                    "start": 209,
+                    "value": null
+                  },
+                  {
+                    "end": 214,
+                    "escaped": false,
+                    "kind": "Ident",
+                    "start": 211,
+                    "value": "red"
+                  },
+                  {
+                    "end": 215,
+                    "escaped": false,
+                    "kind": "Semicolon",
+                    "start": 214,
+                    "value": null
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "rules": [],
+      "start": 164,
+      "type": "UnknownAtRule"
+    },
+    {
+      "end": 280,
+      "name": "supports",
+      "prelude": {
+        "end": 251,
+        "start": 231,
+        "value": [
+          {
+            "end": 251,
+            "start": 231,
+            "type": "SimpleBlock",
+            "value": [
+              {
+                "end": 250,
+                "name": "func",
+                "start": 232,
+                "type": "Function",
+                "value": [
+                  {
+                    "end": 246,
+                    "escaped": false,
+                    "kind": "String",
+                    "start": 237,
+                    "value": "example"
+                  },
+                  {
+                    "end": 247,
+                    "escaped": false,
+                    "kind": "Colon",
+                    "start": 246,
+                    "value": null
+                  },
+                  {
+                    "end": 249,
+                    "escaped": false,
+                    "kind": "Number",
+                    "start": 248,
+                    "value": {
+                      "int": true,
+                      "signed": false,
+                      "value": 1.0
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "properties": [
+        {
+          "end": 278,
+          "important": false,
+          "name": "",
+          "start": 256,
+          "type": "UnknownDeclaration",
+          "value": {
+            "end": 278,
+            "start": 256,
+            "value": [
+              {
+                "end": 257,
+                "escaped": false,
+                "kind": "Delim",
+                "start": 256,
+                "value": "*"
+              },
+              {
+                "end": 278,
+                "start": 258,
+                "type": "SimpleBlock",
+                "value": [
+                  {
+                    "end": 270,
+                    "escaped": false,
+                    "kind": "Ident",
+                    "start": 260,
+                    "value": "background"
+                  },
+                  {
+                    "end": 271,
+                    "escaped": false,
+                    "kind": "Colon",
+                    "start": 270,
+                    "value": null
+                  },
+                  {
+                    "end": 275,
+                    "escaped": false,
+                    "kind": "Ident",
+                    "start": 272,
+                    "value": "red"
+                  },
+                  {
+                    "end": 276,
+                    "escaped": false,
+                    "kind": "Semicolon",
+                    "start": 275,
+                    "value": null
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "rules": [],
+      "start": 221,
+      "type": "UnknownAtRule"
+    },
+    {
+      "end": 328,
+      "name": "supports",
+      "prelude": {
+        "end": 299,
+        "start": 292,
+        "value": [
+          {
+            "end": 299,
+            "start": 292,
+            "type": "SimpleBlock",
+            "value": [
+              {
+                "end": 298,
+                "escaped": false,
+                "kind": "Ident",
+                "start": 293,
+                "value": "--var"
+              }
+            ]
+          }
+        ]
+      },
+      "properties": [
+        {
+          "end": 326,
+          "important": false,
+          "name": "",
+          "start": 304,
+          "type": "UnknownDeclaration",
+          "value": {
+            "end": 326,
+            "start": 304,
+            "value": [
+              {
+                "end": 305,
+                "escaped": false,
+                "kind": "Delim",
+                "start": 304,
+                "value": "*"
+              },
+              {
+                "end": 326,
+                "start": 306,
+                "type": "SimpleBlock",
+                "value": [
+                  {
+                    "end": 318,
+                    "escaped": false,
+                    "kind": "Ident",
+                    "start": 308,
+                    "value": "background"
+                  },
+                  {
+                    "end": 319,
+                    "escaped": false,
+                    "kind": "Colon",
+                    "start": 318,
+                    "value": null
+                  },
+                  {
+                    "end": 323,
+                    "escaped": false,
+                    "kind": "Ident",
+                    "start": 320,
+                    "value": "red"
+                  },
+                  {
+                    "end": 324,
+                    "escaped": false,
+                    "kind": "Semicolon",
+                    "start": 323,
+                    "value": null
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "rules": [],
+      "start": 282,
+      "type": "UnknownAtRule"
+    },
+    {
+      "end": 373,
+      "name": "supports",
+      "prelude": {
+        "end": 344,
+        "start": 340,
+        "value": [
+          {
+            "end": 344,
+            "start": 340,
+            "type": "SimpleBlock",
+            "value": [
+              {
+                "end": 343,
+                "start": 341,
+                "type": "SimpleBlock",
+                "value": []
+              }
+            ]
+          }
+        ]
+      },
+      "properties": [
+        {
+          "end": 371,
+          "important": false,
+          "name": "",
+          "start": 349,
+          "type": "UnknownDeclaration",
+          "value": {
+            "end": 371,
+            "start": 349,
+            "value": [
+              {
+                "end": 350,
+                "escaped": false,
+                "kind": "Delim",
+                "start": 349,
+                "value": "*"
+              },
+              {
+                "end": 371,
+                "start": 351,
+                "type": "SimpleBlock",
+                "value": [
+                  {
+                    "end": 363,
+                    "escaped": false,
+                    "kind": "Ident",
+                    "start": 353,
+                    "value": "background"
+                  },
+                  {
+                    "end": 364,
+                    "escaped": false,
+                    "kind": "Colon",
+                    "start": 363,
+                    "value": null
+                  },
+                  {
+                    "end": 368,
+                    "escaped": false,
+                    "kind": "Ident",
+                    "start": 365,
+                    "value": "red"
+                  },
+                  {
+                    "end": 369,
+                    "escaped": false,
+                    "kind": "Semicolon",
+                    "start": 368,
+                    "value": null
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "rules": [],
+      "start": 330,
+      "type": "UnknownAtRule"
+    },
+    {
+      "end": 428,
+      "name": "supports",
+      "prelude": {
+        "end": 399,
+        "start": 385,
+        "value": [
+          {
+            "end": 399,
+            "start": 385,
+            "type": "SimpleBlock",
+            "value": [
+              {
+                "end": 398,
+                "start": 386,
+                "type": "SimpleBlock",
+                "value": [
+                  {
+                    "end": 392,
+                    "escaped": false,
+                    "kind": "Ident",
+                    "start": 387,
+                    "value": "color"
+                  },
+                  {
+                    "end": 393,
+                    "escaped": false,
+                    "kind": "Colon",
+                    "start": 392,
+                    "value": null
+                  },
+                  {
+                    "end": 397,
+                    "escaped": false,
+                    "kind": "Ident",
+                    "start": 394,
+                    "value": "red"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "properties": [
+        {
+          "end": 426,
+          "important": false,
+          "name": "",
+          "start": 404,
+          "type": "UnknownDeclaration",
+          "value": {
+            "end": 426,
+            "start": 404,
+            "value": [
+              {
+                "end": 405,
+                "escaped": false,
+                "kind": "Delim",
+                "start": 404,
+                "value": "*"
+              },
+              {
+                "end": 426,
+                "start": 406,
+                "type": "SimpleBlock",
+                "value": [
+                  {
+                    "end": 418,
+                    "escaped": false,
+                    "kind": "Ident",
+                    "start": 408,
+                    "value": "background"
+                  },
+                  {
+                    "end": 419,
+                    "escaped": false,
+                    "kind": "Colon",
+                    "start": 418,
+                    "value": null
+                  },
+                  {
+                    "end": 423,
+                    "escaped": false,
+                    "kind": "Ident",
+                    "start": 420,
+                    "value": "red"
+                  },
+                  {
+                    "end": 424,
+                    "escaped": false,
+                    "kind": "Semicolon",
+                    "start": 423,
+                    "value": null
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "rules": [],
+      "start": 375,
+      "type": "UnknownAtRule"
+    },
+    {
+      "end": 507,
+      "name": "supports",
+      "prelude": {
+        "end": 478,
+        "start": 440,
+        "value": [
+          {
+            "end": 478,
+            "start": 440,
+            "type": "SimpleBlock",
+            "value": [
+              {
+                "end": 477,
+                "start": 441,
+                "type": "SimpleBlock",
+                "value": [
+                  {
+                    "end": 476,
+                    "start": 442,
+                    "type": "SimpleBlock",
+                    "value": [
+                      {
+                        "end": 475,
+                        "start": 443,
+                        "type": "SimpleBlock",
+                        "value": [
+                          {
+                            "end": 474,
+                            "start": 444,
+                            "type": "SimpleBlock",
+                            "value": [
+                              {
+                                "end": 473,
+                                "start": 445,
+                                "type": "SimpleBlock",
+                                "value": [
+                                  {
+                                    "end": 472,
+                                    "start": 446,
+                                    "type": "SimpleBlock",
+                                    "value": [
+                                      {
+                                        "end": 470,
+                                        "name": "--func",
+                                        "start": 448,
+                                        "type": "Function",
+                                        "value": [
+                                          {
+                                            "end": 460,
+                                            "escaped": false,
+                                            "kind": "Ident",
+                                            "start": 455,
+                                            "value": "color"
+                                          },
+                                          {
+                                            "end": 461,
+                                            "escaped": false,
+                                            "kind": "Colon",
+                                            "start": 460,
+                                            "value": null
+                                          },
+                                          {
+                                            "end": 469,
+                                            "start": 462,
+                                            "type": "SimpleBlock",
+                                            "value": [
+                                              {
+                                                "end": 467,
+                                                "escaped": false,
+                                                "kind": "Ident",
+                                                "start": 464,
+                                                "value": "red"
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "properties": [
+        {
+          "end": 505,
+          "important": false,
+          "name": "",
+          "start": 483,
+          "type": "UnknownDeclaration",
+          "value": {
+            "end": 505,
+            "start": 483,
+            "value": [
+              {
+                "end": 484,
+                "escaped": false,
+                "kind": "Delim",
+                "start": 483,
+                "value": "*"
+              },
+              {
+                "end": 505,
+                "start": 485,
+                "type": "SimpleBlock",
+                "value": [
+                  {
+                    "end": 497,
+                    "escaped": false,
+                    "kind": "Ident",
+                    "start": 487,
+                    "value": "background"
+                  },
+                  {
+                    "end": 498,
+                    "escaped": false,
+                    "kind": "Colon",
+                    "start": 497,
+                    "value": null
+                  },
+                  {
+                    "end": 502,
+                    "escaped": false,
+                    "kind": "Ident",
+                    "start": 499,
+                    "value": "red"
+                  },
+                  {
+                    "end": 503,
+                    "escaped": false,
+                    "kind": "Semicolon",
+                    "start": 502,
+                    "value": null
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "rules": [],
+      "start": 430,
+      "type": "UnknownAtRule"
+    }
+  ],
+  "start": 0,
+  "type": "Stylesheet"
+}

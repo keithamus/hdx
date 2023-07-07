@@ -1,0 +1,48 @@
+<meta charset="utf-8" />
+<meta
+	name="viewport"
+	content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes"
+/>
+{%- capture pagetitle %} {% if title %}{{ title }} &ndash;{% endif %} hdxcss {%
+endcapture %}
+<title>{{ pagetitle }}</title>
+<link rel="pgpkey authn" href="/key.gpg" />
+<link rel="webmention" href="https://webmention.io/hdxcss.dev/webmention" />
+<link rel="pingback" href="https://webmention.io/hdxcss.dev/xmlrpc" />
+<link
+	rel="apple-touch-icon"
+	sizes="180x180"
+	href="/images/apple-touch-icon.png"
+/>
+<link
+	rel="icon"
+	type="image/png"
+	sizes="32x32"
+	href="/images/favicon-32x32.png"
+/>
+<link
+	rel="icon"
+	type="image/png"
+	sizes="16x16"
+	href="/images/favicon-16x16.png"
+/>
+<meta property="og:title" content="{{ pagetitle }}" />
+{% if imageslug %}
+<meta property="og:image" content="{{ baseurl }}/images/{{ imageslug }}.jpg" />
+{% else %}
+<meta
+	property="og:image"
+	content="{{ baseurl }}/images/android-chrome-512x512.png"
+/>
+{% endif %}{%- if excerpt %}
+<meta name="description" content="{{ excerpt }}" />
+<meta property="og:description" content="{{ excerpt }}" />
+{% else %}
+<meta name="description" content="Refreshing CSS" />
+<meta property="og:description" content="{{ excerpt }}" />
+{% endif %}
+<meta property="og:url" content="{{ baseurl }}{{ page.url }}" />
+<meta property="og:type" content="article" />
+
+<link rel="manifest" href="/site.webmanifest" />
+<link rel="stylesheet" href="/css/base.css" />

@@ -1,0 +1,11 @@
+hdx_parser::ExpectToken
+
+  × Expected `Ident` but found `Whitespace`
+   ╭─[tasks/coverage/postcss-parser-tests/cases/apply.css:1:1]
+ 1 │ :root {
+ 2 │   --zero-size: {
+   ·               ┬
+   ·               ╰── `Ident` expected
+ 3 │     width: 0;
+   ╰────
+  help: This is not correct CSS syntax.

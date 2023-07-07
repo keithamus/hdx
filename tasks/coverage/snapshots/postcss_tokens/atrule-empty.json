@@ -1,0 +1,37 @@
+[
+  {
+    "end": 8,
+    "escaped": false,
+    "kind": "AtKeyword",
+    "start": 0,
+    "value": "charset"
+  },
+  {
+    "end": 9,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 8,
+    "value": null
+  },
+  {
+    "end": 16,
+    "escaped": false,
+    "kind": "String",
+    "start": 9,
+    "value": "UTF-8"
+  },
+  {
+    "end": 17,
+    "escaped": false,
+    "kind": "Semicolon",
+    "start": 16,
+    "value": null
+  },
+  {
+    "end": 18,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 17,
+    "value": null
+  }
+]

@@ -1,0 +1,34 @@
+{
+  "end": 15,
+  "rules": [
+    {
+      "end": 14,
+      "prelude": {
+        "end": 11,
+        "start": 0,
+        "value": [
+          {
+            "end": 1,
+            "escaped": false,
+            "kind": "Colon",
+            "start": 0,
+            "value": null
+          },
+          {
+            "end": 11,
+            "escaped": false,
+            "kind": "Ident",
+            "start": 1,
+            "value": "fullscreen"
+          }
+        ]
+      },
+      "properties": [],
+      "rules": [],
+      "start": 0,
+      "type": "UnknownRule"
+    }
+  ],
+  "start": 0,
+  "type": "Stylesheet"
+}

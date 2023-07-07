@@ -1,0 +1,48 @@
+{
+  "end": 47,
+  "rules": [
+    {
+      "end": 46,
+      "properties": [
+        {
+          "end": 21,
+          "important": false,
+          "start": 8,
+          "type": "Color",
+          "value": {
+            "name": "black",
+            "type": "NamedColor"
+          }
+        },
+        {
+          "end": 44,
+          "important": false,
+          "start": 26,
+          "type": "Background",
+          "value": {
+            "name": "white",
+            "type": "NamedColor"
+          }
+        }
+      ],
+      "rules": [],
+      "selectors": [
+        {
+          "components": [
+            {
+              "type": "Type",
+              "value": "a"
+            }
+          ],
+          "end": 1,
+          "start": 0,
+          "type": "Selector"
+        }
+      ],
+      "start": 0,
+      "type": "StyleRule"
+    }
+  ],
+  "start": 0,
+  "type": "Stylesheet"
+}

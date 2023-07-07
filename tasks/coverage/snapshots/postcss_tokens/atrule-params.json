@@ -1,0 +1,100 @@
+[
+  {
+    "end": 14,
+    "escaped": false,
+    "kind": "AtKeyword",
+    "start": 0,
+    "value": "-moz-document"
+  },
+  {
+    "end": 24,
+    "escaped": false,
+    "kind": "Comment",
+    "start": 14,
+    "value": null
+  },
+  {
+    "end": 25,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 24,
+    "value": null
+  },
+  {
+    "end": 37,
+    "escaped": false,
+    "kind": "Comment",
+    "start": 25,
+    "value": null
+  },
+  {
+    "end": 38,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 37,
+    "value": null
+  },
+  {
+    "end": 42,
+    "escaped": false,
+    "kind": "Function",
+    "start": 38,
+    "value": "url"
+  },
+  {
+    "end": 57,
+    "escaped": false,
+    "kind": "String",
+    "start": 42,
+    "value": "example.com/{"
+  },
+  {
+    "end": 58,
+    "escaped": false,
+    "kind": "RightParen",
+    "start": 57,
+    "value": null
+  },
+  {
+    "end": 59,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 58,
+    "value": null
+  },
+  {
+    "end": 66,
+    "escaped": false,
+    "kind": "Comment",
+    "start": 59,
+    "value": null
+  },
+  {
+    "end": 67,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 66,
+    "value": null
+  },
+  {
+    "end": 68,
+    "escaped": false,
+    "kind": "LeftCurly",
+    "start": 67,
+    "value": null
+  },
+  {
+    "end": 69,
+    "escaped": false,
+    "kind": "RightCurly",
+    "start": 68,
+    "value": null
+  },
+  {
+    "end": 70,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 69,
+    "value": null
+  }
+]

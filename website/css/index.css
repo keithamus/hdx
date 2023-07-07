@@ -1,0 +1,32 @@
+body {
+	font-family: sans-serif;
+	display: flex;
+	max-width: 700px;
+	margin: 0 auto;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+h1,
+h3,
+h4 {
+	margin: 0;
+	text-align: center;
+	color: var(--yellow-6);
+	--text-shadow: var(--sand-0);
+	text-shadow: 3px 3px 0 var(--pink-6), 7px 7px 0 var(--text-shadow),
+		-7px -7px 0 var(--text-shadow), 7px -7px 0 var(--text-shadow),
+		-7px 7px 0 var(--text-shadow);
+}
+
+h1 {
+	margin: 30px 0 20px 0;
+	font-size: 90px;
+	rotate: 2deg;
+}
+
+h3 {
+	font-size: 50px;
+	rotate: -1deg;
+}

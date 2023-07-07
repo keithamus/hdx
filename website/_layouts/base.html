@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		{% include 'head.html' %}
+	</head>
+	<body>
+		<col-stack>
+			{% include 'header.html' %}
+			<main>
+				<row-stack>
+					{% include 'sidebar.html' %} {% block content %} {{ content }} {%
+					endblock %}
+				</row-stack>
+			</main>
+		</col-stack>
+	</body>
+</html>

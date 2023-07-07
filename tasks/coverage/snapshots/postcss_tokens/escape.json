@@ -1,0 +1,1085 @@
+[
+  {
+    "end": 1,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 0,
+    "value": "a"
+  },
+  {
+    "end": 2,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 1,
+    "value": null
+  },
+  {
+    "end": 3,
+    "escaped": false,
+    "kind": "LeftCurly",
+    "start": 2,
+    "value": null
+  },
+  {
+    "end": 8,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 3,
+    "value": null
+  },
+  {
+    "end": 18,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 8,
+    "value": "background"
+  },
+  {
+    "end": 19,
+    "escaped": false,
+    "kind": "Colon",
+    "start": 18,
+    "value": null
+  },
+  {
+    "end": 20,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 19,
+    "value": null
+  },
+  {
+    "end": 24,
+    "escaped": false,
+    "kind": "Function",
+    "start": 20,
+    "value": "url"
+  },
+  {
+    "end": 32,
+    "escaped": false,
+    "kind": "String",
+    "start": 24,
+    "value": "a).png"
+  },
+  {
+    "end": 33,
+    "escaped": false,
+    "kind": "RightParen",
+    "start": 32,
+    "value": null
+  },
+  {
+    "end": 34,
+    "escaped": false,
+    "kind": "Semicolon",
+    "start": 33,
+    "value": null
+  },
+  {
+    "end": 39,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 34,
+    "value": null
+  },
+  {
+    "end": 49,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 39,
+    "value": "background"
+  },
+  {
+    "end": 50,
+    "escaped": false,
+    "kind": "Colon",
+    "start": 49,
+    "value": null
+  },
+  {
+    "end": 51,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 50,
+    "value": null
+  },
+  {
+    "end": 59,
+    "escaped": false,
+    "kind": "Url",
+    "start": 51,
+    "value": "a;a"
+  },
+  {
+    "end": 60,
+    "escaped": false,
+    "kind": "Semicolon",
+    "start": 59,
+    "value": null
+  },
+  {
+    "end": 65,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 60,
+    "value": null
+  },
+  {
+    "end": 75,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 65,
+    "value": "background"
+  },
+  {
+    "end": 76,
+    "escaped": false,
+    "kind": "Colon",
+    "start": 75,
+    "value": null
+  },
+  {
+    "end": 77,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 76,
+    "value": null
+  },
+  {
+    "end": 85,
+    "escaped": false,
+    "kind": "Url",
+    "start": 77,
+    "value": "a/*"
+  },
+  {
+    "end": 86,
+    "escaped": false,
+    "kind": "Semicolon",
+    "start": 85,
+    "value": null
+  },
+  {
+    "end": 91,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 86,
+    "value": null
+  },
+  {
+    "end": 101,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 91,
+    "value": "background"
+  },
+  {
+    "end": 102,
+    "escaped": false,
+    "kind": "Colon",
+    "start": 101,
+    "value": null
+  },
+  {
+    "end": 103,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 102,
+    "value": null
+  },
+  {
+    "end": 106,
+    "escaped": true,
+    "kind": "Ident",
+    "start": 103,
+    "value": ";a"
+  },
+  {
+    "end": 107,
+    "escaped": false,
+    "kind": "Semicolon",
+    "start": 106,
+    "value": null
+  },
+  {
+    "end": 108,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 107,
+    "value": null
+  },
+  {
+    "end": 109,
+    "escaped": false,
+    "kind": "RightCurly",
+    "start": 108,
+    "value": null
+  },
+  {
+    "end": 111,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 109,
+    "value": null
+  },
+  {
+    "end": 112,
+    "escaped": false,
+    "kind": "Colon",
+    "start": 111,
+    "value": null
+  },
+  {
+    "end": 116,
+    "escaped": false,
+    "kind": "Function",
+    "start": 112,
+    "value": "not"
+  },
+  {
+    "end": 117,
+    "escaped": false,
+    "kind": "LeftSquare",
+    "start": 116,
+    "value": null
+  },
+  {
+    "end": 120,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 117,
+    "value": "foo"
+  },
+  {
+    "end": 121,
+    "escaped": false,
+    "kind": "Delim",
+    "start": 120,
+    "value": "="
+  },
+  {
+    "end": 124,
+    "escaped": false,
+    "kind": "String",
+    "start": 121,
+    "value": ")"
+  },
+  {
+    "end": 125,
+    "escaped": false,
+    "kind": "RightSquare",
+    "start": 124,
+    "value": null
+  },
+  {
+    "end": 126,
+    "escaped": false,
+    "kind": "RightParen",
+    "start": 125,
+    "value": null
+  },
+  {
+    "end": 127,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 126,
+    "value": null
+  },
+  {
+    "end": 128,
+    "escaped": false,
+    "kind": "LeftCurly",
+    "start": 127,
+    "value": null
+  },
+  {
+    "end": 129,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 128,
+    "value": null
+  },
+  {
+    "end": 130,
+    "escaped": false,
+    "kind": "RightCurly",
+    "start": 129,
+    "value": null
+  },
+  {
+    "end": 131,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 130,
+    "value": null
+  },
+  {
+    "end": 132,
+    "escaped": false,
+    "kind": "Colon",
+    "start": 131,
+    "value": null
+  },
+  {
+    "end": 136,
+    "escaped": false,
+    "kind": "Function",
+    "start": 132,
+    "value": "not"
+  },
+  {
+    "end": 139,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 136,
+    "value": "div"
+  },
+  {
+    "end": 144,
+    "escaped": false,
+    "kind": "Comment",
+    "start": 139,
+    "value": null
+  },
+  {
+    "end": 145,
+    "escaped": false,
+    "kind": "RightParen",
+    "start": 144,
+    "value": null
+  },
+  {
+    "end": 146,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 145,
+    "value": null
+  },
+  {
+    "end": 147,
+    "escaped": false,
+    "kind": "LeftCurly",
+    "start": 146,
+    "value": null
+  },
+  {
+    "end": 148,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 147,
+    "value": null
+  },
+  {
+    "end": 149,
+    "escaped": false,
+    "kind": "RightCurly",
+    "start": 148,
+    "value": null
+  },
+  {
+    "end": 150,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 149,
+    "value": null
+  },
+  {
+    "end": 151,
+    "escaped": false,
+    "kind": "Colon",
+    "start": 150,
+    "value": null
+  },
+  {
+    "end": 155,
+    "escaped": false,
+    "kind": "Function",
+    "start": 151,
+    "value": "not"
+  },
+  {
+    "end": 156,
+    "escaped": false,
+    "kind": "Colon",
+    "start": 155,
+    "value": null
+  },
+  {
+    "end": 166,
+    "escaped": false,
+    "kind": "Function",
+    "start": 156,
+    "value": "nth-child"
+  },
+  {
+    "end": 168,
+    "escaped": false,
+    "kind": "Dimension",
+    "start": 166,
+    "value": {
+      "int": true,
+      "signed": false,
+      "unit": "n",
+      "value": 2.0
+    }
+  },
+  {
+    "end": 169,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 168,
+    "value": null
+  },
+  {
+    "end": 171,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 169,
+    "value": "of"
+  },
+  {
+    "end": 172,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 171,
+    "value": null
+  },
+  {
+    "end": 173,
+    "escaped": false,
+    "kind": "LeftSquare",
+    "start": 172,
+    "value": null
+  },
+  {
+    "end": 176,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 173,
+    "value": "foo"
+  },
+  {
+    "end": 177,
+    "escaped": false,
+    "kind": "Delim",
+    "start": 176,
+    "value": "="
+  },
+  {
+    "end": 180,
+    "escaped": false,
+    "kind": "String",
+    "start": 177,
+    "value": ")"
+  },
+  {
+    "end": 181,
+    "escaped": false,
+    "kind": "RightSquare",
+    "start": 180,
+    "value": null
+  },
+  {
+    "end": 182,
+    "escaped": false,
+    "kind": "RightParen",
+    "start": 181,
+    "value": null
+  },
+  {
+    "end": 183,
+    "escaped": false,
+    "kind": "RightParen",
+    "start": 182,
+    "value": null
+  },
+  {
+    "end": 184,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 183,
+    "value": null
+  },
+  {
+    "end": 185,
+    "escaped": false,
+    "kind": "LeftCurly",
+    "start": 184,
+    "value": null
+  },
+  {
+    "end": 186,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 185,
+    "value": null
+  },
+  {
+    "end": 187,
+    "escaped": false,
+    "kind": "RightCurly",
+    "start": 186,
+    "value": null
+  },
+  {
+    "end": 188,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 187,
+    "value": null
+  },
+  {
+    "end": 189,
+    "escaped": false,
+    "kind": "LeftSquare",
+    "start": 188,
+    "value": null
+  },
+  {
+    "end": 192,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 189,
+    "value": "foo"
+  },
+  {
+    "end": 193,
+    "escaped": false,
+    "kind": "Delim",
+    "start": 192,
+    "value": "="
+  },
+  {
+    "end": 195,
+    "escaped": true,
+    "kind": "Ident",
+    "start": 193,
+    "value": "\""
+  },
+  {
+    "end": 196,
+    "escaped": false,
+    "kind": "RightSquare",
+    "start": 195,
+    "value": null
+  },
+  {
+    "end": 197,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 196,
+    "value": null
+  },
+  {
+    "end": 198,
+    "escaped": false,
+    "kind": "LeftCurly",
+    "start": 197,
+    "value": null
+  },
+  {
+    "end": 199,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 198,
+    "value": null
+  },
+  {
+    "end": 200,
+    "escaped": false,
+    "kind": "RightCurly",
+    "start": 199,
+    "value": null
+  },
+  {
+    "end": 201,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 200,
+    "value": null
+  },
+  {
+    "end": 202,
+    "escaped": false,
+    "kind": "LeftSquare",
+    "start": 201,
+    "value": null
+  },
+  {
+    "end": 205,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 202,
+    "value": "foo"
+  },
+  {
+    "end": 206,
+    "escaped": false,
+    "kind": "Delim",
+    "start": 205,
+    "value": "="
+  },
+  {
+    "end": 208,
+    "escaped": true,
+    "kind": "Ident",
+    "start": 206,
+    "value": "{"
+  },
+  {
+    "end": 209,
+    "escaped": false,
+    "kind": "RightSquare",
+    "start": 208,
+    "value": null
+  },
+  {
+    "end": 210,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 209,
+    "value": null
+  },
+  {
+    "end": 211,
+    "escaped": false,
+    "kind": "LeftCurly",
+    "start": 210,
+    "value": null
+  },
+  {
+    "end": 212,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 211,
+    "value": null
+  },
+  {
+    "end": 213,
+    "escaped": false,
+    "kind": "RightCurly",
+    "start": 212,
+    "value": null
+  },
+  {
+    "end": 214,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 213,
+    "value": null
+  },
+  {
+    "end": 215,
+    "escaped": false,
+    "kind": "LeftSquare",
+    "start": 214,
+    "value": null
+  },
+  {
+    "end": 218,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 215,
+    "value": "foo"
+  },
+  {
+    "end": 219,
+    "escaped": false,
+    "kind": "Delim",
+    "start": 218,
+    "value": "="
+  },
+  {
+    "end": 221,
+    "escaped": true,
+    "kind": "Ident",
+    "start": 219,
+    "value": "("
+  },
+  {
+    "end": 222,
+    "escaped": false,
+    "kind": "RightSquare",
+    "start": 221,
+    "value": null
+  },
+  {
+    "end": 223,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 222,
+    "value": null
+  },
+  {
+    "end": 224,
+    "escaped": false,
+    "kind": "LeftCurly",
+    "start": 223,
+    "value": null
+  },
+  {
+    "end": 225,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 224,
+    "value": null
+  },
+  {
+    "end": 226,
+    "escaped": false,
+    "kind": "RightCurly",
+    "start": 225,
+    "value": null
+  },
+  {
+    "end": 227,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 226,
+    "value": null
+  },
+  {
+    "end": 228,
+    "escaped": false,
+    "kind": "LeftSquare",
+    "start": 227,
+    "value": null
+  },
+  {
+    "end": 231,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 228,
+    "value": "foo"
+  },
+  {
+    "end": 232,
+    "escaped": false,
+    "kind": "Delim",
+    "start": 231,
+    "value": "="
+  },
+  {
+    "end": 252,
+    "escaped": true,
+    "kind": "Ident",
+    "start": 232,
+    "value": "yes:(it's work)"
+  },
+  {
+    "end": 253,
+    "escaped": false,
+    "kind": "RightSquare",
+    "start": 252,
+    "value": null
+  },
+  {
+    "end": 254,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 253,
+    "value": null
+  },
+  {
+    "end": 255,
+    "escaped": false,
+    "kind": "LeftCurly",
+    "start": 254,
+    "value": null
+  },
+  {
+    "end": 256,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 255,
+    "value": null
+  },
+  {
+    "end": 257,
+    "escaped": false,
+    "kind": "RightCurly",
+    "start": 256,
+    "value": null
+  },
+  {
+    "end": 259,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 257,
+    "value": null
+  },
+  {
+    "end": 265,
+    "escaped": true,
+    "kind": "Ident",
+    "start": 259,
+    "value": "@noat"
+  },
+  {
+    "end": 266,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 265,
+    "value": null
+  },
+  {
+    "end": 267,
+    "escaped": false,
+    "kind": "LeftCurly",
+    "start": 266,
+    "value": null
+  },
+  {
+    "end": 268,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 267,
+    "value": null
+  },
+  {
+    "end": 269,
+    "escaped": false,
+    "kind": "RightCurly",
+    "start": 268,
+    "value": null
+  },
+  {
+    "end": 271,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 269,
+    "value": null
+  },
+  {
+    "end": 275,
+    "escaped": true,
+    "kind": "Ident",
+    "start": 271,
+    "value": "h1\\"
+  },
+  {
+    "end": 276,
+    "escaped": false,
+    "kind": "LeftCurly",
+    "start": 275,
+    "value": null
+  },
+  {
+    "end": 281,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 276,
+    "value": null
+  },
+  {
+    "end": 286,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 281,
+    "value": "color"
+  },
+  {
+    "end": 287,
+    "escaped": false,
+    "kind": "Colon",
+    "start": 286,
+    "value": null
+  },
+  {
+    "end": 288,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 287,
+    "value": null
+  },
+  {
+    "end": 290,
+    "escaped": true,
+    "kind": "Ident",
+    "start": 288,
+    "value": "\\"
+  },
+  {
+    "end": 291,
+    "escaped": false,
+    "kind": "Semicolon",
+    "start": 290,
+    "value": null
+  },
+  {
+    "end": 292,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 291,
+    "value": null
+  },
+  {
+    "end": 293,
+    "escaped": false,
+    "kind": "RightCurly",
+    "start": 292,
+    "value": null
+  },
+  {
+    "end": 295,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 293,
+    "value": null
+  },
+  {
+    "end": 296,
+    "escaped": false,
+    "kind": "LeftSquare",
+    "start": 295,
+    "value": null
+  },
+  {
+    "end": 300,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 296,
+    "value": "attr"
+  },
+  {
+    "end": 301,
+    "escaped": false,
+    "kind": "Delim",
+    "start": 300,
+    "value": "="
+  },
+  {
+    "end": 302,
+    "escaped": false,
+    "kind": "Semicolon",
+    "start": 301,
+    "value": null
+  },
+  {
+    "end": 303,
+    "escaped": false,
+    "kind": "RightSquare",
+    "start": 302,
+    "value": null
+  },
+  {
+    "end": 304,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 303,
+    "value": null
+  },
+  {
+    "end": 305,
+    "escaped": false,
+    "kind": "LeftCurly",
+    "start": 304,
+    "value": null
+  },
+  {
+    "end": 306,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 305,
+    "value": null
+  },
+  {
+    "end": 307,
+    "escaped": false,
+    "kind": "RightCurly",
+    "start": 306,
+    "value": null
+  },
+  {
+    "end": 309,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 307,
+    "value": null
+  },
+  {
+    "end": 310,
+    "escaped": false,
+    "kind": "Delim",
+    "start": 309,
+    "value": "."
+  },
+  {
+    "end": 314,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 310,
+    "value": "prop"
+  },
+  {
+    "end": 315,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 314,
+    "value": null
+  },
+  {
+    "end": 316,
+    "escaped": false,
+    "kind": "LeftCurly",
+    "start": 315,
+    "value": null
+  },
+  {
+    "end": 321,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 316,
+    "value": null
+  },
+  {
+    "end": 329,
+    "escaped": true,
+    "kind": "Ident",
+    "start": 321,
+    "value": "bolor"
+  },
+  {
+    "end": 330,
+    "escaped": false,
+    "kind": "Colon",
+    "start": 329,
+    "value": null
+  },
+  {
+    "end": 331,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 330,
+    "value": null
+  },
+  {
+    "end": 334,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 331,
+    "value": "red"
+  },
+  {
+    "end": 335,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 334,
+    "value": null
+  },
+  {
+    "end": 336,
+    "escaped": false,
+    "kind": "RightCurly",
+    "start": 335,
+    "value": null
+  },
+  {
+    "end": 337,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 336,
+    "value": null
+  }
+]

@@ -1,0 +1,120 @@
+# mostly copied from https://raw.githubusercontent.com/web-infra-dev/oxc/main/.github/workflows/release_cli.yml
+name: release
+on:
+  push:
+    branches: ["main"]
+  release:
+    types: [created]
+  workflow_dispatch:
+concurrency:
+  group: "release"
+  cancel-in-progress: true
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            code-target: win32-x64
+
+          - os: windows-latest
+            target: aarch64-pc-windows-msvc
+            code-target: win32-arm64
+
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            code-target: linux-x64
+
+          - os: ubuntu-20.04
+            target: aarch64-unknown-linux-gnu
+            code-target: linux-arm64
+
+          - os: macos-latest
+            target: x86_64-apple-darwin
+            code-target: darwin-x64
+
+          - os: macos-latest
+            target: aarch64-apple-darwin
+            code-target: darwin-arm64
+
+    name: Package ${{ matrix.code-target }}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v3
+      - run: rustup target add ${{ matrix.target }}
+      - name: Install arm64 toolchain
+        if: matrix.code-target == 'linux-arm64'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc-aarch64-linux-gnu
+      - name: Cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: release-${{ matrix.target }}
+      - name: Build Binary
+        # strip debug symbols from std, see https://github.com/johnthagen/min-sized-rust#remove-panic-string-formatting-with-panic_immediate_abort
+        run: cargo build --release --target ${{ matrix.target }} -p hdx
+        env:
+          CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER: aarch64-linux-gnu-gcc
+
+      # The binary is zipped to fix permission loss https://github.com/actions/upload-artifact#permission-loss
+      - name: Archive Binary
+        if: runner.os == 'Windows'
+        shell: bash
+        run: |
+          BIN_NAME=hdx-${{ matrix.code-target }}
+          mv target/${{ matrix.target }}/release/hdx.exe $BIN_NAME.exe
+          7z a $BIN_NAME.zip $BIN_NAME.exe
+
+      # The binary is zipped to fix permission loss https://github.com/actions/upload-artifact#permission-loss
+      - name: Archive Binary
+        if: runner.os != 'Windows'
+        run: |
+          BIN_NAME=hdx-${{ matrix.code-target }}
+          mv target/${{ matrix.target }}/release/hdx $BIN_NAME
+          tar czf $BIN_NAME.tar.gz $BIN_NAME
+
+      - name: Upload Binary
+        uses: actions/upload-artifact@v3
+        with:
+          if-no-files-found: error
+          name: binaries
+          path: |
+            *.zip
+            *.tar.gz
+
+  deploy:
+    env:
+      TAG_NAME: ${{ github.event.release.tag_name || format('0.0.0-canary.{0}', github.SHA) }}
+      DIST_TAG: ${{ github.event.release.tag_name && 'latest' || 'canary' }}
+    runs-on: ubuntu-latest
+    needs:
+      - build
+    steps:
+      - run: echo "TAG_NAME=$TAG_NAME"; echo "DIST_TAG=$DIST_TAG"
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+          cache-dependency-path: ./website/package.json
+          cache: "npm"
+      - name: Download Artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: binaries
+      - name: Unzip
+        uses: montudor/action-zip@v1
+        with:
+          args: unzip -qq *.zip -d packages/hdx/bin/
+      - name: Untar
+        run: ls *.gz | xargs -i tar xf {} -C packages/hdx/bin
+      - run: tree
+      - run: npm i
+        working-directory: ./packages/hdx
+      - run: npm version ${TAG_NAME} --no-git-tag-version
+        working-directory: ./packages/hdx
+      - run: npm pub --provenance --dist-tag=$DIST_TAG --access=public
+        working-directory: ./packages/hdx
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

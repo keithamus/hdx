@@ -1,0 +1,224 @@
+[
+  {
+    "end": 3,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 0,
+    "value": "one"
+  },
+  {
+    "end": 4,
+    "escaped": false,
+    "kind": "Colon",
+    "start": 3,
+    "value": null
+  },
+  {
+    "end": 5,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 4,
+    "value": null
+  },
+  {
+    "end": 6,
+    "escaped": false,
+    "kind": "Number",
+    "start": 5,
+    "value": {
+      "int": true,
+      "signed": false,
+      "value": 1.0
+    }
+  },
+  {
+    "end": 7,
+    "escaped": false,
+    "kind": "Semicolon",
+    "start": 6,
+    "value": null
+  },
+  {
+    "end": 9,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 7,
+    "value": null
+  },
+  {
+    "end": 10,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 9,
+    "value": "a"
+  },
+  {
+    "end": 11,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 10,
+    "value": null
+  },
+  {
+    "end": 12,
+    "escaped": false,
+    "kind": "LeftCurly",
+    "start": 11,
+    "value": null
+  },
+  {
+    "end": 17,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 12,
+    "value": null
+  },
+  {
+    "end": 20,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 17,
+    "value": "two"
+  },
+  {
+    "end": 21,
+    "escaped": false,
+    "kind": "Colon",
+    "start": 20,
+    "value": null
+  },
+  {
+    "end": 22,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 21,
+    "value": null
+  },
+  {
+    "end": 23,
+    "escaped": false,
+    "kind": "Number",
+    "start": 22,
+    "value": {
+      "int": true,
+      "signed": false,
+      "value": 2.0
+    }
+  },
+  {
+    "end": 24,
+    "escaped": false,
+    "kind": "Semicolon",
+    "start": 23,
+    "value": null
+  },
+  {
+    "end": 29,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 24,
+    "value": null
+  },
+  {
+    "end": 30,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 29,
+    "value": "b"
+  },
+  {
+    "end": 31,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 30,
+    "value": null
+  },
+  {
+    "end": 32,
+    "escaped": false,
+    "kind": "LeftCurly",
+    "start": 31,
+    "value": null
+  },
+  {
+    "end": 41,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 32,
+    "value": null
+  },
+  {
+    "end": 46,
+    "escaped": false,
+    "kind": "Ident",
+    "start": 41,
+    "value": "three"
+  },
+  {
+    "end": 47,
+    "escaped": false,
+    "kind": "Colon",
+    "start": 46,
+    "value": null
+  },
+  {
+    "end": 48,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 47,
+    "value": null
+  },
+  {
+    "end": 49,
+    "escaped": false,
+    "kind": "Number",
+    "start": 48,
+    "value": {
+      "int": true,
+      "signed": false,
+      "value": 3.0
+    }
+  },
+  {
+    "end": 50,
+    "escaped": false,
+    "kind": "Semicolon",
+    "start": 49,
+    "value": null
+  },
+  {
+    "end": 55,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 50,
+    "value": null
+  },
+  {
+    "end": 56,
+    "escaped": false,
+    "kind": "RightCurly",
+    "start": 55,
+    "value": null
+  },
+  {
+    "end": 57,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 56,
+    "value": null
+  },
+  {
+    "end": 58,
+    "escaped": false,
+    "kind": "RightCurly",
+    "start": 57,
+    "value": null
+  },
+  {
+    "end": 59,
+    "escaped": false,
+    "kind": "Whitespace",
+    "start": 58,
+    "value": null
+  }
+]

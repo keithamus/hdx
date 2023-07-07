@@ -1,0 +1,9 @@
+hdx_parser::Unimplemented
+
+  × This block cannot yet be parsed by the parser :(
+   ╭─[tasks/coverage/postcss-parser-tests/cases/colon-selector.css:1:1]
+ 1 │ :fullscreen {}
+   ·  ─────┬────
+   ·       ╰── Didn't recognise this bit
+   ╰────
+  help: This feature needs to be implemented within hdx. This file won't parse without it.
