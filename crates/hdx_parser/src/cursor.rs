@@ -261,7 +261,6 @@ impl<'a> Parser<'a> {
 		self.prev_span = self.token.span;
 		loop {
 			let token = self.lexer.next_token();
-			dbg!("next token is ", &token);
 			if !token.is_trivia() {
 				self.token = token;
 				return;

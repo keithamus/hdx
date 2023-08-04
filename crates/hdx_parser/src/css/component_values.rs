@@ -22,7 +22,6 @@ impl<'a> Parser<'a> {
 					self.advance();
 				}
 				c => {
-					dbg!(&self.cur(), stop_token);
 					if c == stop_token {
 						return Ok(values);
 					}
@@ -46,9 +45,7 @@ impl<'a> Parse<'a> for ComponentValue<'a> {
 				Ok(Self::Function(Function::parse(parser)?).spanned(span.up_to(&parser.cur().span)))
 			}
 			_ => {
-				dbg!(&parser.cur());
 				let token = parser.cur().clone();
-				dbg!(&parser.cur());
 				parser.advance();
 				Ok(Self::Token(token).spanned(span))
 			}
