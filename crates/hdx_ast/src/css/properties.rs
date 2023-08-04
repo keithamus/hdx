@@ -563,10 +563,10 @@ properties! {
 	atom!("counter-increment") => CounterIncrement<Expr<'a, Todo>>,
 	atom!("counter-reset") => CounterReset<Expr<'a, Todo>>,
 	atom!("counter-set") => CounterSet<Expr<'a, Todo>>,
-	atom!("list-style") => ListStyle<Expr<'a, Todo>> shorthand=true,
-	atom!("list-style-image") => ListStyleImage<Expr<'a, Todo>> inherits=true,
-	atom!("list-style-position") => ListStylePosition<Expr<'a, Todo>> inherits=true,
-	atom!("list-style-type") => ListStyleType<Expr<'a, Todo>> inherits=true,
+	atom!("list-style") => ListStyle<ListStyleShorthand<'a>> shorthand=true,
+	atom!("list-style-image") => ListStyleImage<Expr<'a, ListStyleImageValue<'a>>> inherits=true,
+	atom!("list-style-position") => ListStylePosition<Expr<'a, ListStylePositionValue>> inherits=true,
+	atom!("list-style-type") => ListStyleType<Expr<'a, ListStyleTypeValue<'a>>> inherits=true,
 	atom!("marker-side") => MarkerSide<Expr<'a, Todo>> inherits=true,
 
 	// https://drafts.csswg.org/css-logical-1/#property-index

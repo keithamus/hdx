@@ -3,11 +3,13 @@ pub mod backgrounds;
 pub mod r#box;
 pub mod color;
 pub mod content;
+pub mod counter_styles;
 pub mod display;
 pub mod expr;
 pub mod fonts;
 pub mod inline;
 pub mod length;
+pub mod lists;
 pub mod non_standard;
 pub mod page_floats;
 pub mod shorthand;
@@ -51,6 +53,7 @@ parse_for_enums! {
 	FloatReferenceValue,
 	InlineSizingValue,
 	LineStyle,
+	ListStylePositionValue,
 	MinIntrinsicSizingValue,
 	OverflowKeyword,
 	PositionValue,
@@ -61,6 +64,13 @@ parse_for_enums! {
 	TextDecorationSkipInkValue,
 	TextDecorationStyleValue,
 	VisibilityValue,
+}
+
+// TODO:
+impl<'a> Parse<'a> for Image<'a> {
+	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
+		Err(diagnostics::Unimplemented(parser.cur().span))?
+	}
 }
 
 // TODO:
