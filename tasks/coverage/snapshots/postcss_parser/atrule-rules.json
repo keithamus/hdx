@@ -1,260 +1,429 @@
 {
   "end": 258,
-  "rules": [
-    {
-      "end": 170,
-      "name": "supports",
-      "prelude": {
-        "end": 32,
-        "start": 10,
-        "value": [
-          {
-            "end": 32,
-            "start": 10,
-            "type": "SimpleBlock",
-            "value": [
-              {
-                "end": 25,
-                "escaped": false,
-                "kind": "Ident",
-                "start": 11,
-                "value": "animation-name"
+  "node": {
+    "rules": [
+      {
+        "end": 258,
+        "node": {
+          "end": 258,
+          "node": {
+            "name": "supports",
+            "prelude": {
+              "end": 258,
+              "node": {
+                "value": [
+                  {
+                    "end": 31,
+                    "node": {
+                      "end": 31,
+                      "node": {
+                        "pairwise": "Paren",
+                        "type": "SimpleBlock",
+                        "value": [
+                          {
+                            "end": 25,
+                            "node": {
+                              "end": 25,
+                              "escaped": false,
+                              "kind": "Ident",
+                              "start": 11,
+                              "value": "animation-name"
+                            },
+                            "start": 11
+                          },
+                          {
+                            "end": 27,
+                            "node": {
+                              "end": 26,
+                              "escaped": false,
+                              "kind": "Colon",
+                              "start": 25,
+                              "value": null
+                            },
+                            "start": 25
+                          },
+                          {
+                            "end": 31,
+                            "node": {
+                              "end": 31,
+                              "escaped": false,
+                              "kind": "Ident",
+                              "start": 27,
+                              "value": "test"
+                            },
+                            "start": 27
+                          }
+                        ]
+                      },
+                      "start": 10
+                    },
+                    "start": 10
+                  },
+                  {
+                    "end": 33,
+                    "node": {
+                      "end": 32,
+                      "escaped": false,
+                      "kind": "RightParen",
+                      "start": 31,
+                      "value": null
+                    },
+                    "start": 31
+                  },
+                  {
+                    "end": 113,
+                    "node": {
+                      "end": 113,
+                      "node": {
+                        "pairwise": "Curly",
+                        "type": "SimpleBlock",
+                        "value": [
+                          {
+                            "end": 57,
+                            "node": {
+                              "end": 56,
+                              "escaped": false,
+                              "kind": "AtKeyword",
+                              "start": 39,
+                              "value": "-custom-keyframe"
+                            },
+                            "start": 39
+                          },
+                          {
+                            "end": 62,
+                            "node": {
+                              "end": 61,
+                              "escaped": false,
+                              "kind": "Ident",
+                              "start": 57,
+                              "value": "anim"
+                            },
+                            "start": 57
+                          },
+                          {
+                            "end": 113,
+                            "node": {
+                              "end": 113,
+                              "node": {
+                                "pairwise": "Curly",
+                                "type": "SimpleBlock",
+                                "value": [
+                                  {
+                                    "end": 77,
+                                    "node": {
+                                      "end": 76,
+                                      "escaped": false,
+                                      "kind": "Ident",
+                                      "start": 72,
+                                      "value": "from"
+                                    },
+                                    "start": 72
+                                  },
+                                  {
+                                    "end": 113,
+                                    "node": {
+                                      "end": 113,
+                                      "node": {
+                                        "pairwise": "Curly",
+                                        "type": "SimpleBlock",
+                                        "value": [
+                                          {
+                                            "end": 96,
+                                            "node": {
+                                              "end": 96,
+                                              "escaped": false,
+                                              "kind": "Ident",
+                                              "start": 91,
+                                              "value": "color"
+                                            },
+                                            "start": 91
+                                          },
+                                          {
+                                            "end": 98,
+                                            "node": {
+                                              "end": 97,
+                                              "escaped": false,
+                                              "kind": "Colon",
+                                              "start": 96,
+                                              "value": null
+                                            },
+                                            "start": 96
+                                          },
+                                          {
+                                            "end": 103,
+                                            "node": {
+                                              "end": 103,
+                                              "escaped": false,
+                                              "kind": "Ident",
+                                              "start": 98,
+                                              "value": "black"
+                                            },
+                                            "start": 98
+                                          },
+                                          {
+                                            "end": 113,
+                                            "node": {
+                                              "end": 104,
+                                              "escaped": false,
+                                              "kind": "Semicolon",
+                                              "start": 103,
+                                              "value": null
+                                            },
+                                            "start": 103
+                                          }
+                                        ]
+                                      },
+                                      "start": 77
+                                    },
+                                    "start": 77
+                                  }
+                                ]
+                              },
+                              "start": 62
+                            },
+                            "start": 62
+                          }
+                        ]
+                      },
+                      "start": 33
+                    },
+                    "start": 33
+                  },
+                  {
+                    "end": 126,
+                    "node": {
+                      "end": 125,
+                      "escaped": false,
+                      "kind": "Ident",
+                      "start": 123,
+                      "value": "to"
+                    },
+                    "start": 123
+                  },
+                  {
+                    "end": 161,
+                    "node": {
+                      "end": 161,
+                      "node": {
+                        "pairwise": "Curly",
+                        "type": "SimpleBlock",
+                        "value": [
+                          {
+                            "end": 145,
+                            "node": {
+                              "end": 145,
+                              "escaped": false,
+                              "kind": "Ident",
+                              "start": 140,
+                              "value": "color"
+                            },
+                            "start": 140
+                          },
+                          {
+                            "end": 147,
+                            "node": {
+                              "end": 146,
+                              "escaped": false,
+                              "kind": "Colon",
+                              "start": 145,
+                              "value": null
+                            },
+                            "start": 145
+                          },
+                          {
+                            "end": 161,
+                            "node": {
+                              "end": 152,
+                              "escaped": false,
+                              "kind": "Ident",
+                              "start": 147,
+                              "value": "white"
+                            },
+                            "start": 147
+                          }
+                        ]
+                      },
+                      "start": 126
+                    },
+                    "start": 126
+                  },
+                  {
+                    "end": 181,
+                    "node": {
+                      "end": 180,
+                      "escaped": false,
+                      "kind": "AtKeyword",
+                      "start": 172,
+                      "value": "support"
+                    },
+                    "start": 172
+                  },
+                  {
+                    "end": 204,
+                    "node": {
+                      "end": 204,
+                      "node": {
+                        "name": "selector",
+                        "type": "Function",
+                        "value": [
+                          {
+                            "end": 191,
+                            "node": {
+                              "end": 191,
+                              "escaped": false,
+                              "kind": "Colon",
+                              "start": 190,
+                              "value": null
+                            },
+                            "start": 190
+                          },
+                          {
+                            "end": 204,
+                            "node": {
+                              "end": 204,
+                              "escaped": false,
+                              "kind": "Ident",
+                              "start": 191,
+                              "value": "focus-visible"
+                            },
+                            "start": 191
+                          }
+                        ]
+                      },
+                      "start": 181
+                    },
+                    "start": 181
+                  },
+                  {
+                    "end": 206,
+                    "node": {
+                      "end": 205,
+                      "escaped": false,
+                      "kind": "RightParen",
+                      "start": 204,
+                      "value": null
+                    },
+                    "start": 204
+                  },
+                  {
+                    "end": 254,
+                    "node": {
+                      "end": 254,
+                      "node": {
+                        "pairwise": "Curly",
+                        "type": "SimpleBlock",
+                        "value": [
+                          {
+                            "end": 211,
+                            "node": {
+                              "end": 211,
+                              "escaped": false,
+                              "kind": "Ident",
+                              "start": 210,
+                              "value": "a"
+                            },
+                            "start": 210
+                          },
+                          {
+                            "end": 212,
+                            "node": {
+                              "end": 212,
+                              "escaped": false,
+                              "kind": "Colon",
+                              "start": 211,
+                              "value": null
+                            },
+                            "start": 211
+                          },
+                          {
+                            "end": 226,
+                            "node": {
+                              "end": 225,
+                              "escaped": false,
+                              "kind": "Ident",
+                              "start": 212,
+                              "value": "focus-visible"
+                            },
+                            "start": 212
+                          },
+                          {
+                            "end": 254,
+                            "node": {
+                              "end": 254,
+                              "node": {
+                                "pairwise": "Curly",
+                                "type": "SimpleBlock",
+                                "value": [
+                                  {
+                                    "end": 242,
+                                    "node": {
+                                      "end": 242,
+                                      "escaped": false,
+                                      "kind": "Ident",
+                                      "start": 232,
+                                      "value": "background"
+                                    },
+                                    "start": 232
+                                  },
+                                  {
+                                    "end": 244,
+                                    "node": {
+                                      "end": 243,
+                                      "escaped": false,
+                                      "kind": "Colon",
+                                      "start": 242,
+                                      "value": null
+                                    },
+                                    "start": 242
+                                  },
+                                  {
+                                    "end": 250,
+                                    "node": {
+                                      "end": 250,
+                                      "escaped": false,
+                                      "kind": "Ident",
+                                      "start": 244,
+                                      "value": "yellow"
+                                    },
+                                    "start": 244
+                                  },
+                                  {
+                                    "end": 254,
+                                    "node": {
+                                      "end": 251,
+                                      "escaped": false,
+                                      "kind": "Semicolon",
+                                      "start": 250,
+                                      "value": null
+                                    },
+                                    "start": 250
+                                  }
+                                ]
+                              },
+                              "start": 226
+                            },
+                            "start": 226
+                          }
+                        ]
+                      },
+                      "start": 206
+                    },
+                    "start": 206
+                  }
+                ]
               },
-              {
-                "end": 26,
-                "escaped": false,
-                "kind": "Colon",
-                "start": 25,
-                "value": null
-              },
-              {
-                "end": 31,
-                "escaped": false,
-                "kind": "Ident",
-                "start": 27,
-                "value": "test"
-              }
-            ]
-          }
-        ]
-      },
-      "properties": [],
-      "rules": [
-        {
-          "end": 168,
-          "prelude": {
-            "end": 61,
-            "start": 39,
-            "value": [
-              {
-                "end": 56,
-                "escaped": false,
-                "kind": "AtKeyword",
-                "start": 39,
-                "value": "-custom-keyframe"
-              },
-              {
-                "end": 61,
-                "escaped": false,
-                "kind": "Ident",
-                "start": 57,
-                "value": "anim"
-              }
-            ]
+              "start": 10
+            },
+            "properties": [],
+            "rules": [],
+            "type": "UnknownAtRule"
           },
-          "properties": [
-            {
-              "end": 162,
-              "important": false,
-              "name": "",
-              "start": 72,
-              "type": "UnknownDeclaration",
-              "value": {
-                "end": 162,
-                "start": 72,
-                "value": [
-                  {
-                    "end": 76,
-                    "escaped": false,
-                    "kind": "Ident",
-                    "start": 72,
-                    "value": "from"
-                  },
-                  {
-                    "end": 114,
-                    "start": 77,
-                    "type": "SimpleBlock",
-                    "value": [
-                      {
-                        "end": 96,
-                        "escaped": false,
-                        "kind": "Ident",
-                        "start": 91,
-                        "value": "color"
-                      },
-                      {
-                        "end": 97,
-                        "escaped": false,
-                        "kind": "Colon",
-                        "start": 96,
-                        "value": null
-                      },
-                      {
-                        "end": 103,
-                        "escaped": false,
-                        "kind": "Ident",
-                        "start": 98,
-                        "value": "black"
-                      },
-                      {
-                        "end": 104,
-                        "escaped": false,
-                        "kind": "Semicolon",
-                        "start": 103,
-                        "value": null
-                      }
-                    ]
-                  },
-                  {
-                    "end": 125,
-                    "escaped": false,
-                    "kind": "Ident",
-                    "start": 123,
-                    "value": "to"
-                  },
-                  {
-                    "end": 162,
-                    "start": 126,
-                    "type": "SimpleBlock",
-                    "value": [
-                      {
-                        "end": 145,
-                        "escaped": false,
-                        "kind": "Ident",
-                        "start": 140,
-                        "value": "color"
-                      },
-                      {
-                        "end": 146,
-                        "escaped": false,
-                        "kind": "Colon",
-                        "start": 145,
-                        "value": null
-                      },
-                      {
-                        "end": 152,
-                        "escaped": false,
-                        "kind": "Ident",
-                        "start": 147,
-                        "value": "white"
-                      }
-                    ]
-                  }
-                ]
-              }
-            }
-          ],
-          "rules": [],
-          "start": 39,
-          "type": "UnknownRule"
-        }
-      ],
-      "start": 0,
-      "type": "UnknownAtRule"
-    },
-    {
-      "end": 257,
-      "name": "support",
-      "prelude": {
-        "end": 205,
-        "start": 181,
-        "value": [
-          {
-            "end": 205,
-            "name": "selector",
-            "start": 181,
-            "type": "Function",
-            "value": [
-              {
-                "end": 191,
-                "escaped": false,
-                "kind": "Colon",
-                "start": 190,
-                "value": null
-              },
-              {
-                "end": 204,
-                "escaped": false,
-                "kind": "Ident",
-                "start": 191,
-                "value": "focus-visible"
-              }
-            ]
-          }
-        ]
-      },
-      "properties": [
-        {
-          "end": 255,
-          "important": false,
-          "name": "a",
-          "start": 210,
-          "type": "UnknownDeclaration",
-          "value": {
-            "end": 255,
-            "start": 212,
-            "value": [
-              {
-                "end": 225,
-                "escaped": false,
-                "kind": "Ident",
-                "start": 212,
-                "value": "focus-visible"
-              },
-              {
-                "end": 255,
-                "start": 226,
-                "type": "SimpleBlock",
-                "value": [
-                  {
-                    "end": 242,
-                    "escaped": false,
-                    "kind": "Ident",
-                    "start": 232,
-                    "value": "background"
-                  },
-                  {
-                    "end": 243,
-                    "escaped": false,
-                    "kind": "Colon",
-                    "start": 242,
-                    "value": null
-                  },
-                  {
-                    "end": 250,
-                    "escaped": false,
-                    "kind": "Ident",
-                    "start": 244,
-                    "value": "yellow"
-                  },
-                  {
-                    "end": 251,
-                    "escaped": false,
-                    "kind": "Semicolon",
-                    "start": 250,
-                    "value": null
-                  }
-                ]
-              }
-            ]
-          }
-        }
-      ],
-      "rules": [],
-      "start": 172,
-      "type": "UnknownAtRule"
-    }
-  ],
-  "start": 0,
-  "type": "Stylesheet"
+          "start": 0
+        },
+        "start": 0
+      }
+    ],
+    "type": "Stylesheet"
+  },
+  "start": 0
 }

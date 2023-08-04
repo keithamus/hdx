@@ -1,900 +1,1574 @@
 {
   "end": 508,
-  "rules": [
-    {
-      "end": 105,
-      "name": "supports",
-      "prelude": {
-        "end": 55,
-        "start": 10,
-        "value": [
-          {
-            "end": 55,
-            "start": 10,
-            "type": "SimpleBlock",
-            "value": [
-              {
-                "end": 54,
-                "name": "--element",
-                "start": 11,
-                "type": "Function",
+  "node": {
+    "rules": [
+      {
+        "end": 508,
+        "node": {
+          "end": 508,
+          "node": {
+            "name": "supports",
+            "prelude": {
+              "end": 508,
+              "node": {
                 "value": [
-                  {
-                    "end": 32,
-                    "escaped": false,
-                    "kind": "String",
-                    "start": 21,
-                    "value": ".minwidth"
-                  },
-                  {
-                    "end": 33,
-                    "escaped": false,
-                    "kind": "Comma",
-                    "start": 32,
-                    "value": null
-                  },
                   {
                     "end": 53,
-                    "start": 34,
-                    "type": "SimpleBlock",
-                    "value": [
-                      {
-                        "end": 46,
-                        "escaped": false,
-                        "kind": "String",
-                        "start": 36,
-                        "value": "minWidth"
-                      },
-                      {
-                        "end": 47,
-                        "escaped": false,
-                        "kind": "Colon",
-                        "start": 46,
-                        "value": null
-                      },
-                      {
-                        "end": 51,
-                        "escaped": false,
-                        "kind": "Number",
-                        "start": 48,
-                        "value": {
-                          "int": true,
-                          "signed": false,
-                          "value": 300.0
-                        }
-                      }
-                    ]
-                  }
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      "properties": [
-        {
-          "end": 103,
-          "important": false,
-          "name": "",
-          "start": 60,
-          "type": "UnknownDeclaration",
-          "value": {
-            "end": 103,
-            "start": 60,
-            "value": [
-              {
-                "end": 68,
-                "start": 60,
-                "type": "SimpleBlock",
-                "value": [
-                  {
-                    "end": 67,
-                    "escaped": false,
-                    "kind": "Ident",
-                    "start": 61,
-                    "value": "--self"
-                  }
-                ]
-              },
-              {
-                "end": 103,
-                "start": 69,
-                "type": "SimpleBlock",
-                "value": [
-                  {
-                    "end": 85,
-                    "escaped": false,
-                    "kind": "Ident",
-                    "start": 75,
-                    "value": "background"
-                  },
-                  {
-                    "end": 86,
-                    "escaped": false,
-                    "kind": "Colon",
-                    "start": 85,
-                    "value": null
-                  },
-                  {
-                    "end": 98,
-                    "escaped": false,
-                    "kind": "Ident",
-                    "start": 87,
-                    "value": "greenyellow"
-                  },
-                  {
-                    "end": 99,
-                    "escaped": false,
-                    "kind": "Semicolon",
-                    "start": 98,
-                    "value": null
-                  }
-                ]
-              }
-            ]
-          }
-        }
-      ],
-      "rules": [],
-      "start": 0,
-      "type": "UnknownAtRule"
-    },
-    {
-      "end": 162,
-      "name": "supports",
-      "prelude": {
-        "end": 133,
-        "start": 117,
-        "value": [
-          {
-            "end": 133,
-            "start": 117,
-            "type": "SimpleBlock",
-            "value": [
-              {
-                "end": 132,
-                "start": 118,
-                "type": "SimpleBlock",
-                "value": [
-                  {
-                    "end": 128,
-                    "escaped": false,
-                    "kind": "String",
-                    "start": 119,
-                    "value": "example"
-                  },
-                  {
-                    "end": 129,
-                    "escaped": false,
-                    "kind": "Colon",
-                    "start": 128,
-                    "value": null
-                  },
-                  {
-                    "end": 131,
-                    "escaped": false,
-                    "kind": "Number",
-                    "start": 130,
-                    "value": {
-                      "int": true,
-                      "signed": false,
-                      "value": 1.0
-                    }
-                  }
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      "properties": [
-        {
-          "end": 160,
-          "important": false,
-          "name": "",
-          "start": 138,
-          "type": "UnknownDeclaration",
-          "value": {
-            "end": 160,
-            "start": 138,
-            "value": [
-              {
-                "end": 139,
-                "escaped": false,
-                "kind": "Delim",
-                "start": 138,
-                "value": "*"
-              },
-              {
-                "end": 160,
-                "start": 140,
-                "type": "SimpleBlock",
-                "value": [
-                  {
-                    "end": 152,
-                    "escaped": false,
-                    "kind": "Ident",
-                    "start": 142,
-                    "value": "background"
-                  },
-                  {
-                    "end": 153,
-                    "escaped": false,
-                    "kind": "Colon",
-                    "start": 152,
-                    "value": null
-                  },
-                  {
-                    "end": 157,
-                    "escaped": false,
-                    "kind": "Ident",
-                    "start": 154,
-                    "value": "red"
-                  },
-                  {
-                    "end": 158,
-                    "escaped": false,
-                    "kind": "Semicolon",
-                    "start": 157,
-                    "value": null
-                  }
-                ]
-              }
-            ]
-          }
-        }
-      ],
-      "rules": [],
-      "start": 107,
-      "type": "UnknownAtRule"
-    },
-    {
-      "end": 219,
-      "name": "supports",
-      "prelude": {
-        "end": 190,
-        "start": 174,
-        "value": [
-          {
-            "end": 190,
-            "start": 174,
-            "type": "SimpleBlock",
-            "value": [
-              {
-                "end": 189,
-                "start": 175,
-                "type": "SimpleBlock",
-                "value": [
-                  {
-                    "end": 185,
-                    "escaped": false,
-                    "kind": "String",
-                    "start": 176,
-                    "value": "example"
-                  },
-                  {
-                    "end": 186,
-                    "escaped": false,
-                    "kind": "Colon",
-                    "start": 185,
-                    "value": null
-                  },
-                  {
-                    "end": 188,
-                    "escaped": false,
-                    "kind": "Number",
-                    "start": 187,
-                    "value": {
-                      "int": true,
-                      "signed": false,
-                      "value": 1.0
-                    }
-                  }
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      "properties": [
-        {
-          "end": 217,
-          "important": false,
-          "name": "",
-          "start": 195,
-          "type": "UnknownDeclaration",
-          "value": {
-            "end": 217,
-            "start": 195,
-            "value": [
-              {
-                "end": 196,
-                "escaped": false,
-                "kind": "Delim",
-                "start": 195,
-                "value": "*"
-              },
-              {
-                "end": 217,
-                "start": 197,
-                "type": "SimpleBlock",
-                "value": [
-                  {
-                    "end": 209,
-                    "escaped": false,
-                    "kind": "Ident",
-                    "start": 199,
-                    "value": "background"
-                  },
-                  {
-                    "end": 210,
-                    "escaped": false,
-                    "kind": "Colon",
-                    "start": 209,
-                    "value": null
-                  },
-                  {
-                    "end": 214,
-                    "escaped": false,
-                    "kind": "Ident",
-                    "start": 211,
-                    "value": "red"
-                  },
-                  {
-                    "end": 215,
-                    "escaped": false,
-                    "kind": "Semicolon",
-                    "start": 214,
-                    "value": null
-                  }
-                ]
-              }
-            ]
-          }
-        }
-      ],
-      "rules": [],
-      "start": 164,
-      "type": "UnknownAtRule"
-    },
-    {
-      "end": 280,
-      "name": "supports",
-      "prelude": {
-        "end": 251,
-        "start": 231,
-        "value": [
-          {
-            "end": 251,
-            "start": 231,
-            "type": "SimpleBlock",
-            "value": [
-              {
-                "end": 250,
-                "name": "func",
-                "start": 232,
-                "type": "Function",
-                "value": [
-                  {
-                    "end": 246,
-                    "escaped": false,
-                    "kind": "String",
-                    "start": 237,
-                    "value": "example"
-                  },
-                  {
-                    "end": 247,
-                    "escaped": false,
-                    "kind": "Colon",
-                    "start": 246,
-                    "value": null
-                  },
-                  {
-                    "end": 249,
-                    "escaped": false,
-                    "kind": "Number",
-                    "start": 248,
-                    "value": {
-                      "int": true,
-                      "signed": false,
-                      "value": 1.0
-                    }
-                  }
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      "properties": [
-        {
-          "end": 278,
-          "important": false,
-          "name": "",
-          "start": 256,
-          "type": "UnknownDeclaration",
-          "value": {
-            "end": 278,
-            "start": 256,
-            "value": [
-              {
-                "end": 257,
-                "escaped": false,
-                "kind": "Delim",
-                "start": 256,
-                "value": "*"
-              },
-              {
-                "end": 278,
-                "start": 258,
-                "type": "SimpleBlock",
-                "value": [
-                  {
-                    "end": 270,
-                    "escaped": false,
-                    "kind": "Ident",
-                    "start": 260,
-                    "value": "background"
-                  },
-                  {
-                    "end": 271,
-                    "escaped": false,
-                    "kind": "Colon",
-                    "start": 270,
-                    "value": null
-                  },
-                  {
-                    "end": 275,
-                    "escaped": false,
-                    "kind": "Ident",
-                    "start": 272,
-                    "value": "red"
-                  },
-                  {
-                    "end": 276,
-                    "escaped": false,
-                    "kind": "Semicolon",
-                    "start": 275,
-                    "value": null
-                  }
-                ]
-              }
-            ]
-          }
-        }
-      ],
-      "rules": [],
-      "start": 221,
-      "type": "UnknownAtRule"
-    },
-    {
-      "end": 328,
-      "name": "supports",
-      "prelude": {
-        "end": 299,
-        "start": 292,
-        "value": [
-          {
-            "end": 299,
-            "start": 292,
-            "type": "SimpleBlock",
-            "value": [
-              {
-                "end": 298,
-                "escaped": false,
-                "kind": "Ident",
-                "start": 293,
-                "value": "--var"
-              }
-            ]
-          }
-        ]
-      },
-      "properties": [
-        {
-          "end": 326,
-          "important": false,
-          "name": "",
-          "start": 304,
-          "type": "UnknownDeclaration",
-          "value": {
-            "end": 326,
-            "start": 304,
-            "value": [
-              {
-                "end": 305,
-                "escaped": false,
-                "kind": "Delim",
-                "start": 304,
-                "value": "*"
-              },
-              {
-                "end": 326,
-                "start": 306,
-                "type": "SimpleBlock",
-                "value": [
-                  {
-                    "end": 318,
-                    "escaped": false,
-                    "kind": "Ident",
-                    "start": 308,
-                    "value": "background"
-                  },
-                  {
-                    "end": 319,
-                    "escaped": false,
-                    "kind": "Colon",
-                    "start": 318,
-                    "value": null
-                  },
-                  {
-                    "end": 323,
-                    "escaped": false,
-                    "kind": "Ident",
-                    "start": 320,
-                    "value": "red"
-                  },
-                  {
-                    "end": 324,
-                    "escaped": false,
-                    "kind": "Semicolon",
-                    "start": 323,
-                    "value": null
-                  }
-                ]
-              }
-            ]
-          }
-        }
-      ],
-      "rules": [],
-      "start": 282,
-      "type": "UnknownAtRule"
-    },
-    {
-      "end": 373,
-      "name": "supports",
-      "prelude": {
-        "end": 344,
-        "start": 340,
-        "value": [
-          {
-            "end": 344,
-            "start": 340,
-            "type": "SimpleBlock",
-            "value": [
-              {
-                "end": 343,
-                "start": 341,
-                "type": "SimpleBlock",
-                "value": []
-              }
-            ]
-          }
-        ]
-      },
-      "properties": [
-        {
-          "end": 371,
-          "important": false,
-          "name": "",
-          "start": 349,
-          "type": "UnknownDeclaration",
-          "value": {
-            "end": 371,
-            "start": 349,
-            "value": [
-              {
-                "end": 350,
-                "escaped": false,
-                "kind": "Delim",
-                "start": 349,
-                "value": "*"
-              },
-              {
-                "end": 371,
-                "start": 351,
-                "type": "SimpleBlock",
-                "value": [
-                  {
-                    "end": 363,
-                    "escaped": false,
-                    "kind": "Ident",
-                    "start": 353,
-                    "value": "background"
-                  },
-                  {
-                    "end": 364,
-                    "escaped": false,
-                    "kind": "Colon",
-                    "start": 363,
-                    "value": null
-                  },
-                  {
-                    "end": 368,
-                    "escaped": false,
-                    "kind": "Ident",
-                    "start": 365,
-                    "value": "red"
-                  },
-                  {
-                    "end": 369,
-                    "escaped": false,
-                    "kind": "Semicolon",
-                    "start": 368,
-                    "value": null
-                  }
-                ]
-              }
-            ]
-          }
-        }
-      ],
-      "rules": [],
-      "start": 330,
-      "type": "UnknownAtRule"
-    },
-    {
-      "end": 428,
-      "name": "supports",
-      "prelude": {
-        "end": 399,
-        "start": 385,
-        "value": [
-          {
-            "end": 399,
-            "start": 385,
-            "type": "SimpleBlock",
-            "value": [
-              {
-                "end": 398,
-                "start": 386,
-                "type": "SimpleBlock",
-                "value": [
-                  {
-                    "end": 392,
-                    "escaped": false,
-                    "kind": "Ident",
-                    "start": 387,
-                    "value": "color"
-                  },
-                  {
-                    "end": 393,
-                    "escaped": false,
-                    "kind": "Colon",
-                    "start": 392,
-                    "value": null
-                  },
-                  {
-                    "end": 397,
-                    "escaped": false,
-                    "kind": "Ident",
-                    "start": 394,
-                    "value": "red"
-                  }
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      "properties": [
-        {
-          "end": 426,
-          "important": false,
-          "name": "",
-          "start": 404,
-          "type": "UnknownDeclaration",
-          "value": {
-            "end": 426,
-            "start": 404,
-            "value": [
-              {
-                "end": 405,
-                "escaped": false,
-                "kind": "Delim",
-                "start": 404,
-                "value": "*"
-              },
-              {
-                "end": 426,
-                "start": 406,
-                "type": "SimpleBlock",
-                "value": [
-                  {
-                    "end": 418,
-                    "escaped": false,
-                    "kind": "Ident",
-                    "start": 408,
-                    "value": "background"
-                  },
-                  {
-                    "end": 419,
-                    "escaped": false,
-                    "kind": "Colon",
-                    "start": 418,
-                    "value": null
-                  },
-                  {
-                    "end": 423,
-                    "escaped": false,
-                    "kind": "Ident",
-                    "start": 420,
-                    "value": "red"
-                  },
-                  {
-                    "end": 424,
-                    "escaped": false,
-                    "kind": "Semicolon",
-                    "start": 423,
-                    "value": null
-                  }
-                ]
-              }
-            ]
-          }
-        }
-      ],
-      "rules": [],
-      "start": 375,
-      "type": "UnknownAtRule"
-    },
-    {
-      "end": 507,
-      "name": "supports",
-      "prelude": {
-        "end": 478,
-        "start": 440,
-        "value": [
-          {
-            "end": 478,
-            "start": 440,
-            "type": "SimpleBlock",
-            "value": [
-              {
-                "end": 477,
-                "start": 441,
-                "type": "SimpleBlock",
-                "value": [
-                  {
-                    "end": 476,
-                    "start": 442,
-                    "type": "SimpleBlock",
-                    "value": [
-                      {
-                        "end": 475,
-                        "start": 443,
+                    "node": {
+                      "end": 53,
+                      "node": {
+                        "pairwise": "Paren",
                         "type": "SimpleBlock",
                         "value": [
                           {
-                            "end": 474,
-                            "start": 444,
-                            "type": "SimpleBlock",
-                            "value": [
-                              {
-                                "end": 473,
-                                "start": 445,
+                            "end": 53,
+                            "node": {
+                              "end": 53,
+                              "node": {
+                                "name": "--element",
+                                "type": "Function",
+                                "value": [
+                                  {
+                                    "end": 32,
+                                    "node": {
+                                      "end": 32,
+                                      "escaped": false,
+                                      "kind": "String",
+                                      "start": 21,
+                                      "value": ".minwidth"
+                                    },
+                                    "start": 21
+                                  },
+                                  {
+                                    "end": 34,
+                                    "node": {
+                                      "end": 33,
+                                      "escaped": false,
+                                      "kind": "Comma",
+                                      "start": 32,
+                                      "value": null
+                                    },
+                                    "start": 32
+                                  },
+                                  {
+                                    "end": 52,
+                                    "node": {
+                                      "end": 52,
+                                      "node": {
+                                        "pairwise": "Curly",
+                                        "type": "SimpleBlock",
+                                        "value": [
+                                          {
+                                            "end": 46,
+                                            "node": {
+                                              "end": 46,
+                                              "escaped": false,
+                                              "kind": "String",
+                                              "start": 36,
+                                              "value": "minWidth"
+                                            },
+                                            "start": 36
+                                          },
+                                          {
+                                            "end": 48,
+                                            "node": {
+                                              "end": 47,
+                                              "escaped": false,
+                                              "kind": "Colon",
+                                              "start": 46,
+                                              "value": null
+                                            },
+                                            "start": 46
+                                          },
+                                          {
+                                            "end": 52,
+                                            "node": {
+                                              "end": 51,
+                                              "escaped": false,
+                                              "kind": "Number",
+                                              "start": 48,
+                                              "value": {
+                                                "int": true,
+                                                "signed": false,
+                                                "value": 300.0
+                                              }
+                                            },
+                                            "start": 48
+                                          }
+                                        ]
+                                      },
+                                      "start": 34
+                                    },
+                                    "start": 34
+                                  }
+                                ]
+                              },
+                              "start": 11
+                            },
+                            "start": 11
+                          }
+                        ]
+                      },
+                      "start": 10
+                    },
+                    "start": 10
+                  },
+                  {
+                    "end": 54,
+                    "node": {
+                      "end": 54,
+                      "escaped": false,
+                      "kind": "RightParen",
+                      "start": 53,
+                      "value": null
+                    },
+                    "start": 53
+                  },
+                  {
+                    "end": 56,
+                    "node": {
+                      "end": 55,
+                      "escaped": false,
+                      "kind": "RightParen",
+                      "start": 54,
+                      "value": null
+                    },
+                    "start": 54
+                  },
+                  {
+                    "end": 102,
+                    "node": {
+                      "end": 102,
+                      "node": {
+                        "pairwise": "Curly",
+                        "type": "SimpleBlock",
+                        "value": [
+                          {
+                            "end": 67,
+                            "node": {
+                              "end": 67,
+                              "node": {
+                                "pairwise": "Square",
                                 "type": "SimpleBlock",
                                 "value": [
                                   {
-                                    "end": 472,
-                                    "start": 446,
-                                    "type": "SimpleBlock",
-                                    "value": [
-                                      {
-                                        "end": 470,
-                                        "name": "--func",
-                                        "start": 448,
-                                        "type": "Function",
-                                        "value": [
-                                          {
-                                            "end": 460,
-                                            "escaped": false,
-                                            "kind": "Ident",
-                                            "start": 455,
-                                            "value": "color"
-                                          },
-                                          {
-                                            "end": 461,
-                                            "escaped": false,
-                                            "kind": "Colon",
-                                            "start": 460,
-                                            "value": null
-                                          },
-                                          {
-                                            "end": 469,
-                                            "start": 462,
-                                            "type": "SimpleBlock",
-                                            "value": [
-                                              {
-                                                "end": 467,
-                                                "escaped": false,
-                                                "kind": "Ident",
-                                                "start": 464,
-                                                "value": "red"
-                                              }
-                                            ]
-                                          }
-                                        ]
-                                      }
-                                    ]
+                                    "end": 67,
+                                    "node": {
+                                      "end": 67,
+                                      "escaped": false,
+                                      "kind": "Ident",
+                                      "start": 61,
+                                      "value": "--self"
+                                    },
+                                    "start": 61
                                   }
                                 ]
-                              }
-                            ]
+                              },
+                              "start": 60
+                            },
+                            "start": 60
+                          },
+                          {
+                            "end": 69,
+                            "node": {
+                              "end": 68,
+                              "escaped": false,
+                              "kind": "RightSquare",
+                              "start": 67,
+                              "value": null
+                            },
+                            "start": 67
+                          },
+                          {
+                            "end": 102,
+                            "node": {
+                              "end": 102,
+                              "node": {
+                                "pairwise": "Curly",
+                                "type": "SimpleBlock",
+                                "value": [
+                                  {
+                                    "end": 85,
+                                    "node": {
+                                      "end": 85,
+                                      "escaped": false,
+                                      "kind": "Ident",
+                                      "start": 75,
+                                      "value": "background"
+                                    },
+                                    "start": 75
+                                  },
+                                  {
+                                    "end": 87,
+                                    "node": {
+                                      "end": 86,
+                                      "escaped": false,
+                                      "kind": "Colon",
+                                      "start": 85,
+                                      "value": null
+                                    },
+                                    "start": 85
+                                  },
+                                  {
+                                    "end": 98,
+                                    "node": {
+                                      "end": 98,
+                                      "escaped": false,
+                                      "kind": "Ident",
+                                      "start": 87,
+                                      "value": "greenyellow"
+                                    },
+                                    "start": 87
+                                  },
+                                  {
+                                    "end": 102,
+                                    "node": {
+                                      "end": 99,
+                                      "escaped": false,
+                                      "kind": "Semicolon",
+                                      "start": 98,
+                                      "value": null
+                                    },
+                                    "start": 98
+                                  }
+                                ]
+                              },
+                              "start": 69
+                            },
+                            "start": 69
                           }
                         ]
-                      }
-                    ]
+                      },
+                      "start": 56
+                    },
+                    "start": 56
+                  },
+                  {
+                    "end": 117,
+                    "node": {
+                      "end": 116,
+                      "escaped": false,
+                      "kind": "AtKeyword",
+                      "start": 107,
+                      "value": "supports"
+                    },
+                    "start": 107
+                  },
+                  {
+                    "end": 131,
+                    "node": {
+                      "end": 131,
+                      "node": {
+                        "pairwise": "Paren",
+                        "type": "SimpleBlock",
+                        "value": [
+                          {
+                            "end": 131,
+                            "node": {
+                              "end": 131,
+                              "node": {
+                                "pairwise": "Curly",
+                                "type": "SimpleBlock",
+                                "value": [
+                                  {
+                                    "end": 128,
+                                    "node": {
+                                      "end": 128,
+                                      "escaped": false,
+                                      "kind": "String",
+                                      "start": 119,
+                                      "value": "example"
+                                    },
+                                    "start": 119
+                                  },
+                                  {
+                                    "end": 130,
+                                    "node": {
+                                      "end": 129,
+                                      "escaped": false,
+                                      "kind": "Colon",
+                                      "start": 128,
+                                      "value": null
+                                    },
+                                    "start": 128
+                                  },
+                                  {
+                                    "end": 131,
+                                    "node": {
+                                      "end": 131,
+                                      "escaped": false,
+                                      "kind": "Number",
+                                      "start": 130,
+                                      "value": {
+                                        "int": true,
+                                        "signed": false,
+                                        "value": 1.0
+                                      }
+                                    },
+                                    "start": 130
+                                  }
+                                ]
+                              },
+                              "start": 118
+                            },
+                            "start": 118
+                          }
+                        ]
+                      },
+                      "start": 117
+                    },
+                    "start": 117
+                  },
+                  {
+                    "end": 134,
+                    "node": {
+                      "end": 133,
+                      "escaped": false,
+                      "kind": "RightParen",
+                      "start": 132,
+                      "value": null
+                    },
+                    "start": 132
+                  },
+                  {
+                    "end": 159,
+                    "node": {
+                      "end": 159,
+                      "node": {
+                        "pairwise": "Curly",
+                        "type": "SimpleBlock",
+                        "value": [
+                          {
+                            "end": 140,
+                            "node": {
+                              "end": 139,
+                              "escaped": false,
+                              "kind": "Delim",
+                              "start": 138,
+                              "value": "*"
+                            },
+                            "start": 138
+                          },
+                          {
+                            "end": 159,
+                            "node": {
+                              "end": 159,
+                              "node": {
+                                "pairwise": "Curly",
+                                "type": "SimpleBlock",
+                                "value": [
+                                  {
+                                    "end": 152,
+                                    "node": {
+                                      "end": 152,
+                                      "escaped": false,
+                                      "kind": "Ident",
+                                      "start": 142,
+                                      "value": "background"
+                                    },
+                                    "start": 142
+                                  },
+                                  {
+                                    "end": 154,
+                                    "node": {
+                                      "end": 153,
+                                      "escaped": false,
+                                      "kind": "Colon",
+                                      "start": 152,
+                                      "value": null
+                                    },
+                                    "start": 152
+                                  },
+                                  {
+                                    "end": 157,
+                                    "node": {
+                                      "end": 157,
+                                      "escaped": false,
+                                      "kind": "Ident",
+                                      "start": 154,
+                                      "value": "red"
+                                    },
+                                    "start": 154
+                                  },
+                                  {
+                                    "end": 159,
+                                    "node": {
+                                      "end": 158,
+                                      "escaped": false,
+                                      "kind": "Semicolon",
+                                      "start": 157,
+                                      "value": null
+                                    },
+                                    "start": 157
+                                  }
+                                ]
+                              },
+                              "start": 140
+                            },
+                            "start": 140
+                          }
+                        ]
+                      },
+                      "start": 134
+                    },
+                    "start": 134
+                  },
+                  {
+                    "end": 174,
+                    "node": {
+                      "end": 173,
+                      "escaped": false,
+                      "kind": "AtKeyword",
+                      "start": 164,
+                      "value": "supports"
+                    },
+                    "start": 164
+                  },
+                  {
+                    "end": 188,
+                    "node": {
+                      "end": 188,
+                      "node": {
+                        "pairwise": "Paren",
+                        "type": "SimpleBlock",
+                        "value": [
+                          {
+                            "end": 188,
+                            "node": {
+                              "end": 188,
+                              "node": {
+                                "pairwise": "Paren",
+                                "type": "SimpleBlock",
+                                "value": [
+                                  {
+                                    "end": 185,
+                                    "node": {
+                                      "end": 185,
+                                      "escaped": false,
+                                      "kind": "String",
+                                      "start": 176,
+                                      "value": "example"
+                                    },
+                                    "start": 176
+                                  },
+                                  {
+                                    "end": 187,
+                                    "node": {
+                                      "end": 186,
+                                      "escaped": false,
+                                      "kind": "Colon",
+                                      "start": 185,
+                                      "value": null
+                                    },
+                                    "start": 185
+                                  },
+                                  {
+                                    "end": 188,
+                                    "node": {
+                                      "end": 188,
+                                      "escaped": false,
+                                      "kind": "Number",
+                                      "start": 187,
+                                      "value": {
+                                        "int": true,
+                                        "signed": false,
+                                        "value": 1.0
+                                      }
+                                    },
+                                    "start": 187
+                                  }
+                                ]
+                              },
+                              "start": 175
+                            },
+                            "start": 175
+                          }
+                        ]
+                      },
+                      "start": 174
+                    },
+                    "start": 174
+                  },
+                  {
+                    "end": 189,
+                    "node": {
+                      "end": 189,
+                      "escaped": false,
+                      "kind": "RightParen",
+                      "start": 188,
+                      "value": null
+                    },
+                    "start": 188
+                  },
+                  {
+                    "end": 191,
+                    "node": {
+                      "end": 190,
+                      "escaped": false,
+                      "kind": "RightParen",
+                      "start": 189,
+                      "value": null
+                    },
+                    "start": 189
+                  },
+                  {
+                    "end": 216,
+                    "node": {
+                      "end": 216,
+                      "node": {
+                        "pairwise": "Curly",
+                        "type": "SimpleBlock",
+                        "value": [
+                          {
+                            "end": 197,
+                            "node": {
+                              "end": 196,
+                              "escaped": false,
+                              "kind": "Delim",
+                              "start": 195,
+                              "value": "*"
+                            },
+                            "start": 195
+                          },
+                          {
+                            "end": 216,
+                            "node": {
+                              "end": 216,
+                              "node": {
+                                "pairwise": "Curly",
+                                "type": "SimpleBlock",
+                                "value": [
+                                  {
+                                    "end": 209,
+                                    "node": {
+                                      "end": 209,
+                                      "escaped": false,
+                                      "kind": "Ident",
+                                      "start": 199,
+                                      "value": "background"
+                                    },
+                                    "start": 199
+                                  },
+                                  {
+                                    "end": 211,
+                                    "node": {
+                                      "end": 210,
+                                      "escaped": false,
+                                      "kind": "Colon",
+                                      "start": 209,
+                                      "value": null
+                                    },
+                                    "start": 209
+                                  },
+                                  {
+                                    "end": 214,
+                                    "node": {
+                                      "end": 214,
+                                      "escaped": false,
+                                      "kind": "Ident",
+                                      "start": 211,
+                                      "value": "red"
+                                    },
+                                    "start": 211
+                                  },
+                                  {
+                                    "end": 216,
+                                    "node": {
+                                      "end": 215,
+                                      "escaped": false,
+                                      "kind": "Semicolon",
+                                      "start": 214,
+                                      "value": null
+                                    },
+                                    "start": 214
+                                  }
+                                ]
+                              },
+                              "start": 197
+                            },
+                            "start": 197
+                          }
+                        ]
+                      },
+                      "start": 191
+                    },
+                    "start": 191
+                  },
+                  {
+                    "end": 231,
+                    "node": {
+                      "end": 230,
+                      "escaped": false,
+                      "kind": "AtKeyword",
+                      "start": 221,
+                      "value": "supports"
+                    },
+                    "start": 221
+                  },
+                  {
+                    "end": 249,
+                    "node": {
+                      "end": 249,
+                      "node": {
+                        "pairwise": "Paren",
+                        "type": "SimpleBlock",
+                        "value": [
+                          {
+                            "end": 249,
+                            "node": {
+                              "end": 249,
+                              "node": {
+                                "name": "func",
+                                "type": "Function",
+                                "value": [
+                                  {
+                                    "end": 246,
+                                    "node": {
+                                      "end": 246,
+                                      "escaped": false,
+                                      "kind": "String",
+                                      "start": 237,
+                                      "value": "example"
+                                    },
+                                    "start": 237
+                                  },
+                                  {
+                                    "end": 248,
+                                    "node": {
+                                      "end": 247,
+                                      "escaped": false,
+                                      "kind": "Colon",
+                                      "start": 246,
+                                      "value": null
+                                    },
+                                    "start": 246
+                                  },
+                                  {
+                                    "end": 249,
+                                    "node": {
+                                      "end": 249,
+                                      "escaped": false,
+                                      "kind": "Number",
+                                      "start": 248,
+                                      "value": {
+                                        "int": true,
+                                        "signed": false,
+                                        "value": 1.0
+                                      }
+                                    },
+                                    "start": 248
+                                  }
+                                ]
+                              },
+                              "start": 232
+                            },
+                            "start": 232
+                          }
+                        ]
+                      },
+                      "start": 231
+                    },
+                    "start": 231
+                  },
+                  {
+                    "end": 250,
+                    "node": {
+                      "end": 250,
+                      "escaped": false,
+                      "kind": "RightParen",
+                      "start": 249,
+                      "value": null
+                    },
+                    "start": 249
+                  },
+                  {
+                    "end": 252,
+                    "node": {
+                      "end": 251,
+                      "escaped": false,
+                      "kind": "RightParen",
+                      "start": 250,
+                      "value": null
+                    },
+                    "start": 250
+                  },
+                  {
+                    "end": 277,
+                    "node": {
+                      "end": 277,
+                      "node": {
+                        "pairwise": "Curly",
+                        "type": "SimpleBlock",
+                        "value": [
+                          {
+                            "end": 258,
+                            "node": {
+                              "end": 257,
+                              "escaped": false,
+                              "kind": "Delim",
+                              "start": 256,
+                              "value": "*"
+                            },
+                            "start": 256
+                          },
+                          {
+                            "end": 277,
+                            "node": {
+                              "end": 277,
+                              "node": {
+                                "pairwise": "Curly",
+                                "type": "SimpleBlock",
+                                "value": [
+                                  {
+                                    "end": 270,
+                                    "node": {
+                                      "end": 270,
+                                      "escaped": false,
+                                      "kind": "Ident",
+                                      "start": 260,
+                                      "value": "background"
+                                    },
+                                    "start": 260
+                                  },
+                                  {
+                                    "end": 272,
+                                    "node": {
+                                      "end": 271,
+                                      "escaped": false,
+                                      "kind": "Colon",
+                                      "start": 270,
+                                      "value": null
+                                    },
+                                    "start": 270
+                                  },
+                                  {
+                                    "end": 275,
+                                    "node": {
+                                      "end": 275,
+                                      "escaped": false,
+                                      "kind": "Ident",
+                                      "start": 272,
+                                      "value": "red"
+                                    },
+                                    "start": 272
+                                  },
+                                  {
+                                    "end": 277,
+                                    "node": {
+                                      "end": 276,
+                                      "escaped": false,
+                                      "kind": "Semicolon",
+                                      "start": 275,
+                                      "value": null
+                                    },
+                                    "start": 275
+                                  }
+                                ]
+                              },
+                              "start": 258
+                            },
+                            "start": 258
+                          }
+                        ]
+                      },
+                      "start": 252
+                    },
+                    "start": 252
+                  },
+                  {
+                    "end": 292,
+                    "node": {
+                      "end": 291,
+                      "escaped": false,
+                      "kind": "AtKeyword",
+                      "start": 282,
+                      "value": "supports"
+                    },
+                    "start": 282
+                  },
+                  {
+                    "end": 298,
+                    "node": {
+                      "end": 298,
+                      "node": {
+                        "pairwise": "Paren",
+                        "type": "SimpleBlock",
+                        "value": [
+                          {
+                            "end": 298,
+                            "node": {
+                              "end": 298,
+                              "escaped": false,
+                              "kind": "Ident",
+                              "start": 293,
+                              "value": "--var"
+                            },
+                            "start": 293
+                          }
+                        ]
+                      },
+                      "start": 292
+                    },
+                    "start": 292
+                  },
+                  {
+                    "end": 300,
+                    "node": {
+                      "end": 299,
+                      "escaped": false,
+                      "kind": "RightParen",
+                      "start": 298,
+                      "value": null
+                    },
+                    "start": 298
+                  },
+                  {
+                    "end": 325,
+                    "node": {
+                      "end": 325,
+                      "node": {
+                        "pairwise": "Curly",
+                        "type": "SimpleBlock",
+                        "value": [
+                          {
+                            "end": 306,
+                            "node": {
+                              "end": 305,
+                              "escaped": false,
+                              "kind": "Delim",
+                              "start": 304,
+                              "value": "*"
+                            },
+                            "start": 304
+                          },
+                          {
+                            "end": 325,
+                            "node": {
+                              "end": 325,
+                              "node": {
+                                "pairwise": "Curly",
+                                "type": "SimpleBlock",
+                                "value": [
+                                  {
+                                    "end": 318,
+                                    "node": {
+                                      "end": 318,
+                                      "escaped": false,
+                                      "kind": "Ident",
+                                      "start": 308,
+                                      "value": "background"
+                                    },
+                                    "start": 308
+                                  },
+                                  {
+                                    "end": 320,
+                                    "node": {
+                                      "end": 319,
+                                      "escaped": false,
+                                      "kind": "Colon",
+                                      "start": 318,
+                                      "value": null
+                                    },
+                                    "start": 318
+                                  },
+                                  {
+                                    "end": 323,
+                                    "node": {
+                                      "end": 323,
+                                      "escaped": false,
+                                      "kind": "Ident",
+                                      "start": 320,
+                                      "value": "red"
+                                    },
+                                    "start": 320
+                                  },
+                                  {
+                                    "end": 325,
+                                    "node": {
+                                      "end": 324,
+                                      "escaped": false,
+                                      "kind": "Semicolon",
+                                      "start": 323,
+                                      "value": null
+                                    },
+                                    "start": 323
+                                  }
+                                ]
+                              },
+                              "start": 306
+                            },
+                            "start": 306
+                          }
+                        ]
+                      },
+                      "start": 300
+                    },
+                    "start": 300
+                  },
+                  {
+                    "end": 340,
+                    "node": {
+                      "end": 339,
+                      "escaped": false,
+                      "kind": "AtKeyword",
+                      "start": 330,
+                      "value": "supports"
+                    },
+                    "start": 330
+                  },
+                  {
+                    "end": 343,
+                    "node": {
+                      "end": 343,
+                      "node": {
+                        "pairwise": "Paren",
+                        "type": "SimpleBlock",
+                        "value": [
+                          {
+                            "end": 342,
+                            "node": {
+                              "end": 342,
+                              "node": {
+                                "pairwise": "Square",
+                                "type": "SimpleBlock",
+                                "value": []
+                              },
+                              "start": 341
+                            },
+                            "start": 341
+                          },
+                          {
+                            "end": 343,
+                            "node": {
+                              "end": 343,
+                              "escaped": false,
+                              "kind": "RightSquare",
+                              "start": 342,
+                              "value": null
+                            },
+                            "start": 342
+                          }
+                        ]
+                      },
+                      "start": 340
+                    },
+                    "start": 340
+                  },
+                  {
+                    "end": 345,
+                    "node": {
+                      "end": 344,
+                      "escaped": false,
+                      "kind": "RightParen",
+                      "start": 343,
+                      "value": null
+                    },
+                    "start": 343
+                  },
+                  {
+                    "end": 370,
+                    "node": {
+                      "end": 370,
+                      "node": {
+                        "pairwise": "Curly",
+                        "type": "SimpleBlock",
+                        "value": [
+                          {
+                            "end": 351,
+                            "node": {
+                              "end": 350,
+                              "escaped": false,
+                              "kind": "Delim",
+                              "start": 349,
+                              "value": "*"
+                            },
+                            "start": 349
+                          },
+                          {
+                            "end": 370,
+                            "node": {
+                              "end": 370,
+                              "node": {
+                                "pairwise": "Curly",
+                                "type": "SimpleBlock",
+                                "value": [
+                                  {
+                                    "end": 363,
+                                    "node": {
+                                      "end": 363,
+                                      "escaped": false,
+                                      "kind": "Ident",
+                                      "start": 353,
+                                      "value": "background"
+                                    },
+                                    "start": 353
+                                  },
+                                  {
+                                    "end": 365,
+                                    "node": {
+                                      "end": 364,
+                                      "escaped": false,
+                                      "kind": "Colon",
+                                      "start": 363,
+                                      "value": null
+                                    },
+                                    "start": 363
+                                  },
+                                  {
+                                    "end": 368,
+                                    "node": {
+                                      "end": 368,
+                                      "escaped": false,
+                                      "kind": "Ident",
+                                      "start": 365,
+                                      "value": "red"
+                                    },
+                                    "start": 365
+                                  },
+                                  {
+                                    "end": 370,
+                                    "node": {
+                                      "end": 369,
+                                      "escaped": false,
+                                      "kind": "Semicolon",
+                                      "start": 368,
+                                      "value": null
+                                    },
+                                    "start": 368
+                                  }
+                                ]
+                              },
+                              "start": 351
+                            },
+                            "start": 351
+                          }
+                        ]
+                      },
+                      "start": 345
+                    },
+                    "start": 345
+                  },
+                  {
+                    "end": 385,
+                    "node": {
+                      "end": 384,
+                      "escaped": false,
+                      "kind": "AtKeyword",
+                      "start": 375,
+                      "value": "supports"
+                    },
+                    "start": 375
+                  },
+                  {
+                    "end": 398,
+                    "node": {
+                      "end": 398,
+                      "node": {
+                        "pairwise": "Paren",
+                        "type": "SimpleBlock",
+                        "value": [
+                          {
+                            "end": 397,
+                            "node": {
+                              "end": 397,
+                              "node": {
+                                "pairwise": "Square",
+                                "type": "SimpleBlock",
+                                "value": [
+                                  {
+                                    "end": 392,
+                                    "node": {
+                                      "end": 392,
+                                      "escaped": false,
+                                      "kind": "Ident",
+                                      "start": 387,
+                                      "value": "color"
+                                    },
+                                    "start": 387
+                                  },
+                                  {
+                                    "end": 394,
+                                    "node": {
+                                      "end": 393,
+                                      "escaped": false,
+                                      "kind": "Colon",
+                                      "start": 392,
+                                      "value": null
+                                    },
+                                    "start": 392
+                                  },
+                                  {
+                                    "end": 397,
+                                    "node": {
+                                      "end": 397,
+                                      "escaped": false,
+                                      "kind": "Ident",
+                                      "start": 394,
+                                      "value": "red"
+                                    },
+                                    "start": 394
+                                  }
+                                ]
+                              },
+                              "start": 386
+                            },
+                            "start": 386
+                          },
+                          {
+                            "end": 398,
+                            "node": {
+                              "end": 398,
+                              "escaped": false,
+                              "kind": "RightSquare",
+                              "start": 397,
+                              "value": null
+                            },
+                            "start": 397
+                          }
+                        ]
+                      },
+                      "start": 385
+                    },
+                    "start": 385
+                  },
+                  {
+                    "end": 400,
+                    "node": {
+                      "end": 399,
+                      "escaped": false,
+                      "kind": "RightParen",
+                      "start": 398,
+                      "value": null
+                    },
+                    "start": 398
+                  },
+                  {
+                    "end": 425,
+                    "node": {
+                      "end": 425,
+                      "node": {
+                        "pairwise": "Curly",
+                        "type": "SimpleBlock",
+                        "value": [
+                          {
+                            "end": 406,
+                            "node": {
+                              "end": 405,
+                              "escaped": false,
+                              "kind": "Delim",
+                              "start": 404,
+                              "value": "*"
+                            },
+                            "start": 404
+                          },
+                          {
+                            "end": 425,
+                            "node": {
+                              "end": 425,
+                              "node": {
+                                "pairwise": "Curly",
+                                "type": "SimpleBlock",
+                                "value": [
+                                  {
+                                    "end": 418,
+                                    "node": {
+                                      "end": 418,
+                                      "escaped": false,
+                                      "kind": "Ident",
+                                      "start": 408,
+                                      "value": "background"
+                                    },
+                                    "start": 408
+                                  },
+                                  {
+                                    "end": 420,
+                                    "node": {
+                                      "end": 419,
+                                      "escaped": false,
+                                      "kind": "Colon",
+                                      "start": 418,
+                                      "value": null
+                                    },
+                                    "start": 418
+                                  },
+                                  {
+                                    "end": 423,
+                                    "node": {
+                                      "end": 423,
+                                      "escaped": false,
+                                      "kind": "Ident",
+                                      "start": 420,
+                                      "value": "red"
+                                    },
+                                    "start": 420
+                                  },
+                                  {
+                                    "end": 425,
+                                    "node": {
+                                      "end": 424,
+                                      "escaped": false,
+                                      "kind": "Semicolon",
+                                      "start": 423,
+                                      "value": null
+                                    },
+                                    "start": 423
+                                  }
+                                ]
+                              },
+                              "start": 406
+                            },
+                            "start": 406
+                          }
+                        ]
+                      },
+                      "start": 400
+                    },
+                    "start": 400
+                  },
+                  {
+                    "end": 440,
+                    "node": {
+                      "end": 439,
+                      "escaped": false,
+                      "kind": "AtKeyword",
+                      "start": 430,
+                      "value": "supports"
+                    },
+                    "start": 430
+                  },
+                  {
+                    "end": 471,
+                    "node": {
+                      "end": 471,
+                      "node": {
+                        "pairwise": "Paren",
+                        "type": "SimpleBlock",
+                        "value": [
+                          {
+                            "end": 471,
+                            "node": {
+                              "end": 471,
+                              "node": {
+                                "pairwise": "Square",
+                                "type": "SimpleBlock",
+                                "value": [
+                                  {
+                                    "end": 471,
+                                    "node": {
+                                      "end": 471,
+                                      "node": {
+                                        "pairwise": "Square",
+                                        "type": "SimpleBlock",
+                                        "value": [
+                                          {
+                                            "end": 471,
+                                            "node": {
+                                              "end": 471,
+                                              "node": {
+                                                "pairwise": "Square",
+                                                "type": "SimpleBlock",
+                                                "value": [
+                                                  {
+                                                    "end": 471,
+                                                    "node": {
+                                                      "end": 471,
+                                                      "node": {
+                                                        "pairwise": "Square",
+                                                        "type": "SimpleBlock",
+                                                        "value": [
+                                                          {
+                                                            "end": 471,
+                                                            "node": {
+                                                              "end": 471,
+                                                              "node": {
+                                                                "pairwise": "Square",
+                                                                "type": "SimpleBlock",
+                                                                "value": [
+                                                                  {
+                                                                    "end": 471,
+                                                                    "node": {
+                                                                      "end": 471,
+                                                                      "node": {
+                                                                        "pairwise": "Curly",
+                                                                        "type": "SimpleBlock",
+                                                                        "value": [
+                                                                          {
+                                                                            "end": 469,
+                                                                            "node": {
+                                                                              "end": 469,
+                                                                              "node": {
+                                                                                "name": "--func",
+                                                                                "type": "Function",
+                                                                                "value": [
+                                                                                  {
+                                                                                    "end": 460,
+                                                                                    "node": {
+                                                                                      "end": 460,
+                                                                                      "escaped": false,
+                                                                                      "kind": "Ident",
+                                                                                      "start": 455,
+                                                                                      "value": "color"
+                                                                                    },
+                                                                                    "start": 455
+                                                                                  },
+                                                                                  {
+                                                                                    "end": 462,
+                                                                                    "node": {
+                                                                                      "end": 461,
+                                                                                      "escaped": false,
+                                                                                      "kind": "Colon",
+                                                                                      "start": 460,
+                                                                                      "value": null
+                                                                                    },
+                                                                                    "start": 460
+                                                                                  },
+                                                                                  {
+                                                                                    "end": 468,
+                                                                                    "node": {
+                                                                                      "end": 468,
+                                                                                      "node": {
+                                                                                        "pairwise": "Curly",
+                                                                                        "type": "SimpleBlock",
+                                                                                        "value": [
+                                                                                          {
+                                                                                            "end": 468,
+                                                                                            "node": {
+                                                                                              "end": 467,
+                                                                                              "escaped": false,
+                                                                                              "kind": "Ident",
+                                                                                              "start": 464,
+                                                                                              "value": "red"
+                                                                                            },
+                                                                                            "start": 464
+                                                                                          }
+                                                                                        ]
+                                                                                      },
+                                                                                      "start": 462
+                                                                                    },
+                                                                                    "start": 462
+                                                                                  }
+                                                                                ]
+                                                                              },
+                                                                              "start": 448
+                                                                            },
+                                                                            "start": 448
+                                                                          },
+                                                                          {
+                                                                            "end": 471,
+                                                                            "node": {
+                                                                              "end": 470,
+                                                                              "escaped": false,
+                                                                              "kind": "RightParen",
+                                                                              "start": 469,
+                                                                              "value": null
+                                                                            },
+                                                                            "start": 469
+                                                                          }
+                                                                        ]
+                                                                      },
+                                                                      "start": 446
+                                                                    },
+                                                                    "start": 446
+                                                                  }
+                                                                ]
+                                                              },
+                                                              "start": 445
+                                                            },
+                                                            "start": 445
+                                                          }
+                                                        ]
+                                                      },
+                                                      "start": 444
+                                                    },
+                                                    "start": 444
+                                                  }
+                                                ]
+                                              },
+                                              "start": 443
+                                            },
+                                            "start": 443
+                                          }
+                                        ]
+                                      },
+                                      "start": 442
+                                    },
+                                    "start": 442
+                                  }
+                                ]
+                              },
+                              "start": 441
+                            },
+                            "start": 441
+                          }
+                        ]
+                      },
+                      "start": 440
+                    },
+                    "start": 440
+                  },
+                  {
+                    "end": 473,
+                    "node": {
+                      "end": 473,
+                      "escaped": false,
+                      "kind": "RightSquare",
+                      "start": 472,
+                      "value": null
+                    },
+                    "start": 472
+                  },
+                  {
+                    "end": 474,
+                    "node": {
+                      "end": 474,
+                      "escaped": false,
+                      "kind": "RightSquare",
+                      "start": 473,
+                      "value": null
+                    },
+                    "start": 473
+                  },
+                  {
+                    "end": 475,
+                    "node": {
+                      "end": 475,
+                      "escaped": false,
+                      "kind": "RightSquare",
+                      "start": 474,
+                      "value": null
+                    },
+                    "start": 474
+                  },
+                  {
+                    "end": 476,
+                    "node": {
+                      "end": 476,
+                      "escaped": false,
+                      "kind": "RightSquare",
+                      "start": 475,
+                      "value": null
+                    },
+                    "start": 475
+                  },
+                  {
+                    "end": 477,
+                    "node": {
+                      "end": 477,
+                      "escaped": false,
+                      "kind": "RightSquare",
+                      "start": 476,
+                      "value": null
+                    },
+                    "start": 476
+                  },
+                  {
+                    "end": 479,
+                    "node": {
+                      "end": 478,
+                      "escaped": false,
+                      "kind": "RightParen",
+                      "start": 477,
+                      "value": null
+                    },
+                    "start": 477
+                  },
+                  {
+                    "end": 504,
+                    "node": {
+                      "end": 504,
+                      "node": {
+                        "pairwise": "Curly",
+                        "type": "SimpleBlock",
+                        "value": [
+                          {
+                            "end": 485,
+                            "node": {
+                              "end": 484,
+                              "escaped": false,
+                              "kind": "Delim",
+                              "start": 483,
+                              "value": "*"
+                            },
+                            "start": 483
+                          },
+                          {
+                            "end": 504,
+                            "node": {
+                              "end": 504,
+                              "node": {
+                                "pairwise": "Curly",
+                                "type": "SimpleBlock",
+                                "value": [
+                                  {
+                                    "end": 497,
+                                    "node": {
+                                      "end": 497,
+                                      "escaped": false,
+                                      "kind": "Ident",
+                                      "start": 487,
+                                      "value": "background"
+                                    },
+                                    "start": 487
+                                  },
+                                  {
+                                    "end": 499,
+                                    "node": {
+                                      "end": 498,
+                                      "escaped": false,
+                                      "kind": "Colon",
+                                      "start": 497,
+                                      "value": null
+                                    },
+                                    "start": 497
+                                  },
+                                  {
+                                    "end": 502,
+                                    "node": {
+                                      "end": 502,
+                                      "escaped": false,
+                                      "kind": "Ident",
+                                      "start": 499,
+                                      "value": "red"
+                                    },
+                                    "start": 499
+                                  },
+                                  {
+                                    "end": 504,
+                                    "node": {
+                                      "end": 503,
+                                      "escaped": false,
+                                      "kind": "Semicolon",
+                                      "start": 502,
+                                      "value": null
+                                    },
+                                    "start": 502
+                                  }
+                                ]
+                              },
+                              "start": 485
+                            },
+                            "start": 485
+                          }
+                        ]
+                      },
+                      "start": 479
+                    },
+                    "start": 479
                   }
                 ]
-              }
-            ]
-          }
-        ]
-      },
-      "properties": [
-        {
-          "end": 505,
-          "important": false,
-          "name": "",
-          "start": 483,
-          "type": "UnknownDeclaration",
-          "value": {
-            "end": 505,
-            "start": 483,
-            "value": [
-              {
-                "end": 484,
-                "escaped": false,
-                "kind": "Delim",
-                "start": 483,
-                "value": "*"
               },
-              {
-                "end": 505,
-                "start": 485,
-                "type": "SimpleBlock",
-                "value": [
-                  {
-                    "end": 497,
-                    "escaped": false,
-                    "kind": "Ident",
-                    "start": 487,
-                    "value": "background"
-                  },
-                  {
-                    "end": 498,
-                    "escaped": false,
-                    "kind": "Colon",
-                    "start": 497,
-                    "value": null
-                  },
-                  {
-                    "end": 502,
-                    "escaped": false,
-                    "kind": "Ident",
-                    "start": 499,
-                    "value": "red"
-                  },
-                  {
-                    "end": 503,
-                    "escaped": false,
-                    "kind": "Semicolon",
-                    "start": 502,
-                    "value": null
-                  }
-                ]
-              }
-            ]
-          }
-        }
-      ],
-      "rules": [],
-      "start": 430,
-      "type": "UnknownAtRule"
-    }
-  ],
-  "start": 0,
-  "type": "Stylesheet"
+              "start": 10
+            },
+            "properties": [],
+            "rules": [],
+            "type": "UnknownAtRule"
+          },
+          "start": 0
+        },
+        "start": 0
+      }
+    ],
+    "type": "Stylesheet"
+  },
+  "start": 0
 }

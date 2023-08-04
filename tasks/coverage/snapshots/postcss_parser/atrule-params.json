@@ -1,36 +1,80 @@
 {
   "end": 70,
-  "rules": [
-    {
-      "end": 69,
-      "name": "-moz-document",
-      "prelude": {
-        "end": 58,
-        "start": 38,
-        "value": [
-          {
-            "end": 58,
-            "name": "url",
-            "start": 38,
-            "type": "Function",
-            "value": [
-              {
-                "end": 57,
-                "escaped": false,
-                "kind": "String",
-                "start": 42,
-                "value": "example.com/{"
-              }
-            ]
-          }
-        ]
-      },
-      "properties": [],
-      "rules": [],
-      "start": 0,
-      "type": "UnknownAtRule"
-    }
-  ],
-  "start": 0,
-  "type": "Stylesheet"
+  "node": {
+    "rules": [
+      {
+        "end": 70,
+        "node": {
+          "end": 70,
+          "node": {
+            "name": "-moz-document",
+            "prelude": {
+              "end": 70,
+              "node": {
+                "value": [
+                  {
+                    "end": 57,
+                    "node": {
+                      "end": 57,
+                      "node": {
+                        "name": "url",
+                        "type": "Function",
+                        "value": [
+                          {
+                            "end": 57,
+                            "node": {
+                              "end": 57,
+                              "escaped": false,
+                              "kind": "String",
+                              "start": 42,
+                              "value": "example.com/{"
+                            },
+                            "start": 42
+                          }
+                        ]
+                      },
+                      "start": 38
+                    },
+                    "start": 38
+                  },
+                  {
+                    "end": 67,
+                    "node": {
+                      "end": 58,
+                      "escaped": false,
+                      "kind": "RightParen",
+                      "start": 57,
+                      "value": null
+                    },
+                    "start": 57
+                  },
+                  {
+                    "end": 68,
+                    "node": {
+                      "end": 68,
+                      "node": {
+                        "pairwise": "Curly",
+                        "type": "SimpleBlock",
+                        "value": []
+                      },
+                      "start": 67
+                    },
+                    "start": 67
+                  }
+                ]
+              },
+              "start": 38
+            },
+            "properties": [],
+            "rules": [],
+            "type": "UnknownAtRule"
+          },
+          "start": 0
+        },
+        "start": 0
+      }
+    ],
+    "type": "Stylesheet"
+  },
+  "start": 0
 }

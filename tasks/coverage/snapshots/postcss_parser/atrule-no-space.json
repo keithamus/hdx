@@ -1,28 +1,42 @@
 {
   "end": 18,
-  "rules": [
-    {
-      "end": 18,
-      "name": "import",
-      "prelude": {
-        "end": 17,
-        "start": 7,
-        "value": [
-          {
-            "end": 17,
-            "escaped": false,
-            "kind": "String",
-            "start": 7,
-            "value": "test.css"
-          }
-        ]
-      },
-      "properties": [],
-      "rules": [],
-      "start": 0,
-      "type": "UnknownAtRule"
-    }
-  ],
-  "start": 0,
-  "type": "Stylesheet"
+  "node": {
+    "rules": [
+      {
+        "end": 18,
+        "node": {
+          "end": 18,
+          "node": {
+            "name": "import",
+            "prelude": {
+              "end": 18,
+              "node": {
+                "value": [
+                  {
+                    "end": 18,
+                    "node": {
+                      "end": 17,
+                      "escaped": false,
+                      "kind": "String",
+                      "start": 7,
+                      "value": "test.css"
+                    },
+                    "start": 7
+                  }
+                ]
+              },
+              "start": 7
+            },
+            "properties": [],
+            "rules": [],
+            "type": "UnknownAtRule"
+          },
+          "start": 0
+        },
+        "start": 0
+      }
+    ],
+    "type": "Stylesheet"
+  },
+  "start": 0
 }

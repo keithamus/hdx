@@ -1,27 +1,44 @@
 {
   "end": 9,
-  "rules": [
-    {
-      "end": 8,
-      "properties": [],
-      "rules": [],
-      "selectors": [
-        {
-          "components": [
-            {
-              "type": "Type",
-              "value": "a"
-            }
-          ],
-          "end": 5,
-          "start": 0,
-          "type": "Selector"
-        }
-      ],
-      "start": 0,
-      "type": "StyleRule"
-    }
-  ],
-  "start": 0,
-  "type": "Stylesheet"
+  "node": {
+    "rules": [
+      {
+        "end": 8,
+        "node": {
+          "properties": [],
+          "rules": [],
+          "selectors": {
+            "end": 5,
+            "node": {
+              "children": [
+                {
+                  "end": 5,
+                  "node": {
+                    "components": [
+                      {
+                        "end": 5,
+                        "node": {
+                          "type": "Type",
+                          "value": "a"
+                        },
+                        "start": 0
+                      }
+                    ],
+                    "type": "Selector"
+                  },
+                  "start": 0
+                }
+              ],
+              "type": "SelectorSet"
+            },
+            "start": 0
+          },
+          "type": "StyleRule"
+        },
+        "start": 0
+      }
+    ],
+    "type": "Stylesheet"
+  },
+  "start": 0
 }

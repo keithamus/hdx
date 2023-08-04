@@ -1,19 +1,89 @@
 {
   "end": 43,
-  "rules": [
-    {
-      "end": 23,
-      "start": 0,
-      "str": "",
-      "type": "QualifiedRule"
-    },
-    {
-      "end": 43,
-      "start": 26,
-      "str": "",
-      "type": "QualifiedRule"
-    }
-  ],
-  "start": 0,
-  "type": "Stylesheet"
+  "node": {
+    "rules": [
+      {
+        "end": 43,
+        "node": {
+          "end": 43,
+          "node": {
+            "name": "media",
+            "prelude": {
+              "end": 43,
+              "node": {
+                "value": [
+                  {
+                    "end": 14,
+                    "node": {
+                      "end": 13,
+                      "escaped": false,
+                      "kind": "Ident",
+                      "start": 7,
+                      "value": "screen"
+                    },
+                    "start": 7
+                  },
+                  {
+                    "end": 23,
+                    "node": {
+                      "end": 23,
+                      "node": {
+                        "pairwise": "Curly",
+                        "type": "SimpleBlock",
+                        "value": [
+                          {
+                            "end": 23,
+                            "node": {
+                              "end": 23,
+                              "escaped": false,
+                              "kind": "AtKeyword",
+                              "start": 15,
+                              "value": "content"
+                            },
+                            "start": 15
+                          }
+                        ]
+                      },
+                      "start": 14
+                    },
+                    "start": 14
+                  },
+                  {
+                    "end": 35,
+                    "node": {
+                      "end": 34,
+                      "escaped": false,
+                      "kind": "AtKeyword",
+                      "start": 26,
+                      "value": "charset"
+                    },
+                    "start": 26
+                  },
+                  {
+                    "end": 43,
+                    "node": {
+                      "end": 42,
+                      "escaped": false,
+                      "kind": "String",
+                      "start": 35,
+                      "value": "UTF-8"
+                    },
+                    "start": 35
+                  }
+                ]
+              },
+              "start": 7
+            },
+            "properties": [],
+            "rules": [],
+            "type": "UnknownAtRule"
+          },
+          "start": 0
+        },
+        "start": 0
+      }
+    ],
+    "type": "Stylesheet"
+  },
+  "start": 0
 }

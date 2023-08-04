@@ -1,15 +1,23 @@
 {
   "end": 9,
-  "rules": [
-    {
-      "end": 8,
-      "properties": [],
-      "rules": [],
-      "selectors": null,
-      "start": 0,
-      "type": "PageRule"
-    }
-  ],
-  "start": 0,
-  "type": "Stylesheet"
+  "node": {
+    "rules": [
+      {
+        "end": 9,
+        "node": {
+          "end": 8,
+          "node": {
+            "properties": [],
+            "rules": [],
+            "selectors": null,
+            "type": "PageRule"
+          },
+          "start": 0
+        },
+        "start": 0
+      }
+    ],
+    "type": "Stylesheet"
+  },
+  "start": 0
 }
