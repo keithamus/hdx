@@ -77,13 +77,6 @@ impl<'a> Parse<'a> for TimeOrAuto {
 	}
 }
 
-// TODO:
-impl<'a> Parse<'a> for LineWidth {
-	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
-		Err(diagnostics::Unimplemented(parser.cur().span))?
-	}
-}
-
 impl<'a> Parse<'a> for NoNonGlobalValuesAllowed {
 	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
 		Err(diagnostics::Unexpected(parser.cur().kind, parser.cur().span))?

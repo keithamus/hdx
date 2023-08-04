@@ -218,7 +218,7 @@ properties! {
 	// ! background-position redefined in css-backgrounds-4
 	atom!("background-repeat") => BackgroundRepeat<Expr<'a, Todo>>,
 	atom!("background-size") => BackgroundSize<Expr<'a, Todo>>,
-	atom!("border") => Border<Expr<'a, Todo>> shorthand=true,
+	atom!("border") => Border<BorderShorthand<'a>> shorthand=true,
 	atom!("border-bottom") => BorderBottom<Expr<'a, Todo>> shorthand=true,
 	atom!("border-bottom-color") => BorderBottomColor<Expr<'a, ColorValue<'a>>> initial=Expr::Literal(Spanned::dummy(ColorValue::CurrentColor)),
 	atom!("border-bottom-left-radius") => BorderBottomLeftRadius<Expr<'a, Todo>>,
