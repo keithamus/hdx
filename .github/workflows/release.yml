@@ -117,4 +117,4 @@ jobs:
       - run: npm pub --provenance --dist-tag=$DIST_TAG --access=public
         working-directory: ./packages/hdx
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
