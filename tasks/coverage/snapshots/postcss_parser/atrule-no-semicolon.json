@@ -13,7 +13,7 @@
               "node": {
                 "value": [
                   {
-                    "end": 14,
+                    "end": 13,
                     "node": {
                       "end": 13,
                       "escaped": false,
@@ -49,7 +49,7 @@
                     "start": 14
                   },
                   {
-                    "end": 35,
+                    "end": 34,
                     "node": {
                       "end": 34,
                       "escaped": false,
@@ -60,7 +60,7 @@
                     "start": 26
                   },
                   {
-                    "end": 43,
+                    "end": 42,
                     "node": {
                       "end": 42,
                       "escaped": false,

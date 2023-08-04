@@ -16,7 +16,7 @@
                   "node": {
                     "components": [
                       {
-                        "end": 5,
+                        "end": 1,
                         "node": {
                           "type": "Type",
                           "value": "a"

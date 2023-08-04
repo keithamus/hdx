@@ -34,11 +34,11 @@
                 "end": 138,
                 "node": {
                   "important": false,
-                  "name": "",
+                  "name": "border-radius",
                   "type": "UnknownDeclaration",
                   "value": [
                     {
-                      "end": 112,
+                      "end": 117,
                       "node": {
                         "end": 117,
                         "escaped": false,
@@ -54,34 +54,7 @@
                       "start": 114
                     },
                     {
-                      "end": 114,
-                      "node": {
-                        "end": 113,
-                        "escaped": false,
-                        "kind": "Colon",
-                        "start": 112,
-                        "value": null
-                      },
-                      "start": 112
-                    },
-                    {
-                      "end": 118,
-                      "node": {
-                        "end": 117,
-                        "escaped": false,
-                        "kind": "Dimension",
-                        "start": 114,
-                        "value": {
-                          "int": true,
-                          "signed": false,
-                          "unit": "px",
-                          "value": 3.0
-                        }
-                      },
-                      "start": 114
-                    },
-                    {
-                      "end": 120,
+                      "end": 119,
                       "node": {
                         "end": 119,
                         "escaped": false,
@@ -92,7 +65,7 @@
                       "start": 118
                     },
                     {
-                      "end": 138,
+                      "end": 123,
                       "node": {
                         "end": 123,
                         "escaped": false,
@@ -109,12 +82,24 @@
                     }
                   ],
                   "value_like": {
-                    "end": 4294967295,
-                    "node": null,
-                    "start": 4294967295
+                    "end": 118,
+                    "node": {
+                      "end": 118,
+                      "node": {
+                        "Literal": {
+                          "end": 118,
+                          "node": {
+                            "Px": 3.0
+                          },
+                          "start": 114
+                        }
+                      },
+                      "start": 114
+                    },
+                    "start": 114
                   }
                 },
-                "start": 114
+                "start": 99
               },
               "start": 99
             }
@@ -218,9 +203,20 @@
                 "end": 230,
                 "node": {
                   "important": false,
-                  "name": "",
+                  "name": "color",
                   "type": "UnknownDeclaration",
                   "value": [
+                    {
+                      "end": 212,
+                      "node": {
+                        "end": 212,
+                        "escaped": false,
+                        "kind": "Ident",
+                        "start": 209,
+                        "value": "var"
+                      },
+                      "start": 209
+                    },
                     {
                       "end": 225,
                       "node": {
@@ -230,51 +226,15 @@
                           "type": "SimpleBlock",
                           "value": [
                             {
-                              "end": 209,
-                              "node": {
-                                "end": 208,
-                                "escaped": false,
-                                "kind": "Colon",
-                                "start": 207,
-                                "value": null
-                              },
-                              "start": 207
-                            },
-                            {
-                              "end": 216,
-                              "node": {
-                                "end": 212,
-                                "escaped": false,
-                                "kind": "Ident",
-                                "start": 209,
-                                "value": "var"
-                              },
-                              "start": 209
-                            },
-                            {
                               "end": 225,
                               "node": {
                                 "end": 225,
-                                "node": {
-                                  "pairwise": "Paren",
-                                  "type": "SimpleBlock",
-                                  "value": [
-                                    {
-                                      "end": 225,
-                                      "node": {
-                                        "end": 225,
-                                        "escaped": false,
-                                        "kind": "Ident",
-                                        "start": 217,
-                                        "value": "--broken"
-                                      },
-                                      "start": 217
-                                    }
-                                  ]
-                                },
-                                "start": 216
+                                "escaped": false,
+                                "kind": "Ident",
+                                "start": 217,
+                                "value": "--broken"
                               },
-                              "start": 216
+                              "start": 217
                             }
                           ]
                         },
@@ -295,12 +255,32 @@
                     }
                   ],
                   "value_like": {
-                    "end": 4294967295,
-                    "node": null,
-                    "start": 4294967295
+                    "end": 216,
+                    "node": {
+                      "end": 216,
+                      "node": {
+                        "Values": [
+                          {
+                            "end": 216,
+                            "node": {
+                              "Literal": {
+                                "end": 216,
+                                "node": {
+                                  "Named": "var"
+                                },
+                                "start": 209
+                              }
+                            },
+                            "start": 209
+                          }
+                        ]
+                      },
+                      "start": 209
+                    },
+                    "start": 209
                   }
                 },
-                "start": 216
+                "start": 202
               },
               "start": 202
             },
