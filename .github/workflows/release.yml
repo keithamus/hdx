@@ -118,7 +118,7 @@ jobs:
         working-directory: ./packages/hdx
       - run: npm version ${TAG_NAME} --no-git-tag-version
         working-directory: ./packages/hdx
-      - run: npm whoami; npm pub --provenance --dist-tag=$DIST_TAG --access=public
+      - run: npm whoami; npm pub --provenance --tag $DIST_TAG --access public
         working-directory: ./packages/hdx
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
