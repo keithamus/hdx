@@ -7,7 +7,6 @@ use std::{fmt::Result, ops::Deref};
 use hdx_ast::{
 	css::{
 		component_values::{ComponentValue, Function, SimpleBlock},
-		properties::Custom,
 		rules::{Charset, PageMarginRule, PageRule, PageSelector, PageSelectorList},
 		stylesheet::{AtRule, StyleRule, Stylesheet, StylesheetRule},
 		unknown::{UnknownAtRule, UnknownDeclaration, UnknownPrelude, UnknownRule},
@@ -15,7 +14,7 @@ use hdx_ast::{
 	},
 	Spanned,
 };
-use hdx_atom::{atom, Atomizable};
+use hdx_atom::Atomizable;
 use hdx_lexer::{Kind, PairWise, Token};
 use oxc_allocator::Box;
 
@@ -247,36 +246,6 @@ impl<'a> WriteCss<'a> for UnknownPrelude<'a> {
 }
 
 impl<'a> WriteCss<'a> for UnknownDeclaration<'a> {
-	fn write_css<W: CssWriter>(&self, sink: &mut W) -> Result {
-		sink.write_str(self.name.as_ref())?;
-		sink.write_char(':')?;
-		sink.write_trivia_char(' ')?;
-		match &self.value_like {
-			Spanned { span: _, node: ValueLike::Color(color) } => color.write_css(sink)?,
-			Spanned { span: _, node: ValueLike::Length(length) } => length.write_css(sink)?,
-			Spanned { span: _, node: ValueLike::LengthPercentage(length) } => {
-				length.write_css(sink)?
-			}
-			Spanned { span: _, node: ValueLike::FontFamily(font) } => font.write_css(sink)?,
-			_ => {
-				let mut values = self.value.iter().peekable();
-				while let Some(value) = values.next() {
-					value.write_css(sink)?;
-					if values.peek().is_some() {
-						sink.write_char(' ')?;
-					}
-				}
-			}
-		}
-		if self.important {
-			sink.write_trivia_char(' ')?;
-			sink.write_str("!important")?;
-		}
-		Ok(())
-	}
-}
-
-impl<'a> WriteCss<'a> for Custom<'a> {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> Result {
 		sink.write_str(self.name.as_ref())?;
 		sink.write_char(':')?;

@@ -1,5 +1,7 @@
 /// Properties
-use hdx_ast::css::{properties::*, unknown::UnknownDeclaration, values::*};
+use hdx_ast::css::{
+	component_values::ComponentValue, properties::*, unknown::UnknownDeclaration, values::*,
+};
 use miette::Result;
 
 use crate::{atom, diagnostics, Atomizable, Kind, Parse, Parser, Spanned, Token};
@@ -7,28 +9,30 @@ use crate::{atom, diagnostics, Atomizable, Kind, Parse, Parser, Spanned, Token};
 impl<'a> Parse<'a> for Custom<'a> {
 	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
 		let span = parser.cur().span;
-		if !parser.at(Kind::Ident) {
-			todo!()
-		}
+		let mut important = false;
 		let name = parser.expect_ident_cased()?;
-		match parser.cur().kind {
-			Kind::Colon => {
-				parser.advance();
-			}
-			_ => {
-				todo!();
-			}
-		}
+		parser.expect(Kind::Colon)?;
 		let checkpoint = parser.checkpoint();
 		let value_span = parser.cur().span;
 		let value_like = ValueLike::parse(parser)
 			.unwrap_or(ValueLike::Unknown.spanned(value_span.up_to(&parser.cur().span)));
 		parser.rewind(checkpoint);
-		let value = parser.parse_component_values(Kind::Semicolon, true)?;
+		let mut value = parser.parse_component_values(Kind::Semicolon, true)?;
 		if parser.at(Kind::Semicolon) {
 			parser.advance();
 		}
-		Ok(Self { name, value_like, value: parser.boxup(value), important: false }
+		if let Some(Spanned { node: ComponentValue::Token(tok), .. }) = value.last() {
+			if tok.kind == Kind::Ident && tok.as_atom_lower().unwrap() == atom!("important") {
+				let len = value.len();
+				if let Some(Spanned { node: ComponentValue::Token(tok), .. }) = value.get(len - 2) {
+					if tok.kind == Kind::Delim && tok.value.as_char().unwrap() == '!' {
+						value.truncate(len - 2);
+						important = true
+					}
+				}
+			}
+		}
+		Ok(Self { name, value_like, value: parser.boxup(value), important }
 			.spanned(span.up_to(&parser.cur().span)))
 	}
 }
