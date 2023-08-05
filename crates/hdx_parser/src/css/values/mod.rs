@@ -15,6 +15,7 @@ pub mod page_floats;
 pub mod shorthand;
 pub mod size_adjust;
 pub mod sizing;
+pub mod text;
 pub mod text_decor;
 pub mod ui;
 
@@ -63,7 +64,9 @@ parse_for_enums! {
 	TextAlignValue,
 	TextDecorationSkipInkValue,
 	TextDecorationStyleValue,
+	TextWrapValue,
 	VisibilityValue,
+	WhiteSpaceCollapseValue,
 }
 
 // TODO:

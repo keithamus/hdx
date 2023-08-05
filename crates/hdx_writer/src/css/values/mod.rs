@@ -15,6 +15,7 @@ mod page_floats;
 mod shorthand;
 mod size_adjust;
 mod sizing;
+mod text;
 mod text_decor;
 mod ui;
 
@@ -60,7 +61,9 @@ write_atomizable_values! {
 	TextAlignValue,
 	TextDecorationSkipInkValue,
 	TextDecorationStyleValue,
+	TextWrapValue,
 	VisibilityValue,
+	WhiteSpaceCollapseValue,
 }
 
 impl<'a> WriteCss<'a> for TimeOrAuto {
