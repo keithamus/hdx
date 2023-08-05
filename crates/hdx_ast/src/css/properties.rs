@@ -372,7 +372,7 @@ properties! {
 	atom!("bookmark-level") => BookmarkLevel<Expr<'a, Todo>>,
 	atom!("bookmark-state") => BookmarkState<Expr<'a, Todo>>,
 	atom!("content") => Content<ContentsValue<'a>>,
-	atom!("quotes") => Quotes<Expr<'a, Todo>> inherits=true,
+	atom!("quotes") => Quotes<Expr<'a, QuotesValue<'a>>> inherits=true,
 	atom!("string-set") => StringSet<Expr<'a, Todo>> inherits=true,
 
 	// https://drafts.csswg.org/css-counter-styles-3/#property-index

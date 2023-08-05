@@ -1,10 +1,12 @@
-use std::{fmt::Result, ops::Deref};
+use std::ops::Deref;
+
+mod content;
 
 use hdx_ast::{css::values::*, Spanned};
 use hdx_atom::Atomizable;
 use hdx_syntax::identifier::is_ident_str;
 
-use crate::{CssWriter, WriteCss};
+use crate::{CssWriter, Result, WriteCss};
 
 macro_rules! write_atomizable_values {
     {$( $prop: ident, )+} => {
@@ -343,17 +345,6 @@ impl<'a, T: WriteCss<'a>> WriteCss<'a> for DoubleShorthand<'a, T> {
 impl<'a> WriteCss<'a> for NoNonGlobalValuesAllowed {
 	fn write_css<W: CssWriter>(&self, _sink: &mut W) -> Result {
 		Ok(())
-	}
-}
-
-impl<'a> WriteCss<'a> for ContentsValue<'a> {
-	fn write_css<W: CssWriter>(&self, sink: &mut W) -> Result {
-		match self {
-			ContentsValue::Normal => sink.write_str("normal"),
-			ContentsValue::None => sink.write_str("none"),
-			ContentsValue::Replacement(replacement) => replacement.write_css(sink),
-			ContentsValue::List(list) => list.write_css(sink),
-		}
 	}
 }
 

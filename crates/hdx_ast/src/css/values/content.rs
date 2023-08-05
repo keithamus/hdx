@@ -72,9 +72,10 @@ pub enum Leader {
 }
 
 // https://drafts.csswg.org/css-content-3/#leader-function
-#[derive(Debug, PartialEq, Hash)]
+#[derive(Default, Debug, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde())]
 pub enum QuotesValue<'a> {
+	#[default]
 	Auto,
 	None,
 	Custom(Vec<'a, (Atom, Atom)>),

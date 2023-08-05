@@ -1,4 +1,4 @@
-use std::fmt::{Result, Write};
+pub(crate) use std::fmt::{Result, Write};
 
 mod css;
 
