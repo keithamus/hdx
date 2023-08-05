@@ -5,11 +5,11 @@ use crate::{
 	atom,
 	css::{
 		properties::Property,
-		rules::page::PageRule,
+		rules::{page::PageRule, Charset},
 		selector::Selector,
 		unknown::{UnknownAtRule, UnknownRule},
 	},
-	Atom, Box, Spanned, Vec,
+	Atom, Atomizable, Box, Spanned, Vec,
 };
 
 #[derive(Debug, PartialEq, Hash)]
@@ -29,24 +29,16 @@ pub enum StylesheetRule<'a> {
 #[derive(Debug, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde(untagged))]
 pub enum AtRule<'a> {
+	Charset(Box<'a, Spanned<Charset>>),
 	Page(Box<'a, Spanned<PageRule<'a>>>),
 	Unknown(Box<'a, Spanned<UnknownAtRule<'a>>>),
 }
 
-#[derive(Debug, PartialEq, Hash)]
+#[derive(Atomizable, Debug, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde(untagged))]
 pub enum AtRuleId {
-	Page,
-	Unknown,
-}
-
-impl AtRuleId {
-	pub fn from_atom(s: Atom) -> Self {
-		match s {
-			atom!("page") => Self::Page,
-			_ => Self::Unknown,
-		}
-	}
+	Charset, // atom!("charset")
+	Page,    // atom!("page")
 }
 
 #[derive(Debug, PartialEq, Hash)]

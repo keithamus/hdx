@@ -103,7 +103,6 @@ impl<'a> Parser<'a> {
 					return result;
 				}
 				Kind::LeftCurly => {
-					dbg!(self.cur());
 					return self.parse_block(
 						|parser: &mut Parser<'a>,
 						 rules: Vec<'a, Spanned<Rule>>,

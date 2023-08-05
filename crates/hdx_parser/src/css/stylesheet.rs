@@ -1,12 +1,12 @@
 use hdx_ast::css::{
-	rules::page::PageRule,
+	rules::{page::PageRule, Charset},
 	selector::Selector,
 	stylesheet::{AtRule, AtRuleId, SelectorSet, StyleRule, Stylesheet, StylesheetRule},
 	unknown::{UnknownAtRule, UnknownRule},
 };
 use hdx_lexer::Kind;
 
-use crate::{Parse, Parser, Result, Span, Spanned};
+use crate::{diagnostics, Atomizable, Parse, Parser, Result, Span, Spanned};
 
 // https://drafts.csswg.org/css-syntax-3/#consume-stylesheet-contents
 impl<'a> Parse<'a> for Stylesheet<'a> {
@@ -45,14 +45,20 @@ impl<'a> Parse<'a> for AtRule<'a> {
 	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
 		let span = parser.cur().span;
 		parser.expect_without_advance(Kind::AtKeyword)?;
-		Ok(match AtRuleId::from_atom(parser.cur().as_atom_lower().unwrap()) {
-			AtRuleId::Page => {
+		Ok(match AtRuleId::from_atom(parser.cur_atom_lower().unwrap()) {
+			Some(AtRuleId::Charset) => {
+				let rule = Charset::parse(parser)?;
+				AtRule::Charset(parser.boxup(rule)).spanned(span.up_to(&parser.cur().span))
+			}
+			Some(AtRuleId::Page) => {
 				let rule = PageRule::parse(parser)?;
 				AtRule::Page(parser.boxup(rule)).spanned(span.up_to(&parser.cur().span))
 			}
-			_ => {
+			None => {
 				let rule = UnknownAtRule::parse(parser)?;
-				AtRule::Unknown(parser.boxup(rule)).spanned(span.up_to(&parser.cur().span))
+				let rule_span = span.up_to(&parser.cur().span);
+				parser.warnings.push(diagnostics::UnknownRule(rule_span).into());
+				AtRule::Unknown(parser.boxup(rule)).spanned(rule_span)
 			}
 		})
 	}
@@ -68,10 +74,11 @@ impl<'a> Parse<'a> for SelectorSet<'a> {
 
 #[cfg(test)]
 mod test {
+	use hdx_ast::css::rules::Charset;
 	use oxc_allocator::Allocator;
 
-	use super::Stylesheet;
-	use crate::{Parser, ParserOptions};
+	use super::{AtRule, Stylesheet};
+	use crate::{atom, Parser, ParserOptions, Span, Spanned};
 
 	#[test]
 	fn smoke_test() {
@@ -83,6 +90,28 @@ mod test {
 	}
 
 	#[test]
+	fn parses_charset() {
+		let allocator = Allocator::default();
+		let parser = Parser::new(&allocator, "@charset \"utf-8\";", ParserOptions::default());
+		let expected = Spanned {
+			span: Span::new(0, 17),
+			node: AtRule::Charset(parser.boxup(Spanned {
+				span: Span::new(0, 17),
+				node: Charset { encoding: atom!("utf-8") },
+			})),
+		};
+		let parser_return = parser.parse_with::<AtRule>();
+		if !parser_return.errors.is_empty() {
+			panic!("{:?}", parser_return.errors[0]);
+		}
+		if !parser_return.warnings.is_empty() {
+			panic!("{:?}", parser_return.warnings[0]);
+		}
+		let ast = parser_return.output.unwrap();
+		assert_eq!(ast, expected);
+	}
+
+	#[test]
 	fn parses_two_rules() {
 		let allocator = Allocator::default();
 		let parser = Parser::new(
@@ -91,13 +120,13 @@ mod test {
 			ParserOptions::default(),
 		);
 		let parser_return = parser.parse_with::<Stylesheet>();
-		let ast = parser_return.output.unwrap();
 		if !parser_return.errors.is_empty() {
 			panic!("{:?}", parser_return.errors[0]);
 		}
 		if !parser_return.warnings.is_empty() {
 			panic!("{:?}", parser_return.warnings[0]);
 		}
+		let ast = parser_return.output.unwrap();
 		assert_eq!(ast.node.rules.len(), 2);
 	}
 }

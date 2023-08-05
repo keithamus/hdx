@@ -8,18 +8,27 @@ use hdx_ast::{
 	css::{
 		component_values::{ComponentValue, Function, SimpleBlock},
 		properties::Custom,
-		rules::{PageMarginRule, PageRule, PageSelector, PageSelectorList},
+		rules::{Charset, PageMarginRule, PageRule, PageSelector, PageSelectorList},
 		stylesheet::{AtRule, StyleRule, Stylesheet, StylesheetRule},
 		unknown::{UnknownAtRule, UnknownDeclaration, UnknownPrelude, UnknownRule},
 		values::ValueLike,
 	},
 	Spanned,
 };
-use hdx_atom::Atomizable;
+use hdx_atom::{atom, Atomizable};
 use hdx_lexer::{Kind, PairWise, Token};
 use oxc_allocator::Box;
 
 use crate::{CssWriter, WriteCss};
+
+impl<'a> WriteCss<'a> for Charset {
+	fn write_css<W: CssWriter>(&self, sink: &mut W) -> Result {
+		sink.write_str("@charset \"")?;
+		sink.write_str(self.encoding.as_ref())?;
+		sink.write_str("\";")?;
+		Ok(())
+	}
+}
 
 impl<'a> WriteCss<'a> for Stylesheet<'a> {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> Result {
@@ -69,6 +78,7 @@ impl<'a> WriteCss<'a> for StyleRule<'a> {
 impl<'a> WriteCss<'a> for AtRule<'a> {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> Result {
 		match self {
+			Self::Charset(rule) => rule.write_css(sink),
 			Self::Page(rule) => rule.write_css(sink),
 			Self::Unknown(rule) => rule.write_css(sink),
 		}

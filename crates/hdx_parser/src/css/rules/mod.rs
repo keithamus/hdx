@@ -1,3 +1,4 @@
+pub mod charset;
 pub mod page;
 
 use crate::{Kind, Parse, Parser, Result, Spanned};

@@ -12,7 +12,6 @@ use crate::{atom, diagnostics, Atom, Atomizable, Kind, Parse, Parser, Result, Sp
 impl<'a> Parse<'a> for PageRule<'a> {
 	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
 		let span = parser.cur().span;
-		dbg!(parser.cur());
 		parser.parse_at_rule(
 			Some(atom!("page")),
 			|parser: &mut Parser<'a>,
@@ -54,7 +53,6 @@ impl<'a> Parse<'a> for PageSelector<'a> {
 		}
 		if parser.at(Kind::Colon) {
 			loop {
-				dbg!(parser.cur());
 				pseudos.push(PagePseudoClass::parse(parser)?);
 				if !parser.at(Kind::Colon) {
 					break;
