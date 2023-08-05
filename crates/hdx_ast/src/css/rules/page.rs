@@ -11,7 +11,7 @@ use crate::{
 #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
 pub struct PageRule<'a> {
 	#[cfg_attr(feature = "serde", serde(borrow))]
-	pub selectors: Box<'a, Option<Spanned<PageSelectorList<'a>>>>,
+	pub selectors: Box<'a, Spanned<PageSelectorList<'a>>>,
 	#[cfg_attr(feature = "serde", serde(borrow))]
 	pub properties: Box<'a, Vec<'a, Spanned<Property<'a>>>>,
 	#[cfg_attr(feature = "serde", serde(borrow))]

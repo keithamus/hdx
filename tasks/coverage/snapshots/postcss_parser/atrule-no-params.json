@@ -9,7 +9,14 @@
           "node": {
             "properties": [],
             "rules": [],
-            "selectors": null,
+            "selectors": {
+              "end": 0,
+              "node": {
+                "children": [],
+                "type": "PageSelectorList"
+              },
+              "start": 0
+            },
             "type": "PageRule"
           },
           "start": 0

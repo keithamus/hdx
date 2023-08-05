@@ -78,9 +78,11 @@ impl<'a> WriteCss<'a> for AtRule<'a> {
 impl<'a> WriteCss<'a> for PageRule<'a> {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> Result {
 		sink.write_str("@page")?;
-		sink.write_trivia_char(' ')?;
-		if let Some(selectors) = &*self.selectors {
-			selectors.write_css(sink)?;
+		if self.selectors.node.children.len() > 0 {
+			sink.write_char(' ')?;
+		}
+		self.selectors.write_css(sink)?;
+		if self.selectors.node.children.len() > 0 {
 			sink.write_trivia_char(' ')?;
 		}
 		sink.write_char('{')?;
@@ -127,7 +129,6 @@ impl<'a> WriteCss<'a> for PageSelector<'a> {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> Result {
 		if let Some(page_type) = &self.page_type {
 			sink.write_str(page_type.as_ref())?;
-			sink.write_char(' ')?;
 		}
 		for pseudo in self.pseudos.iter() {
 			sink.write_char(':')?;
