@@ -157,7 +157,7 @@ const codeFromUrl = new CodeStorage({
   },
   get() {
     return decodeURIComponent(
-      new URLSearchParams(window.location.search).get("code")
+      new URLSearchParams(window.location.search).get("code"),
     );
   },
   set(code) {
@@ -193,6 +193,14 @@ class EditorHighlight extends Event {
   }
 }
 
+class EditorFocus extends Event {
+  constructor({ start, end }) {
+    super("editor-focus", { bubbles: true });
+    this.start = start;
+    this.end = end;
+  }
+}
+
 class HdxEditor extends HTMLElement {
   static define(tagName = "hdx-editor") {
     customElements.define(tagName, this);
@@ -210,20 +218,24 @@ class HdxEditor extends HTMLElement {
     hdxLight,
     css(),
     lintGutter(),
+    EditorView.domEventHandlers({
+      mouseover: (e) => this.handleEvent(e),
+      click: (e) => this.handleEvent(e),
+    }),
     EditorView.updateListener.of((view) => {
       if (view.startState.doc.toString() !== view.state.doc.toString()) {
         this.dispatchEvent(new EditorChangeEvent(this.code));
       }
     }),
-    EditorView.domEventHandlers({ mouseover: this.handleEvent }),
   ];
 
   async connectedCallback() {
-    let doc = await (codeFromUrl.has()
-      ? codeFromUrl.get()
-      : codeFromLocal.has()
-      ? codeFromLocal.get()
-      : this.textContent);
+    let doc =
+      await (codeFromUrl.has()
+        ? codeFromUrl.get()
+        : codeFromLocal.has()
+        ? codeFromLocal.get()
+        : this.textContent);
     this.view = new EditorView({
       extensions: this.extensions,
       parent: this.shadowRoot,
@@ -237,9 +249,10 @@ class HdxEditor extends HTMLElement {
     this.ownerDocument.addEventListener("viewer-highlight", this);
     this.ownerDocument.addEventListener("load-code", this);
     this.addEventListener("focusout", this);
+    this.addEventListener("focusin", this);
   }
 
-  handleEvent = (event) => {
+  handleEvent(event) {
     if (event.type == "diagnostic") {
       this.view.dispatch(setDiagnostics(this.view.state, event.diagnostics));
     } else if (event.type == "focusout") {
@@ -252,7 +265,16 @@ class HdxEditor extends HTMLElement {
       const tree = syntaxTree(this.view.state);
       let cursor = tree.cursorAt(pos);
       this.dispatchEvent(
-        new EditorHighlight({ start: cursor.from, end: cursor.to })
+        new EditorHighlight({ start: cursor.from, end: cursor.to }),
+      );
+    } else if (event.type == "click" || event.type === "focusin") {
+      codeFromUrl.set(this.code);
+      codeFromLocal.set(this.code);
+      const pos = this.view.posAtCoords(event);
+      const tree = syntaxTree(this.view.state);
+      let cursor = tree.cursorAt(pos);
+      this.dispatchEvent(
+        new EditorFocus({ start: cursor.from, end: cursor.to }),
       );
     } else if (event.type == "load-code") {
       this.view.dispatch(
@@ -262,11 +284,11 @@ class HdxEditor extends HTMLElement {
             to: this.view.state.doc.length,
             insert: event.sourcetext,
           },
-        })
+        }),
       );
       this.dispatchEvent(new EditorChangeEvent(event.sourcetext));
     }
-  };
+  }
 }
 
 class MetricEvent extends Event {
@@ -309,12 +331,12 @@ class HdxViewer extends HTMLElement {
         effects: this.compartment.reconfigure(format),
       };
     }),
-    EditorView.domEventHandlers({ mouseover: this.handleEvent }),
+    EditorView.domEventHandlers({ mouseover: (e) => this.handleEvent(e) }),
   ];
 
   get format() {
     const form = new FormData(
-      document.getElementById(this.getAttribute("for-format"))
+      document.getElementById(this.getAttribute("for-format")),
     );
     return form.get("format");
   }
@@ -323,14 +345,14 @@ class HdxViewer extends HTMLElement {
     return document.getElementById(this.getAttribute("for-editor")).code;
   }
 
-  handleEvent = (event) => {
+  handleEvent(event) {
     if (event.type === "change") {
       try {
         if (this.format === "lex") {
           const start = performance.now();
           const tokens = lex(this.code);
           this.dispatchEvent(
-            new MetricEvent("parseend", performance.now() - start)
+            new MetricEvent("parseend", performance.now() - start),
           );
           this.view.dispatch(
             this.view.state.update({
@@ -339,7 +361,7 @@ class HdxViewer extends HTMLElement {
                 to: this.view.state.doc.length,
                 insert: JSON.stringify(tokens, null, 2),
               },
-            })
+            }),
           );
           this.dispatchEvent(new HdxDiagnosticEvent([]));
         } else if (this.format === "errors") {
@@ -354,17 +376,17 @@ class HdxViewer extends HTMLElement {
                 to: this.view.state.doc.length,
                 insert: report,
               },
-            })
+            }),
           );
           this.dispatchEvent(new HdxDiagnosticEvent(diagnostics));
         } else if (this.format === "minify") {
           const start = performance.now();
           const minified = minify(this.code);
           this.dispatchEvent(
-            new MetricEvent("parseend", performance.now() - start)
+            new MetricEvent("parseend", performance.now() - start),
           );
           this.dispatchEvent(
-            new MetricEvent("minify", minified.length, "bytes")
+            new MetricEvent("minify", minified.length, "bytes"),
           );
           this.view.dispatch(
             this.view.state.update({
@@ -373,14 +395,14 @@ class HdxViewer extends HTMLElement {
                 to: this.view.state.doc.length,
                 insert: minified,
               },
-            })
+            }),
           );
           this.dispatchEvent(new HdxDiagnosticEvent([]));
         } else {
           const start = performance.now();
           const { ast, diagnostics } = parse(this.code);
           this.dispatchEvent(
-            new MetricEvent("parseend", performance.now() - start)
+            new MetricEvent("parseend", performance.now() - start),
           );
           this.view.dispatch(
             this.view.state.update({
@@ -389,7 +411,7 @@ class HdxViewer extends HTMLElement {
                 to: this.view.state.doc.length,
                 insert: JSON.stringify(ast, null, 2),
               },
-            })
+            }),
           );
           this.dispatchEvent(new HdxDiagnosticEvent(diagnostics));
         }
@@ -401,7 +423,7 @@ class HdxViewer extends HTMLElement {
               to: this.view.state.doc.length,
               insert: `${e.message}\n${e.stack}`,
             },
-          })
+          }),
         );
         throw e;
       }
@@ -424,25 +446,69 @@ class HdxViewer extends HTMLElement {
         }
         if (!cursor.prev()) break;
       }
-      if (span.from === span.to) return
+      if (span.from === span.to) return;
       let json = {};
       try {
         json = JSON.parse(textAt(span));
       } catch {}
-      let {start, end} = json;
+      let { start, end } = json;
       if (isFinite(start) && isFinite(end) && start < end) {
         this.dispatchEvent(new ViewerHighlight(start, end));
         if (span.from < span.to) {
           createHighlightEffect(this.view, { start: span.from, end: span.to });
         }
       }
+    } else if (
+      (event.type == "editor-highlight" || event.type == "editor-focus") &&
+      event.target !== this
+    ) {
+      const tree = syntaxTree(this.view.state);
+      let cursor = tree.cursor();
+      let span = { from: 0, to: 0 };
+      let start, end;
+      const textAt = ({ from, to }) =>
+        this.view.state.doc.sliceString(from, to);
+      // Go up and find the `type` key
+      while (cursor.next()) {
+        if (textAt(cursor) == `"start"`) {
+          cursor.next(); // number
+          start = Number(textAt(cursor));
+          cursor.next(); // full end line
+          cursor.next(); // "end"
+          cursor.next(); // number
+          end = Number(textAt(cursor));
+          if (end != event.end && start != event.start) {
+            continue;
+          }
+          cursor.next(); // '}'
+          span.to = cursor.to;
+          span.from = Number(
+            matchBrackets(this.view.state, cursor.to, -1)?.end
+              .from,
+          ) || 0;
+          break;
+        }
+      }
+      if (span.from < span.to) {
+        createHighlightEffect(this.view, { start: span.from, end: span.to });
+        if (isFinite(start) && isFinite(end) && start < end) {
+          this.dispatchEvent(new ViewerHighlight(start, end));
+        }
+        if (event.type == "editor-focus") {
+          this.view.dispatch({
+            selection: { anchor: span.from, head: span.to },
+            scrollIntoView: true,
+          });
+        }
+      }
     }
-  };
+  }
 
   connectedCallback() {
     this.ownerDocument.addEventListener("change", this);
     this.ownerDocument.addEventListener("diagnostic", this);
-    this.shadowRoot.addEventListener("editor-highlight", this);
+    this.ownerDocument.addEventListener("editor-highlight", this);
+    this.ownerDocument.addEventListener("editor-focus", this);
     this.shadowRoot.addEventListener("mouseover", this);
     this.view = new EditorView({
       extensions: this.extensions,
@@ -461,16 +527,17 @@ class MetricObserver extends HTMLElement {
   shadowRoot = this.attachShadow({ mode: "open" });
 
   connectedCallback() {
-    this.shadowRoot.innerHTML = `<slot></slot><span part=value></span><span part=unit></span>`;
+    this.shadowRoot.innerHTML =
+      `<slot></slot><span part=value></span><span part=unit></span>`;
     this.ownerDocument.addEventListener("metric", (e) => {
       if (e.name !== this.getAttribute("name")) return;
       if (Math.floor(e.value) == e.value) {
         this.shadowRoot.querySelector(
-          "[part=value]"
+          "[part=value]",
         ).textContent = `${e.value}`;
       } else {
         this.shadowRoot.querySelector(
-          "[part=value]"
+          "[part=value]",
         ).textContent = `${e.value.toFixed(2)}`;
       }
       this.shadowRoot.querySelector("[part=unit]").textContent = `${e.unit}`;
@@ -510,7 +577,7 @@ class ViewOptions extends HTMLElement {
       window.history.replaceState(
         { path: url.toString() },
         null,
-        url.toString()
+        url.toString(),
       );
     }
   }
@@ -519,9 +586,11 @@ class ViewOptions extends HTMLElement {
     const url = new URL(window.location);
     if (!url.searchParams.has("format")) return;
     const format = url.searchParams.get("format");
-    for (const radio of this.querySelectorAll(
-      "input[type=radio][name=format]"
-    )) {
+    for (
+      const radio of this.querySelectorAll(
+        "input[type=radio][name=format]",
+      )
+    ) {
       radio.checked = format == radio.value;
     }
   }
