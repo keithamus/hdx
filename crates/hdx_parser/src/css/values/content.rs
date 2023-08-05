@@ -5,8 +5,8 @@ use crate::{atom, diagnostics, Kind, Parse, Parser, Result, Spanned};
 impl<'a> Parse<'a> for ContentsValue<'a> {
 	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
 		let span = parser.cur().span;
-		if !parser.at(Kind::Ident) {
-			match parser.cur().value.as_atom_lower().unwrap() {
+		if parser.at(Kind::Ident) {
+			match parser.cur_atom_lower().unwrap() {
 				atom!("normal") => {
 					parser.advance();
 					return Ok(Self::Normal.spanned(span.up_to(&parser.cur().span)));
@@ -38,7 +38,7 @@ impl<'a> Parse<'a> for ContentList<'a> {
 		loop {
 			match parser.cur().kind {
 				Kind::String => {
-					values.push(ContentElement::String(parser.cur().value.as_atom().unwrap()));
+					values.push(ContentElement::String(parser.cur_atom().unwrap()));
 					parser.advance();
 				}
 				Kind::Semicolon | Kind::Eof | Kind::RightCurly => {
