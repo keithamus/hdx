@@ -294,18 +294,18 @@ properties! {
 	// ! widows redefined in css-break-4
 
 	// https://drafts.csswg.org/css-break-4/#property-index
-	atom!("box-decoration-break") => BoxDecorationBreak<Expr<'a, Todo>>,
-	atom!("break-after") => BreakAfter<Expr<'a, Todo>>,
-	atom!("break-before") => BreakBefore<Expr<'a, Todo>>,
-	atom!("break-inside") => BreakInside<Expr<'a, Todo>>,
-	atom!("margin-break") => BreakMargin<Expr<'a, Todo>>,
+	atom!("box-decoration-break") => BoxDecorationBreak<Expr<'a, BoxDecorationBreakValue>>,
+	atom!("break-after") => BreakAfter<Expr<'a, BreakValue>>,
+	atom!("break-before") => BreakBefore<Expr<'a, BreakValue>>,
+	atom!("break-inside") => BreakInside<Expr<'a, BreakInsideValue>>,
+	atom!("margin-break") => BreakMargin<Expr<'a, MarginBreakValue>>,
 	// For compatibility with CSS Level 2, UAs that conform to [CSS2] must alias the
 	// page-break-before, page-break-after, and page-break-inside properties to break-before,
 	// break-after, and break-inside by treating the page-break-* properties as legacy
 	// shorthands for the break-* properties with the following value mappings:
-	atom!("page-break-after") => PageBreakAfter<Expr<'a, Todo>>,
-	atom!("page-break-before") => PageBreakBefore<Expr<'a, Todo>>,
-	atom!("page-break-inside") => PageBreakInside<Expr<'a, Todo>>,
+	atom!("page-break-after") => PageBreakAfter<Expr<'a, BreakValue>>,
+	atom!("page-break-before") => PageBreakBefore<Expr<'a, BreakValue>>,
+	atom!("page-break-inside") => PageBreakInside<Expr<'a, BreakInsideValue>>,
 	atom!("orphans") => Orphans<Expr<'a, Todo>> inherits=true,
 	atom!("widows") => Widows<Expr<'a, Todo>> inherits=true,
 
