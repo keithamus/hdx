@@ -22,7 +22,8 @@ means:
   ("transpiling").
 - Provides integration with IDEs (LSP).
 - Producing the smallest available artefacts (minification & bundling).
-- Provide a way for authors to migrate from alternative authoring formats (such as SCSS).
+- Provide a way for authors to migrate from alternative authoring formats (such
+  as SCSS).
 
 ## Roadmap
 
@@ -49,7 +50,7 @@ Here is a rough order of operations to get there:
     - [ ] [mini.css][11]
     - [ ] [openprops][12]
     - [ ] [pure][13]
-    - [ ] [reset (Eric Myer's)][14]
+    - [x] [reset (Eric Myer's)][14]
     - [ ] [tailwind][15]
     - [ ] [primer css][16]
   - [ ] Benchmarks faster than (or as fast as) comparative parsers
@@ -83,7 +84,8 @@ Here is a rough order of operations to get there:
     - [x] [reset (Eric Myer's)][14]
     - [ ] [tailwind][15]
     - [ ] [primer css][16]
-  - [ ] Produces minified CSS smaller than (or as small as) comparative minifiers for
+  - [ ] Produces minified CSS smaller than (or as small as) comparative
+        minifiers for
     - [x] [960.gs][4]
     - [ ] [animate][5]
     - [ ] [blueprint][6]

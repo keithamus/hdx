@@ -3,8 +3,13 @@ use hdx_ast::css::values::{backgrounds::*, Shorthand};
 use crate::{CssWriter, Result, WriteCss};
 
 impl<'a> WriteCss<'a> for LineWidth {
-	fn write_css<W: CssWriter>(&self, _sink: &mut W) -> Result {
-		todo!()
+	fn write_css<W: CssWriter>(&self, sink: &mut W) -> Result {
+		match self {
+			LineWidth::Thin => sink.write_str("thin"),
+			LineWidth::Medium => sink.write_str("medium"),
+			LineWidth::Thick => sink.write_str("thick"),
+			LineWidth::Length(l) => l.write_css(sink),
+		}
 	}
 }
 
