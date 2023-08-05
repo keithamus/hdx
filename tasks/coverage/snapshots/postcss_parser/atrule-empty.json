@@ -7,29 +7,8 @@
         "node": {
           "end": 18,
           "node": {
-            "name": "charset",
-            "prelude": {
-              "end": 16,
-              "node": {
-                "value": [
-                  {
-                    "end": 16,
-                    "node": {
-                      "end": 16,
-                      "escaped": false,
-                      "kind": "String",
-                      "start": 9,
-                      "value": "UTF-8"
-                    },
-                    "start": 9
-                  }
-                ]
-              },
-              "start": 9
-            },
-            "properties": [],
-            "rules": [],
-            "type": "UnknownAtRule"
+            "encoding": "UTF-8",
+            "type": "Charset"
           },
           "start": 0
         },

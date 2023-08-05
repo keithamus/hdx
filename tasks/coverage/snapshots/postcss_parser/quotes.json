@@ -1,96 +1,115 @@
 {
   "end": 63,
-  "rules": [
-    {
-      "end": 62,
-      "prelude": {
-        "end": 10,
-        "start": 0,
-        "value": [
-          {
-            "end": 1,
-            "escaped": false,
-            "kind": "Ident",
-            "start": 0,
-            "value": "a"
-          },
-          {
-            "end": 2,
-            "escaped": false,
-            "kind": "Colon",
-            "start": 1,
-            "value": null
-          },
-          {
-            "end": 3,
-            "escaped": false,
-            "kind": "Colon",
-            "start": 2,
-            "value": null
-          },
-          {
+  "node": {
+    "rules": [
+      {
+        "end": 62,
+        "node": {
+          "properties": [
+            {
+              "end": 43,
+              "node": {
+                "end": 43,
+                "node": {
+                  "important": false,
+                  "type": "Content",
+                  "value": {
+                    "end": 37,
+                    "node": {
+                      "List": {
+                        "end": 37,
+                        "node": {
+                          "alt": [],
+                          "values": [
+                            {
+                              "String": ";'@ /**/\""
+                            }
+                          ]
+                        },
+                        "start": 25
+                      }
+                    },
+                    "start": 25
+                  }
+                },
+                "start": 16
+              },
+              "start": 16
+            },
+            {
+              "end": 61,
+              "node": {
+                "end": 61,
+                "node": {
+                  "important": false,
+                  "type": "Content",
+                  "value": {
+                    "end": 59,
+                    "node": {
+                      "List": {
+                        "end": 59,
+                        "node": {
+                          "alt": [],
+                          "values": [
+                            {
+                              "String": "'\"\\"
+                            }
+                          ]
+                        },
+                        "start": 52
+                      }
+                    },
+                    "start": 52
+                  }
+                },
+                "start": 43
+              },
+              "start": 43
+            }
+          ],
+          "rules": [],
+          "selectors": {
             "end": 9,
-            "escaped": false,
-            "kind": "Ident",
-            "start": 3,
-            "value": "before"
+            "node": {
+              "children": [
+                {
+                  "end": 9,
+                  "node": {
+                    "components": [
+                      {
+                        "end": 1,
+                        "node": {
+                          "type": "Type",
+                          "value": "a"
+                        },
+                        "start": 0
+                      },
+                      {
+                        "end": 9,
+                        "node": {
+                          "type": "PseudoElement",
+                          "value": {
+                            "type": "before"
+                          }
+                        },
+                        "start": 1
+                      }
+                    ],
+                    "type": "Selector"
+                  },
+                  "start": 0
+                }
+              ],
+              "type": "SelectorSet"
+            },
+            "start": 0
           },
-          {
-            "end": 10,
-            "escaped": false,
-            "kind": "Whitespace",
-            "start": 9,
-            "value": null
-          }
-        ]
-      },
-      "properties": [
-        {
-          "end": 38,
-          "important": false,
-          "name": "content",
-          "start": 16,
-          "type": "UnknownDeclaration",
-          "value": {
-            "end": 37,
-            "start": 25,
-            "value": [
-              {
-                "end": 37,
-                "escaped": true,
-                "kind": "String",
-                "start": 25,
-                "value": ";'@ /**/\""
-              }
-            ]
-          }
+          "type": "StyleRule"
         },
-        {
-          "end": 60,
-          "important": false,
-          "name": "content",
-          "start": 43,
-          "type": "UnknownDeclaration",
-          "value": {
-            "end": 59,
-            "start": 52,
-            "value": [
-              {
-                "end": 59,
-                "escaped": true,
-                "kind": "String",
-                "start": 52,
-                "value": "'\"\\"
-              }
-            ]
-          }
-        }
-      ],
-      "rules": [],
-      "start": 0,
-      "type": "UnknownRule"
-    }
-  ],
-  "start": 0,
-  "type": "Stylesheet"
+        "start": 0
+      }
+    ],
+    "type": "Stylesheet"
+  },
+  "start": 0
 }

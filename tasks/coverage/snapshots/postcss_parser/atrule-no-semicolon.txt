@@ -1,0 +1,10 @@
+hdx_parser::UnknownRule
+
+  × Unknown Rule
+   ╭─[tasks/coverage/postcss-parser-tests/cases/atrule-no-semicolon.css:1:1]
+ 1 │ ╭─▶ @media screen {@content}
+ 2 │ │   
+ 3 │ ├─▶ @charset "UTF-8"
+   · ╰──── Don't know how to interpret this
+   ╰────
+  help: This might be a mistake in the parser, please file an issue!

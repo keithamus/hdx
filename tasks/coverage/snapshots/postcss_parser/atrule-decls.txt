@@ -1,0 +1,23 @@
+hdx_parser::UnknownRule
+
+  × Unknown Rule
+    ╭─[tasks/coverage/postcss-parser-tests/cases/atrule-decls.css:4:1]
+  4 │     
+  5 │ ╭─▶ @media(min-width: 0) {
+  6 │ │       background: white
+  7 │ │   }
+  8 │ │   
+  9 │ │   @font-face {
+ 10 │ │       family-name: "A;' /**/";
+ 11 │ │   }
+ 12 │ │   
+ 13 │ │   @viewport {
+ 14 │ │       width: 110px;
+ 15 │ │   }
+ 16 │ │   
+ 17 │ │   @-ms-viewport {
+ 18 │ │       width: 100px;
+ 19 │ ├─▶ }
+    · ╰──── Don't know how to interpret this
+    ╰────
+  help: This might be a mistake in the parser, please file an issue!

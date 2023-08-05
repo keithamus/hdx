@@ -12,7 +12,7 @@ hdx_parser::UnknownDeclaration
   × Ignored property due to parse error.
    ╭─[tasks/coverage/postcss-parser-tests/cases/raw-decl.css:1:1]
  1 │ a { color: a/* ; */ b  ; }
-   ·     ─────────┬─────────
-   ·              ╰── This property was ignored.
+   ·     ──────────┬──────────
+   ·               ╰── This property was ignored.
    ╰────
   help: This property is going to be ignored because it doesn't look valid. If it is valid, please file an issue!

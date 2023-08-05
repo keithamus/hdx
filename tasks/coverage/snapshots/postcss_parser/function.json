@@ -1,104 +1,188 @@
 {
   "end": 207,
-  "rules": [
-    {
-      "end": 206,
-      "properties": [
-        {
-          "end": 109,
-          "important": false,
-          "name": "",
-          "start": 26,
-          "type": "UnknownDeclaration",
-          "value": {
-            "end": 109,
-            "start": 26,
-            "value": [
-              {
-                "end": 109,
-                "escaped": false,
-                "kind": "Url",
-                "start": 26,
-                "value": "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-              }
-            ]
-          }
-        },
-        {
-          "end": 155,
-          "important": false,
-          "name": "",
-          "start": 133,
-          "type": "UnknownDeclaration",
-          "value": {
-            "end": 155,
-            "start": 133,
-            "value": [
-              {
-                "end": 155,
-                "name": "url",
-                "start": 133,
-                "type": "Function",
-                "value": [
-                  {
-                    "end": 154,
-                    "escaped": false,
-                    "kind": "String",
-                    "start": 137,
-                    "value": "./image (1).jpg"
-                  }
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "end": 203,
-          "important": false,
-          "name": "",
-          "start": 179,
-          "type": "UnknownDeclaration",
-          "value": {
-            "end": 203,
-            "start": 179,
-            "value": [
-              {
-                "end": 203,
-                "name": "url",
-                "start": 179,
-                "type": "Function",
-                "value": [
-                  {
-                    "end": 201,
-                    "escaped": false,
-                    "kind": "String",
-                    "start": 184,
-                    "value": "./image (1).jpg"
-                  }
-                ]
-              }
-            ]
-          }
-        }
-      ],
-      "rules": [],
-      "selectors": [
-        {
-          "components": [
+  "node": {
+    "rules": [
+      {
+        "end": 206,
+        "node": {
+          "properties": [
             {
-              "type": "Type",
-              "value": "a"
+              "end": 115,
+              "node": {
+                "end": 115,
+                "node": {
+                  "important": false,
+                  "name": "background-image",
+                  "type": "UnknownDeclaration",
+                  "value": [
+                    {
+                      "end": 109,
+                      "node": {
+                        "end": 109,
+                        "escaped": false,
+                        "kind": "Url",
+                        "start": 26,
+                        "value": "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+                      },
+                      "start": 26
+                    }
+                  ],
+                  "value_like": {
+                    "end": 0,
+                    "node": null,
+                    "start": 0
+                  }
+                },
+                "start": 8
+              },
+              "start": 8
+            },
+            {
+              "end": 161,
+              "node": {
+                "end": 161,
+                "node": {
+                  "important": false,
+                  "name": "background-image",
+                  "type": "UnknownDeclaration",
+                  "value": [
+                    {
+                      "end": 154,
+                      "node": {
+                        "end": 154,
+                        "node": {
+                          "name": "url",
+                          "type": "Function",
+                          "value": [
+                            {
+                              "end": 154,
+                              "node": {
+                                "end": 154,
+                                "escaped": false,
+                                "kind": "String",
+                                "start": 137,
+                                "value": "./image (1).jpg"
+                              },
+                              "start": 137
+                            }
+                          ]
+                        },
+                        "start": 133
+                      },
+                      "start": 133
+                    },
+                    {
+                      "end": 155,
+                      "node": {
+                        "end": 155,
+                        "escaped": false,
+                        "kind": "RightParen",
+                        "start": 154,
+                        "value": null
+                      },
+                      "start": 154
+                    }
+                  ],
+                  "value_like": {
+                    "end": 0,
+                    "node": null,
+                    "start": 0
+                  }
+                },
+                "start": 115
+              },
+              "start": 115
+            },
+            {
+              "end": 205,
+              "node": {
+                "end": 205,
+                "node": {
+                  "important": false,
+                  "name": "background-image",
+                  "type": "UnknownDeclaration",
+                  "value": [
+                    {
+                      "end": 202,
+                      "node": {
+                        "end": 202,
+                        "node": {
+                          "name": "url",
+                          "type": "Function",
+                          "value": [
+                            {
+                              "end": 201,
+                              "node": {
+                                "end": 201,
+                                "escaped": false,
+                                "kind": "String",
+                                "start": 184,
+                                "value": "./image (1).jpg"
+                              },
+                              "start": 184
+                            }
+                          ]
+                        },
+                        "start": 179
+                      },
+                      "start": 179
+                    },
+                    {
+                      "end": 203,
+                      "node": {
+                        "end": 203,
+                        "escaped": false,
+                        "kind": "RightParen",
+                        "start": 202,
+                        "value": null
+                      },
+                      "start": 202
+                    }
+                  ],
+                  "value_like": {
+                    "end": 0,
+                    "node": null,
+                    "start": 0
+                  }
+                },
+                "start": 161
+              },
+              "start": 161
             }
           ],
-          "end": 1,
-          "start": 0,
-          "type": "Selector"
-        }
-      ],
-      "start": 0,
-      "type": "StyleRule"
-    }
-  ],
-  "start": 0,
-  "type": "Stylesheet"
+          "rules": [],
+          "selectors": {
+            "end": 1,
+            "node": {
+              "children": [
+                {
+                  "end": 1,
+                  "node": {
+                    "components": [
+                      {
+                        "end": 1,
+                        "node": {
+                          "type": "Type",
+                          "value": "a"
+                        },
+                        "start": 0
+                      }
+                    ],
+                    "type": "Selector"
+                  },
+                  "start": 0
+                }
+              ],
+              "type": "SelectorSet"
+            },
+            "start": 0
+          },
+          "type": "StyleRule"
+        },
+        "start": 0
+      }
+    ],
+    "type": "Stylesheet"
+  },
+  "start": 0
 }

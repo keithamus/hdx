@@ -1,15 +1,19 @@
 {
   "end": 3,
-  "rules": [
-    {
-      "end": 2,
-      "prelude": null,
-      "properties": [],
-      "rules": [],
-      "start": 0,
-      "type": "UnknownRule"
-    }
-  ],
-  "start": 0,
-  "type": "Stylesheet"
+  "node": {
+    "rules": [
+      {
+        "end": 2,
+        "node": {
+          "prelude": null,
+          "properties": [],
+          "rules": [],
+          "type": "UnknownRule"
+        },
+        "start": 0
+      }
+    ],
+    "type": "Stylesheet"
+  },
+  "start": 0
 }

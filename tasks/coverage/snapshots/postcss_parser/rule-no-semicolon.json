@@ -1,38 +1,67 @@
 {
   "end": 15,
-  "rules": [
-    {
-      "end": 14,
-      "properties": [
-        {
-          "end": 13,
-          "important": false,
-          "start": 2,
-          "type": "Color",
-          "value": {
-            "name": "black",
-            "type": "NamedColor"
-          }
-        }
-      ],
-      "rules": [],
-      "selectors": [
-        {
-          "components": [
+  "node": {
+    "rules": [
+      {
+        "end": 14,
+        "node": {
+          "properties": [
             {
-              "type": "Type",
-              "value": "a"
+              "end": 13,
+              "node": {
+                "end": 13,
+                "node": {
+                  "important": false,
+                  "type": "Color",
+                  "value": {
+                    "end": 13,
+                    "node": {
+                      "type": "Named",
+                      "value": {
+                        "name": "black"
+                      }
+                    },
+                    "start": 8
+                  }
+                },
+                "start": 2
+              },
+              "start": 2
             }
           ],
-          "end": 1,
-          "start": 0,
-          "type": "Selector"
-        }
-      ],
-      "start": 0,
-      "type": "StyleRule"
-    }
-  ],
-  "start": 0,
-  "type": "Stylesheet"
+          "rules": [],
+          "selectors": {
+            "end": 1,
+            "node": {
+              "children": [
+                {
+                  "end": 1,
+                  "node": {
+                    "components": [
+                      {
+                        "end": 1,
+                        "node": {
+                          "type": "Type",
+                          "value": "a"
+                        },
+                        "start": 0
+                      }
+                    ],
+                    "type": "Selector"
+                  },
+                  "start": 0
+                }
+              ],
+              "type": "SelectorSet"
+            },
+            "start": 0
+          },
+          "type": "StyleRule"
+        },
+        "start": 0
+      }
+    ],
+    "type": "Stylesheet"
+  },
+  "start": 0
 }
