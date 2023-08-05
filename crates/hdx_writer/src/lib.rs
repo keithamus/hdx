@@ -1,5 +1,8 @@
 pub(crate) use std::fmt::{Result, Write};
 
+pub(crate) use hdx_ast::Spanned;
+pub(crate) use hdx_atom::Atomizable;
+
 mod css;
 
 pub trait WriteCss<'a>: Sized {
