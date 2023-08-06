@@ -25,7 +25,7 @@ impl<'a, T: Parse<'a>> Parse<'a> for BoxShorthand<'a, T> {
 				break;
 			}
 		}
-		Ok(Self { top, right, bottom, left }.spanned(span.up_to(&parser.cur().span)))
+		Ok(Self { top, right, bottom, left }.spanned(span.until(parser.cur().span)))
 	}
 }
 
@@ -38,9 +38,9 @@ impl<'a, T: Parse<'a>> Parse<'a> for XYShorthand<'a, T> {
 			Kind::Ident | Kind::Function => {
 				let node = T::parse(parser)?;
 				Ok(Self { x, y: Shorthand::Explicit(parser.boxup(node)) }
-					.spanned(span.up_to(&parser.cur().span)))
+					.spanned(span.until(parser.cur().span)))
 			}
-			_ => Ok(Self { x, y: Shorthand::Implicit }.spanned(span.up_to(&parser.cur().span))),
+			_ => Ok(Self { x, y: Shorthand::Implicit }.spanned(span.until(parser.cur().span))),
 		}
 	}
 }
@@ -54,9 +54,9 @@ impl<'a, T: Parse<'a>> Parse<'a> for DoubleShorthand<'a, T> {
 			Kind::Ident | Kind::Function => {
 				let node = T::parse(parser)?;
 				Ok(Self(first, Shorthand::Explicit(parser.boxup(node)))
-					.spanned(span.up_to(&parser.cur().span)))
+					.spanned(span.until(parser.cur().span)))
 			}
-			_ => Ok(Self(first, Shorthand::Implicit).spanned(span.up_to(&parser.cur().span))),
+			_ => Ok(Self(first, Shorthand::Implicit).spanned(span.until(parser.cur().span))),
 		}
 	}
 }

@@ -13,7 +13,7 @@ impl<'a> Parse<'a> for ColorValue<'a> {
 			Kind::Hash => {
 				let hash = parser.expect_hash()?;
 				if let Some(hex) = ColorValue::from_hex(hash.as_ref()) {
-					Ok(hex.spanned(span.up_to(&parser.cur().span)))
+					Ok(hex.spanned(span.until(parser.cur().span)))
 				} else {
 					Err(diagnostics::BadHexColor(hash.clone(), span))?
 				}
@@ -22,10 +22,10 @@ impl<'a> Parse<'a> for ColorValue<'a> {
 				let name = parser.expect_ident()?;
 				match name {
 					atom!("transparent") => {
-						Ok(ColorValue::Transparent.spanned(span.up_to(&parser.cur().span)))
+						Ok(ColorValue::Transparent.spanned(span.until(parser.cur().span)))
 					}
 					_ => match NamedColor::from_atom(name.clone()) {
-						Some(n) => Ok(ColorValue::Named(n).spanned(span.up_to(&parser.cur().span))),
+						Some(n) => Ok(ColorValue::Named(n).spanned(span.until(parser.cur().span))),
 						None => Err(diagnostics::UnknownColor(name, span))?,
 					},
 				}
@@ -36,7 +36,7 @@ impl<'a> Parse<'a> for ColorValue<'a> {
 					atom!("rgb") | atom!("rgba") => {
 						let node = RGB::parse(parser)?;
 						Ok(ColorValue::RGB(parser.boxup(node))
-							.spanned(span.up_to(&parser.cur().span)))
+							.spanned(span.until(parser.cur().span)))
 					}
 					_ => Err(diagnostics::Unimplemented(span))?,
 				}
@@ -72,7 +72,7 @@ impl<'a> Parse<'a> for RGB<'a> {
 			alpha = MathExpr::<NumberPercentageOrNone>::parse(parser)?;
 		}
 		parser.expect(Kind::RightParen)?;
-		Ok(Self { r, g, b, alpha }.spanned(span.up_to(&parser.cur().span)))
+		Ok(Self { r, g, b, alpha }.spanned(span.until(parser.cur().span)))
 	}
 }
 
@@ -81,14 +81,14 @@ impl<'a> Parse<'a> for NumberPercentageOrNone {
 		let span = parser.cur().span;
 		match parser.cur().kind {
 			Kind::Number => {
-				Ok(Self::Number(parser.expect_number()?).spanned(span.up_to(&parser.cur().span)))
+				Ok(Self::Number(parser.expect_number()?).spanned(span.until(parser.cur().span)))
 			}
 			Kind::Percentage => Ok(Self::Percentage(parser.expect_percentage()?)
-				.spanned(span.up_to(&parser.cur().span))),
+				.spanned(span.until(parser.cur().span))),
 			Kind::Ident => match parser.expect_ident()? {
 				atom!("none") => {
 					parser.advance();
-					Ok(Self::None.spanned(span.up_to(&parser.cur().span)))
+					Ok(Self::None.spanned(span.until(parser.cur().span)))
 				}
 				_ => Err(diagnostics::Unimplemented(span))?,
 			},

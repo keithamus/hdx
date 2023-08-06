@@ -28,7 +28,7 @@ impl<'a> Parse<'a> for Sizing {
 			}
 			_ => Err(diagnostics::Unimplemented(parser.cur().span))?,
 		};
-		Ok(sizing.spanned(span.up_to(&parser.cur().span)))
+		Ok(sizing.spanned(span.until(parser.cur().span)))
 	}
 }
 
@@ -58,7 +58,7 @@ impl<'a> Parse<'a> for MaxSizing {
 			}
 			_ => Err(diagnostics::Unimplemented(parser.cur().span))?,
 		};
-		Ok(sizing.spanned(span.up_to(&parser.cur().span)))
+		Ok(sizing.spanned(span.until(parser.cur().span)))
 	}
 }
 

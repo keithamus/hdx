@@ -18,7 +18,7 @@ impl<'a> Parse<'a> for CounterStyle<'a> {
 				let ident = parser.expect_ident()?;
 				if ident == atom!("symbols") {
 					let node = Symbols::parse(parser)?;
-					Ok(Self::Symbols(node).spanned(span.up_to(&parser.cur().span)))
+					Ok(Self::Symbols(node).spanned(span.until(parser.cur().span)))
 				} else {
 					Err(diagnostics::ExpectedFunction(atom!("symbols"), ident, parser.cur().span))?
 				}

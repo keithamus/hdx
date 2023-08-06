@@ -50,7 +50,7 @@ impl<'a> Parse<'a> for CSSStyleSheet<'a> {
 				}
 			}
 		}
-		Ok(Self { rules }.spanned(span.up_to(&parser.cur().span)))
+		Ok(Self { rules }.spanned(span.until(parser.cur().span)))
 	}
 }
 
@@ -58,7 +58,7 @@ impl<'a> Parse<'a> for SelectorSet<'a> {
 	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
 		let span = parser.cur().span;
 		Ok(Self { children: parser.parse_comma_list_of::<Selector>()? }
-			.spanned(span.up_to(&parser.cur().span)))
+			.spanned(span.until(parser.cur().span)))
 	}
 }
 

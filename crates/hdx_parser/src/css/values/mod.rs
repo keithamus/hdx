@@ -31,7 +31,7 @@ macro_rules! parse_for_enums {
                     let span = parser.cur().span;
                     let ident = parser.expect_ident()?;
                     if let Some(val) = $prop::from_atom(ident.clone()) {
-                        Ok(val.spanned(span.up_to(&parser.cur().span)))
+                        Ok(val.spanned(span.until(parser.cur().span)))
                     } else {
                         Err(diagnostics::UnexpectedIdent(ident, span))?
                     }

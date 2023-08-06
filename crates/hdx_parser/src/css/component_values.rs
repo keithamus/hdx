@@ -39,10 +39,10 @@ impl<'a> Parse<'a> for ComponentValue<'a> {
 		match parser.cur().kind {
 			Kind::LeftCurly | Kind::LeftSquare | Kind::LeftParen => {
 				Ok(Self::SimpleBlock(SimpleBlock::parse(parser)?)
-					.spanned(span.up_to(&parser.cur().span)))
+					.spanned(span.until(parser.cur().span)))
 			}
 			Kind::Function => {
-				Ok(Self::Function(Function::parse(parser)?).spanned(span.up_to(&parser.cur().span)))
+				Ok(Self::Function(Function::parse(parser)?).spanned(span.until(parser.cur().span)))
 			}
 			_ => {
 				let token = parser.cur().clone();
@@ -63,7 +63,7 @@ impl<'a> Parse<'a> for SimpleBlock<'a> {
 			.ok_or_else(|| diagnostics::Unexpected(parser.cur().kind, span))?;
 		parser.advance();
 		let value = parser.parse_component_values(pairwise.end(), true)?;
-		Ok(Self { value: parser.boxup(value), pairwise }.spanned(span.up_to(&parser.cur().span)))
+		Ok(Self { value: parser.boxup(value), pairwise }.spanned(span.until(parser.cur().span)))
 	}
 }
 
@@ -73,6 +73,6 @@ impl<'a> Parse<'a> for Function<'a> {
 		let span = parser.cur().span;
 		let name = parser.expect_function()?;
 		let value = parser.parse_component_values(Kind::RightParen, false)?;
-		Ok(Self { name, value: parser.boxup(value) }.spanned(span.up_to(&parser.cur().span)))
+		Ok(Self { name, value: parser.boxup(value) }.spanned(span.until(parser.cur().span)))
 	}
 }

@@ -15,17 +15,17 @@ impl<'a> Parse<'a> for Angle {
 					))?
 				}
 				parser.advance();
-				Ok(Self::Zero.spanned(span.up_to(&parser.cur().span)))
+				Ok(Self::Zero.spanned(span.until(parser.cur().span)))
 			}
 			Kind::Dimension => {
 				let value = parser.cur().value.as_f32().unwrap();
 				let unit = parser.cur_atom().unwrap();
 				parser.advance();
 				match unit {
-					atom!("deg") => Ok(Self::Deg(value).spanned(span.up_to(&parser.cur().span))),
-					atom!("grad") => Ok(Self::Grad(value).spanned(span.up_to(&parser.cur().span))),
-					atom!("rad") => Ok(Self::Rad(value).spanned(span.up_to(&parser.cur().span))),
-					atom!("turn") => Ok(Self::Turn(value).spanned(span.up_to(&parser.cur().span))),
+					atom!("deg") => Ok(Self::Deg(value).spanned(span.until(parser.cur().span))),
+					atom!("grad") => Ok(Self::Grad(value).spanned(span.until(parser.cur().span))),
+					atom!("rad") => Ok(Self::Rad(value).spanned(span.until(parser.cur().span))),
+					atom!("turn") => Ok(Self::Turn(value).spanned(span.until(parser.cur().span))),
 					_ => Err(diagnostics::UnexpectedIdent(unit, parser.cur().span))?,
 				}
 			}

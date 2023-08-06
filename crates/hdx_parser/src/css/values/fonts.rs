@@ -12,13 +12,13 @@ impl<'a> Parse<'a> for FontWeightValue {
 			Kind::Ident => {
 				let ident = parser.expect_ident()?;
 				if ident == atom!("normal") {
-					Ok(Self::Normal.spanned(span.up_to(&parser.cur().span)))
+					Ok(Self::Normal.spanned(span.until(parser.cur().span)))
 				} else if ident == atom!("bold") {
-					Ok(Self::Bold.spanned(span.up_to(&parser.cur().span)))
+					Ok(Self::Bold.spanned(span.until(parser.cur().span)))
 				} else if ident == atom!("bolder") {
-					Ok(Self::Bolder.spanned(span.up_to(&parser.cur().span)))
+					Ok(Self::Bolder.spanned(span.until(parser.cur().span)))
 				} else if ident == atom!("lighter") {
-					Ok(Self::Lighter.spanned(span.up_to(&parser.cur().span)))
+					Ok(Self::Lighter.spanned(span.until(parser.cur().span)))
 				} else {
 					Err(diagnostics::UnexpectedIdent(ident, parser.cur().span))?
 				}
@@ -27,7 +27,7 @@ impl<'a> Parse<'a> for FontWeightValue {
 				let num = parser.cur().value.as_f32().unwrap();
 				parser.advance();
 				if (1.0..=1000.0).contains(&num) {
-					Ok(Self::Number(num as u16).spanned(span.up_to(&parser.cur().span)))
+					Ok(Self::Number(num as u16).spanned(span.until(parser.cur().span)))
 				} else {
 					Err(diagnostics::NumberOutOfBounds(1.0, 1000.0, parser.cur().span))?
 				}
@@ -44,20 +44,20 @@ impl<'a> Parse<'a> for FontSizeValue {
 			Kind::Ident => {
 				let ident = parser.expect_ident()?;
 				if ident == atom!("math") {
-					Ok(Self::Math.spanned(span.up_to(&parser.cur().span)))
+					Ok(Self::Math.spanned(span.until(parser.cur().span)))
 				} else if let Some(val) = AbsoluteSize::from_atom(ident.clone()) {
 					parser.advance();
-					Ok(Self::Absolute(val).spanned(span.up_to(&parser.cur().span)))
+					Ok(Self::Absolute(val).spanned(span.until(parser.cur().span)))
 				} else if let Some(val) = RelativeSize::from_atom(ident.clone()) {
 					parser.advance();
-					Ok(Self::Relative(val).spanned(span.up_to(&parser.cur().span)))
+					Ok(Self::Relative(val).spanned(span.until(parser.cur().span)))
 				} else {
 					Err(diagnostics::UnexpectedIdent(ident, parser.cur().span))?
 				}
 			}
 			_ => {
 				let node = PositiveLengthPercentage::parse(parser)?;
-				Ok(Self::LengthPercentage(node).spanned(span.up_to(&parser.cur().span)))
+				Ok(Self::LengthPercentage(node).spanned(span.until(parser.cur().span)))
 			}
 		}
 	}
@@ -70,30 +70,28 @@ impl<'a> Parse<'a> for FontFamilyValue {
 			Kind::Ident => {
 				let mut ident = parser.expect_ident_cased()?;
 				match ident.to_ascii_lowercase() {
-					atom!("serif") => Ok(Self::Serif.spanned(span.up_to(&parser.cur().span))),
+					atom!("serif") => Ok(Self::Serif.spanned(span.until(parser.cur().span))),
 					atom!("sans-serif") => {
-						Ok(Self::SansSerif.spanned(span.up_to(&parser.cur().span)))
+						Ok(Self::SansSerif.spanned(span.until(parser.cur().span)))
 					}
-					atom!("cursive") => Ok(Self::Cursive.spanned(span.up_to(&parser.cur().span))),
-					atom!("fantasy") => Ok(Self::Fantasy.spanned(span.up_to(&parser.cur().span))),
+					atom!("cursive") => Ok(Self::Cursive.spanned(span.until(parser.cur().span))),
+					atom!("fantasy") => Ok(Self::Fantasy.spanned(span.until(parser.cur().span))),
 					atom!("monospace") => {
-						Ok(Self::Monospace.spanned(span.up_to(&parser.cur().span)))
+						Ok(Self::Monospace.spanned(span.until(parser.cur().span)))
 					}
-					atom!("system-ui") => {
-						Ok(Self::SystemUi.spanned(span.up_to(&parser.cur().span)))
-					}
-					atom!("emoji") => Ok(Self::Emoji.spanned(span.up_to(&parser.cur().span))),
-					atom!("math") => Ok(Self::Math.spanned(span.up_to(&parser.cur().span))),
-					atom!("fangsong") => Ok(Self::Fangsong.spanned(span.up_to(&parser.cur().span))),
-					atom!("ui-serif") => Ok(Self::UiSerif.spanned(span.up_to(&parser.cur().span))),
+					atom!("system-ui") => Ok(Self::SystemUi.spanned(span.until(parser.cur().span))),
+					atom!("emoji") => Ok(Self::Emoji.spanned(span.until(parser.cur().span))),
+					atom!("math") => Ok(Self::Math.spanned(span.until(parser.cur().span))),
+					atom!("fangsong") => Ok(Self::Fangsong.spanned(span.until(parser.cur().span))),
+					atom!("ui-serif") => Ok(Self::UiSerif.spanned(span.until(parser.cur().span))),
 					atom!("ui-sans-serif") => {
-						Ok(Self::UiSansSerif.spanned(span.up_to(&parser.cur().span)))
+						Ok(Self::UiSansSerif.spanned(span.until(parser.cur().span)))
 					}
 					atom!("ui-monospace") => {
-						Ok(Self::UiMonospace.spanned(span.up_to(&parser.cur().span)))
+						Ok(Self::UiMonospace.spanned(span.until(parser.cur().span)))
 					}
 					atom!("ui-rounded") => {
-						Ok(Self::UiRounded.spanned(span.up_to(&parser.cur().span)))
+						Ok(Self::UiRounded.spanned(span.until(parser.cur().span)))
 					}
 					_ => {
 						let mut name = String::new();
@@ -105,14 +103,14 @@ impl<'a> Parse<'a> for FontFamilyValue {
 							name.push(' ');
 							ident = parser.expect_ident_cased()?;
 						}
-						Ok(Self::Named(Atom::from(name)).spanned(span.up_to(&parser.cur().span)))
+						Ok(Self::Named(Atom::from(name)).spanned(span.until(parser.cur().span)))
 					}
 				}
 			}
 			Kind::String => {
 				let string = parser.cur_atom().unwrap();
 				parser.advance();
-				Ok(Self::Named(string).spanned(span.up_to(&parser.cur().span)))
+				Ok(Self::Named(string).spanned(span.until(parser.cur().span)))
 			}
 			_ => Err(diagnostics::Unexpected(parser.cur().kind, parser.cur().span))?,
 		}
@@ -126,17 +124,17 @@ impl<'a> Parse<'a> for FontStyleValue<'a> {
 			Kind::Ident => {
 				let ident = parser.expect_ident()?;
 				match ident {
-					atom!("normal") => Ok(Self::Normal.spanned(span.up_to(&parser.cur().span))),
-					atom!("italic") => Ok(Self::Italic.spanned(span.up_to(&parser.cur().span))),
+					atom!("normal") => Ok(Self::Normal.spanned(span.until(parser.cur().span))),
+					atom!("italic") => Ok(Self::Italic.spanned(span.until(parser.cur().span))),
 					atom!("oblique") => {
 						if matches!(parser.cur().kind, Kind::Dimension | Kind::Number) {
 							let degrees = MathExpr::<Angle>::parse(parser)?;
-							Ok(Self::Oblique(degrees).spanned(span.up_to(&parser.cur().span)))
+							Ok(Self::Oblique(degrees).spanned(span.until(parser.cur().span)))
 						} else {
 							Ok(Self::Oblique(Spanned::dummy(MathExpr::Literal(Spanned::dummy(
 								Angle::Deg(14.0),
 							))))
-							.spanned(span.up_to(&parser.cur().span)))
+							.spanned(span.until(parser.cur().span)))
 						}
 					}
 					_ => Err(diagnostics::UnexpectedIdent(ident, parser.cur().span))?,

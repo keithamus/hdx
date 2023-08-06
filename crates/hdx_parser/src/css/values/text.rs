@@ -39,7 +39,7 @@ impl<'a> Parse<'a> for WhiteSpaceTrimValue {
 				break;
 			}
 		}
-		Ok(Self::Discard { inner, after, before }.spanned(span.up_to(&parser.cur().span)))
+		Ok(Self::Discard { inner, after, before }.spanned(span.until(parser.cur().span)))
 	}
 }
 
@@ -146,6 +146,6 @@ impl<'a> Parse<'a> for WhiteSpaceShorthand<'a> {
 				break;
 			}
 		}
-		Ok(Self::Expanded { collapse, wrap, trim }.spanned(span.up_to(&parser.cur().span)))
+		Ok(Self::Expanded { collapse, wrap, trim }.spanned(span.until(parser.cur().span)))
 	}
 }

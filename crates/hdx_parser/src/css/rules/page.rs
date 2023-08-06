@@ -26,7 +26,7 @@ impl<'a> Parse<'a> for CSSPageRule<'a> {
 					declarations: parser.boxup(declarations),
 					rules: parser.boxup(rules),
 				}
-				.spanned(span.up_to(&parser.cur().span)))
+				.spanned(span.until(parser.cur().span)))
 			},
 		)
 	}
@@ -36,7 +36,7 @@ impl<'a> Parse<'a> for PageSelectorList<'a> {
 	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
 		let span = parser.cur().span;
 		let ok = Ok(Self { children: parser.parse_comma_list_of::<PageSelector>()? }
-			.spanned(span.up_to(&parser.cur().span)));
+			.spanned(span.until(parser.cur().span)));
 		ok
 	}
 }
@@ -59,7 +59,7 @@ impl<'a> Parse<'a> for PageSelector<'a> {
 				}
 			}
 		}
-		Ok(Self { page_type, pseudos }.spanned(span.up_to(&parser.cur().span)))
+		Ok(Self { page_type, pseudos }.spanned(span.until(parser.cur().span)))
 	}
 }
 
@@ -69,7 +69,7 @@ impl<'a> Parse<'a> for PagePseudoClass {
 		parser.expect(Kind::Colon)?;
 		let name = parser.expect_ident()?;
 		match Self::from_atom(name.clone()) {
-			Some(v) => Ok(v.spanned(span.up_to(&parser.cur().span))),
+			Some(v) => Ok(v.spanned(span.until(parser.cur().span))),
 			_ => Err(diagnostics::UnexpectedPseudo(name, span).into()),
 		}
 	}
@@ -86,7 +86,7 @@ impl<'a> Parse<'a> for CSSMarginRule<'a> {
 			 _rules: Vec<'a, Spanned<CSSMarginRule<'a>>>,
 			 declarations: Vec<'a, Spanned<Property<'a>>>| {
 				Ok(Self { name: PageMarginBox::TopLeft, declarations }
-					.spanned(span.up_to(&parser.cur().span)))
+					.spanned(span.until(parser.cur().span)))
 			},
 		)
 	}

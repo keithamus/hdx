@@ -56,7 +56,7 @@ impl<'a> Parse<'a> for TextDecorationShorthand<'a> {
 				break;
 			}
 		}
-		Ok(Self { color, style, line }.spanned(span.up_to(&parser.cur().span)))
+		Ok(Self { color, style, line }.spanned(span.until(parser.cur().span)))
 	}
 }
 
@@ -65,7 +65,7 @@ impl<'a> Parse<'a> for TextDecorationLineValue {
 		let span = parser.cur().span;
 		if parser.at(Kind::Ident) && parser.cur().as_atom_lower().unwrap() == atom!("none") {
 			parser.advance();
-			return Ok(Self::None.spanned(span.up_to(&parser.cur().span)));
+			return Ok(Self::None.spanned(span.until(parser.cur().span)));
 		}
 		let mut underline = false;
 		let mut overline = false;
@@ -106,7 +106,7 @@ impl<'a> Parse<'a> for TextDecorationLineValue {
 			parser.advance()
 		}
 		Ok(Self::Style { underline, overline, line_through, blink }
-			.spanned(span.up_to(&parser.cur().span)))
+			.spanned(span.until(parser.cur().span)))
 	}
 }
 

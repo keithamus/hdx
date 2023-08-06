@@ -10,10 +10,10 @@ impl<'a> Parse<'a> for TextSizeAdjustValue {
 				let ident = parser.expect_ident()?;
 				match ident {
 					atom!("none") => {
-						Ok(TextSizeAdjustValue::None.spanned(span.up_to(&parser.cur().span)))
+						Ok(TextSizeAdjustValue::None.spanned(span.until(parser.cur().span)))
 					}
 					atom!("auto") => {
-						Ok(TextSizeAdjustValue::Auto.spanned(span.up_to(&parser.cur().span)))
+						Ok(TextSizeAdjustValue::Auto.spanned(span.until(parser.cur().span)))
 					}
 					_ => Err(diagnostics::UnexpectedIdent(ident, span))?,
 				}
@@ -21,7 +21,7 @@ impl<'a> Parse<'a> for TextSizeAdjustValue {
 			Kind::Percentage => {
 				let value = parser.cur().value.as_f32().unwrap();
 				parser.advance();
-				Ok(TextSizeAdjustValue::Percentage(value).spanned(span.up_to(&parser.cur().span)))
+				Ok(TextSizeAdjustValue::Percentage(value).spanned(span.until(parser.cur().span)))
 			}
 			k => Err(diagnostics::Unexpected(k, span))?,
 		}

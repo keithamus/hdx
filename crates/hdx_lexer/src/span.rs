@@ -34,15 +34,14 @@ impl Span {
 		&source_text[self.start as usize..self.end as usize]
 	}
 
-	pub fn with_start(&self, span: &Self) -> Self {
-		Self { start: span.start, end: self.end }
-	}
-
-	pub fn with_end(&self, span: &Self) -> Self {
-		Self { start: self.start, end: span.end }
-	}
-
-	pub fn up_to(&self, span: &Self) -> Self {
+	/// Returns a `Span` from the beginning of `self` until the beginning of `end`.
+	///
+	/// ```text
+	///     ____             ___
+	///     self lorem ipsum end
+	///     ^^^^^^^^^^^^^^^^^
+	/// ```
+	pub fn until(&self, span: Self) -> Self {
 		Self { start: self.start, end: span.start }
 	}
 }

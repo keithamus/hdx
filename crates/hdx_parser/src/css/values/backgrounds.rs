@@ -79,7 +79,7 @@ impl<'a> Parse<'a> for BorderShorthand<'a> {
 				break;
 			}
 		}
-		Ok(Self { color, line_style, line_width }.spanned(span.up_to(&parser.cur().span)))
+		Ok(Self { color, line_style, line_width }.spanned(span.until(parser.cur().span)))
 	}
 }
 
@@ -88,7 +88,7 @@ impl<'a> Parse<'a> for LineWidth {
 		let span = parser.cur().span;
 		match parser.cur().kind {
 			Kind::Number | Kind::Dimension => {
-				Ok(Self::Length(Length::parse(parser)?).spanned(span.up_to(&parser.cur().span)))
+				Ok(Self::Length(Length::parse(parser)?).spanned(span.until(parser.cur().span)))
 			}
 			Kind::Ident => {
 				let ident = parser.cur_atom().unwrap();

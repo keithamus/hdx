@@ -8,6 +8,6 @@ impl<'a> Parse<'a> for CSSCharsetRule {
 		parser.expect_at_keyword_of(atom!("charset"))?;
 		let encoding = parser.expect_string()?;
 		parser.expect(Kind::Semicolon)?;
-		Ok(Self { encoding }.spanned(span.up_to(&parser.cur().span)))
+		Ok(Self { encoding }.spanned(span.until(parser.cur().span)))
 	}
 }

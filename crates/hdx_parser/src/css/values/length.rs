@@ -10,7 +10,7 @@ impl<'a> Parse<'a> for Length {
 			Kind::Dimension => {
 				let (value, atom) = parser.expect_dimension()?;
 				if let Some(unit) = Self::from_f32_and_atom(value, atom.clone()) {
-					Ok(unit.spanned(span.up_to(&parser.cur().span)))
+					Ok(unit.spanned(span.until(parser.cur().span)))
 				} else {
 					Err(diagnostics::UnexpectedDimension(atom, span))?
 				}
@@ -23,7 +23,7 @@ impl<'a> Parse<'a> for Length {
 						parser.cur().span,
 					))?
 				}
-				Ok(Self::Zero.spanned(span.up_to(&parser.cur().span)))
+				Ok(Self::Zero.spanned(span.until(parser.cur().span)))
 			}
 			k => Err(diagnostics::Unexpected(k, span))?,
 		}
@@ -38,7 +38,7 @@ impl<'a> Parse<'a> for PositiveLength {
 			Kind::Dimension => {
 				let (value, atom) = parser.expect_dimension_gte(0.0)?;
 				if let Some(unit) = Self::from_f32_and_atom(value, atom.clone()) {
-					Ok(unit.spanned(span.up_to(&parser.cur().span)))
+					Ok(unit.spanned(span.until(parser.cur().span)))
 				} else {
 					Err(diagnostics::UnexpectedDimension(atom, span))?
 				}
@@ -48,7 +48,7 @@ impl<'a> Parse<'a> for PositiveLength {
 				if value != 0.0 {
 					Err(diagnostics::DisallowedValueWithoutDimension(atom!("px"), span))?
 				}
-				Ok(Self::Zero.spanned(span.up_to(&parser.cur().span)))
+				Ok(Self::Zero.spanned(span.until(parser.cur().span)))
 			}
 			k => Err(diagnostics::Unexpected(k, span))?,
 		}
@@ -62,26 +62,26 @@ impl<'a> Parse<'a> for PositiveLengthPercentageOrNormal {
 		match parser.cur().kind {
 			Kind::Ident => {
 				parser.expect_ident_of(atom!("normal"))?;
-				Ok(Self::Normal.spanned(span.up_to(&parser.cur().span)))
+				Ok(Self::Normal.spanned(span.until(parser.cur().span)))
 			}
 			Kind::Dimension => {
 				let (value, atom) = parser.expect_dimension_gte(0.0)?;
 				if let Some(unit) = Self::from_f32_and_atom(value, atom.clone()) {
-					Ok(unit.spanned(span.up_to(&parser.cur().span)))
+					Ok(unit.spanned(span.until(parser.cur().span)))
 				} else {
 					Err(diagnostics::UnexpectedDimension(atom, span))?
 				}
 			}
 			Kind::Percentage => {
 				let value = parser.expect_percentage_gte(0.0)?;
-				Ok(Self::Percentage(Percentage(value)).spanned(span.up_to(&parser.cur().span)))
+				Ok(Self::Percentage(Percentage(value)).spanned(span.until(parser.cur().span)))
 			}
 			Kind::Number => {
 				let value = parser.expect_number()?;
 				if value != 0.0 {
 					Err(diagnostics::DisallowedValueWithoutDimension(atom!("px"), span))?
 				}
-				Ok(Self::Zero.spanned(span.up_to(&parser.cur().span)))
+				Ok(Self::Zero.spanned(span.until(parser.cur().span)))
 			}
 			k => Err(diagnostics::Unexpected(k, span))?,
 		}
@@ -98,7 +98,7 @@ impl<'a> Parse<'a> for LengthPercentage {
 				let atom = parser.cur().value.as_atom().unwrap();
 				if let Some(unit) = Self::from_f32_and_atom(value, atom.clone()) {
 					parser.advance();
-					Ok(unit.spanned(span.up_to(&parser.cur().span)))
+					Ok(unit.spanned(span.until(parser.cur().span)))
 				} else {
 					Err(diagnostics::UnexpectedDimension(atom, parser.cur().span))?
 				}
@@ -112,12 +112,12 @@ impl<'a> Parse<'a> for LengthPercentage {
 					))?
 				}
 				parser.advance();
-				Ok(Self::Zero.spanned(span.up_to(&parser.cur().span)))
+				Ok(Self::Zero.spanned(span.until(parser.cur().span)))
 			}
 			Kind::Percentage => {
 				let value = parser.cur().value.as_f32().unwrap();
 				parser.advance();
-				Ok(Self::Percentage(Percentage(value)).spanned(span.up_to(&parser.cur().span)))
+				Ok(Self::Percentage(Percentage(value)).spanned(span.until(parser.cur().span)))
 			}
 			_ => Err(diagnostics::Unexpected(parser.cur().kind, parser.cur().span))?,
 		}
@@ -132,7 +132,7 @@ impl<'a> Parse<'a> for LengthPercentageOrNormal {
 			Kind::Ident => {
 				if parser.cur_atom_lower().unwrap() == atom!("normal") {
 					parser.advance();
-					Ok(Self::Normal.spanned(span.up_to(&parser.cur().span)))
+					Ok(Self::Normal.spanned(span.until(parser.cur().span)))
 				} else {
 					Err(diagnostics::UnexpectedIdent(
 						parser.cur_atom_lower().unwrap(),
@@ -145,7 +145,7 @@ impl<'a> Parse<'a> for LengthPercentageOrNormal {
 				let atom = parser.cur().value.as_atom().unwrap();
 				if let Some(unit) = Self::from_f32_and_atom(value, atom.clone()) {
 					parser.advance();
-					Ok(unit.spanned(span.up_to(&parser.cur().span)))
+					Ok(unit.spanned(span.until(parser.cur().span)))
 				} else {
 					Err(diagnostics::UnexpectedDimension(atom, parser.cur().span))?
 				}
@@ -159,12 +159,12 @@ impl<'a> Parse<'a> for LengthPercentageOrNormal {
 					))?
 				}
 				parser.advance();
-				Ok(Self::Zero.spanned(span.up_to(&parser.cur().span)))
+				Ok(Self::Zero.spanned(span.until(parser.cur().span)))
 			}
 			Kind::Percentage => {
 				let value = parser.cur().value.as_f32().unwrap();
 				parser.advance();
-				Ok(Self::Percentage(Percentage(value)).spanned(span.up_to(&parser.cur().span)))
+				Ok(Self::Percentage(Percentage(value)).spanned(span.until(parser.cur().span)))
 			}
 			_ => Err(diagnostics::Unexpected(parser.cur().kind, parser.cur().span))?,
 		}
@@ -184,7 +184,7 @@ impl<'a> Parse<'a> for PositiveLengthPercentage {
 				let atom = parser.cur().value.as_atom().unwrap();
 				if let Some(unit) = Self::from_f32_and_atom(value, atom.clone()) {
 					parser.advance();
-					Ok(unit.spanned(span.up_to(&parser.cur().span)))
+					Ok(unit.spanned(span.until(parser.cur().span)))
 				} else {
 					Err(diagnostics::UnexpectedDimension(atom, parser.cur().span))?
 				}
@@ -198,7 +198,7 @@ impl<'a> Parse<'a> for PositiveLengthPercentage {
 					))?
 				}
 				parser.advance();
-				Ok(Self::Zero.spanned(span.up_to(&parser.cur().span)))
+				Ok(Self::Zero.spanned(span.until(parser.cur().span)))
 			}
 			Kind::Percentage => {
 				let value = parser.cur().value.as_f32().unwrap();
@@ -206,7 +206,7 @@ impl<'a> Parse<'a> for PositiveLengthPercentage {
 					Err(diagnostics::NumberOutOfBounds(value, 0.0, parser.cur().span))?;
 				}
 				parser.advance();
-				Ok(Self::Percentage(Percentage(value)).spanned(span.up_to(&parser.cur().span)))
+				Ok(Self::Percentage(Percentage(value)).spanned(span.until(parser.cur().span)))
 			}
 			_ => Err(diagnostics::Unexpected(parser.cur().kind, parser.cur().span))?,
 		}
@@ -220,7 +220,7 @@ impl<'a> Parse<'a> for LengthPercentageOrAuto {
 			Kind::Ident => {
 				if parser.cur_atom_lower().unwrap() == atom!("auto") {
 					parser.advance();
-					Ok(Self::Auto.spanned(span.up_to(&parser.cur().span)))
+					Ok(Self::Auto.spanned(span.until(parser.cur().span)))
 				} else {
 					Err(diagnostics::UnexpectedIdent(
 						parser.cur_atom_lower().unwrap(),
@@ -233,7 +233,7 @@ impl<'a> Parse<'a> for LengthPercentageOrAuto {
 				let atom = parser.cur().value.as_atom().unwrap();
 				if let Some(unit) = Self::from_f32_and_atom(value, atom.clone()) {
 					parser.advance();
-					Ok(unit.spanned(span.up_to(&parser.cur().span)))
+					Ok(unit.spanned(span.until(parser.cur().span)))
 				} else {
 					Err(diagnostics::UnexpectedDimension(atom, parser.cur().span))?
 				}
@@ -247,12 +247,12 @@ impl<'a> Parse<'a> for LengthPercentageOrAuto {
 					))?
 				}
 				parser.advance();
-				Ok(Self::Zero.spanned(span.up_to(&parser.cur().span)))
+				Ok(Self::Zero.spanned(span.until(parser.cur().span)))
 			}
 			Kind::Percentage => {
 				let value = parser.cur().value.as_f32().unwrap();
 				parser.advance();
-				Ok(Self::Percentage(Percentage(value)).spanned(span.up_to(&parser.cur().span)))
+				Ok(Self::Percentage(Percentage(value)).spanned(span.until(parser.cur().span)))
 			}
 			_ => Err(diagnostics::Unexpected(parser.cur().kind, parser.cur().span))?,
 		}

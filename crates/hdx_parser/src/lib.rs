@@ -107,7 +107,7 @@ impl<'a> Parser<'a> {
 				}
 				self.advance()
 			}
-			self.errors.push(diagnostics::ExpectedEnd(span.up_to(&self.cur().span)).into());
+			self.errors.push(diagnostics::ExpectedEnd(span.until(self.cur().span)).into());
 		}
 		ParserReturn { output, warnings: self.warnings, errors: self.errors, panicked }
 	}

@@ -13,13 +13,13 @@ impl<'a> Parse<'a> for MarginTrimValue {
 				inline_start: false,
 				inline_end: false,
 			}
-			.spanned(span.up_to(&parser.cur().span)))
+			.spanned(span.until(parser.cur().span)))
 		} else if ident == atom!("block") {
 			Ok(Self { block_start: true, block_end: true, inline_start: false, inline_end: false }
-				.spanned(span.up_to(&parser.cur().span)))
+				.spanned(span.until(parser.cur().span)))
 		} else if ident == atom!("inline") {
 			Ok(Self { block_start: false, block_end: false, inline_start: true, inline_end: true }
-				.spanned(span.up_to(&parser.cur().span)))
+				.spanned(span.until(parser.cur().span)))
 		} else {
 			let mut value = Self {
 				block_start: ident == atom!("block-start"),
@@ -61,7 +61,7 @@ impl<'a> Parse<'a> for MarginTrimValue {
 					_ => break,
 				}
 			}
-			Ok(value.spanned(span.up_to(&parser.cur().span)))
+			Ok(value.spanned(span.until(parser.cur().span)))
 		}
 	}
 }

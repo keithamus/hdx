@@ -19,7 +19,7 @@ impl<'a> Parse<'a> for UnknownAtRule<'a> {
 					rules: parser.boxup(rules),
 					properties: parser.boxup(properties),
 				}
-				.spanned(span.up_to(&parser.cur().span)))
+				.spanned(span.until(parser.cur().span)))
 			},
 		)
 	}
@@ -37,7 +37,7 @@ impl<'a> Parse<'a> for UnknownRule<'a> {
 					rules: parser.boxup(rules),
 					properties: parser.boxup(properties),
 				}
-				.spanned(span.up_to(&parser.cur().span)))
+				.spanned(span.until(parser.cur().span)))
 			},
 		)
 	}
@@ -47,7 +47,7 @@ impl<'a> Parse<'a> for UnknownPrelude<'a> {
 	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
 		let span = parser.cur().span;
 		let value = parser.parse_component_values(Kind::Semicolon, false)?;
-		Ok(Self { value: parser.boxup(value) }.spanned(span.up_to(&parser.cur().span)))
+		Ok(Self { value: parser.boxup(value) }.spanned(span.until(parser.cur().span)))
 	}
 }
 
@@ -81,7 +81,7 @@ impl<'a> Parse<'a> for UnknownDeclaration<'a> {
 			parser.advance();
 		}
 		Ok(Self { name, value_like, value: parser.boxup(value), important: false }
-			.spanned(span.up_to(&parser.cur().span)))
+			.spanned(span.until(parser.cur().span)))
 	}
 }
 

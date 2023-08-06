@@ -31,7 +31,7 @@ impl<'a> Parse<'a> for DisplayValue {
 				inside = DisplayInside::from_atom(second).unwrap();
 				if let Some(marker) = DisplayMarker::from_atom(third.clone()) {
 					Ok(DisplayValue::PairAndMarker(outside, inside, marker)
-						.spanned(span.up_to(&parser.cur().span)))
+						.spanned(span.until(parser.cur().span)))
 				} else {
 					Err(diagnostics::UnexpectedIdent(third, parser.cur().span).into())
 				}
@@ -42,10 +42,10 @@ impl<'a> Parse<'a> for DisplayValue {
 					outside = display;
 					if let Some(display) = DisplayMarker::from_atom(second.clone()) {
 						Ok(DisplayValue::PairAndMarker(outside, inside, display)
-							.spanned(span.up_to(&parser.cur().span)))
+							.spanned(span.until(parser.cur().span)))
 					} else if let Some(display) = DisplayInside::from_atom(second.clone()) {
 						Ok(DisplayValue::Pair(outside, display)
-							.spanned(span.up_to(&parser.cur().span)))
+							.spanned(span.until(parser.cur().span)))
 					} else {
 						Err(diagnostics::UnexpectedIdent(second, parser.cur().span).into())
 					}
@@ -53,7 +53,7 @@ impl<'a> Parse<'a> for DisplayValue {
 					inside = display;
 					if let Some(display) = DisplayOutside::from_atom(second.clone()) {
 						Ok(DisplayValue::Pair(display, inside)
-							.spanned(span.up_to(&parser.cur().span)))
+							.spanned(span.until(parser.cur().span)))
 					} else {
 						Err(diagnostics::UnexpectedIdent(second, parser.cur().span).into())
 					}
@@ -64,7 +64,7 @@ impl<'a> Parse<'a> for DisplayValue {
 			// <display-listitem> | <display-internal> | <display-box> | <display-legacy>
 			_ => {
 				if let Some(display) = DisplayValue::from_atom(first.clone()) {
-					Ok(display.spanned(span.up_to(&parser.cur().span)))
+					Ok(display.spanned(span.until(parser.cur().span)))
 				} else {
 					Err(diagnostics::UnexpectedIdent(first, parser.cur().span).into())
 				}

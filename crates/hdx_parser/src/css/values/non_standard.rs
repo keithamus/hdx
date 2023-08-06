@@ -9,8 +9,8 @@ impl<'a> Parse<'a> for ZoomValue {
 			Kind::Ident => {
 				let ident = parser.cur_atom().unwrap();
 				match ident.to_ascii_lowercase() {
-					atom!("normal") => Ok(Self::Normal.spanned(span.up_to(&parser.cur().span))),
-					atom!("reset") => Ok(Self::Reset.spanned(span.up_to(&parser.cur().span))),
+					atom!("normal") => Ok(Self::Normal.spanned(span.until(parser.cur().span))),
+					atom!("reset") => Ok(Self::Reset.spanned(span.until(parser.cur().span))),
 					_ => Err(diagnostics::UnexpectedIdent(
 						parser.cur_atom().unwrap(),
 						parser.cur().span,
@@ -20,12 +20,12 @@ impl<'a> Parse<'a> for ZoomValue {
 			Kind::Percentage => {
 				let value = parser.cur().value.as_f32().unwrap();
 				parser.advance();
-				Ok(Self::Percentage(value).spanned(span.up_to(&parser.cur().span)))
+				Ok(Self::Percentage(value).spanned(span.until(parser.cur().span)))
 			}
 			Kind::Number => {
 				let value = parser.cur().value.as_f32().unwrap();
 				parser.advance();
-				Ok(Self::Number(value).spanned(span.up_to(&parser.cur().span)))
+				Ok(Self::Number(value).spanned(span.until(parser.cur().span)))
 			}
 			_ => Err(diagnostics::Unexpected(parser.cur().kind, parser.cur().span))?,
 		}

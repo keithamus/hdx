@@ -9,11 +9,11 @@ impl<'a> Parse<'a> for ContentsValue<'a> {
 			match parser.cur_atom_lower().unwrap() {
 				atom!("normal") => {
 					parser.advance();
-					return Ok(Self::Normal.spanned(span.up_to(&parser.cur().span)));
+					return Ok(Self::Normal.spanned(span.until(parser.cur().span)));
 				}
 				atom!("none") => {
 					parser.advance();
-					return Ok(Self::None.spanned(span.up_to(&parser.cur().span)));
+					return Ok(Self::None.spanned(span.until(parser.cur().span)));
 				}
 				_ => {}
 			}
@@ -26,7 +26,7 @@ impl<'a> Parse<'a> for ContentsValue<'a> {
 		//         return Ok(Self::Replacement(ContentReplacement { image, alt: list.alt }));
 		//     }
 		// }
-		Ok(Self::List(list).spanned(span.up_to(&parser.cur().span)))
+		Ok(Self::List(list).spanned(span.until(parser.cur().span)))
 	}
 }
 
@@ -47,7 +47,7 @@ impl<'a> Parse<'a> for ContentList<'a> {
 				_ => Err(diagnostics::Unimplemented(parser.cur().span))?,
 			}
 		}
-		Ok(Self { values, alt }.spanned(span.up_to(&parser.cur().span)))
+		Ok(Self { values, alt }.spanned(span.until(parser.cur().span)))
 	}
 }
 
@@ -60,11 +60,11 @@ impl<'a> Parse<'a> for QuotesValue<'a> {
 				match ident {
 					atom!("none") => {
 						parser.advance();
-						return Ok(Self::None.spanned(span.up_to(&parser.cur().span)));
+						return Ok(Self::None.spanned(span.until(parser.cur().span)));
 					}
 					atom!("auto") => {
 						parser.advance();
-						return Ok(Self::Auto.spanned(span.up_to(&parser.cur().span)));
+						return Ok(Self::Auto.spanned(span.until(parser.cur().span)));
 					}
 					_ => Err(diagnostics::UnexpectedIdent(ident, parser.cur().span))?,
 				}
@@ -79,7 +79,7 @@ impl<'a> Parse<'a> for QuotesValue<'a> {
 						break;
 					}
 				}
-				Ok(Self::Custom(custom).spanned(span.up_to(&parser.cur().span)))
+				Ok(Self::Custom(custom).spanned(span.until(parser.cur().span)))
 			}
 			k => Err(diagnostics::Unexpected(k, parser.cur().span))?,
 		}

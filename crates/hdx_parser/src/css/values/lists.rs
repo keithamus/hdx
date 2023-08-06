@@ -62,7 +62,7 @@ impl<'a> Parse<'a> for ListStyleShorthand<'a> {
 				break;
 			}
 		}
-		Ok(Self { position, image, marker }.spanned(span.up_to(&parser.cur().span)))
+		Ok(Self { position, image, marker }.spanned(span.until(parser.cur().span)))
 	}
 }
 
@@ -77,13 +77,13 @@ impl<'a> Parse<'a> for ListStyleTypeValue<'a> {
 					Ok(Self::None.spanned(span))
 				} else {
 					let node = CounterStyle::parse(parser)?;
-					Ok(Self::CounterStyle(node).spanned(span.up_to(&parser.cur().span)))
+					Ok(Self::CounterStyle(node).spanned(span.until(parser.cur().span)))
 				}
 			}
 			Kind::String => Ok(Self::String(parser.expect_string()?).spanned(span)),
 			_ => {
 				let node = CounterStyle::parse(parser)?;
-				Ok(Self::CounterStyle(node).spanned(span.up_to(&parser.cur().span)))
+				Ok(Self::CounterStyle(node).spanned(span.until(parser.cur().span)))
 			}
 		}
 	}
@@ -100,12 +100,12 @@ impl<'a> Parse<'a> for ListStyleImageValue<'a> {
 					Ok(Self::None.spanned(span))
 				} else {
 					let node = Image::parse(parser)?;
-					Ok(Self::Image(node).spanned(span.up_to(&parser.cur().span)))
+					Ok(Self::Image(node).spanned(span.until(parser.cur().span)))
 				}
 			}
 			_ => {
 				let node = Image::parse(parser)?;
-				Ok(Self::Image(node).spanned(span.up_to(&parser.cur().span)))
+				Ok(Self::Image(node).spanned(span.until(parser.cur().span)))
 			}
 		}
 	}

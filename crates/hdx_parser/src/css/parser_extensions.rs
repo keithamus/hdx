@@ -30,7 +30,7 @@ impl<'a> Parser<'a> {
 		let mut prelude = None;
 		loop {
 			match self.cur().kind {
-				Kind::Eof => Err(diagnostics::Unexpected(Kind::Eof, span.up_to(&self.cur().span)))?,
+				Kind::Eof => Err(diagnostics::Unexpected(Kind::Eof, span.until(self.cur().span)))?,
 				Kind::RightCurly => {
 					if nested {
 						Err(diagnostics::Unexpected(self.cur().kind, self.cur().span))?
@@ -181,7 +181,7 @@ impl<'a> Parser<'a> {
 			Err(diagnostics::Unimplemented(span))?;
 		}
 		self.expect(Kind::Colon)
-			.map_err(|_| diagnostics::BadDeclaration(span.up_to(&self.cur().span)))?;
+			.map_err(|_| diagnostics::BadDeclaration(span.until(self.cur().span)))?;
 		let value = Value::parse(self)?;
 		let mut important = false;
 		loop {

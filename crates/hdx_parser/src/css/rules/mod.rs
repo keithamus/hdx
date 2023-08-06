@@ -8,6 +8,6 @@ impl<'a> Parse<'a> for NoPreludeAllowed {
 	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
 		let span = parser.cur().span;
 		parser.expect_without_advance(Kind::LeftCurly)?;
-		Ok(Self {}.spanned(span.up_to(&parser.cur().span)))
+		Ok(Self {}.spanned(span.until(parser.cur().span)))
 	}
 }

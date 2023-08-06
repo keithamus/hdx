@@ -11,7 +11,7 @@ impl<'a> Parse<'a> for FloatDeferValue {
 		match parser.cur().kind {
 			Kind::Ident => {
 				if let Some(val) = Self::from_atom(parser.expect_ident()?) {
-					Ok(val.spanned(span.up_to(&parser.cur().span)))
+					Ok(val.spanned(span.until(parser.cur().span)))
 				} else {
 					Err(diagnostics::UnexpectedIdent(
 						parser.cur_atom().unwrap(),
@@ -21,7 +21,7 @@ impl<'a> Parse<'a> for FloatDeferValue {
 			}
 			Kind::Number => {
 				let node = parser.expect_int()?;
-				Ok(Self::Integer(node).spanned(span.up_to(&parser.cur().span)))
+				Ok(Self::Integer(node).spanned(span.until(parser.cur().span)))
 			}
 			_ => Err(diagnostics::Unexpected(parser.cur().kind, parser.cur().span))?,
 		}
@@ -34,7 +34,7 @@ impl<'a> Parse<'a> for FloatValue {
 		match parser.cur().kind {
 			Kind::Ident => {
 				if let Some(val) = Self::from_atom(parser.expect_ident()?) {
-					Ok(val.spanned(span.up_to(&parser.cur().span)))
+					Ok(val.spanned(span.until(parser.cur().span)))
 				} else {
 					Err(diagnostics::UnexpectedIdent(
 						parser.cur_atom().unwrap(),
@@ -51,7 +51,7 @@ impl<'a> Parse<'a> for FloatValue {
 					atom!("snap-block") => {
 						if let Some(floated) = SnapBlockFloat::from_atom(floated_atom) {
 							Ok(Self::SnapBlockFunction(length, floated)
-								.spanned(span.up_to(&parser.cur().span)))
+								.spanned(span.until(parser.cur().span)))
 						} else {
 							Err(diagnostics::UnexpectedIdent(
 								parser.cur_atom().unwrap(),
@@ -63,7 +63,7 @@ impl<'a> Parse<'a> for FloatValue {
 					atom!("snap-inline") => {
 						if let Some(floated) = SnapInlineFloat::from_atom(floated_atom) {
 							Ok(Self::SnapInlineFunction(length, floated)
-								.spanned(span.up_to(&parser.cur().span)))
+								.spanned(span.until(parser.cur().span)))
 						} else {
 							Err(diagnostics::UnexpectedIdent(
 								parser.cur_atom().unwrap(),

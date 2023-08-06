@@ -16,14 +16,14 @@ impl<'a> Parse<'a> for CSSStyleRule<'a> {
 			 rules: Vec<'a, Spanned<CSSStyleRule<'a>>>,
 			 declarations: Vec<'a, Spanned<Property<'a>>>| {
 				if selectors.is_none() {
-					Err(diagnostics::NoSelector(span, span.up_to(&parser.cur().span)))?
+					Err(diagnostics::NoSelector(span, span.until(parser.cur().span)))?
 				}
 				Ok(Self {
 					selectors: parser.boxup(selectors.unwrap()),
 					declarations: parser.boxup(declarations),
 					rules: parser.boxup(rules),
 				}
-				.spanned(span.up_to(&parser.cur().span)))
+				.spanned(span.until(parser.cur().span)))
 			},
 		)
 	}

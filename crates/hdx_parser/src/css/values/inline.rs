@@ -12,7 +12,7 @@ impl<'a> Parse<'a> for LineHeightValue {
 			Kind::Ident => {
 				let ident = parser.expect_ident()?;
 				if ident == atom!("normal") {
-					Ok(Self::Normal.spanned(span.up_to(&parser.cur().span)))
+					Ok(Self::Normal.spanned(span.until(parser.cur().span)))
 				} else {
 					Err(diagnostics::UnexpectedIdent(ident, parser.cur().span))?
 				}
@@ -20,11 +20,11 @@ impl<'a> Parse<'a> for LineHeightValue {
 			Kind::Number => {
 				let value = parser.cur().value.as_f32().unwrap();
 				parser.advance();
-				Ok(Self::Number(value).spanned(span.up_to(&parser.cur().span)))
+				Ok(Self::Number(value).spanned(span.until(parser.cur().span)))
 			}
 			_ => {
 				let node = LengthPercentage::parse(parser)?;
-				Ok(Self::LengthPercentage(node).spanned(span.up_to(&parser.cur().span)))
+				Ok(Self::LengthPercentage(node).spanned(span.until(parser.cur().span)))
 			}
 		}
 	}
@@ -38,17 +38,17 @@ impl<'a> Parse<'a> for BaselineShiftValue {
 				let span = parser.cur().span;
 				let ident = parser.expect_ident()?;
 				match ident {
-					atom!("sub") => Ok(Self::Sub.spanned(span.up_to(&parser.cur().span))),
-					atom!("super") => Ok(Self::Super.spanned(span.up_to(&parser.cur().span))),
-					atom!("top") => Ok(Self::Top.spanned(span.up_to(&parser.cur().span))),
-					atom!("center") => Ok(Self::Center.spanned(span.up_to(&parser.cur().span))),
-					atom!("bottom") => Ok(Self::Bottom.spanned(span.up_to(&parser.cur().span))),
+					atom!("sub") => Ok(Self::Sub.spanned(span.until(parser.cur().span))),
+					atom!("super") => Ok(Self::Super.spanned(span.until(parser.cur().span))),
+					atom!("top") => Ok(Self::Top.spanned(span.until(parser.cur().span))),
+					atom!("center") => Ok(Self::Center.spanned(span.until(parser.cur().span))),
+					atom!("bottom") => Ok(Self::Bottom.spanned(span.until(parser.cur().span))),
 					_ => Err(diagnostics::UnexpectedIdent(ident, span))?,
 				}
 			}
 			_ => {
 				let node = LengthPercentage::parse(parser)?;
-				Ok(Self::LengthPercentage(node).spanned(span.up_to(&parser.cur().span)))
+				Ok(Self::LengthPercentage(node).spanned(span.until(parser.cur().span)))
 			}
 		}
 	}
@@ -66,9 +66,9 @@ impl<'a> Parse<'a> for VerticalAlignShorthand<'a> {
 					baseline_source = Shorthand::Explicit(
 						parser.boxup(
 							Expr::Literal(
-								BaselineSourceValue::First.spanned(span.up_to(&parser.cur().span)),
+								BaselineSourceValue::First.spanned(span.until(parser.cur().span)),
 							)
-							.spanned(span.up_to(&parser.cur().span)),
+							.spanned(span.until(parser.cur().span)),
 						),
 					);
 					parser.advance();
@@ -77,9 +77,9 @@ impl<'a> Parse<'a> for VerticalAlignShorthand<'a> {
 					baseline_source = Shorthand::Explicit(
 						parser.boxup(
 							Expr::Literal(
-								BaselineSourceValue::Last.spanned(span.up_to(&parser.cur().span)),
+								BaselineSourceValue::Last.spanned(span.until(parser.cur().span)),
 							)
-							.spanned(span.up_to(&parser.cur().span)),
+							.spanned(span.until(parser.cur().span)),
 						),
 					);
 					parser.advance();
@@ -123,6 +123,6 @@ impl<'a> Parse<'a> for VerticalAlignShorthand<'a> {
 			}
 		}
 		Ok(Self { baseline_source, alignment_baseline, baseline_shift }
-			.spanned(span.up_to(&parser.cur().span)))
+			.spanned(span.until(parser.cur().span)))
 	}
 }

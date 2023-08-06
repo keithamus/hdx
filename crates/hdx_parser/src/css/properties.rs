@@ -15,7 +15,7 @@ impl<'a> Parse<'a> for Custom<'a> {
 		let checkpoint = parser.checkpoint();
 		let value_span = parser.cur().span;
 		let value_like = ValueLike::parse(parser)
-			.unwrap_or(ValueLike::Unknown.spanned(value_span.up_to(&parser.cur().span)));
+			.unwrap_or(ValueLike::Unknown.spanned(value_span.until(parser.cur().span)));
 		parser.rewind(checkpoint);
 		let mut value = parser.parse_component_values(Kind::Semicolon, true)?;
 		if parser.at(Kind::Semicolon) {
@@ -33,7 +33,7 @@ impl<'a> Parse<'a> for Custom<'a> {
 			}
 		}
 		Ok(Self { name, value_like, value: parser.boxup(value), important }
-			.spanned(span.up_to(&parser.cur().span)))
+			.spanned(span.until(parser.cur().span)))
 	}
 }
 
@@ -44,28 +44,26 @@ impl<'a> Parse<'a> for ValueLike<'a> {
 		let token = parser.cur().clone();
 		let parsed = MathExpr::<Length>::parse(parser);
 		if let Ok(value) = parsed {
-			return Ok(Self::Length(parser.boxup(value)).spanned(span.up_to(&parser.cur().span)));
+			return Ok(Self::Length(parser.boxup(value)).spanned(span.until(parser.cur().span)));
 		}
 		parser.rewind(checkpoint);
 		let checkpoint = parser.checkpoint();
 		let parsed = MathExpr::<LengthPercentage>::parse(parser);
 		if let Ok(value) = parsed {
 			return Ok(
-				Self::LengthPercentage(parser.boxup(value)).spanned(span.up_to(&parser.cur().span))
+				Self::LengthPercentage(parser.boxup(value)).spanned(span.until(parser.cur().span))
 			);
 		}
 		parser.rewind(checkpoint);
 		let checkpoint = parser.checkpoint();
 		let parsed = Expr::<ColorValue>::parse(parser);
 		if let Ok(value) = parsed {
-			return Ok(Self::Color(parser.boxup(value)).spanned(span.up_to(&parser.cur().span)));
+			return Ok(Self::Color(parser.boxup(value)).spanned(span.until(parser.cur().span)));
 		}
 		parser.rewind(checkpoint);
 		let parsed = ExprList::<FontFamilyValue>::parse(parser);
 		if let Ok(value) = parsed {
-			return Ok(
-				Self::FontFamily(parser.boxup(value)).spanned(span.up_to(&parser.cur().span))
-			);
+			return Ok(Self::FontFamily(parser.boxup(value)).spanned(span.until(parser.cur().span)));
 		}
 		Err(diagnostics::Unexpected(token.kind, token.span).into())
 	}
@@ -80,7 +78,7 @@ macro_rules! parse_properties {
                     parser.parse_declaration(
                         Some($prop::name_as_atom()),
                         |parser: &mut Parser<'a>, _name: &Token, value: Spanned<<$prop as Declaration>::Value>, important: bool| {
-                            Ok($prop { value: parser.boxup(value), important }.spanned(span.up_to(&parser.cur().span)))
+                            Ok($prop { value: parser.boxup(value), important }.spanned(span.until(parser.cur().span)))
                         },
                     )
                 }
@@ -92,7 +90,7 @@ macro_rules! parse_properties {
                 let span = parser.cur().span;
                 if parser.cur().is_dashed_ident() {
                     let custom = Custom::parse(parser)?;
-                    return Ok(Property::Custom(parser.boxup(custom)).spanned(span.up_to(&parser.cur().span)));
+                    return Ok(Property::Custom(parser.boxup(custom)).spanned(span.until(parser.cur().span)));
                 }
                 let checkpoint = parser.checkpoint();
                 let property = match PropertyId::from_atom(parser.cur().as_atom_lower().unwrap_or(atom!(""))) {
@@ -110,10 +108,10 @@ macro_rules! parse_properties {
                     let parsed =
                         UnknownDeclaration::parse(parser).map(|p| Property::Unknown(parser.boxup(p)));
                     parser.warnings.push(e);
-                    parser.warnings.push(diagnostics::UnknownDeclaration(span.up_to(&parser.cur().span)).into());
+                    parser.warnings.push(diagnostics::UnknownDeclaration(span.until(parser.cur().span)).into());
                     parsed
                 })?;
-                Ok(property.spanned(span.up_to(&parser.cur().span)))
+                Ok(property.spanned(span.until(parser.cur().span)))
             }
         }
     }
