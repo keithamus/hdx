@@ -7,7 +7,6 @@ pub use hdx_atomizable_derive::Atomizable;
 use serde::Serialize;
 
 pub mod css;
-pub mod macros;
 pub mod traits;
 
 pub(crate) use hdx_atom::{atom, Atom, Atomizable};
