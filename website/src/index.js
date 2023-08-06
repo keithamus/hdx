@@ -270,9 +270,14 @@ class HdxEditor extends HTMLElement {
     } else if (event.type == "click" || event.type === "focusin") {
       codeFromUrl.set(this.code);
       codeFromLocal.set(this.code);
-      const pos = this.view.posAtCoords(event);
       const tree = syntaxTree(this.view.state);
-      let cursor = tree.cursorAt(pos);
+      let cursor;
+      if (event.x && event.y) {
+        const pos = this.view.posAtCoords(event);
+        cursor = tree.cursorAt(pos);
+      } else {
+        cursor = tree.cursorAt(this.view.state.selection.anchor);
+      }
       this.dispatchEvent(
         new EditorFocus({ start: cursor.from, end: cursor.to }),
       );
