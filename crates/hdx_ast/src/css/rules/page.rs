@@ -7,15 +7,16 @@ use crate::{
 	atom, css::properties::Property, Atom, Atomizable, Spanned, Specificity, ToSpecificity,
 };
 
+// https://drafts.csswg.org/cssom-1/#csspagerule
 #[derive(Debug, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
-pub struct PageRule<'a> {
+pub struct CSSPageRule<'a> {
 	#[cfg_attr(feature = "serde", serde(borrow))]
 	pub selectors: Box<'a, Spanned<PageSelectorList<'a>>>,
 	#[cfg_attr(feature = "serde", serde(borrow))]
-	pub properties: Box<'a, Vec<'a, Spanned<Property<'a>>>>,
+	pub declarations: Box<'a, Vec<'a, Spanned<Property<'a>>>>,
 	#[cfg_attr(feature = "serde", serde(borrow))]
-	pub rules: Box<'a, Vec<'a, Spanned<PageMarginRule<'a>>>>,
+	pub rules: Box<'a, Vec<'a, Spanned<CSSMarginRule<'a>>>>,
 }
 
 #[derive(Debug, PartialEq, Hash)]
@@ -67,12 +68,13 @@ impl ToSpecificity for PagePseudoClass {
 	}
 }
 
+// https://drafts.csswg.org/cssom-1/#cssmarginrule
 #[derive(Debug, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
-pub struct PageMarginRule<'a> {
-	pub margin_box: PageMarginBox,
+pub struct CSSMarginRule<'a> {
+	pub name: PageMarginBox,
 	#[cfg_attr(feature = "serde", serde(borrow))]
-	pub properties: Vec<'a, Spanned<Property<'a>>>,
+	pub declarations: Vec<'a, Spanned<Property<'a>>>,
 }
 
 #[derive(Atomizable, Debug, Clone, PartialEq, Hash)]
@@ -104,9 +106,10 @@ mod tests {
 	#[test]
 	fn size_test() {
 		use std::mem::size_of;
+		assert_eq!(size_of::<CSSPageRule>(), 24);
+		assert_eq!(size_of::<CSSMarginRule>(), 40);
 		assert_eq!(size_of::<PagePseudoClass>(), 1);
 		assert_eq!(size_of::<PageMarginBox>(), 1);
-		assert_eq!(size_of::<PageMarginRule>(), 40);
 		assert_eq!(size_of::<PagePseudoClass>(), 1);
 	}
 

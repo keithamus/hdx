@@ -4,7 +4,7 @@ use std::{
 };
 
 use glob::glob;
-use hdx_parser::{Spanned, Stylesheet};
+use hdx_parser::{CSSStyleSheet, Spanned};
 use serde_json::{from_str, to_string_pretty, Value};
 
 use crate::{
@@ -89,7 +89,7 @@ impl ParserCase for PopularParserTestCase {
 		write(self.warnings_path.clone(), warnings).unwrap();
 	}
 
-	fn convert_ast(&self, ast: &Spanned<Stylesheet>) -> Value {
+	fn convert_ast(&self, ast: &Spanned<CSSStyleSheet>) -> Value {
 		from_str::<Value>(&to_string_pretty(ast).unwrap()).unwrap()
 	}
 }

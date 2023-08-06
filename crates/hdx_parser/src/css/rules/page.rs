@@ -1,7 +1,7 @@
 use hdx_ast::css::{
 	properties::Property,
 	rules::page::{
-		PageMarginBox, PageMarginRule, PagePseudoClass, PageRule, PageSelector, PageSelectorList,
+		CSSMarginRule, CSSPageRule, PageMarginBox, PagePseudoClass, PageSelector, PageSelectorList,
 	},
 };
 use oxc_allocator::Vec;
@@ -9,7 +9,7 @@ use oxc_allocator::Vec;
 use super::NoPreludeAllowed;
 use crate::{atom, diagnostics, Atom, Atomizable, Kind, Parse, Parser, Result, Spanned};
 
-impl<'a> Parse<'a> for PageRule<'a> {
+impl<'a> Parse<'a> for CSSPageRule<'a> {
 	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
 		let span = parser.cur().span;
 		parser.parse_at_rule(
@@ -17,13 +17,13 @@ impl<'a> Parse<'a> for PageRule<'a> {
 			|parser: &mut Parser<'a>,
 			 _name: Atom,
 			 selectors: Option<Spanned<PageSelectorList<'a>>>,
-			 rules: Vec<'a, Spanned<PageMarginRule<'a>>>,
-			 properties: Vec<'a, Spanned<Property<'a>>>| {
+			 rules: Vec<'a, Spanned<CSSMarginRule<'a>>>,
+			 declarations: Vec<'a, Spanned<Property<'a>>>| {
 				Ok(Self {
 					selectors: parser.boxup(selectors.unwrap_or_else(|| {
 						Spanned::dummy(PageSelectorList { children: parser.new_vec() })
 					})),
-					properties: parser.boxup(properties),
+					declarations: parser.boxup(declarations),
 					rules: parser.boxup(rules),
 				}
 				.spanned(span.up_to(&parser.cur().span)))
@@ -75,7 +75,7 @@ impl<'a> Parse<'a> for PagePseudoClass {
 	}
 }
 
-impl<'a> Parse<'a> for PageMarginRule<'a> {
+impl<'a> Parse<'a> for CSSMarginRule<'a> {
 	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
 		let span = parser.cur().span;
 		parser.parse_at_rule(
@@ -83,9 +83,9 @@ impl<'a> Parse<'a> for PageMarginRule<'a> {
 			|parser: &mut Parser<'a>,
 			 _name: Atom,
 			 _prelude: Option<Spanned<NoPreludeAllowed>>,
-			 _rules: Vec<'a, Spanned<PageMarginRule<'a>>>,
-			 properties: Vec<'a, Spanned<Property<'a>>>| {
-				Ok(Self { margin_box: PageMarginBox::TopLeft, properties }
+			 _rules: Vec<'a, Spanned<CSSMarginRule<'a>>>,
+			 declarations: Vec<'a, Spanned<Property<'a>>>| {
+				Ok(Self { name: PageMarginBox::TopLeft, declarations }
 					.spanned(span.up_to(&parser.cur().span)))
 			},
 		)
@@ -97,7 +97,7 @@ mod test {
 	use hdx_ast::{
 		css::{
 			properties::{Background, Property},
-			rules::{PagePseudoClass, PageRule, PageSelector, PageSelectorList},
+			rules::{CSSPageRule, PagePseudoClass, PageSelector, PageSelectorList},
 			values::{ColorValue, NamedColor},
 		},
 		Spanned,
@@ -143,8 +143,8 @@ mod test {
 			span: Span::new(6, 15),
 			node: PageSelector { page_type: Some(Atom::from("toc")), pseudos },
 		});
-		let mut properties = Vec::new_in(&allocator);
-		properties.push(Spanned {
+		let mut declarations = Vec::new_in(&allocator);
+		declarations.push(Spanned {
 			span: Span::new(17, 36),
 			node: Property::Background({
 				parser.boxup(Spanned {
@@ -161,14 +161,14 @@ mod test {
 		});
 		let expected = Spanned {
 			span: Span::new(0, 37),
-			node: PageRule {
+			node: CSSPageRule {
 				selectors: parser
 					.boxup(Spanned { span: Span::new(6, 15), node: PageSelectorList { children } }),
-				properties: parser.boxup(properties),
+				declarations: parser.boxup(declarations),
 				rules: parser.boxup(Vec::new_in(&allocator)),
 			},
 		};
-		let parser_return = parser.parse_entirely_with::<PageRule>();
+		let parser_return = parser.parse_entirely_with::<CSSPageRule>();
 		if !parser_return.errors.is_empty() {
 			panic!("{:?}", parser_return.errors[0]);
 		}

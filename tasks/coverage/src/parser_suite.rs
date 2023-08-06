@@ -5,7 +5,7 @@ use std::{
 };
 
 use console::Style;
-use hdx_parser::{Parser, ParserOptions, Spanned, Stylesheet};
+use hdx_parser::{CSSStyleSheet, Parser, ParserOptions, Spanned};
 use miette::{GraphicalReportHandler, GraphicalTheme, NamedSource, Report};
 use oxc_allocator::Allocator;
 use serde::Serialize;
@@ -108,7 +108,7 @@ pub trait ParserCase: Sized + Sync + Send + UnwindSafe {
 	fn path(&self) -> &Path;
 	fn desired(&self) -> &Self::AST;
 	fn update_desired(&self, ast: &Self::AST);
-	fn convert_ast(&self, ast: &Spanned<Stylesheet>) -> Self::AST;
+	fn convert_ast(&self, ast: &Spanned<CSSStyleSheet>) -> Self::AST;
 	fn desired_warnings(&self) -> String;
 	fn update_warnings(&self, warnings: String);
 	fn parser_options(&self, _args: &AppArgs) -> ParserOptions {

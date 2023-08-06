@@ -7,8 +7,8 @@ use std::{fmt::Result, ops::Deref};
 use hdx_ast::{
 	css::{
 		component_values::{ComponentValue, Function, SimpleBlock},
-		rules::{Charset, PageMarginRule, PageRule, PageSelector, PageSelectorList},
-		stylesheet::{AtRule, StyleRule, Stylesheet, StylesheetRule},
+		rules::{CSSCharsetRule, CSSMarginRule, CSSPageRule, PageSelector, PageSelectorList},
+		stylesheet::{CSSRule, CSSStyleRule, CSSStyleSheet},
 		unknown::{UnknownAtRule, UnknownDeclaration, UnknownPrelude, UnknownRule},
 		values::ValueLike,
 	},
@@ -20,7 +20,7 @@ use oxc_allocator::Box;
 
 use crate::{CssWriter, WriteCss};
 
-impl<'a> WriteCss<'a> for Charset {
+impl<'a> WriteCss<'a> for CSSCharsetRule {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> Result {
 		sink.write_str("@charset \"")?;
 		sink.write_str(self.encoding.as_ref())?;
@@ -29,7 +29,7 @@ impl<'a> WriteCss<'a> for Charset {
 	}
 }
 
-impl<'a> WriteCss<'a> for Stylesheet<'a> {
+impl<'a> WriteCss<'a> for CSSStyleSheet<'a> {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> Result {
 		for rule in &self.rules {
 			rule.write_css(sink)?;
@@ -39,24 +39,26 @@ impl<'a> WriteCss<'a> for Stylesheet<'a> {
 	}
 }
 
-impl<'a> WriteCss<'a> for StylesheetRule<'a> {
+impl<'a> WriteCss<'a> for CSSRule<'a> {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> Result {
 		match self {
 			Self::Style(rule) => rule.write_css(sink),
-			Self::At(rule) => rule.write_css(sink),
+			Self::Charset(rule) => rule.write_css(sink),
+			Self::Page(rule) => rule.write_css(sink),
+			Self::UnknownAt(rule) => rule.write_css(sink),
 			Self::Unknown(rule) => rule.write_css(sink),
 		}
 	}
 }
 
-impl<'a> WriteCss<'a> for StyleRule<'a> {
+impl<'a> WriteCss<'a> for CSSStyleRule<'a> {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> Result {
 		self.selectors.write_css(sink)?;
 		sink.write_trivia_char(' ')?;
 		sink.write_char('{')?;
 		sink.indent();
 		sink.write_newline()?;
-		let mut iter = self.properties.deref().iter().peekable();
+		let mut iter = self.declarations.deref().iter().peekable();
 		while let Some(decl) = iter.next() {
 			sink.write_indent()?;
 			decl.write_css(sink)?;
@@ -74,17 +76,7 @@ impl<'a> WriteCss<'a> for StyleRule<'a> {
 	}
 }
 
-impl<'a> WriteCss<'a> for AtRule<'a> {
-	fn write_css<W: CssWriter>(&self, sink: &mut W) -> Result {
-		match self {
-			Self::Charset(rule) => rule.write_css(sink),
-			Self::Page(rule) => rule.write_css(sink),
-			Self::Unknown(rule) => rule.write_css(sink),
-		}
-	}
-}
-
-impl<'a> WriteCss<'a> for PageRule<'a> {
+impl<'a> WriteCss<'a> for CSSPageRule<'a> {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> Result {
 		sink.write_str("@page")?;
 		if self.selectors.node.children.len() > 0 {
@@ -97,7 +89,7 @@ impl<'a> WriteCss<'a> for PageRule<'a> {
 		sink.write_char('{')?;
 		sink.indent();
 		sink.write_newline()?;
-		let mut iter = self.properties.iter().peekable();
+		let mut iter = self.declarations.iter().peekable();
 		let mut rule_iter = self.rules.iter().peekable();
 		while let Some(decl) = iter.next() {
 			decl.write_css(sink)?;
@@ -147,15 +139,15 @@ impl<'a> WriteCss<'a> for PageSelector<'a> {
 	}
 }
 
-impl<'a> WriteCss<'a> for PageMarginRule<'a> {
+impl<'a> WriteCss<'a> for CSSMarginRule<'a> {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> Result {
 		sink.write_char('@')?;
-		sink.write_str(self.margin_box.to_atom().as_ref())?;
+		sink.write_str(self.name.to_atom().as_ref())?;
 		sink.write_trivia_char(' ')?;
 		sink.write_char('{')?;
 		sink.indent();
 		sink.write_newline()?;
-		let mut iter = self.properties.iter().peekable();
+		let mut iter = self.declarations.iter().peekable();
 		while let Some(decl) = iter.next() {
 			decl.write_css(sink)?;
 			if iter.peek().is_none() {

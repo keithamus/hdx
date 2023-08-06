@@ -7,7 +7,7 @@ use crate::Atom;
 #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
 // TODO: maybe make this an enum? Can use:
 // https://www.iana.org/assignments/character-sets/character-sets.xhtml
-pub struct Charset {
+pub struct CSSCharsetRule {
 	// Common charsets
 	// atom!("UTF-8")
 	// atom!("utf-8")

@@ -5,7 +5,7 @@ mod css;
 mod cursor;
 mod diagnostics;
 
-pub use hdx_ast::{css::stylesheet::Stylesheet, Spanned, Unit};
+pub use hdx_ast::{css::stylesheet::CSSStyleSheet, Spanned, Unit};
 pub use hdx_atom::{atom, Atom, Atomizable};
 pub use hdx_lexer::{Kind, Lexer, PairWise, Span, Token};
 pub use miette::{Error, Result};
@@ -85,8 +85,8 @@ impl<'a> Parser<'a> {
 		oxc_allocator::Box(self.allocator.alloc(value))
 	}
 
-	pub fn parse(self) -> ParserReturn<Spanned<Stylesheet<'a>>> {
-		self.parse_entirely_with::<Stylesheet<'a>>()
+	pub fn parse(self) -> ParserReturn<Spanned<CSSStyleSheet<'a>>> {
+		self.parse_entirely_with::<CSSStyleSheet<'a>>()
 	}
 
 	pub fn parse_entirely_with<T: Parse<'a>>(mut self) -> ParserReturn<Spanned<T>> {

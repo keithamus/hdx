@@ -1,7 +1,7 @@
 use hdx_ast::css::{
-	rules::{page::PageRule, Charset},
+	rules::{CSSCharsetRule, CSSPageRule},
 	selector::Selector,
-	stylesheet::{AtRule, AtRuleId, SelectorSet, StyleRule, Stylesheet, StylesheetRule},
+	stylesheet::{AtRuleId, CSSRule, CSSStyleRule, CSSStyleSheet, SelectorSet},
 	unknown::{UnknownAtRule, UnknownRule},
 };
 use hdx_lexer::Kind;
@@ -9,7 +9,7 @@ use hdx_lexer::Kind;
 use crate::{diagnostics, Atomizable, Parse, Parser, Result, Span, Spanned};
 
 // https://drafts.csswg.org/css-syntax-3/#consume-stylesheet-contents
-impl<'a> Parse<'a> for Stylesheet<'a> {
+impl<'a> Parse<'a> for CSSStyleSheet<'a> {
 	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
 		let span = parser.cur().span;
 		let mut rules = parser.new_vec();
@@ -18,49 +18,39 @@ impl<'a> Parse<'a> for Stylesheet<'a> {
 				Kind::Eof => break,
 				Kind::Comment | Kind::Whitespace | Kind::Cdc | Kind::Cdo => parser.advance(),
 				Kind::AtKeyword => {
-					let rule = AtRule::parse(parser)?;
-					rules.push(StylesheetRule::At(parser.boxup(rule)));
+					rules.push(match AtRuleId::from_atom(parser.cur_atom_lower().unwrap()) {
+						Some(AtRuleId::Charset) => {
+							let rule = CSSCharsetRule::parse(parser)?;
+							CSSRule::Charset(parser.boxup(rule))
+						}
+						Some(AtRuleId::Page) => {
+							let rule = CSSPageRule::parse(parser)?;
+							CSSRule::Page(parser.boxup(rule))
+						}
+						None => {
+							let rule = UnknownAtRule::parse(parser)?;
+							parser.warnings.push(diagnostics::UnknownRule(rule.span).into());
+							CSSRule::UnknownAt(parser.boxup(rule))
+						}
+					});
 				}
 				_ => {
 					// The spec talks of QualifiedRules but in the context of a Stylesheet
 					// the only non-At Rule is a StyleRule, so parse that:
 					let checkpoint = parser.checkpoint();
-					match StyleRule::parse(parser) {
-						Ok(rule) => rules.push(StylesheetRule::Style(parser.boxup(rule))),
+					match CSSStyleRule::parse(parser) {
+						Ok(rule) => rules.push(CSSRule::Style(parser.boxup(rule))),
 						Err(err) => {
 							parser.rewind(checkpoint);
 							parser.warnings.push(err);
 							let rule = UnknownRule::parse(parser)?;
-							rules.push(StylesheetRule::Unknown(parser.boxup(rule)));
+							rules.push(CSSRule::Unknown(parser.boxup(rule)));
 						}
 					}
 				}
 			}
 		}
-		Ok(Stylesheet { rules }.spanned(span.up_to(&parser.cur().span)))
-	}
-}
-
-impl<'a> Parse<'a> for AtRule<'a> {
-	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
-		let span = parser.cur().span;
-		parser.expect_without_advance(Kind::AtKeyword)?;
-		Ok(match AtRuleId::from_atom(parser.cur_atom_lower().unwrap()) {
-			Some(AtRuleId::Charset) => {
-				let rule = Charset::parse(parser)?;
-				AtRule::Charset(parser.boxup(rule)).spanned(span.up_to(&parser.cur().span))
-			}
-			Some(AtRuleId::Page) => {
-				let rule = PageRule::parse(parser)?;
-				AtRule::Page(parser.boxup(rule)).spanned(span.up_to(&parser.cur().span))
-			}
-			None => {
-				let rule = UnknownAtRule::parse(parser)?;
-				let rule_span = span.up_to(&parser.cur().span);
-				parser.warnings.push(diagnostics::UnknownRule(rule_span).into());
-				AtRule::Unknown(parser.boxup(rule)).spanned(rule_span)
-			}
-		})
+		Ok(Self { rules }.spanned(span.up_to(&parser.cur().span)))
 	}
 }
 
@@ -74,17 +64,17 @@ impl<'a> Parse<'a> for SelectorSet<'a> {
 
 #[cfg(test)]
 mod test {
-	use hdx_ast::css::rules::Charset;
+	use hdx_ast::css::rules::CSSCharsetRule;
 	use oxc_allocator::Allocator;
 
-	use super::{AtRule, Stylesheet};
+	use super::{CSSRule, CSSStyleSheet};
 	use crate::{atom, Parser, ParserOptions, Span, Spanned};
 
 	#[test]
 	fn smoke_test() {
 		let allocator = Allocator::default();
 		let parser = Parser::new(&allocator, "", ParserOptions::default());
-		let parser_return = parser.parse_with::<Stylesheet>();
+		let parser_return = parser.parse_with::<CSSStyleSheet>();
 		let ast = parser_return.output.unwrap();
 		assert_eq!(ast.node.rules.len(), 0);
 	}
@@ -93,14 +83,13 @@ mod test {
 	fn parses_charset() {
 		let allocator = Allocator::default();
 		let parser = Parser::new(&allocator, "@charset \"utf-8\";", ParserOptions::default());
-		let expected = Spanned {
+		let mut rules = parser.new_vec();
+		rules.push(CSSRule::Charset(parser.boxup(Spanned {
 			span: Span::new(0, 17),
-			node: AtRule::Charset(parser.boxup(Spanned {
-				span: Span::new(0, 17),
-				node: Charset { encoding: atom!("utf-8") },
-			})),
-		};
-		let parser_return = parser.parse_with::<AtRule>();
+			node: CSSCharsetRule { encoding: atom!("utf-8") },
+		})));
+		let expected = Spanned { span: Span::new(0, 17), node: CSSStyleSheet { rules } };
+		let parser_return = parser.parse_with::<CSSStyleSheet>();
 		if !parser_return.errors.is_empty() {
 			panic!("{:?}", parser_return.errors[0]);
 		}
@@ -119,7 +108,7 @@ mod test {
 			"a{overflow:hidden !important;position:relative}.b{}",
 			ParserOptions::default(),
 		);
-		let parser_return = parser.parse_with::<Stylesheet>();
+		let parser_return = parser.parse_with::<CSSStyleSheet>();
 		if !parser_return.errors.is_empty() {
 			panic!("{:?}", parser_return.errors[0]);
 		}
