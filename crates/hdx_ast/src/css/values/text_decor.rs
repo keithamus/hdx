@@ -29,7 +29,7 @@ pub enum TextDecorationLineValue {
 
 // https://drafts.csswg.org/css-text/#text-align-property
 #[derive(Atomizable, Default, Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type", rename_all = "kebab-case"))]
 pub enum TextDecorationSkipInkValue {
 	#[default]
 	Auto, // atom!("auto")
@@ -39,7 +39,7 @@ pub enum TextDecorationSkipInkValue {
 
 // https://drafts.csswg.org/css-text/#text-align-property
 #[derive(Atomizable, Default, Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type", rename_all = "kebab-case"))]
 pub enum TextDecorationStyleValue {
 	#[default]
 	Solid, // atom!("solid"),

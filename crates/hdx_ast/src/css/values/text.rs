@@ -6,7 +6,7 @@ use crate::{atom, Atom, Atomizable};
 
 // https://drafts.csswg.org/css-text-4/#propdef-text-align
 #[derive(Atomizable, Default, Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type", rename_all = "kebab-case"))]
 pub enum TextAlignValue {
 	#[default]
 	Start, // atom!("start")
@@ -22,7 +22,7 @@ pub enum TextAlignValue {
 
 // https://drafts.csswg.org/css-text-4/#propdef-text-align-all
 #[derive(Atomizable, Default, Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type", rename_all = "kebab-case"))]
 pub enum TextAlignAllValue {
 	#[default]
 	Start, // atom!("start")
@@ -36,7 +36,7 @@ pub enum TextAlignAllValue {
 
 // https://drafts.csswg.org/css-text-4/#propdef-text-align-last
 #[derive(Atomizable, Default, Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type", rename_all = "kebab-case"))]
 pub enum TextAlignLastValue {
 	#[default]
 	Auto, // atom!("auto")
@@ -51,7 +51,7 @@ pub enum TextAlignLastValue {
 
 // https://drafts.csswg.org/css-text-4/#propdef-text-wrap
 #[derive(Atomizable, Default, Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type", rename_all = "kebab-case"))]
 pub enum TextWrapValue {
 	#[default]
 	Wrap, // atom!("wrap")
@@ -63,7 +63,7 @@ pub enum TextWrapValue {
 
 // https://drafts.csswg.org/css-text-4/#propdef-white-space-collapse
 #[derive(Atomizable, Default, Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type", rename_all = "kebab-case"))]
 pub enum WhiteSpaceCollapseValue {
 	#[default]
 	Collapse, // atom!("collapse")
@@ -76,7 +76,7 @@ pub enum WhiteSpaceCollapseValue {
 
 // https://drafts.csswg.org/css-text-4/#propdef-white-space-trim
 #[derive(Default, Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type", rename_all = "kebab-case"))]
 pub enum WhiteSpaceTrimValue {
 	#[default]
 	None,
@@ -89,7 +89,7 @@ pub enum WhiteSpaceTrimValue {
 
 // https://drafts.csswg.org/css-text-4/#propdef-white-space
 #[derive(Default, Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type", rename_all = "kebab-case"))]
 pub enum WhiteSpaceShorthand<'a> {
 	#[default]
 	Normal,

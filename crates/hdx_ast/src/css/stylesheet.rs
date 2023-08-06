@@ -14,7 +14,7 @@ use crate::{
 
 // https://drafts.csswg.org/cssom-1/#the-cssstylesheet-interface
 #[derive(Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type", rename_all = "camelCase"))]
+#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
 pub struct CSSStyleSheet<'a> {
 	pub rules: Vec<'a, CSSRule<'a>>,
 }

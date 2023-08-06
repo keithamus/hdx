@@ -49,7 +49,7 @@ impl<'a> PageSelector<'a> {
 }
 
 #[derive(Atomizable, Debug, Clone, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(rename_all = "lowercase"))]
+#[cfg_attr(feature = "serde", derive(Serialize), serde(rename_all = "kebab-case"))]
 pub enum PagePseudoClass {
 	Left,
 	Right,

@@ -241,7 +241,7 @@ impl<'a> ColorValue<'a> {
 }
 
 #[derive(Atomizable, Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "name", rename_all = "lowercase"))]
+#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type", rename_all = "kebab-case"))]
 pub enum NamedColor {
 	Aliceblue,            // atom!("aliceblue")
 	Antiquewhite,         // atom!("antiquewhite")

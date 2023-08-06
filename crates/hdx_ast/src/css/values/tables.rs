@@ -6,7 +6,7 @@ use crate::{atom, Atom, Atomizable, Span};
 
 // https://drafts.csswg.org/css-tables-3/#propdef-border-collapse
 #[derive(Atomizable, Default, Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type", rename_all = "kebab-case"))]
 pub enum BorderCollapseValue {
 	#[default]
 	Separate, // atom!("separate")
@@ -15,7 +15,7 @@ pub enum BorderCollapseValue {
 
 // https://drafts.csswg.org/css-tables-3/#propdef-caption-side
 #[derive(Atomizable, Default, Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type", rename_all = "kebab-case"))]
 pub enum CaptionSideValue {
 	#[default]
 	Top, // atom!("top")
@@ -24,7 +24,7 @@ pub enum CaptionSideValue {
 
 // https://drafts.csswg.org/css-tables-3/#propdef-caption-side
 #[derive(Atomizable, Default, Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type", rename_all = "kebab-case"))]
 pub enum EmptyCellsValue {
 	#[default]
 	Show, // atom!("show")
@@ -33,7 +33,7 @@ pub enum EmptyCellsValue {
 
 // https://drafts.csswg.org/css-tables-3/#propdef-caption-side
 #[derive(Atomizable, Default, Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type", rename_all = "kebab-case"))]
 pub enum TableLayoutValue {
 	#[default]
 	Auto, // atom!("auto")

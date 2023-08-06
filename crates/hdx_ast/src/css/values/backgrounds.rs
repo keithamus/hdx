@@ -26,7 +26,7 @@ pub enum LineWidth {
 
 // https://drafts.csswg.org/css-backgrounds-3/#typedef-line-style
 #[derive(Atomizable, Debug, Default, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type", rename_all = "kebab-case"))]
 pub enum LineStyle {
 	#[default]
 	None, // atom!("none")

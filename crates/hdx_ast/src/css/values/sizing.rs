@@ -6,7 +6,7 @@ use crate::{atom, Atom, Atomizable, Spanned};
 
 // https://www.w3.org/TR/css-sizing-3/#propdef-box-sizing
 #[derive(Atomizable, Default, Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
+#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type", rename_all = "kebab-case"))]
 pub enum BoxSizingValue {
 	#[default]
 	ContentBox, // atom!("content-box")
@@ -15,7 +15,7 @@ pub enum BoxSizingValue {
 
 // https://drafts.csswg.org/css-sizing-4/#sizing-values
 #[derive(Default, Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
+#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type", rename_all = "kebab-case"))]
 pub enum Sizing {
 	#[default]
 	Auto,
@@ -30,7 +30,7 @@ pub enum Sizing {
 }
 
 #[derive(Default, Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
+#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type", rename_all = "kebab-case"))]
 pub enum MaxSizing {
 	#[default]
 	None,
@@ -45,7 +45,7 @@ pub enum MaxSizing {
 }
 
 #[derive(Default, Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
+#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type", rename_all = "kebab-case"))]
 pub enum RatioOrAuto {
 	#[default]
 	Auto,
@@ -54,7 +54,7 @@ pub enum RatioOrAuto {
 
 // https://drafts.csswg.org/css-sizing-4/#intrinsic-contribution-override
 #[derive(Atomizable, Default, Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type", rename_all = "kebab-case"))]
 pub enum MinIntrinsicSizingValue {
 	#[default]
 	Legacy, // atom!("legacy")

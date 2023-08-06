@@ -104,7 +104,7 @@ pub enum AttributeModifier {
 }
 
 #[derive(Atomizable, Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
+#[cfg_attr(feature = "serde", derive(Serialize), serde(rename_all = "kebab-case"))]
 pub enum PseudoClass {
 	Active,           // atom!("active")
 	AnyLink,          // atom!("any-link")
@@ -178,7 +178,7 @@ pub enum PseudoFunction<'a> {
 }
 
 #[derive(Atomizable, Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
+#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type", rename_all = "kebab-case"))]
 pub enum DirValue {
 	Rtl, // atom!("rtl")
 	Ltr, // atom!("ltr")

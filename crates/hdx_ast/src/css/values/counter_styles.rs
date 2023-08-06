@@ -14,7 +14,7 @@ pub enum CounterStyle<'a> {
 
 // https://drafts.csswg.org/css-counter-styles-3/#predefined-counters
 #[derive(Atomizable, Default, Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type", rename_all = "kebab-case"))]
 pub enum PredefinedCounterStyle {
 	Decimal,            // atom!("decimal"),
 	DecimalLeadingZero, // atom!("decimal-leading-zero"),
@@ -79,7 +79,7 @@ pub enum Symbol<'a> {
 
 // https://drafts.csswg.org/css-counter-styles-3/#typedef-symbols-type
 #[derive(Atomizable, Default, Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type", rename_all = "kebab-case"))]
 pub enum SymbolsType {
 	Cyclic,     // atom!("cyclic")
 	Numeric,    // atom!("numeric")

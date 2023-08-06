@@ -8,7 +8,7 @@ use crate::{atom, Atom, Atomizable, Spanned};
 
 // https://drafts.csswg.org/css-inline/#propdef-alignment-baseline
 #[derive(Atomizable, Default, Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type", rename_all = "kebab-case"))]
 pub enum AlignmentBaselineValue {
 	#[default]
 	Baseline, // atom!("baseline")
@@ -23,7 +23,7 @@ pub enum AlignmentBaselineValue {
 
 // https://drafts.csswg.org/css-inline/#propdef-baseline-source
 #[derive(Atomizable, Default, Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type", rename_all = "kebab-case"))]
 pub enum BaselineSourceValue {
 	#[default]
 	Auto, // atom!("auto")
@@ -51,7 +51,7 @@ impl Default for BaselineShiftValue {
 
 // https://drafts.csswg.org/css-inline/#propdef-dominant-baseline
 #[derive(Atomizable, Default, Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type", rename_all = "kebab-case"))]
 pub enum DominantBaselineValue {
 	#[default]
 	Auto, // atom!("auto")
@@ -67,7 +67,7 @@ pub enum DominantBaselineValue {
 
 // https://drafts.csswg.org/css-inline/#propdef-inline-sizing
 #[derive(Atomizable, Default, Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type", rename_all = "kebab-case"))]
 pub enum InlineSizingValue {
 	#[default]
 	Normal, // atom!("normal")

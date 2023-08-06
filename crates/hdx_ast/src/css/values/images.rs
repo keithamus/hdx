@@ -43,7 +43,7 @@ pub enum RadialGradientSize {
 
 // https://drafts.csswg.org/css-images-3/#typedef-rg-ending-shape
 #[derive(Atomizable, Default, Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type", rename_all = "kebab-case"))]
 pub enum RadialGradientEndingShape {
 	#[default]
 	Circle, // atom!("circle")

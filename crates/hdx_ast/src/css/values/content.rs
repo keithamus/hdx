@@ -53,7 +53,7 @@ pub enum ContentElement<'a> {
 
 // https://drafts.csswg.org/css-content-3/#typedef-quote
 #[derive(Atomizable, Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type", rename_all = "kebab-case"))]
 pub enum Quote {
 	OpenQuote,    // atom!("open-quote")
 	CloseQuote,   // atom!("close-quote")

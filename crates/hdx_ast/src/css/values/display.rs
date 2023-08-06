@@ -218,7 +218,7 @@ impl DisplayMarker {
 
 // https://drafts.csswg.org/css-display-4/#propdef-visibility
 #[derive(Atomizable, Default, Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type", rename_all = "kebab-case"))]
 pub enum VisibilityValue {
 	#[default]
 	Visible, // atom!("visible")

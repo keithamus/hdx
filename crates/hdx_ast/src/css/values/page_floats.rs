@@ -62,7 +62,7 @@ impl FloatValue {
 }
 
 #[derive(Atomizable, Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type", rename_all = "kebab-case"))]
 pub enum SnapBlockFloat {
 	Start, // atom!("start")
 	End,   // atom!("end")
@@ -70,7 +70,7 @@ pub enum SnapBlockFloat {
 }
 
 #[derive(Atomizable, Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type", rename_all = "kebab-case"))]
 pub enum SnapInlineFloat {
 	Right, // atom!("right")
 	Left,  // atom!("left")
@@ -79,7 +79,7 @@ pub enum SnapInlineFloat {
 
 // https://drafts.csswg.org/css-page-floats-3/#propdef-clear
 #[derive(Atomizable, Default, Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type", rename_all = "kebab-case"))]
 pub enum ClearValue {
 	InlineStart, // atom!("inline-start")
 	InlineEnd,   // atom!("inline-end")
@@ -138,7 +138,7 @@ impl From<i32> for FloatDeferValue {
 
 // https://drafts.csswg.org/css-page-floats-3/#propdef-float-reference
 #[derive(Atomizable, Default, Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type", rename_all = "kebab-case"))]
 pub enum FloatReferenceValue {
 	#[default]
 	Inline, // atom!("inline")
