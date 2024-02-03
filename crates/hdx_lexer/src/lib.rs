@@ -1,22 +1,18 @@
 mod constants;
-mod kind;
 mod private;
-mod span;
 mod string_builder;
 mod token;
 
 use std::{collections::VecDeque, str::Chars};
 
 use oxc_allocator::Allocator;
-pub use span::Span;
-pub use token::{PairWise, Token, TokenValue};
-
-pub use self::kind::Kind;
+pub use token::{NumType, PairWise, Token};
 
 #[derive(Debug, Clone)]
 pub struct LexerCheckpoint<'a> {
 	chars: Chars<'a>,
 	token: Token,
+	prev_pos: u32,
 }
 
 pub struct Lexer<'a> {
@@ -29,7 +25,7 @@ pub struct Lexer<'a> {
 impl<'a> Lexer<'a> {
 	pub fn new(allocator: &'a Allocator, source: &'a str) -> Self {
 		let token = Token::default();
-		let current = LexerCheckpoint { chars: source.chars(), token };
+		let current = LexerCheckpoint { chars: source.chars(), token, prev_pos: 0 };
 		Self { allocator, source, current, lookahead: VecDeque::with_capacity(4) }
 	}
 
@@ -38,10 +34,20 @@ impl<'a> Lexer<'a> {
 		self.current.chars.as_str()
 	}
 
+	/// Current position in file
+	#[inline]
+	pub fn pos(&self) -> u32 {
+		(self.source.len() - self.remaining().len()) as u32
+	}
+
 	/// Creates a checkpoint storing the current lexer state.
 	/// Use `rewind` to restore the lexer to the state stored in the checkpoint.
 	pub fn checkpoint(&self) -> LexerCheckpoint<'a> {
-		LexerCheckpoint { chars: self.current.chars.clone(), token: self.current.token.clone() }
+		LexerCheckpoint {
+			prev_pos: self.current.prev_pos,
+			chars: self.current.chars.clone(),
+			token: self.current.token.clone(),
+		}
 	}
 
 	/// Rewinds the lexer to the same state as when the passed in `checkpoint` was created.
@@ -70,11 +76,15 @@ impl<'a> Lexer<'a> {
 		// `self.current = checkpoint`
 		self.current.token = Token::default();
 
+		let prev_pos = self.pos();
+
 		for _i in self.lookahead.len()..n {
-			let kind = self.read_next_token();
-			let peeked = self.finish_next(kind);
-			self.lookahead
-				.push_back(LexerCheckpoint { chars: self.current.chars.clone(), token: peeked });
+			let peeked = self.read_next_token();
+			self.lookahead.push_back(LexerCheckpoint {
+				prev_pos,
+				chars: self.current.chars.clone(),
+				token: peeked,
+			});
 		}
 
 		self.current = checkpoint;
@@ -96,7 +106,6 @@ impl<'a> Lexer<'a> {
 			self.current.chars = checkpoint.chars;
 			return checkpoint.token;
 		}
-		let kind = self.read_next_token();
-		self.finish_next(kind)
+		self.read_next_token()
 	}
 }

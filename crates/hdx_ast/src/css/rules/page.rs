@@ -1,10 +1,9 @@
-use hdx_lexer::Span;
 use oxc_allocator::{Box, Vec};
 #[cfg(feature = "serde")]
 use serde::Serialize;
 
 use crate::{
-	atom, css::properties::Property, Atom, Atomizable, Spanned, Specificity, ToSpecificity,
+	atom, css::properties::Property, Atom, Atomizable, Span, Spanned, Specificity, ToSpecificity,
 };
 
 // https://drafts.csswg.org/cssom-1/#csspagerule

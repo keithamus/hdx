@@ -18,6 +18,7 @@ hdx_atomizable_derive = { workspace = true }
 # Use OXC Allocator until https://github.com/fitzgen/bumpalo/pull/210 is resolved
 oxc_allocator = { workspace = true }
 bumpalo = { workspace = true, features = ["collections", "boxed"] }
+miette = { workspace = true }
 
 serde = { workspace = true, optional = true }
 serde_json = { workspace = true, optional = true }

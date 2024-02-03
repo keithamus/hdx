@@ -141,7 +141,9 @@ impl<'a> Parser<'a> {
 			}
 		}
 		if last_kind == Kind::Comma {
-			let warn: Error = diagnostics::WarnTrailing(self.cur().kind, self.cur().span).into();
+			let warn: Error =
+				diagnostics::WarnTrailing(self.cur().kind, Span::from(self.pos() - 1, self.pos()))
+					.into();
 			if !self.sloppy {
 				Err(warn)?;
 			}

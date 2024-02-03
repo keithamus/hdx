@@ -1,5 +1,3 @@
-#![feature(slice_concat_trait)]
-
 extern crate hdx_atomizable_derive;
 
 pub use hdx_atomizable_derive::Atomizable;
@@ -7,11 +5,13 @@ pub use hdx_atomizable_derive::Atomizable;
 use serde::Serialize;
 
 pub mod css;
+pub mod span;
 pub mod traits;
 
 pub(crate) use hdx_atom::{atom, Atom, Atomizable};
-pub(crate) use hdx_lexer::{PairWise, Span, Token};
+pub(crate) use hdx_lexer::{PairWise, Token};
 pub(crate) use oxc_allocator::{Allocator, Box, Vec};
+pub(crate) use span::Span;
 pub use traits::Unit;
 
 #[derive(Debug, PartialEq, Hash)]

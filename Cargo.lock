@@ -530,6 +530,7 @@ dependencies = [
  "hdx_atomizable_derive",
  "hdx_lexer",
  "hdx_syntax",
+ "miette",
  "oxc_allocator",
  "serde",
  "serde_json",

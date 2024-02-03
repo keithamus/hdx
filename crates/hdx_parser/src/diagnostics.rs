@@ -1,7 +1,7 @@
 use miette::{self, Diagnostic};
 use thiserror::{self, Error};
 
-use crate::{Atom, Kind, Span};
+use crate::{Atom, Span, Token};
 
 #[derive(Debug, Error, Diagnostic)]
 #[error("The token as {0} cannot yet be parsed by the parser :(")]
@@ -22,7 +22,7 @@ pub struct BadDeclaration(#[label("This is not valid syntax for a declaration.")
 #[derive(Debug, Error, Diagnostic)]
 #[error("Unexpected `{0}`")]
 #[diagnostic(help("This is not correct CSS syntax."), code(hdx_parser::Unexpected))]
-pub struct Unexpected(pub Kind, #[label("This wasn't expected here")] pub Span);
+pub struct Unexpected(pub Token, #[label("This wasn't expected here")] pub Span);
 
 #[derive(Debug, Error, Diagnostic)]
 #[error("Unexpected identifier '{0}'")]
@@ -120,7 +120,7 @@ pub struct ExpectedEnd(#[label("All of this extra content was ignored.")] pub Sp
 #[derive(Debug, Error, Diagnostic)]
 #[error("Expected `{0}` but found `{1}` {2}")]
 #[diagnostic(help("This is not correct CSS syntax."), code(hdx_parser::ExpectedToken))]
-pub struct ExpectedToken(pub Kind, pub Kind, #[label("`{0}` expected")] pub Span);
+pub struct ExpectedToken(pub Token, pub Token, #[label("`{0}` expected")] pub Span);
 
 #[derive(Debug, Error, Diagnostic)]
 #[error("Expected the identifier `{0}` but found `{1}`")]
@@ -143,7 +143,7 @@ pub struct ExpectedAtKeyword(pub Atom, pub Atom, #[label("This at-keyword")] pub
 	help("Try removing the trailing {0} which will remove this warning."),
 	code(hdx_parser::WarnTrailing)
 )]
-pub struct WarnTrailing(pub Kind, #[label("This can be removed")] pub Span);
+pub struct WarnTrailing(pub Token, #[label("This can be removed")] pub Span);
 
 #[derive(Debug, Error, Diagnostic)]
 #[error("Invalid hexidecimal value for color: '{0}'")]

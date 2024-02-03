@@ -1,13 +1,12 @@
 use std::ops::Range;
 
-use hdx_lexer::{Kind, LexerCheckpoint, Span, Token};
+use hdx_lexer::{LexerCheckpoint, Span, Token};
 
 use crate::{diagnostics, Atom, Error, Parser, Result};
 
 pub struct ParserCheckpoint<'a> {
 	lexer: LexerCheckpoint<'a>,
 	token: Token,
-	prev_span: Span,
 	warnings_pos: usize,
 	errors_pos: usize,
 }
@@ -61,7 +60,7 @@ impl<'a> Parser<'a> {
 	pub(crate) fn expect_ident_of(&mut self, atom: Atom) -> Result<()> {
 		let ident = self.expect_without_advance(Kind::Ident)?.value.as_atom_lower().unwrap();
 		if atom != ident {
-			Err(diagnostics::ExpectedIdent(atom, ident, self.cur().span))?
+			Err(diagnostics::ExpectedIdent(atom, ident, self.pos()))?
 		}
 		self.advance();
 		Ok(())
@@ -78,7 +77,7 @@ impl<'a> Parser<'a> {
 	pub(crate) fn expect_function_of(&mut self, atom: Atom) -> Result<()> {
 		let ident = self.expect_without_advance(Kind::Function)?.value.as_atom_lower().unwrap();
 		if atom != ident {
-			Err(diagnostics::ExpectedFunction(atom, ident, self.cur().span))?
+			Err(diagnostics::ExpectedFunction(atom, ident, self.pos()))?
 		}
 		self.advance();
 		Ok(())
@@ -95,7 +94,7 @@ impl<'a> Parser<'a> {
 	pub(crate) fn expect_at_keyword_of(&mut self, atom: Atom) -> Result<()> {
 		let ident = self.expect_without_advance(Kind::AtKeyword)?.value.as_atom_lower().unwrap();
 		if atom != ident {
-			Err(diagnostics::ExpectedAtKeyword(atom, ident, self.cur().span))?
+			Err(diagnostics::ExpectedAtKeyword(atom, ident, self.pos()))?
 		}
 		self.advance();
 		Ok(())
@@ -125,7 +124,7 @@ impl<'a> Parser<'a> {
 	#[inline]
 	pub(crate) fn expect_delim_of(&mut self, ch: char) -> Result<()> {
 		if ch != self.expect_without_advance(Kind::Delim)?.value.as_char().unwrap() {
-			Err(diagnostics::UnexpectedDelim(ch, self.cur().span))?
+			Err(diagnostics::UnexpectedDelim(ch, self.pos()))?
 		}
 		self.advance();
 		Ok(())
@@ -142,7 +141,7 @@ impl<'a> Parser<'a> {
 	pub(crate) fn expect_number_gte(&mut self, min: f32) -> Result<f32> {
 		let n = self.expect_without_advance(Kind::Number)?.value.as_f32().unwrap();
 		if n < min {
-			Err(diagnostics::NumberTooSmall(min, self.cur().span))?
+			Err(diagnostics::NumberTooSmall(min, self.pos()))?
 		}
 		self.advance();
 		Ok(n)
@@ -152,7 +151,7 @@ impl<'a> Parser<'a> {
 	pub(crate) fn expect_number_in_range(&mut self, range: Range<f32>) -> Result<f32> {
 		let n = self.expect_without_advance(Kind::Number)?.value.as_f32().unwrap();
 		if !range.contains(&n) {
-			Err(diagnostics::NumberOutOfBounds(range.start, range.end, self.cur().span))?
+			Err(diagnostics::NumberOutOfBounds(range.start, range.end, self.pos()))?
 		}
 		self.advance();
 		Ok(n)
@@ -162,7 +161,7 @@ impl<'a> Parser<'a> {
 	pub(crate) fn expect_int(&mut self) -> Result<i32> {
 		self.expect_without_advance(Kind::Number)?;
 		if !self.cur().value.is_int() {
-			Err(diagnostics::DisallowedFloat(self.cur().value.as_i32().unwrap(), self.cur().span))?
+			Err(diagnostics::DisallowedFloat(self.cur().value.as_i32().unwrap(), self.pos()))?
 		}
 		let n = self.cur().value.as_i32().unwrap();
 		self.advance();
@@ -180,7 +179,7 @@ impl<'a> Parser<'a> {
 	pub(crate) fn expect_percentage_gte(&mut self, min: f32) -> Result<f32> {
 		let n = self.expect_without_advance(Kind::Percentage)?.value.as_f32().unwrap();
 		if n < min {
-			Err(diagnostics::NumberTooSmall(min, self.cur().span))?
+			Err(diagnostics::NumberTooSmall(min, self.pos()))?
 		}
 		self.advance();
 		Ok(n)
@@ -199,7 +198,7 @@ impl<'a> Parser<'a> {
 		let value = &self.expect_without_advance(Kind::Dimension)?.value;
 		let (n, atom) = (value.as_f32().unwrap(), value.as_atom_lower().unwrap());
 		if n < min {
-			Err(diagnostics::NumberTooSmall(min, self.cur().span))?
+			Err(diagnostics::NumberTooSmall(min, self.pos()))?
 		}
 		self.advance();
 		Ok((n, atom))
@@ -210,7 +209,7 @@ impl<'a> Parser<'a> {
 		let value = &self.expect_without_advance(Kind::Dimension)?.value;
 		let (n, atom) = (value.as_f32().unwrap(), value.as_atom_lower().unwrap());
 		if !range.contains(&n) {
-			Err(diagnostics::NumberOutOfBounds(range.start, range.end, self.cur().span))?
+			Err(diagnostics::NumberOutOfBounds(range.start, range.end, self.pos()))?
 		}
 		self.advance();
 		Ok((n, atom))
@@ -219,7 +218,7 @@ impl<'a> Parser<'a> {
 	#[inline]
 	pub(crate) fn expect_without_advance(&mut self, kind: Kind) -> Result<&Token> {
 		if !self.at(kind) {
-			let range = self.cur().span;
+			let range = self.pos();
 			Err::<(), Error>(diagnostics::ExpectedToken(kind, self.cur().kind, range).into())?;
 		}
 		Ok(self.cur())
@@ -242,12 +241,10 @@ impl<'a> Parser<'a> {
 
 	#[inline]
 	pub(crate) fn next_token_include_comments(&mut self) {
-		self.prev_span = self.token.span;
 		self.token = self.lexer.next_token();
 	}
 
 	pub(crate) fn next_token(&mut self) {
-		self.prev_span = self.token.span;
 		loop {
 			let token = self.lexer.next_token();
 			if token.kind != Kind::Comment {
@@ -258,7 +255,6 @@ impl<'a> Parser<'a> {
 	}
 
 	pub(crate) fn advance(&mut self) {
-		self.prev_span = self.token.span;
 		loop {
 			let token = self.lexer.next_token();
 			if !token.is_trivia() {
@@ -276,10 +272,9 @@ impl<'a> Parser<'a> {
 	}
 
 	pub(crate) fn rewind(&mut self, checkpoint: ParserCheckpoint<'a>) {
-		let ParserCheckpoint { lexer, token, prev_span, warnings_pos, errors_pos } = checkpoint;
+		let ParserCheckpoint { lexer, token, warnings_pos, errors_pos } = checkpoint;
 		self.lexer.rewind(lexer);
 		self.token = token;
-		self.prev_span = prev_span;
 		self.warnings.truncate(warnings_pos);
 		self.errors.truncate(errors_pos);
 	}
@@ -288,7 +283,6 @@ impl<'a> Parser<'a> {
 		ParserCheckpoint {
 			lexer: self.lexer.checkpoint(),
 			token: self.token.clone(),
-			prev_span: self.prev_span,
 			warnings_pos: self.warnings.len(),
 			errors_pos: self.errors.len(),
 		}
