@@ -5,6 +5,7 @@ mod token;
 
 use std::{collections::VecDeque, str::Chars};
 
+use bitmask_enum::bitmask;
 use oxc_allocator::Allocator;
 pub use token::{NumType, PairWise, Token};
 
@@ -15,18 +16,31 @@ pub struct LexerCheckpoint<'a> {
 	prev_pos: u32,
 }
 
+#[bitmask(u8)]
+pub(crate) enum Include {
+	Whitespace = 0b0001,
+	Comments = 0b0010,
+}
+
 pub struct Lexer<'a> {
 	allocator: &'a Allocator,
 	source: &'a str,
 	current: LexerCheckpoint<'a>,
 	lookahead: VecDeque<LexerCheckpoint<'a>>,
+	include: Include,
 }
 
 impl<'a> Lexer<'a> {
 	pub fn new(allocator: &'a Allocator, source: &'a str) -> Self {
 		let token = Token::default();
 		let current = LexerCheckpoint { chars: source.chars(), token, prev_pos: 0 };
-		Self { allocator, source, current, lookahead: VecDeque::with_capacity(4) }
+		Self {
+			allocator,
+			source,
+			current,
+			lookahead: VecDeque::with_capacity(4),
+			include: Include::none(),
+		}
 	}
 
 	/// Remaining string from `Chars`
@@ -107,5 +121,19 @@ impl<'a> Lexer<'a> {
 			return checkpoint.token;
 		}
 		self.read_next_token()
+	}
+
+	pub fn next_including_whitespace(&mut self) -> Token {
+		self.include = Include::Whitespace;
+		let token = self.read_next_token();
+		self.include = Include::none();
+		token
+	}
+
+	pub fn next_including_whitespace_and_comments(&mut self) -> Token {
+		self.include = Include::all();
+		let token = self.read_next_token();
+		self.include = Include::none();
+		token
 	}
 }

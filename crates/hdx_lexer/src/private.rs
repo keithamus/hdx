@@ -10,10 +10,20 @@ use crate::{
 	constants::{SINGLE_CHAR_TOKENS, SURROGATE_RANGE},
 	string_builder::AutoCow,
 	token::{NumType, Token},
-	Lexer,
+	Include, Lexer,
 };
 
 impl<'a> Lexer<'a> {
+	#[inline]
+	fn include_whitspace(&self) -> bool {
+		self.include & Include::Whitespace == Include::Whitespace
+	}
+
+	#[inline]
+	fn include_comments(&self) -> bool {
+		self.include & Include::Comments == Include::Comments
+	}
+
 	#[inline]
 	fn nth(&self, n: usize) -> char {
 		self.current.chars.clone().nth(n).unwrap_or(EOF)
@@ -41,7 +51,13 @@ impl<'a> Lexer<'a> {
 		}
 		match c {
 			// Whitespace Range
-			c if is_whitespace(c) => self.consume_whitespace(),
+			c if is_whitespace(c) => {
+				self.consume_whitespace();
+				if self.include_whitspace() {
+					return Token::Whitespace;
+				}
+				self.read_next_token()
+			}
 			// Quote Range
 			c if is_quote(c) => self.consume_string_token(),
 			// Digit Range
@@ -110,7 +126,11 @@ impl<'a> Lexer<'a> {
 				'*' => {
 					self.current.chars.next();
 					self.current.chars.next();
-					self.consume_comment_token()
+					self.consume_comment();
+					if self.include_comments() {
+						return Token::Comment;
+					}
+					self.read_next_token()
 				}
 				_ => Token::Delim(self.current.chars.next().unwrap()),
 			},
@@ -121,13 +141,9 @@ impl<'a> Lexer<'a> {
 		}
 	}
 
-	fn consume_whitespace(&mut self) -> Token {
-		loop {
-			if is_whitespace(self.nth(0)) {
-				self.current.chars.next();
-			} else {
-				return Token::Whitespace;
-			}
+	fn consume_whitespace(&mut self) {
+		while is_whitespace(self.nth(0)) {
+			self.current.chars.next();
 		}
 	}
 
@@ -353,14 +369,13 @@ impl<'a> Lexer<'a> {
 		}
 	}
 
-	fn consume_comment_token(&mut self) -> Token {
+	fn consume_comment(&mut self) {
 		while let Some(c) = self.current.chars.next() {
 			if c == '*' && self.nth(0) == '/' {
 				self.current.chars.next();
-				return Token::Comment;
+				return;
 			}
 		}
-		Token::Comment
 	}
 
 	fn is_number_start(&mut self) -> bool {

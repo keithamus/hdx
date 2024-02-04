@@ -105,6 +105,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "630be753d4e58660abd17930c71b647fe46c27ea6b63cc59e1e3851406972e42"
 
 [[package]]
+name = "bitmask-enum"
+version = "2.2.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9990737a6d5740ff51cdbbc0f0503015cb30c390f6623968281eb214a520cfc0"
+dependencies = [
+ "quote",
+ "syn",
+]
+
+[[package]]
 name = "bstr"
 version = "1.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -607,6 +617,7 @@ dependencies = [
 name = "hdx_lexer"
 version = "0.0.1"
 dependencies = [
+ "bitmask-enum",
  "bumpalo",
  "hdx_atom",
  "hdx_syntax",
