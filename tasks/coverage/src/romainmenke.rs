@@ -4,7 +4,8 @@ use std::{
 };
 
 use glob::glob;
-use hdx_lexer::{Kind, Token, TokenValue};
+use hdx_atom::atom;
+use hdx_lexer::Token;
 use serde::{Deserialize, Serialize};
 use serde_json::from_str;
 
@@ -176,69 +177,73 @@ impl LexerCase for CSSTokenizerTestCase {
 	// Comes with fixtures, no need to update
 	fn update_desired(&self, _: &Vec<RomainToken>) {}
 
-	fn convert_token(&self, token: &Token) -> RomainToken {
-		let structured = match &token.value {
-			TokenValue::Number { int, value, .. } => {
-				if token.kind == Kind::Percentage {
+	fn convert_token(&self, start: usize, end: usize, token: &Token) -> RomainToken {
+		let raw = self.source_text[start..end].to_string();
+		let structured = match &token {
+			Token::Number(numtype, value) => Some(Structured::Number(NumberStructured {
+				value: *value,
+				kind: Some(String::from(if numtype.is_int() { "integer" } else { "number" })),
+			})),
+			Token::Dimension(numtype, value, unit) => {
+				if unit == &atom!("%") {
 					Some(Structured::Number(NumberStructured { value: *value, kind: None }))
 				} else {
-					Some(Structured::Number(NumberStructured {
+					Some(Structured::Dimension(DimensionStructured {
 						value: *value,
-						kind: Some(String::from(if *int { "integer" } else { "number" })),
+						unit: (**unit).into(),
+						kind: String::from(if numtype.is_int() { "integer" } else { "number" }),
 					}))
 				}
 			}
-			TokenValue::Dimension { int, value, unit, .. } => {
-				Some(Structured::Dimension(DimensionStructured {
-					value: *value,
-					unit: (**unit).into(),
-					kind: String::from(if *int { "integer" } else { "number" }),
-				}))
-			}
-			TokenValue::String(value) => {
-				Some(Structured::String(StringStructured { value: (**value).into() }))
-			}
-			TokenValue::Char(value) => {
+			Token::Ident(value)
+			| Token::String(value)
+			| Token::AtKeyword(value)
+			| Token::Function(value)
+			| Token::Url(value)
+			| Token::Hash(value)
+			| Token::HashId(value) => Some(Structured::String(StringStructured { value: (**value).into() })),
+			Token::Delim(value) => {
 				Some(Structured::String(StringStructured { value: value.to_string() }))
 			}
-			TokenValue::Unrestricted(value) => {
-				Some(Structured::String(StringStructured { value: (**value).into() }))
-			}
-			TokenValue::None => None,
+			_ => None,
 		};
-		let raw = self.source_text[token.span.start as usize..token.span.end as usize].to_string();
 		// token.start/end count utf8 bytes because rust strings are utf8. The tokenizer tests,
 		// however, are JS based and JS strings are utf16. So recalculate the indexes to utf16
-		let start_index =
-			self.source_text[0..token.span.start as usize].encode_utf16().count() as u32;
+		let start_index = self.source_text[0..start].encode_utf16().count() as u32;
 		let end_index = start_index + raw.encode_utf16().count() as u32;
 		RomainToken {
-			kind: match token.kind {
-				Kind::Comment => RomainKind::Comment,
-				Kind::Ident => RomainKind::Ident,
-				Kind::Function => RomainKind::Function,
-				Kind::AtKeyword => RomainKind::AtKeyword,
-				Kind::Hash => RomainKind::Hash,
-				Kind::String => RomainKind::String,
-				Kind::BadString => RomainKind::BadString,
-				Kind::Url => RomainKind::Url,
-				Kind::BadUrl => RomainKind::BadUrl,
-				Kind::Delim => RomainKind::Delim,
-				Kind::Number => RomainKind::Number,
-				Kind::Percentage => RomainKind::Percentage,
-				Kind::Dimension => RomainKind::Dimension,
-				Kind::Whitespace => RomainKind::Whitespace,
-				Kind::Cdo => RomainKind::Cdo,
-				Kind::Cdc => RomainKind::Cdc,
-				Kind::Colon => RomainKind::Colon,
-				Kind::Semicolon => RomainKind::Semicolon,
-				Kind::Comma => RomainKind::Comma,
-				Kind::LeftSquare => RomainKind::LeftSquare,
-				Kind::RightSquare => RomainKind::RightSquare,
-				Kind::LeftParen => RomainKind::LeftParen,
-				Kind::RightParen => RomainKind::RightParen,
-				Kind::LeftCurly => RomainKind::LeftCurly,
-				Kind::RightCurly => RomainKind::RightCurly,
+			kind: match token {
+				Token::Comment => RomainKind::Comment,
+				Token::Ident(_) => RomainKind::Ident,
+				Token::Function(_) => RomainKind::Function,
+				Token::AtKeyword(_) => RomainKind::AtKeyword,
+				Token::Hash(_) => RomainKind::Hash,
+				Token::HashId(_) => RomainKind::Hash,
+				Token::String(_) => RomainKind::String,
+				Token::BadString => RomainKind::BadString,
+				Token::Url(_) => RomainKind::Url,
+				Token::BadUrl => RomainKind::BadUrl,
+				Token::Delim(_) => RomainKind::Delim,
+				Token::Number(_, _) => RomainKind::Number,
+				Token::Dimension(_, _, unit) => {
+					if unit == &atom!("%") {
+						RomainKind::Percentage
+					} else {
+						RomainKind::Dimension
+					}
+				}
+				Token::Whitespace => RomainKind::Whitespace,
+				Token::Cdo => RomainKind::Cdo,
+				Token::Cdc => RomainKind::Cdc,
+				Token::Colon => RomainKind::Colon,
+				Token::Semicolon => RomainKind::Semicolon,
+				Token::Comma => RomainKind::Comma,
+				Token::LeftSquare => RomainKind::LeftSquare,
+				Token::RightSquare => RomainKind::RightSquare,
+				Token::LeftParen => RomainKind::LeftParen,
+				Token::RightParen => RomainKind::RightParen,
+				Token::LeftCurly => RomainKind::LeftCurly,
+				Token::RightCurly => RomainKind::RightCurly,
 				_ => unreachable!(),
 			},
 			raw,
