@@ -10,15 +10,13 @@
     "end": 2,
     "escaped": false,
     "kind": "Colon",
-    "start": 1,
-    "value": null
+    "start": 1
   },
   {
     "end": 3,
     "escaped": false,
     "kind": "Colon",
-    "start": 2,
-    "value": null
+    "start": 2
   },
   {
     "end": 9,
@@ -31,22 +29,19 @@
     "end": 10,
     "escaped": false,
     "kind": "Whitespace",
-    "start": 9,
-    "value": null
+    "start": 9
   },
   {
     "end": 11,
     "escaped": false,
     "kind": "LeftCurly",
-    "start": 10,
-    "value": null
+    "start": 10
   },
   {
     "end": 16,
     "escaped": false,
     "kind": "Whitespace",
-    "start": 11,
-    "value": null
+    "start": 11
   },
   {
     "end": 23,
@@ -59,15 +54,13 @@
     "end": 24,
     "escaped": false,
     "kind": "Colon",
-    "start": 23,
-    "value": null
+    "start": 23
   },
   {
     "end": 25,
     "escaped": false,
     "kind": "Whitespace",
-    "start": 24,
-    "value": null
+    "start": 24
   },
   {
     "end": 37,
@@ -80,15 +73,13 @@
     "end": 38,
     "escaped": false,
     "kind": "Semicolon",
-    "start": 37,
-    "value": null
+    "start": 37
   },
   {
     "end": 43,
     "escaped": false,
     "kind": "Whitespace",
-    "start": 38,
-    "value": null
+    "start": 38
   },
   {
     "end": 50,
@@ -101,15 +92,13 @@
     "end": 51,
     "escaped": false,
     "kind": "Colon",
-    "start": 50,
-    "value": null
+    "start": 50
   },
   {
     "end": 52,
     "escaped": false,
     "kind": "Whitespace",
-    "start": 51,
-    "value": null
+    "start": 51
   },
   {
     "end": 59,
@@ -122,28 +111,24 @@
     "end": 60,
     "escaped": false,
     "kind": "Semicolon",
-    "start": 59,
-    "value": null
+    "start": 59
   },
   {
     "end": 61,
     "escaped": false,
     "kind": "Whitespace",
-    "start": 60,
-    "value": null
+    "start": 60
   },
   {
     "end": 62,
     "escaped": false,
     "kind": "RightCurly",
-    "start": 61,
-    "value": null
+    "start": 61
   },
   {
     "end": 63,
     "escaped": false,
     "kind": "Whitespace",
-    "start": 62,
-    "value": null
+    "start": 62
   }
 ]

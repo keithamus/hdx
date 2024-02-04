@@ -3,8 +3,7 @@
     "end": 1,
     "escaped": false,
     "kind": "Colon",
-    "start": 0,
-    "value": null
+    "start": 0
   },
   {
     "end": 11,
@@ -17,28 +16,24 @@
     "end": 12,
     "escaped": false,
     "kind": "Whitespace",
-    "start": 11,
-    "value": null
+    "start": 11
   },
   {
     "end": 13,
     "escaped": false,
     "kind": "LeftCurly",
-    "start": 12,
-    "value": null
+    "start": 12
   },
   {
     "end": 14,
     "escaped": false,
     "kind": "RightCurly",
-    "start": 13,
-    "value": null
+    "start": 13
   },
   {
     "end": 15,
     "escaped": false,
     "kind": "Whitespace",
-    "start": 14,
-    "value": null
+    "start": 14
   }
 ]
