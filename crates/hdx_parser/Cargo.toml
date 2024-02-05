@@ -12,7 +12,6 @@ repository.workspace = true
 [dependencies]
 hdx_lexer = { workspace = true }
 hdx_syntax = { workspace = true }
-hdx_ast = { workspace = true }
 hdx_atom = { workspace = true }
 
 closestmatch = { workspace = true }
@@ -23,6 +22,7 @@ bumpalo = { workspace = true }
 
 miette = { workspace = true }
 thiserror = { workspace = true }
+bitmask-enum = { workspace = true }
 serde = { workspace = true, optional = true }
 serde_json = { workspace = true, optional = true }
 
@@ -31,5 +31,5 @@ glob = { workspace = true }
 
 [features]
 default = []
-serde = ["dep:serde", "dep:serde_json", "hdx_ast/serde", "hdx_lexer/serde"]
+serde = ["dep:serde", "dep:serde_json", "hdx_lexer/serde"]
 fancy = ["miette/fancy-no-backtrace"]

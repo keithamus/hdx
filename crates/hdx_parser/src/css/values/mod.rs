@@ -21,24 +21,28 @@ pub mod ui;
 
 use hdx_ast::css::{properties::Todo, values::*};
 
-use crate::{diagnostics, Atomizable, Parse, Parser, Result, Spanned};
+use crate::{diagnostics, Atomizable, Parse, Parser, Result, Spanned, Token};
 
 macro_rules! parse_for_enums {
-    {$( $prop: ident, )+} => {
-        $(
-            impl<'a> Parse<'a> for $prop {
-                fn parse(parser: &mut Parser<'a>) -> Result<Spanned<$prop>> {
-                    let span = parser.cur().span;
-                    let ident = parser.expect_ident()?;
-                    if let Some(val) = $prop::from_atom(ident.clone()) {
-                        Ok(val.spanned(span.until(parser.cur().span)))
-                    } else {
-                        Err(diagnostics::UnexpectedIdent(ident, span))?
-                    }
-                }
-            }
-        )+
-    }
+	{$( $prop: ident, )+} => {
+		$(
+			impl<'a> Parse<'a> for $prop {
+				fn parse(parser: &mut Parser<'a>) -> Result<Spanned<$prop>> {
+					let span = parser.span();
+					match parser.cur() {
+						Token::Ident(ident) => {
+							if let Some(val) = $prop::from_atom(*ident) {
+								Ok(val.spanned(span))
+							} else {
+								Err(diagnostics::UnexpectedIdent(*ident, span))?
+							}
+						}
+						token => Err(diagnostics::ExpectedIdent(*token, span))?,
+					}
+				}
+			}
+		)+
+	}
 }
 
 parse_for_enums! {
@@ -76,33 +80,33 @@ parse_for_enums! {
 // TODO:
 impl<'a> Parse<'a> for Image<'a> {
 	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
-		Err(diagnostics::Unimplemented(parser.cur().span))?
+		Err(diagnostics::Unimplemented(parser.span()))?
 	}
 }
 
 // TODO:
 impl<'a> Parse<'a> for RatioOrAuto {
 	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
-		Err(diagnostics::Unimplemented(parser.cur().span))?
+		Err(diagnostics::Unimplemented(parser.span()))?
 	}
 }
 
 // TODO:
 impl<'a> Parse<'a> for TimeOrAuto {
 	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
-		Err(diagnostics::Unimplemented(parser.cur().span))?
+		Err(diagnostics::Unimplemented(parser.span()))?
 	}
 }
 
 impl<'a> Parse<'a> for NoNonGlobalValuesAllowed {
 	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
-		Err(diagnostics::Unexpected(parser.cur().kind, parser.cur().span))?
+		unexpected!(parser);
 	}
 }
 
 // TODO:
 impl<'a> Parse<'a> for Todo {
 	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
-		Err(diagnostics::Unimplemented(parser.cur().span))?
+		Err(diagnostics::Unimplemented(parser.span()))?
 	}
 }

@@ -13,6 +13,7 @@ repository.workspace = true
 [dependencies]
 hdx_lexer = { workspace = true, features = ["serde"] }
 hdx_parser = { workspace = true, features = ["serde"] }
+hdx_ast = { workspace = true, features = ["serde"] }
 hdx_writer = { workspace = true, features = [] }
 
 # Use OXC Allocator until https://github.com/fitzgen/bumpalo/pull/210 is resolved

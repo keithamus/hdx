@@ -4,16 +4,16 @@ use crate::{atom, diagnostics, Kind, Parse, Parser, Result, Spanned};
 
 impl<'a> Parse<'a> for ContentsValue<'a> {
 	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
-		let span = parser.cur().span;
+		let span = parser.span();
 		if parser.at(Kind::Ident) {
 			match parser.cur_atom_lower().unwrap() {
 				atom!("normal") => {
 					parser.advance();
-					return Ok(Self::Normal.spanned(span.until(parser.cur().span)));
+					return Ok(Self::Normal.spanned(span.end(parser.pos())));
 				}
 				atom!("none") => {
 					parser.advance();
-					return Ok(Self::None.spanned(span.until(parser.cur().span)));
+					return Ok(Self::None.spanned(span.end(parser.pos())));
 				}
 				_ => {}
 			}
@@ -26,17 +26,17 @@ impl<'a> Parse<'a> for ContentsValue<'a> {
 		//         return Ok(Self::Replacement(ContentReplacement { image, alt: list.alt }));
 		//     }
 		// }
-		Ok(Self::List(list).spanned(span.until(parser.cur().span)))
+		Ok(Self::List(list).spanned(span.end(parser.pos())))
 	}
 }
 
 impl<'a> Parse<'a> for ContentList<'a> {
 	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
-		let span = parser.cur().span;
+		let span = parser.span();
 		let mut values = parser.new_vec();
 		let alt = parser.new_vec();
 		loop {
-			match parser.cur().kind {
+			match parser.cur() {
 				Kind::String => {
 					values.push(ContentElement::String(parser.cur_atom().unwrap()));
 					parser.advance();
@@ -44,29 +44,29 @@ impl<'a> Parse<'a> for ContentList<'a> {
 				Kind::Semicolon | Kind::Eof | Kind::RightCurly => {
 					break;
 				}
-				_ => Err(diagnostics::Unimplemented(parser.cur().span))?,
+				_ => Err(diagnostics::Unimplemented(parser.span()))?,
 			}
 		}
-		Ok(Self { values, alt }.spanned(span.until(parser.cur().span)))
+		Ok(Self { values, alt }.spanned(span.end(parser.pos())))
 	}
 }
 
 impl<'a> Parse<'a> for QuotesValue<'a> {
 	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
-		let span = parser.cur().span;
-		match parser.cur().kind {
+		let span = parser.span();
+		match parser.cur() {
 			Kind::Ident => {
 				let ident = parser.expect_ident()?;
 				match ident {
 					atom!("none") => {
 						parser.advance();
-						return Ok(Self::None.spanned(span.until(parser.cur().span)));
+						return Ok(Self::None.spanned(span.end(parser.pos())));
 					}
 					atom!("auto") => {
 						parser.advance();
-						return Ok(Self::Auto.spanned(span.until(parser.cur().span)));
+						return Ok(Self::Auto.spanned(span.end(parser.pos())));
 					}
-					_ => Err(diagnostics::UnexpectedIdent(ident, parser.cur().span))?,
+					_ => Err(diagnostics::UnexpectedIdent(ident, parser.span()))?,
 				}
 			}
 			Kind::String => {
@@ -79,9 +79,9 @@ impl<'a> Parse<'a> for QuotesValue<'a> {
 						break;
 					}
 				}
-				Ok(Self::Custom(custom).spanned(span.until(parser.cur().span)))
+				Ok(Self::Custom(custom).spanned(span.end(parser.pos())))
 			}
-			k => Err(diagnostics::Unexpected(k, parser.cur().span))?,
+			k => Err(diagnostics::Unexpected(k, parser.span()))?,
 		}
 	}
 }

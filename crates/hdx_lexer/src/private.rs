@@ -126,16 +126,31 @@ impl<'a> Lexer<'a> {
 				'*' => {
 					self.current.chars.next();
 					self.current.chars.next();
-					self.consume_comment();
 					if self.include_comments() {
-						return Token::Comment;
+						let mut builder = AutoCow::new(self);
+						loop {
+							if self.nth(0) == EOF || (self.nth(0) == '*' && self.nth(1) == '/') {
+								let str = builder.finish(self);
+								self.current.chars.next();
+								self.current.chars.next();
+								return Token::Comment(Atom::from(str))
+							}
+							builder.push_matching(self.current.chars.next().unwrap());
+						}
+					} else {
+						while let Some(c) = self.current.chars.next() {
+							if c == '*' && self.nth(0) == '/' {
+								self.current.chars.next();
+								break;
+							}
+						}
+						self.read_next_token()
 					}
-					self.read_next_token()
 				}
 				_ => Token::Delim(self.current.chars.next().unwrap()),
 			},
 			c if is_ident_start(c) => {
-				return self.consume_ident_like_token();
+				self.consume_ident_like_token()
 			}
 			_ => Token::Delim(self.current.chars.next().unwrap()),
 		}
@@ -254,7 +269,7 @@ impl<'a> Lexer<'a> {
 		let mut builder = AutoCow::new(self);
 		let c = self.current.chars.next().unwrap();
 		builder.push_matching(c);
-		let mut num_type = NumType::UnsignedInt;
+		let mut num_type = NumType::none();
 		if is_sign(c) {
 			num_type = num_type.signed();
 		}
@@ -282,13 +297,13 @@ impl<'a> Lexer<'a> {
 		match self.nth(0) {
 			'%' => {
 				self.current.chars.next();
-				Token::Dimension(num_type, value, atom!("%"))
+				Token::Dimension(value, atom!("%"), num_type)
 			}
 			c if is_ident_start_sequence(c, self.nth(1), self.nth(2)) => {
 				let unit = self.consume_ident_sequence();
-				Token::Dimension(num_type, value, unit)
+				Token::Dimension(value, unit, num_type)
 			}
-			_ => Token::Number(num_type, value),
+			_ => Token::Number(value, num_type),
 		}
 	}
 
@@ -365,15 +380,6 @@ impl<'a> Lexer<'a> {
 					self.current.chars.next();
 					builder.push_matching(c);
 				}
-			}
-		}
-	}
-
-	fn consume_comment(&mut self) {
-		while let Some(c) = self.current.chars.next() {
-			if c == '*' && self.nth(0) == '/' {
-				self.current.chars.next();
-				return;
 			}
 		}
 	}

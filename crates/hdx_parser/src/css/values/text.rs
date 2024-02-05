@@ -2,22 +2,20 @@ use hdx_ast::css::values::{
 	Expr, Shorthand, TextWrapValue, WhiteSpaceCollapseValue, WhiteSpaceShorthand,
 	WhiteSpaceTrimValue,
 };
-use hdx_lexer::Kind;
 
-use crate::{atom, diagnostics, Atomizable, Parse, Parser, Result, Spanned};
+use crate::{atom, diagnostics, Atomizable, Parse, Parser, Result, Spanned, Token};
 
 impl<'a> Parse<'a> for WhiteSpaceTrimValue {
 	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
-		let span = parser.cur().span;
+		let span = parser.span();
 		let mut inner = false;
 		let mut after = false;
 		let mut before = false;
 		loop {
-			match parser.cur().kind {
-				Kind::Ident => match parser.cur_atom_lower().unwrap() {
+			match parser.cur() {
+				Token::Ident(ident) => match ident.to_ascii_lowercase() {
 					atom!("none") => {
-						parser.advance();
-						return Ok(Self::None.spanned(span));
+						return Ok(Self::None.spanned(parser.advance()));
 					}
 					atom!("discard-inner") => {
 						parser.advance();
@@ -39,51 +37,46 @@ impl<'a> Parse<'a> for WhiteSpaceTrimValue {
 				break;
 			}
 		}
-		Ok(Self::Discard { inner, after, before }.spanned(span.until(parser.cur().span)))
+		Ok(Self::Discard { inner, after, before }.spanned(span.end(parser.pos())))
 	}
 }
 
 impl<'a> Parse<'a> for WhiteSpaceShorthand<'a> {
 	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
-		let span = parser.cur().span;
-		if parser.at(Kind::Ident) {
-			match parser.cur_atom_lower().unwrap() {
+		let span = parser.span();
+		match parser.cur() {
+			Token::Ident(ident) => match ident.to_ascii_lowercase() {
 				//normal | pre | nowrap | pre-wrap | pre-line
 				atom!("normal") => {
-					parser.advance();
-					return Ok(Self::Normal.spanned(span));
+					return Ok(Self::Normal.spanned(parser.advance()));
 				}
 				atom!("pre") => {
-					parser.advance();
-					return Ok(Self::Pre.spanned(span));
+					return Ok(Self::Pre.spanned(parser.advance()));
 				}
 				atom!("nowrap") => {
-					parser.advance();
-					return Ok(Self::Nowrap.spanned(span));
+					return Ok(Self::Nowrap.spanned(parser.advance()));
 				}
 				atom!("pre-wrap") => {
-					parser.advance();
-					return Ok(Self::PreWrap.spanned(span));
+					return Ok(Self::PreWrap.spanned(parser.advance()));
 				}
 				atom!("pre-line") => {
-					parser.advance();
-					return Ok(Self::PreLine.spanned(span));
+					return Ok(Self::PreLine.spanned(parser.advance()));
 				}
 				_ => {}
-			}
+			},
+			_ => {}
 		}
 		let mut collapse = Shorthand::Implicit;
 		let mut wrap = Shorthand::Implicit;
 		let mut trim = Shorthand::Implicit;
 		loop {
-			match parser.cur().kind {
-				Kind::Semicolon | Kind::Comma | Kind::Eof => {
+			match parser.cur() {
+				Token::Semicolon | Token::Comma | Token::Eof => {
 					break;
 				}
-				Kind::Ident => {
-					let ident = parser.cur_atom_lower().unwrap();
+				Token::Ident(ident) => {
 					if collapse.is_implicit()
-						&& WhiteSpaceCollapseValue::from_atom(ident.clone()).is_some()
+						&& WhiteSpaceCollapseValue::from_atom(ident.to_ascii_lowercase()).is_some()
 					{
 						let node = Expr::<WhiteSpaceCollapseValue>::parse(parser)?;
 						collapse = Shorthand::Explicit(parser.boxup(node));
@@ -94,7 +87,7 @@ impl<'a> Parse<'a> for WhiteSpaceShorthand<'a> {
 						wrap = Shorthand::Explicit(parser.boxup(node));
 					} else if trim.is_implicit()
 						&& matches!(
-							ident,
+							ident.to_ascii_lowercase(),
 							atom!("none")
 								| atom!("discard-inner") | atom!("discard-after")
 								| atom!("discard-before")
@@ -102,7 +95,7 @@ impl<'a> Parse<'a> for WhiteSpaceShorthand<'a> {
 						let node = Expr::<WhiteSpaceTrimValue>::parse(parser)?;
 						trim = Shorthand::Explicit(parser.boxup(node));
 					} else {
-						Err(diagnostics::UnexpectedIdent(ident.clone(), parser.cur().span))?
+						Err(diagnostics::UnexpectedIdent(ident.clone(), parser.span()))?
 					}
 				}
 				k => {
@@ -139,13 +132,13 @@ impl<'a> Parse<'a> for WhiteSpaceShorthand<'a> {
 							Err(_) => parser.rewind(checkpoint),
 						}
 					}
-					Err(diagnostics::Unexpected(k, parser.cur().span))?
+					Err(diagnostics::Unexpected(*k, parser.span()))?
 				}
 			}
 			if collapse.is_explicit() && wrap.is_explicit() && trim.is_explicit() {
 				break;
 			}
 		}
-		Ok(Self::Expanded { collapse, wrap, trim }.spanned(span.until(parser.cur().span)))
+		Ok(Self::Expanded { collapse, wrap, trim }.spanned(span.end(parser.pos())))
 	}
 }

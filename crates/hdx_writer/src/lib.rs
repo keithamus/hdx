@@ -1,9 +1,9 @@
-pub(crate) use std::fmt::{Result, Write};
+pub use std::fmt::{Result, Write};
+use std::ops::Deref;
 
-pub(crate) use hdx_ast::Spanned;
-pub(crate) use hdx_atom::Atomizable;
-
-mod css;
+use hdx_atom::Atom;
+use hdx_parser::Spanned;
+use oxc_allocator::Box;
 
 pub trait WriteCss<'a>: Sized {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> Result;
@@ -100,5 +100,47 @@ where
 		if !self.compressed {
 			self.indent -= 1
 		}
+	}
+}
+
+impl<'a, T: WriteCss<'a>> WriteCss<'a> for Option<T> {
+	fn write_css<W: CssWriter>(&self, sink: &mut W) -> Result {
+		if let Some(value) = self { value.write_css(sink) } else { Ok(()) }
+	}
+}
+
+impl<'a, T: WriteCss<'a>> WriteCss<'a> for Box<'a, T> {
+	fn write_css<W: CssWriter>(&self, sink: &mut W) -> Result {
+		self.deref().write_css(sink)
+	}
+}
+
+impl<'a, T: WriteCss<'a>> WriteCss<'a> for Spanned<T> {
+	fn write_css<W: CssWriter>(&self, sink: &mut W) -> Result {
+		self.node.write_css(sink)
+	}
+}
+
+impl<'a> WriteCss<'a> for Atom {
+	fn write_css<W: CssWriter>(&self, sink: &mut W) -> Result {
+		sink.write_str(self.as_ref())
+	}
+}
+
+impl<'a> WriteCss<'a> for f32 {
+	fn write_css<W: CssWriter>(&self, sink: &mut W) -> Result {
+		sink.write_str(self.to_string().as_str())
+	}
+}
+
+impl<'a> WriteCss<'a> for i32 {
+	fn write_css<W: CssWriter>(&self, sink: &mut W) -> Result {
+		sink.write_str(self.to_string().as_str())
+	}
+}
+
+impl<'a> WriteCss<'a> for char {
+	fn write_css<W: CssWriter>(&self, sink: &mut W) -> Result {
+		sink.write_char(*self)
 	}
 }

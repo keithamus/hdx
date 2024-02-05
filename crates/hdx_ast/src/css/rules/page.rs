@@ -1,27 +1,79 @@
-use oxc_allocator::{Box, Vec};
+use hdx_lexer::Token;
+use hdx_parser::{
+	diagnostics, expect, unexpected, AtRule, Box, DeclarationRuleList, Parse, Parser, Result as ParserResult, Spanned,
+	Vec,
+};
+use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 #[cfg(feature = "serde")]
 use serde::Serialize;
 
-use crate::{
-	atom, css::properties::Property, Atom, Atomizable, Span, Spanned, Specificity, ToSpecificity,
-};
+use super::NoPreludeAllowed;
+use crate::{atom, css::properties::StyleProperty, Atom, Atomizable, Specificity, ToSpecificity};
 
 // https://drafts.csswg.org/cssom-1/#csspagerule
-#[derive(Debug, PartialEq, Hash)]
+// https://drafts.csswg.org/css-page-3/#at-page-rule
+#[derive(Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
-pub struct CSSPageRule<'a> {
+pub struct PageRule<'a> {
 	#[cfg_attr(feature = "serde", serde(borrow))]
-	pub selectors: Box<'a, Spanned<PageSelectorList<'a>>>,
-	#[cfg_attr(feature = "serde", serde(borrow))]
-	pub declarations: Box<'a, Vec<'a, Spanned<Property<'a>>>>,
-	#[cfg_attr(feature = "serde", serde(borrow))]
-	pub rules: Box<'a, Vec<'a, Spanned<CSSMarginRule<'a>>>>,
+	pub selectors: Box<'a, Option<Spanned<PageSelectorList<'a>>>>,
+	pub style: Box<'a, Spanned<PageDeclaration<'a>>>,
+}
+
+// https://drafts.csswg.org/css-page-3/#syntax-page-selector
+impl<'a> Parse<'a> for PageRule<'a> {
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
+		expect!(parser, Token::AtKeyword(atom!("page")));
+		let span = parser.span();
+		let (selectors, style) = Self::parse_at_rule(parser)?;
+		if let Some(style) = style {
+			Ok(Self { selectors: parser.boxup(selectors), style: parser.boxup(style) }.spanned(span.end(parser.pos())))
+		} else {
+			Err(diagnostics::MissingAtRuleBlock(span.end(parser.pos())))?
+		}
+	}
+}
+
+impl<'a> AtRule<'a> for PageRule<'a> {
+	type Block = PageDeclaration<'a>;
+	type Prelude = PageSelectorList<'a>;
+}
+
+impl<'a> WriteCss<'a> for PageRule<'a> {
+	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
+		sink.write_str("@page ")?;
+		self.selectors.write_css(sink)?;
+		self.style.write_css(sink)?;
+		Ok(())
+	}
 }
 
 #[derive(Debug, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
 pub struct PageSelectorList<'a> {
 	pub children: Vec<'a, Spanned<PageSelector<'a>>>,
+}
+
+impl<'a> Parse<'a> for PageSelectorList<'a> {
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
+		let span = parser.span();
+		let ok = Ok(Self { children: parser.parse_comma_list_of::<PageSelector>()? }.spanned(span.end(parser.pos())));
+		ok
+	}
+}
+
+impl<'a> WriteCss<'a> for PageSelectorList<'a> {
+	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
+		let mut iter = self.children.iter().peekable();
+		while let Some(selector) = iter.next() {
+			selector.write_css(sink)?;
+			if iter.peek().is_some() {
+				sink.write_char(',')?;
+				sink.write_trivia_char(' ')?;
+			}
+		}
+		Ok(())
+	}
 }
 
 #[derive(Debug, PartialEq, Hash)]
@@ -32,10 +84,50 @@ pub struct PageSelector<'a> {
 	pub pseudos: Vec<'a, Spanned<PagePseudoClass>>,
 }
 
+impl<'a> Parse<'a> for PageSelector<'a> {
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
+		let span = parser.span();
+		let mut page_type = None;
+		let mut pseudos = parser.new_vec();
+		match parser.cur() {
+			Token::Ident(atom) => {
+				page_type = Some(atom);
+				parser.advance();
+			}
+			_ => {}
+		}
+		loop {
+			match parser.cur() {
+				Token::Colon => {
+					pseudos.push(PagePseudoClass::parse(parser)?);
+				}
+				_ => {
+					break;
+				}
+			}
+		}
+		Ok(Self { page_type, pseudos }.spanned(span.end(parser.pos())))
+	}
+}
+
+impl<'a> WriteCss<'a> for PageSelector<'a> {
+	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
+		if let Some(page_type) = &self.page_type {
+			sink.write_str(page_type.as_ref())?;
+		}
+		for pseudo in self.pseudos.iter() {
+			sink.write_char(':')?;
+			sink.write_str(pseudo.to_atom().as_ref())?;
+		}
+		Ok(())
+	}
+}
+
 impl<'a> PageSelector<'a> {
 	pub fn selector(&self) -> &str {
 		todo!();
-		// format!("{}{}", self.page_type.unwrap_or("").to_owned(), self.pseudos.into_iter().fold("", |p| p.as_str())join("")).as_str()
+		// format!("{}{}", self.page_type.unwrap_or("").to_owned(),
+		// self.pseudos.into_iter().fold("", |p| p.as_str())join("")).as_str()
 	}
 
 	pub fn specificity(&self) -> Specificity {
@@ -56,6 +148,21 @@ pub enum PagePseudoClass {
 	Blank,
 }
 
+impl<'a> Parse<'a> for PagePseudoClass {
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
+		let span = parser.span();
+		expect!(parser, Token::Colon);
+		parser.advance_including_whitespace();
+		match parser.cur() {
+			Token::Ident(name) => match Self::from_atom(name.clone()) {
+				Some(v) => Ok(v.spanned(span.end(parser.pos()))),
+				_ => Err(diagnostics::UnexpectedPseudo(name, span).into()),
+			},
+			token => unexpected!(parser, token),
+		}
+	}
+}
+
 impl ToSpecificity for PagePseudoClass {
 	fn specificity(&self) -> Specificity {
 		match self {
@@ -67,13 +174,101 @@ impl ToSpecificity for PagePseudoClass {
 	}
 }
 
-// https://drafts.csswg.org/cssom-1/#cssmarginrule
-#[derive(Debug, PartialEq, Hash)]
+#[derive(Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
-pub struct CSSMarginRule<'a> {
+pub struct PageDeclaration<'a> {
+	#[cfg_attr(feature = "serde", serde(borrow))]
+	pub properties: Box<'a, Vec<'a, Spanned<StyleProperty<'a>>>>,
+	#[cfg_attr(feature = "serde", serde(borrow))]
+	pub rules: Box<'a, Vec<'a, Spanned<MarginRule<'a>>>>,
+}
+
+impl<'a> Parse<'a> for PageDeclaration<'a> {
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
+		let span = parser.span();
+		let (properties, rules) = Self::parse_declaration_rule_list(parser)?;
+		Ok(Self { properties: parser.boxup(properties), rules: parser.boxup(rules) }.spanned(span.end(parser.pos())))
+	}
+}
+
+impl<'a> DeclarationRuleList<'a> for PageDeclaration<'a> {
+	type AtRule = MarginRule<'a>;
+	type Declaration = StyleProperty<'a>;
+}
+
+impl<'a> WriteCss<'a> for PageDeclaration<'a> {
+	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
+		sink.write_char('{')?;
+		sink.indent();
+		sink.write_newline()?;
+		let mut iter = self.properties.iter().peekable();
+		let mut rule_iter = self.rules.iter().peekable();
+		while let Some(decl) = iter.next() {
+			decl.write_css(sink)?;
+			if iter.peek().is_none() && rule_iter.peek().is_none() {
+				sink.write_trivia_char(';')?;
+			} else {
+				sink.write_char(';')?;
+			}
+			sink.write_newline()?;
+		}
+		for rule in rule_iter {
+			sink.write_newline()?;
+			rule.write_css(sink)?;
+			sink.write_newline()?;
+		}
+		sink.dedent();
+		sink.write_indent()?;
+		sink.write_char('}')
+	}
+}
+
+// https://drafts.csswg.org/cssom-1/#cssmarginrule
+#[derive(Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
+pub struct MarginRule<'a> {
 	pub name: PageMarginBox,
 	#[cfg_attr(feature = "serde", serde(borrow))]
-	pub declarations: Vec<'a, Spanned<Property<'a>>>,
+	pub style: Box<'a, Spanned<MarginDeclaration<'a>>>,
+}
+
+impl<'a> Parse<'a> for MarginRule<'a> {
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
+		match parser.cur() {
+			Token::AtKeyword(atom) => {
+				if let Some(name) = PageMarginBox::from_atom(atom.clone()) {
+					let span = parser.span();
+					let (_, style) = Self::parse_at_rule(parser)?;
+					if let Some(style) = style {
+						Ok(Self { name, style: parser.boxup(style) }.spanned(span.end(parser.pos())))
+					} else {
+						Err(diagnostics::MissingAtRuleBlock(span.end(parser.pos())))?
+					}
+				} else {
+					Err(diagnostics::UnexpectedAtRule(atom, parser.span()))?
+				}
+			}
+			token => unexpected!(parser, token),
+		}
+	}
+}
+
+impl<'a> AtRule<'a> for MarginRule<'a> {
+	type Block = MarginDeclaration<'a>;
+	type Prelude = NoPreludeAllowed;
+
+	fn parse_prelude(_parser: &mut Parser<'a>) -> ParserResult<Option<Spanned<Self::Prelude>>> {
+		Ok(None)
+	}
+}
+
+impl<'a> WriteCss<'a> for MarginRule<'a> {
+	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
+		sink.write_char('@')?;
+		sink.write_str(self.name.to_atom().as_ref())?;
+		sink.write_trivia_char(' ')?;
+		self.style.write_css(sink)
+	}
 }
 
 #[derive(Atomizable, Debug, Clone, PartialEq, Hash)]
@@ -97,6 +292,56 @@ pub enum PageMarginBox {
 	LeftTop,           // atom!("left-top")
 }
 
+#[derive(Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
+pub struct MarginDeclaration<'a> {
+	#[cfg_attr(feature = "serde", serde(borrow))]
+	pub properties: Box<'a, Vec<'a, Spanned<StyleProperty<'a>>>>,
+	#[cfg_attr(feature = "serde", serde(borrow))]
+	pub rules: Box<'a, Vec<'a, Spanned<MarginRule<'a>>>>,
+}
+
+impl<'a> Parse<'a> for MarginDeclaration<'a> {
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
+		let span = parser.span();
+		let (properties, rules) = Self::parse_declaration_rule_list(parser)?;
+		Ok(Self { properties: parser.boxup(properties), rules: parser.boxup(rules) }
+			.spanned(span.end(parser.pos())))
+	}
+}
+
+impl<'a> DeclarationRuleList<'a> for MarginDeclaration<'a> {
+	type AtRule = MarginRule<'a>;
+	type Declaration = StyleProperty<'a>;
+}
+
+impl<'a> WriteCss<'a> for MarginDeclaration<'a> {
+	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
+		sink.write_char('{')?;
+		sink.indent();
+		sink.write_newline()?;
+		let mut iter = self.properties.iter().peekable();
+		let mut rule_iter = self.rules.iter().peekable();
+		while let Some(decl) = iter.next() {
+			decl.write_css(sink)?;
+			if iter.peek().is_none() && rule_iter.peek().is_none() {
+				sink.write_trivia_char(';')?;
+			} else {
+				sink.write_char(';')?;
+			}
+			sink.write_newline()?;
+		}
+		for rule in rule_iter {
+			sink.write_newline()?;
+			rule.write_css(sink)?;
+			sink.write_newline()?;
+		}
+		sink.dedent();
+		sink.write_indent()?;
+		sink.write_char('}')
+	}
+}
+
 #[cfg(test)]
 mod tests {
 
@@ -105,8 +350,8 @@ mod tests {
 	#[test]
 	fn size_test() {
 		use std::mem::size_of;
-		assert_eq!(size_of::<CSSPageRule>(), 24);
-		assert_eq!(size_of::<CSSMarginRule>(), 40);
+		assert_eq!(size_of::<PageRule>(), 16);
+		assert_eq!(size_of::<MarginRule>(), 16);
 		assert_eq!(size_of::<PagePseudoClass>(), 1);
 		assert_eq!(size_of::<PageMarginBox>(), 1);
 		assert_eq!(size_of::<PagePseudoClass>(), 1);

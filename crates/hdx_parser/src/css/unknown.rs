@@ -9,7 +9,7 @@ use crate::{atom, Atom, Parse, Parser, Spanned};
 
 impl<'a> Parse<'a> for UnknownAtRule<'a> {
 	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
-		let span = parser.cur().span;
+		let span = parser.span();
 		parser.parse_at_rule(
 			None,
 			|parser: &mut Parser<'a>, name: Atom, prelude, rules, properties| {
@@ -19,7 +19,7 @@ impl<'a> Parse<'a> for UnknownAtRule<'a> {
 					rules: parser.boxup(rules),
 					properties: parser.boxup(properties),
 				}
-				.spanned(span.until(parser.cur().span)))
+				.spanned(span.end(parser.pos())))
 			},
 		)
 	}
@@ -27,7 +27,7 @@ impl<'a> Parse<'a> for UnknownAtRule<'a> {
 
 impl<'a> Parse<'a> for UnknownRule<'a> {
 	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
-		let span = parser.cur().span;
+		let span = parser.span();
 		parser.parse_qualified_rule(
 			Some(Kind::Semicolon),
 			true,
@@ -37,7 +37,7 @@ impl<'a> Parse<'a> for UnknownRule<'a> {
 					rules: parser.boxup(rules),
 					properties: parser.boxup(properties),
 				}
-				.spanned(span.until(parser.cur().span)))
+				.spanned(span.end(parser.pos())))
 			},
 		)
 	}
@@ -45,16 +45,16 @@ impl<'a> Parse<'a> for UnknownRule<'a> {
 
 impl<'a> Parse<'a> for UnknownPrelude<'a> {
 	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
-		let span = parser.cur().span;
+		let span = parser.span();
 		let value = parser.parse_component_values(Kind::Semicolon, false)?;
-		Ok(Self { value: parser.boxup(value) }.spanned(span.until(parser.cur().span)))
+		Ok(Self { value: parser.boxup(value) }.spanned(span.end(parser.pos())))
 	}
 }
 
 // https://drafts.csswg.org/css-syntax-3/#consume-the-remnants-of-a-bad-declaration
 impl<'a> Parse<'a> for UnknownDeclaration<'a> {
 	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
-		let span = parser.cur().span;
+		let span = parser.span();
 		let mut name = atom!("");
 		let mut value_like = Spanned::dummy(ValueLike::Unknown);
 		let value;
@@ -77,11 +77,11 @@ impl<'a> Parse<'a> for UnknownDeclaration<'a> {
 		} else {
 			value = parser.parse_component_values(Kind::Semicolon, true)?;
 		}
-		if parser.cur().kind == Kind::Semicolon {
+		if parser.cur() == Kind::Semicolon {
 			parser.advance();
 		}
 		Ok(Self { name, value_like, value: parser.boxup(value), important: false }
-			.spanned(span.until(parser.cur().span)))
+			.spanned(span.end(parser.pos())))
 	}
 }
 

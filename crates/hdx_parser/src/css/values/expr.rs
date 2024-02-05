@@ -10,32 +10,32 @@ where
 	T: Parse<'a>,
 {
 	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
-		let span = parser.cur().span;
-		Ok(match parser.cur().kind {
+		let span = parser.span();
+		Ok(match parser.cur() {
 			Kind::Ident => {
 				if let Some(val) = GlobalValue::from_atom(parser.cur().as_atom().unwrap()) {
 					parser.advance();
-					Self::GlobalValue(val).spanned(span.until(parser.cur().span))
+					Self::GlobalValue(val).spanned(span.end(parser.pos()))
 				} else {
-					Self::Literal(T::parse(parser)?).spanned(span.until(parser.cur().span))
+					Self::Literal(T::parse(parser)?).spanned(span.end(parser.pos()))
 				}
 			}
 			Kind::Function => match parser.cur().as_atom().unwrap() {
 				atom!("var") | atom!("env") => {
                     let node = Reference::parse(parser)?;
-                    Self::Reference(node).spanned(span.until(parser.cur().span))
+                    Self::Reference(node).spanned(span.end(parser.pos()))
                 }
                 atom!("calc") /*TODO! ...*/ => {
-                    Err(diagnostics::DisallowedMathFunction(parser.cur().as_atom().unwrap(), parser.cur().span))?
+                    Err(diagnostics::DisallowedMathFunction(parser.cur().as_atom().unwrap(), parser.span()))?
                 },
 				_ => {
                     let node = T::parse(parser)?;
-                    Self::Literal(node).spanned(span.until(parser.cur().span))
+                    Self::Literal(node).spanned(span.end(parser.pos()))
                 }
 			},
 			_ => {
 				let node = T::parse(parser)?;
-				Self::Literal(node).spanned(span.until(parser.cur().span))
+				Self::Literal(node).spanned(span.end(parser.pos()))
 			}
 		})
 	}
@@ -46,31 +46,31 @@ where
 	T: Parse<'a>,
 {
 	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
-		let span = parser.cur().span;
-		Ok(match parser.cur().kind {
+		let span = parser.span();
+		Ok(match parser.cur() {
 			Kind::Ident => {
 				if let Some(val) = GlobalValue::from_atom(parser.cur().as_atom().unwrap()) {
 					parser.advance();
-					Self::GlobalValue(val).spanned(span.until(parser.cur().span))
+					Self::GlobalValue(val).spanned(span.end(parser.pos()))
 				} else {
 					let node = T::parse(parser)?;
-					Self::Literal(node).spanned(span.until(parser.cur().span))
+					Self::Literal(node).spanned(span.end(parser.pos()))
 				}
 			}
 			Kind::Function => {
 				match parser.cur().value.as_atom().unwrap() {
                     atom!("var") | atom!("env") => {
                         let node = Reference::parse(parser)?;
-                        Self::Reference(node).spanned(span.until(parser.cur().span))
+                        Self::Reference(node).spanned(span.end(parser.pos()))
                     },
                     atom!("calc") /*TODO! ...*/ => {
                         let node = MathFunc::parse(parser)?;
-                        Self::Math(node).spanned(span.until(parser.cur().span))
+                        Self::Math(node).spanned(span.end(parser.pos()))
                     },
-                    _ => Self::Literal(T::parse(parser)?).spanned(span.until(parser.cur().span))
+                    _ => Self::Literal(T::parse(parser)?).spanned(span.end(parser.pos()))
                 }
 			}
-			_ => Self::Literal(T::parse(parser)?).spanned(span.until(parser.cur().span)),
+			_ => Self::Literal(T::parse(parser)?).spanned(span.end(parser.pos())),
 		})
 	}
 }
@@ -80,19 +80,19 @@ where
 	T: Parse<'a>,
 {
 	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
-		let span = parser.cur().span;
-		Ok(match parser.cur().kind {
+		let span = parser.span();
+		Ok(match parser.cur() {
 			Kind::Ident => {
 				if let Some(val) = GlobalValue::from_atom(parser.cur().as_atom().unwrap()) {
 					parser.advance();
-					Self::GlobalValue(val).spanned(span.until(parser.cur().span))
+					Self::GlobalValue(val).spanned(span.end(parser.pos()))
 				} else {
 					Self::Values(parser.parse_comma_list_of::<ExprListItem<T>>()?)
-						.spanned(span.until(parser.cur().span))
+						.spanned(span.end(parser.pos()))
 				}
 			}
 			_ => Self::Values(parser.parse_comma_list_of::<ExprListItem<T>>()?)
-				.spanned(span.until(parser.cur().span)),
+				.spanned(span.end(parser.pos())),
 		})
 	}
 }
@@ -102,19 +102,19 @@ where
 	T: Parse<'a>,
 {
 	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
-		let span = parser.cur().span;
-		Ok(match parser.cur().kind {
+		let span = parser.span();
+		Ok(match parser.cur() {
 			Kind::Ident => {
 				if let Some(val) = GlobalValue::from_atom(parser.cur().as_atom().unwrap()) {
 					parser.advance();
-					Self::GlobalValue(val).spanned(span.until(parser.cur().span))
+					Self::GlobalValue(val).spanned(span.end(parser.pos()))
 				} else {
 					Self::Values(parser.parse_comma_list_of::<MathExprListItem<T>>()?)
-						.spanned(span.until(parser.cur().span))
+						.spanned(span.end(parser.pos()))
 				}
 			}
 			_ => Self::Values(parser.parse_comma_list_of::<MathExprListItem<T>>()?)
-				.spanned(span.until(parser.cur().span)),
+				.spanned(span.end(parser.pos())),
 		})
 	}
 }
@@ -124,17 +124,17 @@ where
 	T: Parse<'a>,
 {
 	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
-		let span = parser.cur().span;
-		Ok(match parser.cur().kind {
-			Kind::Ident => Self::Literal(T::parse(parser)?).spanned(span.until(parser.cur().span)),
+		let span = parser.span();
+		Ok(match parser.cur() {
+			Kind::Ident => Self::Literal(T::parse(parser)?).spanned(span.end(parser.pos())),
 			Kind::Function => match parser.cur().as_atom().unwrap() {
-				atom!("var") | atom!("env") => Self::Reference(Reference::parse(parser)?).spanned(span.until(parser.cur().span)),
+				atom!("var") | atom!("env") => Self::Reference(Reference::parse(parser)?).spanned(span.end(parser.pos())),
                 atom!("calc") /*TODO! ...*/ => {
-                    Err(diagnostics::DisallowedMathFunction(parser.cur().as_atom().unwrap(), parser.cur().span))?
+                    Err(diagnostics::DisallowedMathFunction(parser.cur().as_atom().unwrap(), parser.span()))?
                 },
-				_ => Self::Literal(T::parse(parser)?).spanned(span.until(parser.cur().span)),
+				_ => Self::Literal(T::parse(parser)?).spanned(span.end(parser.pos())),
 			},
-			_ => Self::Literal(T::parse(parser)?).spanned(span.until(parser.cur().span)),
+			_ => Self::Literal(T::parse(parser)?).spanned(span.end(parser.pos())),
 		})
 	}
 }
@@ -144,21 +144,21 @@ where
 	T: Parse<'a>,
 {
 	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
-		let span = parser.cur().span;
-		Ok(match parser.cur().kind {
-			Kind::Ident => Self::Literal(T::parse(parser)?).spanned(span.until(parser.cur().span)),
+		let span = parser.span();
+		Ok(match parser.cur() {
+			Kind::Ident => Self::Literal(T::parse(parser)?).spanned(span.end(parser.pos())),
 			Kind::Function => {
 				match parser.cur().as_atom().unwrap() {
                     atom!("var") | atom!("env") => {
-                        Self::Reference(Reference::parse(parser)?).spanned(span.until(parser.cur().span))
+                        Self::Reference(Reference::parse(parser)?).spanned(span.end(parser.pos()))
                     },
                     atom!("calc") /*TODO! ...*/ => {
-                        Self::Math(MathFunc::parse(parser)?).spanned(span.until(parser.cur().span))
+                        Self::Math(MathFunc::parse(parser)?).spanned(span.end(parser.pos()))
                     },
-                    _ => Self::Literal(T::parse(parser)?).spanned(span.until(parser.cur().span))
+                    _ => Self::Literal(T::parse(parser)?).spanned(span.end(parser.pos()))
                 }
 			}
-			_ => Self::Literal(T::parse(parser)?).spanned(span.until(parser.cur().span)),
+			_ => Self::Literal(T::parse(parser)?).spanned(span.end(parser.pos())),
 		})
 	}
 }
@@ -175,7 +175,7 @@ where
 	T: Parse<'a>,
 {
 	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
-		let span = parser.cur().span;
+		let span = parser.span();
 		let ident = parser.expect_function()?;
 		Ok(match ident {
 			atom!("var") => {
@@ -186,7 +186,7 @@ where
 					inner = Some(T::parse(parser)?)
 				}
 				parser.expect(Kind::RightParen)?;
-				Self::Var(name, parser.boxup(inner)).spanned(span.until(parser.cur().span))
+				Self::Var(name, parser.boxup(inner)).spanned(span.end(parser.pos()))
 			}
 			atom!("env") => {
 				let name = parser.expect_ident()?;
@@ -196,9 +196,9 @@ where
 					inner = Some(T::parse(parser)?)
 				}
 				parser.expect(Kind::RightParen)?;
-				Self::Env(name, parser.boxup(inner)).spanned(span.until(parser.cur().span))
+				Self::Env(name, parser.boxup(inner)).spanned(span.end(parser.pos()))
 			}
-			_ => Err(diagnostics::UnexpectedFunction(ident, parser.cur().span))?,
+			_ => Err(diagnostics::UnexpectedFunction(ident, parser.span()))?,
 		})
 	}
 }

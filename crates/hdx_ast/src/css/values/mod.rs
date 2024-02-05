@@ -1,204 +1,279 @@
-use std::hash::{Hash, Hasher};
-
+use hdx_parser::{diagnostics, Parse, Parser, Result as ParserResult};
+use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 #[cfg(feature = "serde")]
 use serde::Serialize;
 
-/// Values
-pub mod color; // https://drafts.csswg.org/css-color-5/#typedef-color
-// TODO! pub mod image; // https://drafts.csswg.org/css-images-3/#typedef-image
-pub mod angle;
-pub mod backgrounds;
-pub mod border_radius;
-pub mod r#box;
-pub mod r#break;
-pub mod compositing;
-pub mod content;
-pub mod counter_styles;
-pub mod display;
-pub mod expr;
-pub mod fonts;
-pub mod frequency;
-pub mod images;
-pub mod inline;
-pub mod lists;
-pub mod non_standard;
-pub mod overflow;
-pub mod page_floats;
-pub mod position;
-pub mod resolution;
-pub mod shapes;
-pub mod shorthand;
-pub mod size_adjust;
-pub mod sizing;
-pub mod tables;
-pub mod text;
-pub mod text_decor;
-pub mod time;
-pub mod ui;
-pub mod units;
+use crate::Spanned;
 
-pub use angle::*;
+/// Values
+mod align;
+mod anchor_position;
+mod animations;
+mod backgrounds;
+mod r#box;
+mod r#break;
+mod cascade;
+mod color;
+mod color_adjust;
+mod compositing;
+mod contain;
+mod content;
+mod css2;
+mod display;
+mod exclusions;
+mod fill_stroke;
+mod filter_effects;
+mod flexbox;
+mod fonts;
+mod gcpm;
+mod grid;
+mod images;
+mod inline;
+mod line_grid;
+mod link_params;
+mod lists;
+mod logical;
+mod masking;
+mod motion;
+mod multicol;
+mod nav;
+mod non_standard;
+mod overflow;
+mod overscroll;
+mod page;
+mod page_floats;
+mod position;
+mod regions;
+mod rhythm;
+mod round_display;
+mod ruby;
+mod scroll_anchoring;
+mod scroll_animations;
+mod scroll_snap;
+mod scrollbars;
+mod shapes;
+mod size_adjust;
+mod sizing;
+mod speech;
+mod tables;
+mod text;
+mod text_decor;
+mod transitions;
+mod ui;
+mod view_transitions;
+mod webkit;
+mod will_change;
+mod writing_modes;
+
+pub use align::*;
+pub use anchor_position::*;
+pub use animations::*;
 pub use backgrounds::*;
-pub use border_radius::*;
 pub use r#box::*;
 pub use r#break::*;
+pub use cascade::*;
 pub use color::*;
+pub use color_adjust::*;
 pub use compositing::*;
+pub use contain::*;
 pub use content::*;
-pub use counter_styles::*;
+pub use css2::*;
 pub use display::*;
-pub use expr::*;
+pub use exclusions::*;
+pub use fill_stroke::*;
+pub use filter_effects::*;
+pub use flexbox::*;
 pub use fonts::*;
-pub use frequency::*;
+pub use gcpm::*;
+pub use grid::*;
 pub use images::*;
 pub use inline::*;
+pub use line_grid::*;
+pub use link_params::*;
 pub use lists::*;
+pub use logical::*;
+pub use masking::*;
+pub use motion::*;
+pub use multicol::*;
+pub use nav::*;
 pub use non_standard::*;
 pub use overflow::*;
+pub use overscroll::*;
+pub use page::*;
 pub use page_floats::*;
 pub use position::*;
-pub use resolution::*;
+pub use regions::*;
+pub use rhythm::*;
+pub use round_display::*;
+pub use ruby::*;
+pub use scroll_anchoring::*;
+pub use scroll_animations::*;
+pub use scroll_snap::*;
+pub use scrollbars::*;
 pub use shapes::*;
-pub use shorthand::*;
 pub use size_adjust::*;
 pub use sizing::*;
+pub use speech::*;
 pub use tables::*;
 pub use text::*;
 pub use text_decor::*;
-pub use time::*;
+pub use transitions::*;
 pub use ui::*;
-pub use units::*;
+pub use view_transitions::*;
+pub use webkit::*;
+pub use will_change::*;
+pub use writing_modes::*;
 
-use crate::{atom, Atom, Atomizable, Box, Spanned};
+mod units;
 
-#[derive(Debug, PartialEq, Hash)]
+// TODO!
+#[derive(Default, Debug, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde(untagged))]
-pub enum ValueLike<'a> {
-	Color(Box<'a, Spanned<Expr<'a, ColorValue<'a>>>>),
-	Length(Box<'a, Spanned<MathExpr<'a, Length>>>),
-	LengthPercentage(Box<'a, Spanned<MathExpr<'a, LengthPercentage>>>),
-	FontFamily(Box<'a, Spanned<ExprList<'a, FontFamilyValue>>>),
-	Unknown,
-}
-
-// https://drafts.csswg.org/css-values-4/#typedef-position
-#[derive(Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
-pub struct PositionXY {
-	pub x: HorizontalPosition,
-	pub y: VerticalPosition,
-}
-
-#[derive(Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
-pub enum HorizontalPosition {
-	Center,
-	Length(LengthPercentage),
-	Left(Option<LengthPercentage>),
-	Right(Option<LengthPercentage>),
-}
-
-#[derive(Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
-pub enum VerticalPosition {
-	Center,
-	Length(LengthPercentage),
-	Top(Option<LengthPercentage>),
-	Bottom(Option<LengthPercentage>),
-}
-
-#[derive(Default, Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde())]
-pub struct NoNonGlobalValuesAllowed;
-
-#[derive(Atomizable, Default, Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde())]
-pub enum AutoOrNone {
+pub enum Todo {
 	#[default]
-	Auto,
-	None,
+	Todo,
 }
 
-// https://drafts.csswg.org/css-values-4/#ratio-value
-#[derive(Default, Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde())]
-pub struct Ratio(u8, u8);
-
-#[derive(Default, Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde())]
-pub enum TimeOrAuto {
-	#[default]
-	Auto,
-	Time(Time),
-}
-
-// https://drafts.csswg.org/css-values/#typedef-length-percentage
-#[derive(Debug, PartialEq)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
-pub enum FrequencyPercentage {
-	Frequency(Frequency),
-	Percentage(f32),
-	// TODO: Calc(Box<'a, Calc<FrequencyPercentage>>)
-}
-
-impl Hash for FrequencyPercentage {
-	fn hash<H: Hasher>(&self, state: &mut H) {
-		match self {
-			Self::Frequency(f) => f.hash(state),
-			Self::Percentage(f) => f.to_bits().hash(state),
-		}
+impl<'a> Parse<'a> for Todo {
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
+		Err(diagnostics::Unimplemented(parser.span()))?
 	}
 }
 
-// https://drafts.csswg.org/css-values/#typedef-length-percentage
-#[derive(Debug, PartialEq)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
-pub enum AnglePercentage {
-	Angle(Angle),
-	Percentage(f32),
-	// TODO: Calc(Box<'a, Calc<FrequencyPercentage>>)
-}
-
-impl Hash for AnglePercentage {
-	fn hash<H: Hasher>(&self, state: &mut H) {
-		match self {
-			Self::Angle(a) => a.hash(state),
-			Self::Percentage(f) => f.to_bits().hash(state),
-		}
+impl<'a> WriteCss<'a> for Todo {
+	fn write_css<W: CssWriter>(&self, _sink: &mut W) -> WriterResult {
+		todo!("Cannot write out Todo values")
 	}
 }
 
-// https://drafts.csswg.org/css-values/#typedef-length-percentage
-#[derive(Debug, PartialEq)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
-pub enum TimePercentage {
-	Time(Time),
-	Percentage(f32),
-	// TODO: Calc(Box<'a, Calc<FrequencyPercentage>>)
-}
-
-impl Hash for TimePercentage {
-	fn hash<H: Hasher>(&self, state: &mut H) {
-		match self {
-			Self::Time(t) => t.hash(state),
-			Self::Percentage(f) => f.to_bits().hash(state),
-		}
-	}
-}
-
-#[cfg(test)]
-mod tests {
-
-	use super::*;
-
-	#[test]
-	fn size_test() {
-		use std::mem::size_of;
-		assert_eq!(size_of::<FrequencyPercentage>(), 8);
-		assert_eq!(size_of::<AnglePercentage>(), 8);
-		assert_eq!(size_of::<TimePercentage>(), 8);
-		assert_eq!(size_of::<PositionXY>(), 24);
-		assert_eq!(size_of::<HorizontalPosition>(), 12);
-		assert_eq!(size_of::<VerticalPosition>(), 12);
-	}
-}
+// #[derive(Debug, PartialEq, Hash)]
+// #[cfg_attr(feature = "serde", derive(Serialize), serde(untagged))]
+// pub enum ValueLike<'a> {
+// 	Color(Box<'a, Spanned<Expr<'a, ColorValue<'a>>>>),
+// 	Length(Box<'a, Spanned<MathExpr<'a, Length>>>),
+// 	LengthPercentage(Box<'a, Spanned<MathExpr<'a, LengthPercentage>>>),
+// 	FontFamily(Box<'a, Spanned<ExprList<'a, FontFamilyValue>>>),
+// 	Unknown,
+// }
+//
+// // https://drafts.csswg.org/css-values-4/#typedef-position
+// #[derive(Debug, PartialEq, Hash)]
+// #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
+// pub struct PositionXY {
+// 	pub x: HorizontalPosition,
+// 	pub y: VerticalPosition,
+// }
+//
+// #[derive(Debug, PartialEq, Hash)]
+// #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
+// pub enum HorizontalPosition {
+// 	Center,
+// 	Length(LengthPercentage),
+// 	Left(Option<LengthPercentage>),
+// 	Right(Option<LengthPercentage>),
+// }
+//
+// #[derive(Debug, PartialEq, Hash)]
+// #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
+// pub enum VerticalPosition {
+// 	Center,
+// 	Length(LengthPercentage),
+// 	Top(Option<LengthPercentage>),
+// 	Bottom(Option<LengthPercentage>),
+// }
+//
+// #[derive(Default, Debug, PartialEq, Hash)]
+// #[cfg_attr(feature = "serde", derive(Serialize), serde())]
+// pub struct NoNonGlobalValuesAllowed;
+//
+// #[derive(Atomizable, Default, Debug, PartialEq, Hash)]
+// #[cfg_attr(feature = "serde", derive(Serialize), serde())]
+// pub enum AutoOrNone {
+// 	#[default]
+// 	Auto,
+// 	None,
+// }
+//
+// // https://drafts.csswg.org/css-values-4/#ratio-value
+// #[derive(Default, Debug, PartialEq, Hash)]
+// #[cfg_attr(feature = "serde", derive(Serialize), serde())]
+// pub struct Ratio(u8, u8);
+//
+// #[derive(Default, Debug, PartialEq, Hash)]
+// #[cfg_attr(feature = "serde", derive(Serialize), serde())]
+// pub enum TimeOrAuto {
+// 	#[default]
+// 	Auto,
+// 	Time(Time),
+// }
+//
+// // https://drafts.csswg.org/css-values/#typedef-length-percentage
+// #[derive(Debug, PartialEq)]
+// #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
+// pub enum FrequencyPercentage {
+// 	Frequency(Frequency),
+// 	Percentage(f32),
+// 	// TODO: Calc(Box<'a, Calc<FrequencyPercentage>>)
+// }
+//
+// impl Hash for FrequencyPercentage {
+// 	fn hash<H: Hasher>(&self, state: &mut H) {
+// 		match self {
+// 			Self::Frequency(f) => f.hash(state),
+// 			Self::Percentage(f) => f.to_bits().hash(state),
+// 		}
+// 	}
+// }
+//
+// // https://drafts.csswg.org/css-values/#typedef-length-percentage
+// #[derive(Debug, PartialEq)]
+// #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
+// pub enum AnglePercentage {
+// 	Angle(Angle),
+// 	Percentage(f32),
+// 	// TODO: Calc(Box<'a, Calc<FrequencyPercentage>>)
+// }
+//
+// impl Hash for AnglePercentage {
+// 	fn hash<H: Hasher>(&self, state: &mut H) {
+// 		match self {
+// 			Self::Angle(a) => a.hash(state),
+// 			Self::Percentage(f) => f.to_bits().hash(state),
+// 		}
+// 	}
+// }
+//
+// // https://drafts.csswg.org/css-values/#typedef-length-percentage
+// #[derive(Debug, PartialEq)]
+// #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
+// pub enum TimePercentage {
+// 	Time(Time),
+// 	Percentage(f32),
+// 	// TODO: Calc(Box<'a, Calc<FrequencyPercentage>>)
+// }
+//
+// impl Hash for TimePercentage {
+// 	fn hash<H: Hasher>(&self, state: &mut H) {
+// 		match self {
+// 			Self::Time(t) => t.hash(state),
+// 			Self::Percentage(f) => f.to_bits().hash(state),
+// 		}
+// 	}
+// }
+//
+// #[cfg(test)]
+// mod tests {
+//
+// 	use super::*;
+//
+// 	#[test]
+// 	fn size_test() {
+// 		use std::mem::size_of;
+// 		assert_eq!(size_of::<FrequencyPercentage>(), 8);
+// 		assert_eq!(size_of::<AnglePercentage>(), 8);
+// 		assert_eq!(size_of::<TimePercentage>(), 8);
+// 		assert_eq!(size_of::<PositionXY>(), 24);
+// 		assert_eq!(size_of::<HorizontalPosition>(), 12);
+// 		assert_eq!(size_of::<VerticalPosition>(), 12);
+// 	}
+// }

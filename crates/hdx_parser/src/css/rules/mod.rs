@@ -6,8 +6,8 @@ use crate::{Kind, Parse, Parser, Result, Spanned};
 pub struct NoPreludeAllowed;
 impl<'a> Parse<'a> for NoPreludeAllowed {
 	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
-		let span = parser.cur().span;
+		let span = parser.span();
 		parser.expect_without_advance(Kind::LeftCurly)?;
-		Ok(Self {}.spanned(span.until(parser.cur().span)))
+		Ok(Self {}.spanned(span.end(parser.pos())))
 	}
 }

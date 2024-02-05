@@ -3,28 +3,27 @@ use hdx_ast::css::values::{
 	LineHeightValue, MathExpr, Shorthand, VerticalAlignShorthand,
 };
 
-use crate::{atom, diagnostics, Kind, Parse, Parser, Result, Spanned};
+use crate::{atom, diagnostics, Parse, Parser, Result, Spanned, Token};
 
 impl<'a> Parse<'a> for LineHeightValue {
 	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
-		let span = parser.cur().span;
-		match parser.cur().kind {
-			Kind::Ident => {
-				let ident = parser.expect_ident()?;
-				if ident == atom!("normal") {
-					Ok(Self::Normal.spanned(span.until(parser.cur().span)))
+		match parser.cur() {
+			Token::Ident(ident) => {
+				if ident.eq_ignore_ascii_case(&atom!("normal")) {
+					Ok(Self::Normal.spanned(parser.advance()))
 				} else {
-					Err(diagnostics::UnexpectedIdent(ident, parser.cur().span))?
+					Err(diagnostics::UnexpectedIdentSuggest(
+						*ident,
+						atom!("normal"),
+						parser.span(),
+					))?
 				}
 			}
-			Kind::Number => {
-				let value = parser.cur().value.as_f32().unwrap();
-				parser.advance();
-				Ok(Self::Number(value).spanned(span.until(parser.cur().span)))
-			}
+			Token::Number(_, value) => Ok(Self::Number(*value).spanned(parser.advance())),
 			_ => {
+				let span = parser.span();
 				let node = LengthPercentage::parse(parser)?;
-				Ok(Self::LengthPercentage(node).spanned(span.until(parser.cur().span)))
+				Ok(Self::LengthPercentage(node).spanned(span.end(parser.pos())))
 			}
 		}
 	}
@@ -32,23 +31,19 @@ impl<'a> Parse<'a> for LineHeightValue {
 
 impl<'a> Parse<'a> for BaselineShiftValue {
 	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
-		let span = parser.cur().span;
-		match parser.cur().kind {
-			Kind::Ident => {
-				let span = parser.cur().span;
-				let ident = parser.expect_ident()?;
-				match ident {
-					atom!("sub") => Ok(Self::Sub.spanned(span.until(parser.cur().span))),
-					atom!("super") => Ok(Self::Super.spanned(span.until(parser.cur().span))),
-					atom!("top") => Ok(Self::Top.spanned(span.until(parser.cur().span))),
-					atom!("center") => Ok(Self::Center.spanned(span.until(parser.cur().span))),
-					atom!("bottom") => Ok(Self::Bottom.spanned(span.until(parser.cur().span))),
-					_ => Err(diagnostics::UnexpectedIdent(ident, span))?,
-				}
-			}
+		match parser.cur() {
+			Token::Ident(ident) => match ident.as_ascii_lower() {
+				atom!("sub") => Ok(Self::Sub.spanned(parser.advance())),
+				atom!("super") => Ok(Self::Super.spanned(parser.advance())),
+				atom!("top") => Ok(Self::Top.spanned(parser.advance())),
+				atom!("center") => Ok(Self::Center.spanned(parser.advance())),
+				atom!("bottom") => Ok(Self::Bottom.spanned(parser.advance())),
+				_ => Err(diagnostics::UnexpectedIdent(*ident, parser.span()))?,
+			},
 			_ => {
+				let span = parser.span();
 				let node = LengthPercentage::parse(parser)?;
-				Ok(Self::LengthPercentage(node).spanned(span.until(parser.cur().span)))
+				Ok(Self::LengthPercentage(node).spanned(span.end(parser.pos())))
 			}
 		}
 	}
@@ -56,41 +51,30 @@ impl<'a> Parse<'a> for BaselineShiftValue {
 
 impl<'a> Parse<'a> for VerticalAlignShorthand<'a> {
 	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
-		let span = parser.cur().span;
-		let mut baseline_source = Shorthand::Implicit;
+		let span = parser.span();
 		let mut alignment_baseline = Shorthand::Implicit;
 		let mut baseline_shift = Shorthand::Implicit;
-		if parser.at(Kind::Ident) {
-			match parser.cur().as_atom().unwrap() {
-				atom!("first") => {
-					baseline_source = Shorthand::Explicit(
-						parser.boxup(
-							Expr::Literal(
-								BaselineSourceValue::First.spanned(span.until(parser.cur().span)),
-							)
-							.spanned(span.until(parser.cur().span)),
-						),
-					);
-					parser.advance();
-				}
-				atom!("last") => {
-					baseline_source = Shorthand::Explicit(
-						parser.boxup(
-							Expr::Literal(
-								BaselineSourceValue::Last.spanned(span.until(parser.cur().span)),
-							)
-							.spanned(span.until(parser.cur().span)),
-						),
-					);
-					parser.advance();
-				}
-				_ => {}
-			}
-		}
+		let mut baseline_source = match parser.cur() {
+			Token::Ident(ident) => match ident.to_ascii_lower() {
+				atom!("first") => Shorthand::Explicit(
+					parser.boxup(
+						Expr::Literal(BaselineSourceValue::First.spanned(parser.span()))
+							.spanned(parser.advance()),
+					),
+				),
+				atom!("last") => Shorthand::Explicit(
+					parser.boxup(
+						Expr::Literal(BaselineSourceValue::Last.spanned(parser.span()))
+							.spanned(parser.advance()),
+					),
+				),
+			},
+			_ => Shorthand::Implicit,
+		};
 		loop {
 			if !matches!(
-				parser.cur().kind,
-				Kind::Ident | Kind::Number | Kind::Percentage | Kind::Dimension
+				parser.cur(),
+				Token::Ident(_) | Token::Number(_, _) | Token::Dimension(_, _, _)
 			) {
 				break;
 			}
@@ -123,6 +107,6 @@ impl<'a> Parse<'a> for VerticalAlignShorthand<'a> {
 			}
 		}
 		Ok(Self { baseline_source, alignment_baseline, baseline_shift }
-			.spanned(span.until(parser.cur().span)))
+			.spanned(span.end(parser.pos())))
 	}
 }

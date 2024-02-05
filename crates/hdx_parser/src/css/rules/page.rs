@@ -11,7 +11,7 @@ use crate::{atom, diagnostics, Atom, Atomizable, Kind, Parse, Parser, Result, Sp
 
 impl<'a> Parse<'a> for CSSPageRule<'a> {
 	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
-		let span = parser.cur().span;
+		let span = parser.span();
 		parser.parse_at_rule(
 			Some(atom!("page")),
 			|parser: &mut Parser<'a>,
@@ -26,7 +26,7 @@ impl<'a> Parse<'a> for CSSPageRule<'a> {
 					declarations: parser.boxup(declarations),
 					rules: parser.boxup(rules),
 				}
-				.spanned(span.until(parser.cur().span)))
+				.spanned(span.end(parser.pos())))
 			},
 		)
 	}
@@ -34,16 +34,16 @@ impl<'a> Parse<'a> for CSSPageRule<'a> {
 
 impl<'a> Parse<'a> for PageSelectorList<'a> {
 	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
-		let span = parser.cur().span;
+		let span = parser.span();
 		let ok = Ok(Self { children: parser.parse_comma_list_of::<PageSelector>()? }
-			.spanned(span.until(parser.cur().span)));
+			.spanned(span.end(parser.pos())));
 		ok
 	}
 }
 
 impl<'a> Parse<'a> for PageSelector<'a> {
 	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
-		let span = parser.cur().span;
+		let span = parser.span();
 		let mut page_type = None;
 		let mut pseudos = parser.new_vec();
 		if parser.at(Kind::Ident) {
@@ -59,17 +59,17 @@ impl<'a> Parse<'a> for PageSelector<'a> {
 				}
 			}
 		}
-		Ok(Self { page_type, pseudos }.spanned(span.until(parser.cur().span)))
+		Ok(Self { page_type, pseudos }.spanned(span.end(parser.pos())))
 	}
 }
 
 impl<'a> Parse<'a> for PagePseudoClass {
 	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
-		let span = parser.cur().span;
+		let span = parser.span();
 		parser.expect(Kind::Colon)?;
 		let name = parser.expect_ident()?;
 		match Self::from_atom(name.clone()) {
-			Some(v) => Ok(v.spanned(span.until(parser.cur().span))),
+			Some(v) => Ok(v.spanned(span.end(parser.pos()))),
 			_ => Err(diagnostics::UnexpectedPseudo(name, span).into()),
 		}
 	}
@@ -77,7 +77,7 @@ impl<'a> Parse<'a> for PagePseudoClass {
 
 impl<'a> Parse<'a> for CSSMarginRule<'a> {
 	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
-		let span = parser.cur().span;
+		let span = parser.span();
 		parser.parse_at_rule(
 			None,
 			|parser: &mut Parser<'a>,
@@ -86,7 +86,7 @@ impl<'a> Parse<'a> for CSSMarginRule<'a> {
 			 _rules: Vec<'a, Spanned<CSSMarginRule<'a>>>,
 			 declarations: Vec<'a, Spanned<Property<'a>>>| {
 				Ok(Self { name: PageMarginBox::TopLeft, declarations }
-					.spanned(span.until(parser.cur().span)))
+					.spanned(span.end(parser.pos())))
 			},
 		)
 	}

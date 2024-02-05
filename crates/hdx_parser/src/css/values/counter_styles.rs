@@ -4,8 +4,8 @@ use crate::{atom, diagnostics, Atomizable, Kind, Parse, Parser, Result, Spanned}
 
 impl<'a> Parse<'a> for CounterStyle<'a> {
 	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
-		let span = parser.cur().span;
-		match parser.cur().kind {
+		let span = parser.span();
+		match parser.cur() {
 			Kind::Ident => {
 				let ident = parser.expect_ident()?;
 				if let Some(node) = PredefinedCounterStyle::from_atom(ident.clone()) {
@@ -18,18 +18,18 @@ impl<'a> Parse<'a> for CounterStyle<'a> {
 				let ident = parser.expect_ident()?;
 				if ident == atom!("symbols") {
 					let node = Symbols::parse(parser)?;
-					Ok(Self::Symbols(node).spanned(span.until(parser.cur().span)))
+					Ok(Self::Symbols(node).spanned(span.end(parser.pos())))
 				} else {
-					Err(diagnostics::ExpectedFunction(atom!("symbols"), ident, parser.cur().span))?
+					Err(diagnostics::ExpectedFunction(atom!("symbols"), ident, parser.span()))?
 				}
 			}
-			k => Err(diagnostics::Unexpected(k, parser.cur().span))?,
+			k => Err(diagnostics::Unexpected(k, parser.span()))?,
 		}
 	}
 }
 
 impl<'a> Parse<'a> for Symbols<'a> {
 	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
-		Err(diagnostics::Unimplemented(parser.cur().span))?
+		Err(diagnostics::Unimplemented(parser.span()))?
 	}
 }

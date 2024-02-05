@@ -6,12 +6,12 @@ use crate::{atom, diagnostics, Kind, Parse, Parser, Result, Spanned};
 
 impl<'a> Parse<'a> for BorderShorthand<'a> {
 	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
-		let span = parser.cur().span;
+		let span = parser.span();
 		let mut line_width = Shorthand::Implicit;
 		let mut line_style = Shorthand::Implicit;
 		let mut color = Shorthand::Implicit;
 		loop {
-			match parser.cur().kind {
+			match parser.cur() {
 				Kind::Ident => {
 					let ident = parser.cur_atom().unwrap();
 					if line_style.is_implicit()
@@ -35,7 +35,7 @@ impl<'a> Parse<'a> for BorderShorthand<'a> {
 						let node = MathExpr::<ColorValue>::parse(parser)?;
 						color = Shorthand::Explicit(parser.boxup(node));
 					} else {
-						Err(diagnostics::UnexpectedIdent(ident.clone(), parser.cur().span))?
+						Err(diagnostics::UnexpectedIdent(ident.clone(), parser.span()))?
 					}
 				}
 				Kind::Semicolon | Kind::Comma | Kind::Eof => {
@@ -46,7 +46,7 @@ impl<'a> Parse<'a> for BorderShorthand<'a> {
 						let node = MathExpr::<LineWidth>::parse(parser)?;
 						line_width = Shorthand::Explicit(parser.boxup(node));
 					} else {
-						Err(diagnostics::Unexpected(Kind::Dimension, parser.cur().span))?
+						Err(diagnostics::Unexpected(Kind::Dimension, parser.span()))?
 					}
 				}
 				k => {
@@ -72,23 +72,23 @@ impl<'a> Parse<'a> for BorderShorthand<'a> {
 							Err(_) => parser.rewind(checkpoint),
 						}
 					}
-					Err(diagnostics::Unexpected(k, parser.cur().span))?
+					Err(diagnostics::Unexpected(k, parser.span()))?
 				}
 			}
 			if color.is_explicit() && line_style.is_explicit() && line_width.is_explicit() {
 				break;
 			}
 		}
-		Ok(Self { color, line_style, line_width }.spanned(span.until(parser.cur().span)))
+		Ok(Self { color, line_style, line_width }.spanned(span.end(parser.pos())))
 	}
 }
 
 impl<'a> Parse<'a> for LineWidth {
 	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
-		let span = parser.cur().span;
-		match parser.cur().kind {
+		let span = parser.span();
+		match parser.cur() {
 			Kind::Number | Kind::Dimension => {
-				Ok(Self::Length(Length::parse(parser)?).spanned(span.until(parser.cur().span)))
+				Ok(Self::Length(Length::parse(parser)?).spanned(span.end(parser.pos())))
 			}
 			Kind::Ident => {
 				let ident = parser.cur_atom().unwrap();

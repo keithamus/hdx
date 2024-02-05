@@ -4,7 +4,7 @@ use crate::{atom, diagnostics, Kind, Parse, Parser, Result, Spanned};
 
 impl<'a> Parse<'a> for MarginTrimValue {
 	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
-		let span = parser.cur().span;
+		let span = parser.span();
 		let ident = parser.expect_ident()?;
 		if ident == atom!("none") {
 			Ok(Self {
@@ -13,13 +13,13 @@ impl<'a> Parse<'a> for MarginTrimValue {
 				inline_start: false,
 				inline_end: false,
 			}
-			.spanned(span.until(parser.cur().span)))
+			.spanned(span.end(parser.pos())))
 		} else if ident == atom!("block") {
 			Ok(Self { block_start: true, block_end: true, inline_start: false, inline_end: false }
-				.spanned(span.until(parser.cur().span)))
+				.spanned(span.end(parser.pos())))
 		} else if ident == atom!("inline") {
 			Ok(Self { block_start: false, block_end: false, inline_start: true, inline_end: true }
-				.spanned(span.until(parser.cur().span)))
+				.spanned(span.end(parser.pos())))
 		} else {
 			let mut value = Self {
 				block_start: ident == atom!("block-start"),
@@ -31,7 +31,7 @@ impl<'a> Parse<'a> for MarginTrimValue {
 				if !parser.at(Kind::Ident) {
 					break;
 				}
-				let span = parser.cur().span;
+				let span = parser.span();
 				let ident = parser.expect_ident()?;
 				match ident {
 					atom!("block-start") => {
@@ -61,7 +61,7 @@ impl<'a> Parse<'a> for MarginTrimValue {
 					_ => break,
 				}
 			}
-			Ok(value.spanned(span.until(parser.cur().span)))
+			Ok(value.spanned(span.end(parser.pos())))
 		}
 	}
 }

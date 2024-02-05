@@ -7,39 +7,33 @@ use crate::{atom, diagnostics, Atomizable, Kind, Parse, Parser, Result, Spanned}
 
 impl<'a> Parse<'a> for FloatDeferValue {
 	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
-		let span = parser.cur().span;
-		match parser.cur().kind {
+		let span = parser.span();
+		match parser.cur() {
 			Kind::Ident => {
 				if let Some(val) = Self::from_atom(parser.expect_ident()?) {
-					Ok(val.spanned(span.until(parser.cur().span)))
+					Ok(val.spanned(span.end(parser.pos())))
 				} else {
-					Err(diagnostics::UnexpectedIdent(
-						parser.cur_atom().unwrap(),
-						parser.cur().span,
-					))?
+					Err(diagnostics::UnexpectedIdent(parser.cur_atom().unwrap(), parser.span()))?
 				}
 			}
 			Kind::Number => {
 				let node = parser.expect_int()?;
-				Ok(Self::Integer(node).spanned(span.until(parser.cur().span)))
+				Ok(Self::Integer(node).spanned(span.end(parser.pos())))
 			}
-			_ => Err(diagnostics::Unexpected(parser.cur().kind, parser.cur().span))?,
+			_ => Err(diagnostics::Unexpected(parser.cur(), parser.span()))?,
 		}
 	}
 }
 
 impl<'a> Parse<'a> for FloatValue {
 	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
-		let span = parser.cur().span;
-		match parser.cur().kind {
+		let span = parser.span();
+		match parser.cur() {
 			Kind::Ident => {
 				if let Some(val) = Self::from_atom(parser.expect_ident()?) {
-					Ok(val.spanned(span.until(parser.cur().span)))
+					Ok(val.spanned(span.end(parser.pos())))
 				} else {
-					Err(diagnostics::UnexpectedIdent(
-						parser.cur_atom().unwrap(),
-						parser.cur().span,
-					))?
+					Err(diagnostics::UnexpectedIdent(parser.cur_atom().unwrap(), parser.span()))?
 				}
 			}
 			Kind::Function => {
@@ -51,11 +45,11 @@ impl<'a> Parse<'a> for FloatValue {
 					atom!("snap-block") => {
 						if let Some(floated) = SnapBlockFloat::from_atom(floated_atom) {
 							Ok(Self::SnapBlockFunction(length, floated)
-								.spanned(span.until(parser.cur().span)))
+								.spanned(span.end(parser.pos())))
 						} else {
 							Err(diagnostics::UnexpectedIdent(
 								parser.cur_atom().unwrap(),
-								parser.cur().span,
+								parser.span(),
 							)
 							.into())
 						}
@@ -63,23 +57,22 @@ impl<'a> Parse<'a> for FloatValue {
 					atom!("snap-inline") => {
 						if let Some(floated) = SnapInlineFloat::from_atom(floated_atom) {
 							Ok(Self::SnapInlineFunction(length, floated)
-								.spanned(span.until(parser.cur().span)))
+								.spanned(span.end(parser.pos())))
 						} else {
 							Err(diagnostics::UnexpectedIdent(
 								parser.cur_atom().unwrap(),
-								parser.cur().span,
+								parser.span(),
 							)
 							.into())
 						}
 					}
-					_ => Err(diagnostics::UnexpectedIdent(
-						parser.cur_atom().unwrap(),
-						parser.cur().span,
-					)
-					.into()),
+					_ => {
+						Err(diagnostics::UnexpectedIdent(parser.cur_atom().unwrap(), parser.span())
+							.into())
+					}
 				}
 			}
-			_ => Err(diagnostics::Unexpected(parser.cur().kind, parser.cur().span))?,
+			_ => Err(diagnostics::Unexpected(parser.cur(), parser.span()))?,
 		}
 	}
 }

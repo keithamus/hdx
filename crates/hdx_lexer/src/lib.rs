@@ -13,7 +13,6 @@ pub use token::{NumType, PairWise, Token};
 pub struct LexerCheckpoint<'a> {
 	chars: Chars<'a>,
 	token: Token,
-	prev_pos: u32,
 }
 
 #[bitmask(u8)]
@@ -33,7 +32,7 @@ pub struct Lexer<'a> {
 impl<'a> Lexer<'a> {
 	pub fn new(allocator: &'a Allocator, source: &'a str) -> Self {
 		let token = Token::default();
-		let current = LexerCheckpoint { chars: source.chars(), token, prev_pos: 0 };
+		let current = LexerCheckpoint { chars: source.chars(), token };
 		Self {
 			allocator,
 			source,
@@ -57,11 +56,7 @@ impl<'a> Lexer<'a> {
 	/// Creates a checkpoint storing the current lexer state.
 	/// Use `rewind` to restore the lexer to the state stored in the checkpoint.
 	pub fn checkpoint(&self) -> LexerCheckpoint<'a> {
-		LexerCheckpoint {
-			prev_pos: self.current.prev_pos,
-			chars: self.current.chars.clone(),
-			token: self.current.token.clone(),
-		}
+		LexerCheckpoint { chars: self.current.chars.clone(), token: self.current.token.clone() }
 	}
 
 	/// Rewinds the lexer to the same state as when the passed in `checkpoint` was created.
@@ -90,15 +85,10 @@ impl<'a> Lexer<'a> {
 		// `self.current = checkpoint`
 		self.current.token = Token::default();
 
-		let prev_pos = self.pos();
-
 		for _i in self.lookahead.len()..n {
 			let peeked = self.read_next_token();
-			self.lookahead.push_back(LexerCheckpoint {
-				prev_pos,
-				chars: self.current.chars.clone(),
-				token: peeked,
-			});
+			self.lookahead
+				.push_back(LexerCheckpoint { chars: self.current.chars.clone(), token: peeked });
 		}
 
 		self.current = checkpoint;
@@ -106,16 +96,16 @@ impl<'a> Lexer<'a> {
 		&self.lookahead[n - 1].token
 	}
 
-	pub fn jump_token(&mut self) -> Token {
+	pub fn jump(&mut self) -> Token {
 		if let Some(checkpoint) = self.lookahead.pop_back() {
 			self.current.chars = checkpoint.chars;
 			self.lookahead.clear();
 			return checkpoint.token;
 		}
-		self.next_token()
+		self.advance()
 	}
 
-	pub fn next_token(&mut self) -> Token {
+	pub fn advance(&mut self) -> Token {
 		if let Some(checkpoint) = self.lookahead.pop_front() {
 			self.current.chars = checkpoint.chars;
 			return checkpoint.token;
@@ -123,14 +113,14 @@ impl<'a> Lexer<'a> {
 		self.read_next_token()
 	}
 
-	pub fn next_including_whitespace(&mut self) -> Token {
+	pub fn advance_including_whitespace(&mut self) -> Token {
 		self.include = Include::Whitespace;
 		let token = self.read_next_token();
 		self.include = Include::none();
 		token
 	}
 
-	pub fn next_including_whitespace_and_comments(&mut self) -> Token {
+	pub fn advance_including_whitespace_and_comments(&mut self) -> Token {
 		self.include = Include::all();
 		let token = self.read_next_token();
 		self.include = Include::none();

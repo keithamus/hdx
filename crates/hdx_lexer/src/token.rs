@@ -1,38 +1,43 @@
 use std::hash::{Hash, Hasher};
 
+use bitmask_enum::bitmask;
 use hdx_atom::Atom;
 #[cfg(feature = "serde")]
 use serde::Serialize;
 
-#[derive(Debug, Copy, Clone, PartialEq, Default, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize))]
+#[derive(Default)]
+#[bitmask(u8)]
+#[cfg_attr(feature = "serde", derive(Serialize), serde())]
 pub enum NumType {
 	#[default]
-	UnsignedInt,
-	SignedInt,
-	UnsignedFloat,
-	SignedFloat,
+	Float = 0x01,
+	Signed = 0x10,
 }
 
 impl NumType {
+	#[inline]
 	pub fn is_int(&self) -> bool {
-		matches!(*self, NumType::UnsignedInt | NumType::SignedInt)
+		self.and(NumType::Float) != NumType::Float
 	}
 
+	#[inline]
+	pub fn is_float(&self) -> bool {
+		self.contains(NumType::Float)
+	}
+
+	#[inline]
+	pub fn is_signed(&self) -> bool {
+		self.contains(NumType::Signed)
+	}
+
+	#[inline]
 	pub fn signed(&self) -> NumType {
-		match *self {
-			NumType::UnsignedInt => NumType::SignedInt,
-			NumType::UnsignedFloat => NumType::SignedFloat,
-			x => x,
-		}
+		self.or(NumType::Signed)
 	}
 
+	#[inline]
 	pub fn float(&self) -> NumType {
-		match *self {
-			NumType::UnsignedInt => NumType::UnsignedFloat,
-			NumType::SignedInt => NumType::SignedFloat,
-			x => x,
-		}
+		self.or(NumType::Float)
 	}
 }
 
@@ -47,7 +52,7 @@ pub enum Token {
 	Eof,
 
 	// <comment-token> (https://drafts.csswg.org/css-syntax/#comment-diagram)
-	Comment,
+	Comment(Atom),
 
 	// <ident-token> (https://drafts.csswg.org/css-syntax/#ident-token-diagram)
 	Ident(Atom),
@@ -80,10 +85,10 @@ pub enum Token {
 	Delim(char),
 
 	// <number-token> (https://drafts.csswg.org/css-syntax/#number-token-diagram)
-	Number(NumType, f32),
+	Number(f32, NumType),
 
 	// <dimension-token> (https://drafts.csswg.org/css-syntax/#dimension-token-diagram)
-	Dimension(NumType, f32, Atom),
+	Dimension(f32, Atom, NumType),
 
 	// <whitespace-token> (https://drafts.csswg.org/css-syntax/#whitespace-token-diagram)
 	Whitespace,
@@ -140,7 +145,7 @@ impl Token {
 
 	#[inline]
 	pub fn is_trivia(&self) -> bool {
-		matches!(self, Token::Whitespace | Token::Comment)
+		matches!(self, Token::Whitespace | Token::Comment(_))
 	}
 
 	#[inline]
@@ -189,16 +194,16 @@ impl Token {
 
 	pub fn as_f32(&self) -> Option<f32> {
 		match self {
-			Self::Number(_, value) => Some(*value),
-			Self::Dimension(_, value, _) => Some(*value),
+			Self::Number(value, _) => Some(*value),
+			Self::Dimension(value, _, _) => Some(*value),
 			_ => None,
 		}
 	}
 
 	pub fn as_i32(&self) -> Option<i32> {
 		match self {
-			Self::Number(_, value) => Some(*value as i32),
-			Self::Dimension(_, value, _) => Some(*value as i32),
+			Self::Number(value, _) => Some(*value as i32),
+			Self::Dimension(value, _, _) => Some(*value as i32),
 			_ => None,
 		}
 	}
@@ -212,20 +217,20 @@ impl Token {
 
 	pub fn is_signed(&self) -> bool {
 		match self {
-			Self::Number(NumType::SignedInt, _) => true,
-			Self::Number(NumType::SignedFloat, _) => true,
-			Self::Dimension(NumType::SignedInt, _, _) => true,
-			Self::Dimension(NumType::SignedFloat, _, _) => true,
+			Self::Number(_, ty) => ty.is_signed(),
+			Self::Number(_, ty) => ty.is_signed(),
+			Self::Dimension(_, _, ty) => ty.is_signed(),
+			Self::Dimension(_, _, ty) => ty.is_signed(),
 			_ => false,
 		}
 	}
 
 	pub fn is_int(&self) -> bool {
 		match self {
-			Self::Number(NumType::SignedInt, _) => true,
-			Self::Number(NumType::UnsignedInt, _) => true,
-			Self::Dimension(NumType::SignedInt, _, _) => true,
-			Self::Dimension(NumType::UnsignedInt, _, _) => true,
+			Self::Number(_, ty) => ty.is_int(),
+			Self::Number(_, ty) => ty.is_int(),
+			Self::Dimension(_, _, ty) => ty.is_int(),
+			Self::Dimension(_, _, ty) => ty.is_int(),
 			_ => false,
 		}
 	}
@@ -280,7 +285,10 @@ impl Hash for Token {
 		match self {
 			Token::Undetermined => {}
 			Token::Eof => 0.hash(state),
-			Token::Comment => 1.hash(state),
+			Token::Comment(a) => {
+				1.hash(state);
+				a.hash(state);
+			}
 			Token::Ident(a) => {
 				2.hash(state);
 				a.hash(state);
@@ -319,16 +327,16 @@ impl Hash for Token {
 				11.hash(state);
 				c.hash(state);
 			}
-			Token::Number(n, f) => {
+			Token::Number(f, n) => {
 				12.hash(state);
-				n.hash(state);
 				f.to_bits().hash(state);
-			}
-			Token::Dimension(n, f, a) => {
-				13.hash(state);
 				n.hash(state);
+			}
+			Token::Dimension(f, a, n) => {
+				13.hash(state);
 				f.to_bits().hash(state);
 				a.hash(state);
+				n.hash(state);
 			}
 			Token::Whitespace => 14.hash(state),
 			Token::Cdo => 15.hash(state),

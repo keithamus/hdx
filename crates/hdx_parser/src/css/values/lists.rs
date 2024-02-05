@@ -3,33 +3,35 @@ use hdx_ast::css::values::{
 	ListStyleTypeValue, Shorthand,
 };
 
-use crate::{atom, diagnostics, Kind, Parse, Parser, Result, Spanned};
+use crate::{atom, diagnostics, Parse, Parser, Result, Spanned, Token};
 
 impl<'a> Parse<'a> for ListStyleShorthand<'a> {
 	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
-		let span = parser.cur().span;
+		let span = parser.span();
 		let mut position = Shorthand::Implicit;
 		let mut image = Shorthand::Implicit;
 		let mut marker = Shorthand::Implicit;
 		loop {
-			match parser.cur().kind {
-				Kind::Semicolon | Kind::Comma | Kind::Eof => {
+			match parser.cur() {
+				Token::Semicolon | Token::Comma | Token::Eof => {
 					break;
 				}
-				Kind::Ident => {
-					let ident = parser.cur_atom().unwrap();
-					if position.is_implicit() && matches!(ident, atom!("inside") | atom!("outside"))
+				Token::Ident(ident) => {
+					if position.is_implicit()
+						&& matches!(ident.to_ascii_lowercase(), atom!("inside") | atom!("outside"))
 					{
 						let node = Expr::<ListStylePositionValue>::parse(parser)?;
 						position = Shorthand::Explicit(parser.boxup(node));
-					} else if image.is_implicit() && matches!(ident, atom!("none")) {
+					} else if image.is_implicit()
+						&& matches!(ident.to_ascii_lowercase(), atom!("none"))
+					{
 						let node = Expr::<ListStyleImageValue>::parse(parser)?;
 						image = Shorthand::Explicit(parser.boxup(node));
 					} else if marker.is_implicit() {
 						let node = Expr::<ListStyleTypeValue>::parse(parser)?;
 						marker = Shorthand::Explicit(parser.boxup(node));
 					} else {
-						Err(diagnostics::UnexpectedIdent(ident.clone(), parser.cur().span))?
+						Err(diagnostics::UnexpectedIdent(*ident, parser.span()))?
 					}
 				}
 				k => {
@@ -55,35 +57,34 @@ impl<'a> Parse<'a> for ListStyleShorthand<'a> {
 							Err(_) => parser.rewind(checkpoint),
 						}
 					}
-					Err(diagnostics::Unexpected(k, parser.cur().span))?
+					Err(diagnostics::Unexpected(*k, parser.span()))?
 				}
 			}
 			if position.is_explicit() && image.is_explicit() && marker.is_explicit() {
 				break;
 			}
 		}
-		Ok(Self { position, image, marker }.spanned(span.until(parser.cur().span)))
+		Ok(Self { position, image, marker }.spanned(span.end(parser.pos())))
 	}
 }
 
 impl<'a> Parse<'a> for ListStyleTypeValue<'a> {
 	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
-		let span = parser.cur().span;
-		match parser.cur().kind {
-			Kind::Ident => {
-				let ident = parser.cur_atom().unwrap();
-				if ident == atom!("none") {
-					parser.advance();
-					Ok(Self::None.spanned(span))
+		match parser.cur() {
+			Token::Ident(ident) => {
+				if ident.to_ascii_lowercase() == atom!("none") {
+					Ok(Self::None.spanned(parser.advance()))
 				} else {
+					let span = parser.span();
 					let node = CounterStyle::parse(parser)?;
-					Ok(Self::CounterStyle(node).spanned(span.until(parser.cur().span)))
+					Ok(Self::CounterStyle(node).spanned(span.end(parser.pos())))
 				}
 			}
-			Kind::String => Ok(Self::String(parser.expect_string()?).spanned(span)),
+			Token::String(value) => Ok(Self::String(*value).spanned(parser.advance())),
 			_ => {
+				let span = parser.span();
 				let node = CounterStyle::parse(parser)?;
-				Ok(Self::CounterStyle(node).spanned(span.until(parser.cur().span)))
+				Ok(Self::CounterStyle(node).spanned(span.end(parser.pos())))
 			}
 		}
 	}
@@ -91,21 +92,20 @@ impl<'a> Parse<'a> for ListStyleTypeValue<'a> {
 
 impl<'a> Parse<'a> for ListStyleImageValue<'a> {
 	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
-		let span = parser.cur().span;
-		match parser.cur().kind {
-			Kind::Ident => {
-				let ident = parser.cur_atom().unwrap();
-				if ident == atom!("none") {
-					parser.advance();
-					Ok(Self::None.spanned(span))
+		match parser.cur() {
+			Token::Ident(ident) => {
+				if ident.to_ascii_lowercase() == atom!("none") {
+					Ok(Self::None.spanned(parser.advance()))
 				} else {
+					let span = parser.span();
 					let node = Image::parse(parser)?;
-					Ok(Self::Image(node).spanned(span.until(parser.cur().span)))
+					Ok(Self::Image(node).spanned(span.end(parser.pos())))
 				}
 			}
 			_ => {
+				let span = parser.span();
 				let node = Image::parse(parser)?;
-				Ok(Self::Image(node).spanned(span.until(parser.cur().span)))
+				Ok(Self::Image(node).spanned(span.end(parser.pos())))
 			}
 		}
 	}

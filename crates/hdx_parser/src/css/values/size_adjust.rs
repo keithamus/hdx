@@ -1,29 +1,19 @@
 use hdx_ast::css::values::TextSizeAdjustValue;
 
-use crate::{atom, diagnostics, Kind, Parse, Parser, Result, Spanned};
+use crate::{atom, diagnostics, Parse, Parser, Result, Spanned, Token};
 
 impl<'a> Parse<'a> for TextSizeAdjustValue {
 	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
-		let span = parser.cur().span;
-		match parser.cur().kind {
-			Kind::Ident => {
-				let ident = parser.expect_ident()?;
-				match ident {
-					atom!("none") => {
-						Ok(TextSizeAdjustValue::None.spanned(span.until(parser.cur().span)))
-					}
-					atom!("auto") => {
-						Ok(TextSizeAdjustValue::Auto.spanned(span.until(parser.cur().span)))
-					}
-					_ => Err(diagnostics::UnexpectedIdent(ident, span))?,
-				}
+		match parser.cur() {
+			Token::Ident(ident) => match ident.to_ascii_lowercase() {
+				atom!("none") => Ok(TextSizeAdjustValue::None.spanned(parser.advance())),
+				atom!("auto") => Ok(TextSizeAdjustValue::Auto.spanned(parser.advance())),
+				_ => Err(diagnostics::UnexpectedIdent(*ident, parser.span()))?,
+			},
+			Token::Dimension(_, value, atom!("%")) => {
+				Ok(TextSizeAdjustValue::Percentage(*value).spanned(parser.advance()))
 			}
-			Kind::Percentage => {
-				let value = parser.cur().value.as_f32().unwrap();
-				parser.advance();
-				Ok(TextSizeAdjustValue::Percentage(value).spanned(span.until(parser.cur().span)))
-			}
-			k => Err(diagnostics::Unexpected(k, span))?,
+			token => Err(diagnostics::Unexpected(*token, parser.span()))?,
 		}
 	}
 }

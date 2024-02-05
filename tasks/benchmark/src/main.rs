@@ -13,9 +13,9 @@ fn main() {
 	let task = command.as_deref().unwrap_or("default");
 
 	match task {
-		"parser" => args.run_parser(),
+		// "parser" => args.run_parser(),
 		"lexer" => args.run_lexer(),
-		"minifier" => args.run_minifier(),
+		// "minifier" => args.run_minifier(),
 		_ => args.run_all(),
 	};
 }

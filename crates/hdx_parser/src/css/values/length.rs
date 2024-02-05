@@ -1,29 +1,24 @@
 use hdx_ast::css::values::{lengths::*, Percentage};
 
-use crate::{atom, diagnostics, Kind, Parse, Parser, Result, Spanned};
+use crate::{atom, diagnostics, Parse, Parser, Result, Spanned, Token};
 
 // https://drafts.csswg.org/css-values-4/#lengths
 impl<'a> Parse<'a> for Length {
 	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
-		let span = parser.cur().span;
-		match parser.cur().kind {
-			Kind::Dimension => {
-				let (value, atom) = parser.expect_dimension()?;
-				if let Some(unit) = Self::from_f32_and_atom(value, atom.clone()) {
-					Ok(unit.spanned(span.until(parser.cur().span)))
+		let span = parser.span();
+		match parser.cur() {
+			Token::Dimension(_, value, atom) => {
+				if let Some(unit) = Self::from_f32_and_atom(value, *atom) {
+					Ok(unit.spanned(span.end(parser.pos())))
 				} else {
 					Err(diagnostics::UnexpectedDimension(atom, span))?
 				}
 			}
-			Kind::Number => {
-				let value = parser.expect_number()?;
-				if value != 0.0 {
-					Err(diagnostics::DisallowedValueWithoutDimension(
-						atom!("px"),
-						parser.cur().span,
-					))?
+			Token::Number(_, value) => {
+				if *value != 0.0 {
+					Err(diagnostics::DisallowedValueWithoutDimension(atom!("px"), parser.span()))?
 				}
-				Ok(Self::Zero.spanned(span.until(parser.cur().span)))
+				Ok(Self::Zero.spanned(span.end(parser.pos())))
 			}
 			k => Err(diagnostics::Unexpected(k, span))?,
 		}
@@ -33,22 +28,21 @@ impl<'a> Parse<'a> for Length {
 // https://drafts.csswg.org/css-values-4/#lengths
 impl<'a> Parse<'a> for PositiveLength {
 	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
-		let span = parser.cur().span;
-		match parser.cur().kind {
-			Kind::Dimension => {
+		let span = parser.span();
+		match parser.cur() {
+			Token::Dimension(_, value, atom) => {
 				let (value, atom) = parser.expect_dimension_gte(0.0)?;
 				if let Some(unit) = Self::from_f32_and_atom(value, atom.clone()) {
-					Ok(unit.spanned(span.until(parser.cur().span)))
+					Ok(unit.spanned(span.end(parser.pos())))
 				} else {
 					Err(diagnostics::UnexpectedDimension(atom, span))?
 				}
 			}
-			Kind::Number => {
-				let value = parser.expect_number()?;
+			Token::Number(_, value) => {
 				if value != 0.0 {
 					Err(diagnostics::DisallowedValueWithoutDimension(atom!("px"), span))?
 				}
-				Ok(Self::Zero.spanned(span.until(parser.cur().span)))
+				Ok(Self::Zero.spanned(span.end(parser.pos())))
 			}
 			k => Err(diagnostics::Unexpected(k, span))?,
 		}
@@ -58,30 +52,30 @@ impl<'a> Parse<'a> for PositiveLength {
 // https://drafts.csswg.org/css-values-4/#lengths
 impl<'a> Parse<'a> for PositiveLengthPercentageOrNormal {
 	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
-		let span = parser.cur().span;
-		match parser.cur().kind {
-			Kind::Ident => {
+		let span = parser.span();
+		match parser.cur() {
+			Token::Ident => {
 				parser.expect_ident_of(atom!("normal"))?;
-				Ok(Self::Normal.spanned(span.until(parser.cur().span)))
+				Ok(Self::Normal.spanned(span.end(parser.pos())))
 			}
-			Kind::Dimension => {
+			Token::Dimension => {
 				let (value, atom) = parser.expect_dimension_gte(0.0)?;
 				if let Some(unit) = Self::from_f32_and_atom(value, atom.clone()) {
-					Ok(unit.spanned(span.until(parser.cur().span)))
+					Ok(unit.spanned(span.end(parser.pos())))
 				} else {
 					Err(diagnostics::UnexpectedDimension(atom, span))?
 				}
 			}
-			Kind::Percentage => {
+			Token::Percentage => {
 				let value = parser.expect_percentage_gte(0.0)?;
-				Ok(Self::Percentage(Percentage(value)).spanned(span.until(parser.cur().span)))
+				Ok(Self::Percentage(Percentage(value)).spanned(span.end(parser.pos())))
 			}
-			Kind::Number => {
+			Token::Number => {
 				let value = parser.expect_number()?;
 				if value != 0.0 {
 					Err(diagnostics::DisallowedValueWithoutDimension(atom!("px"), span))?
 				}
-				Ok(Self::Zero.spanned(span.until(parser.cur().span)))
+				Ok(Self::Zero.spanned(span.end(parser.pos())))
 			}
 			k => Err(diagnostics::Unexpected(k, span))?,
 		}
@@ -91,35 +85,32 @@ impl<'a> Parse<'a> for PositiveLengthPercentageOrNormal {
 // https://drafts.csswg.org/css-values-4/#typedef-length-percentage
 impl<'a> Parse<'a> for LengthPercentage {
 	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
-		let span = parser.cur().span;
-		match parser.cur().kind {
-			Kind::Dimension => {
+		let span = parser.span();
+		match parser.cur() {
+			Token::Dimension => {
 				let value = parser.cur().value.as_f32().unwrap();
 				let atom = parser.cur().value.as_atom().unwrap();
 				if let Some(unit) = Self::from_f32_and_atom(value, atom.clone()) {
 					parser.advance();
-					Ok(unit.spanned(span.until(parser.cur().span)))
+					Ok(unit.spanned(span.end(parser.pos())))
 				} else {
-					Err(diagnostics::UnexpectedDimension(atom, parser.cur().span))?
+					Err(diagnostics::UnexpectedDimension(atom, parser.span()))?
 				}
 			}
-			Kind::Number => {
+			Token::Number => {
 				let value = parser.cur().value.as_f32().unwrap();
 				if value != 0.0 {
-					Err(diagnostics::DisallowedValueWithoutDimension(
-						atom!("px"),
-						parser.cur().span,
-					))?
+					Err(diagnostics::DisallowedValueWithoutDimension(atom!("px"), parser.span()))?
 				}
 				parser.advance();
-				Ok(Self::Zero.spanned(span.until(parser.cur().span)))
+				Ok(Self::Zero.spanned(span.end(parser.pos())))
 			}
-			Kind::Percentage => {
+			Token::Percentage => {
 				let value = parser.cur().value.as_f32().unwrap();
 				parser.advance();
-				Ok(Self::Percentage(Percentage(value)).spanned(span.until(parser.cur().span)))
+				Ok(Self::Percentage(Percentage(value)).spanned(span.end(parser.pos())))
 			}
-			_ => Err(diagnostics::Unexpected(parser.cur().kind, parser.cur().span))?,
+			_ => Err(diagnostics::Unexpected(parser.cur(), parser.span()))?,
 		}
 	}
 }
@@ -127,46 +118,43 @@ impl<'a> Parse<'a> for LengthPercentage {
 // https://drafts.csswg.org/css-values-4/#typedef-length-percentage
 impl<'a> Parse<'a> for LengthPercentageOrNormal {
 	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
-		let span = parser.cur().span;
-		match parser.cur().kind {
-			Kind::Ident => {
+		let span = parser.span();
+		match parser.cur() {
+			Token::Ident => {
 				if parser.cur_atom_lower().unwrap() == atom!("normal") {
 					parser.advance();
-					Ok(Self::Normal.spanned(span.until(parser.cur().span)))
+					Ok(Self::Normal.spanned(span.end(parser.pos())))
 				} else {
 					Err(diagnostics::UnexpectedIdent(
 						parser.cur_atom_lower().unwrap(),
-						parser.cur().span,
+						parser.span(),
 					))?
 				}
 			}
-			Kind::Dimension => {
+			Token::Dimension => {
 				let value = parser.cur().value.as_f32().unwrap();
 				let atom = parser.cur().value.as_atom().unwrap();
 				if let Some(unit) = Self::from_f32_and_atom(value, atom.clone()) {
 					parser.advance();
-					Ok(unit.spanned(span.until(parser.cur().span)))
+					Ok(unit.spanned(span.end(parser.pos())))
 				} else {
-					Err(diagnostics::UnexpectedDimension(atom, parser.cur().span))?
+					Err(diagnostics::UnexpectedDimension(atom, parser.span()))?
 				}
 			}
-			Kind::Number => {
+			Token::Number => {
 				let value = parser.cur().value.as_f32().unwrap();
 				if value != 0.0 {
-					Err(diagnostics::DisallowedValueWithoutDimension(
-						atom!("px"),
-						parser.cur().span,
-					))?
+					Err(diagnostics::DisallowedValueWithoutDimension(atom!("px"), parser.span()))?
 				}
 				parser.advance();
-				Ok(Self::Zero.spanned(span.until(parser.cur().span)))
+				Ok(Self::Zero.spanned(span.end(parser.pos())))
 			}
-			Kind::Percentage => {
+			Token::Percentage => {
 				let value = parser.cur().value.as_f32().unwrap();
 				parser.advance();
-				Ok(Self::Percentage(Percentage(value)).spanned(span.until(parser.cur().span)))
+				Ok(Self::Percentage(Percentage(value)).spanned(span.end(parser.pos())))
 			}
-			_ => Err(diagnostics::Unexpected(parser.cur().kind, parser.cur().span))?,
+			_ => Err(diagnostics::Unexpected(parser.cur(), parser.span()))?,
 		}
 	}
 }
@@ -174,87 +162,81 @@ impl<'a> Parse<'a> for LengthPercentageOrNormal {
 // https://drafts.csswg.org/css-values-4/#typedef-length-percentage
 impl<'a> Parse<'a> for PositiveLengthPercentage {
 	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
-		let span = parser.cur().span;
-		match parser.cur().kind {
-			Kind::Dimension => {
+		let span = parser.span();
+		match parser.cur() {
+			Token::Dimension => {
 				let value = parser.cur().value.as_f32().unwrap();
 				if value < 0.0 {
-					Err(diagnostics::NumberOutOfBounds(value, 0.0, parser.cur().span))?;
+					Err(diagnostics::NumberOutOfBounds(value, 0.0, parser.span()))?;
 				}
 				let atom = parser.cur().value.as_atom().unwrap();
 				if let Some(unit) = Self::from_f32_and_atom(value, atom.clone()) {
 					parser.advance();
-					Ok(unit.spanned(span.until(parser.cur().span)))
+					Ok(unit.spanned(span.end(parser.pos())))
 				} else {
-					Err(diagnostics::UnexpectedDimension(atom, parser.cur().span))?
+					Err(diagnostics::UnexpectedDimension(atom, parser.span()))?
 				}
 			}
-			Kind::Number => {
+			Token::Number => {
 				let value = parser.cur().value.as_f32().unwrap();
 				if value != 0.0 {
-					Err(diagnostics::DisallowedValueWithoutDimension(
-						atom!("px"),
-						parser.cur().span,
-					))?
+					Err(diagnostics::DisallowedValueWithoutDimension(atom!("px"), parser.span()))?
 				}
 				parser.advance();
-				Ok(Self::Zero.spanned(span.until(parser.cur().span)))
+				Ok(Self::Zero.spanned(span.end(parser.pos())))
 			}
-			Kind::Percentage => {
+			Token::Percentage => {
 				let value = parser.cur().value.as_f32().unwrap();
 				if value < 0.0 {
-					Err(diagnostics::NumberOutOfBounds(value, 0.0, parser.cur().span))?;
+					Err(diagnostics::NumberOutOfBounds(value, 0.0, parser.span()))?;
 				}
 				parser.advance();
-				Ok(Self::Percentage(Percentage(value)).spanned(span.until(parser.cur().span)))
+				Ok(Self::Percentage(Percentage(value)).spanned(span.end(parser.pos())))
 			}
-			_ => Err(diagnostics::Unexpected(parser.cur().kind, parser.cur().span))?,
+			_ => Err(diagnostics::Unexpected(parser.cur(), parser.span()))?,
 		}
 	}
 }
 
 impl<'a> Parse<'a> for LengthPercentageOrAuto {
 	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
-		let span = parser.cur().span;
-		match parser.cur().kind {
-			Kind::Ident => {
+		let span = parser.span();
+		match parser.cur() {
+			Token::Ident => {
 				if parser.cur_atom_lower().unwrap() == atom!("auto") {
 					parser.advance();
-					Ok(Self::Auto.spanned(span.until(parser.cur().span)))
+					Ok(Self::Auto.spanned(span.end(parser.pos())))
 				} else {
 					Err(diagnostics::UnexpectedIdent(
 						parser.cur_atom_lower().unwrap(),
-						parser.cur().span,
+						parser.span(),
 					))?
 				}
 			}
-			Kind::Dimension => {
+			Token::Dimension => {
 				let value = parser.cur().value.as_f32().unwrap();
 				let atom = parser.cur().value.as_atom().unwrap();
 				if let Some(unit) = Self::from_f32_and_atom(value, atom.clone()) {
 					parser.advance();
-					Ok(unit.spanned(span.until(parser.cur().span)))
+					Ok(unit.spanned(span.end(parser.pos())))
 				} else {
-					Err(diagnostics::UnexpectedDimension(atom, parser.cur().span))?
+					Err(diagnostics::UnexpectedDimension(atom, parser.span()))?
 				}
 			}
-			Kind::Number => {
+			Token::Number => {
 				let value = parser.cur().value.as_f32().unwrap();
 				if value != 0.0 {
-					Err(diagnostics::DisallowedValueWithoutDimension(
-						atom!("px"),
-						parser.cur().span,
-					))?
+					Err(diagnostics::DisallowedValueWithoutDimension(atom!("px"), parser.span()))?
 				}
 				parser.advance();
-				Ok(Self::Zero.spanned(span.until(parser.cur().span)))
+				Ok(Self::Zero.spanned(span.end(parser.pos())))
 			}
-			Kind::Percentage => {
+			Token::Percentage => {
 				let value = parser.cur().value.as_f32().unwrap();
 				parser.advance();
-				Ok(Self::Percentage(Percentage(value)).spanned(span.until(parser.cur().span)))
+				Ok(Self::Percentage(Percentage(value)).spanned(span.end(parser.pos())))
 			}
-			_ => Err(diagnostics::Unexpected(parser.cur().kind, parser.cur().span))?,
+			_ => Err(diagnostics::Unexpected(parser.cur(), parser.span()))?,
 		}
 	}
 }

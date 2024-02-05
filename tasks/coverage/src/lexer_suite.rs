@@ -103,7 +103,7 @@ pub trait LexerCase: Sized {
 		let mut tokens = vec![];
 		let mut pos = 0;
 		loop {
-			let token = lexer.next_token();
+			let token = lexer.advance_including_whitespace_and_comments();
 			if token == Token::Eof {
 				break;
 			}

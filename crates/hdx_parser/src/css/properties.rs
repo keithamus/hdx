@@ -8,14 +8,14 @@ use crate::{atom, diagnostics, Atomizable, Kind, Parse, Parser, Spanned, Token};
 
 impl<'a> Parse<'a> for Custom<'a> {
 	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
-		let span = parser.cur().span;
+		let span = parser.span();
 		let mut important = false;
 		let name = parser.expect_ident_cased()?;
 		parser.expect(Kind::Colon)?;
 		let checkpoint = parser.checkpoint();
-		let value_span = parser.cur().span;
+		let value_span = parser.span();
 		let value_like = ValueLike::parse(parser)
-			.unwrap_or(ValueLike::Unknown.spanned(value_span.until(parser.cur().span)));
+			.unwrap_or(ValueLike::Unknown.spanned(value_span.end(parser.pos())));
 		parser.rewind(checkpoint);
 		let mut value = parser.parse_component_values(Kind::Semicolon, true)?;
 		if parser.at(Kind::Semicolon) {
@@ -33,88 +33,86 @@ impl<'a> Parse<'a> for Custom<'a> {
 			}
 		}
 		Ok(Self { name, value_like, value: parser.boxup(value), important }
-			.spanned(span.until(parser.cur().span)))
+			.spanned(span.end(parser.pos())))
 	}
 }
 
 impl<'a> Parse<'a> for ValueLike<'a> {
 	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
 		let checkpoint = parser.checkpoint();
-		let span = parser.cur().span;
+		let span = parser.span();
 		let token = parser.cur().clone();
 		let parsed = MathExpr::<Length>::parse(parser);
 		if let Ok(value) = parsed {
-			return Ok(Self::Length(parser.boxup(value)).spanned(span.until(parser.cur().span)));
+			return Ok(Self::Length(parser.boxup(value)).spanned(span.end(parser.pos())));
 		}
 		parser.rewind(checkpoint);
 		let checkpoint = parser.checkpoint();
 		let parsed = MathExpr::<LengthPercentage>::parse(parser);
 		if let Ok(value) = parsed {
-			return Ok(
-				Self::LengthPercentage(parser.boxup(value)).spanned(span.until(parser.cur().span))
-			);
+			return Ok(Self::LengthPercentage(parser.boxup(value)).spanned(span.end(parser.pos())));
 		}
 		parser.rewind(checkpoint);
 		let checkpoint = parser.checkpoint();
 		let parsed = Expr::<ColorValue>::parse(parser);
 		if let Ok(value) = parsed {
-			return Ok(Self::Color(parser.boxup(value)).spanned(span.until(parser.cur().span)));
+			return Ok(Self::Color(parser.boxup(value)).spanned(span.end(parser.pos())));
 		}
 		parser.rewind(checkpoint);
 		let parsed = ExprList::<FontFamilyValue>::parse(parser);
 		if let Ok(value) = parsed {
-			return Ok(Self::FontFamily(parser.boxup(value)).spanned(span.until(parser.cur().span)));
+			return Ok(Self::FontFamily(parser.boxup(value)).spanned(span.end(parser.pos())));
 		}
 		Err(diagnostics::Unexpected(token.kind, token.span).into())
 	}
 }
 
 macro_rules! parse_properties {
-    {$( $prop: ident, )+} => {
-        $(
-            impl<'a> Parse<'a> for $prop<'a> {
-                fn parse(parser: &mut Parser<'a>) -> Result<Spanned<$prop<'a>>> {
-                    let span = parser.cur().span;
-                    parser.parse_declaration(
-                        Some($prop::name_as_atom()),
-                        |parser: &mut Parser<'a>, _name: &Token, value: Spanned<<$prop as Declaration>::Value>, important: bool| {
-                            Ok($prop { value: parser.boxup(value), important }.spanned(span.until(parser.cur().span)))
-                        },
-                    )
-                }
-            }
-        )+
+	{$( $prop: ident, )+} => {
+		$(
+			impl<'a> Parse<'a> for $prop<'a> {
+				fn parse(parser: &mut Parser<'a>) -> Result<Spanned<$prop<'a>>> {
+					let span = parser.span();
+					parser.parse_declaration(
+						Some($prop::name_as_atom()),
+						|parser: &mut Parser<'a>, _name: &Token, value: Spanned<<$prop as Declaration>::Value>, important: bool| {
+							Ok($prop { value: parser.boxup(value), important }.spanned(span.end(parser.pos())))
+						},
+					)
+				}
+			}
+		)+
 
-        impl<'a> Parse<'a> for Property<'a> {
-            fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Property<'a>>> {
-                let span = parser.cur().span;
-                if parser.cur().is_dashed_ident() {
-                    let custom = Custom::parse(parser)?;
-                    return Ok(Property::Custom(parser.boxup(custom)).spanned(span.until(parser.cur().span)));
-                }
-                let checkpoint = parser.checkpoint();
-                let property = match PropertyId::from_atom(parser.cur().as_atom_lower().unwrap_or(atom!(""))) {
-                    $(
-                        Some(PropertyId::$prop) => {
-                            $prop::parse(parser).map(|p| Property::$prop(parser.boxup(p)))
-                        }
-                    )+
-                    _ => {
-                        Err(diagnostics::UnexpectedIdent(parser.cur().as_atom().unwrap(), parser.cur().span))?
-                    }
-                }
-                .or_else(|e| {
-                    parser.rewind(checkpoint);
-                    let parsed =
-                        UnknownDeclaration::parse(parser).map(|p| Property::Unknown(parser.boxup(p)));
-                    parser.warnings.push(e);
-                    parser.warnings.push(diagnostics::UnknownDeclaration(span.until(parser.cur().span)).into());
-                    parsed
-                })?;
-                Ok(property.spanned(span.until(parser.cur().span)))
-            }
-        }
-    }
+		impl<'a> Parse<'a> for Property<'a> {
+			fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Property<'a>>> {
+				let span = parser.span();
+				if parser.cur().is_dashed_ident() {
+					let custom = Custom::parse(parser)?;
+					return Ok(Property::Custom(parser.boxup(custom)).spanned(span.end(parser.pos())));
+				}
+				let checkpoint = parser.checkpoint();
+				let property = match PropertyId::from_atom(parser.cur().as_atom_lower().unwrap_or(atom!(""))) {
+					$(
+						Some(PropertyId::$prop) => {
+							$prop::parse(parser).map(|p| Property::$prop(parser.boxup(p)))
+						}
+					)+
+					_ => {
+						Err(diagnostics::UnexpectedIdent(parser.cur().as_atom().unwrap(), parser.span()))?
+					}
+				}
+				.or_else(|e| {
+					parser.rewind(checkpoint);
+					let parsed =
+						UnknownDeclaration::parse(parser).map(|p| Property::Unknown(parser.boxup(p)));
+					parser.warnings.push(e);
+					parser.warnings.push(diagnostics::UnknownDeclaration(span.end(parser.pos())).into());
+					parsed
+				})?;
+				Ok(property.spanned(span.end(parser.pos())))
+			}
+		}
+	}
 }
 
 parse_properties! {

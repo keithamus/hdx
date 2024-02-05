@@ -1,5 +1,6 @@
-use hdx_lexer::{Kind, Lexer};
-use hdx_parser::{Parser, ParserOptions};
+use hdx_ast::css::StyleSheet;
+use hdx_lexer::{Token, Lexer};
+use hdx_parser::{Parser, Features};
 use hdx_writer::{BaseCssWriter, WriteCss};
 use miette::{GraphicalReportHandler, GraphicalTheme, NamedSource};
 use oxc_allocator::Allocator;
@@ -19,8 +20,9 @@ pub fn lex(source_text: String) -> Result<JsValue, serde_wasm_bindgen::Error> {
 	let serializer = serde_wasm_bindgen::Serializer::json_compatible();
 	let mut tokens = vec![];
 	loop {
-		tokens.push(lex.next_token());
-		if tokens.last().unwrap().kind == Kind::Eof {
+		let token = lex.advance();
+		tokens.push(token.clone());
+		if matches!(token, Token::Eof) {
 			break;
 		}
 	}
@@ -30,7 +32,8 @@ pub fn lex(source_text: String) -> Result<JsValue, serde_wasm_bindgen::Error> {
 #[wasm_bindgen]
 pub fn parse(source_text: String) -> Result<SerializableParserResult, serde_wasm_bindgen::Error> {
 	let allocator = Allocator::default();
-	let result = Parser::new(&allocator, source_text.as_str(), ParserOptions::default()).parse();
+	let result = Parser::new(&allocator, source_text.as_str(), Features::default())
+		.parse_with::<StyleSheet>();
 	let serializer = serde_wasm_bindgen::Serializer::json_compatible();
 	let diagnostics = result
 		.errors
@@ -60,7 +63,8 @@ pub fn parse(source_text: String) -> Result<SerializableParserResult, serde_wasm
 #[wasm_bindgen]
 pub fn minify(source_text: String) -> Result<String, serde_wasm_bindgen::Error> {
 	let allocator = Allocator::default();
-	let result = Parser::new(&allocator, source_text.as_str(), ParserOptions::default()).parse();
+	let result = Parser::new(&allocator, source_text.as_str(), Features::default())
+		.parse_with::<StyleSheet>();
 	if !result.errors.is_empty() {
 		return Err(serde_wasm_bindgen::Error::new("Parse error"));
 	}
@@ -73,7 +77,8 @@ pub fn minify(source_text: String) -> Result<String, serde_wasm_bindgen::Error> 
 #[wasm_bindgen]
 pub fn parse_error_report(source_text: String) -> String {
 	let allocator = Allocator::default();
-	let result = Parser::new(&allocator, source_text.as_str(), ParserOptions::default()).parse();
+	let result = Parser::new(&allocator, source_text.as_str(), Features::default())
+		.parse_with::<StyleSheet>();
 	let handler = GraphicalReportHandler::new_themed(GraphicalTheme::unicode_nocolor());
 	let mut report = String::new();
 	for err in result.errors {

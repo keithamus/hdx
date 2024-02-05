@@ -1,263 +1,276 @@
 use std::{fmt::Debug, hash::Hash};
 
+use hdx_atom::{atom, Atom};
+use hdx_lexer::Token;
+use hdx_parser::{diagnostics, expect, Parse, Parser, Result as ParserResult, Spanned, State, unexpected, discard};
+use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 #[cfg(feature = "serde")]
 use serde::Serialize;
 
 use crate::{
-	atom,
-	css::{component_values::ComponentValue, unknown::UnknownDeclaration, values::*},
-	Atom, Atomizable, Box, Span, Spanned, Vec,
+	css::{component_values::ComponentValues, values},
+	Box,
 };
 
-#[derive(Debug, PartialEq, Hash)]
+#[derive(Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
 pub struct Custom<'a> {
-	pub name: Atom,
-	pub value: Box<'a, Vec<'a, Spanned<ComponentValue<'a>>>>,
-	pub value_like: Spanned<ValueLike<'a>>,
-	pub important: bool,
+	pub value: Box<'a, Spanned<ComponentValues<'a>>>,
+	// pub value_like: Spanned<values::ValueLike<'a>>,
 }
 
-pub trait Declaration: Debug + PartialEq + Hash {
-	type Value: Default + Debug + PartialEq + Hash;
-
-	fn initial() -> Self::Value;
-	fn name_as_atom() -> Atom;
-	fn is_inherits() -> bool;
-	fn is_standard() -> bool;
-	fn is_shorthand() -> bool;
+impl<'a> WriteCss<'a> for Custom<'a> {
+	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
+		self.value.write_css(sink)
+	}
 }
 
-macro_rules! property_initial {
-	($value: ty,) => {
-		fn initial() -> $value {
-			<$value>::default()
-		}
-	};
-	($value: ty, $initial: expr) => {
-		fn initial() -> $value {
-			$initial
-		}
-	};
+impl<'a> Parse<'a> for Custom<'a> {
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
+		let span = parser.span();
+		parser.set(State::StopOnSemicolon);
+		let value =	ComponentValues::parse(parser)?;
+		parser.unset(State::StopOnSemicolon);
+		Ok(Self { value: parser.boxup(value) }.spanned(span.end(parser.pos())))
+	}
 }
 
-macro_rules! property_standard {
-	($l:literal) => {
-		fn is_standard() -> bool {
-			$l
-		}
-	};
-	() => {
-		fn is_standard() -> bool {
-			true
-		}
-	};
+#[derive(Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
+pub struct Unknown<'a> {
+	pub value: Box<'a, Spanned<ComponentValues<'a>>>,
 }
 
-macro_rules! property_shorthand {
-	($l:literal) => {
-		fn is_shorthand() -> bool {
-			$l
-		}
-	};
-	() => {
-		fn is_shorthand() -> bool {
-			false
-		}
-	};
+impl<'a> Parse<'a> for Unknown<'a> {
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
+		let span = parser.span();
+		parser.set(State::StopOnSemicolon);
+		let value = ComponentValues::parse(parser)?;
+		parser.unset(State::StopOnSemicolon);
+		Ok(Self { value: parser.boxup(value) }.spanned(span.end(parser.pos())))
+	}
 }
 
-macro_rules! property_inherits {
-	($l:literal) => {
-		fn is_inherits() -> bool {
-			$l
-		}
-	};
-	() => {
-		fn is_inherits() -> bool {
-			false
-		}
-	};
+impl<'a> WriteCss<'a> for Unknown<'a> {
+	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
+		self.value.write_css(sink)
+	}
 }
 
-macro_rules! property {
-    (
-        $atom: expr, $name: ident, $value: ty, $($standard:literal)?, $($shorthand:literal)?, $($inherits:literal)?, $($initial: expr)?
-    ) => {
-        #[derive(Debug, PartialEq, Hash)]
-        #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
-        pub struct $name<'a> {
-            pub important: bool,
-            pub value: Box<'a, Spanned<$value>>,
-        }
+#[derive(Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+pub struct StyleProperty<'a> {
+	name: Atom,
+	value: StyleValue<'a>,
+	important: bool,
+}
 
-        impl<'a> Declaration for $name<'a> {
-            type Value = $value;
-
-            property_initial!($value, $($initial)?);
-            property_inherits!($($inherits)?);
-            property_standard!($($standard)?);
-            property_shorthand!($($shorthand)?);
-
-            fn name_as_atom() -> Atom {
-                $atom
-            }
-        }
-    };
+impl<'a> WriteCss<'a> for StyleProperty<'a> {
+	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
+		sink.write_str(self.name.as_ref())?;
+		sink.write_char(':')?;
+		sink.write_trivia_char(' ')?;
+		self.value.write_css(sink)?;
+		if self.important {
+			sink.write_str("!important")?;
+		}
+		Ok(())
+	}
 }
 
 macro_rules! properties {
     ( $(
-        $atom: expr => $name: ident<$value: ty> $(standard=$standard:literal)? $(shorthand=$shorthand:literal)? $(inherits=$inherits:literal)? $(initial=$initial: expr)?,
+        $name: ident$(<$a: lifetime>)?: $atom: pat,
     )+ ) => {
-        #[derive(Debug, PartialEq, Hash)]
-        #[cfg_attr(feature = "serde", derive(Serialize), serde(untagged))]
-        pub enum Property<'a> {
-            $(
-                $name(Box<'a, Spanned<$name<'a>>>),
-            )+
-            Custom(Box<'a, Spanned<Custom<'a>>>),
-            Unknown(Box<'a, Spanned<UnknownDeclaration<'a>>>),
-        }
-        #[derive(Debug, PartialEq, Hash)]
-        pub enum PropertyId {
-            $(
-                $name,
-            )+
-        }
-        impl Atomizable for PropertyId {
-            fn from_atom(atom: Atom) -> Option<Self> {
-                match atom {
-                    $(
-                        c if c == $atom => Some(Self::$name),
-                    )+
-                    _ => None
-                }
-            }
-            fn to_atom(&self) -> Atom {
-                match self {
-                    $(
-                        Self::$name => $atom,
-                    )+
-                }
-            }
-        }
+		#[derive(Debug, Hash)]
+		#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+		pub enum StyleValue<'a> {
+			Initial,
+			Inherit,
+			Unset,
+			Revert,
+			RevertLayer,
+			Custom(Box<'a, Spanned<Custom<'a>>>),
+			Unknown(Box<'a, Spanned<Unknown<'a>>>),
+			$(
+				$name(Box<'a, Spanned<values::$name$(<$a>)?>>),
+			)+
+		}
 
-        $(
-            property!($atom, $name, $value, $($standard)?, $($inherits)?, $($shorthand)?, $($initial)?);
-        )+
+		impl<'a> WriteCss<'a> for StyleValue<'a> {
+			fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
+				match self {
+					Self::Initial => sink.write_str("initial")?,
+					Self::Inherit => sink.write_str("inherit")?,
+					Self::Unset => sink.write_str("unset")?,
+					Self::Revert => sink.write_str("revert")?,
+					Self::RevertLayer => sink.write_str("revert-layer")?,
+					Self::Custom(v) => v.write_css(sink)?,
+					Self::Unknown(v) => v.write_css(sink)?,
+					$(
+						Self::$name(v) => v.write_css(sink)?,
+					)+
+				}
+				Ok(())
+			}
+		}
 
-        #[cfg(test)]
-        mod tests {
-
-            use super::*;
-
-            #[test]
-            fn size_test() {
-                use std::mem::size_of;
-                $(
-                    assert_eq!(size_of::<$name>(), 16);
-                )+
-            }
-        }
+		impl<'a> Parse<'a> for StyleProperty<'a> {
+			fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
+				let span = parser.span();
+				let (name, value) = match parser.cur() {
+					Token::Ident(atom) => {
+						let name = atom.to_ascii_lowercase();
+						match name {
+							$(
+							$atom => {
+								expect!(parser, Token::Colon);
+								parser.advance();
+								let value = match parser.cur() {
+									Token::Ident(atom) => match atom.to_ascii_lowercase() {
+										atom!("initial") => {
+											parser.advance();
+											StyleValue::Initial
+										}
+										atom!("inherit") => {
+											parser.advance();
+											StyleValue::Inherit
+										}
+										atom!("unset") => {
+											parser.advance();
+											StyleValue::Unset
+										}
+										atom!("revert") => {
+											parser.advance();
+											StyleValue::Revert
+										}
+										atom!("revert-layer") => {
+											parser.advance();
+											StyleValue::RevertLayer
+										},
+										_ => {
+											let parsed = values::$name::parse(parser)?;
+											StyleValue::$name(parser.boxup(parsed))
+										}
+									},
+									_ => {
+										let parsed = values::$name::parse(parser)?;
+										StyleValue::$name(parser.boxup(parsed))
+									}
+								};
+								(name, value)
+							},
+							)*
+							_ => {
+								let value = Unknown::parse(parser)?;
+								parser.warn(diagnostics::UnknownDeclaration(value.span).into());
+								(atom, StyleValue::Unknown(parser.boxup(value)))
+							}
+						}
+					},
+					token => unexpected!(parser, token),
+				};
+				let important = if matches!(parser.cur(), Token::Delim('!')) && matches!(parser.peek(), Token::Ident(atom!("important"))) {
+					parser.advance();
+					parser.advance();
+					true
+				} else {
+					false
+				};
+				discard!(parser, Token::Semicolon);
+				Ok(Self { name, value, important }.spanned(span.end(parser.pos())))
+			}
+		}
     };
-}
-
-// TODO!
-#[derive(Default, Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde())]
-pub enum Todo {
-	#[default]
-	Todo,
 }
 
 properties! {
 	// https://drafts.csswg.org/css-align-3/#property-index
-	atom!("align-content") => AlignContent<Expr<'a, Todo>>,
-	atom!("align-items") => AlignItems<Expr<'a, Todo>>,
-	atom!("align-self") => AlignSelf<Expr<'a, Todo>>,
-	atom!("column-gap") => ColumnGap<MathExpr<'a, PositiveLengthPercentageOrNormal>>,
-	atom!("gap") => Gap<DoubleShorthand<'a, MathExpr<'a, PositiveLengthPercentageOrNormal>>> shorthand=true,
-	atom!("justify-content") => JustifyContent<Expr<'a, Todo>>,
-	atom!("justify-items") => JustifyItems<Expr<'a, Todo>>,
-	atom!("justify-self") => JustifySelf<Expr<'a, Todo>>,
-	atom!("place-content") => PlaceContent<DoubleShorthand<'a, Expr<'a, Todo>>> shorthand=true,
-	atom!("place-items") => PlaceItems<DoubleShorthand<'a, Expr<'a, Todo>>> shorthand=true,
-	atom!("place-self") => PlaceSelf<DoubleShorthand<'a, Expr<'a, Todo>>> shorthand=true,
-	atom!("row-gap") => RowGap<MathExpr<'a, PositiveLengthPercentageOrNormal>>,
+	AlignContent: atom!("align-content"),
+	AlignItems: atom!("align-items"),
+	AlignSelf: atom!("align-self"),
+	ColumnGap: atom!("column-gap"),
+	Gap: atom!("gap"),
+	JustifyContent: atom!("justify-content"),
+	JustifyItems: atom!("justify-items"),
+	JustifySelf: atom!("justify-self"),
+	PlaceContent: atom!("place-content"),
+	PlaceItems: atom!("place-items"),
+	PlaceSelf: atom!("place-self"),
+	RowGap: atom!("row-gap"),
 
 	// https://drafts.csswg.org/css-anchor-position-1/#property-index
-	atom!("anchor-default") => AnchorDefault<Expr<'a, Todo>>,
-	atom!("anchor-position") => AnchorPosition<Expr<'a, Todo>>,
-	atom!("position-fallback") => PositionFallback<Expr<'a, Todo>>,
-	atom!("position-fallback-bounds") => PositionFallbackBounds<Expr<'a, Todo>>,
+	AnchorDefault: atom!("anchor-default"),
+	AnchorPosition: atom!("anchor-position"),
+	PositionFallback: atom!("position-fallback"),
+	PositionFallbackBounds: atom!("position-fallback-bounds"),
 
 	// https://drafts.csswg.org/css-animations-1/#property-index
-	atom!("animation") => Animation<Expr<'a, Todo>> shorthand=true,
-	atom!("animation-delay") => AnimationDelay<Expr<'a, Todo>>,
-	atom!("animation-direction") => AnimationDirection<Expr<'a, Todo>>,
+	AnimationExpr: atom!("animation"),
+	AnimationDelay: atom!("animation-delay"),
+	AnimationDirection: atom!("animation-direction"),
 	// ! animation-duration redefined in css-animations-2
-	atom!("animation-fill-mode") => AnimationFillMode<Expr<'a, Todo>>,
-	atom!("animation-iteration-count") => AnimationIterationCount<Expr<'a, Todo>>,
-	atom!("animation-name") => AnimationName<Expr<'a, Todo>>,
-	atom!("animation-play-state") => AnimationPlayState<Expr<'a, Todo>>,
-	atom!("animation-timing-function") => AnimationTimingFunction<Expr<'a, Todo>>,
+	AnimationFillMode: atom!("animation-fill-mode"),
+	AnimationIterationCount: atom!("animation-iteration-count"),
+	AnimationName: atom!("animation-name"),
+	AnimationPlayState: atom!("animation-play-state"),
+	AnimationTimingFunction: atom!("animation-timing-function"),
 
 	// https://drafts.csswg.org/css-animations-2/#property-index
-	atom!("animation-duration") => AnimationDuration<Expr<'a, TimeOrAuto>>,
-	atom!("animation-composition") => AnimationComposition<Expr<'a, Todo>>,
-	atom!("animation-timeline") => AnimationTimeline<Expr<'a, Todo>>,
+	AnimationDuration: atom!("animation-duration"),
+	AnimationComposition: atom!("animation-composition"),
+	AnimationTimeline: atom!("animation-timeline"),
 
 	// https://drafts.csswg.org/css-backgrounds-3/#property-index
-	atom!("background") => Background<ColorValue<'a>> shorthand=true,
-	atom!("background-attachment") => BackgroundAttachment<Expr<'a, Todo>>,
+	Background: atom!("background"),
+	BackgroundAttachment: atom!("background-attachment"),
 	// ! background-clip redefined in css-backgrounds-4
-	atom!("background-color") => BackgroundColor<Expr<'a, ColorValue<'a>>>,
-	atom!("background-image") => BackgroundImage<Expr<'a, Todo>>,
-	atom!("background-origin") => BackgroundOrigin<Expr<'a, Todo>>,
+	BackgroundColor: atom!("background-color"),
+	BackgroundImage: atom!("background-image"),
+	BackgroundOrigin: atom!("background-origin"),
 	// ! background-position redefined in css-backgrounds-4
-	atom!("background-repeat") => BackgroundRepeat<Expr<'a, Todo>>,
-	atom!("background-size") => BackgroundSize<Expr<'a, Todo>>,
-	atom!("border") => Border<BorderShorthand<'a>> shorthand=true,
-	atom!("border-bottom") => BorderBottom<BorderShorthand<'a>> shorthand=true,
-	atom!("border-bottom-color") => BorderBottomColor<Expr<'a, ColorValue<'a>>> initial=Expr::Literal(Spanned::dummy(ColorValue::CurrentColor)),
-	atom!("border-bottom-left-radius") => BorderBottomLeftRadius<DoubleShorthand<'a, MathExpr<'a, PositiveLengthPercentage>>>,
-	atom!("border-bottom-right-radius") => BorderBottomRightRadius<DoubleShorthand<'a, MathExpr<'a, PositiveLengthPercentage>>>,
-	atom!("border-bottom-style") => BorderBottomStyle<Expr<'a, LineStyle>>,
-	atom!("border-bottom-width") => BorderBottomWidth<MathExpr<'a, LineWidth>>,
-	atom!("border-color") => BorderColor<BoxShorthand<'a, Expr<'a, ColorValue<'a>>>> shorthand=true,
-	atom!("border-image") => BorderImage<Expr<'a, Todo>> shorthand=true,
-	atom!("border-image-outset") => BorderImageOutset<Expr<'a, Todo>>,
-	atom!("border-image-repeat") => BorderImageRepeat<Expr<'a, Todo>>,
-	atom!("border-image-slice") => BorderImageSlice<Expr<'a, Todo>>,
-	atom!("border-image-source") => BorderImageSource<Expr<'a, Todo>>,
-	atom!("border-image-width") => BorderImageWidth<Expr<'a, Todo>>,
-	atom!("border-left") => BorderLeft<BorderShorthand<'a>> shorthand=true,
-	atom!("border-left-color") => BorderLeftColor<ColorValue<'a>> initial=ColorValue::CurrentColor,
-	atom!("border-left-style") => BorderLeftStyle<Expr<'a, LineStyle>>,
-	atom!("border-left-width") => BorderLeftWidth<MathExpr<'a, LineWidth>>,
-	atom!("border-radius") => BorderRadius<Expr<'a, Todo>> shorthand=true,
-	atom!("border-right") => BorderRight<BorderShorthand<'a>> shorthand=true,
-	atom!("border-right-color") => BorderRightColor<ColorValue<'a>> initial=ColorValue::CurrentColor,
-	atom!("border-right-style") => BorderRightStyle<Expr<'a, LineStyle>>,
-	atom!("border-right-width") => BorderRightWidth<MathExpr<'a, LineWidth>>,
-	atom!("border-style") => BorderStyle<BoxShorthand<'a, Expr<'a, LineStyle>>> shorthand=true,
-	atom!("border-top") => BorderTop<BorderShorthand<'a>> shorthand=true,
-	atom!("border-top-color") => BorderTopColor<ColorValue<'a>> initial=ColorValue::CurrentColor,
-	atom!("border-top-left-radius") => BorderTopLeftRadius<DoubleShorthand<'a, MathExpr<'a, PositiveLengthPercentage>>>,
-	atom!("border-top-right-radius") => BorderTopRightRadius<DoubleShorthand<'a, MathExpr<'a, PositiveLengthPercentage>>>,
-	atom!("border-top-style") => BorderTopStyle<Expr<'a, LineStyle>>,
-	atom!("border-top-width") => BorderTopWidth<MathExpr<'a, LineWidth>>,
-	atom!("border-width") => BorderWidth<BoxShorthand<'a, MathExpr<'a, LineWidth>>> shorthand=true,
-	atom!("box-shadow") => BoxShadow<Expr<'a, Todo>>,
+	BackgroundRepeat: atom!("background-repeat"),
+	BackgroundSize: atom!("background-size"),
+	Border: atom!("border"),
+	BorderBottom: atom!("border-bottom"),
+	BorderBottomColor: atom!("border-bottom-color"),
+	BorderBottomLeftRadius: atom!("border-bottom-left-radius"),
+	BorderBottomRightRadius: atom!("border-bottom-right-radius"),
+	BorderBottomStyle: atom!("border-bottom-style"),
+	BorderBottomWidth: atom!("border-bottom-width"),
+	BorderColor: atom!("border-color"),
+	BorderImage: atom!("border-image"),
+	BorderImageOutset: atom!("border-image-outset"),
+	BorderImageRepeat: atom!("border-image-repeat"),
+	BorderImageSlice: atom!("border-image-slice"),
+	BorderImageSource: atom!("border-image-source"),
+	BorderImageWidth: atom!("border-image-width"),
+	BorderLeft: atom!("border-left"),
+	BorderLeftColor: atom!("border-left-color"),
+	BorderLeftStyle: atom!("border-left-style"),
+	BorderLeftWidth: atom!("border-left-width"),
+	BorderRadius: atom!("border-radius"),
+	BorderRight: atom!("border-right"),
+	BorderRightColor: atom!("border-right-color"),
+	BorderRightStyle: atom!("border-right-style"),
+	BorderRightWidth: atom!("border-right-width"),
+	BorderStyle: atom!("border-style"),
+	BorderTop: atom!("border-top"),
+	BorderTopColor: atom!("border-top-color"),
+	BorderTopLeftRadius: atom!("border-top-left-radius"),
+	BorderTopRightRadius: atom!("border-top-right-radius"),
+	BorderTopStyle: atom!("border-top-style"),
+	BorderTopWidth: atom!("border-top-width"),
+	BorderWidth: atom!("border-width"),
+	BoxShadow: atom!("box-shadow"),
 
 	// https://drafts.csswg.org/css-backgrounds-4/#property-index
-	atom!("background-clip") => BackgroundClip<Expr<'a, Todo>>,
-	atom!("background-position") => BackgroundPosition<Expr<'a, Todo>>,
-	atom!("background-position-block") => BackgroundPositionBlock<Expr<'a, Todo>>,
-	atom!("background-position-inline") => BackgroundPositionInline<Expr<'a, Todo>>,
-	atom!("background-position-x") => BackgroundPositionX<Expr<'a, Todo>>,
-	atom!("background-position-y") => BackgroundPositionY<Expr<'a, Todo>>,
+	BackgroundClip: atom!("background-clip"),
+	BackgroundPosition: atom!("background-position"),
+	BackgroundPositionBlock: atom!("background-position-block"),
+	BackgroundPositionInline: atom!("background-position-inline"),
+	BackgroundPositionX: atom!("background-position-x"),
+	BackgroundPositionY: atom!("background-position-y"),
 
 
 	// https://drafts.csswg.org/css-box-3/#property-index
@@ -273,17 +286,17 @@ properties! {
 	// ! padding-top redefined in css-box-4
 
 	// https://drafts.csswg.org/css-box-4/#property-index
-	atom!("margin") => Margin<BoxShorthand<'a, MathExpr<'a, LengthPercentageOrAuto>>> shorthand=true,
-	atom!("margin-bottom") => MarginBottom<MathExpr<'a, LengthPercentageOrAuto>>,
-	atom!("margin-left") => MarginLeft<MathExpr<'a, LengthPercentageOrAuto>>,
-	atom!("margin-right") => MarginRight<MathExpr<'a, LengthPercentageOrAuto>>,
-	atom!("margin-top") => MarginTop<MathExpr<'a, LengthPercentageOrAuto>>,
-	atom!("margin-trim") => MarginTrim<MathExpr<'a, MarginTrimValue>>,
-	atom!("padding") => Padding<BoxShorthand<'a, MathExpr<'a, PositiveLengthPercentage>>> shorthand=true,
-	atom!("padding-bottom") => PaddingBottom<MathExpr<'a, PositiveLengthPercentage>>,
-	atom!("padding-left") => PaddingLeft<MathExpr<'a, PositiveLengthPercentage>>,
-	atom!("padding-right") => PaddingRight<MathExpr<'a, PositiveLengthPercentage>>,
-	atom!("padding-top") => PaddingTop<MathExpr<'a, PositiveLengthPercentage>>,
+	Margin: atom!("margin"),
+	MarginBottom: atom!("margin-bottom"),
+	MarginLeft: atom!("margin-left"),
+	MarginRight: atom!("margin-right"),
+	MarginTop: atom!("margin-top"),
+	MarginTrim: atom!("margin-trim"),
+	Padding: atom!("padding"),
+	PaddingBottom: atom!("padding-bottom"),
+	PaddingLeft: atom!("padding-left"),
+	PaddingRight: atom!("padding-right"),
+	PaddingTop: atom!("padding-top"),
 
 	// https://drafts.csswg.org/css-break-3/#property-index
 	// ! box-decoration-break redefined in css-break-4
@@ -294,20 +307,20 @@ properties! {
 	// ! widows redefined in css-break-4
 
 	// https://drafts.csswg.org/css-break-4/#property-index
-	atom!("box-decoration-break") => BoxDecorationBreak<Expr<'a, BoxDecorationBreakValue>>,
-	atom!("break-after") => BreakAfter<Expr<'a, BreakValue>>,
-	atom!("break-before") => BreakBefore<Expr<'a, BreakValue>>,
-	atom!("break-inside") => BreakInside<Expr<'a, BreakInsideValue>>,
-	atom!("margin-break") => BreakMargin<Expr<'a, MarginBreakValue>>,
+	BoxDecorationBreak: atom!("box-decoration-break"),
+	BreakAfter: atom!("break-after"),
+	BreakBefore: atom!("break-before"),
+	BreakInside: atom!("break-inside"),
+	MarginBreak: atom!("margin-break"),
 	// For compatibility with CSS Level 2, UAs that conform to [CSS2] must alias the
 	// page-break-before, page-break-after, and page-break-inside properties to break-before,
 	// break-after, and break-inside by treating the page-break-* properties as legacy
 	// shorthands for the break-* properties with the following value mappings:
-	atom!("page-break-after") => PageBreakAfter<Expr<'a, BreakValue>>,
-	atom!("page-break-before") => PageBreakBefore<Expr<'a, BreakValue>>,
-	atom!("page-break-inside") => PageBreakInside<Expr<'a, BreakInsideValue>>,
-	atom!("orphans") => Orphans<Expr<'a, Todo>> inherits=true,
-	atom!("widows") => Widows<Expr<'a, Todo>> inherits=true,
+	PageBreakAfter: atom!("page-break-after"),
+	PageBreakBefore: atom!("page-break-before"),
+	PageBreakInside: atom!("page-break-inside"),
+	Orphans: atom!("orphans"),
+	Widows: atom!("widows"),
 
 	// https://drafts.csswg.org/css-cascade-3/#property-index
 	// ! all redefined in css-cascade-4
@@ -316,7 +329,7 @@ properties! {
 	// ! all redefined in css-cascade-5
 
 	// https://drafts.csswg.org/css-cascade-5/#property-index
-	atom!("all") => All<NoNonGlobalValuesAllowed>,
+	All: atom!("all"),
 
 	// https://drafts.csswg.org/css-cascade-6/#property-index
 	// <No properties>
@@ -326,8 +339,8 @@ properties! {
 	// ! opacity redefined in css-color-4
 
 	// https://drafts.csswg.org/css-color-4/#property-index
-	atom!("color") => Color<ColorValue<'a>> inherits=true,
-	atom!("opacity") => Opacity<Expr<'a, Todo>>,
+	Color: atom!("color"),
+	Opacity: atom!("opacity"),
 
 	// https://drafts.csswg.org/css-color-5/#property-index
 	// <No properties>
@@ -336,10 +349,10 @@ properties! {
 	// <No properties>
 
 	// https://drafts.csswg.org/css-color-adjust-1/#property-index
-	atom!("color-adjust") => ColorAdjust<Expr<'a, Todo>> shorthand=true,
-	atom!("color-scheme") => ColorScheme<Expr<'a, Todo>> inherits=true,
-	atom!("forced-color-adjust") => ForcedColorAdjust<Expr<'a, Todo>> inherits=true,
-	atom!("print-color-adjust") => PrintColorAdjust<Expr<'a, Todo>> inherits=true,
+	ColorAdjust: atom!("color-adjust"),
+	ColorScheme: atom!("color-scheme"),
+	ForcedColorAdjust: atom!("forced-color-adjust"),
+	PrintColorAdjust: atom!("print-color-adjust"),
 
 	// https://drafts.csswg.org/css-color-hdr/#property-index
 	// <No properties>
@@ -357,23 +370,23 @@ properties! {
 	// ! content-visibility redefined in css-contain-3
 
 	// https://drafts.csswg.org/css-contain-2/#property-index
-	atom!("contain") => Contain<Expr<'a, Todo>>,
+	Contain: atom!("contain"),
 	// ! content-visibility redefined in css-contain-3
 
 
 	// https://drafts.csswg.org/css-contain-3/#property-index
-	atom!("container") => Container<Expr<'a, Todo>> shorthand=true,
-	atom!("container-name") => ContainerName<Expr<'a, Todo>>,
-	atom!("container-type") => ContainerType<Expr<'a, Todo>>,
-	atom!("content-visibility") => ContentVisibility<Expr<'a, Todo>>,
+	Container: atom!("container"),
+	ContainerName: atom!("container-name"),
+	ContainerType: atom!("container-type"),
+	ContentVisibility: atom!("content-visibility"),
 
 	// https://drafts.csswg.org/css-content-3/#property-index
-	atom!("bookmark-label") => BookmarkLabel<Expr<'a, Todo>>,
-	atom!("bookmark-level") => BookmarkLevel<Expr<'a, Todo>>,
-	atom!("bookmark-state") => BookmarkState<Expr<'a, Todo>>,
-	atom!("content") => Content<ContentsValue<'a>>,
-	atom!("quotes") => Quotes<Expr<'a, QuotesValue<'a>>> inherits=true,
-	atom!("string-set") => StringSet<Expr<'a, Todo>> inherits=true,
+	BookmarkLabel: atom!("bookmark-label"),
+	BookmarkLevel: atom!("bookmark-level"),
+	BookmarkState: atom!("bookmark-state"),
+	Content: atom!("content"),
+	Quotes: atom!("quotes"),
+	StringSet: atom!("string-set"),
 
 	// https://drafts.csswg.org/css-counter-styles-3/#property-index
 	// <No properties>
@@ -384,11 +397,11 @@ properties! {
 	// ! visibility redefined in css-display-4
 
 	// https://drafts.csswg.org/css-display-4/#property-index
-	atom!("display") => Display<DisplayValue>,
-	atom!("layout-order") => LayoutOrder<Expr<'a, Todo>>,
-	atom!("order") => Order<Expr<'a, Todo>>,
-	atom!("reading-order") => ReadingOrder<Expr<'a, Todo>>,
-	atom!("visibility") => Visibility<VisibilityValue> inherits=true,
+	Display: atom!("display"),
+	LayoutOrder: atom!("layout-order"),
+	Order: atom!("order"),
+	ReadingOrder: atom!("reading-order"),
+	Visibility: atom!("visibility"),
 
 	// https://drafts.csswg.org/css-easing-1/#property-index
 	// <No properties>
@@ -403,8 +416,8 @@ properties! {
 	// <No properties>
 
 	// https://drafts.csswg.org/css-exclusions-1/#property-index
-	atom!("wrap-flow") => WrapFlow<Expr<'a, Todo>>,
-	atom!("wrap-through") => WrapThrough<Expr<'a, Todo>>,
+	WrapFlow: atom!("wrap-flow"),
+	WrapThrough: atom!("wrap-through"),
 
 	// https://drafts.csswg.org/css-extensions-1/#property-index
 	// <No properties>
@@ -413,13 +426,13 @@ properties! {
 	// ! align-content redefined in css-align-3
 	// ! align-items redefined in css-align-3
 	// ! align-self redefined in css-align-3
-	atom!("flex") => Flex<Expr<'a, Todo>> shorthand=true,
-	atom!("flex-basis") => FlexBasis<Expr<'a, Todo>>,
-	atom!("flex-direction") => FlexDirection<Expr<'a, Todo>>,
-	atom!("flex-flow") => FlexFlow<Expr<'a, Todo>> shorthand=true,
-	atom!("flex-grow") => FlexGrow<Expr<'a, Todo>>,
-	atom!("flex-shrink") => FlexShrink<Expr<'a, Todo>>,
-	atom!("flex-wrap") => FlexWrap<Expr<'a, Todo>>,
+	Flex: atom!("flex"),
+	FlexBasis: atom!("flex-basis"),
+	FlexDirection: atom!("flex-direction"),
+	FlexFlow: atom!("flex-flow"),
+	FlexGrow: atom!("flex-grow"),
+	FlexShrink: atom!("flex-shrink"),
+	FlexWrap: atom!("flex-wrap"),
 	// ! justify-content redefined in css-align-3
 
 	// https://drafts.csswg.org/css-font-loading-3/#property-index
@@ -444,46 +457,46 @@ properties! {
 	// ! font-weight redefined in css-fonts-4
 
 	// https://drafts.csswg.org/css-fonts-4/#property-index
-	atom!("font") => Font<Expr<'a, Todo>> shorthand=true inherits=true,
-	atom!("font-family") => FontFamily<ExprList<'a, FontFamilyValue>> inherits=true,
-	atom!("font-feature-settings") => FontFeatureSettings<Expr<'a, Todo>> inherits=true,
-	atom!("font-kerning") => FontKerning<Expr<'a, Todo>> inherits=true,
-	atom!("font-language-override") => FontLanguageOverride<Expr<'a, Todo>> inherits=true,
-	atom!("font-optical-sizing") => FontOpticalSizing<Expr<'a, Todo>> inherits=true,
-	atom!("font-palette") => FontPalette<Expr<'a, Todo>> inherits=true,
-	atom!("font-size") => FontSize<MathExpr<'a, FontSizeValue>> inherits=true,
+	Font: atom!("font"),
+	FontFamily: atom!("font-family"),
+	FontFeatureSettings: atom!("font-feature-settings"),
+	FontKerning: atom!("font-kerning"),
+	FontLanguageOverride: atom!("font-language-override"),
+	FontOpticalSizing: atom!("font-optical-sizing"),
+	FontPalette: atom!("font-palette"),
+	FontSize: atom!("font-size"),
 	// ! font-size-adjust redefined in css-fonts-5
-	atom!("font-stretch") => FontStretch<Expr<'a, Todo>> inherits=true,
-	atom!("font-style") => FontStyle<Expr<'a, FontStyleValue<'a>>> inherits=true,
-	atom!("font-synthesis") => FontSynthesis<Expr<'a, Todo>> inherits=true,
-	atom!("font-synthesis-small-caps") => FontSynthesisSmallCaps<Expr<'a, Todo>> inherits=true,
-	atom!("font-synthesis-style") => FontSynthesisStyle<Expr<'a, Todo>> inherits=true,
-	atom!("font-synthesis-weight") => FontSynthesisWeight<Expr<'a, Todo>> inherits=true,
-	atom!("font-variant") => FontVariant<Expr<'a, Todo>> inherits=true,
-	atom!("font-variant-alternates") => FontVariantAlternates<Expr<'a, Todo>> inherits=true,
-	atom!("font-variant-caps") => FontVariantCaps<Expr<'a, Todo>> inherits=true,
-	atom!("font-variant-east-asian") => FontVariantEastAsian<Expr<'a, Todo>> inherits=true,
-	atom!("font-variant-emoji") => FontVariantEmoji<Expr<'a, Todo>> inherits=true,
-	atom!("font-variant-ligatures") => FontVariantLigatures<Expr<'a, Todo>> inherits=true,
-	atom!("font-variant-numeric") => FontVariantNumeric<Expr<'a, Todo>> inherits=true,
-	atom!("font-variant-position") => FontVariantPosition<Expr<'a, Todo>> inherits=true,
-	atom!("font-variation-settings") => FontVariationSettings<Expr<'a, Todo>> inherits=true,
-	atom!("font-weight") => FontWeight<MathExpr<'a, FontWeightValue>> inherits=true,
+	FontStretch: atom!("font-stretch"),
+	FontStyle: atom!("font-style"),
+	FontSynthesis: atom!("font-synthesis"),
+	FontSynthesisSmallCaps: atom!("font-synthesis-small-caps"),
+	FontSynthesisStyle: atom!("font-synthesis-style"),
+	FontSynthesisWeight: atom!("font-synthesis-weight"),
+	FontVariant: atom!("font-variant"),
+	FontVariantAlternates: atom!("font-variant-alternates"),
+	FontVariantCaps: atom!("font-variant-caps"),
+	FontVariantEastAsian: atom!("font-variant-east-asian"),
+	FontVariantEmoji: atom!("font-variant-emoji"),
+	FontVariantLigatures: atom!("font-variant-ligatures"),
+	FontVariantNumeric: atom!("font-variant-numeric"),
+	FontVariantPosition: atom!("font-variant-position"),
+	FontVariationSettings: atom!("font-variation-settings"),
+	FontWeight: atom!("font-weight"),
 
 	// https://drafts.csswg.org/css-fonts-5/#property-index
-	atom!("font-size-adjust") => FontSizeAdjust<Expr<'a, Todo>> inherits=true,
+	FontSizeAdjust: atom!("font-size-adjust"),
 
 	// https://drafts.csswg.org/css-forms-1/#property-index
 	// <No properties>
 
 	// https://drafts.csswg.org/css-gcpm-3/#property-index
-	atom!("footnote-display") => FootnoteDisplay<Expr<'a, Todo>>,
-	atom!("footnote-policy") => FootnotePolicy<Expr<'a, Todo>>,
-	atom!("running") => Running<Expr<'a, Todo>>,
+	FootnoteDisplay: atom!("footnote-display"),
+	FootnotePolicy: atom!("footnote-policy"),
+	Running: atom!("running"),
 	// ! string-set redefined in css-content-3
 
 	// https://drafts.csswg.org/css-gcpm-4/#property-index
-	atom!("copy-into") => CopyInto<Expr<'a, Todo>>,
+	CopyInto: atom!("copy-into"),
 
 	// https://drafts.csswg.org/css-grid-1/#property-index
 	// ! grid redefined in css-grid-2
@@ -503,103 +516,103 @@ properties! {
 	// ! grid-template-rows redefined in css-grid-2
 
 	// https://drafts.csswg.org/css-grid-2/#property-index
-	atom!("grid") => Grid<Expr<'a, Todo>> shorthand=true,
-	atom!("grid-area") => GridArea<Expr<'a, Todo>> shorthand=true,
-	atom!("grid-auto-columns") => GridAutoColumns<Expr<'a, Todo>>,
-	atom!("grid-auto-flow") => GridAutoFlow<Expr<'a, Todo>>,
-	atom!("grid-auto-rows") => GridAutoRows<Expr<'a, Todo>>,
-	atom!("grid-column") => GridColumn<Expr<'a, Todo>> shorthand=true,
-	atom!("grid-column-end") => GridColumnEnd<Expr<'a, Todo>>,
-	atom!("grid-column-start") => GridColumnStart<Expr<'a, Todo>>,
-	atom!("grid-row") => GridRow<Expr<'a, Todo>> shorthand=true,
-	atom!("grid-row-end") => GridRowEnd<Expr<'a, Todo>>,
-	atom!("grid-row-start") => GridRowStart<Expr<'a, Todo>>,
-	atom!("grid-template") => GridTemplate<Expr<'a, Todo>> shorthand=true,
-	atom!("grid-template-areas") => GridTemplateAreas<Expr<'a, Todo>>,
-	atom!("grid-template-columns") => GridTemplateColumns<Expr<'a, Todo>>,
-	atom!("grid-template-rows") => GridTemplateRows<Expr<'a, Todo>>,
+	Grid: atom!("grid"),
+	GridArea: atom!("grid-area"),
+	GridAutoColumns: atom!("grid-auto-columns"),
+	GridAutoFlow: atom!("grid-auto-flow"),
+	GridAutoRows: atom!("grid-auto-rows"),
+	GridColumn: atom!("grid-column"),
+	GridColumnEnd: atom!("grid-column-end"),
+	GridColumnStart: atom!("grid-column-start"),
+	GridRow: atom!("grid-row"),
+	GridRowEnd: atom!("grid-row-end"),
+	GridRowStart: atom!("grid-row-start"),
+	GridTemplate: atom!("grid-template"),
+	GridTemplateAreas: atom!("grid-template-areas"),
+	GridTemplateColumns: atom!("grid-template-columns"),
+	GridTemplateRows: atom!("grid-template-rows"),
 
 	// https://drafts.csswg.org/css-grid-3/#property-index
-	atom!("align-tracks") => AlignTracks<Expr<'a, Todo>>,
-	atom!("justify-tracks") => JustifyTracks<Expr<'a, Todo>>,
-	atom!("masonry-auto-flow") => MasonryAutoFlow<Expr<'a, Todo>>,
+	AlignTracks: atom!("align-tracks"),
+	JustifyTracks: atom!("justify-tracks"),
+	MasonryAutoFlow: atom!("masonry-auto-flow"),
 
 	// https://drafts.csswg.org/css-images-3/#property-index
-	atom!("image-orientation") => ImageOrientation<Expr<'a, Todo>>,
-	atom!("image-rendering") => ImageRendering<Expr<'a, Todo>>,
+	ImageOrientation: atom!("image-orientation"),
+	ImageRendering: atom!("image-rendering"),
 	// ! object-fit redefined in css-images-4
-	atom!("object-position") => ObjectPosition<Expr<'a, Todo>>,
+	ObjectPosition: atom!("object-position"),
 
 	// https://drafts.csswg.org/css-images-4/#property-index
-	atom!("image-resolution") => ImageResolution<Expr<'a, Todo>>,
-	atom!("object-fit") => ObjectFit<Expr<'a, Todo>>,
+	ImageResolution: atom!("image-resolution"),
+	ObjectFit: atom!("object-fit"),
 
 	// https://drafts.csswg.org/css-images-5/#property-index
-	atom!("object-view-box") => ObjectViewBox<Expr<'a, Todo>>,
+	ObjectViewBox: atom!("object-view-box"),
 
 	// https://drafts.csswg.org/css-inline-3/#property-index
-	atom!("alignment-baseline") => AlignmentBaseline<Expr<'a, AlignmentBaselineValue>>,
-	atom!("baseline-source") => BaselineSource<Expr<'a, BaselineSourceValue>>,
-	atom!("baseline-shift") => BaselineShift<Expr<'a, BaselineShiftValue>>,
-	atom!("dominant-baseline") => DominantBaseline<DominantBaselineValue> inherits=true,
-	atom!("initial-letter") => InitialLetter<Expr<'a, Todo>>,
-	atom!("initial-letter-align") => InitialLetterAlign<Expr<'a, Todo>>,
-	atom!("initial-letter-wrap") => InitialLetterWrap<Expr<'a, Todo>> inherits=true,
-	atom!("inline-sizing") => InlineSizing<InlineSizingValue> inherits=true,
-	atom!("line-height") => LineHeight<MathExpr<'a, LineHeightValue>> inherits=true,
-	atom!("text-box-edge") => TextBoxEdge<Expr<'a, Todo>> inherits=true,
-	atom!("text-box-trim") => TextBoxTrim<Expr<'a, Todo>>,
-	atom!("vertical-align") => VerticalAlign<VerticalAlignShorthand<'a>> shorthand=true,
+	AlignmentBaseline: atom!("alignment-baseline"),
+	BaselineSource: atom!("baseline-source"),
+	BaselineShift: atom!("baseline-shift"),
+	DominantBaseline: atom!("dominant-baseline"),
+	InitialLetter: atom!("initial-letter"),
+	InitialLetterAlign: atom!("initial-letter-align"),
+	InitialLetterWrap: atom!("initial-letter-wrap"),
+	InlineSizing: atom!("inline-sizing"),
+	LineHeight: atom!("line-height"),
+	TextBoxEdge: atom!("text-box-edge"),
+	TextBoxTrim: atom!("text-box-trim"),
+	VerticalAlign: atom!("vertical-align"),
 
 	// https://drafts.csswg.org/css-line-grid-1/#property-index
-	atom!("box-snap") => BoxSnap<Expr<'a, Todo>>,
-	atom!("line-grid") => LineGrid<Expr<'a, Todo>>,
-	atom!("line-snap") => LineSnap<Expr<'a, Todo>>,
+	BoxSnap: atom!("box-snap"),
+	LineGrid: atom!("line-grid"),
+	LineSnap: atom!("line-snap"),
 
 	// https://drafts.csswg.org/css-link-params-1/#property-index
-	atom!("link-parameters") => LinkParameters<Expr<'a, Todo>>,
+	LinkParameters: atom!("link-parameters"),
 
 	// https://drafts.csswg.org/css-lists-3/#property-index
-	atom!("counter-increment") => CounterIncrement<Expr<'a, Todo>>,
-	atom!("counter-reset") => CounterReset<Expr<'a, Todo>>,
-	atom!("counter-set") => CounterSet<Expr<'a, Todo>>,
-	atom!("list-style") => ListStyle<ListStyleShorthand<'a>> shorthand=true,
-	atom!("list-style-image") => ListStyleImage<Expr<'a, ListStyleImageValue<'a>>> inherits=true,
-	atom!("list-style-position") => ListStylePosition<Expr<'a, ListStylePositionValue>> inherits=true,
-	atom!("list-style-type") => ListStyleType<Expr<'a, ListStyleTypeValue<'a>>> inherits=true,
-	atom!("marker-side") => MarkerSide<Expr<'a, Todo>> inherits=true,
+	CounterIncrement: atom!("counter-increment"),
+	CounterReset: atom!("counter-reset"),
+	CounterSet: atom!("counter-set"),
+	ListStyle: atom!("list-style"),
+	ListStyleImage: atom!("list-style-image"),
+	ListStylePosition: atom!("list-style-position"),
+	ListStyleType: atom!("list-style-type"),
+	MarkerSide: atom!("marker-side"),
 
 	// https://drafts.csswg.org/css-logical-1/#property-index
-	atom!("block-size") => BlockSize<Sizing>,
-	atom!("border-block") => BorderBlock<Expr<'a, Todo>> shorthand=true,
-	atom!("border-block-color") => BorderBlockColor<Expr<'a, Todo>> shorthand=true,
-	atom!("border-block-end") => BorderBlockEnd<Expr<'a, Todo>> shorthand=true,
-	atom!("border-block-end-color") => BorderBlockEndColor<ColorValue<'a>> initial=ColorValue::CurrentColor,
-	atom!("border-block-end-style") => BorderBlockEndStyle<LineStyle>,
-	atom!("border-block-end-width") => BorderBlockEndWidth<LineWidth>,
-	atom!("border-block-start") => BorderBlockStart<Expr<'a, Todo>> shorthand=true,
-	atom!("border-block-start-color") => BorderBlockStartColor<ColorValue<'a>> initial=ColorValue::CurrentColor,
-	atom!("border-block-start-style") => BorderBlockStartStyle<LineStyle>,
-	atom!("border-block-start-width") => BorderBlockStartWidth<LineWidth>,
-	atom!("border-block-style") => BorderBlockStyle<Expr<'a, Todo>> shorthand=true,
-	atom!("border-block-width") => BorderBlockWidth<Expr<'a, Todo>> shorthand=true,
-	atom!("border-end-end-radius") => BorderEndEndRadius<DoubleShorthand<'a, MathExpr<'a, PositiveLengthPercentage>>>,
-	atom!("border-end-start-radius") => BorderEndStartRadius<DoubleShorthand<'a, MathExpr<'a, PositiveLengthPercentage>>>,
-	atom!("border-inline") => BorderInline<Expr<'a, Todo>> shorthand=true,
-	atom!("border-inline-color") => BorderInlineColor<Expr<'a, Todo>> shorthand=true,
-	atom!("border-inline-end") => BorderInlineEnd<Expr<'a, Todo>> shorthand=true,
-	atom!("border-inline-end-color") => BorderInlineEndColor<ColorValue<'a>> initial=ColorValue::CurrentColor,
-	atom!("border-inline-end-style") => BorderInlineEndStyle<LineStyle>,
-	atom!("border-inline-end-width") => BorderInlineEndWidth<LineWidth>,
-	atom!("border-inline-start") => BorderInlineStart<Expr<'a, Todo>> shorthand=true,
-	atom!("border-inline-start-color") => BorderInlineStartColor<ColorValue<'a>> initial=ColorValue::CurrentColor,
-	atom!("border-inline-start-style") => BorderInlineStartStyle<LineStyle>,
-	atom!("border-inline-start-width") => BorderInlineStartWidth<LineWidth>,
-	atom!("border-inline-style") => BorderInlineStyle<Expr<'a, Todo>> shorthand=true,
-	atom!("border-inline-width") => BorderInlineWidth<Expr<'a, Todo>> shorthand=true,
-	atom!("border-start-end-radius") => BorderStartEndRadius<DoubleShorthand<'a, MathExpr<'a, PositiveLengthPercentage>>>,
-	atom!("border-start-start-radius") => BorderStartStartRadius<DoubleShorthand<'a, MathExpr<'a, PositiveLengthPercentage>>>,
-	atom!("inline-size") => InlineSize<Sizing> shorthand=true,
+	BlockSize: atom!("block-size"),
+	BorderBlock: atom!("border-block"),
+	BorderBlockColor: atom!("border-block-color"),
+	BorderBlockEnd: atom!("border-block-end"),
+	BorderBlockEndColor: atom!("border-block-end-color"),
+	BorderBlockEndStyle: atom!("border-block-end-style"),
+	BorderBlockEndWidth: atom!("border-block-end-width"),
+	BorderBlockStart: atom!("border-block-start"),
+	BorderBlockStartColor: atom!("border-block-start-color"),
+	BorderBlockStartStyle: atom!("border-block-start-style"),
+	BorderBlockStartWidth: atom!("border-block-start-width"),
+	BorderBlockStyle: atom!("border-block-style"),
+	BorderBlockWidth: atom!("border-block-width"),
+	BorderEndEndRadius: atom!("border-end-end-radius"),
+	BorderEndStartRadius: atom!("border-end-start-radius"),
+	BorderInline: atom!("border-inline"),
+	BorderInlineColor: atom!("border-inline-color"),
+	BorderInlineEnd: atom!("border-inline-end"),
+	BorderInlineEndColor: atom!("border-inline-end-color"),
+	BorderInlineEndStyle: atom!("border-inline-end-style"),
+	BorderInlineEndWidth: atom!("border-inline-end-width"),
+	BorderInlineStart: atom!("border-inline-start"),
+	BorderInlineStartColor: atom!("border-inline-start-color"),
+	BorderInlineStartStyle: atom!("border-inline-start-style"),
+	BorderInlineStartWidth: atom!("border-inline-start-width"),
+	BorderInlineStyle: atom!("border-inline-style"),
+	BorderInlineWidth: atom!("border-inline-width"),
+	BorderStartEndRadius: atom!("border-start-end-radius"),
+	BorderStartStartRadius: atom!("border-start-start-radius"),
+	InlineSize: atom!("inline-size"),
 	// ! inset redefined in css-position-3
 	// ! inset-block redefined in css-position-3
 	// ! inset-inline redefined in css-position-3
@@ -607,118 +620,118 @@ properties! {
 	// ! inset-inline redefined in css-position-3
 	// ! inset-inline-end redefined in css-position-3
 	// ! inset-inline-start redefined in css-position-3
-	atom!("margin-block") => MarginBlock<Expr<'a, Todo>> shorthand=true,
-	atom!("margin-block-end") => MarginBlockEnd<LengthPercentageOrAuto>,
-	atom!("margin-block-start") => MarginBlockStart<LengthPercentageOrAuto>,
-	atom!("margin-inline") => MarginInline<Expr<'a, Todo>> shorthand=true,
-	atom!("margin-inline-end") => MarginInlineEnd<LengthPercentageOrAuto>,
-	atom!("margin-inline-start") => MarginInlineStart<LengthPercentageOrAuto>,
-	atom!("max-block-size") => MaxBlockSize<Sizing>,
-	atom!("max-inline-size") => MaxInlineSize<Sizing>,
-	atom!("min-block-size") => MinBlockSize<Sizing>,
-	atom!("min-inline-size") => MinInlineSize<Sizing>,
-	atom!("padding-block") => PaddingBlock<Expr<'a, Todo>> shorthand=true,
-	atom!("padding-block-end") => PaddingBlockEnd<LengthPercentage>,
-	atom!("padding-block-start") => PaddingBlockStart<LengthPercentage>,
-	atom!("padding-inline") => PaddingInline<Expr<'a, Todo>> shorthand=true,
-	atom!("padding-inline-end") => PaddingInlineEnd<LengthPercentage>,
-	atom!("padding-inline-start") => PaddingInlineStart<LengthPercentage>,
+	MarginBlock: atom!("margin-block"),
+	MarginBlockEnd: atom!("margin-block-end"),
+	MarginBlockStart: atom!("margin-block-start"),
+	MarginInline: atom!("margin-inline"),
+	MarginInlineEnd: atom!("margin-inline-end"),
+	MarginInlineStart: atom!("margin-inline-start"),
+	MaxBlockSize: atom!("max-block-size"),
+	MaxInlineSize: atom!("max-inline-size"),
+	MinBlockSize: atom!("min-block-size"),
+	MinInlineSize: atom!("min-inline-size"),
+	PaddingBlock: atom!("padding-block"),
+	PaddingBlockEnd: atom!("padding-block-end"),
+	PaddingBlockStart: atom!("padding-block-start"),
+	PaddingInline: atom!("padding-inline"),
+	PaddingInlineEnd: atom!("padding-inline-end"),
+	PaddingInlineStart: atom!("padding-inline-start"),
 
 	// https://drafts.csswg.org/css-mobile/#property-index
 	// <No properties>
 
 	// https://drafts.csswg.org/css-multicol-1/#property-index
-	atom!("column-count") => ColumnCount<Expr<'a, Todo>>,
-	atom!("column-fill") => ColumnFill<Expr<'a, Todo>>,
-	atom!("column-rule") => ColumnRule<Expr<'a, Todo>> shorthand=true,
-	atom!("column-rule-color") => ColumnRuleColor<ColorValue<'a>> initial=ColorValue::CurrentColor,
-	atom!("column-rule-style") => ColumnRuleStyle<LineStyle>,
-	atom!("column-rule-width") => ColumnRuleWidth<LineWidth>,
+	ColumnCount: atom!("column-count"),
+	ColumnFill: atom!("column-fill"),
+	ColumnRule: atom!("column-rule"),
+	ColumnRuleColor: atom!("column-rule-color"),
+	ColumnRuleStyle: atom!("column-rule-style"),
+	ColumnRuleWidth: atom!("column-rule-width"),
 	// ! column-span redined in css-multicol-2
-	atom!("column-width") => ColumnWidth<Expr<'a, Todo>>,
-	atom!("columns") => Columns<Expr<'a, Todo>> shorthand=true,
+	ColumnWidth: atom!("column-width"),
+	Columns: atom!("columns"),
 
 	// https://drafts.csswg.org/css-multicol-2/#property-index
-	atom!("column-span") => ColumnSpan<Expr<'a, Todo>>,
+	ColumnSpan: atom!("column-span"),
 
 	// https://drafts.csswg.org/css-namespaces-3/#property-index
 	// <No properties>
 
 	// https://drafts.csswg.org/css-nav-1/#property-index
-	atom!("spatial-navigation-action") => SpatialNavigationAction<Expr<'a, Todo>>,
-	atom!("spatial-navigation-contain") => SpatialNavigationContain<Expr<'a, Todo>>,
-	atom!("spatial-navigation-function") => SpatialNavigationFunction<Expr<'a, Todo>>,
+	SpatialNavigationAction: atom!("spatial-navigation-action"),
+	SpatialNavigationContain: atom!("spatial-navigation-contain"),
+	SpatialNavigationFunction: atom!("spatial-navigation-function"),
 
 	// https://drafts.csswg.org/css-nesting-1/#property-index
 	// <No properties>
 
 	// https://drafts.csswg.org/css-overflow-3/#property-index
-	atom!("overflow") => Overflow<XYShorthand<'a, Expr<'a, OverflowKeyword>>> shorthand=true,
-	atom!("overflow-block") => OverflowBlock<Expr<'a, OverflowKeyword>>,
+	Overflow: atom!("overflow"),
+	OverflowBlock: atom!("overflow-block"),
 	// ! overflow-clip-margin redined in css-overflow-4
-	atom!("overflow-inline") => OverflowInline<Expr<'a, OverflowKeyword>>,
-	atom!("overflow-x") => OverflowX<Expr<'a, OverflowKeyword>>,
-	atom!("overflow-y") => OverflowY<Expr<'a, OverflowKeyword>>,
-	atom!("scroll-behavior") => ScrollBehavior<Expr<'a, Todo>>,
-	atom!("scrollbar-gutter") => ScrollbarGutter<Expr<'a, Todo>>,
+	OverflowInline: atom!("overflow-inline"),
+	OverflowX: atom!("overflow-x"),
+	OverflowY: atom!("overflow-y"),
+	ScrollBehavior: atom!("scroll-behavior"),
+	ScrollbarGutter: atom!("scrollbar-gutter"),
 	// ! text-overflow redined in css-overflow-4
 
 	// https://drafts.csswg.org/css-overflow-4/#property-index
 	// (Yes this is really in the spec as -webkit-line-clamp)
-	atom!("-webkit-line-clamp") => WebkitLineClamp<Expr<'a, Todo>> shorthand=true,
-	atom!("block-ellipsis") => BlockEllipsis<Expr<'a, Todo>> inherits=true,
-	atom!("continue") => Continue<Expr<'a, Todo>>,
-	atom!("line-clamp") => LineClamp<Expr<'a, Todo>> shorthand=true,
-	atom!("max-lines") => MaxLines<Expr<'a, Todo>>,
-	atom!("overflow-clip-margin") => OverflowClipMargin<Expr<'a, Todo>>,
-	atom!("overflow-clip-margin-block") => OverflowClipMarginBlock<Expr<'a, Todo>>,
-	atom!("overflow-clip-margin-block-end") => OverflowClipMarginBlockEnd<Expr<'a, Todo>>,
-	atom!("overflow-clip-margin-block-start") => OverflowClipMarginBlockStart<Expr<'a, Todo>>,
-	atom!("overflow-clip-margin-bottom") => OverflowClipMarginBottom<Expr<'a, Todo>>,
-	atom!("overflow-clip-margin-inline") => OverflowClipMarginInline<Expr<'a, Todo>>,
-	atom!("overflow-clip-margin-inline-end") => OverflowClipMarginInlineEnd<Expr<'a, Todo>>,
-	atom!("overflow-clip-margin-inline-start") => OverflowClipMarginInlineStart<Expr<'a, Todo>>,
-	atom!("overflow-clip-margin-left") => OverflowClipMarginLeft<Expr<'a, Todo>>,
-	atom!("overflow-clip-margin-right") => OverflowClipMarginRight<Expr<'a, Todo>>,
-	atom!("overflow-clip-margin-top") => OverflowClipMarginTop<Expr<'a, Todo>>,
-	atom!("text-overflow") => TextOverflow<Expr<'a, Todo>>,
+	WebkitLineClamp: atom!("-webkit-line-clamp"),
+	BlockEllipsis: atom!("block-ellipsis"),
+	Continue: atom!("continue"),
+	LineClamp: atom!("line-clamp"),
+	MaxLines: atom!("max-lines"),
+	OverflowClipMargin: atom!("overflow-clip-margin"),
+	OverflowClipMarginBlock: atom!("overflow-clip-margin-block"),
+	OverflowClipMarginBlockEnd: atom!("overflow-clip-margin-block-end"),
+	OverflowClipMarginBlockStart: atom!("overflow-clip-margin-block-start"),
+	OverflowClipMarginBottom: atom!("overflow-clip-margin-bottom"),
+	OverflowClipMarginInline: atom!("overflow-clip-margin-inline"),
+	OverflowClipMarginInlineEnd: atom!("overflow-clip-margin-inline-end"),
+	OverflowClipMarginInlineStart: atom!("overflow-clip-margin-inline-start"),
+	OverflowClipMarginLeft: atom!("overflow-clip-margin-left"),
+	OverflowClipMarginRight: atom!("overflow-clip-margin-right"),
+	OverflowClipMarginTop: atom!("overflow-clip-margin-top"),
+	TextOverflow: atom!("text-overflow"),
 
 	// https://drafts.csswg.org/css-overscroll-1/#property-index
-	atom!("overscroll-behavior") => OverscrollBehavior<Expr<'a, Todo>> shorthand=true,
-	atom!("overscroll-behavior-block") => OverscrollBehaviorBlock<Expr<'a, Todo>>,
-	atom!("overscroll-behavior-inline") => OverscrollBehaviorInline<Expr<'a, Todo>>,
-	atom!("overscroll-behavior-x") => OverscrollBehaviorX<Expr<'a, Todo>>,
-	atom!("overscroll-behavior-y") => OverscrollBehaviorY<Expr<'a, Todo>>,
+	OverscrollBehavior: atom!("overscroll-behavior"),
+	OverscrollBehaviorBlock: atom!("overscroll-behavior-block"),
+	OverscrollBehaviorInline: atom!("overscroll-behavior-inline"),
+	OverscrollBehaviorX: atom!("overscroll-behavior-x"),
+	OverscrollBehaviorY: atom!("overscroll-behavior-y"),
 
 	// https://drafts.csswg.org/css-page-3/#property-index
-	atom!("page") => Page<Expr<'a, Todo>>,
+	Page: atom!("page"),
 
 	// https://drafts.csswg.org/css-page-4/#property-index
 	// <No properties>
 
 	// https://drafts.csswg.org/css-page-floats-3/#property-index
-	atom!("clear") => Clear<ClearValue>,
-	atom!("float") => Float<FloatValue>,
-	atom!("float-defer") => FloatDefer<FloatDeferValue>,
-	atom!("float-offset") => FloatOffset<LengthPercentage>,
-	atom!("float-reference") => FloatReference<FloatReferenceValue>,
+	Clear: atom!("clear"),
+	Float: atom!("float"),
+	FloatDefer: atom!("float-defer"),
+	FloatOffset: atom!("float-offset"),
+	FloatReference: atom!("float-reference"),
 
 	// https://drafts.csswg.org/css-page-template-1/#property-index
 	// <No properties>
 
 	// https://drafts.csswg.org/css-position-3/#property-index
-	atom!("bottom") => Bottom<MathExpr<'a, LengthPercentageOrAuto>> initial=MathExpr::Literal(Spanned::dummy(LengthPercentageOrAuto::Auto)),
-	atom!("inset") => Inset<BoxShorthand<'a, MathExpr<'a, LengthPercentageOrAuto>>> shorthand=true,
-	atom!("inset-block") => InsetBlock<DoubleShorthand<'a, MathExpr<'a, LengthPercentageOrAuto>>> shorthand=true,
-	atom!("inset-block-end") => InsetBlockEnd<MathExpr<'a, LengthPercentageOrAuto>> initial=MathExpr::Literal(Spanned::dummy(LengthPercentageOrAuto::Auto)),
-	atom!("inset-block-start") => InsetBlockStart<MathExpr<'a, LengthPercentageOrAuto>> initial=MathExpr::Literal(Spanned::dummy(LengthPercentageOrAuto::Auto)),
-	atom!("inset-inline") => InsetInline<DoubleShorthand<'a, MathExpr<'a, LengthPercentageOrAuto>>> shorthand=true,
-	atom!("inset-inline-end") => InsetInlineEnd<MathExpr<'a, LengthPercentageOrAuto>> initial=MathExpr::Literal(Spanned::dummy(LengthPercentageOrAuto::Auto)),
-	atom!("inset-inline-start") => InsetInlineStart<MathExpr<'a, LengthPercentageOrAuto>> initial=MathExpr::Literal(Spanned::dummy(LengthPercentageOrAuto::Auto)),
-	atom!("left") => Left<MathExpr<'a, LengthPercentageOrAuto>> initial=MathExpr::Literal(Spanned::dummy(LengthPercentageOrAuto::Auto)),
-	atom!("position") => Position<Expr<'a, PositionValue>>,
-	atom!("right") => Right<MathExpr<'a, LengthPercentageOrAuto>> initial=MathExpr::Literal(Spanned::dummy(LengthPercentageOrAuto::Auto)),
-	atom!("top") => Top<MathExpr<'a, LengthPercentageOrAuto>> initial=MathExpr::Literal(Spanned::dummy(LengthPercentageOrAuto::Auto)),
+	Bottom: atom!("bottom"),
+	Inset: atom!("inset"),
+	InsetBlock: atom!("inset-block"),
+	InsetBlockEnd: atom!("inset-block-end"),
+	InsetBlockStart: atom!("inset-block-start"),
+	InsetInline: atom!("inset-inline"),
+	InsetInlineEnd: atom!("inset-inline-end"),
+	InsetInlineStart: atom!("inset-inline-start"),
+	Left: atom!("left"),
+	Position: atom!("position"),
+	Right: atom!("right"),
+	Top: atom!("top"),
 
 	// https://drafts.csswg.org/css-preslev-1/#property-index
 	// <No properties>
@@ -730,130 +743,130 @@ properties! {
 	// <No properties>
 
 	// https://drafts.csswg.org/css-regions-1/#property-index
-	atom!("flow-from") => FlowFrom<Expr<'a, Todo>>,
-	atom!("flow-into") => FlowInto<Expr<'a, Todo>>,
-	atom!("region-fragment") => RegionFragment<Expr<'a, Todo>>,
+	FlowFrom: atom!("flow-from"),
+	FlowInto: atom!("flow-into"),
+	RegionFragment: atom!("region-fragment"),
 
 	// https://drafts.csswg.org/css-rhythm-1/#property-index
-	atom!("block-step") => BlockStep<Expr<'a, Todo>> shorthand=true,
-	atom!("block-step-align") => BlockStepAlign<Expr<'a, Todo>>,
-	atom!("block-step-insert") => BlockStepInsert<Expr<'a, Todo>>,
-	atom!("block-step-round") => BlockStepRound<Expr<'a, Todo>>,
-	atom!("block-step-size") => BlockStepSize<Expr<'a, Todo>>,
-	atom!("line-height-step") => LineHeightStep<Expr<'a, Todo>>,
+	BlockStep: atom!("block-step"),
+	BlockStepAlign: atom!("block-step-align"),
+	BlockStepInsert: atom!("block-step-insert"),
+	BlockStepRound: atom!("block-step-round"),
+	BlockStepSize: atom!("block-step-size"),
+	LineHeightStep: atom!("line-height-step"),
 
 	// https://drafts.csswg.org/css-round-display-1/#property-index
-	atom!("border-boundary") => BorderBoundary<Expr<'a, Todo>>,
-	atom!("shape-inside") => ShapeInside<Expr<'a, Todo>>,
+	BorderBoundary: atom!("border-boundary"),
+	ShapeInside: atom!("shape-inside"),
 
 	// https://drafts.csswg.org/css-ruby-1/#property-index
-	atom!("ruby-align") => RubyAlign<Expr<'a, Todo>>,
-	atom!("ruby-merge") => RubyMerge<Expr<'a, Todo>>,
-	atom!("ruby-overhang") => RubyOverhang<Expr<'a, Todo>>,
-	atom!("ruby-position") => RubyPosition<Expr<'a, Todo>>,
+	RubyAlign: atom!("ruby-align"),
+	RubyMerge: atom!("ruby-merge"),
+	RubyOverhang: atom!("ruby-overhang"),
+	RubyPosition: atom!("ruby-position"),
 
 	// https://drafts.csswg.org/css-scoping-1/#property-index
 	// <No properties>
 
 	// https://drafts.csswg.org/css-scroll-anchoring-1/#property-index
-	atom!("overflow-anchor") => OverflowAnchor<Expr<'a, Todo>>,
+	OverflowAnchor: atom!("overflow-anchor"),
 
 	// https://drafts.csswg.org/css-scroll-snap-1/#property-index
-	atom!("scroll-margin") => ScrollMargin<Expr<'a, Todo>> shorthand=true,
-	atom!("scroll-margin-block") => ScrollMarginBlock<Expr<'a, Todo>> shorthand=true,
-	atom!("scroll-margin-block-end") => ScrollMarginBlockEnd<Length>,
-	atom!("scroll-margin-block-start") => ScrollMarginBlockStart<Length>,
-	atom!("scroll-margin-bottom") => ScrollMarginBottom<Length>,
-	atom!("scroll-margin-inline") => ScrollMarginInline<Expr<'a, Todo>> shorthand=true,
-	atom!("scroll-margin-inline-end") => ScrollMarginInlineEnd<Length>,
-	atom!("scroll-margin-inline-start") => ScrollMarginInlineStart<Length>,
-	atom!("scroll-margin-left") => ScrollMarginLeft<Length>,
-	atom!("scroll-margin-right") => ScrollMarginRight<Length>,
-	atom!("scroll-margin-top") => ScrollMarginTop<Length>,
-	atom!("scroll-padding") => ScrollPadding<Expr<'a, Todo>> shorthand=true,
-	atom!("scroll-padding-block") => ScrollPaddingBlock<Expr<'a, Todo>> shorthand=true,
-	atom!("scroll-padding-block-end") => ScrollPaddingBlockEnd<LengthPercentageOrAuto> initial=LengthPercentageOrAuto::Auto,
-	atom!("scroll-padding-block-start") => ScrollPaddingBlockStart<LengthPercentageOrAuto> initial=LengthPercentageOrAuto::Auto,
-	atom!("scroll-padding-bottom") => ScrollPaddingBottom<LengthPercentageOrAuto> initial=LengthPercentageOrAuto::Auto,
-	atom!("scroll-padding-inline") => ScrollPaddingInline<Expr<'a, Todo>> shorthand=true,
-	atom!("scroll-padding-inline-end") => ScrollPaddingInlineEnd<LengthPercentageOrAuto> initial=LengthPercentageOrAuto::Auto,
-	atom!("scroll-padding-inline-start") => ScrollPaddingInlineStart<LengthPercentageOrAuto> initial=LengthPercentageOrAuto::Auto,
-	atom!("scroll-padding-left") => ScrollPaddingLeft<LengthPercentageOrAuto> initial=LengthPercentageOrAuto::Auto,
-	atom!("scroll-padding-right") => ScrollPaddingRight<LengthPercentageOrAuto> initial=LengthPercentageOrAuto::Auto,
-	atom!("scroll-padding-top") => ScrollPaddingTop<LengthPercentageOrAuto> initial=LengthPercentageOrAuto::Auto,
-	atom!("scroll-snap-align") => ScrollSnapAlign<Expr<'a, Todo>>,
-	atom!("scroll-snap-stop") => ScrollSnapStop<Expr<'a, Todo>>,
-	atom!("scroll-snap-type") => ScrollSnapType<Expr<'a, Todo>>,
+	ScrollMargin: atom!("scroll-margin"),
+	ScrollMarginBlock: atom!("scroll-margin-block"),
+	ScrollMarginBlockEnd: atom!("scroll-margin-block-end"),
+	ScrollMarginBlockStart: atom!("scroll-margin-block-start"),
+	ScrollMarginBottom: atom!("scroll-margin-bottom"),
+	ScrollMarginInline: atom!("scroll-margin-inline"),
+	ScrollMarginInlineEnd: atom!("scroll-margin-inline-end"),
+	ScrollMarginInlineStart: atom!("scroll-margin-inline-start"),
+	ScrollMarginLeft: atom!("scroll-margin-left"),
+	ScrollMarginRight: atom!("scroll-margin-right"),
+	ScrollMarginTop: atom!("scroll-margin-top"),
+	ScrollPadding: atom!("scroll-padding"),
+	ScrollPaddingBlock: atom!("scroll-padding-block"),
+	ScrollPaddingBlockEnd: atom!("scroll-padding-block-end"),
+	ScrollPaddingBlockStart: atom!("scroll-padding-block-start"),
+	ScrollPaddingBottom: atom!("scroll-padding-bottom"),
+	ScrollPaddingInline: atom!("scroll-padding-inline"),
+	ScrollPaddingInlineEnd: atom!("scroll-padding-inline-end"),
+	ScrollPaddingInlineStart: atom!("scroll-padding-inline-start"),
+	ScrollPaddingLeft: atom!("scroll-padding-left"),
+	ScrollPaddingRight: atom!("scroll-padding-right"),
+	ScrollPaddingTop: atom!("scroll-padding-top"),
+	ScrollSnapAlign: atom!("scroll-snap-align"),
+	ScrollSnapStop: atom!("scroll-snap-stop"),
+	ScrollSnapType: atom!("scroll-snap-type"),
 
 	// https://drafts.csswg.org/css-scroll-snap-2/#property-index
-	atom!("scroll-start") => ScrollStart<Expr<'a, Todo>>,
-	atom!("scroll-start-block") => ScrollStartBlock<Expr<'a, Todo>>,
-	atom!("scroll-start-inline") => ScrollStartInline<Expr<'a, Todo>>,
-	atom!("scroll-start-target") => ScrollStartTarget<Expr<'a, Todo>>,
-	atom!("scroll-start-target-block") => ScrollStartTargetBlock<Expr<'a, Todo>>,
-	atom!("scroll-start-target-inline") => ScrollStartTargetInline<Expr<'a, Todo>>,
-	atom!("scroll-start-target-x") => ScrollStartTargetX<Expr<'a, Todo>>,
-	atom!("scroll-start-target-y") => ScrollStartTargetY<Expr<'a, Todo>>,
-	atom!("scroll-start-x") => ScrollStartX<Expr<'a, Todo>>,
-	atom!("scroll-start-y") => ScrollStartY<Expr<'a, Todo>>,
+	ScrollStart: atom!("scroll-start"),
+	ScrollStartBlock: atom!("scroll-start-block"),
+	ScrollStartInline: atom!("scroll-start-inline"),
+	ScrollStartTarget: atom!("scroll-start-target"),
+	ScrollStartTargetBlock: atom!("scroll-start-target-block"),
+	ScrollStartTargetInline: atom!("scroll-start-target-inline"),
+	ScrollStartTargetX: atom!("scroll-start-target-x"),
+	ScrollStartTargetY: atom!("scroll-start-target-y"),
+	ScrollStartX: atom!("scroll-start-x"),
+	ScrollStartY: atom!("scroll-start-y"),
 
 	// https://drafts.csswg.org/css-scrollbars-1/#property-index
-	atom!("scrollbar-color") => ScrollbarColor<Expr<'a, Todo>>,
-	atom!("scrollbar-width") => ScrollbarWidth<Expr<'a, Todo>>,
+	ScrollbarColor: atom!("scrollbar-color"),
+	ScrollbarWidth: atom!("scrollbar-width"),
 
 	// https://drafts.csswg.org/css-shadow-parts-1/#property-index
 	// <No properties>
 
 	// https://drafts.csswg.org/css-shapes-1/#property-index
-	atom!("shape-image-threshold") => ShapeImageThreshold<Expr<'a, Todo>>,
-	atom!("shape-margin") => ShapeMargin<Expr<'a, Todo>>,
-	atom!("shape-outside") => ShapeOutside<Expr<'a, Todo>>,
+	ShapeImageThreshold: atom!("shape-image-threshold"),
+	ShapeMargin: atom!("shape-margin"),
+	ShapeOutside: atom!("shape-outside"),
 
 	// https://drafts.csswg.org/css-shapes-2/#property-index
 	// ! shape-inside is redefined in css-round-display-1
-	atom!("shape-padding") => ShapePadding<Expr<'a, Todo>>,
+	ShapePadding: atom!("shape-padding"),
 
 	// https://drafts.csswg.org/css-size-adjust-1/#property-index
-	atom!("text-size-adust") => TextSizeAdjust<MathExpr<'a, TextSizeAdjustValue>>,
+	TextSizeAdjust: atom!("text-size-adust"),
 
 	// https://drafts.csswg.org/css-sizing-3/#property-index
-	atom!("box-sizing") => BoxSizing<Expr<'a, BoxSizingValue>>,
-	atom!("height") => Height<MathExpr<'a, Sizing>>,
-	atom!("max-height") => MaxHeight<MathExpr<'a, MaxSizing>>,
-	atom!("max-width") => MaxWidth<MathExpr<'a, MaxSizing>>,
-	atom!("min-height") => MinHeight<MathExpr<'a, Sizing>>,
-	atom!("min-width") => MinWidth<MathExpr<'a, Sizing>>,
-	atom!("width") => Width<MathExpr<'a, Sizing>>,
+	BoxSizing: atom!("box-sizing"),
+	Height: atom!("height"),
+	MaxHeight: atom!("max-height"),
+	MaxWidth: atom!("max-width"),
+	MinHeight: atom!("min-height"),
+	MinWidth: atom!("min-width"),
+	Width: atom!("width"),
 
 	// https://drafts.csswg.org/css-sizing-4/#property-index
-	atom!("aspect-ratio") => AspecRatio<RatioOrAuto>,
-	atom!("contain-intrinsic-block-size") => ContainIntrinsicBlockSize<MathExpr<'a, Length>>,
-	atom!("contain-intrinsic-height") => ContainIntrinsicHeight<MathExpr<'a, Length>>,
-	atom!("contain-intrinsic-inline-size") => ContainIntrinsicInlineSize<MathExpr<'a, Length>>,
-	atom!("contain-intrinsic-size") => ContainIntrinsicSize<MathExpr<'a, Length>>,
-	atom!("contain-intrinsic-width") => ContainIntrinsicWidth<MathExpr<'a, Length>>,
-	atom!("min-intrinsic-sizing") => MinIntrinsicSizing<Expr<'a, MinIntrinsicSizingValue>>,
+	AspecRatio: atom!("aspect-ratio"),
+	ContainIntrinsicBlockSize: atom!("contain-intrinsic-block-size"),
+	ContainIntrinsicHeight: atom!("contain-intrinsic-height"),
+	ContainIntrinsicInlineSize: atom!("contain-intrinsic-inline-size"),
+	ContainIntrinsicSize: atom!("contain-intrinsic-size"),
+	ContainIntrinsicWidth: atom!("contain-intrinsic-width"),
+	MinIntrinsicSizing: atom!("min-intrinsic-sizing"),
 
 	// https://drafts.csswg.org/css-speech-1/#property-index
-	atom!("cue") => Cue<Expr<'a, Todo>>,
-	atom!("cue-after") => CueAfter<Expr<'a, Todo>>,
-	atom!("cue-before") => CueBefore<Expr<'a, Todo>>,
-	atom!("pause") => Pause<Expr<'a, Todo>>,
-	atom!("pause-after") => PauseAfter<Expr<'a, Todo>>,
-	atom!("pause-before") => PauseBefore<Expr<'a, Todo>>,
-	atom!("rest") => Rest<Expr<'a, Todo>>,
-	atom!("rest-after") => RestAfter<Expr<'a, Todo>>,
-	atom!("rest-before") => RestBefore<Expr<'a, Todo>>,
-	atom!("speak") => Speak<Expr<'a, Todo>>,
-	atom!("speak-as") => SpeakAs<Expr<'a, Todo>>,
-	atom!("voice-balance") => VoiceBalance<Expr<'a, Todo>>,
-	atom!("voice-duration") => VoiceDuration<Expr<'a, Todo>>,
-	atom!("voice-family") => VoiceFamily<Expr<'a, Todo>>,
-	atom!("voice-pitch") => VoicePitch<Expr<'a, Todo>>,
-	atom!("voice-range") => VoiceRange<Expr<'a, Todo>>,
-	atom!("voice-rate") => VoiceRate<Expr<'a, Todo>>,
-	atom!("voice-stress") => VoiceStress<Expr<'a, Todo>>,
-	atom!("voice-volume") => VoiceVolume<Expr<'a, Todo>>,
+	Cue: atom!("cue"),
+	CueAfter: atom!("cue-after"),
+	CueBefore: atom!("cue-before"),
+	Pause: atom!("pause"),
+	PauseAfter: atom!("pause-after"),
+	PauseBefore: atom!("pause-before"),
+	Rest: atom!("rest"),
+	RestAfter: atom!("rest-after"),
+	RestBefore: atom!("rest-before"),
+	Speak: atom!("speak"),
+	SpeakAs: atom!("speak-as"),
+	VoiceBalance: atom!("voice-balance"),
+	VoiceDuration: atom!("voice-duration"),
+	VoiceFamily: atom!("voice-family"),
+	VoicePitch: atom!("voice-pitch"),
+	VoiceRange: atom!("voice-range"),
+	VoiceRate: atom!("voice-rate"),
+	VoiceStress: atom!("voice-stress"),
+	VoiceVolume: atom!("voice-volume"),
 
 	// https://drafts.csswg.org/css-style-attr-1/#property-index
 	// <No properties>
@@ -862,11 +875,11 @@ properties! {
 	// <No properties>
 
 	// https://drafts.csswg.org/css-tables-3/#property-index
-	atom!("border-collapse") => BorderCollapse<Expr<'a, BorderCollapseValue>>,
-	atom!("border-spacing") => BorderSpacing<DoubleShorthand<'a, MathExpr<'a, PositiveLength>>>,
-	atom!("caption-side") => CaptionSide<Expr<'a, CaptionSideValue>>,
-	atom!("empty-cells") => EmptyCells<Expr<'a, EmptyCellsValue>>,
-	atom!("table-layout") => TableLayout<Expr<'a, TableLayoutValue>>,
+	BorderCollapse: atom!("border-collapse"),
+	BorderSpacing: atom!("border-spacing"),
+	CaptionSide: atom!("caption-side"),
+	EmptyCells: atom!("empty-cells"),
+	TableLayout: atom!("table-layout"),
 
 	// https://drafts.csswg.org/css-template-1/#property-index
 	// TODO: Is this even a thing?
@@ -891,40 +904,40 @@ properties! {
 	// ! word-wrap redefined in css-text-4
 
 	// https://drafts.csswg.org/css-text-4/#property-index
-	atom!("hanging-punctuation") => HangingPunctuation<Expr<'a, Todo>> inherits=true,
-	atom!("hyphenate-character") => HyphenateCharacter<Expr<'a, Todo>> inherits=true,
-	atom!("hyphenate-limit-chars") => HyphenateLimitChars<Expr<'a, Todo>> inherits=true,
-	atom!("hyphenate-limit-last") => HyphenateLimitLast<Expr<'a, Todo>> inherits=true,
-	atom!("hyphenate-limit-lines") => HyphenateLimitLines<Expr<'a, Todo>> inherits=true,
-	atom!("hyphenate-limit-zone") => HyphenateLimitZone<Expr<'a, Todo>> inherits=true,
-	atom!("hyphens") => Hyphens<Expr<'a, Todo>> inherits=true,
-	atom!("letter-spacing") => LetterSpacing<Expr<'a, Todo>> inherits=true,
-	atom!("line-break") => LineBreak<Expr<'a, Todo>> inherits=true,
-	atom!("line-padding") => LinePadding<Expr<'a, Todo>> inherits=true,
-	atom!("overflow-wrap") => OverflowWrap<Expr<'a, Todo>> inherits=true,
-	atom!("tab-size") => TabSize<Expr<'a, Todo>> inherits=true,
-	atom!("text-align") => TextAlign<Expr<'a, TextAlignValue>> inherits=true,
-	atom!("text-align-all") => TextAlignAll<Expr<'a, TextAlignAllValue>> inherits=true,
-	atom!("text-align-last") => TextAlignLast<Expr<'a, TextAlignLastValue>> inherits=true,
-	atom!("text-autospace") => TextAutospace<Expr<'a, Todo>> inherits=true,
-	atom!("text-group-align") => TextGroupAlign<Expr<'a, Todo>>,
-	atom!("text-indent") => TextIndent<Expr<'a, Todo>> inherits=true,
-	atom!("text-justify") => TextJustify<Expr<'a, Todo>> inherits=true,
-	atom!("text-spacing") => TextSpacing<Expr<'a, Todo>> inherits=true,
-	atom!("text-spacing-trim") => TextSpacingTrim<Expr<'a, Todo>> inherits=true,
-	atom!("text-transform") => TextTransform<Expr<'a, Todo>> inherits=true,
-	atom!("text-wrap") => TextWrap<Expr<'a, Todo>> inherits=true,
-	atom!("white-space") => WhiteSpace<WhiteSpaceShorthand<'a>> inherits=true,
-	atom!("white-space-collapse") => WhiteSpaceCollapse<Expr<'a, WhiteSpaceCollapseValue>> inherits=true,
-	atom!("white-space-trim") => WhiteSpaceTrim<Expr<'a, WhiteSpaceTrimValue>>,
-	atom!("word-boundary-detection") => WordBoundaryDetection<Expr<'a, Todo>> inherits=true,
-	atom!("word-boundary-expansion") => WordBoundaryExpansion<Expr<'a, Todo>> inherits=true,
-	atom!("word-break") => WordBreak<Expr<'a, Todo>> inherits=true,
-	atom!("word-spacing") => WordSpacing<Expr<'a, Todo>> inherits=true,
-	atom!("word-wrap") => WordWrap<Expr<'a, Todo>>,
-	atom!("wrap-after") => WrapAfter<Expr<'a, Todo>>,
-	atom!("wrap-before") => WrapBefore<Expr<'a, Todo>>,
-	atom!("wrap-inside") => WrapInside<Expr<'a, Todo>>,
+	HangingPunctuation: atom!("hanging-punctuation"),
+	HyphenateCharacter: atom!("hyphenate-character"),
+	HyphenateLimitChars: atom!("hyphenate-limit-chars"),
+	HyphenateLimitLast: atom!("hyphenate-limit-last"),
+	HyphenateLimitLines: atom!("hyphenate-limit-lines"),
+	HyphenateLimitZone: atom!("hyphenate-limit-zone"),
+	Hyphens: atom!("hyphens"),
+	LetterSpacing: atom!("letter-spacing"),
+	LineBreak: atom!("line-break"),
+	LinePadding: atom!("line-padding"),
+	OverflowWrap: atom!("overflow-wrap"),
+	TabSize: atom!("tab-size"),
+	TextAlign: atom!("text-align"),
+	TextAlignAll: atom!("text-align-all"),
+	TextAlignLast: atom!("text-align-last"),
+	TextAutospace: atom!("text-autospace"),
+	TextGroupAlign: atom!("text-group-align"),
+	TextIndent: atom!("text-indent"),
+	TextJustify: atom!("text-justify"),
+	TextSpacing: atom!("text-spacing"),
+	TextSpacingTrim: atom!("text-spacing-trim"),
+	TextTransform: atom!("text-transform"),
+	TextWrap: atom!("text-wrap"),
+	WhiteSpace: atom!("white-space"),
+	WhiteSpaceCollapse: atom!("white-space-collapse"),
+	WhiteSpaceTrim: atom!("white-space-trim"),
+	WordBoundaryDetection: atom!("word-boundary-detection"),
+	WordBoundaryExpansion: atom!("word-boundary-expansion"),
+	WordBreak: atom!("word-break"),
+	WordSpacing: atom!("word-spacing"),
+	WordWrap: atom!("word-wrap"),
+	WrapAfter: atom!("wrap-after"),
+	WrapBefore: atom!("wrap-before"),
+	WrapInside: atom!("wrap-inside"),
 
 	// https://drafts.csswg.org/css-text-decor-3/#property-index
 	// ! text-decoration redefined in css-text-decor-4
@@ -938,31 +951,31 @@ properties! {
 	// ! text-underline-position redefined in css-text-decor-4
 
 	// https://drafts.csswg.org/css-text-decor-4/#property-index
-	atom!("text-decoration") => TextDecoration<TextDecorationShorthand<'a>> shorthand=true,
-	atom!("text-decoration-color") => TextDecorationColor<Expr<'a, ColorValue<'a>>> initial=Expr::Literal(Spanned::dummy(ColorValue::CurrentColor)),
-	atom!("text-decoration-line") => TextDecorationLine<Expr<'a, TextDecorationLineValue>> inherits=true,
-	atom!("text-decoration-skip") => TextDecorationSkip<Expr<'a, Todo>> inherits=true,
-	atom!("text-decoration-skip-ink") => TextDecorationSkipInk<Expr<'a, TextDecorationSkipInkValue>> inherits=true,
-	atom!("text-decoration-skip-self") => TextDecorationSkipSelf<Expr<'a, Todo>>,
-	atom!("text-decoration-skip-spaces") => TextDecorationSkipSpaces<Expr<'a, Todo>> inherits=true,
-	atom!("text-decoration-style") => TextDecorationStyle<Expr<'a, TextDecorationStyleValue>>,
-	atom!("text-decoration-thickness") => TextDecorationThickness<Expr<'a, Todo>>,
-	atom!("text-decoration-trim") => TextDecorationTrim<Expr<'a, Todo>>,
-	atom!("text-emphasis") => TextEmphasis<Expr<'a, Todo>> shorthand=true,
-	atom!("text-emphasis-color") => TextEmphasisColor<ColorValue<'a>> inherits=true initial=ColorValue::CurrentColor,
-	atom!("text-emphasis-position") => TextEmphasisPosition<Expr<'a, Todo>> inherits=true,
-	atom!("text-emphasis-skip") => TextEmphasisSkip<Expr<'a, Todo>> inherits=true,
-	atom!("text-emphasis-style") => TextEmphasisStyle<Expr<'a, Todo>> inherits=true,
-	atom!("text-shadow") => TextShadow<Expr<'a, Todo>> inherits=true,
-	atom!("text-underline-offset") => TextUnderlineOffset<Expr<'a, Todo>> inherits=true,
-	atom!("text-underline-position") => TextUnderlinePosition<Expr<'a, Todo>> inherits=true,
+	TextDecoration: atom!("text-decoration"),
+	TextDecorationColor: atom!("text-decoration-color"),
+	TextDecorationLine: atom!("text-decoration-line"),
+	TextDecorationSkip: atom!("text-decoration-skip"),
+	TextDecorationSkipInk: atom!("text-decoration-skip-ink"),
+	TextDecorationSkipSelf: atom!("text-decoration-skip-self"),
+	TextDecorationSkipSpaces: atom!("text-decoration-skip-spaces"),
+	TextDecorationStyle: atom!("text-decoration-style"),
+	TextDecorationThickness: atom!("text-decoration-thickness"),
+	TextDecorationTrim: atom!("text-decoration-trim"),
+	TextEmphasis: atom!("text-emphasis"),
+	TextEmphasisColor: atom!("text-emphasis-color"),
+	TextEmphasisPosition: atom!("text-emphasis-position"),
+	TextEmphasisSkip: atom!("text-emphasis-skip"),
+	TextEmphasisStyle: atom!("text-emphasis-style"),
+	TextShadow: atom!("text-shadow"),
+	TextUnderlineOffset: atom!("text-underline-offset"),
+	TextUnderlinePosition: atom!("text-underline-position"),
 
 	// https://drafts.csswg.org/css-transitions-1/#property-index
-	atom!("transition") => Transition<Expr<'a, Todo>> shorthand=true,
-	atom!("transition-delay") => TransitionDelay<Expr<'a, Todo>>,
-	atom!("transition-duration") => TransitionDuration<Expr<'a, Todo>>,
-	atom!("transition-property") => TransitionProperty<Expr<'a, Todo>>,
-	atom!("transition-timing-function") => TransitionTimingFunction<Expr<'a, Todo>>,
+	Transition: atom!("transition"),
+	TransitionDelay: atom!("transition-delay"),
+	TransitionDuration: atom!("transition-duration"),
+	TransitionProperty: atom!("transition-property"),
+	TransitionTimingFunction: atom!("transition-timing-function"),
 
 	// https://drafts.csswg.org/css-transitions-2/#property-index
 	// <No properties>
@@ -983,25 +996,25 @@ properties! {
 	// ! text-overflow redefined in css-overflow-4
 
 	// https://drafts.csswg.org/css-ui-4/#property-index
-	atom!("accent-color") => AccentColor<Expr<'a, Todo>> inherits=true,
-	atom!("appearance") => Appearance<Expr<'a, Todo>>,
-	atom!("caret") => Caret<Expr<'a, Todo>> inherits=true,
-	atom!("caret-color") => CaretColor<Expr<'a, Todo>> inherits=true,
-	atom!("caret-shape") => CaretShape<Expr<'a, Todo>> inherits=true,
-	atom!("cursor") => Cursor<Expr<'a, CursorValue<'a>>> inherits=true,
-	atom!("input-security") => InputSecurity<AutoOrNone>,
-	atom!("nav-down") => NavDown<Expr<'a, Todo>>,
-	atom!("nav-left") => NavLeft<Expr<'a, Todo>>,
-	atom!("nav-right") => NavRight<Expr<'a, Todo>>,
-	atom!("nav-up") => NavUp<Expr<'a, Todo>>,
-	atom!("outline") => Outline<Expr<'a, Todo>> shorthand=true,
-	atom!("outline-color") => OutlineColor<Expr<'a, Todo>>,
-	atom!("outline-offset") => OutlineOffset<Expr<'a, Todo>>,
-	atom!("outline-style") => OutlineStyle<Expr<'a, Todo>>,
-	atom!("outline-width") => OutlineWidth<MathExpr<'a, LineWidth>>,
-	atom!("pointer-events") => PointerEvents<AutoOrNone> inherits=true,
-	atom!("resize") => Resize<Expr<'a, Todo>>,
-	atom!("user-select") => UserSelect<Expr<'a, Todo>>,
+	AccentColor: atom!("accent-color"),
+	Appearance: atom!("appearance"),
+	Caret: atom!("caret"),
+	CaretColor: atom!("caret-color"),
+	CaretShape: atom!("caret-shape"),
+	Cursor: atom!("cursor"),
+	InputSecurity: atom!("input-security"),
+	NavDown: atom!("nav-down"),
+	NavLeft: atom!("nav-left"),
+	NavRight: atom!("nav-right"),
+	NavUp: atom!("nav-up"),
+	Outline: atom!("outline"),
+	OutlineColor: atom!("outline-color"),
+	OutlineOffset: atom!("outline-offset"),
+	OutlineStyle: atom!("outline-style"),
+	OutlineWidth: atom!("outline-width"),
+	PointerEvents: atom!("pointer-events"),
+	Resize: atom!("resize"),
+	UserSelect: atom!("user-select"),
 
 	// https://drafts.csswg.org/css-values-3/#property-index
 	// <No properties>
@@ -1019,13 +1032,13 @@ properties! {
 	// This spec defines the <dashed-ident> properties.
 
 	// https://drafts.csswg.org/css-view-transitions-1/#property-index
-	atom!("view-transition-name") => ViewTransitionName<Expr<'a, Todo>>,
+	ViewTransitionName: atom!("view-transition-name"),
 
 	// https://drafts.csswg.org/css-viewport/#property-index
 	// <No properties>
 
 	// https://drafts.csswg.org/css-will-change-1/#property-index
-	atom!("will-change") => WillChange<Expr<'a, Todo>>,
+	WillChange: atom!("will-change"),
 
 	// https://drafts.csswg.org/css-writing-modes-3/#property-index
 	// ! direction is redefined in css-text-decor-4
@@ -1036,12 +1049,12 @@ properties! {
 	// ! writing-mode is redefined in css-text-decor-4
 
 	// https://drafts.csswg.org/css-writing-modes-4/#property-index
-	atom!("direction") => Direction<Expr<'a, Todo>>,
-	atom!("glyph-orientation-horizontal") => GlyphOrientationHorizontal<Expr<'a, Todo>>,
-	atom!("text-combine-upright") => TextCombineUpright<Expr<'a, Todo>>,
-	atom!("text-orientation") => TextOrientation<Expr<'a, Todo>>,
-	atom!("unicode-bidi") => UnicodeBidi<Expr<'a, Todo>>,
-	atom!("writing-mode") => WritingMode<Expr<'a, Todo>>,
+	Direction: atom!("direction"),
+	GlyphOrientationHorizontal: atom!("glyph-orientation-horizontal"),
+	TextCombineUpright: atom!("text-combine-upright"),
+	TextOrientation: atom!("text-orientation"),
+	UnicodeBidi: atom!("unicode-bidi"),
+	WritingMode: atom!("writing-mode"),
 
 	// https://drafts.csswg.org/css2/#property-index
 	// ! background is redefined in css-backgrounds-3
@@ -1137,7 +1150,7 @@ properties! {
 	// ! white-space is redefined in css-text-3
 	// ! widows is redefined in css-page-3
 	// ! word-spacing is redefined in css-text-decor-4
-	atom!("z-index") => ZIndex<Expr<'a, Todo>>,
+	ZIndex: atom!("z-index"),
 
 	// https://drafts.csswg.org/cssom-1/#property-index
 	// <No properties>
@@ -1158,17 +1171,17 @@ properties! {
 	// <No properties>
 
 	// https://drafts.csswg.org/scroll-animations-1/#property-index
-	atom!("antimation-range") => AnimationRange<Expr<'a, Todo>>,
-	atom!("antimation-range-end") => AnimationRangeEnd<Expr<'a, Todo>>,
-	atom!("antimation-range-start") => AnimationRangeStart<Expr<'a, Todo>>,
-	atom!("scroll-timeline") => ScrollTimeline<Expr<'a, Todo>>,
-	atom!("scroll-timeline-axis") => ScrollTimelineAxis<Expr<'a, Todo>>,
-	atom!("scroll-timeline-name") => ScrollTimelineName<Expr<'a, Todo>>,
-	atom!("timeline-scope") => TimelineScope<Expr<'a, Todo>>,
-	atom!("view-timeline") => ViewTimeline<Expr<'a, Todo>>,
-	atom!("view-timeline-axis") => ViewTimelineAxis<Expr<'a, Todo>>,
-	atom!("view-timeline-inset") => ViewTimelineInset<Expr<'a, Todo>>,
-	atom!("view-timeline-name") => ViewTimelineName<Expr<'a, Todo>>,
+	AnimationRange: atom!("antimation-range"),
+	AnimationRangeEnd: atom!("antimation-range-end"),
+	AnimationRangeStart: atom!("antimation-range-start"),
+	ScrollTimeline: atom!("scroll-timeline"),
+	ScrollTimelineAxis: atom!("scroll-timeline-axis"),
+	ScrollTimelineName: atom!("scroll-timeline-name"),
+	TimelineScope: atom!("timeline-scope"),
+	ViewTimeline: atom!("view-timeline"),
+	ViewTimelineAxis: atom!("view-timeline-axis"),
+	ViewTimelineInset: atom!("view-timeline-inset"),
+	ViewTimelineName: atom!("view-timeline-name"),
 
 	// https://drafts.csswg.org/selectors-3/#property-index
 	// <No properties>
@@ -1185,14 +1198,100 @@ properties! {
 	// https://drafts.csswg.org/web-animations-2/#property-index
 	// <No properties>
 
+	// https://drafts.fxtf.org/compositing-2/#property-index
+	BackgroundBlendMode: atom!("background-blend-mode"),
+	Isolation: atom!("isolation"),
+	MixBlendMode: atom!("mix-blend-mode"),
+
+	// https://drafts.fxtf.org/css-masking-1/#property-index
+	Clip: atom!("clip"),
+	ClipPath: atom!("clip-path"),
+	ClipRule: atom!("clip-rule"),
+	Mask: atom!("mask"),
+	MaskBorder: atom!("mask-border"),
+	MaskBorderMode: atom!("mask-border-mode"),
+	MaskBorderOutset: atom!("mask-border-outset"),
+	MaskBorderRepeat: atom!("mask-border-repeat"),
+	MaskBorderSlice: atom!("mask-border-slice"),
+	MaskBorderSource: atom!("mask-border-source"),
+	MaskBorderWidth: atom!("mask-border-width"),
+	MaskClip: atom!("mask-clip"),
+	MaskImage: atom!("mask-image"),
+	MaskMode: atom!("mask-mode"),
+	MaskOrigin: atom!("mask-origin"),
+	MaskPosition: atom!("mask-position"),
+	MaskRepeat: atom!("mask-repeat"),
+	MaskSize: atom!("mask-size"),
+	MaskType: atom!("mask-type"),
+
+	// https://drafts.fxtf.org/filter-effects/#property-index
+	ColorInterpolationFilters: atom!("color-interpolation-filters"),
+	Filter: atom!("filter"),
+	FloodColor: atom!("flood-color"),
+	FloodOpacity: atom!("flood-opacity"),
+	LightingColor: atom!("lighting-color"),
+
+	// https://drafts.fxtf.org/filter-effects-2/
+	BackdropFilter: atom!("backdrop-filter"),
+
+	// https://drafts.fxtf.org/fill-stroke/#property-index
+	Fill: atom!("fill"),
+	FillBreak: atom!("fill-break"),
+	FillColor: atom!("fill-color"),
+	FillImage: atom!("fill-image"),
+	FillOpacity: atom!("fill-opacity"),
+	FillOrigin: atom!("fill-origin"),
+	FillPosition: atom!("fill-position"),
+	FillRepeat: atom!("fill-repeat"),
+	FillRule: atom!("fill-rule"),
+	FillSize: atom!("fill-size"),
+	Stroke: atom!("stroke"),
+	StrokeAlign: atom!("stroke-align"),
+	StrokeBreak: atom!("stroke-break"),
+	StrokeColor: atom!("stroke-color"),
+	StrokeDashCorner: atom!("stroke-dash-corner"),
+	StrokeDashJustify: atom!("stroke-dash-justify"),
+	StrokeDasharray: atom!("stroke-dasharray"),
+	StrokeDashoffset: atom!("stroke-dashoffset"),
+	StrokeImage: atom!("stroke-image"),
+	StrokeLinecap: atom!("stroke-linecap"),
+	StrokeLinejoin: atom!("stroke-linejoin"),
+	StrokeMiterlimit: atom!("stroke-miterlimit"),
+	StrokeOpacity: atom!("stroke-opacity"),
+	StrokeOrigin: atom!("stroke-origin"),
+	StrokePosition: atom!("stroke-position"),
+	StrokeRepeat: atom!("stroke-repeat"),
+	StrokeSize: atom!("stroke-size"),
+	StrokeWidth: atom!("stroke-width"),
+
+	// https://drafts.fxtf.org/motion-1/#property-index
+	Offset: atom!("offset"),
+	OffsetAnchor: atom!("offset-anchor"),
+	OffsetDistance: atom!("offset-distance"),
+	OffsetPath: atom!("offset-path"),
+	OffsetPosition: atom!("offset-position"),
+	OffsetRotate: atom!("offset-rotate"),
+
+
 	// Non Standard Properties
-	atom!("zoom") => NonStandardZoom<ZoomValue> standard=false,
-	// https://drafts.fxtf.org/css-masking/#clip-property
-	atom!("clip") => NonStandardClip<Expr<'a, Todo>> standard=false,
+	Zoom: atom!("zoom"),
 
 	// Webkit NonStandards
-	atom!("-webkit-text-size-adjust") => WebkitTextSizeAdjust<MathExpr<'a, TextSizeAdjustValue>> standard=false,
-	atom!("-webkit-text-decoration") => WebkitTextDecoration<TextDecorationShorthand<'a>> standard=false,
-	atom!("-webkit-tap-highlight-color") => WebkitTapHighlightColor<MathExpr<'a, ColorValue<'a>>> standard=false,
-	atom!("-webkit-text-decoration-skip-ink") => WebkitTextDecorationSkipInk<Expr<'a, TextDecorationSkipInkValue>> standard=false,
+	WebkitTextSizeAdjust: atom!("-webkit-text-size-adjust"),
+	WebkitTextDecoration: atom!("-webkit-text-decoration"),
+	WebkitTapHighlightColor: atom!("-webkit-tap-highlight-color"),
+	WebkitTextDecorationSkipInk: atom!("-webkit-text-decoration-skip-ink"),
+}
+
+#[cfg(test)]
+mod tests {
+
+	use super::*;
+
+	#[test]
+	fn size_test() {
+		use std::mem::size_of;
+		assert_eq!(size_of::<StyleProperty>(), 32);
+		assert_eq!(size_of::<StyleValue>(), 16);
+	}
 }

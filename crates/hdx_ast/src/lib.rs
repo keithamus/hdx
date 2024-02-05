@@ -1,57 +1,27 @@
-extern crate hdx_atomizable_derive;
-
-pub use hdx_atomizable_derive::Atomizable;
-#[cfg(feature = "serde")]
-use serde::Serialize;
+extern crate hdx_derive;
 
 pub mod css;
-pub mod span;
 pub mod traits;
+pub mod macros;
 
+#[cfg(test)]
+pub mod test_helpers;
+
+pub(crate) use bitmask_enum::bitmask;
 pub(crate) use hdx_atom::{atom, Atom, Atomizable};
-pub(crate) use hdx_lexer::{PairWise, Token};
-pub(crate) use oxc_allocator::{Allocator, Box, Vec};
-pub(crate) use span::Span;
+pub(crate) use hdx_derive::{Atomizable, Parsable, Writable};
+pub(crate) use hdx_parser::{Box, Spanned, Vec};
+pub(crate) use macros::*;
 pub use traits::Unit;
 
-#[derive(Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde())]
-pub struct Spanned<T> {
-	pub node: T,
-	#[cfg_attr(feature = "serde", serde(flatten))]
-	pub span: Span,
-}
-
-impl<T> Spanned<T> {
-	pub fn dummy(node: T) -> Self {
-		Self { node, span: Span::dummy() }
-	}
-}
-
-impl<T: Atomizable> Atomizable for Spanned<T> {
-	fn from_atom(atom: Atom) -> Option<Self> {
-		T::from_atom(atom).map(|node| Self { node, span: Span::dummy() })
-	}
-
-	fn to_atom(&self) -> Atom {
-		self.node.to_atom()
-	}
+pub trait ToSpecificity: Sized {
+	fn specificity(&self) -> Specificity;
 }
 
 impl<T: ToSpecificity> ToSpecificity for Spanned<T> {
 	fn specificity(&self) -> Specificity {
 		self.node.specificity()
 	}
-}
-
-impl<T: Default> Default for Spanned<T> {
-	fn default() -> Self {
-		Self::dummy(T::default())
-	}
-}
-
-pub trait ToSpecificity: Sized {
-	fn specificity(&self) -> Specificity;
 }
 
 #[derive(Debug, PartialEq, Hash)]

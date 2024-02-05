@@ -180,11 +180,11 @@ impl LexerCase for CSSTokenizerTestCase {
 	fn convert_token(&self, start: usize, end: usize, token: &Token) -> RomainToken {
 		let raw = self.source_text[start..end].to_string();
 		let structured = match &token {
-			Token::Number(numtype, value) => Some(Structured::Number(NumberStructured {
+			Token::Number(value, numtype) => Some(Structured::Number(NumberStructured {
 				value: *value,
 				kind: Some(String::from(if numtype.is_int() { "integer" } else { "number" })),
 			})),
-			Token::Dimension(numtype, value, unit) => {
+			Token::Dimension(value, unit, numtype) => {
 				if unit == &atom!("%") {
 					Some(Structured::Number(NumberStructured { value: *value, kind: None }))
 				} else {
@@ -213,7 +213,7 @@ impl LexerCase for CSSTokenizerTestCase {
 		let end_index = start_index + raw.encode_utf16().count() as u32;
 		RomainToken {
 			kind: match token {
-				Token::Comment => RomainKind::Comment,
+				Token::Comment(_) => RomainKind::Comment,
 				Token::Ident(_) => RomainKind::Ident,
 				Token::Function(_) => RomainKind::Function,
 				Token::AtKeyword(_) => RomainKind::AtKeyword,
@@ -225,7 +225,7 @@ impl LexerCase for CSSTokenizerTestCase {
 				Token::BadUrl => RomainKind::BadUrl,
 				Token::Delim(_) => RomainKind::Delim,
 				Token::Number(_, _) => RomainKind::Number,
-				Token::Dimension(_, _, unit) => {
+				Token::Dimension(_, unit, _) => {
 					if unit == &atom!("%") {
 						RomainKind::Percentage
 					} else {

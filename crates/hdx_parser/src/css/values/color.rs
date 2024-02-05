@@ -7,13 +7,13 @@ use crate::{atom, diagnostics, Atomizable, Kind, Parse, Parser, Result, Spanned}
 
 impl<'a> Parse<'a> for ColorValue<'a> {
 	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
-		let span = parser.cur().span;
-		match parser.cur().kind {
+		let span = parser.span();
+		match parser.cur() {
 			// https://drafts.csswg.org/css-color/#hex-notation
 			Kind::Hash => {
 				let hash = parser.expect_hash()?;
 				if let Some(hex) = ColorValue::from_hex(hash.as_ref()) {
-					Ok(hex.spanned(span.until(parser.cur().span)))
+					Ok(hex.spanned(span.end(parser.pos())))
 				} else {
 					Err(diagnostics::BadHexColor(hash.clone(), span))?
 				}
@@ -22,10 +22,10 @@ impl<'a> Parse<'a> for ColorValue<'a> {
 				let name = parser.expect_ident()?;
 				match name {
 					atom!("transparent") => {
-						Ok(ColorValue::Transparent.spanned(span.until(parser.cur().span)))
+						Ok(ColorValue::Transparent.spanned(span.end(parser.pos())))
 					}
 					_ => match NamedColor::from_atom(name.clone()) {
-						Some(n) => Ok(ColorValue::Named(n).spanned(span.until(parser.cur().span))),
+						Some(n) => Ok(ColorValue::Named(n).spanned(span.end(parser.pos()))),
 						None => Err(diagnostics::UnknownColor(name, span))?,
 					},
 				}
@@ -35,8 +35,7 @@ impl<'a> Parse<'a> for ColorValue<'a> {
 				match name {
 					atom!("rgb") | atom!("rgba") => {
 						let node = RGB::parse(parser)?;
-						Ok(ColorValue::RGB(parser.boxup(node))
-							.spanned(span.until(parser.cur().span)))
+						Ok(ColorValue::RGB(parser.boxup(node)).spanned(span.end(parser.pos())))
 					}
 					_ => Err(diagnostics::Unimplemented(span))?,
 				}
@@ -48,7 +47,7 @@ impl<'a> Parse<'a> for ColorValue<'a> {
 
 impl<'a> Parse<'a> for RGB<'a> {
 	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
-		let span = parser.cur().span;
+		let span = parser.span();
 		let ident = parser.expect_function()?;
 		let mut legacy = false;
 		let r = MathExpr::<NumberPercentageOrNone>::parse(parser)?;
@@ -72,23 +71,24 @@ impl<'a> Parse<'a> for RGB<'a> {
 			alpha = MathExpr::<NumberPercentageOrNone>::parse(parser)?;
 		}
 		parser.expect(Kind::RightParen)?;
-		Ok(Self { r, g, b, alpha }.spanned(span.until(parser.cur().span)))
+		Ok(Self { r, g, b, alpha }.spanned(span.end(parser.pos())))
 	}
 }
 
 impl<'a> Parse<'a> for NumberPercentageOrNone {
 	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
-		let span = parser.cur().span;
-		match parser.cur().kind {
+		let span = parser.span();
+		match parser.cur() {
 			Kind::Number => {
-				Ok(Self::Number(parser.expect_number()?).spanned(span.until(parser.cur().span)))
+				Ok(Self::Number(parser.expect_number()?).spanned(span.end(parser.pos())))
 			}
-			Kind::Percentage => Ok(Self::Percentage(parser.expect_percentage()?)
-				.spanned(span.until(parser.cur().span))),
+			Kind::Percentage => {
+				Ok(Self::Percentage(parser.expect_percentage()?).spanned(span.end(parser.pos())))
+			}
 			Kind::Ident => match parser.expect_ident()? {
 				atom!("none") => {
 					parser.advance();
-					Ok(Self::None.spanned(span.until(parser.cur().span)))
+					Ok(Self::None.spanned(span.end(parser.pos())))
 				}
 				_ => Err(diagnostics::Unimplemented(span))?,
 			},

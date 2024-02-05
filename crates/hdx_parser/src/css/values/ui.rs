@@ -1,21 +1,18 @@
 use hdx_ast::css::values::CursorValue;
 
-use crate::{diagnostics, Atomizable, Kind, Parse, Parser, Result, Spanned};
+use crate::{diagnostics, Atomizable, Parse, Parser, Result, Spanned, Token};
 
 impl<'a> Parse<'a> for CursorValue<'a> {
 	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
-		let span = parser.cur().span;
-		match parser.cur().kind {
-			Kind::Ident => {
-				let span = parser.cur().span;
-				let ident = parser.expect_ident()?;
-				if let Some(val) = CursorValue::from_atom(ident.clone()) {
-					Ok(val.spanned(span.until(parser.cur().span)))
+		match parser.cur() {
+			Token::Ident(ident) => {
+				if let Some(val) = CursorValue::from_atom(*ident) {
+					Ok(val.spanned(parser.advance()))
 				} else {
-					Err(diagnostics::UnexpectedIdent(ident, span))?
+					Err(diagnostics::UnexpectedIdent(*ident, parser.span()))?
 				}
 			}
-			k => Err(diagnostics::Unexpected(k, parser.cur().span))?,
+			token => Err(diagnostics::Unexpected(*token, parser.span()))?,
 		}
 	}
 }

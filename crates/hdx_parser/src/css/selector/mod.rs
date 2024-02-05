@@ -10,9 +10,9 @@ fn parse_wq_name(parser: &mut Parser) -> Result<(NSPrefix, Atom)> {
 	let peeked = parser.peek();
 	let mut nsprefix = NSPrefix::None;
 	if peeked.kind == Kind::Delim && peeked.value.as_char().unwrap() == '|' {
-		match parser.cur().kind {
+		match parser.cur() {
 			Kind::Delim => {
-				let span = parser.cur().span;
+				let span = parser.span();
 				let ch = parser.expect_delim()?;
 				if ch == '*' {
 					nsprefix = NSPrefix::Wildcard;
@@ -24,9 +24,9 @@ fn parse_wq_name(parser: &mut Parser) -> Result<(NSPrefix, Atom)> {
 				let ident = parser.expect_ident()?;
 				nsprefix = NSPrefix::Named(ident);
 			}
-			k => Err(diagnostics::Unexpected(k, parser.cur().span))?,
+			k => Err(diagnostics::Unexpected(k, parser.span()))?,
 		}
-		let span = parser.cur().span;
+		let span = parser.span();
 		let ch = parser.expect_delim()?;
 		if ch != '|' {
 			Err(diagnostics::UnexpectedDelim(ch, span))?
@@ -34,7 +34,7 @@ fn parse_wq_name(parser: &mut Parser) -> Result<(NSPrefix, Atom)> {
 		Ok((nsprefix, parser.expect_ident()?))
 	} else {
 		if parser.at(Kind::Delim) && parser.cur_char().unwrap() == '|' {
-			parser.next_token();
+			parser.advance();
 		}
 		Ok((nsprefix, parser.expect_ident()?))
 	}
@@ -42,10 +42,10 @@ fn parse_wq_name(parser: &mut Parser) -> Result<(NSPrefix, Atom)> {
 
 impl<'a> Parse<'a> for Selector<'a> {
 	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
-		let span = parser.cur().span;
+		let span = parser.span();
 		let mut components: Vec<'a, Spanned<Component>> = parser.new_vec();
 		loop {
-			match parser.cur().kind {
+			match parser.cur() {
 				Kind::Eof | Kind::Semicolon | Kind::Comma | Kind::LeftCurly => {
 					break;
 				}
@@ -91,69 +91,69 @@ impl<'a> Parse<'a> for Selector<'a> {
 			}
 			components.push(component);
 		}
-		Ok(Self { components: parser.boxup(components) }.spanned(span.until(parser.cur().span)))
+		Ok(Self { components: parser.boxup(components) }.spanned(span.end(parser.pos())))
 	}
 }
 
 impl<'a> Parse<'a> for Component<'a> {
 	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
-		let span = parser.cur().span;
-		match parser.cur().kind {
+		let span = parser.span();
+		match parser.cur() {
 			Kind::Whitespace => {
-				parser.next_token();
-				Ok(Self::Combinator(Combinator::Descendant).spanned(span.until(parser.cur().span)))
+				parser.advance();
+				Ok(Self::Combinator(Combinator::Descendant).spanned(span.end(parser.pos())))
 			}
 			Kind::Ident => {
 				let name = parser.cur().as_atom_lower().unwrap();
-				parser.next_token();
+				parser.advance();
 				Ok(Self::Type(name).spanned(span))
 			}
 			Kind::Colon => {
-				parser.next_token();
-				match parser.cur().kind {
+				parser.advance();
+				match parser.cur() {
 					Kind::Colon => {
-						parser.next_token();
+						parser.advance();
 						parser.expect_without_advance(Kind::Ident)?;
 						let ident = parser.cur().as_atom().unwrap();
 						if let Some(selector) = PseudoElement::from_atom(ident) {
-							parser.next_token();
-							Ok(Self::PseudoElement(selector).spanned(span.until(parser.cur().span)))
+							parser.advance();
+							Ok(Self::PseudoElement(selector).spanned(span.end(parser.pos())))
 						} else {
-							Err(diagnostics::Unimplemented(parser.cur().span))?
+							Err(diagnostics::Unimplemented(parser.span()))?
 						}
 					}
 					Kind::Ident => {
 						parser.expect_without_advance(Kind::Ident)?;
 						let ident = parser.cur().as_atom().unwrap();
 						if let Some(selector) = PseudoClass::from_atom(ident.clone()) {
-							parser.next_token();
-							Ok(Self::PseudoClass(selector).spanned(span.until(parser.cur().span)))
+							parser.advance();
+							Ok(Self::PseudoClass(selector).spanned(span.end(parser.pos())))
 						} else if let Some(e) = LegacyPseudoElement::from_atom(ident.clone()) {
-							parser.next_token();
-							Ok(Self::LegacyPseudoElement(e).spanned(span.until(parser.cur().span)))
+							parser.advance();
+							Ok(Self::LegacyPseudoElement(e).spanned(span.end(parser.pos())))
 						} else {
-							Err(diagnostics::UnexpectedIdent(ident, parser.cur().span))?
+							Err(diagnostics::UnexpectedIdent(ident, parser.span()))?
 						}
 					}
-					_ => Err(diagnostics::Unimplemented(parser.cur().span))?,
+					_ => Err(diagnostics::Unimplemented(parser.span()))?,
 				}
 			}
 			Kind::Hash => {
 				let name = parser.cur().as_atom().unwrap();
-				parser.next_token();
-				Ok(Self::Id(name).spanned(span.until(parser.cur().span)))
+				parser.advance();
+				Ok(Self::Id(name).spanned(span.end(parser.pos())))
 			}
 			Kind::Delim => match parser.cur().value.as_char() {
 				Some('.') => {
 					let next_token = parser.peek_including_trivia();
 					match next_token.kind {
 						Kind::Ident => {
-							parser.next_token();
+							parser.advance();
 							let ident = parser.cur().as_atom().unwrap();
-							parser.next_token();
-							Ok(Self::Class(ident).spanned(span.until(parser.cur().span)))
+							parser.advance();
+							Ok(Self::Class(ident).spanned(span.end(parser.pos())))
 						}
-						_ => Err(diagnostics::Unimplemented(parser.cur().span))?,
+						_ => Err(diagnostics::Unimplemented(parser.span()))?,
 					}
 				}
 				Some('*') => {
@@ -162,43 +162,43 @@ impl<'a> Parse<'a> for Component<'a> {
 						Kind::Delim if next_token.value.as_char().unwrap() == '|' => {
 							let (prefix, atom) = parse_wq_name(parser)?;
 							Ok(Self::NSPrefixedType(parser.boxup((prefix, atom)))
-								.spanned(span.until(parser.cur().span)))
+								.spanned(span.end(parser.pos())))
 						}
 						_ => {
-							parser.next_token();
-							Ok(Self::Wildcard.spanned(span.until(parser.cur().span)))
+							parser.advance();
+							Ok(Self::Wildcard.spanned(span.end(parser.pos())))
 						}
 					}
 				}
-				_ => Err(diagnostics::Unimplemented(parser.cur().span))?,
+				_ => Err(diagnostics::Unimplemented(parser.span()))?,
 			},
 			Kind::LeftSquare => {
 				let attr = Attribute::parse(parser)?;
-				Ok(Component::Attribute(parser.boxup(attr)).spanned(span.until(parser.cur().span)))
+				Ok(Component::Attribute(parser.boxup(attr)).spanned(span.end(parser.pos())))
 			}
-			_ => Err(diagnostics::Unimplemented(parser.cur().span))?,
+			_ => Err(diagnostics::Unimplemented(parser.span()))?,
 		}
 	}
 }
 
 impl<'a> Parse<'a> for Attribute {
 	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
-		let span = parser.cur().span;
+		let span = parser.span();
 		parser.expect(Kind::LeftSquare)?;
 		let (ns_prefix, name) = parse_wq_name(parser)?;
 		let mut matcher = AttributeMatch::Any;
 		let mut modifier = AttributeModifier::None;
 		let mut value = atom!("");
-		match parser.cur().kind {
+		match parser.cur() {
 			Kind::RightSquare => {
-				parser.next_token();
+				parser.advance();
 				return Ok(Self { ns_prefix, name, value, modifier, matcher }
-					.spanned(span.until(parser.cur().span)));
+					.spanned(span.end(parser.pos())));
 			}
 			Kind::Delim => {
-				let delim_span = parser.cur().span;
+				let delim_span = parser.span();
 				let ch = parser.cur().value.as_char().unwrap();
-				parser.next_token();
+				parser.advance();
 				if matcher != AttributeMatch::Any {
 					Err(diagnostics::UnexpectedDelim(ch, delim_span))?;
 				}
@@ -218,23 +218,23 @@ impl<'a> Parse<'a> for Attribute {
 					}
 				}
 			}
-			k => Err(diagnostics::Unexpected(k, parser.cur().span))?,
+			k => Err(diagnostics::Unexpected(k, parser.span()))?,
 		}
-		match parser.cur().kind {
+		match parser.cur() {
 			Kind::Ident | Kind::String => {
 				value = parser.cur().as_atom().unwrap();
 				parser.advance();
 			}
-			k => Err(diagnostics::Unexpected(k, parser.cur().span))?,
+			k => Err(diagnostics::Unexpected(k, parser.span()))?,
 		}
-		match parser.cur().kind {
+		match parser.cur() {
 			Kind::RightSquare => {
-				parser.next_token();
+				parser.advance();
 				Ok(Self { ns_prefix, name, value, modifier, matcher }
-					.spanned(span.until(parser.cur().span)))
+					.spanned(span.end(parser.pos())))
 			}
 			Kind::Ident => {
-				let ident_span = parser.cur().span;
+				let ident_span = parser.span();
 				modifier = match parser.expect_ident()? {
 					atom!("i") => AttributeModifier::Insensitive,
 					atom!("s") => AttributeModifier::Sensitive,
@@ -242,9 +242,9 @@ impl<'a> Parse<'a> for Attribute {
 				};
 				parser.expect(Kind::RightSquare)?;
 				Ok(Self { ns_prefix, name, value, modifier, matcher }
-					.spanned(span.until(parser.cur().span)))
+					.spanned(span.end(parser.pos())))
 			}
-			k => Err(diagnostics::Unexpected(k, parser.cur().span))?,
+			k => Err(diagnostics::Unexpected(k, parser.span()))?,
 		}
 	}
 }
