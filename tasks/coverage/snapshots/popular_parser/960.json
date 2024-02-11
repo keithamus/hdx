@@ -5,7 +5,7 @@
       {
         "end": 300,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 299,
               "node": {
@@ -24,7 +24,7 @@
                             "Px": 960.0
                           },
                           "start": 292,
-                          "type": "LengthPercentage"
+                          "type": "length-percentage"
                         },
                         "start": 292
                       }
@@ -64,14 +64,14 @@
             },
             "start": 272
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 272
       },
       {
         "end": 511,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 474,
               "node": {
@@ -136,7 +136,7 @@
                             "Px": 960.0
                           },
                           "start": 503,
-                          "type": "LengthPercentage"
+                          "type": "length-percentage"
                         },
                         "start": 503
                       }
@@ -193,14 +193,14 @@
             },
             "start": 420
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 420
       },
       {
         "end": 866,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 809,
               "node": {
@@ -573,14 +573,14 @@
             },
             "start": 636
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 636
       },
       {
         "end": 1174,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 1173,
               "node": {
@@ -593,7 +593,9 @@
                     "node": {
                       "Literal": {
                         "end": 1171,
-                        "node": "Relative",
+                        "node": {
+                          "type": "relative"
+                        },
                         "start": 1163
                       }
                     },
@@ -1125,14 +1127,14 @@
             },
             "start": 868
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 868
       },
       {
         "end": 1240,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 1239,
               "node": {
@@ -1151,7 +1153,7 @@
                             "Px": 220.0
                           },
                           "start": 1232,
-                          "type": "LengthPercentage"
+                          "type": "length-percentage"
                         },
                         "start": 1232
                       }
@@ -1244,14 +1246,14 @@
             },
             "start": 1176
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 1176
       },
       {
         "end": 1306,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 1305,
               "node": {
@@ -1270,7 +1272,7 @@
                             "Px": 460.0
                           },
                           "start": 1298,
-                          "type": "LengthPercentage"
+                          "type": "length-percentage"
                         },
                         "start": 1298
                       }
@@ -1363,14 +1365,14 @@
             },
             "start": 1242
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 1242
       },
       {
         "end": 1373,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 1372,
               "node": {
@@ -1389,7 +1391,7 @@
                             "Px": 700.0
                           },
                           "start": 1365,
-                          "type": "LengthPercentage"
+                          "type": "length-percentage"
                         },
                         "start": 1365
                       }
@@ -1482,14 +1484,14 @@
             },
             "start": 1308
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 1308
       },
       {
         "end": 1441,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 1440,
               "node": {
@@ -1508,7 +1510,7 @@
                             "Px": 940.0
                           },
                           "start": 1433,
-                          "type": "LengthPercentage"
+                          "type": "length-percentage"
                         },
                         "start": 1433
                       }
@@ -1601,14 +1603,14 @@
             },
             "start": 1375
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 1375
       },
       {
         "end": 1626,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 1625,
               "node": {
@@ -1660,14 +1662,14 @@
             },
             "start": 1598
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 1598
       },
       {
         "end": 1657,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 1656,
               "node": {
@@ -1719,14 +1721,14 @@
             },
             "start": 1628
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 1628
       },
       {
         "end": 1826,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 1825,
               "node": {
@@ -1745,7 +1747,7 @@
                             "Px": 60.0
                           },
                           "start": 1819,
-                          "type": "LengthPercentage"
+                          "type": "length-percentage"
                         },
                         "start": 1819
                       }
@@ -1803,14 +1805,14 @@
             },
             "start": 1786
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 1786
       },
       {
         "end": 1869,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 1868,
               "node": {
@@ -1829,7 +1831,7 @@
                             "Px": 140.0
                           },
                           "start": 1861,
-                          "type": "LengthPercentage"
+                          "type": "length-percentage"
                         },
                         "start": 1861
                       }
@@ -1887,14 +1889,14 @@
             },
             "start": 1828
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 1828
       },
       {
         "end": 1912,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 1911,
               "node": {
@@ -1913,7 +1915,7 @@
                             "Px": 300.0
                           },
                           "start": 1904,
-                          "type": "LengthPercentage"
+                          "type": "length-percentage"
                         },
                         "start": 1904
                       }
@@ -1971,14 +1973,14 @@
             },
             "start": 1871
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 1871
       },
       {
         "end": 1955,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 1954,
               "node": {
@@ -1997,7 +1999,7 @@
                             "Px": 380.0
                           },
                           "start": 1947,
-                          "type": "LengthPercentage"
+                          "type": "length-percentage"
                         },
                         "start": 1947
                       }
@@ -2055,14 +2057,14 @@
             },
             "start": 1914
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 1914
       },
       {
         "end": 1998,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 1997,
               "node": {
@@ -2081,7 +2083,7 @@
                             "Px": 540.0
                           },
                           "start": 1990,
-                          "type": "LengthPercentage"
+                          "type": "length-percentage"
                         },
                         "start": 1990
                       }
@@ -2139,14 +2141,14 @@
             },
             "start": 1957
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 1957
       },
       {
         "end": 2041,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 2040,
               "node": {
@@ -2165,7 +2167,7 @@
                             "Px": 620.0
                           },
                           "start": 2033,
-                          "type": "LengthPercentage"
+                          "type": "length-percentage"
                         },
                         "start": 2033
                       }
@@ -2223,14 +2225,14 @@
             },
             "start": 2000
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 2000
       },
       {
         "end": 2085,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 2084,
               "node": {
@@ -2249,7 +2251,7 @@
                             "Px": 780.0
                           },
                           "start": 2077,
-                          "type": "LengthPercentage"
+                          "type": "length-percentage"
                         },
                         "start": 2077
                       }
@@ -2307,14 +2309,14 @@
             },
             "start": 2043
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 2043
       },
       {
         "end": 2129,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 2128,
               "node": {
@@ -2333,7 +2335,7 @@
                             "Px": 860.0
                           },
                           "start": 2121,
-                          "type": "LengthPercentage"
+                          "type": "length-percentage"
                         },
                         "start": 2121
                       }
@@ -2391,14 +2393,14 @@
             },
             "start": 2087
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 2087
       },
       {
         "end": 2298,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 2297,
               "node": {
@@ -2417,7 +2419,7 @@
                             "Px": 40.0
                           },
                           "start": 2291,
-                          "type": "LengthPercentage"
+                          "type": "length-percentage"
                         },
                         "start": 2291
                       }
@@ -2475,14 +2477,14 @@
             },
             "start": 2258
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 2258
       },
       {
         "end": 2341,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 2340,
               "node": {
@@ -2501,7 +2503,7 @@
                             "Px": 100.0
                           },
                           "start": 2333,
-                          "type": "LengthPercentage"
+                          "type": "length-percentage"
                         },
                         "start": 2333
                       }
@@ -2559,14 +2561,14 @@
             },
             "start": 2300
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 2300
       },
       {
         "end": 2384,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 2383,
               "node": {
@@ -2585,7 +2587,7 @@
                             "Px": 160.0
                           },
                           "start": 2376,
-                          "type": "LengthPercentage"
+                          "type": "length-percentage"
                         },
                         "start": 2376
                       }
@@ -2643,14 +2645,14 @@
             },
             "start": 2343
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 2343
       },
       {
         "end": 2427,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 2426,
               "node": {
@@ -2669,7 +2671,7 @@
                             "Px": 280.0
                           },
                           "start": 2419,
-                          "type": "LengthPercentage"
+                          "type": "length-percentage"
                         },
                         "start": 2419
                       }
@@ -2727,14 +2729,14 @@
             },
             "start": 2386
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 2386
       },
       {
         "end": 2470,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 2469,
               "node": {
@@ -2753,7 +2755,7 @@
                             "Px": 340.0
                           },
                           "start": 2462,
-                          "type": "LengthPercentage"
+                          "type": "length-percentage"
                         },
                         "start": 2462
                       }
@@ -2811,14 +2813,14 @@
             },
             "start": 2429
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 2429
       },
       {
         "end": 2513,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 2512,
               "node": {
@@ -2837,7 +2839,7 @@
                             "Px": 400.0
                           },
                           "start": 2505,
-                          "type": "LengthPercentage"
+                          "type": "length-percentage"
                         },
                         "start": 2505
                       }
@@ -2895,14 +2897,14 @@
             },
             "start": 2472
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 2472
       },
       {
         "end": 2556,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 2555,
               "node": {
@@ -2921,7 +2923,7 @@
                             "Px": 520.0
                           },
                           "start": 2548,
-                          "type": "LengthPercentage"
+                          "type": "length-percentage"
                         },
                         "start": 2548
                       }
@@ -2979,14 +2981,14 @@
             },
             "start": 2515
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 2515
       },
       {
         "end": 2600,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 2599,
               "node": {
@@ -3005,7 +3007,7 @@
                             "Px": 580.0
                           },
                           "start": 2592,
-                          "type": "LengthPercentage"
+                          "type": "length-percentage"
                         },
                         "start": 2592
                       }
@@ -3063,14 +3065,14 @@
             },
             "start": 2558
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 2558
       },
       {
         "end": 2644,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 2643,
               "node": {
@@ -3089,7 +3091,7 @@
                             "Px": 640.0
                           },
                           "start": 2636,
-                          "type": "LengthPercentage"
+                          "type": "length-percentage"
                         },
                         "start": 2636
                       }
@@ -3147,14 +3149,14 @@
             },
             "start": 2602
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 2602
       },
       {
         "end": 2688,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 2687,
               "node": {
@@ -3173,7 +3175,7 @@
                             "Px": 760.0
                           },
                           "start": 2680,
-                          "type": "LengthPercentage"
+                          "type": "length-percentage"
                         },
                         "start": 2680
                       }
@@ -3231,14 +3233,14 @@
             },
             "start": 2646
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 2646
       },
       {
         "end": 2732,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 2731,
               "node": {
@@ -3257,7 +3259,7 @@
                             "Px": 820.0
                           },
                           "start": 2724,
-                          "type": "LengthPercentage"
+                          "type": "length-percentage"
                         },
                         "start": 2724
                       }
@@ -3315,14 +3317,14 @@
             },
             "start": 2690
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 2690
       },
       {
         "end": 2776,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 2775,
               "node": {
@@ -3341,7 +3343,7 @@
                             "Px": 880.0
                           },
                           "start": 2768,
-                          "type": "LengthPercentage"
+                          "type": "length-percentage"
                         },
                         "start": 2768
                       }
@@ -3399,14 +3401,14 @@
             },
             "start": 2734
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 2734
       },
       {
         "end": 2990,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 2989,
               "node": {
@@ -3513,14 +3515,14 @@
             },
             "start": 2915
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 2915
       },
       {
         "end": 3067,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 3066,
               "node": {
@@ -3627,14 +3629,14 @@
             },
             "start": 2992
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 2992
       },
       {
         "end": 3145,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 3144,
               "node": {
@@ -3741,14 +3743,14 @@
             },
             "start": 3069
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 3069
       },
       {
         "end": 3337,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 3336,
               "node": {
@@ -3820,14 +3822,14 @@
             },
             "start": 3288
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 3288
       },
       {
         "end": 3389,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 3388,
               "node": {
@@ -3899,14 +3901,14 @@
             },
             "start": 3339
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 3339
       },
       {
         "end": 3441,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 3440,
               "node": {
@@ -3978,14 +3980,14 @@
             },
             "start": 3391
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 3391
       },
       {
         "end": 3493,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 3492,
               "node": {
@@ -4057,14 +4059,14 @@
             },
             "start": 3443
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 3443
       },
       {
         "end": 3545,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 3544,
               "node": {
@@ -4136,14 +4138,14 @@
             },
             "start": 3495
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 3495
       },
       {
         "end": 3597,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 3596,
               "node": {
@@ -4215,14 +4217,14 @@
             },
             "start": 3547
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 3547
       },
       {
         "end": 3650,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 3649,
               "node": {
@@ -4294,14 +4296,14 @@
             },
             "start": 3599
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 3599
       },
       {
         "end": 3703,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 3702,
               "node": {
@@ -4373,14 +4375,14 @@
             },
             "start": 3652
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 3652
       },
       {
         "end": 3895,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 3894,
               "node": {
@@ -4452,14 +4454,14 @@
             },
             "start": 3846
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 3846
       },
       {
         "end": 3947,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 3946,
               "node": {
@@ -4531,14 +4533,14 @@
             },
             "start": 3897
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 3897
       },
       {
         "end": 3999,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 3998,
               "node": {
@@ -4610,14 +4612,14 @@
             },
             "start": 3949
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 3949
       },
       {
         "end": 4051,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 4050,
               "node": {
@@ -4689,14 +4691,14 @@
             },
             "start": 4001
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 4001
       },
       {
         "end": 4103,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 4102,
               "node": {
@@ -4768,14 +4770,14 @@
             },
             "start": 4053
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 4053
       },
       {
         "end": 4155,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 4154,
               "node": {
@@ -4847,14 +4849,14 @@
             },
             "start": 4105
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 4105
       },
       {
         "end": 4207,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 4206,
               "node": {
@@ -4926,14 +4928,14 @@
             },
             "start": 4157
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 4157
       },
       {
         "end": 4260,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 4259,
               "node": {
@@ -5005,14 +5007,14 @@
             },
             "start": 4209
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 4209
       },
       {
         "end": 4313,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 4312,
               "node": {
@@ -5084,14 +5086,14 @@
             },
             "start": 4262
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 4262
       },
       {
         "end": 4366,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 4365,
               "node": {
@@ -5163,14 +5165,14 @@
             },
             "start": 4315
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 4315
       },
       {
         "end": 4419,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 4418,
               "node": {
@@ -5242,14 +5244,14 @@
             },
             "start": 4368
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 4368
       },
       {
         "end": 4472,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 4471,
               "node": {
@@ -5321,14 +5323,14 @@
             },
             "start": 4421
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 4421
       },
       {
         "end": 4687,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 4686,
               "node": {
@@ -5435,14 +5437,14 @@
             },
             "start": 4611
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 4611
       },
       {
         "end": 4765,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 4764,
               "node": {
@@ -5549,14 +5551,14 @@
             },
             "start": 4689
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 4689
       },
       {
         "end": 4844,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 4843,
               "node": {
@@ -5663,14 +5665,14 @@
             },
             "start": 4767
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 4767
       },
       {
         "end": 5037,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 5036,
               "node": {
@@ -5742,14 +5744,14 @@
             },
             "start": 4987
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 4987
       },
       {
         "end": 5090,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 5089,
               "node": {
@@ -5821,14 +5823,14 @@
             },
             "start": 5039
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 5039
       },
       {
         "end": 5143,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 5142,
               "node": {
@@ -5900,14 +5902,14 @@
             },
             "start": 5092
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 5092
       },
       {
         "end": 5196,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 5195,
               "node": {
@@ -5979,14 +5981,14 @@
             },
             "start": 5145
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 5145
       },
       {
         "end": 5249,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 5248,
               "node": {
@@ -6058,14 +6060,14 @@
             },
             "start": 5198
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 5198
       },
       {
         "end": 5302,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 5301,
               "node": {
@@ -6137,14 +6139,14 @@
             },
             "start": 5251
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 5251
       },
       {
         "end": 5356,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 5355,
               "node": {
@@ -6216,14 +6218,14 @@
             },
             "start": 5304
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 5304
       },
       {
         "end": 5410,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 5409,
               "node": {
@@ -6295,14 +6297,14 @@
             },
             "start": 5358
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 5358
       },
       {
         "end": 5603,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 5602,
               "node": {
@@ -6374,14 +6376,14 @@
             },
             "start": 5553
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 5553
       },
       {
         "end": 5656,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 5655,
               "node": {
@@ -6453,14 +6455,14 @@
             },
             "start": 5605
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 5605
       },
       {
         "end": 5709,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 5708,
               "node": {
@@ -6532,14 +6534,14 @@
             },
             "start": 5658
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 5658
       },
       {
         "end": 5762,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 5761,
               "node": {
@@ -6611,14 +6613,14 @@
             },
             "start": 5711
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 5711
       },
       {
         "end": 5815,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 5814,
               "node": {
@@ -6690,14 +6692,14 @@
             },
             "start": 5764
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 5764
       },
       {
         "end": 5868,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 5867,
               "node": {
@@ -6769,14 +6771,14 @@
             },
             "start": 5817
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 5817
       },
       {
         "end": 5921,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 5920,
               "node": {
@@ -6848,14 +6850,14 @@
             },
             "start": 5870
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 5870
       },
       {
         "end": 5975,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 5974,
               "node": {
@@ -6927,14 +6929,14 @@
             },
             "start": 5923
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 5923
       },
       {
         "end": 6029,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 6028,
               "node": {
@@ -7006,14 +7008,14 @@
             },
             "start": 5977
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 5977
       },
       {
         "end": 6083,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 6082,
               "node": {
@@ -7085,14 +7087,14 @@
             },
             "start": 6031
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 6031
       },
       {
         "end": 6137,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 6136,
               "node": {
@@ -7164,14 +7166,14 @@
             },
             "start": 6085
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 6085
       },
       {
         "end": 6191,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 6190,
               "node": {
@@ -7243,14 +7245,14 @@
             },
             "start": 6139
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 6139
       },
       {
         "end": 6385,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 6384,
               "node": {
@@ -7357,14 +7359,14 @@
             },
             "start": 6322
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 6322
       },
       {
         "end": 6450,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 6449,
               "node": {
@@ -7471,14 +7473,14 @@
             },
             "start": 6387
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 6387
       },
       {
         "end": 6516,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 6515,
               "node": {
@@ -7585,14 +7587,14 @@
             },
             "start": 6452
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 6452
       },
       {
         "end": 6690,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 6689,
               "node": {
@@ -7664,14 +7666,14 @@
             },
             "start": 6651
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 6651
       },
       {
         "end": 6732,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 6731,
               "node": {
@@ -7743,14 +7745,14 @@
             },
             "start": 6692
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 6692
       },
       {
         "end": 6774,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 6773,
               "node": {
@@ -7822,14 +7824,14 @@
             },
             "start": 6734
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 6734
       },
       {
         "end": 6816,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 6815,
               "node": {
@@ -7901,14 +7903,14 @@
             },
             "start": 6776
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 6776
       },
       {
         "end": 6858,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 6857,
               "node": {
@@ -7980,14 +7982,14 @@
             },
             "start": 6818
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 6818
       },
       {
         "end": 6900,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 6899,
               "node": {
@@ -8059,14 +8061,14 @@
             },
             "start": 6860
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 6860
       },
       {
         "end": 6943,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 6942,
               "node": {
@@ -8138,14 +8140,14 @@
             },
             "start": 6902
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 6902
       },
       {
         "end": 6986,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 6985,
               "node": {
@@ -8217,14 +8219,14 @@
             },
             "start": 6945
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 6945
       },
       {
         "end": 7160,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 7159,
               "node": {
@@ -8296,14 +8298,14 @@
             },
             "start": 7121
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 7121
       },
       {
         "end": 7202,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 7201,
               "node": {
@@ -8375,14 +8377,14 @@
             },
             "start": 7162
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 7162
       },
       {
         "end": 7244,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 7243,
               "node": {
@@ -8454,14 +8456,14 @@
             },
             "start": 7204
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 7204
       },
       {
         "end": 7286,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 7285,
               "node": {
@@ -8533,14 +8535,14 @@
             },
             "start": 7246
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 7246
       },
       {
         "end": 7328,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 7327,
               "node": {
@@ -8612,14 +8614,14 @@
             },
             "start": 7288
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 7288
       },
       {
         "end": 7370,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 7369,
               "node": {
@@ -8691,14 +8693,14 @@
             },
             "start": 7330
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 7330
       },
       {
         "end": 7412,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 7411,
               "node": {
@@ -8770,14 +8772,14 @@
             },
             "start": 7372
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 7372
       },
       {
         "end": 7455,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 7454,
               "node": {
@@ -8849,14 +8851,14 @@
             },
             "start": 7414
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 7414
       },
       {
         "end": 7498,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 7497,
               "node": {
@@ -8928,14 +8930,14 @@
             },
             "start": 7457
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 7457
       },
       {
         "end": 7541,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 7540,
               "node": {
@@ -9007,14 +9009,14 @@
             },
             "start": 7500
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 7500
       },
       {
         "end": 7584,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 7583,
               "node": {
@@ -9086,14 +9088,14 @@
             },
             "start": 7543
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 7543
       },
       {
         "end": 7627,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 7626,
               "node": {
@@ -9165,14 +9167,14 @@
             },
             "start": 7586
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 7586
       },
       {
         "end": 7822,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 7821,
               "node": {
@@ -9279,14 +9281,14 @@
             },
             "start": 7758
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 7758
       },
       {
         "end": 7888,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 7887,
               "node": {
@@ -9393,14 +9395,14 @@
             },
             "start": 7824
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 7824
       },
       {
         "end": 7955,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 7954,
               "node": {
@@ -9507,14 +9509,14 @@
             },
             "start": 7890
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 7890
       },
       {
         "end": 8130,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 8129,
               "node": {
@@ -9586,14 +9588,14 @@
             },
             "start": 8090
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 8090
       },
       {
         "end": 8173,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 8172,
               "node": {
@@ -9665,14 +9667,14 @@
             },
             "start": 8132
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 8132
       },
       {
         "end": 8216,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 8215,
               "node": {
@@ -9744,14 +9746,14 @@
             },
             "start": 8175
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 8175
       },
       {
         "end": 8259,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 8258,
               "node": {
@@ -9823,14 +9825,14 @@
             },
             "start": 8218
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 8218
       },
       {
         "end": 8302,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 8301,
               "node": {
@@ -9902,14 +9904,14 @@
             },
             "start": 8261
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 8261
       },
       {
         "end": 8345,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 8344,
               "node": {
@@ -9981,14 +9983,14 @@
             },
             "start": 8304
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 8304
       },
       {
         "end": 8389,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 8388,
               "node": {
@@ -10060,14 +10062,14 @@
             },
             "start": 8347
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 8347
       },
       {
         "end": 8433,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 8432,
               "node": {
@@ -10139,14 +10141,14 @@
             },
             "start": 8391
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 8391
       },
       {
         "end": 8608,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 8607,
               "node": {
@@ -10218,14 +10220,14 @@
             },
             "start": 8568
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 8568
       },
       {
         "end": 8651,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 8650,
               "node": {
@@ -10297,14 +10299,14 @@
             },
             "start": 8610
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 8610
       },
       {
         "end": 8694,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 8693,
               "node": {
@@ -10376,14 +10378,14 @@
             },
             "start": 8653
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 8653
       },
       {
         "end": 8737,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 8736,
               "node": {
@@ -10455,14 +10457,14 @@
             },
             "start": 8696
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 8696
       },
       {
         "end": 8780,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 8779,
               "node": {
@@ -10534,14 +10536,14 @@
             },
             "start": 8739
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 8739
       },
       {
         "end": 8823,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 8822,
               "node": {
@@ -10613,14 +10615,14 @@
             },
             "start": 8782
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 8782
       },
       {
         "end": 8866,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 8865,
               "node": {
@@ -10692,14 +10694,14 @@
             },
             "start": 8825
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 8825
       },
       {
         "end": 8910,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 8909,
               "node": {
@@ -10771,14 +10773,14 @@
             },
             "start": 8868
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 8868
       },
       {
         "end": 8954,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 8953,
               "node": {
@@ -10850,14 +10852,14 @@
             },
             "start": 8912
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 8912
       },
       {
         "end": 8998,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 8997,
               "node": {
@@ -10929,14 +10931,14 @@
             },
             "start": 8956
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 8956
       },
       {
         "end": 9042,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 9041,
               "node": {
@@ -11008,14 +11010,14 @@
             },
             "start": 9000
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 9000
       },
       {
         "end": 9086,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 9085,
               "node": {
@@ -11087,14 +11089,14 @@
             },
             "start": 9044
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 9044
       },
       {
         "end": 9381,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 9297,
               "node": {
@@ -11104,7 +11106,9 @@
                   "type": "Clear",
                   "value": {
                     "end": 9293,
-                    "node": "Both",
+                    "node": {
+                      "type": "both"
+                    },
                     "start": 9289
                   }
                 },
@@ -11150,7 +11154,9 @@
                           "node": {
                             "Literal": {
                               "end": 9331,
-                              "node": "Hidden",
+                              "node": {
+                                "type": "hidden"
+                              },
                               "start": 9325
                             }
                           },
@@ -11175,7 +11181,9 @@
                   "type": "Visibility",
                   "value": {
                     "end": 9353,
-                    "node": "Hidden",
+                    "node": {
+                      "type": "hidden"
+                    },
                     "start": 9347
                   }
                 },
@@ -11199,7 +11207,7 @@
                           "end": 9365,
                           "node": "Zero",
                           "start": 9364,
-                          "type": "LengthPercentage"
+                          "type": "length-percentage"
                         },
                         "start": 9364
                       }
@@ -11227,7 +11235,7 @@
                           "end": 9378,
                           "node": "Zero",
                           "start": 9377,
-                          "type": "LengthPercentage"
+                          "type": "length-percentage"
                         },
                         "start": 9377
                       }
@@ -11267,14 +11275,14 @@
             },
             "start": 9271
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 9271
       },
       {
         "end": 9732,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 9614,
               "node": {
@@ -11343,7 +11351,9 @@
                           "node": {
                             "Literal": {
                               "end": 9648,
-                              "node": "Hidden",
+                              "node": {
+                                "type": "hidden"
+                              },
                               "start": 9642
                             }
                           },
@@ -11368,7 +11378,9 @@
                   "type": "Visibility",
                   "value": {
                     "end": 9670,
-                    "node": "Hidden",
+                    "node": {
+                      "type": "hidden"
+                    },
                     "start": 9664
                   }
                 },
@@ -11446,7 +11458,7 @@
                           "end": 9716,
                           "node": "Zero",
                           "start": 9715,
-                          "type": "LengthPercentage"
+                          "type": "length-percentage"
                         },
                         "start": 9715
                       }
@@ -11474,7 +11486,7 @@
                           "end": 9729,
                           "node": "Zero",
                           "start": 9728,
-                          "type": "LengthPercentage"
+                          "type": "length-percentage"
                         },
                         "start": 9728
                       }
@@ -11659,14 +11671,14 @@
             },
             "start": 9474
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 9474
       },
       {
         "end": 9810,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 9809,
               "node": {
@@ -11676,7 +11688,9 @@
                   "type": "Clear",
                   "value": {
                     "end": 9807,
-                    "node": "Both",
+                    "node": {
+                      "type": "both"
+                    },
                     "start": 9803
                   }
                 },
@@ -11776,14 +11790,14 @@
             },
             "start": 9734
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 9734
       },
       {
         "end": 9991,
         "node": {
-          "properties": [
+          "declarations": [
             {
               "end": 9990,
               "node": {
@@ -11866,12 +11880,12 @@
             },
             "start": 9937
           },
-          "type": "StyleRule"
+          "type": "CSSStyleRule"
         },
         "start": 9937
       }
     ],
-    "type": "Stylesheet"
+    "type": "CSSStyleSheet"
   },
   "start": 272
 }
