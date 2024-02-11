@@ -1,6 +1,6 @@
 use hdx_atom::{atom, Atom};
 use hdx_lexer::Token;
-use hdx_parser::{expect, unexpected, unexpected_ident, Parse, Parser, Result as ParserResult, Spanned};
+use hdx_parser::{discard, expect, unexpected, unexpected_ident, Parse, Parser, Result as ParserResult, Spanned};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 #[cfg(feature = "serde")]
 use serde::Serialize;
@@ -24,6 +24,9 @@ impl<'a> Parse<'a> for Attribute {
 			Token::LeftSquare => {
 				parser.advance();
 				let (ns_prefix, name) = parse_wq_name(parser)?;
+				// parse_wq_name advances including WS/Comments so we should discard
+				// any as attribute selectors aren't WS sensitive.
+				discard!(parser, Token::Whitespace | Token::Comment(_));
 				let matcher = match parser.cur() {
 					Token::RightSquare => {
 						parser.advance_including_whitespace_and_comments();
@@ -178,13 +181,28 @@ pub enum AttributeModifier {
 
 #[cfg(test)]
 mod tests {
+	use oxc_allocator::Allocator;
 
 	use super::*;
+	use crate::test_helpers::test_write;
 
 	#[test]
 	fn size_test() {
 		assert_eq!(::std::mem::size_of::<Attribute>(), 40);
 		assert_eq!(::std::mem::size_of::<AttributeMatch>(), 1);
 		assert_eq!(::std::mem::size_of::<AttributeMatch>(), 1);
+	}
+
+	#[test]
+	fn test_writes() {
+		let allocator = Allocator::default();
+		test_write::<Attribute>(&allocator, "[foo]", "[foo]");
+		test_write::<Attribute>(&allocator, "[foo='bar']", "[foo=\"bar\"]");
+		test_write::<Attribute>(&allocator, "[foo = 'bar']", "[foo=\"bar\"]");
+		test_write::<Attribute>(&allocator, "[attr*='foo']", "[attr*=\"foo\"]");
+		test_write::<Attribute>(&allocator, "[|attr='foo']", "[attr=\"foo\"]");
+		test_write::<Attribute>(&allocator, "[*|attr='foo']", "[*|attr=\"foo\"]");
+		test_write::<Attribute>(&allocator, "[x|attr='foo']", "[x|attr=\"foo\"]");
+		test_write::<Attribute>(&allocator, "[attr|='foo']", "[attr|=\"foo\"]");
 	}
 }

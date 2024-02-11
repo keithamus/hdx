@@ -115,14 +115,14 @@ impl<'a> Lexer<'a> {
 
 	pub fn advance_including_whitespace(&mut self) -> Token {
 		self.include = Include::Whitespace;
-		let token = self.read_next_token();
+		let token = self.advance();
 		self.include = Include::none();
 		token
 	}
 
 	pub fn advance_including_whitespace_and_comments(&mut self) -> Token {
 		self.include = Include::all();
-		let token = self.read_next_token();
+		let token = self.advance();
 		self.include = Include::none();
 		token
 	}

@@ -1,6 +1,8 @@
 use hdx_atom::Atom;
 use hdx_lexer::Token;
-use hdx_parser::{diagnostics, Parse, Parser, Result as ParserResult, Span, Spanned, unexpected_ident, unexpected};
+use hdx_parser::{
+	diagnostics, expect, unexpected, unexpected_ident, Parse, Parser, Result as ParserResult, Span, Spanned,
+};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 #[cfg(feature = "serde")]
 use serde::Serialize;
@@ -37,37 +39,38 @@ impl<'a> Parse<'a> for Selector<'a> {
 						break;
 					}
 				}
-				_ => {}
-			}
-			let component = Component::parse(parser)?;
-			if let Some(Spanned { node, span: component_span }) = components.last() {
-				match (node, &component.node) {
-					// A selector like `a /**/ b` would parse as // <Type>, <Descendant>,
-					// <Descendant>, <Type>. The CSS selector grammar implicitly swallows adjacent
-					// descendant combinators as whitespace, but due to simplifying AST nodes in our
-					// parser, it means we must explicitly check for, and elide adjacent descendant
-					// combinators. Adjacent Descendant Combinator Elision is the name of my metal
-					// band, btw.
-					(Component::Combinator(_), Component::Combinator(Combinator::Descendant))
-					| (Component::Combinator(Combinator::Descendant), Component::Combinator(_)) => {
-						continue;
+				_ => {
+					let component = Component::parse(parser)?;
+					if let Some(Spanned { node, span: component_span }) = components.last() {
+						match (node, &component.node) {
+							// A selector like `a /**/ b` would parse as // <Type>, <Descendant>,
+							// <Descendant>, <Type>. The CSS selector grammar implicitly swallows adjacent
+							// descendant combinators as whitespace, but due to simplifying AST nodes in our
+							// parser, it means we must explicitly check for, and elide adjacent descendant
+							// combinators. Adjacent Descendant Combinator Elision is the name of my metal
+							// band, btw.
+							(Component::Combinator(_), Component::Combinator(Combinator::Descendant))
+							| (Component::Combinator(Combinator::Descendant), Component::Combinator(_)) => {
+								continue;
+							}
+							// Combinators cannot be next to eachother.
+							(Component::Combinator(_), Component::Combinator(_)) => {
+								Err(diagnostics::AdjacentSelectorCombinators(
+									*component_span,
+									Span::new(span.start, component_span.start),
+								))?
+							}
+							// Types cannot be next to eachother.
+							(Component::Type(_), Component::Type(_)) => Err(diagnostics::AdjacentSelectorTypes(
+								*component_span,
+								Span::new(span.start, component_span.start),
+							))?,
+							_ => {}
+						}
 					}
-					// Combinators cannot be next to eachother.
-					(Component::Combinator(_), Component::Combinator(_)) => {
-						Err(diagnostics::AdjacentSelectorCombinators(
-							*component_span,
-							Span::new(span.start, component_span.start),
-						))?
-					}
-					// Types cannot be next to eachother.
-					(Component::Type(_), Component::Type(_)) => Err(diagnostics::AdjacentSelectorTypes(
-						*component_span,
-						Span::new(span.start, component_span.start),
-					))?,
-					_ => {}
+					components.push(component);
 				}
 			}
-			components.push(component);
 		}
 		Ok(Self { components: parser.boxup(components) }.spanned(span.end(parser.pos())))
 	}
@@ -119,36 +122,36 @@ impl<'a> Parse<'a> for Component<'a> {
 		let span = parser.span();
 		match parser.cur() {
 			Token::Whitespace => {
-				parser.advance_including_whitespace_and_comments();
+				parser.advance_including_whitespace();
 				Ok(Self::Combinator(Combinator::Descendant).spanned(span.end(parser.pos())))
 			}
 			Token::Ident(name) => {
-				parser.advance_including_whitespace_and_comments();
+				parser.advance_including_whitespace();
 				Ok(Self::Type(name.to_ascii_lowercase()).spanned(span))
 			}
 			Token::Colon => {
-				parser.advance_including_whitespace_and_comments();
-				match parser.cur(){
+				parser.advance_including_whitespace();
+				match parser.cur() {
 					Token::Colon => {
-						parser.advance_including_whitespace_and_comments();
+						parser.advance_including_whitespace();
 						match parser.cur() {
 							Token::Ident(name) => {
 								if let Some(selector) = PseudoElement::from_atom(name.clone()) {
-									parser.advance_including_whitespace_and_comments();
+									parser.advance_including_whitespace();
 									Ok(Self::PseudoElement(selector).spanned(span.end(parser.pos())))
 								} else {
 									unexpected_ident!(parser, name)
 								}
 							}
-							token => unexpected!(parser, token)
+							token => unexpected!(parser, token),
 						}
 					}
 					Token::Ident(ident) => {
 						if let Some(selector) = PseudoClass::from_atom(ident.clone()) {
-							parser.advance_including_whitespace_and_comments();
+							parser.advance_including_whitespace();
 							Ok(Self::PseudoClass(selector).spanned(span.end(parser.pos())))
 						} else if let Some(e) = LegacyPseudoElement::from_atom(ident.clone()) {
-							parser.advance_including_whitespace_and_comments();
+							parser.advance_including_whitespace();
 							Ok(Self::LegacyPseudoElement(e).spanned(span.end(parser.pos())))
 						} else {
 							Err(diagnostics::UnexpectedIdent(ident, parser.span()))?
@@ -158,32 +161,30 @@ impl<'a> Parse<'a> for Component<'a> {
 				}
 			}
 			Token::Hash(name) => {
-				parser.advance_including_whitespace_and_comments();
+				parser.advance_including_whitespace();
 				Ok(Self::Id(name).spanned(span.end(parser.pos())))
 			}
 			Token::Delim(char) => match char {
 				'.' => {
-					parser.advance_including_whitespace_and_comments();
+					parser.advance_including_whitespace();
 					match parser.cur() {
 						Token::Ident(ident) => {
-							parser.advance_including_whitespace_and_comments();
+							parser.advance_including_whitespace();
 							Ok(Self::Class(ident).spanned(span.end(parser.pos())))
 						}
 						_ => Err(diagnostics::Unimplemented(parser.span()))?,
 					}
 				}
-				'*' => {
-					match parser.peek() {
-						Token::Delim('|') => {
-							let (prefix, atom) = parse_wq_name(parser)?;
-							Ok(Self::NSPrefixedType(parser.boxup((prefix, atom))).spanned(span.end(parser.pos())))
-						}
-						_ => {
-							parser.advance_including_whitespace_and_comments();
-							Ok(Self::Wildcard.spanned(span.end(parser.pos())))
-						}
+				'*' => match parser.peek() {
+					Token::Delim('|') => {
+						let (prefix, atom) = parse_wq_name(parser)?;
+						Ok(Self::NSPrefixedType(parser.boxup((prefix, atom))).spanned(span.end(parser.pos())))
 					}
-				}
+					_ => {
+						parser.advance_including_whitespace();
+						Ok(Self::Wildcard.spanned(span.end(parser.pos())))
+					}
+				},
 				_ => Err(diagnostics::Unimplemented(parser.span()))?,
 			},
 			Token::LeftSquare => {
@@ -344,41 +345,44 @@ pub struct ANBEvenOdd {
 
 pub(crate) fn parse_wq_name(parser: &mut Parser) -> ParserResult<(NSPrefix, Atom)> {
 	let nsprefix = match parser.cur() {
-		Token::Delim('|') => {
-			parser.advance_including_whitespace_and_comments();
+		Token::Delim('|') if matches!(parser.peek(), Token::Ident(_)) => {
+			parser.advance_including_whitespace();
 			NSPrefix::None
-		},
-		Token::Delim('*') => {
-			parser.advance_including_whitespace_and_comments();
-			match parser.cur() {
-				Token::Delim('|') => {
-					parser.advance_including_whitespace_and_comments();
-					NSPrefix::Wildcard
-				},
-				token => unexpected!(parser, token),
-			}
+		}
+		Token::Delim('*') if matches!(parser.peek(), Token::Delim('|')) => {
+			parser.advance_including_whitespace();
+			expect!(parser, Token::Delim('|'));
+			parser.advance_including_whitespace();
+			NSPrefix::Wildcard
 		}
 		Token::Ident(name) => {
-			parser.advance_including_whitespace_and_comments();
+			parser.advance_including_whitespace();
 			match parser.cur() {
-				Token::Delim('|') => {
-					parser.advance_including_whitespace_and_comments();
+				Token::Delim('|') if matches!(parser.peek(), Token::Ident(_)) => {
+					parser.advance_including_whitespace();
 					NSPrefix::Named(name)
 				}
-				_ => return Ok((NSPrefix::None, name))
+				_ => return Ok((NSPrefix::None, name)),
 			}
-		},
+		}
 		token => unexpected!(parser, token),
 	};
 	match parser.cur() {
-		Token::Ident(name) => Ok((nsprefix, name)),
-		token => unexpected!(parser, token)
+		Token::Ident(name) => {
+			parser.advance_including_whitespace();
+			Ok((nsprefix, name))
+		}
+		token => unexpected!(parser, token),
 	}
 }
 
 #[cfg(test)]
 mod test {
+	use oxc_allocator::Allocator;
+
 	use super::*;
+	use crate::test_helpers::test_write;
+
 	#[test]
 	fn size_test() {
 		assert_eq!(::std::mem::size_of::<Selector>(), 8);
@@ -393,5 +397,17 @@ mod test {
 		assert_eq!(::std::mem::size_of::<Combinator>(), 1);
 		assert_eq!(::std::mem::size_of::<ANB>(), 8);
 		assert_eq!(::std::mem::size_of::<ANBEvenOdd>(), 8);
+	}
+
+	#[test]
+	fn test_writes() {
+		let allocator = Allocator::default();
+		test_write::<Component>(&allocator, ":root", ":root");
+		test_write::<Component>(&allocator, "*", "*");
+		test_write::<Component>(&allocator, "[attr|='foo']", "[attr|=\"foo\"]");
+		// test_write::<Component>(&allocator, "*|x", "*|x");
+		test_write::<Selector>(&allocator, ":root", ":root");
+		test_write::<Selector>(&allocator, "body [attr|='foo']", "body [attr|=\"foo\"]");
+		// test_write::<Selector>(&allocator, "*|x :focus-within", "*|x :focus-within");
 	}
 }
