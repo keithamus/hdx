@@ -83,7 +83,6 @@ pub trait QualifiedRule<'a>: Sized + Parse<'a> {
 	// https://drafts.csswg.org/css-syntax-3/#consume-a-qualified-rule
 	fn parse_qualified_rule(parser: &mut Parser<'a>) -> Result<(Spanned<Self::Prelude>, Spanned<Self::Block>)> {
 		let prelude = Self::parse_prelude(parser)?;
-		expect!(parser, Token::LeftCurly);
 		Ok((prelude, Self::parse_block(parser)?))
 	}
 }

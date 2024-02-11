@@ -57,11 +57,15 @@ impl<'a> Parse<'a> for StyleDeclaration<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
 		let span = parser.span();
 		expect!(parser, Token::LeftCurly);
+		parser.advance();
 		let mut declarations = parser.new_vec();
 		let mut rules = parser.new_vec();
 		loop {
 			match parser.cur() {
-				Token::RightCurly => break,
+				Token::RightCurly => {
+					parser.advance();
+					break;
+				}
 				t @ Token::Eof => unexpected!(parser, t),
 				_ => {
 					let checkpoint = parser.checkpoint();
@@ -96,13 +100,21 @@ impl<'a> WriteCss<'a> for StyleDeclaration<'a> {
 }
 
 #[cfg(test)]
-mod tests {
+mod test {
+	use oxc_allocator::Allocator;
 
 	use super::*;
+	use crate::test_helpers::test_write;
 
 	#[test]
 	fn size_test() {
 		use std::mem::size_of;
 		assert_eq!(size_of::<StyleRule>(), 16);
+	}
+
+	#[test]
+	fn test_writes() {
+		let allocator = Allocator::default();
+		test_write::<StyleRule>(&allocator, "body {}", "body{}");
 	}
 }

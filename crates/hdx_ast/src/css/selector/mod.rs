@@ -1,7 +1,7 @@
 use hdx_atom::Atom;
 use hdx_lexer::Token;
 use hdx_parser::{
-	diagnostics, expect, unexpected, unexpected_ident, Parse, Parser, Result as ParserResult, Span, Spanned,
+	diagnostics, discard, expect, unexpected, unexpected_ident, Parse, Parser, Result as ParserResult, Span, Spanned,
 };
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 #[cfg(feature = "serde")]
@@ -72,6 +72,9 @@ impl<'a> Parse<'a> for Selector<'a> {
 				}
 			}
 		}
+		// Given selector parsing is Whitespace sensitive, trailing whitespace should be
+		// discarded before moving onto the next parser which is likely a block parser
+		discard!(parser, Token::Whitespace);
 		Ok(Self { components: parser.boxup(components) }.spanned(span.end(parser.pos())))
 	}
 }
