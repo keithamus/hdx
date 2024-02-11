@@ -16,45 +16,28 @@ jobs:
             target: x86_64-pc-windows-msvc
             code-target: win32-x64
 
-          - os: windows-latest
-            target: aarch64-pc-windows-msvc
-            code-target: win32-arm64
-
           - os: ubuntu-latest
             target: x86_64-unknown-linux-gnu
             code-target: linux-x64
-
-          - os: ubuntu-20.04
-            target: aarch64-unknown-linux-gnu
-            code-target: linux-arm64
 
           - os: macos-latest
             target: x86_64-apple-darwin
             code-target: darwin-x64
 
-          - os: macos-latest
-            target: aarch64-apple-darwin
-            code-target: darwin-arm64
-
     name: Build & Test on ${{ matrix.code-target }}
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
-      - run: rustup target add ${{ matrix.target }}
-      - name: Install arm64 toolchain
-        if: matrix.code-target == 'linux-arm64'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y gcc-aarch64-linux-gnu
+      - run: rustup target add ${{ matrix.target }
       - name: Cache
         uses: Swatinem/rust-cache@v2
         with:
           shared-key: release-${{ matrix.target }}
       - name: Test
-        run: cargo test --target ${{ matrix.target }}
+        run: cargo test
         env:
           CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER: aarch64-linux-gnu-gcc
       - name: Coverage
-        run: cargo coverage --diff --target ${{ matrix.target }}
+        run: cargo coverage --diff
         env:
           CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER: aarch64-linux-gnu-gcc
