@@ -28,7 +28,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
-      - run: rustup target add ${{ matrix.target }
+      - run: rustup target add ${{ matrix.target }}
       - name: Cache
         uses: Swatinem/rust-cache@v2
         with:
