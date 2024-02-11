@@ -1,5 +1,5 @@
 # mostly copied from https://raw.githubusercontent.com/web-infra-dev/oxc/main/.github/workflows/release_cli.yml
-name: release
+name: test
 on:
   push:
     branches: ["main"]
