@@ -120,12 +120,13 @@ macro_rules! properties {
 				let span = parser.span();
 				let (name, value) = match parser.cur() {
 					Token::Ident(atom) => {
+						parser.advance();
+						expect!(parser, Token::Colon);
+						parser.advance();
 						let name = atom.to_ascii_lowercase();
 						match name {
 							$(
 							$atom => {
-								expect!(parser, Token::Colon);
-								parser.advance();
 								let value = match parser.cur() {
 									Token::Ident(atom) => match atom.to_ascii_lowercase() {
 										atom!("initial") => {
@@ -172,7 +173,8 @@ macro_rules! properties {
 				};
 				let important = if matches!(parser.cur(), Token::Delim('!')) && matches!(parser.peek(), Token::Ident(atom!("important"))) {
 					parser.advance();
-					parser.advance();
+					parser.advance_including_whitespace_and_comments();
+					expect!(parser, Token::Ident(atom!("important")));
 					true
 				} else {
 					false
@@ -1285,13 +1287,21 @@ properties! {
 
 #[cfg(test)]
 mod tests {
+	use oxc_allocator::Allocator;
 
 	use super::*;
+	use crate::test_helpers::test_write;
 
 	#[test]
 	fn size_test() {
 		use std::mem::size_of;
 		assert_eq!(size_of::<StyleProperty>(), 32);
 		assert_eq!(size_of::<StyleValue>(), 16);
+	}
+
+	#[test]
+	fn test_writes() {
+		let allocator = Allocator::default();
+		test_write::<StyleProperty>(&allocator, "width: 1px", "width:1px");
 	}
 }

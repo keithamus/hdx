@@ -58,6 +58,7 @@ impl<'a> Parse<'a> for Width {
 					Err(diagnostics::NumberNotNegative(val, span))?
 				}
 				if let Some(val) = LengthPercentage::new(val.into(), unit.clone()) {
+					parser.advance();
 					Ok(Self::LengthPercentage(val).spanned(span))
 				} else {
 					Err(diagnostics::UnexpectedDimension(unit, span))?
@@ -78,7 +79,7 @@ impl<'a> Parse<'a> for Width {
 							parser.advance();
 							expect!(parser, Token::RightParen);
 							parser.advance();
-							Ok(Self::LengthPercentage(val).spanned(span))
+							Ok(Self::FitContentFunction(val).spanned(span))
 						} else {
 							Err(diagnostics::UnexpectedDimension(unit, span))?
 						}
@@ -87,12 +88,36 @@ impl<'a> Parse<'a> for Width {
 						parser.advance();
 						expect!(parser, Token::RightParen);
 						parser.advance();
-						Ok(Self::LengthPercentage(LengthPercentage::Zero).spanned(span))
+						Ok(Self::FitContentFunction(LengthPercentage::Zero).spanned(span))
 					}
 					token => unexpected!(parser, token),
 				}
 			}
 			token => unexpected!(parser, token),
 		}
+	}
+}
+
+#[cfg(test)]
+mod tests {
+	use oxc_allocator::Allocator;
+
+	use super::*;
+	use crate::test_helpers::test_write;
+
+	#[test]
+	fn size_test() {
+		use std::mem::size_of;
+		assert_eq!(size_of::<Width>(), 16);
+	}
+
+	#[test]
+	fn test_writes() {
+		let allocator = Allocator::default();
+		test_write::<Width>(&allocator, "0", "0");
+		test_write::<Width>(&allocator, "1px", "1px");
+		test_write::<Width>(&allocator, "fit-content", "fit-content");
+		test_write::<Width>(&allocator, "fit-content(20rem)", "fit-content(20rem)");
+		test_write::<Width>(&allocator, "fit-content(0)", "fit-content(0)");
 	}
 }

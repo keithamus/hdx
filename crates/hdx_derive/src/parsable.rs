@@ -81,7 +81,6 @@ impl ParsableArgs {
 					ParsableArg::Atom(s) => ret.atom = Some(s),
 				}
 			}
-			return ret;
 		}
 		ret
 	}

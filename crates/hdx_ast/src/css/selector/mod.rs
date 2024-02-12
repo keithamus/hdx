@@ -34,10 +34,8 @@ impl<'a> Parse<'a> for Selector<'a> {
 				Token::Eof | Token::Semicolon | Token::Comma | Token::LeftCurly => {
 					break;
 				}
-				Token::Whitespace => {
-					if matches!(parser.peek(), Token::Eof | Token::Semicolon | Token::Comma | Token::LeftCurly) {
-						break;
-					}
+				Token::Whitespace if matches!(parser.peek(), Token::Eof | Token::Semicolon | Token::Comma | Token::LeftCurly) => {
+					break;
 				}
 				_ => {
 					let component = Component::parse(parser)?;
@@ -125,7 +123,7 @@ impl<'a> Parse<'a> for Component<'a> {
 		let span = parser.span();
 		match parser.cur() {
 			Token::Whitespace => {
-				parser.advance_including_whitespace();
+				parser.advance();
 				Ok(Self::Combinator(Combinator::Descendant).spanned(span.end(parser.pos())))
 			}
 			Token::Ident(name) => {

@@ -78,6 +78,7 @@ macro_rules! length {
 			#[writable(suffix = $atom)]
 			$name(CSSFloat),
 			)+
+			#[writable(suffix = "%")]
 			Percent(CSSFloat),
 		}
 

@@ -1,8 +1,8 @@
 use proc_macro2::{Span, TokenStream};
 use quote::quote;
 use syn::{
-	parse::Parse, punctuated::Punctuated, spanned::Spanned, Attribute, Data, DataEnum, DataStruct,
-	DeriveInput, Error, Fields, FieldsUnnamed, Ident, Index, LitStr, Meta, Token,
+	parse::Parse, punctuated::Punctuated, spanned::Spanned, Attribute, Data, DataEnum, DataStruct, DeriveInput, Error,
+	Fields, FieldsUnnamed, Ident, Index, LitStr, Meta, Token,
 };
 
 use crate::{err, kebab};
@@ -36,22 +36,28 @@ impl Parse for WritableArg {
 	}
 }
 
-pub struct WritableArgs(Vec<WritableArg>);
+pub struct WritableArgs {
+	as_function: Option<String>,
+	suffix: Option<String>,
+	prefix: Option<String>,
+	rename: Option<String>,
+}
 
 impl WritableArgs {
 	fn parse(attrs: &[Attribute]) -> Self {
-		if let Some(Attribute { meta: Meta::List(meta), .. }) =
-			&attrs.iter().find(|a| a.path().is_ident("writable"))
-		{
-			return Self(
-				meta.parse_args_with(Punctuated::<WritableArg, Token![,]>::parse_terminated)
-					.unwrap()
-					.iter()
-					.cloned()
-					.collect(),
-			);
+		let mut ret = Self { as_function: None, suffix: None, prefix: None, rename: None };
+		if let Some(Attribute { meta: Meta::List(meta), .. }) = &attrs.iter().find(|a| a.path().is_ident("writable")) {
+			let args = meta.parse_args_with(Punctuated::<WritableArg, Token![,]>::parse_terminated).unwrap();
+			for arg in args {
+				match arg {
+					WritableArg::AsFunction(s) => ret.as_function = Some(s),
+					WritableArg::Suffix(s) => ret.suffix = Some(s),
+					WritableArg::Prefix(s) => ret.prefix = Some(s),
+					WritableArg::Rename(s) => ret.rename = Some(s),
+				}
+			}
 		}
-		Self(vec![])
+		ret
 	}
 }
 
@@ -64,46 +70,45 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 			for var in variants {
 				let var_ident = var.ident;
 				let args = WritableArgs::parse(&var.attrs);
-				if args.0.len() > 1 {
-					return err(var_ident.span(), "#[writable] can only have one argument");
-				}
 				match var.fields {
 					Fields::Unit => {
-						let str =
-							LitStr::new(kebab(format!("{}", var_ident)).as_str(), var_ident.span());
-						match args.0.first() {
-							Some(WritableArg::AsFunction(name)) => {
-								matchers.push(quote! {
-									Self::#var_ident => {
-										hdx_atom::atom!(#name).write_css(sink)?;
-										sink.write_char('(')?;
-										hdx_atom::atom!(#str).write_css(sink)?;
-										sink.write_char(')')?;
-									}
-								});
-							}
-							Some(WritableArg::Prefix(prefix)) => {
-								matchers.push(quote! {
-									Self::#var_ident => {
-										sink.write_str(#prefix)?;
-										hdx_atom::atom!(#str).write_css(sink)?;
-									}
-								});
-							}
-							Some(WritableArg::Suffix(suffix)) => {
-								matchers.push(quote! {
-									Self::#var_ident => {
-										hdx_atom::atom!(#str).write_css(sink)?;
-										sink.write_str(#suffix)?;
-									}
-								});
-							}
-							_ => {
-								matchers.push(quote! {
-									Self::#var_ident => hdx_atom::atom!(#str).write_css(sink)?,
-								});
-							}
+						let str = LitStr::new(
+							&args.rename.unwrap_or_else(|| kebab(format!("{}", var_ident))),
+							var_ident.span(),
+						);
+						let mut fn_head = None;
+						let mut fn_tail = None;
+						let mut prefix = None;
+						let mut suffix = None;
+						if let Some(str) = args.as_function {
+							fn_head = Some(quote! {
+								hdx_atom::atom!(#str).write_css(sink)?;
+								sink.write_char('(')?;
+							});
+							fn_tail = Some(quote! {
+								sink.write_char(')')?;
+							});
 						}
+						if let Some(str) = args.prefix {
+							prefix = Some(quote! {
+								sink.write_str(#str)?;
+							});
+						}
+						if let Some(str) = args.suffix {
+							suffix = Some(quote! {
+								sink.write_str(#str)?;
+							});
+						}
+						matchers.push(quote! {
+							Self::#var_ident => {
+								#fn_head
+								#prefix
+								// This is the write of the UNIT
+								hdx_atom::atom!(#str).write_css(sink)?;
+								#suffix
+								#fn_tail
+							}
+						});
 					}
 					Fields::Unnamed(FieldsUnnamed { unnamed, .. }) => {
 						let mut field_extract = vec![];
@@ -115,42 +120,42 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 								#fname.write_css(sink)?;
 							});
 						}
-						match args.0.first() {
-							Some(WritableArg::AsFunction(name)) => {
-								matchers.push(quote! {
-									Self::#var_ident(#(#field_extract)*) => {
-										hdx_atom::atom!(#name).write_css(sink)?;
-										sink.write_char('(')?;
-										#(#field_writes)*
-										sink.write_char(')')?;
-									},
-								});
+						let mut fn_head = None;
+						let mut fn_tail = None;
+						let mut prefix = None;
+						let mut suffix = None;
+						if let Some(str) = args.as_function {
+							fn_head = Some(quote! {
+								hdx_atom::atom!(#str).write_css(sink)?;
+								sink.write_char('(')?;
+							});
+							fn_tail = Some(quote! {
+								sink.write_char(')')?;
+							});
+						}
+						if let Some(str) = args.prefix {
+							prefix = Some(quote! {
+								sink.write_str(#str)?;
+							});
+						}
+						if let Some(str) = args.suffix {
+							suffix = Some(quote! {
+								sink.write_str(#str)?;
+							});
+						}
+						matchers.push(quote! {
+							Self::#var_ident(#(#field_extract)*) => {
+								#fn_head
+								#prefix
+								#(#field_writes)*
+								#suffix
+								#fn_tail
 							}
-							Some(WritableArg::Prefix(prefix)) => {
-								matchers.push(quote! {
-									Self::#var_ident(#(#field_extract)*) => {
-										hdx_atom::atom!(#prefix).write_css(sink)?;
-										#(#field_writes)*
-									}
-								});
-							}
-							Some(WritableArg::Suffix(suffix)) => {
-								matchers.push(quote! {
-									Self::#var_ident(#(#field_extract)*) => {
-										#(#field_writes)*
-										hdx_atom::atom!(#suffix).write_css(sink)?;
-									}
-								});
-							}
-							_ => matchers.push(quote! {
-								Self::#var_ident(#(#field_extract)*) => {
-									#(#field_writes)*
-								}
-							}),
-						};
+						});
 					}
-					Fields::Named(_) => matchers
-						.push(err(var.fields.span(), "Cannot derive on Writable on named fields")),
+					Fields::Named(_) => {
+						matchers.push(err(var.fields.span(), "Cannot derive on Writable on named fields"))
+					}
 				}
 			}
 			let match_block = quote! {
@@ -170,9 +175,6 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 			}
 		}
 		Data::Struct(DataStruct { fields: Fields::Unnamed(fields), .. }) => {
-			if input_args.0.len() > 1 {
-				return err(ident.span(), "#[writable] can only have one argument");
-			}
 			let mut field_writes = vec![];
 			for i in 0..fields.unnamed.len() {
 				let idx = Index::from(i);
@@ -180,45 +182,45 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 					self.#idx.write_css(sink)?;
 				});
 			}
-			let write = match input_args.0.first() {
-				Some(WritableArg::AsFunction(name)) => {
-					quote! {
-						hdx_atom::atom!(#name).write_css(sink)?;
-						sink.write_char('(')?;
-						#(#field_writes)*
-						sink.write_char(')')?;
-					}
-				}
-				Some(WritableArg::Prefix(prefix)) => {
-					quote! {
-						hdx_atom::atom!(#prefix).write_css(sink)?;
-						#(#field_writes)*
-					}
-				}
-				Some(WritableArg::Suffix(suffix)) => {
-					quote! {
-						#(#field_writes)*
-						hdx_atom::atom!(#suffix).write_css(sink)?;
-					}
-				}
-				_ => quote! {
-					#(#field_writes)*
-				},
-			};
+			let mut fn_head = None;
+			let mut fn_tail = None;
+			let mut prefix = None;
+			let mut suffix = None;
+			if let Some(str) = input_args.as_function {
+				fn_head = Some(quote! {
+					hdx_atom::atom!(#str).write_css(sink)?;
+					sink.write_char('(')?;
+				});
+				fn_tail = Some(quote! {
+					sink.write_char(')')?;
+				});
+			}
+			if let Some(str) = input_args.prefix {
+				prefix = Some(quote! {
+					sink.write_str(#str)?;
+				});
+			}
+			if let Some(str) = input_args.suffix {
+				suffix = Some(quote! {
+					sink.write_str(#str)?;
+				});
+			}
 			quote! {
 				#[automatically_derived]
 				impl<'a> ::hdx_writer::WriteCss<'a> for #ident {
 					fn write_css<W: ::hdx_writer::CssWriter>(&self, sink: &mut W) -> ::hdx_writer::Result {
 						use ::hdx_writer::{WriteCss, CssWriter};
-						#write
+						#fn_head
+						#prefix
+						#(#field_writes)*
+						#suffix
+						#fn_tail
 						Ok(())
 					}
 				}
 			}
 		}
-		Data::Struct(_) => {
-			err(ident.span(), "Cannot derive Writable on a Struct with named or no fields")
-		}
+		Data::Struct(_) => err(ident.span(), "Cannot derive Writable on a Struct with named or no fields"),
 		Data::Union(_) => err(ident.span(), "Cannot derive Writable on a Union"),
 	}
 }
