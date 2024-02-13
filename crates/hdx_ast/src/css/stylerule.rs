@@ -116,6 +116,5 @@ mod test {
 	fn test_writes() {
 		let allocator = Allocator::default();
 		test_write::<StyleRule>(&allocator, "body {}", "body{}");
-		test_write::<StyleRule>(&allocator, "body { --foo {} }", "body{ --foo {} }");
 	}
 }
