@@ -2,7 +2,11 @@ use hdx_ast::css::StyleSheet;
 use hdx_lexer::{Token, Lexer};
 use hdx_parser::{Parser, Features};
 use hdx_writer::{BaseCssWriter, WriteCss};
-use miette::{GraphicalReportHandler, GraphicalTheme, NamedSource};
+#[cfg(feature="fancy")]
+use miette::{GraphicalReportHandler, GraphicalTheme};
+#[cfg(not(feature="fancy"))]
+use miette::JSONReportHandler;
+use miette::NamedSource;
 use oxc_allocator::Allocator;
 use serde::Serialize;
 use wasm_bindgen::prelude::*;
@@ -79,6 +83,11 @@ pub fn parse_error_report(source_text: String) -> String {
 	let allocator = Allocator::default();
 	let result = Parser::new(&allocator, source_text.as_str(), Features::default())
 		.parse_with::<StyleSheet>();
+	#[cfg(feature="fancy")]
+	let handler = GraphicalReportHandler::new_themed(GraphicalTheme::unicode_nocolor());
+	#[cfg(not(feature="fancy"))]
+	let handler = JSONReportHandler::new();
+	#[cfg(feature="fancy")]
 	let handler = GraphicalReportHandler::new_themed(GraphicalTheme::unicode_nocolor());
 	let mut report = String::new();
 	for err in result.errors {

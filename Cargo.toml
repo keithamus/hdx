@@ -24,32 +24,36 @@ hdx_writer = { version = "0.0.0", path = "crates/hdx_writer" }
 # Use OXC Allocator until https://github.com/fitzgen/bumpalo/pull/210 is resolved
 oxc_allocator = { version = "0.6.0" }
 
-bumpalo = { version = "3.13.0" }
+bumpalo = { version = "3.14.0" }
 
-clap = { version = "4.3.19" }
+clap = { version = "4.5.0" }
 
 closestmatch = { version = "0.1.2" }
-miette = { version = "6.0.1" }
-thiserror = { version = "1.0.43" }
-serde = { version = "1.0.171" }
-serde_json = { version = "1.0.102" }
-syn = { version = "2.0.26" }
-quote = { version = "1.0.31" }
-proc-macro2 = { version = "1.0.66" }
-bitmask-enum = { version = "2.2.1" }
+miette = { version = "6.0.1", default-features = false }
+thiserror = { version = "1.0.57" }
+serde = { version = "1.0.196" }
+serde_json = { version = "1.0.113" }
+syn = { version = "2.0.48" }
+quote = { version = "1.0.35" }
+proc-macro2 = { version = "1.0.78" }
+bitmask-enum = { version = "2.2.3" }
 
 glob = { version = "0.3.1" }
 pico-args = { version = "0.5.0" }
 project-root = { version = "0.2.2" }
-similar = { version = "2.2.1" }
+similar = { version = "2.4.0" }
 criterion = { version = "0.5.1" }
 
 string_cache = { version = "0.8.7" }
 string_cache_codegen = { version = "0.5.2" }
 
-grep-regex = { version = "0.1.11" }
-grep-matcher = { version = "0.1.6" }
-grep-searcher = { version = "0.1.11" }
+grep-regex = { version = "0.1.12" }
+grep-matcher = { version = "0.1.7" }
+grep-searcher = { version = "0.1.13" }
+
+wasm-bindgen = { version = "0.2.91" }
+serde-wasm-bindgen = { version = "0.6.3" }
+console_error_panic_hook = { version = "0.1.7" }
 
 [workspace.metadata.workspaces]
 allow_branch = "main"
