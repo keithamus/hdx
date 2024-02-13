@@ -1,233 +1,315 @@
 {
   "end": 122,
-  "rules": [
-    {
-      "end": 121,
-      "prelude": {
-        "end": 5,
-        "start": 0,
-        "value": [
-          {
-            "end": 1,
-            "escaped": false,
-            "kind": "Colon",
-            "start": 0,
-            "value": null
+  "node": {
+    "rules": [
+      {
+        "end": 122,
+        "node": {
+          "selectors": {
+            "end": 7,
+            "node": {
+              "components": [
+                {
+                  "end": 6,
+                  "node": {
+                    "type": "PseudoClass",
+                    "value": "root"
+                  },
+                  "start": 0
+                }
+              ],
+              "type": "Selector"
+            },
+            "start": 0
           },
-          {
-            "end": 5,
-            "escaped": false,
-            "kind": "Ident",
-            "start": 1,
-            "value": "root"
-          }
-        ]
-      },
-      "properties": [
-        {
-          "end": 57,
-          "important": false,
-          "name": "",
-          "start": 10,
-          "type": "UnknownDeclaration",
-          "value": {
-            "end": 57,
-            "start": 10,
-            "value": [
-              {
-                "end": 21,
-                "escaped": false,
-                "kind": "Ident",
-                "start": 10,
-                "value": "--zero-size"
-              },
-              {
-                "end": 22,
-                "escaped": false,
-                "kind": "Colon",
-                "start": 21,
-                "value": null
-              },
-              {
-                "end": 57,
-                "start": 23,
-                "type": "SimpleBlock",
-                "value": [
-                  {
-                    "end": 34,
-                    "escaped": false,
-                    "kind": "Ident",
-                    "start": 29,
-                    "value": "width"
-                  },
-                  {
-                    "end": 35,
-                    "escaped": false,
-                    "kind": "Colon",
-                    "start": 34,
-                    "value": null
-                  },
-                  {
-                    "end": 37,
-                    "escaped": false,
-                    "kind": "Number",
-                    "start": 36,
+          "style": {
+            "end": 122,
+            "node": {
+              "declarations": [
+                {
+                  "end": 73,
+                  "node": {
+                    "important": false,
+                    "name": "--zero-size",
                     "value": {
-                      "int": true,
-                      "signed": false,
-                      "value": 0.0
+                      "Unknown": {
+                        "end": 58,
+                        "node": {
+                          "type": "Unknown",
+                          "value": {
+                            "end": 58,
+                            "node": [
+                              {
+                                "end": 58,
+                                "node": {
+                                  "end": 58,
+                                  "node": {
+                                    "pairwise": "Curly",
+                                    "type": "SimpleBlock",
+                                    "values": [
+                                      {
+                                        "end": 34,
+                                        "node": {
+                                          "kind": "Ident",
+                                          "value": "width"
+                                        },
+                                        "start": 24
+                                      },
+                                      {
+                                        "end": 35,
+                                        "node": {
+                                          "kind": "Colon"
+                                        },
+                                        "start": 34
+                                      },
+                                      {
+                                        "end": 36,
+                                        "node": {
+                                          "kind": "Whitespace"
+                                        },
+                                        "start": 35
+                                      },
+                                      {
+                                        "end": 37,
+                                        "node": {
+                                          "kind": "Number",
+                                          "value": [
+                                            0.0,
+                                            {
+                                              "bits": 0
+                                            }
+                                          ]
+                                        },
+                                        "start": 36
+                                      },
+                                      {
+                                        "end": 38,
+                                        "node": {
+                                          "kind": "Semicolon"
+                                        },
+                                        "start": 37
+                                      },
+                                      {
+                                        "end": 43,
+                                        "node": {
+                                          "kind": "Whitespace"
+                                        },
+                                        "start": 38
+                                      },
+                                      {
+                                        "end": 49,
+                                        "node": {
+                                          "kind": "Ident",
+                                          "value": "height"
+                                        },
+                                        "start": 43
+                                      },
+                                      {
+                                        "end": 50,
+                                        "node": {
+                                          "kind": "Colon"
+                                        },
+                                        "start": 49
+                                      },
+                                      {
+                                        "end": 51,
+                                        "node": {
+                                          "kind": "Whitespace"
+                                        },
+                                        "start": 50
+                                      },
+                                      {
+                                        "end": 52,
+                                        "node": {
+                                          "kind": "Number",
+                                          "value": [
+                                            0.0,
+                                            {
+                                              "bits": 0
+                                            }
+                                          ]
+                                        },
+                                        "start": 51
+                                      },
+                                      {
+                                        "end": 53,
+                                        "node": {
+                                          "kind": "Semicolon"
+                                        },
+                                        "start": 52
+                                      },
+                                      {
+                                        "end": 56,
+                                        "node": {
+                                          "kind": "Whitespace"
+                                        },
+                                        "start": 53
+                                      }
+                                    ]
+                                  },
+                                  "start": 22
+                                },
+                                "start": 22
+                              }
+                            ],
+                            "start": 22
+                          }
+                        },
+                        "start": 22
+                      }
                     }
                   },
-                  {
-                    "end": 38,
-                    "escaped": false,
-                    "kind": "Semicolon",
-                    "start": 37,
-                    "value": null
-                  },
-                  {
-                    "end": 49,
-                    "escaped": false,
-                    "kind": "Ident",
-                    "start": 43,
-                    "value": "height"
-                  },
-                  {
-                    "end": 50,
-                    "escaped": false,
-                    "kind": "Colon",
-                    "start": 49,
-                    "value": null
-                  },
-                  {
-                    "end": 52,
-                    "escaped": false,
-                    "kind": "Number",
-                    "start": 51,
+                  "start": 7
+                },
+                {
+                  "end": 121,
+                  "node": {
+                    "important": false,
+                    "name": "--small-icon",
                     "value": {
-                      "int": true,
-                      "signed": false,
-                      "value": 0.0
+                      "Unknown": {
+                        "end": 119,
+                        "node": {
+                          "type": "Unknown",
+                          "value": {
+                            "end": 119,
+                            "node": [
+                              {
+                                "end": 119,
+                                "node": {
+                                  "end": 119,
+                                  "node": {
+                                    "pairwise": "Curly",
+                                    "type": "SimpleBlock",
+                                    "values": [
+                                      {
+                                        "end": 86,
+                                        "node": {
+                                          "kind": "Ident",
+                                          "value": "width"
+                                        },
+                                        "start": 76
+                                      },
+                                      {
+                                        "end": 87,
+                                        "node": {
+                                          "kind": "Colon"
+                                        },
+                                        "start": 86
+                                      },
+                                      {
+                                        "end": 88,
+                                        "node": {
+                                          "kind": "Whitespace"
+                                        },
+                                        "start": 87
+                                      },
+                                      {
+                                        "end": 92,
+                                        "node": {
+                                          "kind": "Dimension",
+                                          "value": [
+                                            16.0,
+                                            "px",
+                                            {
+                                              "bits": 0
+                                            }
+                                          ]
+                                        },
+                                        "start": 88
+                                      },
+                                      {
+                                        "end": 93,
+                                        "node": {
+                                          "kind": "Semicolon"
+                                        },
+                                        "start": 92
+                                      },
+                                      {
+                                        "end": 98,
+                                        "node": {
+                                          "kind": "Whitespace"
+                                        },
+                                        "start": 93
+                                      },
+                                      {
+                                        "end": 104,
+                                        "node": {
+                                          "kind": "Ident",
+                                          "value": "height"
+                                        },
+                                        "start": 98
+                                      },
+                                      {
+                                        "end": 105,
+                                        "node": {
+                                          "kind": "Colon"
+                                        },
+                                        "start": 104
+                                      },
+                                      {
+                                        "end": 106,
+                                        "node": {
+                                          "kind": "Whitespace"
+                                        },
+                                        "start": 105
+                                      },
+                                      {
+                                        "end": 110,
+                                        "node": {
+                                          "kind": "Dimension",
+                                          "value": [
+                                            16.0,
+                                            "px",
+                                            {
+                                              "bits": 0
+                                            }
+                                          ]
+                                        },
+                                        "start": 106
+                                      },
+                                      {
+                                        "end": 111,
+                                        "node": {
+                                          "kind": "Semicolon"
+                                        },
+                                        "start": 110
+                                      },
+                                      {
+                                        "end": 114,
+                                        "node": {
+                                          "kind": "Whitespace"
+                                        },
+                                        "start": 111
+                                      }
+                                    ]
+                                  },
+                                  "start": 74
+                                },
+                                "start": 74
+                              }
+                            ],
+                            "start": 74
+                          }
+                        },
+                        "start": 74
+                      }
                     }
                   },
-                  {
-                    "end": 53,
-                    "escaped": false,
-                    "kind": "Semicolon",
-                    "start": 52,
-                    "value": null
-                  }
-                ]
-              }
-            ]
-          }
+                  "start": 58
+                }
+              ],
+              "rules": [],
+              "type": "StyleDeclaration"
+            },
+            "start": 6
+          },
+          "type": "StyleRule"
         },
-        {
-          "end": 115,
-          "important": false,
-          "name": "",
-          "start": 61,
-          "type": "UnknownDeclaration",
-          "value": {
-            "end": 115,
-            "start": 61,
-            "value": [
-              {
-                "end": 73,
-                "escaped": false,
-                "kind": "Ident",
-                "start": 61,
-                "value": "--small-icon"
-              },
-              {
-                "end": 74,
-                "escaped": false,
-                "kind": "Colon",
-                "start": 73,
-                "value": null
-              },
-              {
-                "end": 115,
-                "start": 75,
-                "type": "SimpleBlock",
-                "value": [
-                  {
-                    "end": 86,
-                    "escaped": false,
-                    "kind": "Ident",
-                    "start": 81,
-                    "value": "width"
-                  },
-                  {
-                    "end": 87,
-                    "escaped": false,
-                    "kind": "Colon",
-                    "start": 86,
-                    "value": null
-                  },
-                  {
-                    "end": 92,
-                    "escaped": false,
-                    "kind": "Dimension",
-                    "start": 88,
-                    "value": {
-                      "int": true,
-                      "signed": false,
-                      "unit": "px",
-                      "value": 16.0
-                    }
-                  },
-                  {
-                    "end": 93,
-                    "escaped": false,
-                    "kind": "Semicolon",
-                    "start": 92,
-                    "value": null
-                  },
-                  {
-                    "end": 104,
-                    "escaped": false,
-                    "kind": "Ident",
-                    "start": 98,
-                    "value": "height"
-                  },
-                  {
-                    "end": 105,
-                    "escaped": false,
-                    "kind": "Colon",
-                    "start": 104,
-                    "value": null
-                  },
-                  {
-                    "end": 110,
-                    "escaped": false,
-                    "kind": "Dimension",
-                    "start": 106,
-                    "value": {
-                      "int": true,
-                      "signed": false,
-                      "unit": "px",
-                      "value": 16.0
-                    }
-                  },
-                  {
-                    "end": 111,
-                    "escaped": false,
-                    "kind": "Semicolon",
-                    "start": 110,
-                    "value": null
-                  }
-                ]
-              }
-            ]
-          }
-        }
-      ],
-      "rules": [],
-      "start": 0,
-      "type": "UnknownRule"
-    }
-  ],
-  "start": 0,
-  "type": "Stylesheet"
+        "start": 0
+      }
+    ],
+    "type": "StyleSheet"
+  },
+  "start": 0
 }

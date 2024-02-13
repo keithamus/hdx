@@ -1,11 +1,27 @@
-hdx_parser::ExpectToken
+hdx_parser::UnknownDeclaration
 
-  × Expected `Ident` but found `Whitespace`
-   ╭─[tasks/coverage/postcss-parser-tests/cases/apply.css:1:1]
- 1 │ :root {
- 2 │   --zero-size: {
-   ·               ┬
-   ·               ╰── `Ident` expected
- 3 │     width: 0;
+  × Ignored property due to parse error.
+   ╭─[tasks/coverage/postcss-parser-tests/cases/apply.css:2:15]
+ 1 │     :root {
+ 2 │ ╭─▶   --zero-size: {
+ 3 │ │       width: 0;
+ 4 │ │       height: 0;
+ 5 │ ├─▶   };
+   · ╰──── This property was ignored.
+ 6 │       --small-icon: {
    ╰────
-  help: This is not correct CSS syntax.
+  help: This property is going to be ignored because it doesn't look valid. If it is valid, please file an issue!
+hdx_parser::UnknownDeclaration
+
+  × Ignored property due to parse error.
+    ╭─[tasks/coverage/postcss-parser-tests/cases/apply.css:6:16]
+  5 │       };
+  6 │ ╭─▶   --small-icon: {
+  7 │ │       width: 16px;
+  8 │ │       height: 16px;
+  9 │ │     }
+ 10 │ ├─▶   ;
+    · ╰──── This property was ignored.
+ 11 │     }
+    ╰────
+  help: This property is going to be ignored because it doesn't look valid. If it is valid, please file an issue!
