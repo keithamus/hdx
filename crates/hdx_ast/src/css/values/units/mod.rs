@@ -1,8 +1,3 @@
-#[cfg(feature = "serde")]
-use serde::Serialize;
-
-use crate::Writable;
-
 mod angles;
 mod custom;
 mod float;
@@ -20,33 +15,6 @@ pub use length::*;
 pub use percent::*;
 pub use resolution::*;
 pub use time::*;
-
-#[derive(Writable, Debug, Clone, Copy, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde())]
-pub enum CSSNumeric {
-	Length(Length),
-	Angle(Angle),
-	Time(Time),
-	Frequency(Frequency),
-	Resolution(Resolution),
-	#[writable(suffix = "fr")]
-	Flex(CSSFloat),
-	Percent(Percent),
-}
-
-impl Into<CSSFloat> for CSSNumeric {
-	fn into(self) -> CSSFloat {
-		match self {
-			Self::Length(v) => v.into(),
-			Self::Angle(v) => v.into(),
-			Self::Time(v) => v.into(),
-			Self::Frequency(v) => v.into(),
-			Self::Resolution(v) => v.into(),
-			Self::Flex(v) => v.into(),
-			Self::Percent(v) => v.into(),
-		}
-	}
-}
 
 pub trait AbsoluteUnit: Unit {
 	fn to_base(&self) -> Self;

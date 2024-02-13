@@ -218,8 +218,6 @@ impl Token {
 	pub fn is_signed(&self) -> bool {
 		match self {
 			Self::Number(_, ty) => ty.is_signed(),
-			Self::Number(_, ty) => ty.is_signed(),
-			Self::Dimension(_, _, ty) => ty.is_signed(),
 			Self::Dimension(_, _, ty) => ty.is_signed(),
 			_ => false,
 		}
@@ -228,8 +226,6 @@ impl Token {
 	pub fn is_int(&self) -> bool {
 		match self {
 			Self::Number(_, ty) => ty.is_int(),
-			Self::Number(_, ty) => ty.is_int(),
-			Self::Dimension(_, _, ty) => ty.is_int(),
 			Self::Dimension(_, _, ty) => ty.is_int(),
 			_ => false,
 		}

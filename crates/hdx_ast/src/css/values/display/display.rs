@@ -282,7 +282,6 @@ impl<'a> WriteCss<'a> for Display {
 #[cfg(test)]
 mod tests {
 
-	use hdx_writer::{BaseCssWriter, WriteCss};
 	use oxc_allocator::Allocator;
 
 	use super::*;

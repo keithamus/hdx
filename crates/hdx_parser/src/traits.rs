@@ -1,12 +1,10 @@
-use hdx_atom::Atom;
 use hdx_lexer::Token;
 
 use crate::{
-	diagnostics, discard, expect,
+	expect,
 	parser::Parser,
 	span::{Span, Spanned},
-	unexpected, Result,
-	Vec
+	unexpected, Result, Vec,
 };
 
 pub trait Parse<'a>: Sized {
@@ -92,7 +90,9 @@ pub trait DeclarationRuleList<'a>: Sized + Parse<'a> {
 	type AtRule: AtRule<'a> + Parse<'a>;
 
 	// https://drafts.csswg.org/css-syntax-3/#consume-a-qualified-rule
-	fn parse_declaration_rule_list(parser: &mut Parser<'a>) -> Result<(Vec<'a, Spanned<Self::Declaration>>, Vec<'a, Spanned<Self::AtRule>>)> {
+	fn parse_declaration_rule_list(
+		parser: &mut Parser<'a>,
+	) -> Result<(Vec<'a, Spanned<Self::Declaration>>, Vec<'a, Spanned<Self::AtRule>>)> {
 		expect!(parser, Token::LeftCurly);
 		parser.advance();
 		let mut declarations = parser.new_vec();
@@ -101,15 +101,15 @@ pub trait DeclarationRuleList<'a>: Sized + Parse<'a> {
 			match parser.cur() {
 				Token::AtKeyword(_) => {
 					rules.push(Self::AtRule::parse(parser)?);
-				},
+				}
 				Token::Ident(_) => {
 					declarations.push(Self::Declaration::parse(parser)?);
-				},
+				}
 				Token::RightCurly => {
 					parser.advance();
 					return Ok((declarations, rules));
 				}
-				token => unexpected!(parser, token)
+				token => unexpected!(parser, token),
 			}
 		}
 	}

@@ -36,11 +36,11 @@ impl Default for Features {
 
 #[bitmask(u8)]
 pub enum State {
-	Nested = 0x01,
+	Nested = 0b0000_0001,
 
 	// Stop Tokens for some algorithms
-	StopOnSemicolon = 0xF0,
-	StopOnComma = 0xF1,
+	StopOnSemicolon =   0b1000_0000,
+	StopOnComma =       0b1100_0000,
 }
 
 pub struct ParserReturn<T> {
