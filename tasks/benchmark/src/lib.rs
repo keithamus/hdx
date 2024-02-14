@@ -1,14 +1,13 @@
-use std::{
-	fs::{read_to_string, write},
-	path::PathBuf,
-	time::Duration,
-};
+use std::{fs::read_to_string, path::PathBuf, time::Duration};
 
 use criterion::{BenchmarkId, Criterion, Throughput};
 use glob::glob;
+use hdx_ast::css::StyleSheet;
 use hdx_lexer::Lexer;
-use hdx_parser::{Parser, ParserOptions};
+use hdx_parser::{Parser, Features};
 use hdx_writer::{BaseCssWriter, WriteCss};
+// use hdx_parser::{Parser, Features};
+// use hdx_writer::{BaseCssWriter, WriteCss};
 use oxc_allocator::Allocator;
 
 /// # Panics
@@ -33,8 +32,8 @@ struct TestFile {
 impl AppArgs {
 	pub fn run_all(&self) {
 		self.run_lexer();
-		self.run_parser();
-		self.run_minifier();
+		// self.run_parser();
+		// self.run_minifier();
 	}
 
 	fn get_files(&self) -> Vec<TestFile> {
@@ -50,32 +49,29 @@ impl AppArgs {
 
 	pub fn run_lexer(&self) {
 		let measurement_time = Duration::new(/* seconds */ 15, 0);
-		let mut criterion = Criterion::default().without_plots().measurement_time(measurement_time);
+		let mut criterion = Criterion::default().with_plots().measurement_time(measurement_time);
 		if let Some(baseline) = &self.save {
 			criterion = criterion.save_baseline(baseline.into());
 		}
 		let mut group = criterion.benchmark_group("lexer");
 		for file in &self.get_files() {
 			group.throughput(Throughput::Bytes(file.source_text.len() as u64));
-			group.bench_with_input(
-				BenchmarkId::from_parameter(&file.name),
-				&file.source_text,
-				|b, source_text| {
-					b.iter_with_large_drop(|| {
-						// Include the allocator drop time to make time measurement consistent.
-						// Otherwise the allocator will allocate huge memory chunks (by power of two) from the
-						// system allocator, which makes time measurement unequal during long runs.
-						let allocator = Allocator::default();
-						let mut lexer = Lexer::new(&allocator, source_text);
-						loop {
-							if lexer.next_token().kind == hdx_lexer::Kind::Eof {
-								break;
-							}
+			group.bench_with_input(BenchmarkId::from_parameter(&file.name), &file.source_text, |b, source_text| {
+				b.iter_with_large_drop(|| {
+					// Include the allocator drop time to make time measurement consistent.
+					// Otherwise the allocator will allocate huge memory chunks (by power of two)
+					// from the system allocator, which makes time measurement unequal during long
+					// runs.
+					let allocator = Allocator::default();
+					let mut lexer = Lexer::new(&allocator, source_text);
+					loop {
+						if lexer.advance() == hdx_lexer::Token::Eof {
+							break;
 						}
-						allocator
-					});
-				},
-			);
+					}
+					allocator
+				});
+			});
 		}
 		group.finish();
 		drop(criterion);
@@ -83,25 +79,20 @@ impl AppArgs {
 
 	pub fn run_parser(&self) {
 		let measurement_time = Duration::new(/* seconds */ 15, 0);
-		let mut criterion = Criterion::default().without_plots().measurement_time(measurement_time);
+		let mut criterion = Criterion::default().with_plots().measurement_time(measurement_time);
 		if let Some(baseline) = &self.save {
 			criterion = criterion.save_baseline(baseline.into());
 		}
 		let mut group = criterion.benchmark_group("parser");
 		for file in &self.get_files() {
 			group.throughput(Throughput::Bytes(file.source_text.len() as u64));
-			group.bench_with_input(
-				BenchmarkId::from_parameter(&file.name),
-				&file.source_text,
-				|b, source_text| {
-					b.iter_with_large_drop(|| {
-						let allocator = Allocator::default();
-						let _ =
-							Parser::new(&allocator, source_text, ParserOptions::default()).parse();
-						allocator
-					});
-				},
-			);
+			group.bench_with_input(BenchmarkId::from_parameter(&file.name), &file.source_text, |b, source_text| {
+				b.iter_with_large_drop(|| {
+					let allocator = Allocator::default();
+					let _ = Parser::new(&allocator, source_text, Features::default()).parse_with::<StyleSheet>();
+					allocator
+				});
+			});
 		}
 		group.finish();
 		drop(criterion);
@@ -109,34 +100,30 @@ impl AppArgs {
 
 	pub fn run_minifier(&self) {
 		let measurement_time = Duration::new(/* seconds */ 15, 0);
-		let mut criterion = Criterion::default().without_plots().measurement_time(measurement_time);
+		let mut criterion = Criterion::default().with_plots().measurement_time(measurement_time);
 		if let Some(baseline) = &self.save {
 			criterion = criterion.save_baseline(baseline.into());
 		}
 		let mut group = criterion.benchmark_group("minify");
 		for file in &self.get_files() {
 			group.throughput(Throughput::Bytes(file.source_text.len() as u64));
-			group.bench_with_input(
-				BenchmarkId::from_parameter(&file.name),
-				&file.source_text,
-				|b, source_text| {
-					b.iter_with_large_drop(|| {
-						let allocator = Allocator::default();
-						let result =
-							Parser::new(&allocator, source_text.as_str(), ParserOptions::default())
-								.parse();
-						{
-							let mut string = String::new();
-							let mut writer = BaseCssWriter::new(&mut string, true);
-							if let Some(stylesheet) = &result.output {
-								let _ = stylesheet.write_css(&mut writer).unwrap().to_owned();
-							}
+			group.bench_with_input(BenchmarkId::from_parameter(&file.name), &file.source_text, |b, source_text| {
+				b.iter_with_large_drop(|| {
+					let allocator = Allocator::default();
+					let result =
+						Parser::new(&allocator, source_text.as_str(), Features::default()).parse_with::<StyleSheet>();
+					{
+						let mut string = String::new();
+						let mut writer = BaseCssWriter::new(&mut string, true);
+						if let Some(stylesheet) = &result.output {
+							let _ = stylesheet.write_css(&mut writer).unwrap().to_owned();
 						}
-						// TODO:
-						// Figure out how to drop allocator without borrow checker complaining.
-					});
-				},
-			);
+					}
+					// TODO:
+					// Figure out how to drop allocator without borrow checker
+					// complaining.
+				});
+			});
 		}
 		group.finish();
 		drop(criterion);

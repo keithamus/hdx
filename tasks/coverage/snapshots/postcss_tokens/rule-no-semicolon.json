@@ -10,8 +10,7 @@
     "end": 2,
     "escaped": false,
     "kind": "LeftCurly",
-    "start": 1,
-    "value": null
+    "start": 1
   },
   {
     "end": 7,
@@ -24,8 +23,7 @@
     "end": 8,
     "escaped": false,
     "kind": "Colon",
-    "start": 7,
-    "value": null
+    "start": 7
   },
   {
     "end": 13,
@@ -38,14 +36,12 @@
     "end": 14,
     "escaped": false,
     "kind": "RightCurly",
-    "start": 13,
-    "value": null
+    "start": 13
   },
   {
     "end": 15,
     "escaped": false,
     "kind": "Whitespace",
-    "start": 14,
-    "value": null
+    "start": 14
   }
 ]

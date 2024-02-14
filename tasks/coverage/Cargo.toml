@@ -11,7 +11,9 @@ license.workspace = true
 repository.workspace = true
 
 [dependencies]
+hdx_atom = { workspace = true, features = ["serde"] }
 hdx_lexer = { workspace = true, features = ["serde"] }
+hdx_ast = { workspace = true, features = ["serde"] }
 hdx_parser = { workspace = true, features = ["serde"] }
 
 # Use OXC Allocator until https://github.com/fitzgen/bumpalo/pull/210 is resolved
@@ -26,7 +28,6 @@ pico-args = { workspace = true }
 project-root = { workspace = true }
 similar = { workspace = true }
 
-cssparser = "0.31.2"
 console = "0.15.7"
 encoding_rs = "0.8.32"
 encoding_rs_io = "0.1.7"

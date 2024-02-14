@@ -21,3 +21,10 @@ imports_granularity = "Crate"
 
 # Use tab for alignment
 hard_tabs = true
+
+# Hard stop line length at 120 chars
+max_width = 120
+
+# Make comments a little more like prose and have them block to 80 chars
+comment_width = 80
+wrap_comments = true

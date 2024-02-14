@@ -10,22 +10,19 @@
     "end": 2,
     "escaped": false,
     "kind": "Whitespace",
-    "start": 1,
-    "value": null
+    "start": 1
   },
   {
     "end": 3,
     "escaped": false,
     "kind": "LeftCurly",
-    "start": 2,
-    "value": null
+    "start": 2
   },
   {
     "end": 8,
     "escaped": false,
     "kind": "Whitespace",
-    "start": 3,
-    "value": null
+    "start": 3
   },
   {
     "end": 14,
@@ -38,15 +35,13 @@
     "end": 15,
     "escaped": false,
     "kind": "Colon",
-    "start": 14,
-    "value": null
+    "start": 14
   },
   {
     "end": 16,
     "escaped": false,
     "kind": "Whitespace",
-    "start": 15,
-    "value": null
+    "start": 15
   },
   {
     "end": 22,
@@ -59,8 +54,7 @@
     "end": 23,
     "escaped": false,
     "kind": "Colon",
-    "start": 22,
-    "value": null
+    "start": 22
   },
   {
     "end": 39,
@@ -116,25 +110,24 @@
     "escaped": false,
     "kind": "Number",
     "start": 67,
-    "value": {
-      "int": true,
-      "signed": false,
-      "value": 2.0
-    }
+    "value": [
+      2.0,
+      {
+        "bits": 0
+      }
+    ]
   },
   {
     "end": 69,
     "escaped": false,
     "kind": "RightParen",
-    "start": 68,
-    "value": null
+    "start": 68
   },
   {
     "end": 70,
     "escaped": false,
     "kind": "Whitespace",
-    "start": 69,
-    "value": null
+    "start": 69
   },
   {
     "end": 76,
@@ -147,8 +140,7 @@
     "end": 77,
     "escaped": false,
     "kind": "Colon",
-    "start": 76,
-    "value": null
+    "start": 76
   },
   {
     "end": 93,
@@ -204,45 +196,41 @@
     "escaped": false,
     "kind": "Number",
     "start": 119,
-    "value": {
-      "int": true,
-      "signed": false,
-      "value": 3.0
-    }
+    "value": [
+      3.0,
+      {
+        "bits": 0
+      }
+    ]
   },
   {
     "end": 121,
     "escaped": false,
     "kind": "RightParen",
-    "start": 120,
-    "value": null
+    "start": 120
   },
   {
     "end": 122,
     "escaped": false,
     "kind": "Semicolon",
-    "start": 121,
-    "value": null
+    "start": 121
   },
   {
     "end": 123,
     "escaped": false,
     "kind": "Whitespace",
-    "start": 122,
-    "value": null
+    "start": 122
   },
   {
     "end": 124,
     "escaped": false,
     "kind": "RightCurly",
-    "start": 123,
-    "value": null
+    "start": 123
   },
   {
     "end": 125,
     "escaped": false,
     "kind": "Whitespace",
-    "start": 124,
-    "value": null
+    "start": 124
   }
 ]

@@ -1,30 +1,38 @@
-use std::hash::{Hash, Hasher};
+mod angles;
+mod custom;
+mod float;
+mod frequency;
+mod length;
+mod percent;
+mod resolution;
+mod time;
 
-#[cfg(feature = "serde")]
-use serde::Serialize;
+pub use angles::*;
+pub use custom::*;
+pub use float::*;
+pub use frequency::*;
+pub use length::*;
+pub use percent::*;
+pub use resolution::*;
+pub use time::*;
 
-pub mod lengths;
-
-pub use lengths::*;
-
-#[derive(Default, Clone, Copy, Debug, PartialEq)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde())]
-pub struct Percentage(pub f32);
-
-impl Hash for Percentage {
-    fn hash<H: Hasher>(&self, state: &mut H) {
-        self.0.to_bits().hash(state);
-    }
+pub trait AbsoluteUnit: Unit {
+	fn to_base(&self) -> Self;
 }
 
-#[cfg(test)]
-mod tests {
-
-    use super::*;
-
-    #[test]
-    fn size_test() {
-        use std::mem::size_of;
-        assert_eq!(size_of::<Percentage>(), 4);
-    }
+pub trait Unit: Into<CSSFloat> + Copy + PartialEq + Sized {
+	fn is_negative(&self) -> bool {
+		let f: CSSFloat = (*self).into();
+		f < 0.0
+	}
+	fn is_positive(&self) -> bool {
+		let f: CSSFloat = (*self).into();
+		f >= 0.0
+	}
+	fn is_zero(&self) -> bool {
+		let f: CSSFloat = (*self).into();
+		f >= 0.0
+	}
 }
+
+impl<T: Into<CSSFloat> + Copy + PartialEq + Sized> Unit for T {}

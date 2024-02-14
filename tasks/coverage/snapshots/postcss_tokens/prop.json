@@ -10,22 +10,19 @@
     "end": 2,
     "escaped": false,
     "kind": "Whitespace",
-    "start": 1,
-    "value": null
+    "start": 1
   },
   {
     "end": 3,
     "escaped": false,
     "kind": "LeftCurly",
-    "start": 2,
-    "value": null
+    "start": 2
   },
   {
     "end": 8,
     "escaped": false,
     "kind": "Whitespace",
-    "start": 3,
-    "value": null
+    "start": 3
   },
   {
     "end": 9,
@@ -45,22 +42,19 @@
     "end": 15,
     "escaped": false,
     "kind": "Whitespace",
-    "start": 14,
-    "value": null
+    "start": 14
   },
   {
     "end": 16,
     "escaped": false,
     "kind": "Colon",
-    "start": 15,
-    "value": null
+    "start": 15
   },
   {
     "end": 17,
     "escaped": false,
     "kind": "Whitespace",
-    "start": 16,
-    "value": null
+    "start": 16
   },
   {
     "end": 22,
@@ -73,15 +67,13 @@
     "end": 23,
     "escaped": false,
     "kind": "Semicolon",
-    "start": 22,
-    "value": null
+    "start": 22
   },
   {
     "end": 28,
     "escaped": false,
     "kind": "Whitespace",
-    "start": 23,
-    "value": null
+    "start": 23
   },
   {
     "end": 39,
@@ -94,15 +86,13 @@
     "end": 40,
     "escaped": false,
     "kind": "Colon",
-    "start": 39,
-    "value": null
+    "start": 39
   },
   {
     "end": 41,
     "escaped": false,
     "kind": "Whitespace",
-    "start": 40,
-    "value": null
+    "start": 40
   },
   {
     "end": 46,
@@ -115,15 +105,13 @@
     "end": 47,
     "escaped": false,
     "kind": "Semicolon",
-    "start": 46,
-    "value": null
+    "start": 46
   },
   {
     "end": 52,
     "escaped": false,
     "kind": "Whitespace",
-    "start": 47,
-    "value": null
+    "start": 47
   },
   {
     "end": 61,
@@ -137,21 +125,19 @@
     "escaped": false,
     "kind": "Comment",
     "start": 61,
-    "value": null
+    "value": ""
   },
   {
     "end": 66,
     "escaped": false,
     "kind": "Colon",
-    "start": 65,
-    "value": null
+    "start": 65
   },
   {
     "end": 67,
     "escaped": false,
     "kind": "Whitespace",
-    "start": 66,
-    "value": null
+    "start": 66
   },
   {
     "end": 70,
@@ -164,15 +150,13 @@
     "end": 71,
     "escaped": false,
     "kind": "Semicolon",
-    "start": 70,
-    "value": null
+    "start": 70
   },
   {
     "end": 76,
     "escaped": false,
     "kind": "Whitespace",
-    "start": 71,
-    "value": null
+    "start": 71
   },
   {
     "end": 77,
@@ -185,8 +169,7 @@
     "end": 78,
     "escaped": false,
     "kind": "LeftParen",
-    "start": 77,
-    "value": null
+    "start": 77
   },
   {
     "end": 81,
@@ -199,8 +182,7 @@
     "end": 82,
     "escaped": false,
     "kind": "RightParen",
-    "start": 81,
-    "value": null
+    "start": 81
   },
   {
     "end": 87,
@@ -213,53 +195,49 @@
     "end": 88,
     "escaped": false,
     "kind": "Colon",
-    "start": 87,
-    "value": null
+    "start": 87
   },
   {
     "end": 89,
     "escaped": false,
     "kind": "Whitespace",
-    "start": 88,
-    "value": null
+    "start": 88
   },
   {
     "end": 93,
     "escaped": false,
-    "kind": "Percentage",
+    "kind": "Dimension",
     "start": 89,
-    "value": {
-      "int": true,
-      "signed": false,
-      "value": 100.0
-    }
+    "value": [
+      100.0,
+      "%",
+      {
+        "bits": 0
+      }
+    ]
   },
   {
     "end": 94,
     "escaped": false,
     "kind": "Semicolon",
-    "start": 93,
-    "value": null
+    "start": 93
   },
   {
     "end": 95,
     "escaped": false,
     "kind": "Whitespace",
-    "start": 94,
-    "value": null
+    "start": 94
   },
   {
     "end": 96,
     "escaped": false,
     "kind": "RightCurly",
-    "start": 95,
-    "value": null
+    "start": 95
   },
   {
     "end": 97,
     "escaped": false,
     "kind": "Whitespace",
-    "start": 96,
-    "value": null
+    "start": 96
   }
 ]

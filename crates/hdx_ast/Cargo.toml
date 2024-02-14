@@ -13,14 +13,19 @@ repository.workspace = true
 hdx_lexer = { workspace = true }
 hdx_syntax = { workspace = true }
 hdx_atom = { workspace = true }
-hdx_atomizable_derive = { workspace = true }
+hdx_parser = { workspace = true }
+hdx_writer = { workspace = true }
+hdx_derive = { workspace = true }
 
 # Use OXC Allocator until https://github.com/fitzgen/bumpalo/pull/210 is resolved
 oxc_allocator = { workspace = true }
 bumpalo = { workspace = true, features = ["collections", "boxed"] }
+miette = { workspace = true, features = ["derive"] }
 
 serde = { workspace = true, optional = true }
 serde_json = { workspace = true, optional = true }
+
+bitmask-enum = { workspace = true }
 
 [dev-dependencies]
 glob = { workspace = true }

@@ -4,9 +4,9 @@
 	"version": "0.0.0-development",
 	"scripts": {
 		"postinstall": "[ \"$NODE_ENV\" = \"production\" ] && npm run build || npm run build:dev",
-		"clean-old": "ls -t playground/hdx* | tail -n +2 | xargs rm -f",
+		"clean-old": "ls -t playground/ | grep hdx | tail -n +2 | xargs rm -f",
 		"postbuild": "npm run clean-old",
-		"prestart": "npm run wasm-build:dev",
+		"prestart": "[ \"$NODE_ENV\" = \"production\" ] && npm run wasm-build || npm run build:dev",
 		"postbuild:dev": "npm run clean-old",
 		"prebuild": "npm run wasm-build",
 		"prebuild:dev": "npm run wasm-build:dev",

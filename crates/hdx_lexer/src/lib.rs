@@ -1,17 +1,13 @@
 mod constants;
-mod kind;
 mod private;
-mod span;
 mod string_builder;
 mod token;
 
 use std::{collections::VecDeque, str::Chars};
 
+use bitmask_enum::bitmask;
 use oxc_allocator::Allocator;
-pub use span::Span;
-pub use token::{PairWise, Token, TokenValue};
-
-pub use self::kind::Kind;
+pub use token::{NumType, PairWise, Token};
 
 #[derive(Debug, Clone)]
 pub struct LexerCheckpoint<'a> {
@@ -19,23 +15,42 @@ pub struct LexerCheckpoint<'a> {
 	token: Token,
 }
 
+#[bitmask(u8)]
+pub(crate) enum Include {
+	Whitespace = 0b0001,
+	Comments = 0b0010,
+}
+
 pub struct Lexer<'a> {
 	allocator: &'a Allocator,
 	source: &'a str,
 	current: LexerCheckpoint<'a>,
 	lookahead: VecDeque<LexerCheckpoint<'a>>,
+	include: Include,
 }
 
 impl<'a> Lexer<'a> {
 	pub fn new(allocator: &'a Allocator, source: &'a str) -> Self {
 		let token = Token::default();
 		let current = LexerCheckpoint { chars: source.chars(), token };
-		Self { allocator, source, current, lookahead: VecDeque::with_capacity(4) }
+		Self {
+			allocator,
+			source,
+			current,
+			lookahead: VecDeque::with_capacity(4),
+			include: Include::none(),
+		}
 	}
 
 	/// Remaining string from `Chars`
 	fn remaining(&self) -> &'a str {
 		self.current.chars.as_str()
+	}
+
+	/// Current position in file
+	#[inline]
+	pub fn pos(&self) -> u32 {
+		(self.source.len() - self.remaining().len()) as u32
 	}
 
 	/// Creates a checkpoint storing the current lexer state.
@@ -71,8 +86,7 @@ impl<'a> Lexer<'a> {
 		self.current.token = Token::default();
 
 		for _i in self.lookahead.len()..n {
-			let kind = self.read_next_token();
-			let peeked = self.finish_next(kind);
+			let peeked = self.read_next_token();
 			self.lookahead
 				.push_back(LexerCheckpoint { chars: self.current.chars.clone(), token: peeked });
 		}
@@ -82,21 +96,34 @@ impl<'a> Lexer<'a> {
 		&self.lookahead[n - 1].token
 	}
 
-	pub fn jump_token(&mut self) -> Token {
+	pub fn jump(&mut self) -> Token {
 		if let Some(checkpoint) = self.lookahead.pop_back() {
 			self.current.chars = checkpoint.chars;
 			self.lookahead.clear();
 			return checkpoint.token;
 		}
-		self.next_token()
+		self.advance()
 	}
 
-	pub fn next_token(&mut self) -> Token {
+	pub fn advance(&mut self) -> Token {
 		if let Some(checkpoint) = self.lookahead.pop_front() {
 			self.current.chars = checkpoint.chars;
 			return checkpoint.token;
 		}
-		let kind = self.read_next_token();
-		self.finish_next(kind)
+		self.read_next_token()
+	}
+
+	pub fn advance_including_whitespace(&mut self) -> Token {
+		self.include = Include::Whitespace;
+		let token = self.advance();
+		self.include = Include::none();
+		token
+	}
+
+	pub fn advance_including_whitespace_and_comments(&mut self) -> Token {
+		self.include = Include::all();
+		let token = self.advance();
+		self.include = Include::none();
+		token
 	}
 }

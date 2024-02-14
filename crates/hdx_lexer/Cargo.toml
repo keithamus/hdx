@@ -16,6 +16,7 @@ hdx_atom.workspace = true
 # Use OXC Allocator until https://github.com/fitzgen/bumpalo/pull/210 is resolved
 oxc_allocator = { workspace = true }
 bumpalo = { workspace = true, features = ["boxed", "collections"] }
+bitmask-enum = { workspace = true }
 
 miette = { workspace = true }
 serde = { workspace = true, features = ["derive"], optional = true }

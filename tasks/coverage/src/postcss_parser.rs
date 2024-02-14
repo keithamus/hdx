@@ -4,7 +4,8 @@ use std::{
 };
 
 use glob::glob;
-use hdx_parser::{CSSStyleSheet, Spanned};
+use hdx_ast::css::StyleSheet;
+use hdx_parser::Spanned;
 use serde_json::{from_str, to_string_pretty, Value};
 
 use crate::{
@@ -47,11 +48,9 @@ impl PostCSSParserTestCase {
 		let json_path: PathBuf = (SNAPSHOTS_PATH.to_owned() + name.as_str() + ".json").into();
 		let warnings_path: PathBuf = (SNAPSHOTS_PATH.to_owned() + name.as_str() + ".txt").into();
 		let source_text = read_to_string(&source_path).unwrap();
-		let desired: Value =
-			from_str(read_to_string(json_path.clone()).unwrap_or("{}".to_owned()).as_str())
-				.unwrap_or_else(|e| panic!("{} {}", json_path.display(), e));
-		let warnings: String =
-			read_to_string(warnings_path.clone()).unwrap_or("".to_owned()).as_str().to_owned();
+		let desired: Value = from_str(read_to_string(json_path.clone()).unwrap_or("{}".to_owned()).as_str())
+			.unwrap_or_else(|e| panic!("{} {}", json_path.display(), e));
+		let warnings: String = read_to_string(warnings_path.clone()).unwrap_or("".to_owned()).as_str().to_owned();
 		Self { name, source_path, json_path, source_text, desired, warnings_path, warnings }
 	}
 }
@@ -89,7 +88,7 @@ impl ParserCase for PostCSSParserTestCase {
 		write(self.warnings_path.clone(), warnings).unwrap();
 	}
 
-	fn convert_ast(&self, ast: &Spanned<CSSStyleSheet>) -> Value {
+	fn convert_ast(&self, ast: &Spanned<StyleSheet>) -> Value {
 		from_str::<Value>(&to_string_pretty(ast).unwrap()).unwrap()
 	}
 }

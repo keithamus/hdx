@@ -5,7 +5,8 @@ use std::{
 };
 
 use console::Style;
-use hdx_parser::{CSSStyleSheet, Parser, ParserOptions, Spanned};
+use hdx_ast::css::StyleSheet;
+use hdx_parser::{Features, Parser, Spanned};
 use miette::{GraphicalReportHandler, GraphicalTheme, NamedSource, Report};
 use oxc_allocator::Allocator;
 use serde::Serialize;
@@ -108,11 +109,11 @@ pub trait ParserCase: Sized + Sync + Send + UnwindSafe {
 	fn path(&self) -> &Path;
 	fn desired(&self) -> &Self::AST;
 	fn update_desired(&self, ast: &Self::AST);
-	fn convert_ast(&self, ast: &Spanned<CSSStyleSheet>) -> Self::AST;
+	fn convert_ast(&self, ast: &Spanned<StyleSheet>) -> Self::AST;
 	fn desired_warnings(&self) -> String;
 	fn update_warnings(&self, warnings: String);
-	fn parser_options(&self, _args: &AppArgs) -> ParserOptions {
-		ParserOptions::default()
+	fn parser_options(&self, _args: &AppArgs) -> Features {
+		Features::default()
 	}
 
 	/// Execute the parser once and get the test result
@@ -121,14 +122,11 @@ pub trait ParserCase: Sized + Sync + Send + UnwindSafe {
 		let source_text = self.source_text().to_owned();
 		let source_path = self.path();
 		let parser = Parser::new(&allocator, &source_text, self.parser_options(args));
-		let ret = parser.parse();
+		let ret = parser.parse_with::<StyleSheet>();
 		let handler = GraphicalReportHandler::new_themed(GraphicalTheme::unicode_nocolor());
 		let mut warnings = String::new();
 		for warn in ret.warnings {
-			let warn = warn.with_source_code(NamedSource::new(
-				source_path.to_str().unwrap(),
-				source_text.to_string(),
-			));
+			let warn = warn.with_source_code(NamedSource::new(source_path.to_str().unwrap(), source_text.to_string()));
 			handler.render_report(&mut warnings, warn.as_ref()).unwrap();
 		}
 		println!("{}", &warnings);
