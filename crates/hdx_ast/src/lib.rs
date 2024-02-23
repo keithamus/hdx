@@ -3,6 +3,7 @@ extern crate hdx_derive;
 pub mod css;
 pub mod traits;
 pub mod macros;
+pub mod syntax;
 
 #[cfg(test)]
 pub mod test_helpers;

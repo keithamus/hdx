@@ -1,11 +1,12 @@
 use hdx_lexer::Token;
-use hdx_parser::{unexpected, Parse, Parser, QualifiedRule, Result as ParserResult, expect};
+use hdx_parser::{expect, unexpected, Parse, Parser, QualifiedRule, Result as ParserResult, Block};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 #[cfg(feature = "serde")]
 use serde::Serialize;
 
 use crate::{
 	css::{properties::StyleProperty, selector::Selector},
+	syntax::Declaration,
 	Box, Spanned, Vec,
 };
 
@@ -56,30 +57,14 @@ pub struct StyleDeclaration<'a> {
 impl<'a> Parse<'a> for StyleDeclaration<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
 		let span = parser.span();
-		expect!(parser, Token::LeftCurly);
-		parser.advance();
-		let mut declarations = parser.new_vec();
-		let mut rules = parser.new_vec();
-		loop {
-			match parser.cur() {
-				Token::RightCurly => {
-					parser.advance();
-					break;
-				}
-				t @ Token::Eof => unexpected!(parser, t),
-				_ => {
-					let checkpoint = parser.checkpoint();
-					if let Ok(decl) = StyleProperty::parse(parser) {
-						declarations.push(decl)
-					} else {
-						parser.rewind(checkpoint);
-						rules.push(StyleRule::parse(parser)?);
-					}
-				}
-			}
-		}
+		let (declarations, rules) = Self::parse_block(parser)?;
 		Ok(Self { declarations, rules }.spanned(span.end(parser.pos())))
 	}
+}
+
+impl<'a> Block<'a> for StyleDeclaration<'a> {
+	type Declaration = StyleProperty<'a>;
+	type Rule = StyleRule<'a>;
 }
 
 impl<'a> WriteCss<'a> for StyleDeclaration<'a> {
@@ -116,5 +101,6 @@ mod test {
 	fn test_writes() {
 		let allocator = Allocator::default();
 		test_write::<StyleRule>(&allocator, "body {}", "body{}");
+		test_write::<StyleRule>(&allocator, "body { width:1px }", "body{width:1px}");
 	}
 }

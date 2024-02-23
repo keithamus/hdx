@@ -1,17 +1,17 @@
 use hdx_atom::atom;
 use hdx_derive::Atomizable;
 use hdx_lexer::Token;
-use hdx_parser::{diagnostics, discard, Parse, Parser, Result as ParserResult};
+use hdx_parser::{diagnostics, discard, StyleSheet as StyleSheetTrait, Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 #[cfg(feature = "serde")]
 use serde::Serialize;
 
 use crate::{
 	css::{
+		rules::{CharsetRule, PageRule},
 		stylerule::StyleRule,
-		rules::{PageRule, CharsetRule},
-		unknown::{UnknownAtRule, UnknownRule},
 	},
+	syntax::{AtRule, QualifiedRule},
 	Box, Spanned, Vec,
 };
 
@@ -19,7 +19,7 @@ use crate::{
 #[derive(Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
 pub struct StyleSheet<'a> {
-	pub rules: Vec<'a, Rule<'a>>,
+	pub rules: Vec<'a, Spanned<Rule<'a>>>,
 }
 
 // A StyleSheet represents the root node of a CSS-like language.
@@ -27,57 +27,14 @@ pub struct StyleSheet<'a> {
 // alternate implementations such as SCSS.
 // AtRules vs QualifiedRules are differentiated by two different functions.
 impl<'a> Parse<'a> for StyleSheet<'a> {
-	// https://drafts.csswg.org/css-syntax-3/#consume-stylesheet-contents
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
-		// 5.5.1. Consume a stylesheet’s contents
-		// "To consume a stylesheet’s contents from a token stream input:"
-
 		let span = parser.span();
-
-		// "Let rules be an initially empty list of rules."
-		let mut rules = parser.new_vec();
-		loop {
-			discard!(parser, Token::Comment(_) | Token::Whitespace | Token::Cdc | Token::Cdo);
-			match parser.cur() {
-				// Eof is the end of a StyleSheet
-				Token::Eof => break,
-				// "Consume an at-rule from input. If anything is returned, append it to rules."
-				Token::AtKeyword(atom) => {
-					let rule = match atom.to_ascii_lowercase() {
-						atom!("charset") => {
-							let rule = CharsetRule::parse(parser)?;
-							Rule::Charset(parser.boxup(rule))
-						}
-						atom!("page") => {
-							let rule = PageRule::parse(parser)?;
-							Rule::Page(parser.boxup(rule))
-						}
-						_ => {
-							let rule = UnknownAtRule::parse(parser)?;
-							parser.warn(diagnostics::UnknownRule(rule.span).into());
-							Rule::UnknownAt(parser.boxup(rule))
-						}
-					};
-					rules.push(rule);
-				}
-				// "Consume a qualified rule from input. If anything is returned, append it to rules."
-				_ => {
-					let checkpoint = parser.checkpoint();
-					let rule = match StyleRule::parse(parser) {
-						Ok(rule) => Rule::Style(parser.boxup(rule)),
-						Err(err) => {
-							parser.rewind(checkpoint);
-							parser.warn(err);
-							let rule = UnknownRule::parse(parser)?;
-							Rule::Unknown(parser.boxup(rule))
-						}
-					};
-					rules.push(rule);
-				}
-			}
-		}
-		Ok(Self { rules }.spanned(span.end(parser.pos())))
+		Ok(Self { rules: Self::parse_stylesheet(parser)? }.spanned(span.end(parser.pos())))
 	}
+}
+
+impl<'a> StyleSheetTrait<'a> for StyleSheet<'a> {
+	type Rule = Rule<'a>;
 }
 
 impl<'a> WriteCss<'a> for StyleSheet<'a> {
@@ -97,8 +54,46 @@ pub enum Rule<'a> {
 	Charset(Box<'a, Spanned<CharsetRule>>),
 	Page(Box<'a, Spanned<PageRule<'a>>>),
 	Style(Box<'a, Spanned<StyleRule<'a>>>),
-	UnknownAt(Box<'a, Spanned<UnknownAtRule<'a>>>),
-	Unknown(Box<'a, Spanned<UnknownRule<'a>>>),
+	UnknownAt(Box<'a, Spanned<AtRule<'a>>>),
+	Unknown(Box<'a, Spanned<QualifiedRule<'a>>>),
+}
+
+impl<'a> Parse<'a> for Rule<'a> {
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
+		let span = parser.span();
+		Ok(match parser.cur() {
+			Token::AtKeyword(atom) => {
+				match atom.to_ascii_lowercase() {
+					atom!("charset") => {
+						let rule = CharsetRule::parse(parser)?;
+						Rule::Charset(parser.boxup(rule))
+					}
+					atom!("page") => {
+						let rule = PageRule::parse(parser)?;
+						Rule::Page(parser.boxup(rule))
+					}
+					_ => {
+						let rule = AtRule::parse(parser)?;
+						parser.warn(diagnostics::UnknownRule(rule.span).into());
+						Rule::UnknownAt(parser.boxup(rule))
+					}
+				}
+			}
+			// "Consume a qualified rule from input. If anything is returned, append it to rules."
+			_ => {
+				let checkpoint = parser.checkpoint();
+				match StyleRule::parse(parser) {
+					Ok(rule) => Rule::Style(parser.boxup(rule)),
+					Err(err) => {
+						parser.rewind(checkpoint);
+						parser.warn(err);
+						let rule = QualifiedRule::parse(parser)?;
+						Rule::Unknown(parser.boxup(rule))
+					}
+				}
+			}
+		}.spanned(span.end(parser.pos())))
+	}
 }
 
 impl<'a> WriteCss<'a> for Rule<'a> {
@@ -122,8 +117,10 @@ pub enum AtRuleId {
 
 #[cfg(test)]
 mod tests {
+	use oxc_allocator::Allocator;
 
 	use super::*;
+	use crate::test_helpers::test_write;
 
 	#[test]
 	fn size_test() {
@@ -131,5 +128,12 @@ mod tests {
 		assert_eq!(size_of::<StyleSheet>(), 32);
 		assert_eq!(size_of::<Rule>(), 16);
 		assert_eq!(size_of::<AtRuleId>(), 1);
+	}
+
+	#[test]
+	fn test_writes() {
+		let allocator = Allocator::default();
+		test_write::<StyleSheet>(&allocator, "body {}", "body{}");
+		test_write::<StyleSheet>(&allocator, "body { width: 1px }", "body{width:1px}");
 	}
 }

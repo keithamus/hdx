@@ -2,15 +2,12 @@ use std::{fmt::Debug, hash::Hash};
 
 use hdx_atom::{atom, Atom};
 use hdx_lexer::Token;
-use hdx_parser::{diagnostics, expect, Parse, Parser, Result as ParserResult, Spanned, State, unexpected, discard};
+use hdx_parser::{diagnostics, discard, expect, unexpected, Parse, Parser, Result as ParserResult, Spanned, State};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 #[cfg(feature = "serde")]
 use serde::Serialize;
 
-use crate::{
-	css::{component_values::ComponentValues, values},
-	Box,
-};
+use crate::{css::values, syntax::ComponentValues, Box};
 
 #[derive(Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
@@ -29,7 +26,7 @@ impl<'a> Parse<'a> for Custom<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
 		let span = parser.span();
 		parser.set(State::StopOnSemicolon);
-		let value =	ComponentValues::parse(parser)?;
+		let value = ComponentValues::parse(parser)?;
 		parser.unset(State::StopOnSemicolon);
 		Ok(Self { value: parser.boxup(value) }.spanned(span.end(parser.pos())))
 	}

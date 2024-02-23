@@ -4,7 +4,7 @@ use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 #[cfg(feature = "serde")]
 use serde::Serialize;
 
-use super::component_values::{ComponentValues, SimpleBlock};
+use super::component_values::{ComponentValues, Block};
 use crate::{Atom, Box, Spanned};
 
 #[derive(Debug, Hash)]
@@ -12,7 +12,7 @@ use crate::{Atom, Box, Spanned};
 pub struct UnknownAtRule<'a> {
 	pub name: Atom,
 	pub prelude: Box<'a, Option<Spanned<ComponentValues<'a>>>>,
-	pub block: Box<'a, Option<Spanned<SimpleBlock<'a>>>>,
+	pub block: Box<'a, Option<Spanned<Block<'a>>>>,
 }
 
 impl<'a> Parse<'a> for UnknownAtRule<'a> {
@@ -29,7 +29,7 @@ impl<'a> Parse<'a> for UnknownAtRule<'a> {
 }
 
 impl<'a> AtRule<'a> for UnknownAtRule<'a> {
-	type Block = SimpleBlock<'a>;
+	type Block = Block<'a>;
 	type Prelude = ComponentValues<'a>;
 }
 
@@ -49,7 +49,7 @@ impl<'a> WriteCss<'a> for UnknownAtRule<'a> {
 #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
 pub struct UnknownRule<'a> {
 	pub prelude: Box<'a, Spanned<ComponentValues<'a>>>,
-	pub block: Box<'a, Spanned<SimpleBlock<'a>>>,
+	pub block: Box<'a, Spanned<Block<'a>>>,
 }
 
 impl<'a> Parse<'a> for UnknownRule<'a> {
@@ -61,7 +61,7 @@ impl<'a> Parse<'a> for UnknownRule<'a> {
 }
 
 impl<'a> QualifiedRule<'a> for UnknownRule<'a> {
-	type Block = SimpleBlock<'a>;
+	type Block = Block<'a>;
 	type Prelude = ComponentValues<'a>;
 }
 
@@ -76,13 +76,22 @@ impl<'a> WriteCss<'a> for UnknownRule<'a> {
 
 #[cfg(test)]
 mod tests {
+	use oxc_allocator::Allocator;
 
 	use super::*;
+	use crate::test_helpers::test_write;
 
 	#[test]
 	fn size_test() {
 		use std::mem::size_of;
 		assert_eq!(size_of::<UnknownAtRule>(), 24);
 		assert_eq!(size_of::<UnknownRule>(), 16);
+	}
+
+	#[test]
+	fn test_writes() {
+		let allocator = Allocator::default();
+		// This rule is known but UnknownRule should still be able to parse it.
+		test_write::<UnknownRule>(&allocator, "body { color: black }", "body{ color: black }");
 	}
 }

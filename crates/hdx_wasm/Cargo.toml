@@ -44,7 +44,7 @@ opt-level = 3
 lto = "fat"
 codegen-units = 1
 strip = "symbols"
-debug = false
+debug = true
 panic = "abort"
 
 [profile.release]
@@ -52,7 +52,7 @@ opt-level = 3
 lto = "fat"
 codegen-units = 1
 strip = "symbols"
-debug = false
+debug = true
 panic = "abort"
 
 [package.metadata.wasm-pack.profile.release]

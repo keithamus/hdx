@@ -1,6 +1,9 @@
-use hdx_atom::Atom;
+use hdx_atom::{atom, Atom};
 use hdx_lexer::{PairWise, Token};
-use hdx_parser::{unexpected, Box, Parse, Parser, Result as ParserResult, Spanned, State, Vec, expect};
+use hdx_parser::{
+	discard, expect, unexpected, AtRule as AtRuleTrait, Box, Parse, Parser, QualifiedRule as QualifiedRuleTrait,
+	Result as ParserResult, Span, Spanned, State, Vec,
+};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 #[cfg(feature = "serde")]
 use serde::Serialize;
@@ -16,8 +19,10 @@ impl<'a> Parse<'a> for ComponentValues<'a> {
 		let span = parser.span();
 		let mut values = parser.new_vec();
 		loop {
+			dbg!("ComponentValues loop", parser.cur());
 			match parser.cur() {
 				Token::Eof => break,
+				Token::RightCurly if parser.is(State::Nested) => break,
 				// ComponentValues can be passed a "stop token" which could be any token.
 				// In reality it is only ever called with a comma-token or semicolon-token.
 				Token::Semicolon if parser.is(State::StopOnSemicolon) => break,
@@ -51,6 +56,7 @@ pub enum ComponentValue<'a> {
 impl<'a> Parse<'a> for ComponentValue<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
 		let span = parser.span();
+		dbg!("ComponentValue checking token", parser.cur());
 		match parser.cur() {
 			Token::LeftCurly | Token::LeftSquare | Token::LeftParen => {
 				Ok(Self::SimpleBlock(SimpleBlock::parse(parser)?).spanned(span.end(parser.pos())))
@@ -58,6 +64,7 @@ impl<'a> Parse<'a> for ComponentValue<'a> {
 			Token::Function(_) => Ok(Self::Function(Function::parse(parser)?).spanned(span.end(parser.pos()))),
 			token => {
 				parser.advance_including_whitespace();
+				dbg!("ComponentValue making token", &token, parser.cur());
 				Ok(Self::Token(token).spanned(span))
 			}
 		}
@@ -128,7 +135,7 @@ impl<'a> WriteCss<'a> for ComponentValue<'a> {
 #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
 pub struct SimpleBlock<'a> {
 	pub pairwise: PairWise,
-	pub values: Vec<'a, Spanned<ComponentValue<'a>>>
+	pub values: Vec<'a, Spanned<ComponentValue<'a>>>,
 }
 
 // https://drafts.csswg.org/css-syntax-3/#consume-a-simple-block
@@ -179,9 +186,188 @@ impl<'a> WriteCss<'a> for SimpleBlock<'a> {
 
 #[derive(Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
+pub struct Block<'a> {
+	pub declarations: Vec<'a, Spanned<Declaration<'a>>>,
+	pub rules: Vec<'a, Spanned<QualifiedRule<'a>>>,
+}
+
+// https://drafts.csswg.org/css-syntax-3/#consume-a-block
+impl<'a> Parse<'a> for Block<'a> {
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
+		let span = parser.span();
+		expect!(parser, Token::LeftCurly);
+		parser.advance();
+		let mut declarations = parser.new_vec();
+		let mut rules = parser.new_vec();
+		loop {
+			discard!(parser, Token::Whitespace | Token::Semicolon);
+			match parser.cur() {
+				Token::Eof | Token::RightCurly => {
+					parser.advance();
+					break
+				},
+				Token::AtKeyword(name) => {
+					parser.set(State::Nested);
+					todo!()
+				},
+				_ => {
+					let checkpoint = parser.checkpoint();
+					if let Ok(decl) = Declaration::parse(parser) {
+						declarations.push(decl)
+					} else {
+						parser.rewind(checkpoint);
+						parser.set(State::Nested);
+						rules.push(QualifiedRule::parse(parser)?);
+					}
+				}
+			}
+		}
+		Ok(Self { declarations, rules }.spanned(span.end(parser.pos())))
+	}
+}
+
+#[derive(Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
+pub struct Declaration<'a> {
+	pub name: Atom,
+	pub value: Spanned<ComponentValues<'a>>,
+	pub important: bool,
+}
+
+// https://drafts.csswg.org/css-syntax-3/#consume-a-declaration
+impl<'a> Parse<'a> for Declaration<'a> {
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
+		let span = parser.span();
+		match parser.cur() {
+			Token::Ident(name) => {
+				parser.advance();
+				expect!(parser, Token::Colon);
+				parser.advance();
+				parser.set(State::StopOnSemicolon);
+				parser.set(State::Nested);
+				let mut value = ComponentValues::parse(parser)?;
+				parser.unset(State::StopOnSemicolon | State::StopOnComma);
+				let mut iter = value.node.0.iter_mut();
+				let important = matches!(
+					iter.nth_back(1),
+					Some(Spanned { node: ComponentValue::Token(Token::Ident(atom!("important"))), .. })
+				) && matches!(
+					iter.nth_back(2),
+					Some(Spanned { node: ComponentValue::Token(Token::Delim('!')), .. })
+				);
+				Ok(Self { name, value, important }.spanned(span.end(parser.pos())))
+			}
+			token => unexpected!(parser, token),
+		}
+	}
+}
+
+impl<'a> WriteCss<'a> for Declaration<'a> {
+	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
+		self.name.write_css(sink)?;
+		sink.write_char(':')?;
+		sink.write_trivia_char(' ')?;
+		self.value.write_css(sink)?;
+		if self.important {
+			sink.write_str(" !important")?;
+		}
+		sink.write_char(';')?;
+		Ok(())
+	}
+}
+
+impl<'a> WriteCss<'a> for Block<'a> {
+	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
+		sink.write_char('{')?;
+		for decl in &self.declarations {
+			decl.write_css(sink)?;
+		}
+		for rule in &self.rules {
+			rule.write_css(sink)?;
+		}
+		sink.write_char('}')
+	}
+}
+
+#[derive(Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
+pub struct AtRule<'a> {
+	pub name: Atom,
+	pub prelude: Box<'a, Spanned<ComponentValues<'a>>>,
+	pub block: Box<'a, Spanned<Block<'a>>>,
+}
+
+// https://drafts.csswg.org/css-syntax-3/#consume-an-at-rule
+impl<'a> Parse<'a> for AtRule<'a> {
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
+		let span = parser.span();
+		match parser.cur() {
+			Token::AtKeyword(name) => {
+				let (prelude_opt, block_opt) = Self::parse_at_rule(parser)?;
+				let prelude = prelude_opt.unwrap_or_else(|| ComponentValues(parser.new_vec()).spanned(Span::dummy()));
+				let block = block_opt.unwrap_or_else(|| {
+					Block { declarations: parser.new_vec(), rules: parser.new_vec() }.spanned(Span::dummy())
+				});
+				Ok(Self { name, prelude: parser.boxup(prelude), block: parser.boxup(block) }
+					.spanned(span.end(parser.pos())))
+			}
+			token => unexpected!(parser, token),
+		}
+	}
+}
+
+impl<'a> AtRuleTrait<'a> for AtRule<'a> {
+	type Block = Block<'a>;
+	type Prelude = ComponentValues<'a>;
+}
+
+impl<'a> WriteCss<'a> for AtRule<'a> {
+	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
+		sink.write_str("@")?;
+		sink.write_str(self.name.as_ref())?;
+		self.prelude.write_css(sink)?;
+		sink.write_trivia_char(' ')?;
+		self.block.write_css(sink)?;
+		Ok(())
+	}
+}
+
+#[derive(Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
+pub struct QualifiedRule<'a> {
+	pub prelude: Box<'a, Spanned<ComponentValues<'a>>>,
+	pub block: Box<'a, Spanned<Block<'a>>>,
+}
+
+// https://drafts.csswg.org/css-syntax-3/#consume-a-qualified-rule
+impl<'a> Parse<'a> for QualifiedRule<'a> {
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
+		let span = parser.span();
+		let (prelude, block) = Self::parse_qualified_rule(parser)?;
+		dbg!("Finished syntax::QualifiedRule", parser.cur());
+		Ok(Self { prelude: parser.boxup(prelude), block: parser.boxup(block) }.spanned(span.end(parser.pos())))
+	}
+}
+
+impl<'a> QualifiedRuleTrait<'a> for QualifiedRule<'a> {
+	type Block = Block<'a>;
+	type Prelude = ComponentValues<'a>;
+}
+
+impl<'a> WriteCss<'a> for QualifiedRule<'a> {
+	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
+		self.prelude.write_css(sink)?;
+		sink.write_trivia_char(' ')?;
+		self.block.write_css(sink)?;
+		Ok(())
+	}
+}
+
+#[derive(Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
 pub struct Function<'a> {
 	pub name: Atom,
-	pub values: Vec<'a, Spanned<ComponentValue<'a>>>
+	pub values: Vec<'a, Spanned<ComponentValue<'a>>>,
 }
 
 // https://drafts.csswg.org/css-syntax-3/#consume-function
@@ -195,7 +381,7 @@ impl<'a> Parse<'a> for Function<'a> {
 				loop {
 					match parser.cur() {
 						Token::Eof => break,
-						Token::RightParen =>  break,
+						Token::RightParen => break,
 						_ => values.push(ComponentValue::parse(parser)?),
 					}
 				}
@@ -243,8 +429,15 @@ mod tests {
 		test_write::<SimpleBlock>(&allocator, "(one two three)", "(one two three)");
 		test_write::<SimpleBlock>(&allocator, "(one(two))", "(one(two))");
 		test_write::<SimpleBlock>(&allocator, "{one(two)}", "{one(two)}");
+		test_write::<SimpleBlock>(&allocator, "{}", "{}");
+		test_write::<SimpleBlock>(&allocator, "{foo}", "{foo}");
+		test_write::<SimpleBlock>(&allocator, "{foo:bar}", "{foo:bar}");
 		test_write::<Function>(&allocator, "one((two) three)", "one((two)three)");
 		test_write::<ComponentValues>(&allocator, "a b c d", "a b c d");
 		test_write::<ComponentValues>(&allocator, "body { color: black }", "body {color: black }");
+		test_write::<ComponentValues>(&allocator, "body ", "body ");
+		test_write::<Block>(&allocator, "{}", "{}");
+		test_write::<Block>(&allocator, "{foo:bar}", "{foo:bar;}");
+		test_write::<Block>(&allocator, "{foo:bar;baz:bing}", "{foo:bar;baz:bing;}");
 	}
 }

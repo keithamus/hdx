@@ -37,6 +37,7 @@ impl<'a> Parse<'a> for Selector<'a> {
 				Token::Whitespace if matches!(parser.peek(), Token::Eof | Token::Semicolon | Token::Comma | Token::LeftCurly) => {
 					break;
 				}
+				token @ Token::RightCurly => unexpected!(parser, token),
 				_ => {
 					let component = Component::parse(parser)?;
 					if let Some(Spanned { node, span: component_span }) = components.last() {
