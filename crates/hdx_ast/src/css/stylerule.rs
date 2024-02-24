@@ -1,12 +1,10 @@
-use hdx_lexer::Token;
-use hdx_parser::{expect, unexpected, Parse, Parser, QualifiedRule, Result as ParserResult, Block};
+use hdx_parser::{Block, Parse, Parser, QualifiedRule, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 #[cfg(feature = "serde")]
 use serde::Serialize;
 
 use crate::{
-	css::{properties::StyleProperty, selector::Selector},
-	syntax::Declaration,
+	css::{properties::StyleProperty, selector::Selectors},
 	Box, Spanned, Vec,
 };
 
@@ -14,7 +12,7 @@ use crate::{
 #[derive(Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
 pub struct StyleRule<'a> {
-	pub selectors: Box<'a, Spanned<Selector<'a>>>,
+	pub selectors: Box<'a, Spanned<Selectors<'a>>>,
 	pub style: Box<'a, Spanned<StyleDeclaration<'a>>>,
 }
 
@@ -28,7 +26,7 @@ impl<'a> Parse<'a> for StyleRule<'a> {
 
 impl<'a> QualifiedRule<'a> for StyleRule<'a> {
 	type Block = StyleDeclaration<'a>;
-	type Prelude = Selector<'a>;
+	type Prelude = Selectors<'a>;
 }
 
 impl<'a> WriteCss<'a> for StyleRule<'a> {
@@ -101,6 +99,7 @@ mod test {
 	fn test_writes() {
 		let allocator = Allocator::default();
 		test_write::<StyleRule>(&allocator, "body {}", "body{}");
+		test_write::<StyleRule>(&allocator, "body, body {}", "body,body{}");
 		test_write::<StyleRule>(&allocator, "body { width:1px }", "body{width:1px}");
 	}
 }

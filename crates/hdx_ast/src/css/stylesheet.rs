@@ -1,7 +1,7 @@
 use hdx_atom::atom;
 use hdx_derive::Atomizable;
 use hdx_lexer::Token;
-use hdx_parser::{diagnostics, discard, StyleSheet as StyleSheetTrait, Parse, Parser, Result as ParserResult};
+use hdx_parser::{diagnostics, Parse, Parser, Result as ParserResult, StyleSheet as StyleSheetTrait};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 #[cfg(feature = "serde")]
 use serde::Serialize;
@@ -62,23 +62,21 @@ impl<'a> Parse<'a> for Rule<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
 		let span = parser.span();
 		Ok(match parser.cur() {
-			Token::AtKeyword(atom) => {
-				match atom.to_ascii_lowercase() {
-					atom!("charset") => {
-						let rule = CharsetRule::parse(parser)?;
-						Rule::Charset(parser.boxup(rule))
-					}
-					atom!("page") => {
-						let rule = PageRule::parse(parser)?;
-						Rule::Page(parser.boxup(rule))
-					}
-					_ => {
-						let rule = AtRule::parse(parser)?;
-						parser.warn(diagnostics::UnknownRule(rule.span).into());
-						Rule::UnknownAt(parser.boxup(rule))
-					}
+			Token::AtKeyword(atom) => match atom.to_ascii_lowercase() {
+				atom!("charset") => {
+					let rule = CharsetRule::parse(parser)?;
+					Rule::Charset(parser.boxup(rule))
 				}
-			}
+				atom!("page") => {
+					let rule = PageRule::parse(parser)?;
+					Rule::Page(parser.boxup(rule))
+				}
+				_ => {
+					let rule = AtRule::parse(parser)?;
+					parser.warn(diagnostics::UnknownRule(rule.span).into());
+					Rule::UnknownAt(parser.boxup(rule))
+				}
+			},
 			// "Consume a qualified rule from input. If anything is returned, append it to rules."
 			_ => {
 				let checkpoint = parser.checkpoint();
@@ -92,7 +90,8 @@ impl<'a> Parse<'a> for Rule<'a> {
 					}
 				}
 			}
-		}.spanned(span.end(parser.pos())))
+		}
+		.spanned(span.end(parser.pos())))
 	}
 }
 
@@ -134,6 +133,7 @@ mod tests {
 	fn test_writes() {
 		let allocator = Allocator::default();
 		test_write::<StyleSheet>(&allocator, "body {}", "body{}");
+		test_write::<StyleSheet>(&allocator, "body, body {}", "body,body{}");
 		test_write::<StyleSheet>(&allocator, "body { width: 1px }", "body{width:1px}");
 	}
 }

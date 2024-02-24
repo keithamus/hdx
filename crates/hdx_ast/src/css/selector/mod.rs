@@ -15,6 +15,40 @@ mod pseudo_class;
 use attribute::Attribute;
 use pseudo_class::PseudoClass;
 
+#[derive(Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+pub struct Selectors<'a>(pub Vec<'a, Spanned<Selector<'a>>>);
+
+impl<'a> Parse<'a> for Selectors<'a> {
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
+		let span = parser.span();
+		let mut selectors = parser.new_vec();
+		loop {
+			selectors.push(Selector::parse(parser)?);
+			discard!(parser, Token::Whitespace);
+			match parser.cur() {
+				Token::Comma => { parser.advance(); },
+				_ => break,
+			}
+		}
+		Ok(Selectors( selectors ).spanned(span.end(parser.pos())))
+	}
+}
+
+impl<'a> WriteCss<'a> for Selectors<'a> {
+    fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
+		let mut iter = self.0.iter().peekable();
+		while let Some(selector) = iter.next() {
+			selector.write_css(sink)?;
+			if iter.peek().is_some() {
+				sink.write_char(',')?;
+			}
+			sink.write_trivia_char(' ')?;
+		}
+		Ok(())
+    }
+}
+
 // This encapsulates both `simple-selector` and `compound-selector`.
 // As `simple-selector` is a `compound-selector` but with only one `Component`.
 // Having `Selector` be both ` simple-selector` and `compound-selector` makes

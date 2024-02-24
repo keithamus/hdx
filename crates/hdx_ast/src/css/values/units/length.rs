@@ -1,6 +1,6 @@
 use hdx_atom::{atom, Atom};
 use hdx_lexer::Token;
-use hdx_parser::{diagnostics::UnexpectedDimension, unexpected, Parse, Parser, Result as ParserResult, Spanned};
+use hdx_parser::FromToken;
 #[cfg(feature = "serde")]
 use serde::Serialize;
 
@@ -23,7 +23,7 @@ macro_rules! length {
 		#[cfg_attr(feature = "serde", derive(Serialize), serde())]
 		pub enum Length {
 			#[writable(rename = "0")]
-			Zero, // TODO: atom!("zero") <- shouldn't need to be an atom but something weird is happening
+			Zero,
 			$(
 			#[writable(suffix = $atom)]
 			$name(CSSFloat),
@@ -48,23 +48,12 @@ macro_rules! length {
 			}
 		}
 
-		impl<'a> Parse<'a> for Length {
-			fn parse(parser: &mut Parser) -> ParserResult<Spanned<Self>> {
-				let span = parser.span();
-				match parser.cur() {
-					Token::Number(n, _) if n == 0.0 => {
-						parser.advance();
-						Ok(Self::Zero.spanned(span))
-					}
-					Token::Dimension(n, unit, _) => {
-						if let Some(length) = Self::new(n.into(), unit.clone()) {
-							parser.advance();
-							Ok(length.spanned(span))
-						} else {
-							Err(UnexpectedDimension(unit, span))?
-						}
-					}
-					token => unexpected!(parser, token),
+		impl FromToken for Length {
+			fn from_token(token: Token) -> Option<Self> {
+				match token {
+					Token::Number(n, _) if n == 0.0 => Some(Self::Zero),
+					Token::Dimension(n, unit, _) => Self::new(n.into(), unit),
+					_ => None,
 				}
 			}
 		}
@@ -101,23 +90,12 @@ macro_rules! length {
 			}
 		}
 
-		impl<'a> Parse<'a> for LengthPercentage {
-			fn parse(parser: &mut Parser) -> ParserResult<Spanned<Self>> {
-				let span = parser.span();
-				match parser.cur() {
-					Token::Number(n, _) if n == 0.0 => {
-						parser.advance();
-						Ok(Self::Zero.spanned(span))
-					},
-					Token::Dimension(n, unit, _) => {
-						parser.advance();
-						if let Some(length) = Self::new(n.into(), unit.clone()) {
-							Ok(length.spanned(span))
-						} else {
-							Err(UnexpectedDimension(unit, span))?
-						}
-					}
-					token => unexpected!(parser, token),
+		impl FromToken for LengthPercentage {
+			fn from_token(token: Token) -> Option<Self> {
+				match token {
+					Token::Number(n, _) if n == 0.0 => Some(Self::Zero),
+					Token::Dimension(n, unit, _) => Self::new(n.into(), unit),
+					_ => None,
 				}
 			}
 		}

@@ -20,7 +20,7 @@ macro_rules! expect {
 	($parser: ident, $pattern:pat $(if $guard:expr)? $(,)?) => {
 		match $parser.cur() {
 			$pattern $(if $guard)? => {},
-			token => unexpected!($parser, token),
+			token => $crate::unexpected!($parser, token),
 		}
 	};
 }

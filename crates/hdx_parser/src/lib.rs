@@ -9,5 +9,4 @@ pub use miette::{Error, Result};
 pub use oxc_allocator::{Box, Vec};
 pub use parser::*;
 pub use span::*;
-pub use macros::*;
 pub use traits::*;

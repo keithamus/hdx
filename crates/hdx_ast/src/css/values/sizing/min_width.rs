@@ -1,1 +1,1 @@
-pub type MinWidth = super::super::Todo;
+pub type MinWidth = super::MaxWidth;

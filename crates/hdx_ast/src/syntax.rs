@@ -1,8 +1,8 @@
 use hdx_atom::{atom, Atom};
 use hdx_lexer::{PairWise, Token};
 use hdx_parser::{
-	discard, expect, unexpected, AtRule as AtRuleTrait, Box, Parse, Parser, QualifiedRule as QualifiedRuleTrait,
-	Result as ParserResult, Span, Spanned, State, Vec,
+	discard, expect, unexpected, AtRule as AtRuleTrait, Block as BlockTrait, Box, Parse, Parser,
+	QualifiedRule as QualifiedRuleTrait, Result as ParserResult, Span, Spanned, State, Vec,
 };
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 #[cfg(feature = "serde")]
@@ -19,7 +19,6 @@ impl<'a> Parse<'a> for ComponentValues<'a> {
 		let span = parser.span();
 		let mut values = parser.new_vec();
 		loop {
-			dbg!("ComponentValues loop", parser.cur());
 			match parser.cur() {
 				Token::Eof => break,
 				Token::RightCurly if parser.is(State::Nested) => break,
@@ -56,7 +55,6 @@ pub enum ComponentValue<'a> {
 impl<'a> Parse<'a> for ComponentValue<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
 		let span = parser.span();
-		dbg!("ComponentValue checking token", parser.cur());
 		match parser.cur() {
 			Token::LeftCurly | Token::LeftSquare | Token::LeftParen => {
 				Ok(Self::SimpleBlock(SimpleBlock::parse(parser)?).spanned(span.end(parser.pos())))
@@ -64,7 +62,6 @@ impl<'a> Parse<'a> for ComponentValue<'a> {
 			Token::Function(_) => Ok(Self::Function(Function::parse(parser)?).spanned(span.end(parser.pos()))),
 			token => {
 				parser.advance_including_whitespace();
-				dbg!("ComponentValue making token", &token, parser.cur());
 				Ok(Self::Token(token).spanned(span))
 			}
 		}
@@ -186,44 +183,48 @@ impl<'a> WriteCss<'a> for SimpleBlock<'a> {
 
 #[derive(Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
-pub struct Block<'a> {
-	pub declarations: Vec<'a, Spanned<Declaration<'a>>>,
-	pub rules: Vec<'a, Spanned<QualifiedRule<'a>>>,
+pub enum Rule<'a> {
+	AtRule(Spanned<AtRule<'a>>),
+	QualifiedRule(Spanned<QualifiedRule<'a>>),
 }
 
-// https://drafts.csswg.org/css-syntax-3/#consume-a-block
+impl<'a> Parse<'a> for Rule<'a> {
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
+		let span = parser.span();
+		Ok(match parser.cur() {
+			Token::AtKeyword(_) => Rule::AtRule(AtRule::parse(parser)?),
+			_ => Rule::QualifiedRule(QualifiedRule::parse(parser)?),
+		}.spanned(span.end(parser.pos())))
+	}
+}
+
+impl<'a> WriteCss<'a> for Rule<'a> {
+	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
+		match self {
+			Self::AtRule(value) => value.write_css(sink),
+			Self::QualifiedRule(value) => value.write_css(sink),
+		}
+	}
+}
+
+#[derive(Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
+pub struct Block<'a> {
+	pub declarations: Vec<'a, Spanned<Declaration<'a>>>,
+	pub rules: Vec<'a, Spanned<Rule<'a>>>,
+}
+
 impl<'a> Parse<'a> for Block<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
 		let span = parser.span();
-		expect!(parser, Token::LeftCurly);
-		parser.advance();
-		let mut declarations = parser.new_vec();
-		let mut rules = parser.new_vec();
-		loop {
-			discard!(parser, Token::Whitespace | Token::Semicolon);
-			match parser.cur() {
-				Token::Eof | Token::RightCurly => {
-					parser.advance();
-					break
-				},
-				Token::AtKeyword(name) => {
-					parser.set(State::Nested);
-					todo!()
-				},
-				_ => {
-					let checkpoint = parser.checkpoint();
-					if let Ok(decl) = Declaration::parse(parser) {
-						declarations.push(decl)
-					} else {
-						parser.rewind(checkpoint);
-						parser.set(State::Nested);
-						rules.push(QualifiedRule::parse(parser)?);
-					}
-				}
-			}
-		}
+		let (declarations, rules) = Self::parse_block(parser)?;
 		Ok(Self { declarations, rules }.spanned(span.end(parser.pos())))
 	}
+}
+
+impl<'a> BlockTrait<'a> for Block<'a> {
+	type Declaration = Declaration<'a>;
+	type Rule = Rule<'a>;
 }
 
 #[derive(Debug, Hash)]
@@ -344,7 +345,6 @@ impl<'a> Parse<'a> for QualifiedRule<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
 		let span = parser.span();
 		let (prelude, block) = Self::parse_qualified_rule(parser)?;
-		dbg!("Finished syntax::QualifiedRule", parser.cur());
 		Ok(Self { prelude: parser.boxup(prelude), block: parser.boxup(block) }.spanned(span.end(parser.pos())))
 	}
 }

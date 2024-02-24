@@ -7,6 +7,22 @@ use crate::{
 	unexpected, Result, State, Vec,
 };
 
+pub trait FromToken: Sized {
+	fn from_token(token: Token) -> Option<Self>;
+}
+
+impl<'a, T: FromToken> Parse<'a> for T {
+	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
+		let span = parser.span();
+		if let Some(result) = Self::from_token(parser.cur()) {
+			parser.advance();
+			Ok(result.spanned(span))
+		} else {
+			unexpected!(parser)
+		}
+	}
+}
+
 pub trait Parse<'a>: Sized {
 	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<Self>>;
 
@@ -21,7 +37,6 @@ pub trait Block<'a>: Sized + Parse<'a> {
 
 	// https://drafts.csswg.org/css-syntax-3/#consume-block-contents
 	fn parse_block(parser: &mut Parser<'a>) -> Result<(Vec<'a, Spanned<Self::Declaration>>, Vec<'a, Spanned<Self::Rule>>)> {
-		let span = parser.span();
 		expect!(parser, Token::LeftCurly);
 		parser.advance();
 		let mut declarations = parser.new_vec();
@@ -48,7 +63,6 @@ pub trait Block<'a>: Sized + Parse<'a> {
 						parser.unset(State::Nested);
 					} else {
 						parser.rewind(checkpoint);
-						dbg!("StyleRule::parse(parser)", parser.cur());
 						rules.push(Self::Rule::parse(parser)?);
 						parser.unset(State::Nested);
 					}
@@ -124,7 +138,6 @@ pub trait QualifiedRule<'a>: Sized + Parse<'a> {
 
 	// https://drafts.csswg.org/css-syntax-3/#consume-a-qualified-rule
 	fn parse_qualified_rule(parser: &mut Parser<'a>) -> Result<(Spanned<Self::Prelude>, Spanned<Self::Block>)> {
-		dbg!("parse_qualified_rule", parser.cur());
 		match parser.cur() {
 			token @ Token::Eof => unexpected!(parser, token),
 			token @ Token::RightCurly if !parser.is(State::Nested) => unexpected!(parser, token),

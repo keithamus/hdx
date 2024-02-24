@@ -307,6 +307,11 @@ pub struct ExpectedInt(pub f32, #[label("This value")] pub Span);
 pub struct ExpectedFloat(pub f32, #[label("This value")] pub Span);
 
 #[derive(Debug, Error, Diagnostic)]
+#[error("This number must be 0, got {0} instead.")]
+#[diagnostic(help("Try replacing it with the literal 0 instead"), code(hdx_parser::ExpectedZero))]
+pub struct ExpectedZero(pub f32, #[label("This value")] pub Span);
+
+#[derive(Debug, Error, Diagnostic)]
 #[error("Display 'list-item' can only be combined with 'flow' or 'flow-root'")]
 #[diagnostic(help("{0} is not valid in combination with list-item, try changing it to flow or flow-root"), code(hdx_parser::DisplayHasInvalidListItemCombo))]
 pub struct DisplayHasInvalidListItemCombo(pub Atom, pub Span);
