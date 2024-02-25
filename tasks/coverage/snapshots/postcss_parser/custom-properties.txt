@@ -1,43 +1,219 @@
-hdx_parser::ExpectToken
+hdx_parser::UnknownDeclaration
 
-  × Expected `Ident` but found `Whitespace`
-   ╭─[tasks/coverage/postcss-parser-tests/cases/custom-properties.css:1:1]
+  × Ignored property due to parse error.
+   ╭─[tasks/coverage/postcss-parser-tests/cases/custom-properties.css:2:12]
  1 │ :root {
  2 │   --number: 1;
-   ·            ┬
-   ·            ╰── `Ident` expected
+   ·            ─┬─
+   ·             ╰── This property was ignored.
  3 │   --unit: 100vw;
    ╰────
-  help: This is not correct CSS syntax.
-hdx_parser::ExpectToken
+  help: This property is going to be ignored because it doesn't look valid. If it is valid, please file an issue!
+hdx_parser::UnknownDeclaration
 
-  × Expected `Ident` but found `Number`
-    ╭─[tasks/coverage/postcss-parser-tests/cases/custom-properties.css:25:1]
+  × Ignored property due to parse error.
+   ╭─[tasks/coverage/postcss-parser-tests/cases/custom-properties.css:3:10]
+ 2 │   --number: 1;
+ 3 │   --unit: 100vw;
+   ·          ───┬───
+   ·             ╰── This property was ignored.
+ 4 │   --color: #06c;
+   ╰────
+  help: This property is going to be ignored because it doesn't look valid. If it is valid, please file an issue!
+hdx_parser::UnknownDeclaration
+
+  × Ignored property due to parse error.
+   ╭─[tasks/coverage/postcss-parser-tests/cases/custom-properties.css:4:11]
+ 3 │   --unit: 100vw;
+ 4 │   --color: #06c;
+   ·           ───┬──
+   ·              ╰── This property was ignored.
+ 5 │ 
+   ╰────
+  help: This property is going to be ignored because it doesn't look valid. If it is valid, please file an issue!
+hdx_parser::UnknownDeclaration
+
+  × Ignored property due to parse error.
+   ╭─[tasks/coverage/postcss-parser-tests/cases/custom-properties.css:6:14]
+ 5 │ 
+ 6 │   --function: calc(1 + 1);
+   ·              ──────┬──────
+   ·                    ╰── This property was ignored.
+ 7 │   --variable: var(--unit);
+   ╰────
+  help: This property is going to be ignored because it doesn't look valid. If it is valid, please file an issue!
+hdx_parser::UnknownDeclaration
+
+  × Ignored property due to parse error.
+   ╭─[tasks/coverage/postcss-parser-tests/cases/custom-properties.css:7:14]
+ 6 │   --function: calc(1 + 1);
+ 7 │   --variable: var(--unit);
+   ·              ──────┬──────
+   ·                    ╰── This property was ignored.
+ 8 │ 
+   ╰────
+  help: This property is going to be ignored because it doesn't look valid. If it is valid, please file an issue!
+hdx_parser::UnknownDeclaration
+
+  × Ignored property due to parse error.
+    ╭─[tasks/coverage/postcss-parser-tests/cases/custom-properties.css:9:12]
+  8 │ 
+  9 │   --string: 'single quoted string';
+    ·            ────────────┬───────────
+    ·                        ╰── This property was ignored.
+ 10 │   --string: "double quoted string";
+    ╰────
+  help: This property is going to be ignored because it doesn't look valid. If it is valid, please file an issue!
+hdx_parser::UnknownDeclaration
+
+  × Ignored property due to parse error.
+    ╭─[tasks/coverage/postcss-parser-tests/cases/custom-properties.css:10:12]
+  9 │   --string: 'single quoted string';
+ 10 │   --string: "double quoted string";
+    ·            ────────────┬───────────
+    ·                        ╰── This property was ignored.
+ 11 │ 
+    ╰────
+  help: This property is going to be ignored because it doesn't look valid. If it is valid, please file an issue!
+hdx_parser::UnknownDeclaration
+
+  × Ignored property due to parse error.
+    ╭─[tasks/coverage/postcss-parser-tests/cases/custom-properties.css:12:18]
+ 11 │ 
+ 12 │   --square-block: [1, 2, 3];
+    ·                  ─────┬─────
+    ·                       ╰── This property was ignored.
+ 13 │   --round-block: (1, 2, 3);
+    ╰────
+  help: This property is going to be ignored because it doesn't look valid. If it is valid, please file an issue!
+hdx_parser::UnknownDeclaration
+
+  × Ignored property due to parse error.
+    ╭─[tasks/coverage/postcss-parser-tests/cases/custom-properties.css:13:17]
+ 12 │   --square-block: [1, 2, 3];
+ 13 │   --round-block: (1, 2, 3);
+    ·                 ─────┬─────
+    ·                      ╰── This property was ignored.
+ 14 │ 
+    ╰────
+  help: This property is going to be ignored because it doesn't look valid. If it is valid, please file an issue!
+hdx_parser::UnknownDeclaration
+
+  × Ignored property due to parse error.
+    ╭─[tasks/coverage/postcss-parser-tests/cases/custom-properties.css:15:12]
+ 14 │ 
+ 15 │   --empty1: ;
+    ·            ─┬
+    ·             ╰── This property was ignored.
+ 16 │   --empty2: /**/;
+    ╰────
+  help: This property is going to be ignored because it doesn't look valid. If it is valid, please file an issue!
+hdx_parser::UnknownDeclaration
+
+  × Ignored property due to parse error.
+    ╭─[tasks/coverage/postcss-parser-tests/cases/custom-properties.css:16:12]
+ 15 │   --empty1: ;
+ 16 │   --empty2: /**/;
+    ·            ───┬──
+    ·               ╰── This property was ignored.
+ 17 │   --empty3: !important;
+    ╰────
+  help: This property is going to be ignored because it doesn't look valid. If it is valid, please file an issue!
+hdx_parser::UnknownDeclaration
+
+  × Ignored property due to parse error.
+    ╭─[tasks/coverage/postcss-parser-tests/cases/custom-properties.css:17:12]
+ 16 │   --empty2: /**/;
+ 17 │   --empty3: !important;
+    ·            ──────┬─────
+    ·                  ╰── This property was ignored.
+ 18 │   --empty4:/**/ !important;
+    ╰────
+  help: This property is going to be ignored because it doesn't look valid. If it is valid, please file an issue!
+hdx_parser::UnknownDeclaration
+
+  × Ignored property due to parse error.
+    ╭─[tasks/coverage/postcss-parser-tests/cases/custom-properties.css:18:12]
+ 17 │   --empty3: !important;
+ 18 │   --empty4:/**/ !important;
+    ·            ────────┬───────
+    ·                    ╰── This property was ignored.
+ 19 │   --empty5:/**/ ;
+    ╰────
+  help: This property is going to be ignored because it doesn't look valid. If it is valid, please file an issue!
+hdx_parser::UnknownDeclaration
+
+  × Ignored property due to parse error.
+    ╭─[tasks/coverage/postcss-parser-tests/cases/custom-properties.css:19:12]
+ 18 │   --empty4:/**/ !important;
+ 19 │   --empty5:/**/ ;
+    ·            ───┬──
+    ·               ╰── This property was ignored.
+ 20 │ 
+    ╰────
+  help: This property is going to be ignored because it doesn't look valid. If it is valid, please file an issue!
+hdx_parser::UnknownDeclaration
+
+  × Ignored property due to parse error.
+    ╭─[tasks/coverage/postcss-parser-tests/cases/custom-properties.css:21:19]
+ 20 │ 
+ 21 │   --bracket-block: {1, 2, 3};
+    ·                   ─────┬─────
+    ·                        ╰── This property was ignored.
+ 22 │   --JSON: [1, "2", {"three": {"a":1}}, [4]];
+    ╰────
+  help: This property is going to be ignored because it doesn't look valid. If it is valid, please file an issue!
+hdx_parser::UnknownDeclaration
+
+  × Ignored property due to parse error.
+    ╭─[tasks/coverage/postcss-parser-tests/cases/custom-properties.css:22:10]
+ 21 │   --bracket-block: {1, 2, 3};
+ 22 │   --JSON: [1, "2", {"three": {"a":1}}, [4]];
+    ·          ─────────────────┬─────────────────
+    ·                           ╰── This property was ignored.
+ 23 │   --javascript: function(rule) { console.log(rule) };
+    ╰────
+  help: This property is going to be ignored because it doesn't look valid. If it is valid, please file an issue!
+hdx_parser::UnknownDeclaration
+
+  × Ignored property due to parse error.
+    ╭─[tasks/coverage/postcss-parser-tests/cases/custom-properties.css:23:16]
+ 22 │   --JSON: [1, "2", {"three": {"a":1}}, [4]];
+ 23 │   --javascript: function(rule) { console.log(rule) };
+    ·                ───────────────────┬──────────────────
+    ·                                   ╰── This property was ignored.
+ 24 │ }
+    ╰────
+  help: This property is going to be ignored because it doesn't look valid. If it is valid, please file an issue!
+hdx_parser::UnknownDeclaration
+
+  × Ignored property due to parse error.
+    ╭─[tasks/coverage/postcss-parser-tests/cases/custom-properties.css:26:11]
  25 │ 
  26 │ :root{--a:1}
-    ·           ┬
-    ·           ╰── `Ident` expected
+    ·           ─┬
+    ·            ╰── This property was ignored.
  27 │ 
     ╰────
-  help: This is not correct CSS syntax.
-hdx_parser::ExpectToken
+  help: This property is going to be ignored because it doesn't look valid. If it is valid, please file an issue!
+hdx_parser::UnknownDeclaration
 
-  × Expected `Ident` but found `Comment`
-    ╭─[tasks/coverage/postcss-parser-tests/cases/custom-properties.css:27:1]
+  × Ignored property due to parse error.
+    ╭─[tasks/coverage/postcss-parser-tests/cases/custom-properties.css:28:30]
  27 │ 
  28 │ .semicolon-less {--empty-end:/**/ }
-    ·                              ──┬─
-    ·                                ╰── `Ident` expected
+    ·                              ───┬──
+    ·                                 ╰── This property was ignored.
  29 │ 
     ╰────
-  help: This is not correct CSS syntax.
-hdx_parser::ExpectToken
+  help: This property is going to be ignored because it doesn't look valid. If it is valid, please file an issue!
+hdx_parser::UnknownDeclaration
 
-  × Expected `Ident` but found `Whitespace`
-    ╭─[tasks/coverage/postcss-parser-tests/cases/custom-properties.css:29:1]
+  × Ignored property due to parse error.
+    ╭─[tasks/coverage/postcss-parser-tests/cases/custom-properties.css:30:12]
  29 │ 
  30 │ .empty{--a: }
-    ·            ┬
-    ·            ╰── `Ident` expected
+    ·            ─┬
+    ·             ╰── This property was ignored.
     ╰────
-  help: This is not correct CSS syntax.
+  help: This property is going to be ignored because it doesn't look valid. If it is valid, please file an issue!

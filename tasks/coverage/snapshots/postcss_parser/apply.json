@@ -5,306 +5,316 @@
       {
         "end": 122,
         "node": {
-          "selectors": {
-            "end": 7,
-            "node": {
-              "components": [
+          "end": 122,
+          "node": {
+            "selectors": {
+              "end": 7,
+              "node": [
                 {
-                  "end": 6,
+                  "end": 7,
                   "node": {
-                    "type": "PseudoClass",
-                    "value": "root"
+                    "components": [
+                      {
+                        "end": 6,
+                        "node": {
+                          "type": "PseudoClass",
+                          "value": "root"
+                        },
+                        "start": 0
+                      }
+                    ],
+                    "type": "Selector"
                   },
                   "start": 0
                 }
               ],
-              "type": "Selector"
+              "start": 0
             },
-            "start": 0
-          },
-          "style": {
-            "end": 122,
-            "node": {
-              "declarations": [
-                {
-                  "end": 73,
-                  "node": {
-                    "important": false,
-                    "name": "--zero-size",
-                    "value": {
-                      "Unknown": {
-                        "end": 58,
-                        "node": {
-                          "type": "Unknown",
-                          "value": {
-                            "end": 58,
-                            "node": [
-                              {
-                                "end": 58,
-                                "node": {
+            "style": {
+              "end": 122,
+              "node": {
+                "declarations": [
+                  {
+                    "end": 73,
+                    "node": {
+                      "important": false,
+                      "name": "--zero-size",
+                      "value": {
+                        "Unknown": {
+                          "end": 58,
+                          "node": {
+                            "type": "Unknown",
+                            "value": {
+                              "end": 58,
+                              "node": [
+                                {
                                   "end": 58,
                                   "node": {
-                                    "pairwise": "Curly",
-                                    "type": "SimpleBlock",
-                                    "values": [
-                                      {
-                                        "end": 34,
-                                        "node": {
-                                          "kind": "Ident",
-                                          "value": "width"
+                                    "end": 58,
+                                    "node": {
+                                      "pairwise": "Curly",
+                                      "type": "SimpleBlock",
+                                      "values": [
+                                        {
+                                          "end": 34,
+                                          "node": {
+                                            "kind": "Ident",
+                                            "value": "width"
+                                          },
+                                          "start": 24
                                         },
-                                        "start": 24
-                                      },
-                                      {
-                                        "end": 35,
-                                        "node": {
-                                          "kind": "Colon"
+                                        {
+                                          "end": 35,
+                                          "node": {
+                                            "kind": "Colon"
+                                          },
+                                          "start": 34
                                         },
-                                        "start": 34
-                                      },
-                                      {
-                                        "end": 36,
-                                        "node": {
-                                          "kind": "Whitespace"
+                                        {
+                                          "end": 36,
+                                          "node": {
+                                            "kind": "Whitespace"
+                                          },
+                                          "start": 35
                                         },
-                                        "start": 35
-                                      },
-                                      {
-                                        "end": 37,
-                                        "node": {
-                                          "kind": "Number",
-                                          "value": [
-                                            0.0,
-                                            {
-                                              "bits": 0
-                                            }
-                                          ]
+                                        {
+                                          "end": 37,
+                                          "node": {
+                                            "kind": "Number",
+                                            "value": [
+                                              0.0,
+                                              {
+                                                "bits": 0
+                                              }
+                                            ]
+                                          },
+                                          "start": 36
                                         },
-                                        "start": 36
-                                      },
-                                      {
-                                        "end": 38,
-                                        "node": {
-                                          "kind": "Semicolon"
+                                        {
+                                          "end": 38,
+                                          "node": {
+                                            "kind": "Semicolon"
+                                          },
+                                          "start": 37
                                         },
-                                        "start": 37
-                                      },
-                                      {
-                                        "end": 43,
-                                        "node": {
-                                          "kind": "Whitespace"
+                                        {
+                                          "end": 43,
+                                          "node": {
+                                            "kind": "Whitespace"
+                                          },
+                                          "start": 38
                                         },
-                                        "start": 38
-                                      },
-                                      {
-                                        "end": 49,
-                                        "node": {
-                                          "kind": "Ident",
-                                          "value": "height"
+                                        {
+                                          "end": 49,
+                                          "node": {
+                                            "kind": "Ident",
+                                            "value": "height"
+                                          },
+                                          "start": 43
                                         },
-                                        "start": 43
-                                      },
-                                      {
-                                        "end": 50,
-                                        "node": {
-                                          "kind": "Colon"
+                                        {
+                                          "end": 50,
+                                          "node": {
+                                            "kind": "Colon"
+                                          },
+                                          "start": 49
                                         },
-                                        "start": 49
-                                      },
-                                      {
-                                        "end": 51,
-                                        "node": {
-                                          "kind": "Whitespace"
+                                        {
+                                          "end": 51,
+                                          "node": {
+                                            "kind": "Whitespace"
+                                          },
+                                          "start": 50
                                         },
-                                        "start": 50
-                                      },
-                                      {
-                                        "end": 52,
-                                        "node": {
-                                          "kind": "Number",
-                                          "value": [
-                                            0.0,
-                                            {
-                                              "bits": 0
-                                            }
-                                          ]
+                                        {
+                                          "end": 52,
+                                          "node": {
+                                            "kind": "Number",
+                                            "value": [
+                                              0.0,
+                                              {
+                                                "bits": 0
+                                              }
+                                            ]
+                                          },
+                                          "start": 51
                                         },
-                                        "start": 51
-                                      },
-                                      {
-                                        "end": 53,
-                                        "node": {
-                                          "kind": "Semicolon"
+                                        {
+                                          "end": 53,
+                                          "node": {
+                                            "kind": "Semicolon"
+                                          },
+                                          "start": 52
                                         },
-                                        "start": 52
-                                      },
-                                      {
-                                        "end": 56,
-                                        "node": {
-                                          "kind": "Whitespace"
-                                        },
-                                        "start": 53
-                                      }
-                                    ]
+                                        {
+                                          "end": 56,
+                                          "node": {
+                                            "kind": "Whitespace"
+                                          },
+                                          "start": 53
+                                        }
+                                      ]
+                                    },
+                                    "start": 22
                                   },
                                   "start": 22
-                                },
-                                "start": 22
-                              }
-                            ],
-                            "start": 22
-                          }
-                        },
-                        "start": 22
+                                }
+                              ],
+                              "start": 22
+                            }
+                          },
+                          "start": 22
+                        }
                       }
-                    }
+                    },
+                    "start": 7
                   },
-                  "start": 7
-                },
-                {
-                  "end": 121,
-                  "node": {
-                    "important": false,
-                    "name": "--small-icon",
-                    "value": {
-                      "Unknown": {
-                        "end": 119,
-                        "node": {
-                          "type": "Unknown",
-                          "value": {
-                            "end": 119,
-                            "node": [
-                              {
-                                "end": 119,
-                                "node": {
+                  {
+                    "end": 121,
+                    "node": {
+                      "important": false,
+                      "name": "--small-icon",
+                      "value": {
+                        "Unknown": {
+                          "end": 119,
+                          "node": {
+                            "type": "Unknown",
+                            "value": {
+                              "end": 119,
+                              "node": [
+                                {
                                   "end": 119,
                                   "node": {
-                                    "pairwise": "Curly",
-                                    "type": "SimpleBlock",
-                                    "values": [
-                                      {
-                                        "end": 86,
-                                        "node": {
-                                          "kind": "Ident",
-                                          "value": "width"
+                                    "end": 119,
+                                    "node": {
+                                      "pairwise": "Curly",
+                                      "type": "SimpleBlock",
+                                      "values": [
+                                        {
+                                          "end": 86,
+                                          "node": {
+                                            "kind": "Ident",
+                                            "value": "width"
+                                          },
+                                          "start": 76
                                         },
-                                        "start": 76
-                                      },
-                                      {
-                                        "end": 87,
-                                        "node": {
-                                          "kind": "Colon"
+                                        {
+                                          "end": 87,
+                                          "node": {
+                                            "kind": "Colon"
+                                          },
+                                          "start": 86
                                         },
-                                        "start": 86
-                                      },
-                                      {
-                                        "end": 88,
-                                        "node": {
-                                          "kind": "Whitespace"
+                                        {
+                                          "end": 88,
+                                          "node": {
+                                            "kind": "Whitespace"
+                                          },
+                                          "start": 87
                                         },
-                                        "start": 87
-                                      },
-                                      {
-                                        "end": 92,
-                                        "node": {
-                                          "kind": "Dimension",
-                                          "value": [
-                                            16.0,
-                                            "px",
-                                            {
-                                              "bits": 0
-                                            }
-                                          ]
+                                        {
+                                          "end": 92,
+                                          "node": {
+                                            "kind": "Dimension",
+                                            "value": [
+                                              16.0,
+                                              "px",
+                                              {
+                                                "bits": 0
+                                              }
+                                            ]
+                                          },
+                                          "start": 88
                                         },
-                                        "start": 88
-                                      },
-                                      {
-                                        "end": 93,
-                                        "node": {
-                                          "kind": "Semicolon"
+                                        {
+                                          "end": 93,
+                                          "node": {
+                                            "kind": "Semicolon"
+                                          },
+                                          "start": 92
                                         },
-                                        "start": 92
-                                      },
-                                      {
-                                        "end": 98,
-                                        "node": {
-                                          "kind": "Whitespace"
+                                        {
+                                          "end": 98,
+                                          "node": {
+                                            "kind": "Whitespace"
+                                          },
+                                          "start": 93
                                         },
-                                        "start": 93
-                                      },
-                                      {
-                                        "end": 104,
-                                        "node": {
-                                          "kind": "Ident",
-                                          "value": "height"
+                                        {
+                                          "end": 104,
+                                          "node": {
+                                            "kind": "Ident",
+                                            "value": "height"
+                                          },
+                                          "start": 98
                                         },
-                                        "start": 98
-                                      },
-                                      {
-                                        "end": 105,
-                                        "node": {
-                                          "kind": "Colon"
+                                        {
+                                          "end": 105,
+                                          "node": {
+                                            "kind": "Colon"
+                                          },
+                                          "start": 104
                                         },
-                                        "start": 104
-                                      },
-                                      {
-                                        "end": 106,
-                                        "node": {
-                                          "kind": "Whitespace"
+                                        {
+                                          "end": 106,
+                                          "node": {
+                                            "kind": "Whitespace"
+                                          },
+                                          "start": 105
                                         },
-                                        "start": 105
-                                      },
-                                      {
-                                        "end": 110,
-                                        "node": {
-                                          "kind": "Dimension",
-                                          "value": [
-                                            16.0,
-                                            "px",
-                                            {
-                                              "bits": 0
-                                            }
-                                          ]
+                                        {
+                                          "end": 110,
+                                          "node": {
+                                            "kind": "Dimension",
+                                            "value": [
+                                              16.0,
+                                              "px",
+                                              {
+                                                "bits": 0
+                                              }
+                                            ]
+                                          },
+                                          "start": 106
                                         },
-                                        "start": 106
-                                      },
-                                      {
-                                        "end": 111,
-                                        "node": {
-                                          "kind": "Semicolon"
+                                        {
+                                          "end": 111,
+                                          "node": {
+                                            "kind": "Semicolon"
+                                          },
+                                          "start": 110
                                         },
-                                        "start": 110
-                                      },
-                                      {
-                                        "end": 114,
-                                        "node": {
-                                          "kind": "Whitespace"
-                                        },
-                                        "start": 111
-                                      }
-                                    ]
+                                        {
+                                          "end": 114,
+                                          "node": {
+                                            "kind": "Whitespace"
+                                          },
+                                          "start": 111
+                                        }
+                                      ]
+                                    },
+                                    "start": 74
                                   },
                                   "start": 74
-                                },
-                                "start": 74
-                              }
-                            ],
-                            "start": 74
-                          }
-                        },
-                        "start": 74
+                                }
+                              ],
+                              "start": 74
+                            }
+                          },
+                          "start": 74
+                        }
                       }
-                    }
-                  },
-                  "start": 58
-                }
-              ],
-              "rules": [],
-              "type": "StyleDeclaration"
+                    },
+                    "start": 58
+                  }
+                ],
+                "rules": [],
+                "type": "StyleDeclaration"
+              },
+              "start": 6
             },
-            "start": 6
+            "type": "StyleRule"
           },
-          "type": "StyleRule"
+          "start": 0
         },
         "start": 0
       }

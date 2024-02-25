@@ -3,25 +3,22 @@
   "node": {
     "rules": [
       {
-        "end": 14,
+        "end": 15,
         "node": {
-          "properties": [],
-          "rules": [],
-          "selectors": {
-            "end": 11,
-            "node": {
-              "children": [
+          "end": 15,
+          "node": {
+            "selectors": {
+              "end": 13,
+              "node": [
                 {
-                  "end": 11,
+                  "end": 13,
                   "node": {
                     "components": [
                       {
-                        "end": 11,
+                        "end": 12,
                         "node": {
                           "type": "PseudoClass",
-                          "value": {
-                            "type": "Fullscreen"
-                          }
+                          "value": "fullscreen"
                         },
                         "start": 0
                       }
@@ -31,16 +28,25 @@
                   "start": 0
                 }
               ],
-              "type": "SelectorSet"
+              "start": 0
             },
-            "start": 0
+            "style": {
+              "end": 15,
+              "node": {
+                "declarations": [],
+                "rules": [],
+                "type": "StyleDeclaration"
+              },
+              "start": 12
+            },
+            "type": "StyleRule"
           },
-          "type": "StyleRule"
+          "start": 0
         },
         "start": 0
       }
     ],
-    "type": "Stylesheet"
+    "type": "StyleSheet"
   },
   "start": 0
 }

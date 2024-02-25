@@ -1,1124 +1,1319 @@
 {
   "end": 544,
-  "rules": [
-    {
-      "end": 477,
-      "prelude": {
-        "end": 5,
-        "start": 0,
-        "value": [
-          {
-            "end": 1,
-            "escaped": false,
-            "kind": "Colon",
-            "start": 0,
-            "value": null
-          },
-          {
-            "end": 5,
-            "escaped": false,
-            "kind": "Ident",
-            "start": 1,
-            "value": "root"
-          }
-        ]
-      },
-      "properties": [
-        {
-          "end": 21,
-          "important": false,
-          "name": "",
-          "start": 10,
-          "type": "UnknownDeclaration",
-          "value": {
-            "end": 21,
-            "start": 10,
-            "value": [
-              {
-                "end": 18,
-                "escaped": false,
-                "kind": "Ident",
-                "start": 10,
-                "value": "--number"
-              },
-              {
-                "end": 19,
-                "escaped": false,
-                "kind": "Colon",
-                "start": 18,
-                "value": null
-              },
-              {
-                "end": 21,
-                "escaped": false,
-                "kind": "Number",
-                "start": 20,
-                "value": {
-                  "int": true,
-                  "signed": false,
-                  "value": 1.0
-                }
-              }
-            ]
-          }
-        },
-        {
-          "end": 38,
-          "important": false,
-          "name": "",
-          "start": 25,
-          "type": "UnknownDeclaration",
-          "value": {
-            "end": 38,
-            "start": 25,
-            "value": [
-              {
-                "end": 31,
-                "escaped": false,
-                "kind": "Ident",
-                "start": 25,
-                "value": "--unit"
-              },
-              {
-                "end": 32,
-                "escaped": false,
-                "kind": "Colon",
-                "start": 31,
-                "value": null
-              },
-              {
-                "end": 38,
-                "escaped": false,
-                "kind": "Dimension",
-                "start": 33,
-                "value": {
-                  "int": true,
-                  "signed": false,
-                  "unit": "vw",
-                  "value": 100.0
-                }
-              }
-            ]
-          }
-        },
-        {
-          "end": 55,
-          "important": false,
-          "name": "",
-          "start": 42,
-          "type": "UnknownDeclaration",
-          "value": {
-            "end": 55,
-            "start": 42,
-            "value": [
-              {
-                "end": 49,
-                "escaped": false,
-                "kind": "Ident",
-                "start": 42,
-                "value": "--color"
-              },
-              {
-                "end": 50,
-                "escaped": false,
-                "kind": "Colon",
-                "start": 49,
-                "value": null
-              },
-              {
-                "end": 55,
-                "escaped": false,
-                "kind": "Hash",
-                "start": 51,
-                "value": "06c"
-              }
-            ]
-          }
-        },
-        {
-          "end": 83,
-          "important": false,
-          "name": "",
-          "start": 60,
-          "type": "UnknownDeclaration",
-          "value": {
-            "end": 83,
-            "start": 60,
-            "value": [
-              {
-                "end": 70,
-                "escaped": false,
-                "kind": "Ident",
-                "start": 60,
-                "value": "--function"
-              },
-              {
-                "end": 71,
-                "escaped": false,
-                "kind": "Colon",
-                "start": 70,
-                "value": null
-              },
-              {
-                "end": 83,
-                "name": "calc",
-                "start": 72,
-                "type": "Function",
-                "value": [
-                  {
-                    "end": 78,
-                    "escaped": false,
-                    "kind": "Number",
-                    "start": 77,
-                    "value": {
-                      "int": true,
-                      "signed": false,
-                      "value": 1.0
-                    }
-                  },
-                  {
-                    "end": 80,
-                    "escaped": false,
-                    "kind": "Delim",
-                    "start": 79,
-                    "value": "+"
-                  },
-                  {
-                    "end": 82,
-                    "escaped": false,
-                    "kind": "Number",
-                    "start": 81,
-                    "value": {
-                      "int": true,
-                      "signed": false,
-                      "value": 1.0
-                    }
-                  }
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "end": 110,
-          "important": false,
-          "name": "",
-          "start": 87,
-          "type": "UnknownDeclaration",
-          "value": {
-            "end": 110,
-            "start": 87,
-            "value": [
-              {
-                "end": 97,
-                "escaped": false,
-                "kind": "Ident",
-                "start": 87,
-                "value": "--variable"
-              },
-              {
-                "end": 98,
-                "escaped": false,
-                "kind": "Colon",
-                "start": 97,
-                "value": null
-              },
-              {
-                "end": 110,
-                "name": "var",
-                "start": 99,
-                "type": "Function",
-                "value": [
-                  {
-                    "end": 109,
-                    "escaped": false,
-                    "kind": "Ident",
-                    "start": 103,
-                    "value": "--unit"
-                  }
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "end": 147,
-          "important": false,
-          "name": "",
-          "start": 115,
-          "type": "UnknownDeclaration",
-          "value": {
-            "end": 147,
-            "start": 115,
-            "value": [
-              {
-                "end": 123,
-                "escaped": false,
-                "kind": "Ident",
-                "start": 115,
-                "value": "--string"
-              },
-              {
-                "end": 124,
-                "escaped": false,
-                "kind": "Colon",
-                "start": 123,
-                "value": null
-              },
-              {
-                "end": 147,
-                "escaped": false,
-                "kind": "String",
-                "start": 125,
-                "value": "single quoted string"
-              }
-            ]
-          }
-        },
-        {
-          "end": 183,
-          "important": false,
-          "name": "",
-          "start": 151,
-          "type": "UnknownDeclaration",
-          "value": {
-            "end": 183,
-            "start": 151,
-            "value": [
-              {
-                "end": 159,
-                "escaped": false,
-                "kind": "Ident",
-                "start": 151,
-                "value": "--string"
-              },
-              {
-                "end": 160,
-                "escaped": false,
-                "kind": "Colon",
-                "start": 159,
-                "value": null
-              },
-              {
-                "end": 183,
-                "escaped": false,
-                "kind": "String",
-                "start": 161,
-                "value": "double quoted string"
-              }
-            ]
-          }
-        },
-        {
-          "end": 213,
-          "important": false,
-          "name": "",
-          "start": 188,
-          "type": "UnknownDeclaration",
-          "value": {
-            "end": 213,
-            "start": 188,
-            "value": [
-              {
-                "end": 202,
-                "escaped": false,
-                "kind": "Ident",
-                "start": 188,
-                "value": "--square-block"
-              },
-              {
-                "end": 203,
-                "escaped": false,
-                "kind": "Colon",
-                "start": 202,
-                "value": null
-              },
-              {
-                "end": 213,
-                "start": 204,
-                "type": "SimpleBlock",
-                "value": [
-                  {
-                    "end": 206,
-                    "escaped": false,
-                    "kind": "Number",
-                    "start": 205,
-                    "value": {
-                      "int": true,
-                      "signed": false,
-                      "value": 1.0
-                    }
-                  },
-                  {
-                    "end": 207,
-                    "escaped": false,
-                    "kind": "Comma",
-                    "start": 206,
-                    "value": null
-                  },
-                  {
-                    "end": 209,
-                    "escaped": false,
-                    "kind": "Number",
-                    "start": 208,
-                    "value": {
-                      "int": true,
-                      "signed": false,
-                      "value": 2.0
-                    }
-                  },
-                  {
-                    "end": 210,
-                    "escaped": false,
-                    "kind": "Comma",
-                    "start": 209,
-                    "value": null
-                  },
-                  {
-                    "end": 212,
-                    "escaped": false,
-                    "kind": "Number",
-                    "start": 211,
-                    "value": {
-                      "int": true,
-                      "signed": false,
-                      "value": 3.0
-                    }
-                  }
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "end": 241,
-          "important": false,
-          "name": "",
-          "start": 217,
-          "type": "UnknownDeclaration",
-          "value": {
-            "end": 241,
-            "start": 217,
-            "value": [
-              {
-                "end": 230,
-                "escaped": false,
-                "kind": "Ident",
-                "start": 217,
-                "value": "--round-block"
-              },
-              {
-                "end": 231,
-                "escaped": false,
-                "kind": "Colon",
-                "start": 230,
-                "value": null
-              },
-              {
-                "end": 241,
-                "start": 232,
-                "type": "SimpleBlock",
-                "value": [
-                  {
-                    "end": 234,
-                    "escaped": false,
-                    "kind": "Number",
-                    "start": 233,
-                    "value": {
-                      "int": true,
-                      "signed": false,
-                      "value": 1.0
-                    }
-                  },
-                  {
-                    "end": 235,
-                    "escaped": false,
-                    "kind": "Comma",
-                    "start": 234,
-                    "value": null
-                  },
-                  {
-                    "end": 237,
-                    "escaped": false,
-                    "kind": "Number",
-                    "start": 236,
-                    "value": {
-                      "int": true,
-                      "signed": false,
-                      "value": 2.0
-                    }
-                  },
-                  {
-                    "end": 238,
-                    "escaped": false,
-                    "kind": "Comma",
-                    "start": 237,
-                    "value": null
-                  },
-                  {
-                    "end": 240,
-                    "escaped": false,
-                    "kind": "Number",
-                    "start": 239,
-                    "value": {
-                      "int": true,
-                      "signed": false,
-                      "value": 3.0
-                    }
-                  }
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "end": 255,
-          "important": false,
-          "name": "",
-          "start": 246,
-          "type": "UnknownDeclaration",
-          "value": {
-            "end": 255,
-            "start": 246,
-            "value": [
-              {
-                "end": 254,
-                "escaped": false,
-                "kind": "Ident",
-                "start": 246,
-                "value": "--empty1"
-              },
-              {
-                "end": 255,
-                "escaped": false,
-                "kind": "Colon",
-                "start": 254,
-                "value": null
-              }
-            ]
-          }
-        },
-        {
-          "end": 269,
-          "important": false,
-          "name": "",
-          "start": 260,
-          "type": "UnknownDeclaration",
-          "value": {
-            "end": 269,
-            "start": 260,
-            "value": [
-              {
-                "end": 268,
-                "escaped": false,
-                "kind": "Ident",
-                "start": 260,
-                "value": "--empty2"
-              },
-              {
-                "end": 269,
-                "escaped": false,
-                "kind": "Colon",
-                "start": 268,
-                "value": null
-              }
-            ]
-          }
-        },
-        {
-          "end": 298,
-          "important": false,
-          "name": "",
-          "start": 278,
-          "type": "UnknownDeclaration",
-          "value": {
-            "end": 298,
-            "start": 278,
-            "value": [
-              {
-                "end": 286,
-                "escaped": false,
-                "kind": "Ident",
-                "start": 278,
-                "value": "--empty3"
-              },
-              {
-                "end": 287,
-                "escaped": false,
-                "kind": "Colon",
-                "start": 286,
-                "value": null
-              },
-              {
-                "end": 289,
-                "escaped": false,
-                "kind": "Delim",
-                "start": 288,
-                "value": "!"
-              },
-              {
-                "end": 298,
-                "escaped": false,
-                "kind": "Ident",
-                "start": 289,
-                "value": "important"
-              }
-            ]
-          }
-        },
-        {
-          "end": 326,
-          "important": false,
-          "name": "",
-          "start": 302,
-          "type": "UnknownDeclaration",
-          "value": {
-            "end": 326,
-            "start": 302,
-            "value": [
-              {
-                "end": 310,
-                "escaped": false,
-                "kind": "Ident",
-                "start": 302,
-                "value": "--empty4"
-              },
-              {
-                "end": 311,
-                "escaped": false,
-                "kind": "Colon",
-                "start": 310,
-                "value": null
-              },
-              {
-                "end": 317,
-                "escaped": false,
-                "kind": "Delim",
-                "start": 316,
-                "value": "!"
-              },
-              {
-                "end": 326,
-                "escaped": false,
-                "kind": "Ident",
-                "start": 317,
-                "value": "important"
-              }
-            ]
-          }
-        },
-        {
-          "end": 339,
-          "important": false,
-          "name": "",
-          "start": 330,
-          "type": "UnknownDeclaration",
-          "value": {
-            "end": 339,
-            "start": 330,
-            "value": [
-              {
-                "end": 338,
-                "escaped": false,
-                "kind": "Ident",
-                "start": 330,
-                "value": "--empty5"
-              },
-              {
-                "end": 339,
-                "escaped": false,
-                "kind": "Colon",
-                "start": 338,
-                "value": null
-              }
-            ]
-          }
-        },
-        {
-          "end": 375,
-          "important": false,
-          "name": "",
-          "start": 349,
-          "type": "UnknownDeclaration",
-          "value": {
-            "end": 375,
-            "start": 349,
-            "value": [
-              {
-                "end": 364,
-                "escaped": false,
-                "kind": "Ident",
-                "start": 349,
-                "value": "--bracket-block"
-              },
-              {
-                "end": 365,
-                "escaped": false,
-                "kind": "Colon",
-                "start": 364,
-                "value": null
-              },
-              {
-                "end": 375,
-                "start": 366,
-                "type": "SimpleBlock",
-                "value": [
-                  {
-                    "end": 368,
-                    "escaped": false,
-                    "kind": "Number",
-                    "start": 367,
-                    "value": {
-                      "int": true,
-                      "signed": false,
-                      "value": 1.0
-                    }
-                  },
-                  {
-                    "end": 369,
-                    "escaped": false,
-                    "kind": "Comma",
-                    "start": 368,
-                    "value": null
-                  },
-                  {
-                    "end": 371,
-                    "escaped": false,
-                    "kind": "Number",
-                    "start": 370,
-                    "value": {
-                      "int": true,
-                      "signed": false,
-                      "value": 2.0
-                    }
-                  },
-                  {
-                    "end": 372,
-                    "escaped": false,
-                    "kind": "Comma",
-                    "start": 371,
-                    "value": null
-                  },
-                  {
-                    "end": 374,
-                    "escaped": false,
-                    "kind": "Number",
-                    "start": 373,
-                    "value": {
-                      "int": true,
-                      "signed": false,
-                      "value": 3.0
-                    }
-                  }
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "end": 420,
-          "important": false,
-          "name": "",
-          "start": 379,
-          "type": "UnknownDeclaration",
-          "value": {
-            "end": 420,
-            "start": 379,
-            "value": [
-              {
-                "end": 385,
-                "escaped": false,
-                "kind": "Ident",
-                "start": 379,
-                "value": "--JSON"
-              },
-              {
-                "end": 386,
-                "escaped": false,
-                "kind": "Colon",
-                "start": 385,
-                "value": null
-              },
-              {
-                "end": 420,
-                "start": 387,
-                "type": "SimpleBlock",
-                "value": [
-                  {
-                    "end": 389,
-                    "escaped": false,
-                    "kind": "Number",
-                    "start": 388,
-                    "value": {
-                      "int": true,
-                      "signed": false,
-                      "value": 1.0
-                    }
-                  },
-                  {
-                    "end": 390,
-                    "escaped": false,
-                    "kind": "Comma",
-                    "start": 389,
-                    "value": null
-                  },
-                  {
-                    "end": 394,
-                    "escaped": false,
-                    "kind": "String",
-                    "start": 391,
-                    "value": "2"
-                  },
-                  {
-                    "end": 395,
-                    "escaped": false,
-                    "kind": "Comma",
-                    "start": 394,
-                    "value": null
-                  },
-                  {
-                    "end": 414,
-                    "start": 396,
-                    "type": "SimpleBlock",
-                    "value": [
+  "node": {
+    "rules": [
+      {
+        "end": 480,
+        "node": {
+          "end": 480,
+          "node": {
+            "selectors": {
+              "end": 7,
+              "node": [
+                {
+                  "end": 7,
+                  "node": {
+                    "components": [
                       {
-                        "end": 404,
-                        "escaped": false,
-                        "kind": "String",
-                        "start": 397,
-                        "value": "three"
-                      },
-                      {
-                        "end": 405,
-                        "escaped": false,
-                        "kind": "Colon",
-                        "start": 404,
-                        "value": null
-                      },
-                      {
-                        "end": 413,
-                        "start": 406,
-                        "type": "SimpleBlock",
-                        "value": [
-                          {
-                            "end": 410,
-                            "escaped": false,
-                            "kind": "String",
-                            "start": 407,
-                            "value": "a"
-                          },
-                          {
-                            "end": 411,
-                            "escaped": false,
-                            "kind": "Colon",
-                            "start": 410,
-                            "value": null
-                          },
-                          {
-                            "end": 412,
-                            "escaped": false,
-                            "kind": "Number",
-                            "start": 411,
-                            "value": {
-                              "int": true,
-                              "signed": false,
-                              "value": 1.0
-                            }
-                          }
-                        ]
+                        "end": 6,
+                        "node": {
+                          "type": "PseudoClass",
+                          "value": "root"
+                        },
+                        "start": 0
                       }
-                    ]
+                    ],
+                    "type": "Selector"
                   },
+                  "start": 0
+                }
+              ],
+              "start": 0
+            },
+            "style": {
+              "end": 480,
+              "node": {
+                "declarations": [
                   {
-                    "end": 415,
-                    "escaped": false,
-                    "kind": "Comma",
-                    "start": 414,
-                    "value": null
-                  },
-                  {
-                    "end": 419,
-                    "start": 416,
-                    "type": "SimpleBlock",
-                    "value": [
-                      {
-                        "end": 418,
-                        "escaped": false,
-                        "kind": "Number",
-                        "start": 417,
-                        "value": {
-                          "int": true,
-                          "signed": false,
-                          "value": 4.0
+                    "end": 31,
+                    "node": {
+                      "important": false,
+                      "name": "--number",
+                      "value": {
+                        "Unknown": {
+                          "end": 22,
+                          "node": {
+                            "type": "Unknown",
+                            "value": {
+                              "end": 22,
+                              "node": [
+                                {
+                                  "end": 21,
+                                  "node": {
+                                    "kind": "Number",
+                                    "value": [
+                                      1.0,
+                                      {
+                                        "bits": 0
+                                      }
+                                    ]
+                                  },
+                                  "start": 19
+                                }
+                              ],
+                              "start": 19
+                            }
+                          },
+                          "start": 19
                         }
                       }
-                    ]
-                  }
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "end": 474,
-          "important": false,
-          "name": "",
-          "start": 424,
-          "type": "UnknownDeclaration",
-          "value": {
-            "end": 474,
-            "start": 424,
-            "value": [
-              {
-                "end": 436,
-                "escaped": false,
-                "kind": "Ident",
-                "start": 424,
-                "value": "--javascript"
-              },
-              {
-                "end": 437,
-                "escaped": false,
-                "kind": "Colon",
-                "start": 436,
-                "value": null
-              },
-              {
-                "end": 452,
-                "name": "function",
-                "start": 438,
-                "type": "Function",
-                "value": [
-                  {
-                    "end": 451,
-                    "escaped": false,
-                    "kind": "Ident",
-                    "start": 447,
-                    "value": "rule"
-                  }
-                ]
-              },
-              {
-                "end": 474,
-                "start": 453,
-                "type": "SimpleBlock",
-                "value": [
-                  {
-                    "end": 462,
-                    "escaped": false,
-                    "kind": "Ident",
-                    "start": 455,
-                    "value": "console"
+                    },
+                    "start": 7
                   },
                   {
-                    "end": 463,
-                    "escaped": false,
-                    "kind": "Delim",
-                    "start": 462,
-                    "value": "."
-                  },
-                  {
-                    "end": 472,
-                    "name": "log",
-                    "start": 463,
-                    "type": "Function",
-                    "value": [
-                      {
-                        "end": 471,
-                        "escaped": false,
-                        "kind": "Ident",
-                        "start": 467,
-                        "value": "rule"
+                    "end": 49,
+                    "node": {
+                      "important": false,
+                      "name": "--unit",
+                      "value": {
+                        "Unknown": {
+                          "end": 39,
+                          "node": {
+                            "type": "Unknown",
+                            "value": {
+                              "end": 39,
+                              "node": [
+                                {
+                                  "end": 38,
+                                  "node": {
+                                    "kind": "Dimension",
+                                    "value": [
+                                      100.0,
+                                      "vw",
+                                      {
+                                        "bits": 0
+                                      }
+                                    ]
+                                  },
+                                  "start": 32
+                                }
+                              ],
+                              "start": 32
+                            }
+                          },
+                          "start": 32
+                        }
                       }
-                    ]
+                    },
+                    "start": 22
+                  },
+                  {
+                    "end": 70,
+                    "node": {
+                      "important": false,
+                      "name": "--color",
+                      "value": {
+                        "Unknown": {
+                          "end": 56,
+                          "node": {
+                            "type": "Unknown",
+                            "value": {
+                              "end": 56,
+                              "node": [
+                                {
+                                  "end": 55,
+                                  "node": {
+                                    "kind": "Hash",
+                                    "value": "06c"
+                                  },
+                                  "start": 50
+                                }
+                              ],
+                              "start": 50
+                            }
+                          },
+                          "start": 50
+                        }
+                      }
+                    },
+                    "start": 39
+                  },
+                  {
+                    "end": 97,
+                    "node": {
+                      "important": false,
+                      "name": "--function",
+                      "value": {
+                        "Unknown": {
+                          "end": 84,
+                          "node": {
+                            "type": "Unknown",
+                            "value": {
+                              "end": 84,
+                              "node": [
+                                {
+                                  "end": 84,
+                                  "node": {
+                                    "end": 84,
+                                    "node": {
+                                      "name": "calc",
+                                      "type": "Function",
+                                      "values": [
+                                        {
+                                          "end": 78,
+                                          "node": {
+                                            "kind": "Number",
+                                            "value": [
+                                              1.0,
+                                              {
+                                                "bits": 0
+                                              }
+                                            ]
+                                          },
+                                          "start": 77
+                                        },
+                                        {
+                                          "end": 79,
+                                          "node": {
+                                            "kind": "Whitespace"
+                                          },
+                                          "start": 78
+                                        },
+                                        {
+                                          "end": 80,
+                                          "node": {
+                                            "kind": "Delim",
+                                            "value": "+"
+                                          },
+                                          "start": 79
+                                        },
+                                        {
+                                          "end": 81,
+                                          "node": {
+                                            "kind": "Whitespace"
+                                          },
+                                          "start": 80
+                                        },
+                                        {
+                                          "end": 82,
+                                          "node": {
+                                            "kind": "Number",
+                                            "value": [
+                                              1.0,
+                                              {
+                                                "bits": 0
+                                              }
+                                            ]
+                                          },
+                                          "start": 81
+                                        }
+                                      ]
+                                    },
+                                    "start": 71
+                                  },
+                                  "start": 71
+                                }
+                              ],
+                              "start": 71
+                            }
+                          },
+                          "start": 71
+                        }
+                      }
+                    },
+                    "start": 56
+                  },
+                  {
+                    "end": 123,
+                    "node": {
+                      "important": false,
+                      "name": "--variable",
+                      "value": {
+                        "Unknown": {
+                          "end": 111,
+                          "node": {
+                            "type": "Unknown",
+                            "value": {
+                              "end": 111,
+                              "node": [
+                                {
+                                  "end": 111,
+                                  "node": {
+                                    "end": 111,
+                                    "node": {
+                                      "name": "var",
+                                      "type": "Function",
+                                      "values": [
+                                        {
+                                          "end": 109,
+                                          "node": {
+                                            "kind": "Ident",
+                                            "value": "--unit"
+                                          },
+                                          "start": 103
+                                        }
+                                      ]
+                                    },
+                                    "start": 98
+                                  },
+                                  "start": 98
+                                }
+                              ],
+                              "start": 98
+                            }
+                          },
+                          "start": 98
+                        }
+                      }
+                    },
+                    "start": 84
+                  },
+                  {
+                    "end": 159,
+                    "node": {
+                      "important": false,
+                      "name": "--string",
+                      "value": {
+                        "Unknown": {
+                          "end": 148,
+                          "node": {
+                            "type": "Unknown",
+                            "value": {
+                              "end": 148,
+                              "node": [
+                                {
+                                  "end": 147,
+                                  "node": {
+                                    "kind": "String",
+                                    "value": "single quoted string"
+                                  },
+                                  "start": 124
+                                }
+                              ],
+                              "start": 124
+                            }
+                          },
+                          "start": 124
+                        }
+                      }
+                    },
+                    "start": 111
+                  },
+                  {
+                    "end": 202,
+                    "node": {
+                      "important": false,
+                      "name": "--string",
+                      "value": {
+                        "Unknown": {
+                          "end": 184,
+                          "node": {
+                            "type": "Unknown",
+                            "value": {
+                              "end": 184,
+                              "node": [
+                                {
+                                  "end": 183,
+                                  "node": {
+                                    "kind": "String",
+                                    "value": "double quoted string"
+                                  },
+                                  "start": 160
+                                }
+                              ],
+                              "start": 160
+                            }
+                          },
+                          "start": 160
+                        }
+                      }
+                    },
+                    "start": 148
+                  },
+                  {
+                    "end": 230,
+                    "node": {
+                      "important": false,
+                      "name": "--square-block",
+                      "value": {
+                        "Unknown": {
+                          "end": 214,
+                          "node": {
+                            "type": "Unknown",
+                            "value": {
+                              "end": 214,
+                              "node": [
+                                {
+                                  "end": 214,
+                                  "node": {
+                                    "end": 214,
+                                    "node": {
+                                      "pairwise": "Square",
+                                      "type": "SimpleBlock",
+                                      "values": [
+                                        {
+                                          "end": 206,
+                                          "node": {
+                                            "kind": "Number",
+                                            "value": [
+                                              1.0,
+                                              {
+                                                "bits": 0
+                                              }
+                                            ]
+                                          },
+                                          "start": 205
+                                        },
+                                        {
+                                          "end": 207,
+                                          "node": {
+                                            "kind": "Comma"
+                                          },
+                                          "start": 206
+                                        },
+                                        {
+                                          "end": 208,
+                                          "node": {
+                                            "kind": "Whitespace"
+                                          },
+                                          "start": 207
+                                        },
+                                        {
+                                          "end": 209,
+                                          "node": {
+                                            "kind": "Number",
+                                            "value": [
+                                              2.0,
+                                              {
+                                                "bits": 0
+                                              }
+                                            ]
+                                          },
+                                          "start": 208
+                                        },
+                                        {
+                                          "end": 210,
+                                          "node": {
+                                            "kind": "Comma"
+                                          },
+                                          "start": 209
+                                        },
+                                        {
+                                          "end": 211,
+                                          "node": {
+                                            "kind": "Whitespace"
+                                          },
+                                          "start": 210
+                                        },
+                                        {
+                                          "end": 212,
+                                          "node": {
+                                            "kind": "Number",
+                                            "value": [
+                                              3.0,
+                                              {
+                                                "bits": 0
+                                              }
+                                            ]
+                                          },
+                                          "start": 211
+                                        }
+                                      ]
+                                    },
+                                    "start": 203
+                                  },
+                                  "start": 203
+                                }
+                              ],
+                              "start": 203
+                            }
+                          },
+                          "start": 203
+                        }
+                      }
+                    },
+                    "start": 184
+                  },
+                  {
+                    "end": 254,
+                    "node": {
+                      "important": false,
+                      "name": "--round-block",
+                      "value": {
+                        "Unknown": {
+                          "end": 242,
+                          "node": {
+                            "type": "Unknown",
+                            "value": {
+                              "end": 242,
+                              "node": [
+                                {
+                                  "end": 242,
+                                  "node": {
+                                    "end": 242,
+                                    "node": {
+                                      "pairwise": "Paren",
+                                      "type": "SimpleBlock",
+                                      "values": [
+                                        {
+                                          "end": 234,
+                                          "node": {
+                                            "kind": "Number",
+                                            "value": [
+                                              1.0,
+                                              {
+                                                "bits": 0
+                                              }
+                                            ]
+                                          },
+                                          "start": 233
+                                        },
+                                        {
+                                          "end": 235,
+                                          "node": {
+                                            "kind": "Comma"
+                                          },
+                                          "start": 234
+                                        },
+                                        {
+                                          "end": 236,
+                                          "node": {
+                                            "kind": "Whitespace"
+                                          },
+                                          "start": 235
+                                        },
+                                        {
+                                          "end": 237,
+                                          "node": {
+                                            "kind": "Number",
+                                            "value": [
+                                              2.0,
+                                              {
+                                                "bits": 0
+                                              }
+                                            ]
+                                          },
+                                          "start": 236
+                                        },
+                                        {
+                                          "end": 238,
+                                          "node": {
+                                            "kind": "Comma"
+                                          },
+                                          "start": 237
+                                        },
+                                        {
+                                          "end": 239,
+                                          "node": {
+                                            "kind": "Whitespace"
+                                          },
+                                          "start": 238
+                                        },
+                                        {
+                                          "end": 240,
+                                          "node": {
+                                            "kind": "Number",
+                                            "value": [
+                                              3.0,
+                                              {
+                                                "bits": 0
+                                              }
+                                            ]
+                                          },
+                                          "start": 239
+                                        }
+                                      ]
+                                    },
+                                    "start": 231
+                                  },
+                                  "start": 231
+                                }
+                              ],
+                              "start": 231
+                            }
+                          },
+                          "start": 231
+                        }
+                      }
+                    },
+                    "start": 214
+                  },
+                  {
+                    "end": 268,
+                    "node": {
+                      "important": false,
+                      "name": "--empty1",
+                      "value": {
+                        "Unknown": {
+                          "end": 257,
+                          "node": {
+                            "type": "Unknown",
+                            "value": {
+                              "end": 257,
+                              "node": [],
+                              "start": 255
+                            }
+                          },
+                          "start": 255
+                        }
+                      }
+                    },
+                    "start": 242
+                  },
+                  {
+                    "end": 286,
+                    "node": {
+                      "important": false,
+                      "name": "--empty2",
+                      "value": {
+                        "Unknown": {
+                          "end": 275,
+                          "node": {
+                            "type": "Unknown",
+                            "value": {
+                              "end": 275,
+                              "node": [],
+                              "start": 269
+                            }
+                          },
+                          "start": 269
+                        }
+                      }
+                    },
+                    "start": 257
+                  },
+                  {
+                    "end": 310,
+                    "node": {
+                      "important": false,
+                      "name": "--empty3",
+                      "value": {
+                        "Unknown": {
+                          "end": 299,
+                          "node": {
+                            "type": "Unknown",
+                            "value": {
+                              "end": 299,
+                              "node": [
+                                {
+                                  "end": 289,
+                                  "node": {
+                                    "kind": "Delim",
+                                    "value": "!"
+                                  },
+                                  "start": 287
+                                },
+                                {
+                                  "end": 298,
+                                  "node": {
+                                    "kind": "Ident",
+                                    "value": "important"
+                                  },
+                                  "start": 289
+                                }
+                              ],
+                              "start": 287
+                            }
+                          },
+                          "start": 287
+                        }
+                      }
+                    },
+                    "start": 275
+                  },
+                  {
+                    "end": 338,
+                    "node": {
+                      "important": false,
+                      "name": "--empty4",
+                      "value": {
+                        "Unknown": {
+                          "end": 327,
+                          "node": {
+                            "type": "Unknown",
+                            "value": {
+                              "end": 327,
+                              "node": [
+                                {
+                                  "end": 317,
+                                  "node": {
+                                    "kind": "Delim",
+                                    "value": "!"
+                                  },
+                                  "start": 311
+                                },
+                                {
+                                  "end": 326,
+                                  "node": {
+                                    "kind": "Ident",
+                                    "value": "important"
+                                  },
+                                  "start": 317
+                                }
+                              ],
+                              "start": 311
+                            }
+                          },
+                          "start": 311
+                        }
+                      }
+                    },
+                    "start": 299
+                  },
+                  {
+                    "end": 364,
+                    "node": {
+                      "important": false,
+                      "name": "--empty5",
+                      "value": {
+                        "Unknown": {
+                          "end": 345,
+                          "node": {
+                            "type": "Unknown",
+                            "value": {
+                              "end": 345,
+                              "node": [],
+                              "start": 339
+                            }
+                          },
+                          "start": 339
+                        }
+                      }
+                    },
+                    "start": 327
+                  },
+                  {
+                    "end": 385,
+                    "node": {
+                      "important": false,
+                      "name": "--bracket-block",
+                      "value": {
+                        "Unknown": {
+                          "end": 376,
+                          "node": {
+                            "type": "Unknown",
+                            "value": {
+                              "end": 376,
+                              "node": [
+                                {
+                                  "end": 376,
+                                  "node": {
+                                    "end": 376,
+                                    "node": {
+                                      "pairwise": "Curly",
+                                      "type": "SimpleBlock",
+                                      "values": [
+                                        {
+                                          "end": 368,
+                                          "node": {
+                                            "kind": "Number",
+                                            "value": [
+                                              1.0,
+                                              {
+                                                "bits": 0
+                                              }
+                                            ]
+                                          },
+                                          "start": 367
+                                        },
+                                        {
+                                          "end": 369,
+                                          "node": {
+                                            "kind": "Comma"
+                                          },
+                                          "start": 368
+                                        },
+                                        {
+                                          "end": 370,
+                                          "node": {
+                                            "kind": "Whitespace"
+                                          },
+                                          "start": 369
+                                        },
+                                        {
+                                          "end": 371,
+                                          "node": {
+                                            "kind": "Number",
+                                            "value": [
+                                              2.0,
+                                              {
+                                                "bits": 0
+                                              }
+                                            ]
+                                          },
+                                          "start": 370
+                                        },
+                                        {
+                                          "end": 372,
+                                          "node": {
+                                            "kind": "Comma"
+                                          },
+                                          "start": 371
+                                        },
+                                        {
+                                          "end": 373,
+                                          "node": {
+                                            "kind": "Whitespace"
+                                          },
+                                          "start": 372
+                                        },
+                                        {
+                                          "end": 374,
+                                          "node": {
+                                            "kind": "Number",
+                                            "value": [
+                                              3.0,
+                                              {
+                                                "bits": 0
+                                              }
+                                            ]
+                                          },
+                                          "start": 373
+                                        }
+                                      ]
+                                    },
+                                    "start": 365
+                                  },
+                                  "start": 365
+                                }
+                              ],
+                              "start": 365
+                            }
+                          },
+                          "start": 365
+                        }
+                      }
+                    },
+                    "start": 345
+                  },
+                  {
+                    "end": 436,
+                    "node": {
+                      "important": false,
+                      "name": "--JSON",
+                      "value": {
+                        "Unknown": {
+                          "end": 421,
+                          "node": {
+                            "type": "Unknown",
+                            "value": {
+                              "end": 421,
+                              "node": [
+                                {
+                                  "end": 421,
+                                  "node": {
+                                    "end": 421,
+                                    "node": {
+                                      "pairwise": "Square",
+                                      "type": "SimpleBlock",
+                                      "values": [
+                                        {
+                                          "end": 389,
+                                          "node": {
+                                            "kind": "Number",
+                                            "value": [
+                                              1.0,
+                                              {
+                                                "bits": 0
+                                              }
+                                            ]
+                                          },
+                                          "start": 388
+                                        },
+                                        {
+                                          "end": 390,
+                                          "node": {
+                                            "kind": "Comma"
+                                          },
+                                          "start": 389
+                                        },
+                                        {
+                                          "end": 391,
+                                          "node": {
+                                            "kind": "Whitespace"
+                                          },
+                                          "start": 390
+                                        },
+                                        {
+                                          "end": 394,
+                                          "node": {
+                                            "kind": "String",
+                                            "value": "2"
+                                          },
+                                          "start": 391
+                                        },
+                                        {
+                                          "end": 395,
+                                          "node": {
+                                            "kind": "Comma"
+                                          },
+                                          "start": 394
+                                        },
+                                        {
+                                          "end": 396,
+                                          "node": {
+                                            "kind": "Whitespace"
+                                          },
+                                          "start": 395
+                                        },
+                                        {
+                                          "end": 415,
+                                          "node": {
+                                            "end": 415,
+                                            "node": {
+                                              "pairwise": "Curly",
+                                              "type": "SimpleBlock",
+                                              "values": [
+                                                {
+                                                  "end": 404,
+                                                  "node": {
+                                                    "kind": "String",
+                                                    "value": "three"
+                                                  },
+                                                  "start": 397
+                                                },
+                                                {
+                                                  "end": 405,
+                                                  "node": {
+                                                    "kind": "Colon"
+                                                  },
+                                                  "start": 404
+                                                },
+                                                {
+                                                  "end": 406,
+                                                  "node": {
+                                                    "kind": "Whitespace"
+                                                  },
+                                                  "start": 405
+                                                },
+                                                {
+                                                  "end": 414,
+                                                  "node": {
+                                                    "end": 414,
+                                                    "node": {
+                                                      "pairwise": "Curly",
+                                                      "type": "SimpleBlock",
+                                                      "values": [
+                                                        {
+                                                          "end": 410,
+                                                          "node": {
+                                                            "kind": "String",
+                                                            "value": "a"
+                                                          },
+                                                          "start": 407
+                                                        },
+                                                        {
+                                                          "end": 411,
+                                                          "node": {
+                                                            "kind": "Colon"
+                                                          },
+                                                          "start": 410
+                                                        },
+                                                        {
+                                                          "end": 412,
+                                                          "node": {
+                                                            "kind": "Number",
+                                                            "value": [
+                                                              1.0,
+                                                              {
+                                                                "bits": 0
+                                                              }
+                                                            ]
+                                                          },
+                                                          "start": 411
+                                                        }
+                                                      ]
+                                                    },
+                                                    "start": 406
+                                                  },
+                                                  "start": 406
+                                                }
+                                              ]
+                                            },
+                                            "start": 396
+                                          },
+                                          "start": 396
+                                        },
+                                        {
+                                          "end": 415,
+                                          "node": {
+                                            "kind": "Comma"
+                                          },
+                                          "start": 414
+                                        },
+                                        {
+                                          "end": 416,
+                                          "node": {
+                                            "kind": "Whitespace"
+                                          },
+                                          "start": 415
+                                        },
+                                        {
+                                          "end": 420,
+                                          "node": {
+                                            "end": 420,
+                                            "node": {
+                                              "pairwise": "Square",
+                                              "type": "SimpleBlock",
+                                              "values": [
+                                                {
+                                                  "end": 418,
+                                                  "node": {
+                                                    "kind": "Number",
+                                                    "value": [
+                                                      4.0,
+                                                      {
+                                                        "bits": 0
+                                                      }
+                                                    ]
+                                                  },
+                                                  "start": 417
+                                                }
+                                              ]
+                                            },
+                                            "start": 416
+                                          },
+                                          "start": 416
+                                        }
+                                      ]
+                                    },
+                                    "start": 386
+                                  },
+                                  "start": 386
+                                }
+                              ],
+                              "start": 386
+                            }
+                          },
+                          "start": 386
+                        }
+                      }
+                    },
+                    "start": 376
+                  },
+                  {
+                    "end": 477,
+                    "node": {
+                      "important": false,
+                      "name": "--javascript",
+                      "value": {
+                        "Unknown": {
+                          "end": 475,
+                          "node": {
+                            "type": "Unknown",
+                            "value": {
+                              "end": 475,
+                              "node": [
+                                {
+                                  "end": 454,
+                                  "node": {
+                                    "end": 454,
+                                    "node": {
+                                      "name": "function",
+                                      "type": "Function",
+                                      "values": [
+                                        {
+                                          "end": 451,
+                                          "node": {
+                                            "kind": "Ident",
+                                            "value": "rule"
+                                          },
+                                          "start": 447
+                                        }
+                                      ]
+                                    },
+                                    "start": 437
+                                  },
+                                  "start": 437
+                                },
+                                {
+                                  "end": 475,
+                                  "node": {
+                                    "end": 475,
+                                    "node": {
+                                      "pairwise": "Curly",
+                                      "type": "SimpleBlock",
+                                      "values": [
+                                        {
+                                          "end": 462,
+                                          "node": {
+                                            "kind": "Ident",
+                                            "value": "console"
+                                          },
+                                          "start": 454
+                                        },
+                                        {
+                                          "end": 463,
+                                          "node": {
+                                            "kind": "Delim",
+                                            "value": "."
+                                          },
+                                          "start": 462
+                                        },
+                                        {
+                                          "end": 474,
+                                          "node": {
+                                            "end": 474,
+                                            "node": {
+                                              "name": "log",
+                                              "type": "Function",
+                                              "values": [
+                                                {
+                                                  "end": 471,
+                                                  "node": {
+                                                    "kind": "Ident",
+                                                    "value": "rule"
+                                                  },
+                                                  "start": 467
+                                                }
+                                              ]
+                                            },
+                                            "start": 463
+                                          },
+                                          "start": 463
+                                        }
+                                      ]
+                                    },
+                                    "start": 452
+                                  },
+                                  "start": 452
+                                }
+                              ],
+                              "start": 437
+                            }
+                          },
+                          "start": 437
+                        }
+                      }
+                    },
+                    "start": 421
                   }
-                ]
-              }
-            ]
-          }
-        }
-      ],
-      "rules": [],
-      "start": 0,
-      "type": "UnknownRule"
-    },
-    {
-      "end": 491,
-      "prelude": {
-        "end": 484,
-        "start": 479,
-        "value": [
-          {
-            "end": 480,
-            "escaped": false,
-            "kind": "Colon",
-            "start": 479,
-            "value": null
+                ],
+                "rules": [],
+                "type": "StyleDeclaration"
+              },
+              "start": 6
+            },
+            "type": "StyleRule"
           },
-          {
-            "end": 484,
-            "escaped": false,
-            "kind": "Ident",
-            "start": 480,
-            "value": "root"
-          }
-        ]
+          "start": 0
+        },
+        "start": 0
       },
-      "properties": [
-        {
-          "end": 490,
-          "important": false,
-          "name": "",
-          "start": 485,
-          "type": "UnknownDeclaration",
-          "value": {
-            "end": 490,
-            "start": 485,
-            "value": [
-              {
-                "end": 488,
-                "escaped": false,
-                "kind": "Ident",
-                "start": 485,
-                "value": "--a"
-              },
-              {
-                "end": 489,
-                "escaped": false,
-                "kind": "Colon",
-                "start": 488,
-                "value": null
-              },
-              {
-                "end": 490,
-                "escaped": false,
-                "kind": "Number",
-                "start": 489,
-                "value": {
-                  "int": true,
-                  "signed": false,
-                  "value": 1.0
+      {
+        "end": 494,
+        "node": {
+          "end": 494,
+          "node": {
+            "selectors": {
+              "end": 485,
+              "node": [
+                {
+                  "end": 485,
+                  "node": {
+                    "components": [
+                      {
+                        "end": 485,
+                        "node": {
+                          "type": "PseudoClass",
+                          "value": "root"
+                        },
+                        "start": 477
+                      }
+                    ],
+                    "type": "Selector"
+                  },
+                  "start": 477
                 }
-              }
-            ]
-          }
-        }
-      ],
-      "rules": [],
-      "start": 479,
-      "type": "UnknownRule"
-    },
-    {
-      "end": 528,
-      "prelude": {
-        "end": 508,
-        "start": 493,
-        "value": [
-          {
-            "end": 494,
-            "escaped": false,
-            "kind": "Delim",
-            "start": 493,
-            "value": "."
-          },
-          {
-            "end": 508,
-            "escaped": false,
-            "kind": "Ident",
-            "start": 494,
-            "value": "semicolon-less"
-          }
-        ]
-      },
-      "properties": [
-        {
-          "end": 522,
-          "important": false,
-          "name": "",
-          "start": 510,
-          "type": "UnknownDeclaration",
-          "value": {
-            "end": 522,
-            "start": 510,
-            "value": [
-              {
-                "end": 521,
-                "escaped": false,
-                "kind": "Ident",
-                "start": 510,
-                "value": "--empty-end"
+              ],
+              "start": 477
+            },
+            "style": {
+              "end": 494,
+              "node": {
+                "declarations": [
+                  {
+                    "end": 491,
+                    "node": {
+                      "important": false,
+                      "name": "--a",
+                      "value": {
+                        "Unknown": {
+                          "end": 491,
+                          "node": {
+                            "type": "Unknown",
+                            "value": {
+                              "end": 491,
+                              "node": [
+                                {
+                                  "end": 490,
+                                  "node": {
+                                    "kind": "Number",
+                                    "value": [
+                                      1.0,
+                                      {
+                                        "bits": 0
+                                      }
+                                    ]
+                                  },
+                                  "start": 489
+                                }
+                              ],
+                              "start": 489
+                            }
+                          },
+                          "start": 489
+                        }
+                      }
+                    },
+                    "start": 485
+                  }
+                ],
+                "rules": [],
+                "type": "StyleDeclaration"
               },
-              {
-                "end": 522,
-                "escaped": false,
-                "kind": "Colon",
-                "start": 521,
-                "value": null
-              }
-            ]
-          }
-        }
-      ],
-      "rules": [],
-      "start": 493,
-      "type": "UnknownRule"
-    },
-    {
-      "end": 543,
-      "prelude": {
-        "end": 536,
-        "start": 530,
-        "value": [
-          {
-            "end": 531,
-            "escaped": false,
-            "kind": "Delim",
-            "start": 530,
-            "value": "."
+              "start": 484
+            },
+            "type": "StyleRule"
           },
-          {
-            "end": 536,
-            "escaped": false,
-            "kind": "Ident",
-            "start": 531,
-            "value": "empty"
-          }
-        ]
+          "start": 477
+        },
+        "start": 477
       },
-      "properties": [
-        {
-          "end": 541,
-          "important": false,
-          "name": "",
-          "start": 537,
-          "type": "UnknownDeclaration",
-          "value": {
-            "end": 541,
-            "start": 537,
-            "value": [
-              {
-                "end": 540,
-                "escaped": false,
-                "kind": "Ident",
-                "start": 537,
-                "value": "--a"
+      {
+        "end": 531,
+        "node": {
+          "end": 531,
+          "node": {
+            "selectors": {
+              "end": 510,
+              "node": [
+                {
+                  "end": 510,
+                  "node": {
+                    "components": [
+                      {
+                        "end": 509,
+                        "node": {
+                          "type": "Class",
+                          "value": "semicolon-less"
+                        },
+                        "start": 491
+                      }
+                    ],
+                    "type": "Selector"
+                  },
+                  "start": 491
+                }
+              ],
+              "start": 491
+            },
+            "style": {
+              "end": 531,
+              "node": {
+                "declarations": [
+                  {
+                    "end": 528,
+                    "node": {
+                      "important": false,
+                      "name": "--empty-end",
+                      "value": {
+                        "Unknown": {
+                          "end": 528,
+                          "node": {
+                            "type": "Unknown",
+                            "value": {
+                              "end": 528,
+                              "node": [],
+                              "start": 522
+                            }
+                          },
+                          "start": 522
+                        }
+                      }
+                    },
+                    "start": 510
+                  }
+                ],
+                "rules": [],
+                "type": "StyleDeclaration"
               },
-              {
-                "end": 541,
-                "escaped": false,
-                "kind": "Colon",
-                "start": 540,
-                "value": null
-              }
-            ]
-          }
-        }
-      ],
-      "rules": [],
-      "start": 530,
-      "type": "UnknownRule"
-    }
-  ],
-  "start": 0,
-  "type": "Stylesheet"
+              "start": 509
+            },
+            "type": "StyleRule"
+          },
+          "start": 491
+        },
+        "start": 491
+      },
+      {
+        "end": 544,
+        "node": {
+          "end": 544,
+          "node": {
+            "selectors": {
+              "end": 537,
+              "node": [
+                {
+                  "end": 537,
+                  "node": {
+                    "components": [
+                      {
+                        "end": 537,
+                        "node": {
+                          "type": "Class",
+                          "value": "empty"
+                        },
+                        "start": 528
+                      }
+                    ],
+                    "type": "Selector"
+                  },
+                  "start": 528
+                }
+              ],
+              "start": 528
+            },
+            "style": {
+              "end": 544,
+              "node": {
+                "declarations": [
+                  {
+                    "end": 543,
+                    "node": {
+                      "important": false,
+                      "name": "--a",
+                      "value": {
+                        "Unknown": {
+                          "end": 543,
+                          "node": {
+                            "type": "Unknown",
+                            "value": {
+                              "end": 543,
+                              "node": [],
+                              "start": 541
+                            }
+                          },
+                          "start": 541
+                        }
+                      }
+                    },
+                    "start": 537
+                  }
+                ],
+                "rules": [],
+                "type": "StyleDeclaration"
+              },
+              "start": 536
+            },
+            "type": "StyleRule"
+          },
+          "start": 528
+        },
+        "start": 528
+      }
+    ],
+    "type": "StyleSheet"
+  },
+  "start": 0
 }

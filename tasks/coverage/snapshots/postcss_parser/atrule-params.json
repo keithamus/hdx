@@ -7,74 +7,65 @@
         "node": {
           "end": 70,
           "node": {
+            "block": {
+              "end": 0,
+              "node": {
+                "declarations": [],
+                "rules": [],
+                "type": "Block"
+              },
+              "start": 0
+            },
             "name": "-moz-document",
             "prelude": {
               "end": 70,
-              "node": {
-                "value": [
-                  {
-                    "end": 57,
-                    "node": {
-                      "end": 57,
-                      "node": {
-                        "name": "url",
-                        "type": "Function",
-                        "value": [
-                          {
-                            "end": 57,
-                            "node": {
-                              "end": 57,
-                              "escaped": false,
-                              "kind": "String",
-                              "start": 42,
-                              "value": "example.com/{"
-                            },
-                            "start": 42
-                          }
-                        ]
-                      },
-                      "start": 38
-                    },
-                    "start": 38
-                  },
-                  {
-                    "end": 58,
-                    "node": {
-                      "end": 58,
-                      "escaped": false,
-                      "kind": "RightParen",
-                      "start": 57,
-                      "value": null
-                    },
-                    "start": 57
-                  },
-                  {
+              "node": [
+                {
+                  "end": 68,
+                  "node": {
                     "end": 68,
                     "node": {
-                      "end": 68,
-                      "node": {
-                        "pairwise": "Curly",
-                        "type": "SimpleBlock",
-                        "value": []
-                      },
-                      "start": 67
+                      "name": "url",
+                      "type": "Function",
+                      "values": [
+                        {
+                          "end": 57,
+                          "node": {
+                            "kind": "String",
+                            "value": "example.com/{"
+                          },
+                          "start": 42
+                        }
+                      ]
                     },
-                    "start": 67
-                  }
-                ]
-              },
-              "start": 38
+                    "start": 14
+                  },
+                  "start": 14
+                },
+                {
+                  "end": 70,
+                  "node": {
+                    "end": 70,
+                    "node": {
+                      "pairwise": "Curly",
+                      "type": "SimpleBlock",
+                      "values": []
+                    },
+                    "start": 58
+                  },
+                  "start": 58
+                }
+              ],
+              "start": 14
             },
-            "properties": [],
-            "rules": [],
-            "type": "UnknownAtRule"
+            "type": "AtRule"
           },
           "start": 0
         },
         "start": 0
       }
     ],
-    "type": "Stylesheet"
+    "type": "StyleSheet"
   },
   "start": 0
 }

@@ -3,77 +3,15 @@
   "node": {
     "rules": [
       {
-        "end": 62,
+        "end": 63,
         "node": {
-          "properties": [
-            {
-              "end": 43,
-              "node": {
-                "end": 43,
-                "node": {
-                  "important": false,
-                  "type": "Content",
-                  "value": {
-                    "end": 37,
-                    "node": {
-                      "List": {
-                        "end": 37,
-                        "node": {
-                          "alt": [],
-                          "values": [
-                            {
-                              "String": ";'@ /**/\""
-                            }
-                          ]
-                        },
-                        "start": 25
-                      }
-                    },
-                    "start": 25
-                  }
-                },
-                "start": 16
-              },
-              "start": 16
-            },
-            {
-              "end": 61,
-              "node": {
-                "end": 61,
-                "node": {
-                  "important": false,
-                  "type": "Content",
-                  "value": {
-                    "end": 59,
-                    "node": {
-                      "List": {
-                        "end": 59,
-                        "node": {
-                          "alt": [],
-                          "values": [
-                            {
-                              "String": "'\"\\"
-                            }
-                          ]
-                        },
-                        "start": 52
-                      }
-                    },
-                    "start": 52
-                  }
-                },
-                "start": 43
-              },
-              "start": 43
-            }
-          ],
-          "rules": [],
-          "selectors": {
-            "end": 9,
-            "node": {
-              "children": [
+          "end": 63,
+          "node": {
+            "selectors": {
+              "end": 11,
+              "node": [
                 {
-                  "end": 9,
+                  "end": 11,
                   "node": {
                     "components": [
                       {
@@ -85,7 +23,7 @@
                         "start": 0
                       },
                       {
-                        "end": 9,
+                        "end": 10,
                         "node": {
                           "type": "PseudoElement",
                           "value": {
@@ -100,16 +38,60 @@
                   "start": 0
                 }
               ],
-              "type": "SelectorSet"
+              "start": 0
             },
-            "start": 0
+            "style": {
+              "end": 63,
+              "node": {
+                "declarations": [
+                  {
+                    "end": 50,
+                    "node": {
+                      "important": false,
+                      "name": "content",
+                      "value": {
+                        "Content": {
+                          "end": 38,
+                          "node": {
+                            "String": ";'@ /**/\""
+                          },
+                          "start": 24
+                        }
+                      }
+                    },
+                    "start": 11
+                  },
+                  {
+                    "end": 62,
+                    "node": {
+                      "important": false,
+                      "name": "content",
+                      "value": {
+                        "Content": {
+                          "end": 60,
+                          "node": {
+                            "String": "'\"\\"
+                          },
+                          "start": 51
+                        }
+                      }
+                    },
+                    "start": 38
+                  }
+                ],
+                "rules": [],
+                "type": "StyleDeclaration"
+              },
+              "start": 10
+            },
+            "type": "StyleRule"
           },
-          "type": "StyleRule"
+          "start": 0
         },
         "start": 0
       }
     ],
-    "type": "Stylesheet"
+    "type": "StyleSheet"
   },
   "start": 0
 }
