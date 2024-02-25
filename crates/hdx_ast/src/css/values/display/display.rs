@@ -5,7 +5,7 @@ use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 #[cfg(feature = "serde")]
 use serde::Serialize;
 
-use crate::bitmask;
+use crate::{bitmask, Value};
 
 // https://drafts.csswg.org/css-display-4/#propdef-display
 #[derive(Default)]
@@ -90,6 +90,8 @@ pub enum Display {
 	Ruby = 0b0000_0101,
 	Table = 0b0000_0110,
 }
+
+impl Value for Display {}
 
 impl Display {
 	#[inline]

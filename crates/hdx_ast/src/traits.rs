@@ -1,6 +1,9 @@
-use crate::Atomizable;
-pub trait Unit: Sized {
-    type Unit: Atomizable + Default;
+pub trait Value: PartialEq + Default + Sized {
+	fn initial() -> Self {
+		Self::default()
+	}
 
-    fn new(value: f32, unit: Self::Unit) -> Self;
+	fn inherits() -> bool {
+		false
+	}
 }

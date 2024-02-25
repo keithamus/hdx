@@ -1,7 +1,7 @@
 #[cfg(feature = "serde")]
 use serde::Serialize;
 
-use crate::{Atomizable, Parsable, Writable};
+use crate::{Atomizable, Parsable, Writable, Value};
 
 // https://drafts.csswg.org/css-break-4/#propdef-margin-break
 #[derive(Parsable, Writable, Atomizable, Default, Debug, PartialEq, Hash)]
@@ -12,3 +12,5 @@ pub enum MarginBreak {
 	Keep,    // atom!("keep")
 	Discard, // atom!("discard")
 }
+
+impl Value for MarginBreak {}

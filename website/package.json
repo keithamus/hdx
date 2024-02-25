@@ -6,7 +6,7 @@
 		"postinstall": "[ \"$NODE_ENV\" = \"production\" ] && npm run build || npm run build:dev",
 		"clean-old": "ls -t playground/ | grep hdx | tail -n +2 | xargs rm -f",
 		"postbuild": "npm run clean-old",
-		"prestart": "[ \"$NODE_ENV\" = \"production\" ] && npm run wasm-build || npm run build:dev",
+		"prestart": "npm run postinstall",
 		"postbuild:dev": "npm run clean-old",
 		"prebuild": "npm run wasm-build",
 		"prebuild:dev": "npm run wasm-build:dev",

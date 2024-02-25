@@ -1,10 +1,7 @@
 #[cfg(feature = "serde")]
 use serde::Serialize;
 
-use crate::{
-	css::values::units::{CSSFloat},
-	Parsable, Writable,
-};
+use crate::{css::values::units::CSSFloat, Parsable, Writable};
 
 #[derive(Parsable, Writable, Default, Debug, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type", content = "value"))]

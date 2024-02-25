@@ -5,13 +5,14 @@ use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 #[cfg(feature = "serde")]
 use serde::Serialize;
 
-use crate::{bitmask, Atomizable};
+use crate::{bitmask, Atomizable, Value};
 
 // https://drafts.csswg.org/css-box-4/#propdef-margin-trim
-#[derive(Atomizable)]
+#[derive(Atomizable, Default)]
 #[bitmask(u8)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde())]
 pub enum MarginTrim {
+	#[default]
 	None,
 	Block,
 	Inline,
@@ -20,6 +21,8 @@ pub enum MarginTrim {
 	InlineStart,
 	InlineEnd,
 }
+
+impl Value for MarginTrim {}
 
 impl<'a> Parse<'a> for MarginTrim {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {

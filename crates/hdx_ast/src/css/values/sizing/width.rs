@@ -2,7 +2,7 @@
 use serde::Serialize;
 
 use super::super::units::LengthPercentage;
-use crate::{Parsable, Writable};
+use crate::{Parsable, Writable, Value};
 
 // https://drafts.csswg.org/css-sizing-4/#sizing-values
 #[derive(Parsable, Writable, Default, Debug, PartialEq, Hash)]
@@ -23,6 +23,8 @@ pub enum Width {
 	#[writable(as_function = "fit-content")]
 	FitContentFunction(LengthPercentage),
 }
+
+impl Value for Width {}
 
 #[cfg(test)]
 mod tests {

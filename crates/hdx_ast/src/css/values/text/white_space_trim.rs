@@ -5,7 +5,7 @@ use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 #[cfg(feature = "serde")]
 use serde::Serialize;
 
-use crate::{bitmask, Atomizable};
+use crate::{bitmask, Atomizable, Value};
 
 // https://drafts.csswg.org/css-text-4/#propdef-white-space-trim
 #[derive(Default, Atomizable)]
@@ -18,6 +18,8 @@ pub enum WhiteSpaceTrim {
 	DiscardAfter = 0b0010,  // atom!("discard-after")
 	DiscardInner = 0b0100,  // atom!("discard-inner")
 }
+
+impl Value for WhiteSpaceTrim {}
 
 impl<'a> Parse<'a> for WhiteSpaceTrim {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {

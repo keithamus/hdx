@@ -5,7 +5,7 @@ use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 #[cfg(feature = "serde")]
 use serde::Serialize;
 
-use crate::bitmask;
+use crate::{bitmask, Value};
 
 // https://drafts.csswg.org/css-text/#text-align-property
 #[derive(Default)]
@@ -19,6 +19,8 @@ pub enum TextDecorationLine {
 	LineThrough = 0b0100,
 	Blink = 0b1000,
 }
+
+impl Value for TextDecorationLine {}
 
 impl<'a> Parse<'a> for TextDecorationLine {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {

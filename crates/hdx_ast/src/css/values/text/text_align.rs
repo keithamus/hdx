@@ -1,7 +1,7 @@
 #[cfg(feature = "serde")]
 use serde::Serialize;
 
-use crate::{Atomizable, Parsable, Writable};
+use crate::{Atomizable, Parsable, Writable, Value};
 
 // https://drafts.csswg.org/css-text-4/#propdef-text-align
 #[derive(Parsable, Writable, Atomizable, Default, Debug, PartialEq, Hash)]
@@ -17,6 +17,12 @@ pub enum TextAlign {
 	MatchParent, // atom!("match-parent")
 	JustifyAll,  /* atom!("justify-all")
 	              * TODO: Custom? */
+}
+
+impl Value for TextAlign {
+	fn inherits() -> bool {
+		true
+	}
 }
 
 #[cfg(test)]

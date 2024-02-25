@@ -61,6 +61,7 @@ pub struct Selector<'a> {
 
 impl<'a> Parse<'a> for Selector<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
+		discard!(parser, Token::Whitespace);
 		let span = parser.span();
 		let mut components: Vec<'a, Spanned<Component>> = parser.new_vec();
 		loop {

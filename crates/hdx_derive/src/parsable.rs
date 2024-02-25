@@ -2,7 +2,7 @@ use proc_macro2::TokenStream;
 use quote::quote;
 use syn::{
 	parse::Parse, punctuated::Punctuated, spanned::Spanned, Attribute, Data, DataEnum, DeriveInput, Error, Fields,
-	FieldsUnnamed, Ident, LitStr, Meta, Token,
+	FieldsUnnamed, Ident, LitStr, Meta, Token, DataStruct,
 };
 
 use crate::{err, kebab};
@@ -100,7 +100,43 @@ impl ParsableArgs {
 pub fn derive(input: DeriveInput) -> TokenStream {
 	let ident = input.ident;
 	match input.data {
-		Data::Struct(_) => err(ident.span(), "Cannot derive Parsable on a struct with named or no fields"),
+		Data::Struct(DataStruct { fields: Fields::Unnamed(fields), .. }) => {
+			if fields.unnamed.len() != 1 {
+				err(ident.span(), "Cannot derive Parsable on a struct with multiple unnamed fields")
+			} else {
+				let field = fields.unnamed.first().unwrap();
+				let field_ty = &field.ty;
+				let args = ParsableArgs::parse(&field.attrs);
+				let value = if args.parse_inner {
+					quote! {
+						Self(#field_ty::parse(parser)?).spanned(span.end(parser.pos()))
+					}
+				} else if args.from_token {
+					quote! {
+						if let Some(value) = #field_ty::from_token(parser.cur()) {
+							parser.advance();
+							Self(value).spanned(span.end(parser.pos()))
+						} else {
+							hdx_parser::unexpected!(parser)
+						}
+					}
+				} else {
+					return err(ident.span(), "Cannot derive Parsable on a struct without marking ParseInner or FromToken")
+				};
+				quote! {
+					#[automatically_derived]
+					impl<'a> hdx_parser::Parse<'a> for #ident {
+						fn parse(parser: &mut hdx_parser::Parser<'a>) -> hdx_parser::Result<hdx_parser::Spanned<Self>> {
+							use hdx_parser::{Parse, FromToken};
+							let span = parser.span();
+							Ok(#value)
+						}
+					}
+				}
+			}
+		}
+
+		Data::Struct(_) => err(ident.span(), "Cannot derive Parsable on a struct with named fields"),
 
 		Data::Union(_) => err(ident.span(), "Cannot derive Parsable on a Union"),
 

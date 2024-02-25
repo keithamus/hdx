@@ -1,7 +1,7 @@
 #[cfg(feature = "serde")]
 use serde::Serialize;
 
-use crate::{Atomizable, Parsable, Writable};
+use crate::{Atomizable, Parsable, Value, Writable};
 
 // https://drafts.csswg.org/css-inline/#propdef-dominant-baseline
 #[derive(Parsable, Writable, Atomizable, Default, Debug, PartialEq, Hash)]
@@ -17,6 +17,12 @@ pub enum DominantBaseline {
 	Mathematical, // atom!("mathematical")
 	Hanging,      // atom!("hanging")
 	TextTop,      // atom!("text-top")
+}
+
+impl Value for DominantBaseline {
+	fn inherits() -> bool {
+		true
+	}
 }
 
 #[cfg(test)]

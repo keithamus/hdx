@@ -1,7 +1,7 @@
 #[cfg(feature = "serde")]
 use serde::Serialize;
 
-use crate::{Atomizable, Parsable, Writable};
+use crate::{Atomizable, Parsable, Value, Writable};
 
 // https://drafts.csswg.org/css-ui-4/#propdef-cursor
 #[derive(Parsable, Writable, Atomizable, Default, Debug, PartialEq, Hash)]
@@ -45,6 +45,12 @@ pub enum Cursor {
 	ZoomIn,       // atom!("zoom-in")
 	ZoomOut,      /* atom!("zoom-out")
 	               * TODO: Custom? */
+}
+
+impl Value for Cursor {
+	fn inherits() -> bool {
+		true
+	}
 }
 
 #[cfg(test)]

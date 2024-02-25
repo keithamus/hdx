@@ -34,6 +34,29 @@ impl<'a> Parse<'a> for Custom<'a> {
 
 #[derive(Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
+pub struct Computed<'a> {
+	pub value: Box<'a, Spanned<ComponentValues<'a>>>,
+	// pub value_like: Spanned<values::ValueLike<'a>>,
+}
+
+impl<'a> WriteCss<'a> for Computed<'a> {
+	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
+		self.value.write_css(sink)
+	}
+}
+
+impl<'a> Parse<'a> for Computed<'a> {
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
+		let span = parser.span();
+		parser.set(State::StopOnSemicolon);
+		let value = ComponentValues::parse(parser)?;
+		parser.unset(State::StopOnSemicolon);
+		Ok(Self { value: parser.boxup(value) }.spanned(span.end(parser.pos())))
+	}
+}
+
+#[derive(Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
 pub struct Unknown<'a> {
 	pub value: Box<'a, Spanned<ComponentValues<'a>>>,
 }
@@ -75,6 +98,37 @@ impl<'a> WriteCss<'a> for StyleProperty<'a> {
 	}
 }
 
+#[inline]
+fn is_computed_token(token: Token) -> bool {
+	match token {
+		Token::Function(atom) => match atom.to_ascii_lowercase() {
+			atom!("var")
+			| atom!("calc")
+			| atom!("min")
+			| atom!("max")
+			| atom!("clamp")
+			| atom!("round")
+			| atom!("mod")
+			| atom!("rem")
+			| atom!("sin")
+			| atom!("cos")
+			| atom!("tan")
+			| atom!("asin")
+			| atom!("atan")
+			| atom!("atan2")
+			| atom!("pow")
+			| atom!("sqrt")
+			| atom!("hypot")
+			| atom!("log")
+			| atom!("exp")
+			| atom!("abs")
+			| atom!("sign") => true,
+			_ => false,
+		},
+		_ => false,
+	}
+}
+
 macro_rules! properties {
     ( $(
         $name: ident$(<$a: lifetime>)?: $atom: pat,
@@ -88,6 +142,7 @@ macro_rules! properties {
 			Revert,
 			RevertLayer,
 			Custom(Box<'a, Spanned<Custom<'a>>>),
+			Computed(Box<'a, Spanned<Computed<'a>>>),
 			Unknown(Box<'a, Spanned<Unknown<'a>>>),
 			$(
 				$name(Box<'a, Spanned<values::$name$(<$a>)?>>),
@@ -104,6 +159,7 @@ macro_rules! properties {
 					Self::RevertLayer => sink.write_str("revert-layer")?,
 					Self::Custom(v) => v.write_css(sink)?,
 					Self::Unknown(v) => v.write_css(sink)?,
+					Self::Computed(v) => v.write_css(sink)?,
 					$(
 						Self::$name(v) => v.write_css(sink)?,
 					)+
@@ -147,13 +203,36 @@ macro_rules! properties {
 											StyleValue::RevertLayer
 										},
 										_ => {
-											let parsed = values::$name::parse(parser)?;
-											StyleValue::$name(parser.boxup(parsed))
+											let checkpoint = parser.checkpoint();
+											if let Ok(value) = values::$name::parse(parser) {
+												StyleValue::$name(parser.boxup(value))
+											} else if is_computed_token(parser.cur()) {
+												parser.rewind(checkpoint);
+												let value = Computed::parse(parser)?;
+												StyleValue::Computed(parser.boxup(value))
+											} else {
+												parser.rewind(checkpoint);
+												unexpected!(parser)
+											}
 										}
 									},
 									_ => {
-										let parsed = values::$name::parse(parser)?;
-										StyleValue::$name(parser.boxup(parsed))
+										if is_computed_token(parser.cur()) {
+											let value = Computed::parse(parser)?;
+											StyleValue::Computed(parser.boxup(value))
+										} else {
+											let checkpoint = parser.checkpoint();
+											if let Ok(value) = values::$name::parse(parser) {
+												StyleValue::$name(parser.boxup(value))
+											} else if is_computed_token(parser.cur()) {
+												parser.rewind(checkpoint);
+												let value = Computed::parse(parser)?;
+												StyleValue::Computed(parser.boxup(value))
+											} else {
+												parser.rewind(checkpoint);
+												unexpected!(parser)
+											}
+										}
 									}
 								};
 								(name, value)
@@ -1276,10 +1355,10 @@ properties! {
 	Zoom: atom!("zoom"),
 
 	// Webkit NonStandards
-	WebkitTextSizeAdjust: atom!("-webkit-text-size-adjust"),
-	WebkitTextDecoration: atom!("-webkit-text-decoration"),
-	WebkitTapHighlightColor: atom!("-webkit-tap-highlight-color"),
-	WebkitTextDecorationSkipInk: atom!("-webkit-text-decoration-skip-ink"),
+	// WebkitTextSizeAdjust: atom!("-webkit-text-size-adjust"),
+	// WebkitTextDecoration: atom!("-webkit-text-decoration"),
+	// WebkitTapHighlightColor: atom!("-webkit-tap-highlight-color"),
+	// WebkitTextDecorationSkipInk: atom!("-webkit-text-decoration-skip-ink"),
 }
 
 #[cfg(test)]
@@ -1300,5 +1379,6 @@ mod tests {
 	fn test_writes() {
 		let allocator = Allocator::default();
 		test_write::<StyleProperty>(&allocator, "width: 1px", "width:1px");
+		test_write::<StyleProperty>(&allocator, "width: min(1px, 2px)", "width:min(1px, 2px)");
 	}
 }

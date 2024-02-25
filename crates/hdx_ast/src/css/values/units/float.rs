@@ -5,6 +5,7 @@ use std::{
 };
 
 use hdx_derive::Writable;
+use hdx_parser::FromToken;
 #[cfg(feature = "serde")]
 use serde::Serialize;
 

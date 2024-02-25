@@ -1,7 +1,7 @@
 #[cfg(feature = "serde")]
 use serde::Serialize;
 
-use crate::{Atomizable, Parsable, Writable};
+use crate::{Atomizable, Parsable, Writable, Value};
 
 // https://drafts.csswg.org/css-page-floats-3/#propdef-clear
 #[derive(Parsable, Writable, Atomizable, Default, Debug, PartialEq, Hash)]
@@ -21,6 +21,8 @@ pub enum Clear {
 	#[default]
 	None, // atom!("none")
 }
+
+impl Value for Clear {}
 
 #[cfg(test)]
 mod tests {

@@ -19,6 +19,7 @@ hdx_atom = { workspace = true }
 hdx_derive = { workspace = true }
 
 clap = { workspace = true, features = ["derive", "cargo"] }
+miette = { workspace = true }
 
 # Use OXC Allocator until https://github.com/fitzgen/bumpalo/pull/210 is resolved
 oxc_allocator = { workspace = true }
@@ -28,5 +29,6 @@ serde = { workspace = true, optional = true }
 serde_json = { workspace = true, optional = true }
 
 [features]
-default = []
-serde = ["dep:serde", "dep:serde_json", "hdx_lexer/serde"]
+default = ["fancy"]
+serde = ["dep:serde", "dep:serde_json", "hdx_lexer/serde"] 
+fancy = ["hdx_ast/fancy", "hdx_parser/fancy", "miette/fancy"]

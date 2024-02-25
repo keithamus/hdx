@@ -1,7 +1,7 @@
 #[cfg(feature = "serde")]
 use serde::Serialize;
 
-use crate::{Atomizable, Parsable, Writable};
+use crate::{Atomizable, Parsable, Writable, Value};
 
 // https://drafts.csswg.org/css-text-4/#propdef-text-align-last
 #[derive(Parsable, Writable, Atomizable, Default, Debug, PartialEq, Hash)]
@@ -16,6 +16,12 @@ pub enum TextAlignLast {
 	Center,      // atom!("center")
 	Justify,     // atom!("justify")
 	MatchParent, // atom!("match-parent")
+}
+
+impl Value for TextAlignLast {
+	fn inherits() -> bool {
+		true
+	}
 }
 
 #[cfg(test)]

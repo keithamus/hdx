@@ -2,7 +2,7 @@
 use serde::Serialize;
 
 use super::super::units::LengthPercentage;
-use crate::{Parsable, Writable};
+use crate::{Parsable, Writable, traits::Value};
 
 // https://drafts.csswg.org/css-sizing-4/#sizing-values
 #[derive(Parsable, Writable, Default, Debug, PartialEq, Hash)]
@@ -22,6 +22,12 @@ pub enum MaxWidth {
 	#[parsable(Function, FromToken, Check::Positive, atom = "fit-content")]
 	#[writable(as_function = "fit-content")]
 	FitContentFunction(LengthPercentage),
+}
+
+impl Value for MaxWidth {
+	fn initial() -> MaxWidth {
+		MaxWidth::None
+	}
 }
 
 #[cfg(test)]

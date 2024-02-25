@@ -19,10 +19,11 @@ macro_rules! length {
         $name: ident: $atom: tt,
     )+ ) => {
 
-		#[derive(Writable, Debug, Clone, Copy, PartialEq, Hash)]
+		#[derive(Writable, Default, Debug, Clone, Copy, PartialEq, Hash)]
 		#[cfg_attr(feature = "serde", derive(Serialize), serde())]
 		pub enum Length {
 			#[writable(rename = "0")]
+			#[default]
 			Zero,
 			$(
 			#[writable(suffix = $atom)]
@@ -58,9 +59,10 @@ macro_rules! length {
 			}
 		}
 
-		#[derive(Writable, Debug, Clone, Copy, PartialEq, Hash)]
+		#[derive(Writable, Default, Debug, Clone, Copy, PartialEq, Hash)]
 		#[cfg_attr(feature = "serde", derive(Serialize), serde())]
 		pub enum LengthPercentage {
+			#[default]
 			#[writable(rename = "0")]
 			Zero,
 			$(
@@ -75,6 +77,7 @@ macro_rules! length {
 			pub fn new(val: CSSFloat, atom: Atom) -> Option<LengthPercentage> {
 				match atom {
 					$(atom!($atom) => Some(LengthPercentage::$name(val)),)+
+					atom!("%") => Some(LengthPercentage::Percent(val)),
 					_ => None
 				}
 			}
@@ -182,5 +185,7 @@ mod tests {
 		test_write::<Length>(&allocator, "1.2345678901234px", "1.2345679px");
 		// Removes redundant dp
 		test_write::<Length>(&allocator, "-1.0px", "-1px");
+		// Percent
+		test_write::<LengthPercentage>(&allocator, "1%", "1%");
 	}
 }

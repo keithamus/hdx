@@ -13,7 +13,7 @@ pub(crate) use hdx_atom::{atom, Atom, Atomizable};
 pub(crate) use hdx_derive::{Atomizable, Parsable, Writable};
 pub(crate) use hdx_parser::{Box, Spanned, Vec};
 pub(crate) use macros::*;
-pub use traits::Unit;
+pub use traits::Value;
 
 pub trait ToSpecificity: Sized {
 	fn specificity(&self) -> Specificity;

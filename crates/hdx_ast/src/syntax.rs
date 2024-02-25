@@ -1,7 +1,7 @@
 use hdx_atom::{atom, Atom};
 use hdx_lexer::{PairWise, Token};
 use hdx_parser::{
-	discard, expect, unexpected, AtRule as AtRuleTrait, Block as BlockTrait, Box, Parse, Parser,
+	expect, unexpected, AtRule as AtRuleTrait, Block as BlockTrait, Box, Parse, Parser,
 	QualifiedRule as QualifiedRuleTrait, Result as ParserResult, Span, Spanned, State, Vec,
 };
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
@@ -194,7 +194,8 @@ impl<'a> Parse<'a> for Rule<'a> {
 		Ok(match parser.cur() {
 			Token::AtKeyword(_) => Rule::AtRule(AtRule::parse(parser)?),
 			_ => Rule::QualifiedRule(QualifiedRule::parse(parser)?),
-		}.spanned(span.end(parser.pos())))
+		}
+		.spanned(span.end(parser.pos())))
 	}
 }
 

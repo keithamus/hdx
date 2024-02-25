@@ -1,7 +1,7 @@
 #[cfg(feature = "serde")]
 use serde::Serialize;
 
-use crate::{Atomizable, Parsable, Writable};
+use crate::{Atomizable, Parsable, Value, Writable};
 
 // https://drafts.csswg.org/css-inline/#propdef-alignment-baseline
 #[derive(Parsable, Writable, Atomizable, Default, Debug, PartialEq, Hash)]
@@ -17,6 +17,8 @@ pub enum AlignmentBaseline {
 	Mathematical, // atom!("mathematical")
 	TextTop,      // atom!("text-top")
 }
+
+impl Value for AlignmentBaseline {}
 
 #[cfg(test)]
 mod tests {
