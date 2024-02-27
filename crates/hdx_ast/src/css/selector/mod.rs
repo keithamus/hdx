@@ -7,7 +7,7 @@ use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 #[cfg(feature = "serde")]
 use serde::Serialize;
 
-use crate::{Atomizable, Box, Vec};
+use crate::{Atomizable, Vec};
 
 mod attribute;
 mod pseudo_class;
@@ -27,16 +27,18 @@ impl<'a> Parse<'a> for Selectors<'a> {
 			selectors.push(Selector::parse(parser)?);
 			discard!(parser, Token::Whitespace);
 			match parser.cur() {
-				Token::Comma => { parser.advance(); },
+				Token::Comma => {
+					parser.advance();
+				}
 				_ => break,
 			}
 		}
-		Ok(Selectors( selectors ).spanned(span.end(parser.pos())))
+		Ok(Selectors(selectors).spanned(span.end(parser.pos())))
 	}
 }
 
 impl<'a> WriteCss<'a> for Selectors<'a> {
-    fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
+	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
 		let mut iter = self.0.iter().peekable();
 		while let Some(selector) = iter.next() {
 			selector.write_css(sink)?;
@@ -46,7 +48,7 @@ impl<'a> WriteCss<'a> for Selectors<'a> {
 			sink.write_trivia_char(' ')?;
 		}
 		Ok(())
-    }
+	}
 }
 
 // This encapsulates both `simple-selector` and `compound-selector`.
@@ -56,7 +58,7 @@ impl<'a> WriteCss<'a> for Selectors<'a> {
 #[derive(Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
 pub struct Selector<'a> {
-	pub components: Box<'a, Vec<'a, Spanned<Component<'a>>>>,
+	pub components: Vec<'a, Spanned<Component<'a>>>,
 }
 
 impl<'a> Parse<'a> for Selector<'a> {
@@ -69,7 +71,9 @@ impl<'a> Parse<'a> for Selector<'a> {
 				Token::Eof | Token::Semicolon | Token::Comma | Token::LeftCurly => {
 					break;
 				}
-				Token::Whitespace if matches!(parser.peek(), Token::Eof | Token::Semicolon | Token::Comma | Token::LeftCurly) => {
+				Token::Whitespace
+					if matches!(parser.peek(), Token::Eof | Token::Semicolon | Token::Comma | Token::LeftCurly) =>
+				{
 					break;
 				}
 				token @ Token::RightCurly => unexpected!(parser, token),
@@ -109,7 +113,7 @@ impl<'a> Parse<'a> for Selector<'a> {
 		// Given selector parsing is Whitespace sensitive, trailing whitespace should be
 		// discarded before moving onto the next parser which is likely a block parser
 		discard!(parser, Token::Whitespace);
-		Ok(Self { components: parser.boxup(components) }.spanned(span.end(parser.pos())))
+		Ok(Self { components }.spanned(span.end(parser.pos())))
 	}
 }
 
@@ -125,13 +129,13 @@ impl<'a> WriteCss<'a> for Selector<'a> {
 #[derive(Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
 pub struct ForgivingSelector<'a> {
-	pub components: Box<'a, Vec<'a, Spanned<Component<'a>>>>,
+	pub components: Vec<'a, Spanned<Component<'a>>>,
 }
 
 #[derive(Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
 pub struct RelativeSelector<'a> {
-	pub components: Box<'a, Vec<'a, Spanned<Component<'a>>>>,
+	pub components: Vec<'a, Spanned<Component<'a>>>,
 }
 
 // This encapsulates all `simple-selector` subtypes (e.g. `wq-name`,
@@ -145,12 +149,12 @@ pub enum Component<'a> {
 	Type(Atom),
 	Wildcard,
 	Combinator(Combinator),
-	Attribute(Box<'a, Spanned<Attribute>>),
+	Attribute(Spanned<Attribute>),
 	PseudoClass(PseudoClass),
 	PseudoElement(PseudoElement),
 	LegacyPseudoElement(LegacyPseudoElement),
 	PseudoFunction(PseudoFunction<'a>),
-	NSPrefixedType(Box<'a, (NSPrefix, Atom)>),
+	NSPrefixedType((NSPrefix, Atom)),
 	NSPrefixedWildcard(NSPrefix),
 }
 
@@ -215,7 +219,7 @@ impl<'a> Parse<'a> for Component<'a> {
 				'*' => match parser.peek() {
 					Token::Delim('|') => {
 						let (prefix, atom) = parse_wq_name(parser)?;
-						Ok(Self::NSPrefixedType(parser.boxup((prefix, atom))).spanned(span.end(parser.pos())))
+						Ok(Self::NSPrefixedType((prefix, atom)).spanned(span.end(parser.pos())))
 					}
 					_ => {
 						parser.advance_including_whitespace();
@@ -226,7 +230,7 @@ impl<'a> Parse<'a> for Component<'a> {
 			},
 			Token::LeftSquare => {
 				let attr = Attribute::parse(parser)?;
-				Ok(Component::Attribute(parser.boxup(attr)).spanned(span.end(parser.pos())))
+				Ok(Component::Attribute(attr).spanned(span.end(parser.pos())))
 			}
 			_ => Err(diagnostics::Unimplemented(parser.span()))?,
 		}
@@ -331,7 +335,7 @@ pub enum PseudoFunction<'a> {
 	Host(Selector<'a>),           // atom!("host")
 	HostContext(Selector<'a>),    // atom!("host-context")
 	Is(ForgivingSelector<'a>),    // atom!("is")
-	Lang(Box<'a, Vec<'a, Atom>>), // atom!("lang")
+	Lang(Vec<'a, Atom>),          // atom!("lang")
 	Not(Selector<'a>),            // atom!("not")
 	NthChild(ANBEvenOdd),         // atom!("nth-child")
 	NthCol(ANB),                  // atom!("nth-col")

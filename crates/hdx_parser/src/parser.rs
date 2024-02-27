@@ -71,11 +71,6 @@ impl<'a> Parser<'a> {
 	}
 
 	#[inline]
-	pub fn boxup<T>(&self, value: T) -> oxc_allocator::Box<'a, T> {
-		oxc_allocator::Box(self.allocator.alloc(value))
-	}
-
-	#[inline]
 	fn enabled(&self, other: Features) -> bool {
 		self.features.contains(other)
 	}

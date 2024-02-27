@@ -1,7 +1,6 @@
 use hdx_lexer::Token;
 use hdx_parser::{
-	diagnostics, expect, unexpected, AtRule, Box, DeclarationRuleList, Parse, Parser, Result as ParserResult, Spanned,
-	Vec,
+	diagnostics, expect, unexpected, AtRule, DeclarationRuleList, Parse, Parser, Result as ParserResult, Spanned, Vec,
 };
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 #[cfg(feature = "serde")]
@@ -16,8 +15,8 @@ use crate::{atom, css::properties::StyleProperty, Atom, Atomizable, Specificity,
 #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
 pub struct PageRule<'a> {
 	#[cfg_attr(feature = "serde", serde(borrow))]
-	pub selectors: Box<'a, Option<Spanned<PageSelectorList<'a>>>>,
-	pub style: Box<'a, Spanned<PageDeclaration<'a>>>,
+	pub selectors: Option<Spanned<PageSelectorList<'a>>>,
+	pub style: Spanned<PageDeclaration<'a>>,
 }
 
 // https://drafts.csswg.org/css-page-3/#syntax-page-selector
@@ -27,7 +26,7 @@ impl<'a> Parse<'a> for PageRule<'a> {
 		let span = parser.span();
 		let (selectors, style) = Self::parse_at_rule(parser)?;
 		if let Some(style) = style {
-			Ok(Self { selectors: parser.boxup(selectors), style: parser.boxup(style) }.spanned(span.end(parser.pos())))
+			Ok(Self { selectors, style }.spanned(span.end(parser.pos())))
 		} else {
 			Err(diagnostics::MissingAtRuleBlock(span.end(parser.pos())))?
 		}
@@ -178,16 +177,16 @@ impl ToSpecificity for PagePseudoClass {
 #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
 pub struct PageDeclaration<'a> {
 	#[cfg_attr(feature = "serde", serde(borrow))]
-	pub properties: Box<'a, Vec<'a, Spanned<StyleProperty<'a>>>>,
+	pub properties: Vec<'a, Spanned<StyleProperty<'a>>>,
 	#[cfg_attr(feature = "serde", serde(borrow))]
-	pub rules: Box<'a, Vec<'a, Spanned<MarginRule<'a>>>>,
+	pub rules: Vec<'a, Spanned<MarginRule<'a>>>,
 }
 
 impl<'a> Parse<'a> for PageDeclaration<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
 		let span = parser.span();
 		let (properties, rules) = Self::parse_declaration_rule_list(parser)?;
-		Ok(Self { properties: parser.boxup(properties), rules: parser.boxup(rules) }.spanned(span.end(parser.pos())))
+		Ok(Self { properties, rules }.spanned(span.end(parser.pos())))
 	}
 }
 
@@ -229,7 +228,7 @@ impl<'a> WriteCss<'a> for PageDeclaration<'a> {
 pub struct MarginRule<'a> {
 	pub name: PageMarginBox,
 	#[cfg_attr(feature = "serde", serde(borrow))]
-	pub style: Box<'a, Spanned<MarginDeclaration<'a>>>,
+	pub style: Spanned<MarginDeclaration<'a>>,
 }
 
 impl<'a> Parse<'a> for MarginRule<'a> {
@@ -240,7 +239,7 @@ impl<'a> Parse<'a> for MarginRule<'a> {
 					let span = parser.span();
 					let (_, style) = Self::parse_at_rule(parser)?;
 					if let Some(style) = style {
-						Ok(Self { name, style: parser.boxup(style) }.spanned(span.end(parser.pos())))
+						Ok(Self { name, style }.spanned(span.end(parser.pos())))
 					} else {
 						Err(diagnostics::MissingAtRuleBlock(span.end(parser.pos())))?
 					}
@@ -296,17 +295,16 @@ pub enum PageMarginBox {
 #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
 pub struct MarginDeclaration<'a> {
 	#[cfg_attr(feature = "serde", serde(borrow))]
-	pub properties: Box<'a, Vec<'a, Spanned<StyleProperty<'a>>>>,
+	pub properties: Vec<'a, Spanned<StyleProperty<'a>>>,
 	#[cfg_attr(feature = "serde", serde(borrow))]
-	pub rules: Box<'a, Vec<'a, Spanned<MarginRule<'a>>>>,
+	pub rules: Vec<'a, Spanned<MarginRule<'a>>>,
 }
 
 impl<'a> Parse<'a> for MarginDeclaration<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
 		let span = parser.span();
 		let (properties, rules) = Self::parse_declaration_rule_list(parser)?;
-		Ok(Self { properties: parser.boxup(properties), rules: parser.boxup(rules) }
-			.spanned(span.end(parser.pos())))
+		Ok(Self { properties, rules }.spanned(span.end(parser.pos())))
 	}
 }
 

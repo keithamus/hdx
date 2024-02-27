@@ -109,12 +109,6 @@ impl<'a, T: WriteCss<'a>> WriteCss<'a> for Option<T> {
 	}
 }
 
-impl<'a, T: WriteCss<'a>> WriteCss<'a> for Box<'a, T> {
-	fn write_css<W: CssWriter>(&self, sink: &mut W) -> Result {
-		self.deref().write_css(sink)
-	}
-}
-
 impl<'a, T: WriteCss<'a>> WriteCss<'a> for Spanned<T> {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> Result {
 		self.node.write_css(sink)

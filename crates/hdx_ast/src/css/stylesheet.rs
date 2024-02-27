@@ -12,7 +12,7 @@ use crate::{
 		stylerule::StyleRule,
 	},
 	syntax::{AtRule, QualifiedRule},
-	Box, Spanned, Vec,
+	Spanned, Vec,
 };
 
 // https://drafts.csswg.org/cssom-1/#the-cssstylesheet-interface
@@ -51,11 +51,11 @@ impl<'a> WriteCss<'a> for StyleSheet<'a> {
 #[derive(Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde(untagged))]
 pub enum Rule<'a> {
-	Charset(Box<'a, Spanned<CharsetRule>>),
-	Page(Box<'a, Spanned<PageRule<'a>>>),
-	Style(Box<'a, Spanned<StyleRule<'a>>>),
-	UnknownAt(Box<'a, Spanned<AtRule<'a>>>),
-	Unknown(Box<'a, Spanned<QualifiedRule<'a>>>),
+	Charset(Spanned<CharsetRule>),
+	Page(Spanned<PageRule<'a>>),
+	Style(Spanned<StyleRule<'a>>),
+	UnknownAt(Spanned<AtRule<'a>>),
+	Unknown(Spanned<QualifiedRule<'a>>),
 }
 
 impl<'a> Parse<'a> for Rule<'a> {
@@ -65,28 +65,28 @@ impl<'a> Parse<'a> for Rule<'a> {
 			Token::AtKeyword(atom) => match atom.to_ascii_lowercase() {
 				atom!("charset") => {
 					let rule = CharsetRule::parse(parser)?;
-					Rule::Charset(parser.boxup(rule))
+					Rule::Charset(rule)
 				}
 				atom!("page") => {
 					let rule = PageRule::parse(parser)?;
-					Rule::Page(parser.boxup(rule))
+					Rule::Page(rule)
 				}
 				_ => {
 					let rule = AtRule::parse(parser)?;
 					parser.warn(diagnostics::UnknownRule(rule.span).into());
-					Rule::UnknownAt(parser.boxup(rule))
+					Rule::UnknownAt(rule)
 				}
 			},
 			// "Consume a qualified rule from input. If anything is returned, append it to rules."
 			_ => {
 				let checkpoint = parser.checkpoint();
 				match StyleRule::parse(parser) {
-					Ok(rule) => Rule::Style(parser.boxup(rule)),
+					Ok(rule) => Rule::Style(rule),
 					Err(err) => {
 						parser.rewind(checkpoint);
 						parser.warn(err);
 						let rule = QualifiedRule::parse(parser)?;
-						Rule::Unknown(parser.boxup(rule))
+						Rule::Unknown(rule)
 					}
 				}
 			}

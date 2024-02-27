@@ -1,9 +1,9 @@
 extern crate hdx_derive;
 
 pub mod css;
-pub mod traits;
 pub mod macros;
 pub mod syntax;
+pub mod traits;
 
 #[cfg(test)]
 pub mod test_helpers;
@@ -11,8 +11,7 @@ pub mod test_helpers;
 pub(crate) use bitmask_enum::bitmask;
 pub(crate) use hdx_atom::{atom, Atom, Atomizable};
 pub(crate) use hdx_derive::{Atomizable, Parsable, Writable};
-pub(crate) use hdx_parser::{Box, Spanned, Vec};
-pub(crate) use macros::*;
+pub(crate) use hdx_parser::{Spanned, Vec};
 pub use traits::Value;
 
 pub trait ToSpecificity: Sized {

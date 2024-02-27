@@ -1,8 +1,8 @@
 use hdx_atom::{atom, Atom};
 use hdx_lexer::{PairWise, Token};
 use hdx_parser::{
-	expect, unexpected, AtRule as AtRuleTrait, Block as BlockTrait, Box, Parse, Parser,
-	QualifiedRule as QualifiedRuleTrait, Result as ParserResult, Span, Spanned, State, Vec,
+	expect, unexpected, AtRule as AtRuleTrait, Block as BlockTrait, Parse, Parser, QualifiedRule as QualifiedRuleTrait,
+	Result as ParserResult, Span, Spanned, State, Vec,
 };
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 #[cfg(feature = "serde")]
@@ -295,8 +295,8 @@ impl<'a> WriteCss<'a> for Block<'a> {
 #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
 pub struct AtRule<'a> {
 	pub name: Atom,
-	pub prelude: Box<'a, Spanned<ComponentValues<'a>>>,
-	pub block: Box<'a, Spanned<Block<'a>>>,
+	pub prelude: Spanned<ComponentValues<'a>>,
+	pub block: Spanned<Block<'a>>,
 }
 
 // https://drafts.csswg.org/css-syntax-3/#consume-an-at-rule
@@ -310,8 +310,7 @@ impl<'a> Parse<'a> for AtRule<'a> {
 				let block = block_opt.unwrap_or_else(|| {
 					Block { declarations: parser.new_vec(), rules: parser.new_vec() }.spanned(Span::dummy())
 				});
-				Ok(Self { name, prelude: parser.boxup(prelude), block: parser.boxup(block) }
-					.spanned(span.end(parser.pos())))
+				Ok(Self { name, prelude, block }.spanned(span.end(parser.pos())))
 			}
 			token => unexpected!(parser, token),
 		}
@@ -337,8 +336,8 @@ impl<'a> WriteCss<'a> for AtRule<'a> {
 #[derive(Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
 pub struct QualifiedRule<'a> {
-	pub prelude: Box<'a, Spanned<ComponentValues<'a>>>,
-	pub block: Box<'a, Spanned<Block<'a>>>,
+	pub prelude: Spanned<ComponentValues<'a>>,
+	pub block: Spanned<Block<'a>>,
 }
 
 // https://drafts.csswg.org/css-syntax-3/#consume-a-qualified-rule
@@ -346,7 +345,7 @@ impl<'a> Parse<'a> for QualifiedRule<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
 		let span = parser.span();
 		let (prelude, block) = Self::parse_qualified_rule(parser)?;
-		Ok(Self { prelude: parser.boxup(prelude), block: parser.boxup(block) }.spanned(span.end(parser.pos())))
+		Ok(Self { prelude, block }.spanned(span.end(parser.pos())))
 	}
 }
 

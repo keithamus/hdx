@@ -5,22 +5,22 @@ use serde::Serialize;
 
 use crate::{
 	css::{properties::StyleProperty, selector::Selectors},
-	Box, Spanned, Vec,
+	Spanned, Vec,
 };
 
 // https://drafts.csswg.org/cssom-1/#the-cssstylerule-interface
 #[derive(Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
 pub struct StyleRule<'a> {
-	pub selectors: Box<'a, Spanned<Selectors<'a>>>,
-	pub style: Box<'a, Spanned<StyleDeclaration<'a>>>,
+	pub selectors: Spanned<Selectors<'a>>,
+	pub style: Spanned<StyleDeclaration<'a>>,
 }
 
 impl<'a> Parse<'a> for StyleRule<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
 		let span = parser.span();
 		let (selectors, style) = Self::parse_qualified_rule(parser)?;
-		Ok(Self { selectors: parser.boxup(selectors), style: parser.boxup(style) }.spanned(span.end(parser.pos())))
+		Ok(Self { selectors, style }.spanned(span.end(parser.pos())))
 	}
 }
 

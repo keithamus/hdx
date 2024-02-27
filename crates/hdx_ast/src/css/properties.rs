@@ -7,12 +7,12 @@ use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 #[cfg(feature = "serde")]
 use serde::Serialize;
 
-use crate::{css::values, syntax::ComponentValues, Box};
+use crate::{css::values, syntax::ComponentValues};
 
 #[derive(Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
 pub struct Custom<'a> {
-	pub value: Box<'a, Spanned<ComponentValues<'a>>>,
+	pub value: Spanned<ComponentValues<'a>>,
 	// pub value_like: Spanned<values::ValueLike<'a>>,
 }
 
@@ -28,14 +28,14 @@ impl<'a> Parse<'a> for Custom<'a> {
 		parser.set(State::StopOnSemicolon);
 		let value = ComponentValues::parse(parser)?;
 		parser.unset(State::StopOnSemicolon);
-		Ok(Self { value: parser.boxup(value) }.spanned(span.end(parser.pos())))
+		Ok(Self { value }.spanned(span.end(parser.pos())))
 	}
 }
 
 #[derive(Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
 pub struct Computed<'a> {
-	pub value: Box<'a, Spanned<ComponentValues<'a>>>,
+	pub value: Spanned<ComponentValues<'a>>,
 	// pub value_like: Spanned<values::ValueLike<'a>>,
 }
 
@@ -51,14 +51,14 @@ impl<'a> Parse<'a> for Computed<'a> {
 		parser.set(State::StopOnSemicolon);
 		let value = ComponentValues::parse(parser)?;
 		parser.unset(State::StopOnSemicolon);
-		Ok(Self { value: parser.boxup(value) }.spanned(span.end(parser.pos())))
+		Ok(Self { value }.spanned(span.end(parser.pos())))
 	}
 }
 
 #[derive(Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
 pub struct Unknown<'a> {
-	pub value: Box<'a, Spanned<ComponentValues<'a>>>,
+	pub value: Spanned<ComponentValues<'a>>,
 }
 
 impl<'a> Parse<'a> for Unknown<'a> {
@@ -67,7 +67,7 @@ impl<'a> Parse<'a> for Unknown<'a> {
 		parser.set(State::StopOnSemicolon);
 		let value = ComponentValues::parse(parser)?;
 		parser.unset(State::StopOnSemicolon);
-		Ok(Self { value: parser.boxup(value) }.spanned(span.end(parser.pos())))
+		Ok(Self { value }.spanned(span.end(parser.pos())))
 	}
 }
 
@@ -141,11 +141,11 @@ macro_rules! properties {
 			Unset,
 			Revert,
 			RevertLayer,
-			Custom(Box<'a, Spanned<Custom<'a>>>),
-			Computed(Box<'a, Spanned<Computed<'a>>>),
-			Unknown(Box<'a, Spanned<Unknown<'a>>>),
+			Custom(Spanned<Custom<'a>>),
+			Computed(Spanned<Computed<'a>>),
+			Unknown(Spanned<Unknown<'a>>),
 			$(
-				$name(Box<'a, Spanned<values::$name$(<$a>)?>>),
+				$name(Spanned<values::$name$(<$a>)?>),
 			)+
 		}
 
@@ -178,6 +178,10 @@ macro_rules! properties {
 						parser.advance();
 						let name = atom.to_ascii_lowercase();
 						match name {
+							_ if name.starts_with("--") => {
+								let custom = Custom::parse(parser)?;
+								(atom, StyleValue::Custom(custom))
+							},
 							$(
 							$atom => {
 								let value = match parser.cur() {
@@ -205,11 +209,11 @@ macro_rules! properties {
 										_ => {
 											let checkpoint = parser.checkpoint();
 											if let Ok(value) = values::$name::parse(parser) {
-												StyleValue::$name(parser.boxup(value))
+												StyleValue::$name(value)
 											} else if is_computed_token(parser.cur()) {
 												parser.rewind(checkpoint);
 												let value = Computed::parse(parser)?;
-												StyleValue::Computed(parser.boxup(value))
+												StyleValue::Computed(value)
 											} else {
 												parser.rewind(checkpoint);
 												unexpected!(parser)
@@ -219,15 +223,15 @@ macro_rules! properties {
 									_ => {
 										if is_computed_token(parser.cur()) {
 											let value = Computed::parse(parser)?;
-											StyleValue::Computed(parser.boxup(value))
+											StyleValue::Computed(value)
 										} else {
 											let checkpoint = parser.checkpoint();
 											if let Ok(value) = values::$name::parse(parser) {
-												StyleValue::$name(parser.boxup(value))
+												StyleValue::$name(value)
 											} else if is_computed_token(parser.cur()) {
 												parser.rewind(checkpoint);
 												let value = Computed::parse(parser)?;
-												StyleValue::Computed(parser.boxup(value))
+												StyleValue::Computed(value)
 											} else {
 												parser.rewind(checkpoint);
 												unexpected!(parser)
@@ -241,7 +245,7 @@ macro_rules! properties {
 							_ => {
 								let value = Unknown::parse(parser)?;
 								parser.warn(diagnostics::UnknownDeclaration(value.span).into());
-								(atom, StyleValue::Unknown(parser.boxup(value)))
+								(atom, StyleValue::Unknown(value))
 							}
 						}
 					},

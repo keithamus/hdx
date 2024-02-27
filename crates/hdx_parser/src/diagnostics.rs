@@ -51,6 +51,14 @@ pub struct BadDeclaration(#[label("This is not valid syntax for a declaration.")
 pub struct Unexpected(pub Token, #[label("This wasn't expected here")] pub Span);
 
 #[derive(Debug, Error, Diagnostic)]
+#[error("Unexpected charset '{0}'. '{0}' isn't allowed here. This must be a valid IANA language code.")]
+#[diagnostic(help("Consider removing the rule or setting this to 'utf-8'"), code(hdx_parser::UnexpectedCharset))]
+pub struct UnexpectedCharset(
+	pub Atom,
+	#[label("This charset code is not allowed here")] pub Span,
+);
+
+#[derive(Debug, Error, Diagnostic)]
 #[error("Unexpected identifier '{0}'")]
 #[diagnostic(help("Try removing the word here."), code(hdx_parser::UnexpectedIdent))]
 pub struct UnexpectedIdent(pub Atom, #[label("??")] pub Span);

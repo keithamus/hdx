@@ -4,15 +4,15 @@ use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 #[cfg(feature = "serde")]
 use serde::Serialize;
 
-use super::component_values::{ComponentValues, Block};
-use crate::{Atom, Box, Spanned};
+use super::component_values::{Block, ComponentValues};
+use crate::{Atom, Spanned};
 
 #[derive(Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
 pub struct UnknownAtRule<'a> {
 	pub name: Atom,
-	pub prelude: Box<'a, Option<Spanned<ComponentValues<'a>>>>,
-	pub block: Box<'a, Option<Spanned<Block<'a>>>>,
+	pub prelude: Option<Spanned<ComponentValues<'a>>>,
+	pub block: Option<Spanned<Block<'a>>>,
 }
 
 impl<'a> Parse<'a> for UnknownAtRule<'a> {
@@ -21,7 +21,7 @@ impl<'a> Parse<'a> for UnknownAtRule<'a> {
 		match parser.cur() {
 			Token::AtKeyword(name) => {
 				let (prelude, block) = Self::parse_at_rule(parser)?;
-				Ok(Self { name, prelude: parser.boxup(prelude), block: parser.boxup(block) }.spanned(span.end(parser.pos())))
+				Ok(Self { name, prelude, block }.spanned(span.end(parser.pos())))
 			}
 			token => unexpected!(parser, token),
 		}
@@ -48,15 +48,15 @@ impl<'a> WriteCss<'a> for UnknownAtRule<'a> {
 #[derive(Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
 pub struct UnknownRule<'a> {
-	pub prelude: Box<'a, Spanned<ComponentValues<'a>>>,
-	pub block: Box<'a, Spanned<Block<'a>>>,
+	pub prelude: Spanned<ComponentValues<'a>>,
+	pub block: Spanned<Block<'a>>,
 }
 
 impl<'a> Parse<'a> for UnknownRule<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
 		let span = parser.span();
 		let (prelude, block) = Self::parse_qualified_rule(parser)?;
-		Ok(Self { prelude: parser.boxup(prelude), block: parser.boxup(block) }.spanned(span.end(parser.pos())))
+		Ok(Self { prelude, block }.spanned(span.end(parser.pos())))
 	}
 }
 

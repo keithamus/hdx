@@ -1,8 +1,31 @@
-use proc_macro2::TokenStream;
+use proc_macro2::{Span, TokenStream};
 use quote::quote;
-use syn::{Data, DataEnum, DataStruct, DeriveInput, Fields, LitStr};
+use syn::{
+	parse::Parse, punctuated::Punctuated, Attribute, Data, DataEnum, DataStruct, DeriveInput, Fields, LitStr, Meta, Token,
+};
 
 use crate::{err, kebab};
+
+#[derive(Debug)]
+struct AtomizableArgs(String);
+
+impl Parse for AtomizableArgs {
+	fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
+		Ok(Self(input.parse::<LitStr>()?.value()))
+	}
+}
+
+impl AtomizableArgs {
+	fn parse(attrs: &[Attribute]) -> Option<Self> {
+		if let Some(Attribute { meta: Meta::List(meta), .. }) = &attrs.iter().find(|a| a.path().is_ident("atomizable"))
+		{
+			let args = meta.parse_args_with(Punctuated::<AtomizableArgs, Token![,]>::parse_terminated).unwrap();
+			args.into_iter().next()
+		} else {
+			None
+		}
+	}
+}
 
 pub fn derive(input: DeriveInput) -> TokenStream {
 	let ident = input.ident;
@@ -12,7 +35,13 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 			let mut match_enum_variant_to_atom = Vec::new();
 			for var in variants {
 				let var_ident = var.ident;
-				let str = LitStr::new(kebab(format!("{}", var_ident)).as_str(), var_ident.span());
+				let var_args = AtomizableArgs::parse(&var.attrs);
+				let ident = if let Some(name) = var_args {
+					name.0
+				} else {
+					kebab(format!("{}", var_ident))
+				};
+				let str = LitStr::new(&ident, var_ident.span());
 				match_atom_to_enum_variant.push(quote! {
 					hdx_atom::atom!(#str) => Some(Self::#var_ident),
 				});
@@ -66,9 +95,7 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 				}
 			}
 		}
-		Data::Struct(_) => {
-			err(ident.span(), "Cannot derive Atomizable on a struct with named or no fields")
-		}
+		Data::Struct(_) => err(ident.span(), "Cannot derive Atomizable on a struct with named or no fields"),
 		Data::Union(_) => err(ident.span(), "Cannot derive Atomizable on a Union"),
 	}
 }
