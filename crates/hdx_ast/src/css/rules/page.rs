@@ -348,8 +348,8 @@ mod tests {
 	#[test]
 	fn size_test() {
 		use std::mem::size_of;
-		assert_eq!(size_of::<PageRule>(), 16);
-		assert_eq!(size_of::<MarginRule>(), 16);
+		assert_eq!(size_of::<PageRule>(), 112);
+		assert_eq!(size_of::<MarginRule>(), 80);
 		assert_eq!(size_of::<PagePseudoClass>(), 1);
 		assert_eq!(size_of::<PageMarginBox>(), 1);
 		assert_eq!(size_of::<PagePseudoClass>(), 1);

@@ -32,9 +32,9 @@ macro_rules! length {
 		}
 
 		impl Length {
-			pub fn new(val: CSSFloat, atom: Atom) -> Option<Length> {
+			pub fn new(val: CSSFloat, atom: Atom) -> Option<Self> {
 				match atom {
-					$(atom!($atom) => Some(Length::$name(val)),)+
+					$(atom!($atom) => Some(Self::$name(val)),)+
 					_ => None
 				}
 			}
@@ -74,10 +74,10 @@ macro_rules! length {
 		}
 
 		impl LengthPercentage {
-			pub fn new(val: CSSFloat, atom: Atom) -> Option<LengthPercentage> {
+			pub fn new(val: CSSFloat, atom: Atom) -> Option<Self> {
 				match atom {
-					$(atom!($atom) => Some(LengthPercentage::$name(val)),)+
-					atom!("%") => Some(LengthPercentage::Percent(val)),
+					$(atom!($atom) => Some(Self::$name(val)),)+
+					atom!("%") => Some(Self::Percent(val)),
 					_ => None
 				}
 			}
@@ -164,6 +164,34 @@ length! {
 	Cqmax: "cqmax", // atom!("cqmax")
 }
 
+#[derive(Writable, Default, Debug, Clone, Copy, PartialEq, Hash)]
+#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+pub enum LengthPercentageOrAuto {
+	#[default]
+	Auto,
+	LengthPercentage(LengthPercentage),
+}
+
+impl FromToken for LengthPercentageOrAuto {
+	fn from_token(token: Token) -> Option<Self> {
+		match token {
+			Token::Ident(atom) => match atom.to_ascii_lowercase() {
+				atom!("auto") => Some(Self::Auto),
+				_ => None
+			},
+			Token::Dimension(val, unit, _) => {
+				if let Some(l) = LengthPercentage::new(val.into(), unit) {
+					Some(Self::LengthPercentage(l))
+				} else {
+					None
+				}
+			},
+			Token::Number(val, _) if val == 0.0 => Some(Self::LengthPercentage(LengthPercentage::Zero)),
+			_ => None
+		}
+	}
+}
+
 #[cfg(test)]
 mod tests {
 	use oxc_allocator::Allocator;
@@ -175,6 +203,7 @@ mod tests {
 	fn size_test() {
 		assert_eq!(::std::mem::size_of::<Length>(), 8);
 		assert_eq!(::std::mem::size_of::<LengthPercentage>(), 8);
+		assert_eq!(::std::mem::size_of::<LengthPercentageOrAuto>(), 8);
 	}
 
 	#[test]
@@ -187,5 +216,6 @@ mod tests {
 		test_write::<Length>(&allocator, "-1.0px", "-1px");
 		// Percent
 		test_write::<LengthPercentage>(&allocator, "1%", "1%");
+		test_write::<LengthPercentageOrAuto>(&allocator, "auto", "auto");
 	}
 }

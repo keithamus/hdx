@@ -13,6 +13,7 @@ pub enum WritableArg {
 	Suffix(String),
 	Prefix(String),
 	Rename(String),
+	String,
 }
 
 impl Parse for WritableArg {
@@ -21,6 +22,8 @@ impl Parse for WritableArg {
 		if ident == "as_function" {
 			input.parse::<Token![=]>()?;
 			Ok(Self::AsFunction(input.parse::<LitStr>()?.value()))
+		} else if ident == "String" {
+			Ok(Self::String)
 		} else if ident == "suffix" {
 			input.parse::<Token![=]>()?;
 			Ok(Self::Suffix(input.parse::<LitStr>()?.value()))
@@ -36,8 +39,14 @@ impl Parse for WritableArg {
 	}
 }
 
+pub enum WritableKind {
+	String,
+	Function(String),
+	None,
+}
+
 pub struct WritableArgs {
-	as_function: Option<String>,
+	kind: WritableKind,
 	suffix: Option<String>,
 	prefix: Option<String>,
 	rename: Option<String>,
@@ -45,12 +54,13 @@ pub struct WritableArgs {
 
 impl WritableArgs {
 	fn parse(attrs: &[Attribute]) -> Self {
-		let mut ret = Self { as_function: None, suffix: None, prefix: None, rename: None };
+		let mut ret = Self { kind: WritableKind::None, suffix: None, prefix: None, rename: None };
 		if let Some(Attribute { meta: Meta::List(meta), .. }) = &attrs.iter().find(|a| a.path().is_ident("writable")) {
 			let args = meta.parse_args_with(Punctuated::<WritableArg, Token![,]>::parse_terminated).unwrap();
 			for arg in args {
 				match arg {
-					WritableArg::AsFunction(s) => ret.as_function = Some(s),
+					WritableArg::AsFunction(s) => ret.kind = WritableKind::Function(s),
+					WritableArg::String => ret.kind = WritableKind::String,
 					WritableArg::Suffix(s) => ret.suffix = Some(s),
 					WritableArg::Prefix(s) => ret.prefix = Some(s),
 					WritableArg::Rename(s) => ret.rename = Some(s),
@@ -76,18 +86,25 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 							&args.rename.unwrap_or_else(|| kebab(format!("{}", var_ident))),
 							var_ident.span(),
 						);
-						let mut fn_head = None;
-						let mut fn_tail = None;
+						let mut head = None;
+						let mut tail = None;
 						let mut prefix = None;
 						let mut suffix = None;
-						if let Some(str) = args.as_function {
-							fn_head = Some(quote! {
-								hdx_atom::atom!(#str).write_css(sink)?;
-								sink.write_char('(')?;
-							});
-							fn_tail = Some(quote! {
-								sink.write_char(')')?;
-							});
+						match args.kind {
+							WritableKind::Function(str) => {
+								head = Some(quote! {
+									hdx_atom::atom!(#str).write_css(sink)?;
+									sink.write_char('(')?;
+								});
+								tail = Some(quote! {
+									sink.write_char(')')?;
+								});
+							},
+							WritableKind::String => {
+								head = Some(quote! { sink.write_char('"')?; });
+								tail = Some(quote! { sink.write_char('"')?; });
+							},
+							WritableKind::None => {},
 						}
 						if let Some(str) = args.prefix {
 							prefix = Some(quote! {
@@ -101,12 +118,12 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 						}
 						matchers.push(quote! {
 							Self::#var_ident => {
-								#fn_head
+								#head
 								#prefix
 								// This is the write of the UNIT
 								hdx_atom::atom!(#str).write_css(sink)?;
 								#suffix
-								#fn_tail
+								#tail
 							}
 						});
 					}
@@ -120,18 +137,25 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 								#fname.write_css(sink)?;
 							});
 						}
-						let mut fn_head = None;
-						let mut fn_tail = None;
+						let mut head = None;
+						let mut tail = None;
 						let mut prefix = None;
 						let mut suffix = None;
-						if let Some(str) = args.as_function {
-							fn_head = Some(quote! {
-								hdx_atom::atom!(#str).write_css(sink)?;
-								sink.write_char('(')?;
-							});
-							fn_tail = Some(quote! {
-								sink.write_char(')')?;
-							});
+						match args.kind {
+							WritableKind::Function(str) => {
+								head = Some(quote! {
+									hdx_atom::atom!(#str).write_css(sink)?;
+									sink.write_char('(')?;
+								});
+								tail = Some(quote! {
+									sink.write_char(')')?;
+								});
+							}
+							WritableKind::String => {
+								head = Some(quote! { sink.write_char('"')?; });
+								tail = Some(quote! { sink.write_char('"')?; });
+							}
+							WritableKind::None => {},
 						}
 						if let Some(str) = args.prefix {
 							prefix = Some(quote! {
@@ -145,11 +169,11 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 						}
 						matchers.push(quote! {
 							Self::#var_ident(#(#field_extract)*) => {
-								#fn_head
+								#head
 								#prefix
 								#(#field_writes)*
 								#suffix
-								#fn_tail
+								#tail
 							}
 						});
 					}
@@ -182,18 +206,25 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 					self.#idx.write_css(sink)?;
 				});
 			}
-			let mut fn_head = None;
-			let mut fn_tail = None;
+			let mut head = None;
+			let mut tail = None;
 			let mut prefix = None;
 			let mut suffix = None;
-			if let Some(str) = input_args.as_function {
-				fn_head = Some(quote! {
-					hdx_atom::atom!(#str).write_css(sink)?;
-					sink.write_char('(')?;
-				});
-				fn_tail = Some(quote! {
-					sink.write_char(')')?;
-				});
+			match input_args.kind {
+				WritableKind::Function(str) => {
+					head = Some(quote! {
+						hdx_atom::atom!(#str).write_css(sink)?;
+						sink.write_char('(')?;
+					});
+					tail = Some(quote! {
+						sink.write_char(')')?;
+					});
+				}
+				WritableKind::String => {
+					head = Some(quote! { sink.write_char('"')?; });
+					tail = Some(quote! { sink.write_char('"')?; });
+				}
+				WritableKind::None => {},
 			}
 			if let Some(str) = input_args.prefix {
 				prefix = Some(quote! {
@@ -210,11 +241,11 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 				impl<'a> ::hdx_writer::WriteCss<'a> for #ident {
 					fn write_css<W: ::hdx_writer::CssWriter>(&self, sink: &mut W) -> ::hdx_writer::Result {
 						use ::hdx_writer::{WriteCss, CssWriter};
-						#fn_head
+						#head
 						#prefix
 						#(#field_writes)*
 						#suffix
-						#fn_tail
+						#tail
 						Ok(())
 					}
 				}

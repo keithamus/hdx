@@ -426,14 +426,14 @@ mod test {
 
 	#[test]
 	fn size_test() {
-		assert_eq!(::std::mem::size_of::<Selector>(), 8);
-		assert_eq!(::std::mem::size_of::<ForgivingSelector>(), 8);
-		assert_eq!(::std::mem::size_of::<RelativeSelector>(), 8);
-		assert_eq!(::std::mem::size_of::<Component>(), 24);
+		assert_eq!(::std::mem::size_of::<Selector>(), 32);
+		assert_eq!(::std::mem::size_of::<ForgivingSelector>(), 32);
+		assert_eq!(::std::mem::size_of::<RelativeSelector>(), 32);
+		assert_eq!(::std::mem::size_of::<Component>(), 48);
 		assert_eq!(::std::mem::size_of::<PseudoElement>(), 1);
 		assert_eq!(::std::mem::size_of::<LegacyPseudoElement>(), 1);
 		assert_eq!(::std::mem::size_of::<PseudoClass>(), 1);
-		assert_eq!(::std::mem::size_of::<PseudoFunction>(), 16);
+		assert_eq!(::std::mem::size_of::<PseudoFunction>(), 40);
 		assert_eq!(::std::mem::size_of::<DirValue>(), 1);
 		assert_eq!(::std::mem::size_of::<Combinator>(), 1);
 		assert_eq!(::std::mem::size_of::<ANB>(), 8);

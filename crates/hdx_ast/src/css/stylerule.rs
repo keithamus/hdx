@@ -92,7 +92,7 @@ mod test {
 	#[test]
 	fn size_test() {
 		use std::mem::size_of;
-		assert_eq!(size_of::<StyleRule>(), 16);
+		assert_eq!(size_of::<StyleRule>(), 112);
 	}
 
 	#[test]

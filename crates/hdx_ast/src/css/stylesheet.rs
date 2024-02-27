@@ -125,7 +125,7 @@ mod tests {
 	fn size_test() {
 		use std::mem::size_of;
 		assert_eq!(size_of::<StyleSheet>(), 32);
-		assert_eq!(size_of::<Rule>(), 16);
+		assert_eq!(size_of::<Rule>(), 136);
 		assert_eq!(size_of::<AtRuleId>(), 1);
 	}
 

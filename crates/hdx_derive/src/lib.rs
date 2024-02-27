@@ -2,6 +2,7 @@ use proc_macro::TokenStream;
 
 mod string_transform;
 
+mod value;
 mod atomizable;
 mod parsable;
 mod writable;
@@ -9,6 +10,12 @@ mod writable;
 use proc_macro2::Span;
 pub(crate) use string_transform::*;
 use syn::Error;
+
+#[proc_macro_derive(Value, attributes(value))]
+pub fn derive_value(stream: TokenStream) -> TokenStream {
+	let input = syn::parse(stream).unwrap();
+	value::derive(input).into()
+}
 
 #[proc_macro_derive(Atomizable, attributes(atomizable))]
 pub fn derive_atomizable(stream: TokenStream) -> TokenStream {

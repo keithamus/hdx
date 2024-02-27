@@ -244,30 +244,38 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 								));
 							} else {
 								let field = unnamed[0].clone().ty;
-								let match_arm = match args.kind {
-									Kind::DimensionOrZero => quote! {
-										hdx_lexer::Token::Dimension(val, _, ty) |
-										hdx_lexer::Token::Number(val @ 0.0, ty)
-									},
-									Kind::DimensionOrNumber => quote! {
-										hdx_lexer::Token::Dimension(val, _, ty) |
-										hdx_lexer::Token::Number(val, ty)
-									},
-									_ => quote! {
-										hdx_lexer::Token::Dimension(val, _, ty)
-									},
-								};
 								if args.parse_inner {
 									dimension_matcher = Some(quote! {
-										#match_arm => {
+										hdx_lexer::Token::Dimension(val, _, ty) => {
 											#checks
 											let parsed = #field::parse(parser);
 											Ok(Self::#var_ident(parsed).spanned(span.end(parser.pos())))
 										},
 									});
+									number_matcher = match args.kind {
+										Kind::DimensionOrZero => Some(
+											quote! {
+												hdx_lexer::Token::Number(val, ty) if val == 0.0 => {
+													#checks
+													let parsed = #field::parse(parser);
+													Ok(Self::#var_ident(parsed).spanned(span.end(parser.pos())))
+												}
+											}
+										),
+										Kind::DimensionOrNumber => Some(
+											quote! {
+												hdx_lexer::Token::Number(val, ty) {
+													#checks
+													let parsed = #field::parse(parser);
+													Ok(Self::#var_ident(parsed).spanned(span.end(parser.pos())))
+												}
+											}
+										),
+										_ => number_matcher,
+									};
 								} else if args.from_token {
 									dimension_matcher = Some(quote! {
-										#match_arm => {
+										hdx_lexer::Token::Dimension(val, _, ty) => {
 											#checks
 											if let Some(val) = #field::from_token(parser.cur()) {
 												parser.advance();
@@ -277,6 +285,35 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 											}
 										},
 									});
+									number_matcher = match args.kind {
+										Kind::DimensionOrZero => Some(
+											quote! {
+												hdx_lexer::Token::Number(val, ty) if val == 0.0 => {
+													#checks
+													if let Some(val) = #field::from_token(parser.cur()) {
+														parser.advance();
+														Ok(Self::#var_ident(val.into()).spanned(span))
+													} else {
+														hdx_parser::unexpected!(parser)
+													}
+												}
+											}
+										),
+										Kind::DimensionOrNumber => Some(
+											quote! {
+												hdx_lexer::Token::Number(val, ty) {
+													#checks
+													if let Some(val) = #field::from_token(parser.cur()) {
+														parser.advance();
+														Ok(Self::#var_ident(val.into()).spanned(span))
+													} else {
+														hdx_parser::unexpected!(parser)
+													}
+												}
+											}
+										),
+										_ => number_matcher,
+									};
 								} else {
 									dimension_matchers.push(quote! {
 										hdx_atom::atom!(#str) => {

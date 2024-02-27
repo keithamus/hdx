@@ -8,9 +8,10 @@ pub mod traits;
 #[cfg(test)]
 pub mod test_helpers;
 
+extern crate self as hdx_ast;
 pub(crate) use bitmask_enum::bitmask;
 pub(crate) use hdx_atom::{atom, Atom, Atomizable};
-pub(crate) use hdx_derive::{Atomizable, Parsable, Writable};
+pub(crate) use hdx_derive::{Atomizable, Parsable, Value, Writable};
 pub(crate) use hdx_parser::{Spanned, Vec};
 pub use traits::Value;
 
