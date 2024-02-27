@@ -40,10 +40,10 @@
                       "important": false,
                       "name": "--zero-size",
                       "value": {
-                        "Unknown": {
+                        "Custom": {
                           "end": 58,
                           "node": {
-                            "type": "Unknown",
+                            "type": "Custom",
                             "value": {
                               "end": 58,
                               "node": [
@@ -175,10 +175,10 @@
                       "important": false,
                       "name": "--small-icon",
                       "value": {
-                        "Unknown": {
+                        "Custom": {
                           "end": 119,
                           "node": {
-                            "type": "Unknown",
+                            "type": "Custom",
                             "value": {
                               "end": 119,
                               "node": [

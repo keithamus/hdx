@@ -40,10 +40,10 @@
                       "important": false,
                       "name": "--number",
                       "value": {
-                        "Unknown": {
+                        "Custom": {
                           "end": 22,
                           "node": {
-                            "type": "Unknown",
+                            "type": "Custom",
                             "value": {
                               "end": 22,
                               "node": [
@@ -76,10 +76,10 @@
                       "important": false,
                       "name": "--unit",
                       "value": {
-                        "Unknown": {
+                        "Custom": {
                           "end": 39,
                           "node": {
-                            "type": "Unknown",
+                            "type": "Custom",
                             "value": {
                               "end": 39,
                               "node": [
@@ -113,10 +113,10 @@
                       "important": false,
                       "name": "--color",
                       "value": {
-                        "Unknown": {
+                        "Custom": {
                           "end": 56,
                           "node": {
-                            "type": "Unknown",
+                            "type": "Custom",
                             "value": {
                               "end": 56,
                               "node": [
@@ -144,10 +144,10 @@
                       "important": false,
                       "name": "--function",
                       "value": {
-                        "Unknown": {
+                        "Custom": {
                           "end": 84,
                           "node": {
-                            "type": "Unknown",
+                            "type": "Custom",
                             "value": {
                               "end": 84,
                               "node": [
@@ -229,10 +229,10 @@
                       "important": false,
                       "name": "--variable",
                       "value": {
-                        "Unknown": {
+                        "Custom": {
                           "end": 111,
                           "node": {
-                            "type": "Unknown",
+                            "type": "Custom",
                             "value": {
                               "end": 111,
                               "node": [
@@ -274,10 +274,10 @@
                       "important": false,
                       "name": "--string",
                       "value": {
-                        "Unknown": {
+                        "Custom": {
                           "end": 148,
                           "node": {
-                            "type": "Unknown",
+                            "type": "Custom",
                             "value": {
                               "end": 148,
                               "node": [
@@ -305,10 +305,10 @@
                       "important": false,
                       "name": "--string",
                       "value": {
-                        "Unknown": {
+                        "Custom": {
                           "end": 184,
                           "node": {
-                            "type": "Unknown",
+                            "type": "Custom",
                             "value": {
                               "end": 184,
                               "node": [
@@ -336,10 +336,10 @@
                       "important": false,
                       "name": "--square-block",
                       "value": {
-                        "Unknown": {
+                        "Custom": {
                           "end": 214,
                           "node": {
-                            "type": "Unknown",
+                            "type": "Custom",
                             "value": {
                               "end": 214,
                               "node": [
@@ -440,10 +440,10 @@
                       "important": false,
                       "name": "--round-block",
                       "value": {
-                        "Unknown": {
+                        "Custom": {
                           "end": 242,
                           "node": {
-                            "type": "Unknown",
+                            "type": "Custom",
                             "value": {
                               "end": 242,
                               "node": [
@@ -544,10 +544,10 @@
                       "important": false,
                       "name": "--empty1",
                       "value": {
-                        "Unknown": {
+                        "Custom": {
                           "end": 257,
                           "node": {
-                            "type": "Unknown",
+                            "type": "Custom",
                             "value": {
                               "end": 257,
                               "node": [],
@@ -566,10 +566,10 @@
                       "important": false,
                       "name": "--empty2",
                       "value": {
-                        "Unknown": {
+                        "Custom": {
                           "end": 275,
                           "node": {
-                            "type": "Unknown",
+                            "type": "Custom",
                             "value": {
                               "end": 275,
                               "node": [],
@@ -588,10 +588,10 @@
                       "important": false,
                       "name": "--empty3",
                       "value": {
-                        "Unknown": {
+                        "Custom": {
                           "end": 299,
                           "node": {
-                            "type": "Unknown",
+                            "type": "Custom",
                             "value": {
                               "end": 299,
                               "node": [
@@ -627,10 +627,10 @@
                       "important": false,
                       "name": "--empty4",
                       "value": {
-                        "Unknown": {
+                        "Custom": {
                           "end": 327,
                           "node": {
-                            "type": "Unknown",
+                            "type": "Custom",
                             "value": {
                               "end": 327,
                               "node": [
@@ -666,10 +666,10 @@
                       "important": false,
                       "name": "--empty5",
                       "value": {
-                        "Unknown": {
+                        "Custom": {
                           "end": 345,
                           "node": {
-                            "type": "Unknown",
+                            "type": "Custom",
                             "value": {
                               "end": 345,
                               "node": [],
@@ -688,10 +688,10 @@
                       "important": false,
                       "name": "--bracket-block",
                       "value": {
-                        "Unknown": {
+                        "Custom": {
                           "end": 376,
                           "node": {
-                            "type": "Unknown",
+                            "type": "Custom",
                             "value": {
                               "end": 376,
                               "node": [
@@ -792,10 +792,10 @@
                       "important": false,
                       "name": "--JSON",
                       "value": {
-                        "Unknown": {
+                        "Custom": {
                           "end": 421,
                           "node": {
-                            "type": "Unknown",
+                            "type": "Custom",
                             "value": {
                               "end": 421,
                               "node": [
@@ -997,10 +997,10 @@
                       "important": false,
                       "name": "--javascript",
                       "value": {
-                        "Unknown": {
+                        "Custom": {
                           "end": 475,
                           "node": {
-                            "type": "Unknown",
+                            "type": "Custom",
                             "value": {
                               "end": 475,
                               "node": [
@@ -1138,10 +1138,10 @@
                       "important": false,
                       "name": "--a",
                       "value": {
-                        "Unknown": {
+                        "Custom": {
                           "end": 491,
                           "node": {
-                            "type": "Unknown",
+                            "type": "Custom",
                             "value": {
                               "end": 491,
                               "node": [
@@ -1218,10 +1218,10 @@
                       "important": false,
                       "name": "--empty-end",
                       "value": {
-                        "Unknown": {
+                        "Custom": {
                           "end": 528,
                           "node": {
-                            "type": "Unknown",
+                            "type": "Custom",
                             "value": {
                               "end": 528,
                               "node": [],
@@ -1284,10 +1284,10 @@
                       "important": false,
                       "name": "--a",
                       "value": {
-                        "Unknown": {
+                        "Custom": {
                           "end": 543,
                           "node": {
-                            "type": "Unknown",
+                            "type": "Custom",
                             "value": {
                               "end": 543,
                               "node": [],

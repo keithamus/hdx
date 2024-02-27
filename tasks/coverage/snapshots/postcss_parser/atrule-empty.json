@@ -7,15 +7,14 @@
         "node": {
           "end": 18,
           "node": {
-            "encoding": "UTF-8",
-            "type": "Charset"
+            "type": "Utf8"
           },
-          "start": 0
+          "start": 17
         },
         "start": 0
       }
     ],
-    "type": "Stylesheet"
+    "type": "StyleSheet"
   },
   "start": 0
 }
