@@ -1,6 +1,6 @@
 use hdx_atom::atom;
 use hdx_lexer::Token;
-use hdx_parser::{Parse, Parser, Result as ParserResult, unexpected, Spanned};
+use hdx_parser::{unexpected, Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 #[cfg(feature = "serde")]
 use serde::Serialize;
@@ -8,7 +8,7 @@ use serde::Serialize;
 use crate::{bitmask, Atomizable, Value};
 
 // https://drafts.csswg.org/css-text-4/#propdef-white-space-trim
-#[derive(Default, Atomizable)]
+#[derive(Value, Default, Atomizable)]
 #[bitmask(u8)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde())]
 pub enum WhiteSpaceTrim {
@@ -19,11 +19,8 @@ pub enum WhiteSpaceTrim {
 	DiscardInner = 0b0100,  // atom!("discard-inner")
 }
 
-impl Value for WhiteSpaceTrim {}
-
 impl<'a> Parse<'a> for WhiteSpaceTrim {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
-		let span = parser.span();
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		let mut value = Self::none();
 		loop {
 			if value.is_all() {
@@ -31,25 +28,17 @@ impl<'a> Parse<'a> for WhiteSpaceTrim {
 			}
 			match parser.cur() {
 				Token::Ident(atom) => match atom.to_ascii_lowercase() {
-					atom!("none") if value.is_none() => {
-						return Ok(Self::None.spanned(span.end(parser.pos())));
-					}
-					atom!("discard-before") if !value.contains(Self::DiscardBefore) => {
-						value |= Self::DiscardBefore
-					}
-					atom!("discard-after") if !value.contains(Self::DiscardAfter) => {
-						value |= Self::DiscardAfter
-					}
-					atom!("discard-inner") if !value.contains(Self::DiscardInner) => {
-						value |= Self::DiscardInner
-					},
-					_ => break
+					atom!("none") if value.is_none() => return Ok(Self::None),
+					atom!("discard-before") if !value.contains(Self::DiscardBefore) => value |= Self::DiscardBefore,
+					atom!("discard-after") if !value.contains(Self::DiscardAfter) => value |= Self::DiscardAfter,
+					atom!("discard-inner") if !value.contains(Self::DiscardInner) => value |= Self::DiscardInner,
+					_ => break,
 				},
-				token => unexpected!(parser, token)
+				token => unexpected!(parser, token),
 			}
 			parser.advance();
 		}
-		Ok(value.spanned(span.end(parser.pos())))
+		Ok(value)
 	}
 }
 

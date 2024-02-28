@@ -1,10 +1,10 @@
 #[cfg(feature = "serde")]
 use serde::Serialize;
 
-use crate::{Atomizable, Parsable, Writable, Value};
+use crate::{Atomizable, Parsable, Value, Writable};
 
 // https://drafts.csswg.org/css-break-4/#propdef-break-before
-#[derive(Parsable, Writable, Atomizable, Default, Debug, PartialEq, Hash)]
+#[derive(Value, Parsable, Writable, Atomizable, Default, Debug, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type", rename_all = "kebab-case"))]
 pub enum BreakBefore {
 	#[default]
@@ -23,8 +23,6 @@ pub enum BreakBefore {
 	AvoidRegion, // atom!("avoid-region")
 	Region,      // atom!("region")
 }
-
-impl Value for BreakBefore {}
 
 #[cfg(test)]
 mod tests {

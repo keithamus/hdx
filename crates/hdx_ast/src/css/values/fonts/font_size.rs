@@ -3,27 +3,22 @@ use serde::Serialize;
 
 use crate::{css::values::units::LengthPercentage, Parsable, Value, Writable};
 
-#[derive(Parsable, Writable, Default, PartialEq, Debug, Hash)]
+#[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Hash)]
+#[value(Inherits)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde())]
 pub enum FontSize {
 	XxSmall, // atom!("xx-small")
-	XSmall, // atom!("x-small")
-	Small, // atom!("small")
+	XSmall,  // atom!("x-small")
+	Small,   // atom!("small")
 	#[default]
 	Medium, // atom!("medium")
-	Large, // atom!("large")
-	XLarge, // atom!("x-large")
+	Large,   // atom!("large")
+	XLarge,  // atom!("x-large")
 	XxLarge, // atom!("xx-large")
-	Larger, // atom!("larger")
+	Larger,  // atom!("larger")
 	Smaller, // atom!("smaller")
-	#[parsable(DimensionOrZero, FromToken, Check::Positive)]
-	LengthPercentage(LengthPercentage)
-}
-
-impl Value for FontSize {
-	fn inherits() -> bool {
-		true
-	}
+	#[parsable(DimensionOrZero, FromToken, Check::Range(1.0..))]
+	LengthPercentage(LengthPercentage),
 }
 
 #[cfg(test)]

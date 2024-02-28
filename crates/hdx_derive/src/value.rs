@@ -2,24 +2,15 @@ use proc_macro2::TokenStream;
 use quote::quote;
 use syn::{parse::Parse, punctuated::Punctuated, Attribute, DeriveInput, Error, Ident, Meta, Token};
 
-use crate::{err, kebab};
-
 #[derive(Clone, Debug)]
 enum ValueArg {
-	Inherits(bool),
+	Inherits,
 }
 
 impl Parse for ValueArg {
 	fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
 		match input.parse::<Ident>()? {
-			i if i == "Inherits" => {
-				input.parse::<Token![::]>()?;
-				match input.parse::<Ident>()? {
-					i if i == "No" => Ok(Self::Inherits(true)),
-					i if i == "Float" => Ok(Self::Inherits(false)),
-					ident => Err(Error::new(ident.span(), format!("Unrecognized Value arg Inherits::{:?}", ident)))?,
-				}
-			}
+			i if i == "Inherits" => Ok(Self::Inherits),
 			ident => Err(Error::new(ident.span(), format!("Unrecognized Value arg {:?}", ident)))?,
 		}
 	}
@@ -33,11 +24,11 @@ struct ValueArgs {
 impl ValueArgs {
 	fn parse(attrs: &[Attribute]) -> Self {
 		let mut ret = Self { inherits: false };
-		if let Some(Attribute { meta: Meta::List(meta), .. }) = &attrs.iter().find(|a| a.path().is_ident("parsable")) {
+		if let Some(Attribute { meta: Meta::List(meta), .. }) = &attrs.iter().find(|a| a.path().is_ident("value")) {
 			let args = meta.parse_args_with(Punctuated::<ValueArg, Token![,]>::parse_terminated).unwrap();
 			for arg in args {
 				match arg {
-					ValueArg::Inherits(b) => ret.inherits = b,
+					ValueArg::Inherits => ret.inherits = true,
 				}
 			}
 		}
@@ -49,7 +40,7 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 	let ident = input.ident;
 	let input_args = ValueArgs::parse(&input.attrs);
 	let inherits = if input_args.inherits {
-		Some(quote!{
+		Some(quote! {
 			fn inherits() -> bool { true }
 		})
 	} else {

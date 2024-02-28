@@ -2,9 +2,9 @@ use proc_macro::TokenStream;
 
 mod string_transform;
 
-mod value;
 mod atomizable;
 mod parsable;
+mod value;
 mod writable;
 
 use proc_macro2::Span;

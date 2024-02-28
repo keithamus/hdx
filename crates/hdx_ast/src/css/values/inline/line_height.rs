@@ -6,21 +6,16 @@ use crate::{
 	Parsable, Value, Writable,
 };
 
-#[derive(Parsable, Writable, Default, PartialEq, Debug, Hash)]
+#[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Hash)]
+#[value(Inherits)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde())]
 pub enum LineHeight {
 	#[default]
-	Normal, // atom!("medium")
-	#[parsable(Number, Check::Positive)]
+	Normal, // atom!("normal")
+	#[parsable(Number, Check::Range(1.0..))]
 	Number(CSSFloat),
-	#[parsable(Dimension, FromToken, Check::Positive)]
+	#[parsable(Dimension, FromToken, Check::Range(1.0..))]
 	LengthPercentage(LengthPercentage),
-}
-
-impl Value for LineHeight {
-	fn inherits() -> bool {
-		true
-	}
 }
 
 #[cfg(test)]

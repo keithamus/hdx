@@ -1,5 +1,5 @@
-use hdx_parser::{Parse, Parser, Spanned, Result as ParserResult, Span};
-use hdx_writer::{WriteCss, CssWriter, Result as WriterResult};
+use hdx_parser::{Parse, Parser, Result as ParserResult, Span, Spanned};
+use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 #[cfg(feature = "serde")]
 use serde::Serialize;
 
@@ -9,9 +9,12 @@ use serde::Serialize;
 pub struct All();
 
 impl<'a> Parse<'a> for All {
-	fn parse(_parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
+	fn parse(_parser: &mut Parser<'a>) -> ParserResult<Self> {
 		// All has no defined grammay beyond the global keywords
-		Ok(Self().spanned(Span::dummy()))
+		Ok(Self())
+	}
+	fn parse_spanned(_parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
+		Ok(Spanned { node: Self(), span: Span::dummy() })
 	}
 }
 

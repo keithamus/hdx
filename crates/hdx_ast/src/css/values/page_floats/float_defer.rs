@@ -1,7 +1,7 @@
 #[cfg(feature = "serde")]
 use serde::Serialize;
 
-use crate::{Parsable, Writable, css::values::units::CSSFloat};
+use crate::{css::values::units::CSSFloat, Parsable, Writable};
 
 // https://drafts.csswg.org/css-page-floats-3/#propdef-float-defer
 #[derive(Parsable, Writable, Default, Debug, PartialEq, Hash)]

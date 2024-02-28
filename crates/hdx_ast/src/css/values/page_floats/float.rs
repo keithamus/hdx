@@ -3,12 +3,12 @@ use serde::Serialize;
 
 use hdx_atom::atom;
 use hdx_lexer::Token;
-use hdx_parser::{diagnostics, expect, unexpected, unexpected_ident, FromToken, Parse};
+use hdx_parser::{diagnostics, expect, unexpected, unexpected_ident, FromToken, Parse, Parser, Result as ParserResult};
 use hdx_writer::WriteCss;
 
 use crate::{css::values::units::Length, Atomizable, Value};
 
-#[derive(Debug, PartialEq, Default, Hash)]
+#[derive(Value, Debug, PartialEq, Default, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde())]
 pub enum Float {
 	#[default]
@@ -27,11 +27,8 @@ pub enum Float {
 	SnapInlineFunction(Length, Option<SnapInlineDirection>),
 }
 
-impl Value for Float {}
-
 impl<'a> Parse<'a> for Float {
-	fn parse(parser: &mut hdx_parser::Parser<'a>) -> miette::Result<hdx_parser::Spanned<Self>> {
-		let span = parser.span();
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		let value = match parser.cur() {
 			Token::Ident(atom) => match atom.to_ascii_lowercase() {
 				atom!("none") => {
@@ -139,7 +136,7 @@ impl<'a> Parse<'a> for Float {
 			},
 			token => unexpected!(parser, token),
 		};
-		Ok(value.spanned(span.end(parser.pos())))
+		Ok(value)
 	}
 }
 

@@ -16,12 +16,11 @@ pub struct UnknownAtRule<'a> {
 }
 
 impl<'a> Parse<'a> for UnknownAtRule<'a> {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
-		let span = parser.span();
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		match parser.cur() {
 			Token::AtKeyword(name) => {
 				let (prelude, block) = Self::parse_at_rule(parser)?;
-				Ok(Self { name, prelude, block }.spanned(span.end(parser.pos())))
+				Ok(Self { name, prelude, block })
 			}
 			token => unexpected!(parser, token),
 		}
@@ -53,10 +52,9 @@ pub struct UnknownRule<'a> {
 }
 
 impl<'a> Parse<'a> for UnknownRule<'a> {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
-		let span = parser.span();
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		let (prelude, block) = Self::parse_qualified_rule(parser)?;
-		Ok(Self { prelude, block }.spanned(span.end(parser.pos())))
+		Ok(Self { prelude, block })
 	}
 }
 

@@ -7,7 +7,8 @@ use grep_searcher::{sinks::UTF8, Searcher};
 
 fn main() {
 	let matcher =
-		RegexMatcher::new("(?:atom!\\(\"|atomizable\\(\"|atom = \"|suffix = \"|prefix = \"|rename = \")([^\"]+)").unwrap();
+		RegexMatcher::new("(?:atom!\\(\"|atomizable\\(\"|atom = \"|suffix = \"|prefix = \"|rename = \")([^\"]+)")
+			.unwrap();
 	let mut matches = vec![];
 	for entry in glob("../**/*.rs").unwrap() {
 		let mut searcher = Searcher::new();

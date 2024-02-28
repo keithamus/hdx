@@ -7,7 +7,7 @@ use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 use serde::Serialize;
 
 use super::NoPreludeAllowed;
-use crate::{atom, css::properties::StyleProperty, Atom, Atomizable, Specificity, ToSpecificity};
+use crate::{atom, css::properties::Property, Atom, Atomizable, Specificity, ToSpecificity};
 
 // https://drafts.csswg.org/cssom-1/#csspagerule
 // https://drafts.csswg.org/css-page-3/#at-page-rule
@@ -21,12 +21,12 @@ pub struct PageRule<'a> {
 
 // https://drafts.csswg.org/css-page-3/#syntax-page-selector
 impl<'a> Parse<'a> for PageRule<'a> {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		expect!(parser, Token::AtKeyword(atom!("page")));
 		let span = parser.span();
 		let (selectors, style) = Self::parse_at_rule(parser)?;
 		if let Some(style) = style {
-			Ok(Self { selectors, style }.spanned(span.end(parser.pos())))
+			Ok(Self { selectors, style })
 		} else {
 			Err(diagnostics::MissingAtRuleBlock(span.end(parser.pos())))?
 		}
@@ -54,10 +54,8 @@ pub struct PageSelectorList<'a> {
 }
 
 impl<'a> Parse<'a> for PageSelectorList<'a> {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
-		let span = parser.span();
-		let ok = Ok(Self { children: parser.parse_comma_list_of::<PageSelector>()? }.spanned(span.end(parser.pos())));
-		ok
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
+		Ok(Self { children: parser.parse_comma_list_of::<PageSelector>()? })
 	}
 }
 
@@ -84,8 +82,7 @@ pub struct PageSelector<'a> {
 }
 
 impl<'a> Parse<'a> for PageSelector<'a> {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
-		let span = parser.span();
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		let mut page_type = None;
 		let mut pseudos = parser.new_vec();
 		match parser.cur() {
@@ -98,14 +95,14 @@ impl<'a> Parse<'a> for PageSelector<'a> {
 		loop {
 			match parser.cur() {
 				Token::Colon => {
-					pseudos.push(PagePseudoClass::parse(parser)?);
+					pseudos.push(PagePseudoClass::parse_spanned(parser)?);
 				}
 				_ => {
 					break;
 				}
 			}
 		}
-		Ok(Self { page_type, pseudos }.spanned(span.end(parser.pos())))
+		Ok(Self { page_type, pseudos })
 	}
 }
 
@@ -148,14 +145,13 @@ pub enum PagePseudoClass {
 }
 
 impl<'a> Parse<'a> for PagePseudoClass {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
-		let span = parser.span();
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		expect!(parser, Token::Colon);
 		parser.advance_including_whitespace();
 		match parser.cur() {
 			Token::Ident(name) => match Self::from_atom(name.clone()) {
-				Some(v) => Ok(v.spanned(span.end(parser.pos()))),
-				_ => Err(diagnostics::UnexpectedPseudo(name, span).into()),
+				Some(v) => Ok(v),
+				_ => Err(diagnostics::UnexpectedPseudo(name, parser.span()).into()),
 			},
 			token => unexpected!(parser, token),
 		}
@@ -177,22 +173,21 @@ impl ToSpecificity for PagePseudoClass {
 #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
 pub struct PageDeclaration<'a> {
 	#[cfg_attr(feature = "serde", serde(borrow))]
-	pub properties: Vec<'a, Spanned<StyleProperty<'a>>>,
+	pub properties: Vec<'a, Spanned<Property<'a>>>,
 	#[cfg_attr(feature = "serde", serde(borrow))]
 	pub rules: Vec<'a, Spanned<MarginRule<'a>>>,
 }
 
 impl<'a> Parse<'a> for PageDeclaration<'a> {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
-		let span = parser.span();
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		let (properties, rules) = Self::parse_declaration_rule_list(parser)?;
-		Ok(Self { properties, rules }.spanned(span.end(parser.pos())))
+		Ok(Self { properties, rules })
 	}
 }
 
 impl<'a> DeclarationRuleList<'a> for PageDeclaration<'a> {
 	type AtRule = MarginRule<'a>;
-	type Declaration = StyleProperty<'a>;
+	type Declaration = Property<'a>;
 }
 
 impl<'a> WriteCss<'a> for PageDeclaration<'a> {
@@ -232,14 +227,14 @@ pub struct MarginRule<'a> {
 }
 
 impl<'a> Parse<'a> for MarginRule<'a> {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
+		let span = parser.span();
 		match parser.cur() {
 			Token::AtKeyword(atom) => {
 				if let Some(name) = PageMarginBox::from_atom(atom.clone()) {
-					let span = parser.span();
 					let (_, style) = Self::parse_at_rule(parser)?;
 					if let Some(style) = style {
-						Ok(Self { name, style }.spanned(span.end(parser.pos())))
+						Ok(Self { name, style })
 					} else {
 						Err(diagnostics::MissingAtRuleBlock(span.end(parser.pos())))?
 					}
@@ -295,22 +290,21 @@ pub enum PageMarginBox {
 #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
 pub struct MarginDeclaration<'a> {
 	#[cfg_attr(feature = "serde", serde(borrow))]
-	pub properties: Vec<'a, Spanned<StyleProperty<'a>>>,
+	pub properties: Vec<'a, Spanned<Property<'a>>>,
 	#[cfg_attr(feature = "serde", serde(borrow))]
 	pub rules: Vec<'a, Spanned<MarginRule<'a>>>,
 }
 
 impl<'a> Parse<'a> for MarginDeclaration<'a> {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
-		let span = parser.span();
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		let (properties, rules) = Self::parse_declaration_rule_list(parser)?;
-		Ok(Self { properties, rules }.spanned(span.end(parser.pos())))
+		Ok(Self { properties, rules })
 	}
 }
 
 impl<'a> DeclarationRuleList<'a> for MarginDeclaration<'a> {
 	type AtRule = MarginRule<'a>;
-	type Declaration = StyleProperty<'a>;
+	type Declaration = Property<'a>;
 }
 
 impl<'a> WriteCss<'a> for MarginDeclaration<'a> {

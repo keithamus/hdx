@@ -4,7 +4,7 @@ use serde::Serialize;
 use crate::{Atomizable, Parsable, Value, Writable};
 
 // https://drafts.csswg.org/css-inline/#propdef-alignment-baseline
-#[derive(Parsable, Writable, Atomizable, Default, Debug, PartialEq, Hash)]
+#[derive(Value, Parsable, Writable, Atomizable, Default, Debug, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type", rename_all = "kebab-case"))]
 pub enum AlignmentBaseline {
 	#[default]
@@ -18,15 +18,23 @@ pub enum AlignmentBaseline {
 	TextTop,      // atom!("text-top")
 }
 
-impl Value for AlignmentBaseline {}
-
 #[cfg(test)]
 mod tests {
+	use oxc_allocator::Allocator;
 
 	use super::*;
+	use crate::test_helpers::test_write;
 
 	#[test]
 	fn size_test() {
-		assert_eq!(::std::mem::size_of::<AlignmentBaseline>(), 1);
+		use std::mem::size_of;
+		assert_eq!(size_of::<AlignmentBaseline>(), 1);
+	}
+
+	#[test]
+	fn test_writes() {
+		let allocator = Allocator::default();
+		test_write::<AlignmentBaseline>(&allocator, "baseline", "baseline");
+		test_write::<AlignmentBaseline>(&allocator, "text-bottom", "text-bottom");
 	}
 }

@@ -1,9 +1,7 @@
 pub use std::fmt::{Result, Write};
-use std::ops::Deref;
 
 use hdx_atom::Atom;
 use hdx_parser::Spanned;
-use oxc_allocator::Box;
 
 pub trait WriteCss<'a>: Sized {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> Result;
@@ -105,7 +103,11 @@ where
 
 impl<'a, T: WriteCss<'a>> WriteCss<'a> for Option<T> {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> Result {
-		if let Some(value) = self { value.write_css(sink) } else { Ok(()) }
+		if let Some(value) = self {
+			value.write_css(sink)
+		} else {
+			Ok(())
+		}
 	}
 }
 

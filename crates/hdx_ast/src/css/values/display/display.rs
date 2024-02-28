@@ -1,6 +1,6 @@
 use hdx_atom::{atom, Atom};
 use hdx_lexer::Token;
-use hdx_parser::{diagnostics, unexpected_ident, Parse, Parser, Result as ParserResult, Spanned};
+use hdx_parser::{diagnostics, unexpected_ident, Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 #[cfg(feature = "serde")]
 use serde::Serialize;
@@ -8,7 +8,7 @@ use serde::Serialize;
 use crate::{bitmask, Value};
 
 // https://drafts.csswg.org/css-display-4/#propdef-display
-#[derive(Default)]
+#[derive(Value, Default)]
 #[bitmask(u8)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde())]
 pub enum Display {
@@ -91,8 +91,6 @@ pub enum Display {
 	Table = 0b0000_0110,
 }
 
-impl Value for Display {}
-
 impl Display {
 	#[inline]
 	fn outside_bits(&self) -> Self {
@@ -169,7 +167,7 @@ impl Display {
 }
 
 impl<'a> Parse<'a> for Display {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		let span = parser.span();
 		// Certain values can only be used in a "standalone way" and so complete the
 		// value:
@@ -202,7 +200,7 @@ impl<'a> Parse<'a> for Display {
 		};
 		if let Some(value) = single_value {
 			parser.advance();
-			return Ok(value.spanned(span.end(parser.pos())));
+			return Ok(value);
 		}
 
 		// If a legacy/internal/box value is not applied then it must be a pair/triplet
@@ -233,7 +231,7 @@ impl<'a> Parse<'a> for Display {
 		if value.has_list_item() && !value.valid_list_item() {
 			Err(diagnostics::DisplayHasInvalidListItemCombo(value.inside_to_atom().unwrap(), span.end(parser.pos())))?;
 		}
-		Ok(value.spanned(span.end(parser.pos())))
+		Ok(value)
 	}
 }
 

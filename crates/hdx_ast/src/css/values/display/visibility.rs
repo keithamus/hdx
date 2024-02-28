@@ -3,19 +3,14 @@ use serde::Serialize;
 
 use crate::{Parsable, Value, Writable};
 
-#[derive(Parsable, Writable, Default, PartialEq, Debug, Hash)]
+#[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Hash)]
+#[value(Inherits)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde())]
 pub enum Visibility {
 	#[default]
 	Visible, // atom!("visible"),
 	Hidden,   // atom!("hidden"),
 	Collapse, // atom!("collapse"),
-}
-
-impl Value for Visibility {
-	fn inherits() -> bool {
-		true
-	}
 }
 
 #[cfg(test)]

@@ -15,8 +15,7 @@ pub struct ComponentValues<'a>(pub Vec<'a, Spanned<ComponentValue<'a>>>);
 
 impl<'a> Parse<'a> for ComponentValues<'a> {
 	// https://drafts.csswg.org/css-syntax-3/#consume-list-of-components
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
-		let span = parser.span();
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		let mut values = parser.new_vec();
 		loop {
 			match parser.cur() {
@@ -26,10 +25,10 @@ impl<'a> Parse<'a> for ComponentValues<'a> {
 				// In reality it is only ever called with a comma-token or semicolon-token.
 				Token::Semicolon if parser.is(State::StopOnSemicolon) => break,
 				Token::Comma if parser.is(State::StopOnComma) => break,
-				_ => values.push(ComponentValue::parse(parser)?),
+				_ => values.push(ComponentValue::parse_spanned(parser)?),
 			}
 		}
-		Ok(Self(values).spanned(span.end(parser.pos())))
+		Ok(Self(values))
 	}
 }
 
@@ -46,23 +45,22 @@ impl<'a> WriteCss<'a> for ComponentValues<'a> {
 #[derive(Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde(untagged))]
 pub enum ComponentValue<'a> {
-	SimpleBlock(Spanned<SimpleBlock<'a>>),
-	Function(Spanned<Function<'a>>),
+	SimpleBlock(SimpleBlock<'a>),
+	Function(Function<'a>),
 	Token(Token),
 }
 
 // https://drafts.csswg.org/css-syntax-3/#consume-component-value
 impl<'a> Parse<'a> for ComponentValue<'a> {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
-		let span = parser.span();
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		match parser.cur() {
 			Token::LeftCurly | Token::LeftSquare | Token::LeftParen => {
-				Ok(Self::SimpleBlock(SimpleBlock::parse(parser)?).spanned(span.end(parser.pos())))
+				Ok(Self::SimpleBlock(SimpleBlock::parse(parser)?))
 			}
-			Token::Function(_) => Ok(Self::Function(Function::parse(parser)?).spanned(span.end(parser.pos()))),
+			Token::Function(_) => Ok(Self::Function(Function::parse(parser)?)),
 			token => {
 				parser.advance_including_whitespace();
-				Ok(Self::Token(token).spanned(span))
+				Ok(Self::Token(token))
 			}
 		}
 	}
@@ -137,9 +135,8 @@ pub struct SimpleBlock<'a> {
 
 // https://drafts.csswg.org/css-syntax-3/#consume-a-simple-block
 impl<'a> Parse<'a> for SimpleBlock<'a> {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		if let Some(pairwise) = parser.cur().to_pairwise() {
-			let span = parser.span();
 			let mut values = parser.new_vec();
 			let ending_token = pairwise.end();
 			parser.advance();
@@ -147,7 +144,7 @@ impl<'a> Parse<'a> for SimpleBlock<'a> {
 				match parser.cur() {
 					Token::Eof => break,
 					t if t == ending_token => break,
-					_ => values.push(ComponentValue::parse(parser)?),
+					_ => values.push(ComponentValue::parse_spanned(parser)?),
 				}
 			}
 			if parser.cur() == pairwise.end() {
@@ -155,7 +152,7 @@ impl<'a> Parse<'a> for SimpleBlock<'a> {
 			} else {
 				unexpected!(parser)
 			}
-			Ok(Self { values, pairwise }.spanned(span.end(parser.pos())))
+			Ok(Self { values, pairwise })
 		} else {
 			unexpected!(parser)
 		}
@@ -184,18 +181,16 @@ impl<'a> WriteCss<'a> for SimpleBlock<'a> {
 #[derive(Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
 pub enum Rule<'a> {
-	AtRule(Spanned<AtRule<'a>>),
-	QualifiedRule(Spanned<QualifiedRule<'a>>),
+	AtRule(AtRule<'a>),
+	QualifiedRule(QualifiedRule<'a>),
 }
 
 impl<'a> Parse<'a> for Rule<'a> {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
-		let span = parser.span();
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		Ok(match parser.cur() {
 			Token::AtKeyword(_) => Rule::AtRule(AtRule::parse(parser)?),
 			_ => Rule::QualifiedRule(QualifiedRule::parse(parser)?),
-		}
-		.spanned(span.end(parser.pos())))
+		})
 	}
 }
 
@@ -216,10 +211,9 @@ pub struct Block<'a> {
 }
 
 impl<'a> Parse<'a> for Block<'a> {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
-		let span = parser.span();
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		let (declarations, rules) = Self::parse_block(parser)?;
-		Ok(Self { declarations, rules }.spanned(span.end(parser.pos())))
+		Ok(Self { declarations, rules })
 	}
 }
 
@@ -238,8 +232,7 @@ pub struct Declaration<'a> {
 
 // https://drafts.csswg.org/css-syntax-3/#consume-a-declaration
 impl<'a> Parse<'a> for Declaration<'a> {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
-		let span = parser.span();
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		match parser.cur() {
 			Token::Ident(name) => {
 				parser.advance();
@@ -247,7 +240,7 @@ impl<'a> Parse<'a> for Declaration<'a> {
 				parser.advance();
 				parser.set(State::StopOnSemicolon);
 				parser.set(State::Nested);
-				let mut value = ComponentValues::parse(parser)?;
+				let mut value = ComponentValues::parse_spanned(parser)?;
 				parser.unset(State::StopOnSemicolon | State::StopOnComma);
 				let mut iter = value.node.0.iter_mut();
 				let important = matches!(
@@ -257,7 +250,7 @@ impl<'a> Parse<'a> for Declaration<'a> {
 					iter.nth_back(2),
 					Some(Spanned { node: ComponentValue::Token(Token::Delim('!')), .. })
 				);
-				Ok(Self { name, value, important }.spanned(span.end(parser.pos())))
+				Ok(Self { name, value, important })
 			}
 			token => unexpected!(parser, token),
 		}
@@ -301,16 +294,17 @@ pub struct AtRule<'a> {
 
 // https://drafts.csswg.org/css-syntax-3/#consume-an-at-rule
 impl<'a> Parse<'a> for AtRule<'a> {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
-		let span = parser.span();
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		match parser.cur() {
 			Token::AtKeyword(name) => {
 				let (prelude_opt, block_opt) = Self::parse_at_rule(parser)?;
-				let prelude = prelude_opt.unwrap_or_else(|| ComponentValues(parser.new_vec()).spanned(Span::dummy()));
-				let block = block_opt.unwrap_or_else(|| {
-					Block { declarations: parser.new_vec(), rules: parser.new_vec() }.spanned(Span::dummy())
+				let prelude = prelude_opt
+					.unwrap_or_else(|| Spanned { node: ComponentValues(parser.new_vec()), span: Span::dummy() });
+				let block = block_opt.unwrap_or_else(|| Spanned {
+					node: Block { declarations: parser.new_vec(), rules: parser.new_vec() },
+					span: Span::dummy(),
 				});
-				Ok(Self { name, prelude, block }.spanned(span.end(parser.pos())))
+				Ok(Self { name, prelude, block })
 			}
 			token => unexpected!(parser, token),
 		}
@@ -342,10 +336,9 @@ pub struct QualifiedRule<'a> {
 
 // https://drafts.csswg.org/css-syntax-3/#consume-a-qualified-rule
 impl<'a> Parse<'a> for QualifiedRule<'a> {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
-		let span = parser.span();
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		let (prelude, block) = Self::parse_qualified_rule(parser)?;
-		Ok(Self { prelude, block }.spanned(span.end(parser.pos())))
+		Ok(Self { prelude, block })
 	}
 }
 
@@ -372,22 +365,21 @@ pub struct Function<'a> {
 
 // https://drafts.csswg.org/css-syntax-3/#consume-function
 impl<'a> Parse<'a> for Function<'a> {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		match parser.cur() {
 			Token::Function(name) => {
-				let span = parser.span();
 				let mut values = parser.new_vec();
 				parser.advance();
 				loop {
 					match parser.cur() {
 						Token::Eof => break,
 						Token::RightParen => break,
-						_ => values.push(ComponentValue::parse(parser)?),
+						_ => values.push(ComponentValue::parse_spanned(parser)?),
 					}
 				}
 				expect!(parser, Token::RightParen);
 				parser.advance();
-				Ok(Self { name, values }.spanned(span.end(parser.pos())))
+				Ok(Self { name, values })
 			}
 			token => unexpected!(parser, token),
 		}
@@ -416,7 +408,7 @@ mod tests {
 	fn size_test() {
 		use std::mem::size_of;
 		assert_eq!(size_of::<ComponentValues>(), 32);
-		assert_eq!(size_of::<ComponentValue>(), 56);
+		assert_eq!(size_of::<ComponentValue>(), 48);
 		assert_eq!(size_of::<SimpleBlock>(), 40);
 		assert_eq!(size_of::<Function>(), 40);
 	}

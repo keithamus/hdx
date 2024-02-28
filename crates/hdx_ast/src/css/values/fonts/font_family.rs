@@ -1,12 +1,12 @@
 use hdx_atom::{atom, Atom};
 use hdx_lexer::Token;
-use hdx_parser::{unexpected, unexpected_ident, FromToken, Parse, Parser, Result as ParserResult, Spanned};
+use hdx_parser::{unexpected, Parse, Parser, Result as ParserResult, Spanned};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 #[cfg(feature = "serde")]
 use serde::Serialize;
 
 use crate::{Value, Writable};
-use smallvec::{SmallVec, smallvec};
+use smallvec::{smallvec, SmallVec};
 
 // https://drafts.csswg.org/css-animations-2/#animation-duration
 #[derive(Default, Debug, PartialEq, Hash)]
@@ -27,27 +27,26 @@ pub enum SingleFontFamily {
 	Fantasy, // atom!("fantasy")
 	Monospace, // atom!("monospace")
 	SystemUi, // atom!("system-ui")
-	Math, // atom!("math")
-	Fangsong,// atom!("fangsong")
-	Kai,// atom!("kai")
-	Nastaliq,// atom!("nastaliq")
-	UiSerif,// atom!("ui-serif")
-	UiMonospace,// atom!("ui-monospace")
-	UiRounded,// atom!("ui-rounded")
+	Math,  // atom!("math")
+	Fangsong, // atom!("fangsong")
+	Kai,   // atom!("kai")
+	Nastaliq, // atom!("nastaliq")
+	UiSerif, // atom!("ui-serif")
+	UiMonospace, // atom!("ui-monospace")
+	UiRounded, // atom!("ui-rounded")
 	// <system-family-name>
-	Caption,// atom!("caption")
-	Icon,// atom!("icon")
-	Menu,// atom!("menu")
-	MessageBox,// atom!("message-box")
-	SmallCaption,// atom!("small-caption")
-	StatusBar,// atom!("status-bar")
+	Caption,      // atom!("caption")
+	Icon,         // atom!("icon")
+	Menu,         // atom!("menu")
+	MessageBox,   // atom!("message-box")
+	SmallCaption, // atom!("small-caption")
+	StatusBar,    // atom!("status-bar")
 }
 
 impl<'a> Value for FontFamily {}
 
 impl<'a> Parse<'a> for SingleFontFamily {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
-		let span = parser.span();
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		let value = match parser.cur() {
 			Token::Ident(ident) => {
 				parser.advance();
@@ -70,30 +69,29 @@ impl<'a> Parse<'a> for SingleFontFamily {
 					atom!("status-bar") => Self::StatusBar,
 					_ => Self::Named(ident),
 				}
-			},
+			}
 			Token::Function(atom!("generic")) => {
 				parser.advance();
 				match parser.cur() {
 					Token::Ident(ident) => Self::Generic(ident),
-					token => unexpected!(parser, token)
+					token => unexpected!(parser, token),
 				}
-			},
+			}
 			Token::String(atom) => {
 				parser.advance();
 				Self::Named(atom)
 			}
 			token => unexpected!(parser, token),
 		};
-		Ok(value.spanned(span.end(parser.pos())))
+		Ok(value)
 	}
 }
 
 impl<'a> Parse<'a> for FontFamily {
-    fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
-		let span = parser.span();
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		let mut values = smallvec![];
 		loop {
-			let value = SingleFontFamily::parse(parser)?;
+			let value = SingleFontFamily::parse_spanned(parser)?;
 			values.push(value);
 			match parser.cur() {
 				Token::Comma => {
@@ -104,7 +102,7 @@ impl<'a> Parse<'a> for FontFamily {
 				}
 			}
 		}
-		Ok(FontFamily(values).spanned(span.end(parser.pos())))
+		Ok(FontFamily(values))
 	}
 }
 
@@ -140,6 +138,10 @@ mod tests {
 		let allocator = Allocator::default();
 		test_write::<FontFamily>(&allocator, "serif", "serif");
 		test_write::<FontFamily>(&allocator, "Arial, sans-serif", "\"Arial\",sans-serif");
-		test_write::<FontFamily>(&allocator, "'Gill Sans MS', Arial, system-ui, sans-serif", "\"Gill Sans MS\",\"Arial\",system-ui,sans-serif");
+		test_write::<FontFamily>(
+			&allocator,
+			"'Gill Sans MS', Arial, system-ui, sans-serif",
+			"\"Gill Sans MS\",\"Arial\",system-ui,sans-serif",
+		);
 	}
 }

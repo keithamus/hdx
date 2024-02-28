@@ -27,9 +27,8 @@ pub struct StyleSheet<'a> {
 // alternate implementations such as SCSS.
 // AtRules vs QualifiedRules are differentiated by two different functions.
 impl<'a> Parse<'a> for StyleSheet<'a> {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
-		let span = parser.span();
-		Ok(Self { rules: Self::parse_stylesheet(parser)? }.spanned(span.end(parser.pos())))
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
+		Ok(Self { rules: Self::parse_stylesheet(parser)? })
 	}
 }
 
@@ -51,16 +50,15 @@ impl<'a> WriteCss<'a> for StyleSheet<'a> {
 #[derive(Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde(untagged))]
 pub enum Rule<'a> {
-	Charset(Spanned<CharsetRule>),
-	Page(Spanned<PageRule<'a>>),
-	Style(Spanned<StyleRule<'a>>),
-	UnknownAt(Spanned<AtRule<'a>>),
-	Unknown(Spanned<QualifiedRule<'a>>),
+	Charset(CharsetRule),
+	Page(PageRule<'a>),
+	Style(StyleRule<'a>),
+	UnknownAt(AtRule<'a>),
+	Unknown(QualifiedRule<'a>),
 }
 
 impl<'a> Parse<'a> for Rule<'a> {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
-		let span = parser.span();
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		Ok(match parser.cur() {
 			Token::AtKeyword(atom) => match atom.to_ascii_lowercase() {
 				atom!("charset") => {
@@ -72,8 +70,9 @@ impl<'a> Parse<'a> for Rule<'a> {
 					Rule::Page(rule)
 				}
 				_ => {
+					let span = parser.span();
 					let rule = AtRule::parse(parser)?;
-					parser.warn(diagnostics::UnknownRule(rule.span).into());
+					parser.warn(diagnostics::UnknownRule(span.end(parser.pos())).into());
 					Rule::UnknownAt(rule)
 				}
 			},
@@ -90,8 +89,7 @@ impl<'a> Parse<'a> for Rule<'a> {
 					}
 				}
 			}
-		}
-		.spanned(span.end(parser.pos())))
+		})
 	}
 }
 

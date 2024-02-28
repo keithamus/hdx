@@ -1,6 +1,6 @@
 use hdx_atom::{atom, Atom};
 use hdx_lexer::Token;
-use hdx_parser::{unexpected, unexpected_ident, Parse};
+use hdx_parser::{unexpected, unexpected_ident, Parse, Parser, Result as ParserResult};
 
 use hdx_writer::WriteCss;
 #[cfg(feature = "serde")]
@@ -8,7 +8,7 @@ use serde::Serialize;
 
 use crate::{Parsable, Value, Vec, Writable};
 
-#[derive(Default, PartialEq, Debug, Hash)]
+#[derive(Value, Default, PartialEq, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde())]
 pub enum Content {
 	#[default]
@@ -22,11 +22,8 @@ pub enum Content {
 	// AttrFunction(), // TODO: Implement attr()
 }
 
-impl Value for Content {}
-
 impl<'a> Parse<'a> for Content {
-	fn parse(parser: &mut hdx_parser::Parser<'a>) -> miette::Result<hdx_parser::Spanned<Self>> {
-		let span = parser.span();
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		let value = match parser.cur() {
 			Token::Ident(atom) => match atom.to_ascii_lowercase() {
 				atom!("normal") => {
@@ -45,7 +42,7 @@ impl<'a> Parse<'a> for Content {
 			}
 			token => unexpected!(parser, token),
 		};
-		Ok(value.spanned(span.end(parser.pos())))
+		Ok(value)
 	}
 }
 
@@ -58,7 +55,7 @@ impl<'a> WriteCss<'a> for Content {
 				sink.write_char('"')?;
 				sink.write_str(str)?;
 				sink.write_char('"')
-			},
+			}
 		}
 	}
 }

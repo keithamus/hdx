@@ -5,6 +5,7 @@ use std::{
 };
 
 use hdx_derive::Writable;
+use hdx_lexer::Token;
 use hdx_parser::FromToken;
 #[cfg(feature = "serde")]
 use serde::Serialize;
@@ -16,7 +17,11 @@ pub struct CSSFloat(f32);
 
 impl CSSFloat {
 	pub fn normalize(&self) -> Self {
-		if self.0.is_nan() { Self(0.0) } else { Self(self.0) }
+		if self.0.is_nan() {
+			Self(0.0)
+		} else {
+			Self(self.0)
+		}
 	}
 }
 

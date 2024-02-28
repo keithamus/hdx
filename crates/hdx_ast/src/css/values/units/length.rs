@@ -177,7 +177,7 @@ impl FromToken for LengthPercentageOrAuto {
 		match token {
 			Token::Ident(atom) => match atom.to_ascii_lowercase() {
 				atom!("auto") => Some(Self::Auto),
-				_ => None
+				_ => None,
 			},
 			Token::Dimension(val, unit, _) => {
 				if let Some(l) = LengthPercentage::new(val.into(), unit) {
@@ -185,9 +185,9 @@ impl FromToken for LengthPercentageOrAuto {
 				} else {
 					None
 				}
-			},
+			}
 			Token::Number(val, _) if val == 0.0 => Some(Self::LengthPercentage(LengthPercentage::Zero)),
-			_ => None
+			_ => None,
 		}
 	}
 }

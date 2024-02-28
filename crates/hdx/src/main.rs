@@ -1,7 +1,7 @@
 use clap::Parser;
 use hdx_ast::css::StyleSheet;
 use hdx_writer::{BaseCssWriter, WriteCss};
-use miette::{NamedSource, GraphicalReportHandler, GraphicalTheme};
+use miette::{GraphicalReportHandler, GraphicalTheme, NamedSource};
 use oxc_allocator::Allocator;
 
 #[derive(Debug, Parser)]

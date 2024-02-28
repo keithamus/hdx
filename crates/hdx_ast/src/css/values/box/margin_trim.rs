@@ -1,6 +1,6 @@
 use hdx_atom::atom;
 use hdx_lexer::Token;
-use hdx_parser::{unexpected, unexpected_ident, Parse, Parser, Result as ParserResult, Spanned};
+use hdx_parser::{unexpected, unexpected_ident, Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 #[cfg(feature = "serde")]
 use serde::Serialize;
@@ -8,7 +8,7 @@ use serde::Serialize;
 use crate::{bitmask, Atomizable, Value};
 
 // https://drafts.csswg.org/css-box-4/#propdef-margin-trim
-#[derive(Atomizable, Default)]
+#[derive(Value, Atomizable, Default)]
 #[bitmask(u8)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde())]
 pub enum MarginTrim {
@@ -22,11 +22,8 @@ pub enum MarginTrim {
 	InlineEnd,
 }
 
-impl Value for MarginTrim {}
-
 impl<'a> Parse<'a> for MarginTrim {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
-		let span = parser.span();
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		let mut value = Self::none();
 		loop {
 			if value.is_all() {
@@ -52,7 +49,7 @@ impl<'a> Parse<'a> for MarginTrim {
 		if value.is_none() {
 			unexpected!(parser);
 		}
-		Ok(value.spanned(span.end(parser.pos())))
+		Ok(value)
 	}
 }
 

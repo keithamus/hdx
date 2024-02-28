@@ -1,5 +1,5 @@
 use hdx_lexer::Token;
-use hdx_parser::{unexpected, unexpected_ident, Parse, Parser, Result as ParserResult, Spanned};
+use hdx_parser::{unexpected, unexpected_ident, Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 #[cfg(feature = "serde")]
 use serde::Serialize;
@@ -8,7 +8,7 @@ use crate::{Atomizable, Value, Writable};
 use smallvec::{smallvec, SmallVec};
 
 // https://drafts.csswg.org/css-animations-2/#animation-fill-mode
-#[derive(Default, Debug, PartialEq, Hash)]
+#[derive(Value, Default, Debug, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde())]
 pub struct AnimationFillMode(pub SmallVec<[SingleAnimationFillMode; 8]>);
 
@@ -22,11 +22,8 @@ pub enum SingleAnimationFillMode {
 	Both,      // atom!("both")
 }
 
-impl Value for AnimationFillMode {}
-
 impl<'a> Parse<'a> for AnimationFillMode {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
-		let span = parser.span();
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		let mut values = smallvec![];
 		loop {
 			match parser.cur() {
@@ -49,7 +46,7 @@ impl<'a> Parse<'a> for AnimationFillMode {
 				}
 			}
 		}
-		Ok(Self(values).spanned(span.end(parser.pos())))
+		Ok(Self(values))
 	}
 }
 

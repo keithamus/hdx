@@ -1,6 +1,6 @@
 use hdx_atom::{atom, Atom};
 use hdx_lexer::Token;
-use hdx_parser::{discard, expect, unexpected, unexpected_ident, Parse, Parser, Result as ParserResult, Spanned};
+use hdx_parser::{discard, expect, unexpected, unexpected_ident, Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 #[cfg(feature = "serde")]
 use serde::Serialize;
@@ -18,8 +18,7 @@ pub struct Attribute {
 }
 
 impl<'a> Parse<'a> for Attribute {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
-		let span = parser.span();
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		match parser.cur() {
 			Token::LeftSquare => {
 				parser.advance();
@@ -36,8 +35,7 @@ impl<'a> Parse<'a> for Attribute {
 							value: atom!(""),
 							modifier: AttributeModifier::None,
 							matcher: AttributeMatch::Any,
-						}
-						.spanned(span.end(parser.pos())));
+						});
 					}
 					Token::Delim('=') => {
 						parser.advance();
@@ -85,8 +83,7 @@ impl<'a> Parse<'a> for Attribute {
 				match parser.cur() {
 					Token::RightSquare => {
 						parser.advance_including_whitespace_and_comments();
-						Ok(Self { ns_prefix, name, value, modifier: AttributeModifier::None, matcher }
-							.spanned(span.end(parser.pos())))
+						Ok(Self { ns_prefix, name, value, modifier: AttributeModifier::None, matcher })
 					}
 					Token::Ident(ident) => {
 						let modifier = match ident.to_ascii_lowercase() {
@@ -97,7 +94,7 @@ impl<'a> Parse<'a> for Attribute {
 						parser.advance();
 						expect!(parser, Token::RightSquare);
 						parser.advance_including_whitespace_and_comments();
-						Ok(Self { ns_prefix, name, value, modifier, matcher }.spanned(span.end(parser.pos())))
+						Ok(Self { ns_prefix, name, value, modifier, matcher })
 					}
 					token => unexpected!(parser, token),
 				}

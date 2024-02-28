@@ -1,6 +1,6 @@
 use hdx_atom::atom;
 use hdx_lexer::Token;
-use hdx_parser::{unexpected, Parse, Parser, Result as ParserResult, Spanned};
+use hdx_parser::{unexpected, Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 #[cfg(feature = "serde")]
 use serde::Serialize;
@@ -8,7 +8,7 @@ use serde::Serialize;
 use crate::{bitmask, Value};
 
 // https://drafts.csswg.org/css-text/#text-align-property
-#[derive(Default)]
+#[derive(Value, Default)]
 #[bitmask(u8)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde())]
 pub enum TextDecorationLine {
@@ -20,11 +20,8 @@ pub enum TextDecorationLine {
 	Blink = 0b1000,
 }
 
-impl Value for TextDecorationLine {}
-
 impl<'a> Parse<'a> for TextDecorationLine {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
-		let span = parser.span();
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		let mut value = Self::none();
 		loop {
 			if value.is_all() {
@@ -33,7 +30,7 @@ impl<'a> Parse<'a> for TextDecorationLine {
 			match parser.cur() {
 				Token::Ident(atom) => match atom.to_ascii_lowercase() {
 					atom!("none") if value.is_none() => {
-						return Ok(Self::None.spanned(span.end(parser.pos())));
+						return Ok(Self::None);
 					}
 					atom!("underline") if !value.contains(Self::Underline) => value |= Self::Underline,
 					atom!("overline") if !value.contains(Self::Overline) => value |= Self::Overline,
@@ -45,7 +42,7 @@ impl<'a> Parse<'a> for TextDecorationLine {
 			}
 			parser.advance();
 		}
-		Ok(value.spanned(span.end(parser.pos())))
+		Ok(value)
 	}
 }
 

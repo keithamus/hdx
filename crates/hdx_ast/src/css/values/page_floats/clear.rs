@@ -1,10 +1,10 @@
 #[cfg(feature = "serde")]
 use serde::Serialize;
 
-use crate::{Atomizable, Parsable, Writable, Value};
+use crate::{Atomizable, Parsable, Value, Writable};
 
 // https://drafts.csswg.org/css-page-floats-3/#propdef-clear
-#[derive(Parsable, Writable, Atomizable, Default, Debug, PartialEq, Hash)]
+#[derive(Value, Parsable, Writable, Atomizable, Default, Debug, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type", rename_all = "kebab-case"))]
 pub enum Clear {
 	InlineStart, // atom!("inline-start")
@@ -21,8 +21,6 @@ pub enum Clear {
 	#[default]
 	None, // atom!("none")
 }
-
-impl Value for Clear {}
 
 #[cfg(test)]
 mod tests {

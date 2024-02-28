@@ -29,9 +29,9 @@ pub enum Features {
 }
 
 impl Default for Features {
-    fn default() -> Self {
-        Self::none()
-    }
+	fn default() -> Self {
+		Self::none()
+	}
 }
 
 #[bitmask(u8)]
@@ -39,8 +39,8 @@ pub enum State {
 	Nested = 0b0000_0001,
 
 	// Stop Tokens for some algorithms
-	StopOnSemicolon =   0b1000_0000,
-	StopOnComma =       0b1100_0000,
+	StopOnSemicolon = 0b1000_0000,
+	StopOnComma = 0b1100_0000,
 }
 
 pub struct ParserReturn<T> {
@@ -91,7 +91,10 @@ impl<'a> Parser<'a> {
 	}
 
 	#[inline]
-	pub fn with_state<F, T>(&mut self, state: State, call: F) -> T where F: FnOnce(&mut Parser) -> T {
+	pub fn with_state<F, T>(&mut self, state: State, call: F) -> T
+	where
+		F: FnOnce(&mut Parser) -> T,
+	{
 		self.set(state);
 		let ret = call(self);
 		self.unset(state);
@@ -100,7 +103,7 @@ impl<'a> Parser<'a> {
 
 	pub fn parse_entirely_with<T: Parse<'a>>(mut self) -> ParserReturn<Spanned<T>> {
 		self.advance();
-		let (output, panicked) = match T::parse(&mut self) {
+		let (output, panicked) = match T::parse_spanned(&mut self) {
 			Ok(output) => (Some(output), false),
 			Err(error) => {
 				self.errors.push(error);
@@ -122,7 +125,7 @@ impl<'a> Parser<'a> {
 
 	pub fn parse_with<T: Parse<'a>>(mut self) -> ParserReturn<Spanned<T>> {
 		self.advance();
-		let (output, panicked) = match T::parse(&mut self) {
+		let (output, panicked) = match T::parse_spanned(&mut self) {
 			Ok(output) => (Some(output), false),
 			Err(error) => {
 				self.errors.push(error);
@@ -136,7 +139,7 @@ impl<'a> Parser<'a> {
 		let mut vec = self.new_vec();
 		let mut last_kind;
 		loop {
-			vec.push(T::parse(self)?);
+			vec.push(T::parse_spanned(self)?);
 			match self.cur() {
 				Token::Comma => {
 					self.advance();

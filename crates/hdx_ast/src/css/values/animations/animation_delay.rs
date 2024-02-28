@@ -1,13 +1,13 @@
 use hdx_atom::atom;
 use hdx_lexer::Token;
-use hdx_parser::{unexpected, unexpected_ident, FromToken, Parse, Parser, Result as ParserResult, Spanned};
+use hdx_parser::{unexpected, unexpected_ident, FromToken, Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 #[cfg(feature = "serde")]
 use serde::Serialize;
 
 use super::super::units::Time;
 use crate::Value;
-use smallvec::{SmallVec, smallvec};
+use smallvec::{smallvec, SmallVec};
 
 // https://drafts.csswg.org/css-animations-2/#animation-duration
 #[derive(Default, Debug, PartialEq, Hash)]
@@ -17,8 +17,7 @@ pub struct AnimationDelay(pub SmallVec<[Time; 2]>);
 impl<'a> Value for AnimationDelay {}
 
 impl<'a> Parse<'a> for AnimationDelay {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
-		let span = parser.span();
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		let value = match parser.cur() {
 			Token::Dimension(_, _, _) => {
 				let mut values = smallvec![];
@@ -39,10 +38,10 @@ impl<'a> Parse<'a> for AnimationDelay {
 					}
 				}
 				AnimationDelay(values)
-			},
+			}
 			token => unexpected!(parser, token),
 		};
-		Ok(value.spanned(span.end(parser.pos())))
+		Ok(value)
 	}
 }
 

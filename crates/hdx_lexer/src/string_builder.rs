@@ -37,10 +37,7 @@ impl<'a> AutoCow<'a> {
 		self.value = if self.start.len() == lexer.remaining().len() {
 			Some(String::from_str_in("", lexer.allocator))
 		} else {
-			Some(String::from_str_in(
-				&self.start[..self.start.len() - lexer.remaining().len() - 1],
-				lexer.allocator,
-			))
+			Some(String::from_str_in(&self.start[..self.start.len() - lexer.remaining().len() - 1], lexer.allocator))
 		};
 	}
 

@@ -1,9 +1,9 @@
 use crate::Atomizable;
-use hdx_atom::{atom};
+use hdx_atom::atom;
 use hdx_lexer::Token;
 use hdx_parser::{
 	diagnostics::{self},
-	expect, unexpected, Parse, Parser, Result as ParserResult, Spanned,
+	expect, unexpected, Parse, Parser, Result as ParserResult,
 };
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 #[cfg(feature = "serde")]
@@ -65,7 +65,7 @@ pub enum CharsetRule {
 }
 
 impl<'a> Parse<'a> for CharsetRule {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		expect!(parser, Token::AtKeyword(atom!("charset")));
 		parser.advance_including_whitespace_and_comments();
 		expect!(parser, Token::Whitespace);
@@ -83,7 +83,7 @@ impl<'a> Parse<'a> for CharsetRule {
 		};
 		expect!(parser, Token::Semicolon);
 		parser.advance();
-		Ok(rule.spanned(parser.span()))
+		Ok(rule)
 	}
 }
 

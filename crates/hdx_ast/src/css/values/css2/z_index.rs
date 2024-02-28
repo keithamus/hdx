@@ -3,7 +3,7 @@ use serde::Serialize;
 
 use crate::{css::values::units::CSSFloat, Parsable, Value, Writable};
 
-#[derive(Parsable, Writable, Default, Debug, PartialEq, Hash)]
+#[derive(Value, Parsable, Writable, Default, Debug, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type", content = "value"))]
 pub enum ZIndex {
 	#[default]
@@ -11,8 +11,6 @@ pub enum ZIndex {
 	#[parsable(Number, Check::Int)]
 	Integer(CSSFloat),
 }
-
-impl Value for ZIndex {}
 
 #[cfg(test)]
 mod tests {

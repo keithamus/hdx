@@ -99,12 +99,12 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 								tail = Some(quote! {
 									sink.write_char(')')?;
 								});
-							},
+							}
 							WritableKind::String => {
 								head = Some(quote! { sink.write_char('"')?; });
 								tail = Some(quote! { sink.write_char('"')?; });
-							},
-							WritableKind::None => {},
+							}
+							WritableKind::None => {}
 						}
 						if let Some(str) = args.prefix {
 							prefix = Some(quote! {
@@ -155,7 +155,7 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 								head = Some(quote! { sink.write_char('"')?; });
 								tail = Some(quote! { sink.write_char('"')?; });
 							}
-							WritableKind::None => {},
+							WritableKind::None => {}
 						}
 						if let Some(str) = args.prefix {
 							prefix = Some(quote! {
@@ -224,7 +224,7 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 					head = Some(quote! { sink.write_char('"')?; });
 					tail = Some(quote! { sink.write_char('"')?; });
 				}
-				WritableKind::None => {},
+				WritableKind::None => {}
 			}
 			if let Some(str) = input_args.prefix {
 				prefix = Some(quote! {

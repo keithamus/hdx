@@ -133,7 +133,7 @@ impl<'a> Lexer<'a> {
 								let str = builder.finish(self);
 								self.current.chars.next();
 								self.current.chars.next();
-								return Token::Comment(Atom::from(str))
+								return Token::Comment(Atom::from(str));
 							}
 							builder.push_matching(self.current.chars.next().unwrap());
 						}
@@ -149,9 +149,7 @@ impl<'a> Lexer<'a> {
 				}
 				_ => Token::Delim(self.current.chars.next().unwrap()),
 			},
-			c if is_ident_start(c) => {
-				self.consume_ident_like_token()
-			}
+			c if is_ident_start(c) => self.consume_ident_like_token(),
 			_ => Token::Delim(self.current.chars.next().unwrap()),
 		}
 	}
@@ -283,8 +281,7 @@ impl<'a> Lexer<'a> {
 			num_type = num_type.float();
 		}
 		if matches!(self.nth(0), 'e' | 'E')
-			&& (self.nth(1).is_ascii_digit()
-				|| (matches!(self.nth(1), '-' | '+') && self.nth(2).is_ascii_digit()))
+			&& (self.nth(1).is_ascii_digit() || (matches!(self.nth(1), '-' | '+') && self.nth(2).is_ascii_digit()))
 		{
 			self.current.chars.next();
 			if matches!(self.nth(0), '-' | '+') {
@@ -309,7 +306,11 @@ impl<'a> Lexer<'a> {
 
 	fn consume_hash_token(&mut self) -> Token {
 		let ident = self.consume_ident_sequence();
-		if ident.starts_with(is_ident_start) { Token::HashId(ident) } else { Token::Hash(ident) }
+		if ident.starts_with(is_ident_start) {
+			Token::HashId(ident)
+		} else {
+			Token::Hash(ident)
+		}
 	}
 
 	fn consume_decimal_digits(&mut self) {
@@ -387,8 +388,7 @@ impl<'a> Lexer<'a> {
 	fn is_number_start(&mut self) -> bool {
 		self.nth(0).is_ascii_digit()
 			|| (is_sign(self.nth(0))
-				&& (self.nth(1).is_ascii_digit()
-					|| self.nth(1) == '.' && self.nth(2).is_ascii_digit()))
+				&& (self.nth(1).is_ascii_digit() || self.nth(1) == '.' && self.nth(2).is_ascii_digit()))
 			|| (self.nth(0) == '.' && self.nth(1).is_ascii_digit())
 	}
 

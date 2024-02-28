@@ -4,7 +4,7 @@ use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 use serde::Serialize;
 
 use crate::{
-	css::{properties::StyleProperty, selector::Selectors},
+	css::{properties::Property, selector::Selectors},
 	Spanned, Vec,
 };
 
@@ -17,10 +17,9 @@ pub struct StyleRule<'a> {
 }
 
 impl<'a> Parse<'a> for StyleRule<'a> {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
-		let span = parser.span();
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		let (selectors, style) = Self::parse_qualified_rule(parser)?;
-		Ok(Self { selectors, style }.spanned(span.end(parser.pos())))
+		Ok(Self { selectors, style })
 	}
 }
 
@@ -48,20 +47,19 @@ impl<'a> WriteCss<'a> for StyleRule<'a> {
 #[derive(Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
 pub struct StyleDeclaration<'a> {
-	pub declarations: Vec<'a, Spanned<StyleProperty<'a>>>,
+	pub declarations: Vec<'a, Spanned<Property<'a>>>,
 	pub rules: Vec<'a, Spanned<StyleRule<'a>>>,
 }
 
 impl<'a> Parse<'a> for StyleDeclaration<'a> {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
-		let span = parser.span();
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		let (declarations, rules) = Self::parse_block(parser)?;
-		Ok(Self { declarations, rules }.spanned(span.end(parser.pos())))
+		Ok(Self { declarations, rules })
 	}
 }
 
 impl<'a> Block<'a> for StyleDeclaration<'a> {
-	type Declaration = StyleProperty<'a>;
+	type Declaration = Property<'a>;
 	type Rule = StyleRule<'a>;
 }
 
@@ -92,7 +90,7 @@ mod test {
 	#[test]
 	fn size_test() {
 		use std::mem::size_of;
-		assert_eq!(size_of::<StyleRule>(), 112);
+		assert_eq!(size_of::<StyleRule>(), 136);
 	}
 
 	#[test]

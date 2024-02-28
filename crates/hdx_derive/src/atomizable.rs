@@ -1,7 +1,8 @@
-use proc_macro2::{Span, TokenStream};
+use proc_macro2::TokenStream;
 use quote::quote;
 use syn::{
-	parse::Parse, punctuated::Punctuated, Attribute, Data, DataEnum, DataStruct, DeriveInput, Fields, LitStr, Meta, Token,
+	parse::Parse, punctuated::Punctuated, Attribute, Data, DataEnum, DataStruct, DeriveInput, Fields, LitStr, Meta,
+	Token,
 };
 
 use crate::{err, kebab};
@@ -36,11 +37,7 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 			for var in variants {
 				let var_ident = var.ident;
 				let var_args = AtomizableArgs::parse(&var.attrs);
-				let ident = if let Some(name) = var_args {
-					name.0
-				} else {
-					kebab(format!("{}", var_ident))
-				};
+				let ident = if let Some(name) = var_args { name.0 } else { kebab(format!("{}", var_ident)) };
 				let str = LitStr::new(&ident, var_ident.span());
 				match_atom_to_enum_variant.push(quote! {
 					hdx_atom::atom!(#str) => Some(Self::#var_ident),

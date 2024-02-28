@@ -33,13 +33,7 @@ impl<'a> Lexer<'a> {
 	pub fn new(allocator: &'a Allocator, source: &'a str) -> Self {
 		let token = Token::default();
 		let current = LexerCheckpoint { chars: source.chars(), token };
-		Self {
-			allocator,
-			source,
-			current,
-			lookahead: VecDeque::with_capacity(4),
-			include: Include::none(),
-		}
+		Self { allocator, source, current, lookahead: VecDeque::with_capacity(4), include: Include::none() }
 	}
 
 	/// Remaining string from `Chars`
@@ -87,8 +81,7 @@ impl<'a> Lexer<'a> {
 
 		for _i in self.lookahead.len()..n {
 			let peeked = self.read_next_token();
-			self.lookahead
-				.push_back(LexerCheckpoint { chars: self.current.chars.clone(), token: peeked });
+			self.lookahead.push_back(LexerCheckpoint { chars: self.current.chars.clone(), token: peeked });
 		}
 
 		self.current = checkpoint;

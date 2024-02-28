@@ -1,10 +1,11 @@
 #[cfg(feature = "serde")]
 use serde::Serialize;
 
-use crate::{Atomizable, Parsable, Writable, Value};
+use crate::{Atomizable, Parsable, Value, Writable};
 
 // https://drafts.csswg.org/css-text-4/#propdef-text-align
-#[derive(Parsable, Writable, Atomizable, Default, Debug, PartialEq, Hash)]
+#[derive(Value, Parsable, Writable, Atomizable, Default, Debug, PartialEq, Hash)]
+#[value(Inherits)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type", rename_all = "kebab-case"))]
 pub enum TextAlign {
 	#[default]
@@ -17,12 +18,6 @@ pub enum TextAlign {
 	MatchParent, // atom!("match-parent")
 	JustifyAll,  /* atom!("justify-all")
 	              * TODO: Custom? */
-}
-
-impl Value for TextAlign {
-	fn inherits() -> bool {
-		true
-	}
 }
 
 #[cfg(test)]

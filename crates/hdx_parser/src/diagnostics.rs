@@ -1,3 +1,5 @@
+use std::ops::Range;
+
 use hdx_atom::Atom;
 use hdx_lexer::Token;
 use miette::{self, Diagnostic};
@@ -23,26 +25,17 @@ pub struct DisallowedAtRulePrelude(#[label("Remove this part")] pub Span);
 
 #[derive(Debug, Error, Diagnostic)]
 #[error("This at-rule must not have a 'block'.")]
-#[diagnostic(
-	help("The 'block' is the bit between the {{ and }}"),
-	code(hdx_parser::DisllowedAtRuleBlock)
-)]
+#[diagnostic(help("The 'block' is the bit between the {{ and }}"), code(hdx_parser::DisllowedAtRuleBlock))]
 pub struct DisallowedAtRuleBlock(#[label("Remove this part")] pub Span);
 
 #[derive(Debug, Error, Diagnostic)]
 #[error("This at-rule must have a 'block'.")]
-#[diagnostic(
-	help("The 'block' is the bit between the {{ and }}"),
-	code(hdx_parser::MissingAtRuleBlock)
-)]
+#[diagnostic(help("The 'block' is the bit between the {{ and }}"), code(hdx_parser::MissingAtRuleBlock))]
 pub struct MissingAtRuleBlock(#[label("Add {{}} here")] pub Span);
 
 #[derive(Debug, Error, Diagnostic)]
 #[error("This declaration wasn't understood, and so was disregarded.")]
-#[diagnostic(
-	help("The declaration contains invalid syntax, and will be ignored."),
-	code(hdx_parser::BadDeclaration)
-)]
+#[diagnostic(help("The declaration contains invalid syntax, and will be ignored."), code(hdx_parser::BadDeclaration))]
 pub struct BadDeclaration(#[label("This is not valid syntax for a declaration.")] pub Span);
 
 #[derive(Debug, Error, Diagnostic)]
@@ -53,10 +46,7 @@ pub struct Unexpected(pub Token, #[label("This wasn't expected here")] pub Span)
 #[derive(Debug, Error, Diagnostic)]
 #[error("Unexpected charset '{0}'. '{0}' isn't allowed here. This must be a valid IANA language code.")]
 #[diagnostic(help("Consider removing the rule or setting this to 'utf-8'"), code(hdx_parser::UnexpectedCharset))]
-pub struct UnexpectedCharset(
-	pub Atom,
-	#[label("This charset code is not allowed here")] pub Span,
-);
+pub struct UnexpectedCharset(pub Atom, #[label("This charset code is not allowed here")] pub Span);
 
 #[derive(Debug, Error, Diagnostic)]
 #[error("Unexpected identifier '{0}'")]
@@ -66,11 +56,7 @@ pub struct UnexpectedIdent(pub Atom, #[label("??")] pub Span);
 #[derive(Debug, Error, Diagnostic)]
 #[error("Unexpected identifier '{0}'. '{0}' isn't allowed here, but '{1}' is.")]
 #[diagnostic(help("Try changing this to '{1}'"), code(hdx_parser::UnexpectedIdentSuggest))]
-pub struct UnexpectedIdentSuggest(
-	pub Atom,
-	pub Atom,
-	#[label("This keyword is not allowed here")] pub Span,
-);
+pub struct UnexpectedIdentSuggest(pub Atom, pub Atom, #[label("This keyword is not allowed here")] pub Span);
 
 #[derive(Debug, Error, Diagnostic)]
 #[error("Unexpected duplicate '{0}'")]
@@ -84,10 +70,7 @@ pub struct UnexpectedDelim(pub char, #[label("This character wasn't understood")
 
 #[derive(Debug, Error, Diagnostic)]
 #[error("Unexpected pseudo selector ':{0}'")]
-#[diagnostic(
-	help("This isn't a valid psuedo selector for this rule."),
-	code(hdx_parser::UnexpectedPseudo)
-)]
+#[diagnostic(help("This isn't a valid psuedo selector for this rule."), code(hdx_parser::UnexpectedPseudo))]
 pub struct UnexpectedPseudo(pub Atom, #[label("This psuedo selector")] pub Span);
 
 #[derive(Debug, Error, Diagnostic)]
@@ -103,45 +86,32 @@ pub struct UnexpectedDimension(pub Atom, #[label("This isn't recognised")] pub S
 #[derive(Debug, Error, Diagnostic)]
 #[error("Unexpected at rule ':{0}'")]
 #[diagnostic(
-	help(
-		"This isn't a recognisable at-rule here. If the rule is valid, it might not be allowed here."
-	),
+	help("This isn't a recognisable at-rule here. If the rule is valid, it might not be allowed here."),
 	code(hdx_parser::UnexpectedAtRule)
 )]
 pub struct UnexpectedAtRule(pub Atom, #[label("This isn't recognised")] pub Span);
 
 #[derive(Debug, Error, Diagnostic)]
 #[error("Unexpected function '{0}'()")]
-#[diagnostic(
-	help("This function wasn't expected in this position."),
-	code(hdx_parser::UnexpectedFunction)
-)]
+#[diagnostic(help("This function wasn't expected in this position."), code(hdx_parser::UnexpectedFunction))]
 pub struct UnexpectedFunction(pub Atom, #[label("??")] pub Span);
 
 #[derive(Debug, Error, Diagnostic)]
 #[error("Unknown Rule")]
-#[diagnostic(
-	help("This might be a mistake in the parser, please file an issue!"),
-	code(hdx_parser::UnknownRule)
-)]
+#[diagnostic(help("This might be a mistake in the parser, please file an issue!"), code(hdx_parser::UnknownRule))]
 pub struct UnknownRule(#[label("Don't know how to interpret this")] pub Span);
 
 #[derive(Debug, Error, Diagnostic)]
 #[error("Ignored property due to parse error.")]
 #[diagnostic(
-	help(
-		"This property is going to be ignored because it doesn't look valid. If it is valid, please file an issue!"
-	),
+	help("This property is going to be ignored because it doesn't look valid. If it is valid, please file an issue!"),
 	code(hdx_parser::UnknownDeclaration)
 )]
 pub struct UnknownDeclaration(#[label("This property was ignored.")] pub Span);
 
 #[derive(Debug, Error, Diagnostic)]
 #[error("Unknown Value")]
-#[diagnostic(
-	help("This might be a mistake in the parser, please file an issue!"),
-	code(hdx_parser::UnknownValue)
-)]
+#[diagnostic(help("This might be a mistake in the parser, please file an issue!"), code(hdx_parser::UnknownValue))]
 pub struct UnknownValue(#[label("Don't know how to interpret this")] pub Span);
 
 #[derive(Debug, Error, Diagnostic)]
@@ -217,10 +187,7 @@ pub struct ExpectedDelimOf(pub char, pub char, #[label("This delimiter")] pub Sp
 
 #[derive(Debug, Error, Diagnostic)]
 #[error("Unexpected trailing `{0}`")]
-#[diagnostic(
-	help("Try removing the trailing {0} which will remove this warning."),
-	code(hdx_parser::WarnTrailing)
-)]
+#[diagnostic(help("Try removing the trailing {0} which will remove this warning."), code(hdx_parser::WarnTrailing))]
 pub struct WarnTrailing(pub Token, #[label("This can be removed")] pub Span);
 
 #[derive(Debug, Error, Diagnostic)]
@@ -246,10 +213,7 @@ pub struct AdjacentSelectorCombinators(
 
 #[derive(Debug, Error, Diagnostic)]
 #[error("This selector has two types next to each other, which is disallowed.")]
-#[diagnostic(
-	help("Try removing one of the types or add a space inbetween"),
-	code(hdx_parser::AdjacentSelectorTypes)
-)]
+#[diagnostic(help("Try removing one of the types or add a space inbetween"), code(hdx_parser::AdjacentSelectorTypes))]
 pub struct AdjacentSelectorTypes(
 	#[label("...because this type is right next to the previous one.")] pub Span,
 	#[label("This selector is invalid...")] pub Span,
@@ -257,10 +221,7 @@ pub struct AdjacentSelectorTypes(
 
 #[derive(Debug, Error, Diagnostic)]
 #[error("This value isn't allowed to be a raw number, it has to have a dimension.")]
-#[diagnostic(
-	help("Try adding a dimension, like '{0}'"),
-	code(hdx_parser::DisallowedValueWithoutDimension)
-)]
+#[diagnostic(help("Try adding a dimension, like '{0}'"), code(hdx_parser::DisallowedValueWithoutDimension))]
 pub struct DisallowedValueWithoutDimension(pub Atom, #[label("This value")] pub Span);
 
 #[derive(Debug, Error, Diagnostic)]
@@ -288,11 +249,8 @@ pub struct ExpectedUnsigned(pub f32, #[label("Remove the sign")] pub Span);
 
 #[derive(Debug, Error, Diagnostic)]
 #[error("This number is out of bounds.")]
-#[diagnostic(
-	help("This needs to be a number between {0} and {1} inclusive."),
-	code(hdx_parser::NumberOutOfBounds)
-)]
-pub struct NumberOutOfBounds(pub f32, pub f32, #[label("This value")] pub Span);
+#[diagnostic(help("This needs to be a number between {1}."), code(hdx_parser::NumberOutOfBounds))]
+pub struct NumberOutOfBounds(pub f32, pub String, #[label("This value")] pub Span);
 
 #[derive(Debug, Error, Diagnostic)]
 #[error("This number cannot be negative.")]
@@ -321,5 +279,8 @@ pub struct ExpectedZero(pub f32, #[label("This value")] pub Span);
 
 #[derive(Debug, Error, Diagnostic)]
 #[error("Display 'list-item' can only be combined with 'flow' or 'flow-root'")]
-#[diagnostic(help("{0} is not valid in combination with list-item, try changing it to flow or flow-root"), code(hdx_parser::DisplayHasInvalidListItemCombo))]
+#[diagnostic(
+	help("{0} is not valid in combination with list-item, try changing it to flow or flow-root"),
+	code(hdx_parser::DisplayHasInvalidListItemCombo)
+)]
 pub struct DisplayHasInvalidListItemCombo(pub Atom, pub Span);

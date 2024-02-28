@@ -1,6 +1,6 @@
 use hdx_atom::atom;
 use hdx_lexer::Token;
-use hdx_parser::{unexpected, unexpected_ident, Parse, Parser, Result as ParserResult, Spanned};
+use hdx_parser::{unexpected, unexpected_ident, Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 #[cfg(feature = "serde")]
 use serde::Serialize;
@@ -9,7 +9,7 @@ use crate::{css::values::units::CSSFloat, Value, Writable};
 use smallvec::{smallvec, SmallVec};
 
 // https://drafts.csswg.org/css-animations-2/#animation-fill-mode
-#[derive(Default, Debug, PartialEq, Hash)]
+#[derive(Value, Default, Debug, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde())]
 pub struct AnimationIterationCount(pub SmallVec<[SingleAnimationIterationCount; 1]>);
 
@@ -26,11 +26,8 @@ impl Default for SingleAnimationIterationCount {
 	}
 }
 
-impl Value for AnimationIterationCount {}
-
 impl<'a> Parse<'a> for AnimationIterationCount {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
-		let span = parser.span();
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		let mut values = smallvec![];
 		loop {
 			match parser.cur() {
@@ -38,9 +35,9 @@ impl<'a> Parse<'a> for AnimationIterationCount {
 					atom!("infinite") => {
 						parser.advance();
 						values.push(SingleAnimationIterationCount::Infinite);
-					},
+					}
 					atom => unexpected_ident!(parser, atom),
-				}
+				},
 				Token::Number(val, ty) if ty.is_int() && !ty.is_signed() => {
 					parser.advance();
 					values.push(SingleAnimationIterationCount::Number(val.into()))
@@ -56,7 +53,7 @@ impl<'a> Parse<'a> for AnimationIterationCount {
 				}
 			}
 		}
-		Ok(Self(values).spanned(span.end(parser.pos())))
+		Ok(Self(values))
 	}
 }
 

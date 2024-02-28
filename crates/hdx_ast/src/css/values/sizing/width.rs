@@ -2,10 +2,10 @@
 use serde::Serialize;
 
 use super::super::units::LengthPercentage;
-use crate::{Parsable, Writable, Value};
+use crate::{Parsable, Value, Writable};
 
 // https://drafts.csswg.org/css-sizing-4/#sizing-values
-#[derive(Parsable, Writable, Default, Debug, PartialEq, Hash)]
+#[derive(Value, Parsable, Writable, Default, Debug, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type", rename_all = "kebab-case"))]
 pub enum Width {
 	#[default]
@@ -17,14 +17,12 @@ pub enum Width {
 	FitContent, // atom!("fit-content")
 	Contain,    // atom!("contain")
 
-	#[parsable(DimensionOrZero, FromToken, Check::Positive)]
+	#[parsable(DimensionOrZero, FromToken, Check::Range(0.0..))]
 	LengthPercentage(LengthPercentage),
-	#[parsable(Function, FromToken, Check::Positive, atom = "fit-content")]
+	#[parsable(Function, FromToken, Check::Range(0.0..), atom = "fit-content")]
 	#[writable(as_function = "fit-content")]
 	FitContentFunction(LengthPercentage),
 }
-
-impl Value for Width {}
 
 #[cfg(test)]
 mod tests {

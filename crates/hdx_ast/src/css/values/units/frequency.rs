@@ -4,7 +4,7 @@ use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 use serde::Serialize;
 
 use super::{AbsoluteUnit, CSSFloat};
-use crate::{Parsable};
+use crate::Parsable;
 
 // https://drafts.csswg.org/css-values/#resolution
 #[derive(Parsable, Debug, Clone, Copy, PartialEq, Hash)]

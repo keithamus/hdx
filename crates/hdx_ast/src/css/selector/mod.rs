@@ -6,6 +6,7 @@ use hdx_parser::{
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 #[cfg(feature = "serde")]
 use serde::Serialize;
+use smallvec::{SmallVec, smallvec};
 
 use crate::{Atomizable, Vec};
 
@@ -17,14 +18,13 @@ use pseudo_class::PseudoClass;
 
 #[derive(Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde())]
-pub struct Selectors<'a>(pub Vec<'a, Spanned<Selector<'a>>>);
+pub struct Selectors<'a>(pub SmallVec<[Spanned<Selector<'a>>; 1]>);
 
 impl<'a> Parse<'a> for Selectors<'a> {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
-		let span = parser.span();
-		let mut selectors = parser.new_vec();
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
+		let mut selectors = smallvec![];
 		loop {
-			selectors.push(Selector::parse(parser)?);
+			selectors.push(Selector::parse_spanned(parser)?);
 			discard!(parser, Token::Whitespace);
 			match parser.cur() {
 				Token::Comma => {
@@ -33,7 +33,7 @@ impl<'a> Parse<'a> for Selectors<'a> {
 				_ => break,
 			}
 		}
-		Ok(Selectors(selectors).spanned(span.end(parser.pos())))
+		Ok(Selectors(selectors))
 	}
 }
 
@@ -62,9 +62,9 @@ pub struct Selector<'a> {
 }
 
 impl<'a> Parse<'a> for Selector<'a> {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		discard!(parser, Token::Whitespace);
-		let span = parser.span();
+
 		let mut components: Vec<'a, Spanned<Component>> = parser.new_vec();
 		loop {
 			match parser.cur() {
@@ -78,7 +78,8 @@ impl<'a> Parse<'a> for Selector<'a> {
 				}
 				token @ Token::RightCurly => unexpected!(parser, token),
 				_ => {
-					let component = Component::parse(parser)?;
+					let span = parser.span();
+					let component = Component::parse_spanned(parser)?;
 					if let Some(Spanned { node, span: component_span }) = components.last() {
 						match (node, &component.node) {
 							// A selector like `a /**/ b` would parse as // <Type>, <Descendant>,
@@ -113,7 +114,7 @@ impl<'a> Parse<'a> for Selector<'a> {
 		// Given selector parsing is Whitespace sensitive, trailing whitespace should be
 		// discarded before moving onto the next parser which is likely a block parser
 		discard!(parser, Token::Whitespace);
-		Ok(Self { components }.spanned(span.end(parser.pos())))
+		Ok(Self { components })
 	}
 }
 
@@ -149,7 +150,7 @@ pub enum Component<'a> {
 	Type(Atom),
 	Wildcard,
 	Combinator(Combinator),
-	Attribute(Spanned<Attribute>),
+	Attribute(Attribute),
 	PseudoClass(PseudoClass),
 	PseudoElement(PseudoElement),
 	LegacyPseudoElement(LegacyPseudoElement),
@@ -159,16 +160,15 @@ pub enum Component<'a> {
 }
 
 impl<'a> Parse<'a> for Component<'a> {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
-		let span = parser.span();
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		match parser.cur() {
 			Token::Whitespace => {
 				parser.advance();
-				Ok(Self::Combinator(Combinator::Descendant).spanned(span.end(parser.pos())))
+				Ok(Self::Combinator(Combinator::Descendant))
 			}
 			Token::Ident(name) => {
 				parser.advance_including_whitespace();
-				Ok(Self::Type(name.to_ascii_lowercase()).spanned(span))
+				Ok(Self::Type(name.to_ascii_lowercase()))
 			}
 			Token::Colon => {
 				parser.advance_including_whitespace();
@@ -179,7 +179,7 @@ impl<'a> Parse<'a> for Component<'a> {
 							Token::Ident(name) => {
 								if let Some(selector) = PseudoElement::from_atom(name.clone()) {
 									parser.advance_including_whitespace();
-									Ok(Self::PseudoElement(selector).spanned(span.end(parser.pos())))
+									Ok(Self::PseudoElement(selector))
 								} else {
 									unexpected_ident!(parser, name)
 								}
@@ -190,10 +190,10 @@ impl<'a> Parse<'a> for Component<'a> {
 					Token::Ident(ident) => {
 						if let Some(selector) = PseudoClass::from_atom(ident.clone()) {
 							parser.advance_including_whitespace();
-							Ok(Self::PseudoClass(selector).spanned(span.end(parser.pos())))
+							Ok(Self::PseudoClass(selector))
 						} else if let Some(e) = LegacyPseudoElement::from_atom(ident.clone()) {
 							parser.advance_including_whitespace();
-							Ok(Self::LegacyPseudoElement(e).spanned(span.end(parser.pos())))
+							Ok(Self::LegacyPseudoElement(e))
 						} else {
 							Err(diagnostics::UnexpectedIdent(ident, parser.span()))?
 						}
@@ -203,7 +203,7 @@ impl<'a> Parse<'a> for Component<'a> {
 			}
 			Token::Hash(name) => {
 				parser.advance_including_whitespace();
-				Ok(Self::Id(name).spanned(span.end(parser.pos())))
+				Ok(Self::Id(name))
 			}
 			Token::Delim(char) => match char {
 				'.' => {
@@ -211,7 +211,7 @@ impl<'a> Parse<'a> for Component<'a> {
 					match parser.cur() {
 						Token::Ident(ident) => {
 							parser.advance_including_whitespace();
-							Ok(Self::Class(ident).spanned(span.end(parser.pos())))
+							Ok(Self::Class(ident))
 						}
 						_ => Err(diagnostics::Unimplemented(parser.span()))?,
 					}
@@ -219,18 +219,18 @@ impl<'a> Parse<'a> for Component<'a> {
 				'*' => match parser.peek() {
 					Token::Delim('|') => {
 						let (prefix, atom) = parse_wq_name(parser)?;
-						Ok(Self::NSPrefixedType((prefix, atom)).spanned(span.end(parser.pos())))
+						Ok(Self::NSPrefixedType((prefix, atom)))
 					}
 					_ => {
 						parser.advance_including_whitespace();
-						Ok(Self::Wildcard.spanned(span.end(parser.pos())))
+						Ok(Self::Wildcard)
 					}
 				},
 				_ => Err(diagnostics::Unimplemented(parser.span()))?,
 			},
 			Token::LeftSquare => {
 				let attr = Attribute::parse(parser)?;
-				Ok(Component::Attribute(attr).spanned(span.end(parser.pos())))
+				Ok(Component::Attribute(attr))
 			}
 			_ => Err(diagnostics::Unimplemented(parser.span()))?,
 		}
@@ -335,7 +335,7 @@ pub enum PseudoFunction<'a> {
 	Host(Selector<'a>),           // atom!("host")
 	HostContext(Selector<'a>),    // atom!("host-context")
 	Is(ForgivingSelector<'a>),    // atom!("is")
-	Lang(Vec<'a, Atom>),          // atom!("lang")
+	Lang(SmallVec<[Atom; 3]>),    // atom!("lang")
 	Not(Selector<'a>),            // atom!("not")
 	NthChild(ANBEvenOdd),         // atom!("nth-child")
 	NthCol(ANB),                  // atom!("nth-col")
@@ -426,6 +426,7 @@ mod test {
 
 	#[test]
 	fn size_test() {
+		assert_eq!(::std::mem::size_of::<Selectors>(), 56);
 		assert_eq!(::std::mem::size_of::<Selector>(), 32);
 		assert_eq!(::std::mem::size_of::<ForgivingSelector>(), 32);
 		assert_eq!(::std::mem::size_of::<RelativeSelector>(), 32);
@@ -447,9 +448,13 @@ mod test {
 		test_write::<Component>(&allocator, "*", "*");
 		test_write::<Component>(&allocator, "[attr|='foo']", "[attr|=\"foo\"]");
 		// test_write::<Component>(&allocator, "*|x", "*|x");
+		test_write::<Selector>(&allocator, "a b ", "a b");
 		test_write::<Selector>(&allocator, ":root", ":root");
 		test_write::<Selector>(&allocator, "body [attr|='foo']", "body [attr|=\"foo\"]");
 		// test_write::<Selector>(&allocator, "*|x :focus-within", "*|x
 		// :focus-within");
+		test_write::<Selectors>(&allocator, "a b ", "a b");
+		test_write::<Selectors>(&allocator, ":root", ":root");
+		test_write::<Selectors>(&allocator, "body [attr|='foo']", "body [attr|=\"foo\"]");
 	}
 }

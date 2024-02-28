@@ -3,7 +3,7 @@ use serde::Serialize;
 
 use crate::{css::values::units::LengthPercentage, Parsable, Value, Writable};
 
-#[derive(Parsable, Writable, Default, PartialEq, Debug, Hash)]
+#[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde())]
 pub enum Bottom {
 	#[default]
@@ -11,8 +11,6 @@ pub enum Bottom {
 	#[parsable(DimensionOrZero, FromToken)]
 	LengthPercentage(LengthPercentage),
 }
-
-impl Value for Bottom {}
 
 #[cfg(test)]
 mod tests {

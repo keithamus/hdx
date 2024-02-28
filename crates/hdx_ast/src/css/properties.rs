@@ -2,7 +2,9 @@ use std::{fmt::Debug, hash::Hash};
 
 use hdx_atom::{atom, Atom};
 use hdx_lexer::Token;
-use hdx_parser::{diagnostics, discard, expect, unexpected, Parse, Parser, Result as ParserResult, Spanned, State};
+use hdx_parser::{
+	discard, expect, unexpected, unexpected_ident, Parse, Parser, Result as ParserResult, State, DeclarationValue, Declaration,
+};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 #[cfg(feature = "serde")]
 use serde::Serialize;
@@ -10,82 +12,130 @@ use serde::Serialize;
 use crate::{css::values, syntax::ComponentValues};
 
 #[derive(Debug, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
-pub struct Custom<'a> {
-	pub value: Spanned<ComponentValues<'a>>,
-	// pub value_like: Spanned<values::ValueLike<'a>>,
-}
+#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+pub struct Custom<'a>(pub ComponentValues<'a>);
 
 impl<'a> WriteCss<'a> for Custom<'a> {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
-		self.value.write_css(sink)
+		self.0.write_css(sink)
 	}
 }
 
 impl<'a> Parse<'a> for Custom<'a> {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
-		let span = parser.span();
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		parser.set(State::StopOnSemicolon);
 		let value = ComponentValues::parse(parser)?;
 		parser.unset(State::StopOnSemicolon);
-		Ok(Self { value }.spanned(span.end(parser.pos())))
-	}
-}
-
-#[derive(Debug, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
-pub struct Computed<'a> {
-	pub value: Spanned<ComponentValues<'a>>,
-	// pub value_like: Spanned<values::ValueLike<'a>>,
-}
-
-impl<'a> WriteCss<'a> for Computed<'a> {
-	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
-		self.value.write_css(sink)
-	}
-}
-
-impl<'a> Parse<'a> for Computed<'a> {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
-		let span = parser.span();
-		parser.set(State::StopOnSemicolon);
-		let value = ComponentValues::parse(parser)?;
-		parser.unset(State::StopOnSemicolon);
-		Ok(Self { value }.spanned(span.end(parser.pos())))
-	}
-}
-
-#[derive(Debug, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
-pub struct Unknown<'a> {
-	pub value: Spanned<ComponentValues<'a>>,
-}
-
-impl<'a> Parse<'a> for Unknown<'a> {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
-		let span = parser.span();
-		parser.set(State::StopOnSemicolon);
-		let value = ComponentValues::parse(parser)?;
-		parser.unset(State::StopOnSemicolon);
-		Ok(Self { value }.spanned(span.end(parser.pos())))
-	}
-}
-
-impl<'a> WriteCss<'a> for Unknown<'a> {
-	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
-		self.value.write_css(sink)
+		Ok(Self(value))
 	}
 }
 
 #[derive(Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde())]
-pub struct StyleProperty<'a> {
+pub struct Computed<'a>(pub ComponentValues<'a>);
+
+impl<'a> WriteCss<'a> for Computed<'a> {
+	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
+		self.0.write_css(sink)
+	}
+}
+
+impl<'a> Parse<'a> for Computed<'a> {
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
+		parser.set(State::StopOnSemicolon);
+		let value = ComponentValues::parse(parser)?;
+		parser.unset(State::StopOnSemicolon);
+		Ok(Self(value))
+	}
+}
+
+#[derive(Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+pub struct Unknown<'a>(pub ComponentValues<'a>);
+
+impl<'a> Parse<'a> for Unknown<'a> {
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
+		parser.set(State::StopOnSemicolon);
+		let value = ComponentValues::parse(parser)?;
+		parser.unset(State::StopOnSemicolon);
+		Ok(Self(value))
+	}
+}
+
+impl<'a> WriteCss<'a> for Unknown<'a> {
+	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
+		self.0.write_css(sink)
+	}
+}
+
+#[derive(Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+pub struct Property<'a> {
 	name: Atom,
 	value: StyleValue<'a>,
 	important: bool,
 }
 
-impl<'a> WriteCss<'a> for StyleProperty<'a> {
+impl<'a> Parse<'a> for Property<'a> {
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
+		let (name, value, important) = Self::parse_declaration(parser)?;
+		Ok(Self { name, value, important })
+	}
+}
+
+impl<'a> Declaration<'a> for Property<'a> {
+	type DeclarationValue = StyleValue<'a>;
+
+	fn parse_declaration_value(name: &Atom, parser: &mut Parser<'a>) -> ParserResult<Self::DeclarationValue> {
+		if name.starts_with("--") {
+			return Ok(StyleValue::Custom(Custom::parse(parser)?))
+		}
+		match parser.cur() {
+			Token::Ident(atom) => match atom.to_ascii_lowercase() {
+				atom!("initial") => {
+					parser.advance();
+					return Ok(StyleValue::Initial);
+				}
+				atom!("inherit") => {
+					parser.advance();
+					return Ok(StyleValue::Inherit);
+				}
+				atom!("unset") => {
+					parser.advance();
+					return Ok(StyleValue::Unset);
+				}
+				atom!("revert") => {
+					parser.advance();
+					return Ok(StyleValue::Revert);
+				}
+				atom!("revert-layer") => {
+					parser.advance();
+					return Ok(StyleValue::RevertLayer);
+				},
+				_ => {}
+			},
+			_ => {}
+		}
+		if is_computed_token(parser.cur()) {
+			let value = Computed::parse(parser)?;
+			Ok(StyleValue::Computed(value))
+		} else {
+			let checkpoint = parser.checkpoint();
+			if let Ok(value) = StyleValue::parse_declaration_value(&name, parser) {
+				Ok(value)
+			} else if is_computed_token(parser.cur()) {
+				parser.rewind(checkpoint);
+				let value = Computed::parse(parser)?;
+				Ok(StyleValue::Computed(value))
+			} else {
+				parser.rewind(checkpoint);
+				unexpected!(parser)
+			}
+		}
+	}
+}
+
+impl<'a> WriteCss<'a> for Property<'a> {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
 		sink.write_str(self.name.as_ref())?;
 		sink.write_char(':')?;
@@ -141,11 +191,11 @@ macro_rules! properties {
 			Unset,
 			Revert,
 			RevertLayer,
-			Custom(Spanned<Custom<'a>>),
-			Computed(Spanned<Computed<'a>>),
-			Unknown(Spanned<Unknown<'a>>),
+			Custom(Custom<'a>),
+			Computed(Computed<'a>),
+			Unknown(Unknown<'a>),
 			$(
-				$name(Spanned<values::$name$(<$a>)?>),
+				$name(values::$name$(<$a>)?),
 			)+
 		}
 
@@ -168,99 +218,17 @@ macro_rules! properties {
 			}
 		}
 
-		impl<'a> Parse<'a> for StyleProperty<'a> {
-			fn parse(parser: &mut Parser<'a>) -> ParserResult<Spanned<Self>> {
-				let span = parser.span();
-				let (name, value) = match parser.cur() {
-					Token::Ident(atom) => {
-						parser.advance();
-						expect!(parser, Token::Colon);
-						parser.advance();
-						let name = atom.to_ascii_lowercase();
-						match name {
-							_ if name.starts_with("--") => {
-								let custom = Custom::parse(parser)?;
-								(atom, StyleValue::Custom(custom))
-							},
-							$(
-							$atom => {
-								let value = match parser.cur() {
-									Token::Ident(atom) => match atom.to_ascii_lowercase() {
-										atom!("initial") => {
-											parser.advance();
-											StyleValue::Initial
-										}
-										atom!("inherit") => {
-											parser.advance();
-											StyleValue::Inherit
-										}
-										atom!("unset") => {
-											parser.advance();
-											StyleValue::Unset
-										}
-										atom!("revert") => {
-											parser.advance();
-											StyleValue::Revert
-										}
-										atom!("revert-layer") => {
-											parser.advance();
-											StyleValue::RevertLayer
-										},
-										_ => {
-											let checkpoint = parser.checkpoint();
-											if let Ok(value) = values::$name::parse(parser) {
-												StyleValue::$name(value)
-											} else if is_computed_token(parser.cur()) {
-												parser.rewind(checkpoint);
-												let value = Computed::parse(parser)?;
-												StyleValue::Computed(value)
-											} else {
-												parser.rewind(checkpoint);
-												unexpected!(parser)
-											}
-										}
-									},
-									_ => {
-										if is_computed_token(parser.cur()) {
-											let value = Computed::parse(parser)?;
-											StyleValue::Computed(value)
-										} else {
-											let checkpoint = parser.checkpoint();
-											if let Ok(value) = values::$name::parse(parser) {
-												StyleValue::$name(value)
-											} else if is_computed_token(parser.cur()) {
-												parser.rewind(checkpoint);
-												let value = Computed::parse(parser)?;
-												StyleValue::Computed(value)
-											} else {
-												parser.rewind(checkpoint);
-												unexpected!(parser)
-											}
-										}
-									}
-								};
-								(name, value)
-							},
-							)*
-							_ => {
-								let value = Unknown::parse(parser)?;
-								parser.warn(diagnostics::UnknownDeclaration(value.span).into());
-								(atom, StyleValue::Unknown(value))
-							}
-						}
-					},
-					token => unexpected!(parser, token),
-				};
-				let important = if matches!(parser.cur(), Token::Delim('!')) && matches!(parser.peek(), Token::Ident(atom!("important"))) {
-					parser.advance();
-					parser.advance_including_whitespace_and_comments();
-					expect!(parser, Token::Ident(atom!("important")));
-					true
-				} else {
-					false
-				};
-				discard!(parser, Token::Semicolon);
-				Ok(Self { name, value, important }.spanned(span.end(parser.pos())))
+		impl<'a> DeclarationValue<'a> for StyleValue<'a> {
+			fn parse_declaration_value(name: &Atom, parser: &mut Parser) -> ParserResult<Self> {
+				match name {
+					$(
+						&$atom => Ok(Self::$name(values::$name::parse(parser)?)),
+					)+
+					_ => {
+						let ident = name.clone();
+						unexpected_ident!(parser, ident)
+					}
+				}
 			}
 		}
     };
@@ -1375,14 +1343,15 @@ mod tests {
 	#[test]
 	fn size_test() {
 		use std::mem::size_of;
-		assert_eq!(size_of::<StyleProperty>(), 72);
-		assert_eq!(size_of::<StyleValue>(), 56);
+		assert_eq!(size_of::<Property>(), 64);
+		assert_eq!(size_of::<StyleValue>(), 48);
 	}
 
 	#[test]
 	fn test_writes() {
 		let allocator = Allocator::default();
-		test_write::<StyleProperty>(&allocator, "width: 1px", "width:1px");
-		test_write::<StyleProperty>(&allocator, "width: min(1px, 2px)", "width:min(1px, 2px)");
+		test_write::<Property>(&allocator, "float: none !important", "float:none!important");
+		test_write::<Property>(&allocator, "width: 1px", "width:1px");
+		test_write::<Property>(&allocator, "width: min(1px, 2px)", "width:min(1px, 2px)");
 	}
 }
