@@ -1,7 +1,7 @@
 #[cfg(feature = "serde")]
 use serde::Serialize;
 
-use crate::{css::values::units::CSSFloat, Atomizable, Parsable, Value, Writable};
+use crate::{css::values::units::CSSFloat, Parsable, Value, Writable};
 
 // https://drafts.csswg.org/css-inline/#propdef-alignment-baseline
 #[derive(Value, Parsable, Writable, Default, Debug, PartialEq, Hash)]

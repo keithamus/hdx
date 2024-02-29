@@ -1,6 +1,5 @@
-use hdx_atom::atom;
 use hdx_lexer::Token;
-use hdx_parser::{unexpected, unexpected_ident, FromToken, Parse, Parser, Result as ParserResult};
+use hdx_parser::{unexpected, FromToken, Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 #[cfg(feature = "serde")]
 use serde::Serialize;
@@ -52,7 +51,7 @@ impl<'a> WriteCss<'a> for AnimationDelay {
 			time.write_css(sink)?;
 			if iter.peek().is_some() {
 				sink.write_char(',')?;
-				sink.write_trivia_char(' ')?;
+				sink.write_whitespace()?;
 			}
 		}
 		Ok(())

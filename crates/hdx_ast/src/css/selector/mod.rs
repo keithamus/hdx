@@ -45,7 +45,7 @@ impl<'a> WriteCss<'a> for Selectors<'a> {
 			if iter.peek().is_some() {
 				sink.write_char(',')?;
 			}
-			sink.write_trivia_char(' ')?;
+			sink.write_whitespace()?;
 		}
 		Ok(())
 	}
@@ -268,7 +268,7 @@ impl<'a> WriteCss<'a> for Component<'a> {
 				attr.write_css(sink)?;
 			}
 			Self::Combinator(combinator) => {
-				sink.write_trivia_char(' ')?;
+				sink.write_whitespace()?;
 				match combinator {
 					Combinator::Descendant => {
 						sink.write_char(' ')?;
@@ -287,7 +287,7 @@ impl<'a> WriteCss<'a> for Component<'a> {
 						sink.write_char('|')?;
 					}
 				}
-				sink.write_trivia_char(' ')?;
+				sink.write_whitespace()?;
 			}
 			Self::Wildcard => {
 				sink.write_char('*')?;

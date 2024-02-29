@@ -89,10 +89,13 @@ impl<'a> Parse<'a> for CharsetRule {
 
 impl<'a> WriteCss<'a> for CharsetRule {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
-		sink.write_str("@charset \"")?;
+		sink.write_char('@')?;
+		atom!("charset").write_css(sink)?;
+		sink.write_char(' ')?;
+		sink.write_char('"')?;
 		self.to_atom().write_css(sink)?;
-		sink.write_str("\";")?;
-		Ok(())
+		sink.write_char('"')?;
+		sink.write_char(';')
 	}
 }
 

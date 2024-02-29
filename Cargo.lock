@@ -631,6 +631,7 @@ dependencies = [
 name = "hdx_writer"
 version = "0.0.0"
 dependencies = [
+ "bitmask-enum",
  "hdx_atom",
  "hdx_lexer",
  "hdx_parser",

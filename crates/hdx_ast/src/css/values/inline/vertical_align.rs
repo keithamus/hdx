@@ -1,9 +1,8 @@
-use hdx_parser::{unexpected, FromToken, Parse, Parser, Result as ParserResult, Span, Spanned};
-use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
+use hdx_parser::{FromToken, Parse, Parser, Result as ParserResult, Span, Spanned};
 #[cfg(feature = "serde")]
 use serde::Serialize;
 
-use crate::{css::values::units::LengthPercentageOrAuto, macros::*, Parsable, Value, Writable};
+use crate::{macros::*, Value};
 
 use super::{AlignmentBaseline, BaselineShift, BaselineSource};
 

@@ -1,3 +1,5 @@
+use bitmask_enum::bitmask;
+
 pub use std::fmt::{Result, Write};
 
 use hdx_atom::Atom;
@@ -7,15 +9,28 @@ pub trait WriteCss<'a>: Sized {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> Result;
 }
 
+#[bitmask(u8)]
+pub enum OutputOption {
+	Nesting,
+	Whitespace,
+	Comments,
+	Trailing,
+	RedundantRules,
+	RedundantDeclarations,
+	RedundantShorthandValues,
+}
+
 pub trait CssWriter {
 	fn write_newline(&mut self) -> Result;
 	fn write_str(&mut self, str: &str) -> Result;
-	fn write_char(&mut self, char: char) -> Result;
-	fn write_trivia_str(&mut self, str: &str) -> Result;
-	fn write_trivia_char(&mut self, char: char) -> Result;
+	fn write_char(&mut self, ch: char) -> Result;
+	fn write_comment(&mut self, str: &str) -> Result;
+	fn write_trailing_char(&mut self, ch: char) -> Result;
+	fn write_whitespace(&mut self) -> Result;
 	fn write_indent(&mut self) -> Result;
 	fn indent(&mut self);
 	fn dedent(&mut self);
+	fn can_output(&self, opt: OutputOption) -> bool;
 }
 
 pub struct BaseCssWriter<W>
@@ -26,15 +41,15 @@ where
 	col: u32,
 	line: u32,
 	indent: u8,
-	compressed: bool,
+	opts: OutputOption,
 }
 
 impl<W> BaseCssWriter<W>
 where
 	W: Write,
 {
-	pub fn new(sink: W, compressed: bool) -> Self {
-		BaseCssWriter { sink, col: 0, line: 0, indent: 0, compressed }
+	pub fn new(sink: W, opts: OutputOption) -> Self {
+		BaseCssWriter { sink, col: 0, line: 0, indent: 0, opts }
 	}
 }
 
@@ -42,44 +57,63 @@ impl<W> CssWriter for BaseCssWriter<W>
 where
 	W: Write,
 {
-	fn write_newline(&mut self) -> Result {
-		if !self.compressed {
-			self.write_char('\n')?;
-			self.line += 1;
-		}
-		Ok(())
+	#[inline]
+	fn can_output(&self, opt: OutputOption) -> bool {
+		self.opts.contains(opt)
 	}
 
-	fn write_trivia_str(&mut self, str: &str) -> Result {
-		if !self.compressed {
-			self.write_str(str)?;
-		}
-		Ok(())
-	}
-
+	#[inline]
 	fn write_str(&mut self, str: &str) -> Result {
 		self.col += str.len() as u32;
 		self.sink.write_str(str)
 	}
 
-	fn write_trivia_char(&mut self, ch: char) -> Result {
-		if !self.compressed {
-			self.write_char(ch)?;
-		}
-		Ok(())
-	}
-
+	#[inline]
 	fn write_char(&mut self, ch: char) -> Result {
 		if ch == '\n' {
-			self.line += 1
+			return self.write_newline();
 		} else {
 			self.col += 1
 		}
 		self.sink.write_char(ch)
 	}
 
+	#[inline]
+	fn write_newline(&mut self) -> Result {
+		if self.can_output(OutputOption::Whitespace) {
+			self.write_char('\n')?;
+			self.line += 1;
+		}
+		Ok(())
+	}
+
+	#[inline]
+	fn write_comment(&mut self, str: &str) -> Result {
+		if self.can_output(OutputOption::Comments) {
+			self.write_str(str)?;
+		}
+		Ok(())
+	}
+
+	#[inline]
+	fn write_trailing_char(&mut self, ch: char) -> Result {
+		if self.can_output(OutputOption::Trailing) {
+			self.write_char(ch)?;
+		}
+		Ok(())
+	}
+
+	#[inline]
+	fn write_whitespace(&mut self) -> Result {
+		if self.can_output(OutputOption::Whitespace) {
+			self.write_char(' ')?;
+		}
+		Ok(())
+	}
+
+	#[inline]
 	fn write_indent(&mut self) -> Result {
-		if !self.compressed {
+		if self.can_output(OutputOption::Whitespace) {
 			for _ in 0..(self.indent) {
 				self.write_char('\t')?;
 			}
@@ -88,16 +122,14 @@ where
 		Ok(())
 	}
 
+	#[inline]
 	fn indent(&mut self) {
-		if !self.compressed {
-			self.indent += 1
-		}
+		self.indent += 1
 	}
 
+	#[inline]
 	fn dedent(&mut self) {
-		if !self.compressed {
-			self.indent -= 1
-		}
+		self.indent -= 1
 	}
 }
 

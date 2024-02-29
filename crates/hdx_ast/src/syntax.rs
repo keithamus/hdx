@@ -88,9 +88,12 @@ impl<'a> WriteCss<'a> for ComponentValue<'a> {
 						sink.write_char('"')?;
 					}
 					Token::Url(url) => {
-						sink.write_str("url(")?;
+						atom!("url").write_css(sink)?;
+						sink.write_char('(')?;
+						sink.write_char('"')?;
 						sink.write_str(url.as_ref())?;
-						sink.write_str("\")")?;
+						sink.write_char('"')?;
+						sink.write_char(')')?;
 					}
 					Token::Delim(ch) => {
 						sink.write_char(*ch)?;
@@ -101,8 +104,8 @@ impl<'a> WriteCss<'a> for ComponentValue<'a> {
 						sink.write_str(unit.as_ref())?;
 					}
 					Token::Whitespace => sink.write_char(' ')?,
-					Token::Cdo => sink.write_str("<!--")?,
-					Token::Cdc => sink.write_str("-->")?,
+					Token::Cdo => atom!("<!--").write_css(sink)?,
+					Token::Cdc => atom!("-->").write_css(sink)?,
 					Token::Colon => sink.write_char(':')?,
 					Token::Semicolon => sink.write_char(';')?,
 					Token::Comma => sink.write_char(',')?,
@@ -113,7 +116,7 @@ impl<'a> WriteCss<'a> for ComponentValue<'a> {
 					Token::LeftCurly => sink.write_char('{')?,
 					Token::RightCurly => sink.write_char('}')?,
 					Token::Undetermined => {}
-					Token::Comment(content) => sink.write_trivia_str(content.as_ref())?,
+					Token::Comment(content) => sink.write_comment(content.as_ref())?,
 					Token::Function(name) => {
 						sink.write_str(name.as_ref())?;
 						sink.write_char('(')?;
@@ -261,10 +264,12 @@ impl<'a> WriteCss<'a> for Declaration<'a> {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
 		self.name.write_css(sink)?;
 		sink.write_char(':')?;
-		sink.write_trivia_char(' ')?;
+		sink.write_whitespace()?;
 		self.value.write_css(sink)?;
 		if self.important {
-			sink.write_str(" !important")?;
+			sink.write_whitespace()?;
+			sink.write_char('!')?;
+			atom!("important").write_css(sink)?;
 		}
 		sink.write_char(';')?;
 		Ok(())
@@ -318,10 +323,10 @@ impl<'a> AtRuleTrait<'a> for AtRule<'a> {
 
 impl<'a> WriteCss<'a> for AtRule<'a> {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
-		sink.write_str("@")?;
+		sink.write_char('@')?;
 		sink.write_str(self.name.as_ref())?;
 		self.prelude.write_css(sink)?;
-		sink.write_trivia_char(' ')?;
+		sink.write_whitespace()?;
 		self.block.write_css(sink)?;
 		Ok(())
 	}
@@ -350,7 +355,7 @@ impl<'a> QualifiedRuleTrait<'a> for QualifiedRule<'a> {
 impl<'a> WriteCss<'a> for QualifiedRule<'a> {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
 		self.prelude.write_css(sink)?;
-		sink.write_trivia_char(' ')?;
+		sink.write_whitespace()?;
 		self.block.write_css(sink)?;
 		Ok(())
 	}

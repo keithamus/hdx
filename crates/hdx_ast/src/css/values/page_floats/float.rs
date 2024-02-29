@@ -143,33 +143,35 @@ impl<'a> Parse<'a> for Float {
 impl<'a> WriteCss<'a> for Float {
 	fn write_css<W: hdx_writer::CssWriter>(&self, sink: &mut W) -> hdx_writer::Result {
 		match self {
-			Self::None => sink.write_str("none"),
-			Self::Left => sink.write_str("left"),
-			Self::Right => sink.write_str("right"),
-			Self::Top => sink.write_str("top"),
-			Self::Bottom => sink.write_str("bottom"),
-			Self::BlockStart => sink.write_str("block-start"),
-			Self::BlockEnd => sink.write_str("block-end"),
-			Self::InlineStart => sink.write_str("inline-start"),
-			Self::InlineEnd => sink.write_str("inline-end"),
-			Self::SnapBlock => sink.write_str("snap-block"),
+			Self::None => atom!("none").write_css(sink),
+			Self::Left => atom!("left").write_css(sink),
+			Self::Right => atom!("right").write_css(sink),
+			Self::Top => atom!("top").write_css(sink),
+			Self::Bottom => atom!("bottom").write_css(sink),
+			Self::BlockStart => atom!("block-start").write_css(sink),
+			Self::BlockEnd => atom!("block-end").write_css(sink),
+			Self::InlineStart => atom!("inline-start").write_css(sink),
+			Self::InlineEnd => atom!("inline-end").write_css(sink),
+			Self::SnapBlock => atom!("snap-block").write_css(sink),
 			Self::SnapBlockFunction(len, dir) => {
-				sink.write_str("snap-block(")?;
+				atom!("snap-block").write_css(sink)?;
+				sink.write_char('(')?;
 				len.write_css(sink)?;
 				if let Some(direction) = dir {
 					sink.write_char(',')?;
-					sink.write_trivia_char(' ')?;
+					sink.write_whitespace()?;
 					direction.to_atom().write_css(sink)?;
 				}
 				sink.write_char(')')
 			}
-			Self::SnapInline => sink.write_str("snap-inline"),
+			Self::SnapInline => atom!("snap-inline").write_css(sink),
 			Self::SnapInlineFunction(len, dir) => {
-				sink.write_str("snap-inline(")?;
+				atom!("snap-inline").write_css(sink)?;
+				sink.write_char('(')?;
 				len.write_css(sink)?;
 				if let Some(direction) = dir {
 					sink.write_char(',')?;
-					sink.write_trivia_char(' ')?;
+					sink.write_whitespace()?;
 					direction.to_atom().write_css(sink)?;
 				}
 				sink.write_char(')')

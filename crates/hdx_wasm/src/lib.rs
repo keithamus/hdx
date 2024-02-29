@@ -1,7 +1,7 @@
 use hdx_ast::css::StyleSheet;
 use hdx_lexer::{Lexer, Token};
 use hdx_parser::{Features, Parser};
-use hdx_writer::{BaseCssWriter, WriteCss};
+use hdx_writer::{BaseCssWriter, WriteCss, OutputOption};
 #[cfg(not(feature = "fancy"))]
 use miette::JSONReportHandler;
 use miette::NamedSource;
@@ -70,7 +70,7 @@ pub fn minify(source_text: String) -> Result<String, serde_wasm_bindgen::Error> 
 		return Err(serde_wasm_bindgen::Error::new("Parse error"));
 	}
 	let mut string = String::new();
-	let mut writer = BaseCssWriter::new(&mut string, true);
+	let mut writer = BaseCssWriter::new(&mut string, OutputOption::none());
 	result.output.unwrap().write_css(&mut writer).unwrap();
 	Ok(string)
 }
@@ -83,8 +83,6 @@ pub fn parse_error_report(source_text: String) -> String {
 	let handler = GraphicalReportHandler::new_themed(GraphicalTheme::unicode_nocolor());
 	#[cfg(not(feature = "fancy"))]
 	let handler = JSONReportHandler::new();
-	#[cfg(feature = "fancy")]
-	let handler = GraphicalReportHandler::new_themed(GraphicalTheme::unicode_nocolor());
 	let mut report = String::new();
 	for err in result.errors {
 		let err = err.with_source_code(NamedSource::new("", source_text.to_string()));
@@ -96,7 +94,7 @@ pub fn parse_error_report(source_text: String) -> String {
 		handler.render_report(&mut report, warn.as_ref()).unwrap();
 		report += "\n";
 	}
-	format!("{}", &report)
+	report.to_string()
 }
 
 #[wasm_bindgen]

@@ -56,25 +56,25 @@ impl<'a> Parse<'a> for MarginTrim {
 impl<'a> WriteCss<'a> for MarginTrim {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
 		if self.contains(Self::BlockStart) {
-			sink.write_str("block-start")?;
+			atom!("block-start").write_css(sink)?;
 		}
 		if self.contains(Self::BlockEnd) {
 			if self.intersects(Self::BlockStart) {
 				sink.write_char(' ')?;
 			}
-			sink.write_str("block-end")?;
+			atom!("block-end").write_css(sink)?;
 		}
 		if self.contains(Self::InlineStart) {
 			if self.intersects(Self::BlockStart | Self::BlockEnd) {
 				sink.write_char(' ')?;
 			}
-			sink.write_str("inline-start")?;
+			atom!("inline-start").write_css(sink)?;
 		}
 		if self.contains(Self::InlineEnd) {
 			if self.intersects(Self::BlockStart | Self::BlockEnd | Self::InlineStart) {
 				sink.write_char(' ')?;
 			}
-			sink.write_str("inline-end")?;
+			atom!("inline-end").write_css(sink)?;
 		}
 		Ok(())
 	}

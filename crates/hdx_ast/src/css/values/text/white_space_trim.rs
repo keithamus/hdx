@@ -45,22 +45,22 @@ impl<'a> Parse<'a> for WhiteSpaceTrim {
 impl<'a> WriteCss<'a> for WhiteSpaceTrim {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
 		if self.is_none() {
-			sink.write_str("none")?;
+			atom!("none").write_css(sink)?;
 		} else {
 			if self.contains(Self::DiscardBefore) {
-				sink.write_str("discard-before")?;
+				atom!("discard-before").write_css(sink)?;
 			}
 			if self.contains(Self::DiscardAfter) {
 				if self.intersects(Self::DiscardBefore) {
 					sink.write_char(' ')?;
 				}
-				sink.write_str("discard-after")?;
+				atom!("discard-after").write_css(sink)?;
 			}
 			if self.contains(Self::DiscardInner) {
 				if self.intersects(Self::DiscardBefore | Self::DiscardAfter) {
 					sink.write_char(' ')?;
 				}
-				sink.write_str("discard-inner")?;
+				atom!("discard-inner").write_css(sink)?;
 			}
 		}
 		Ok(())

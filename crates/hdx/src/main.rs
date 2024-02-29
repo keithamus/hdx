@@ -1,6 +1,6 @@
 use clap::Parser;
 use hdx_ast::css::StyleSheet;
-use hdx_writer::{BaseCssWriter, WriteCss};
+use hdx_writer::{BaseCssWriter, WriteCss, OutputOption};
 use miette::{GraphicalReportHandler, GraphicalTheme, NamedSource};
 use oxc_allocator::Allocator;
 
@@ -34,7 +34,12 @@ fn main() {
 	{
 		let start = std::time::Instant::now();
 		let mut str = String::new();
-		let mut writer = BaseCssWriter::new(&mut str, args.minify);
+		let opts = if args.minify {
+			OutputOption::none()
+		} else {
+			OutputOption::all()
+		};
+		let mut writer = BaseCssWriter::new(&mut str, opts);
 		if let Some(stylesheet) = &result.output {
 			stylesheet.write_css(&mut writer).unwrap();
 			if let Some(file) = args.output {

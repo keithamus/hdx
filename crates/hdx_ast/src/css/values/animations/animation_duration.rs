@@ -66,7 +66,7 @@ impl<'a> WriteCss<'a> for AnimationDuration {
 					time.write_css(sink)?;
 					if iter.peek().is_some() {
 						sink.write_char(',')?;
-						sink.write_trivia_char(' ')?;
+						sink.write_whitespace()?;
 					}
 				}
 				Ok(())

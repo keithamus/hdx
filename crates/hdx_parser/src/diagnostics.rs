@@ -1,5 +1,3 @@
-use std::ops::Range;
-
 use hdx_atom::Atom;
 use hdx_lexer::Token;
 use miette::{self, Diagnostic};
@@ -27,6 +25,11 @@ pub struct DisallowedAtRulePrelude(#[label("Remove this part")] pub Span);
 #[error("This at-rule must not have a 'block'.")]
 #[diagnostic(help("The 'block' is the bit between the {{ and }}"), code(hdx_parser::DisllowedAtRuleBlock))]
 pub struct DisallowedAtRuleBlock(#[label("Remove this part")] pub Span);
+
+#[derive(Debug, Error, Diagnostic)]
+#[error("This at-rule must have a 'prelude'.")]
+#[diagnostic(help("The 'prelude' is the bit between the @ and the {{"), code(hdx_parser::MissingAtRulePrelude))]
+pub struct MissingAtRulePrelude(#[label("Add content here")] pub Span);
 
 #[derive(Debug, Error, Diagnostic)]
 #[error("This at-rule must have a 'block'.")]

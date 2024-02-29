@@ -31,7 +31,7 @@ impl<'a> QualifiedRule<'a> for StyleRule<'a> {
 impl<'a> WriteCss<'a> for StyleRule<'a> {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
 		self.selectors.write_css(sink)?;
-		sink.write_trivia_char(' ')?;
+		sink.write_whitespace()?;
 		sink.write_char('{')?;
 		sink.indent();
 		sink.write_newline()?;
@@ -70,7 +70,7 @@ impl<'a> WriteCss<'a> for StyleDeclaration<'a> {
 			sink.write_indent()?;
 			decl.write_css(sink)?;
 			if iter.peek().is_none() {
-				sink.write_trivia_char(';')?;
+				sink.write_trailing_char(';')?;
 			} else {
 				sink.write_char(';')?;
 			}

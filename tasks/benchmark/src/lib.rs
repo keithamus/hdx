@@ -5,7 +5,7 @@ use glob::glob;
 use hdx_ast::css::StyleSheet;
 use hdx_lexer::Lexer;
 use hdx_parser::{Parser, Features};
-use hdx_writer::{BaseCssWriter, WriteCss};
+use hdx_writer::{BaseCssWriter, WriteCss, OutputOption};
 // use hdx_parser::{Parser, Features};
 // use hdx_writer::{BaseCssWriter, WriteCss};
 use oxc_allocator::Allocator;
@@ -114,7 +114,7 @@ impl AppArgs {
 						Parser::new(&allocator, source_text.as_str(), Features::default()).parse_with::<StyleSheet>();
 					{
 						let mut string = String::new();
-						let mut writer = BaseCssWriter::new(&mut string, true);
+						let mut writer = BaseCssWriter::new(&mut string, OutputOption::none());
 						if let Some(stylesheet) = &result.output {
 							let _ = stylesheet.write_css(&mut writer).unwrap().to_owned();
 						}

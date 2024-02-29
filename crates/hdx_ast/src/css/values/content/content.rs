@@ -6,7 +6,7 @@ use hdx_writer::WriteCss;
 #[cfg(feature = "serde")]
 use serde::Serialize;
 
-use crate::{Parsable, Value, Vec, Writable};
+use crate::Value;
 
 #[derive(Value, Default, PartialEq, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde())]

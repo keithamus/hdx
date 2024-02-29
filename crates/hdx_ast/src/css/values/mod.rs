@@ -3,8 +3,6 @@ use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 #[cfg(feature = "serde")]
 use serde::Serialize;
 
-use crate::Spanned;
-
 /// Values
 mod align;
 mod anchor_position;

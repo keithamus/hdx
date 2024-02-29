@@ -1,9 +1,6 @@
-use std::ops::Range;
-
-use hdx_atom::Atom;
 use hdx_lexer::{LexerCheckpoint, Token};
 
-use crate::{diagnostics, span::Span, Parser, Result};
+use crate::{span::Span, Parser};
 
 pub struct ParserCheckpoint<'a> {
 	lexer: LexerCheckpoint<'a>,

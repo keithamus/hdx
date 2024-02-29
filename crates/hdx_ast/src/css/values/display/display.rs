@@ -238,25 +238,24 @@ impl<'a> Parse<'a> for Display {
 impl<'a> WriteCss<'a> for Display {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
 		match self {
-			&Self::None => sink.write_str("none"),
-			&Self::Contents => sink.write_str("contents"),
-			&Self::InlineBlock if self.is_legacy() => sink.write_str("inline-block"),
-			&Self::InlineTable if self.is_legacy() => sink.write_str("inline-table"),
-			&Self::InlineFlex if self.is_legacy() => sink.write_str("inline-flex"),
-			&Self::InlineGrid if self.is_legacy() => sink.write_str("inline-grid"),
-			&Self::TableRowGroup if self.is_internal() => sink.write_str("table-row-group"),
-			&Self::TableHeaderGroup if self.is_internal() => sink.write_str("table-header-group"),
-			&Self::TableFooterGroup if self.is_internal() => sink.write_str("table-footer-group"),
-			&Self::TableRow if self.is_internal() => sink.write_str("table-row"),
-			&Self::TableCell if self.is_internal() => sink.write_str("table-cell"),
-			&Self::TableColumnGroup if self.is_internal() => sink.write_str("table-column-group"),
-			&Self::TableColumn if self.is_internal() => sink.write_str("table-column"),
-			&Self::TableCaption if self.is_internal() => sink.write_str("table-caption"),
-			&Self::RubyBase if self.is_internal() => sink.write_str("ruby-base"),
-			&Self::RubyText if self.is_internal() => sink.write_str("ruby-text"),
-			&Self::RubyBaseContainer if self.is_internal() => sink.write_str("ruby-base-container"),
-			&Self::RubyTextContainer if self.is_internal() => sink.write_str("ruby-text-container"),
-
+			&Self::None => atom!("none").write_css(sink),
+			&Self::Contents => atom!("contents").write_css(sink),
+			&Self::InlineBlock if self.is_legacy() => atom!("inline-block").write_css(sink),
+			&Self::InlineTable if self.is_legacy() => atom!("inline-table").write_css(sink),
+			&Self::InlineFlex if self.is_legacy() => atom!("inline-flex").write_css(sink),
+			&Self::InlineGrid if self.is_legacy() => atom!("inline-grid").write_css(sink),
+			&Self::TableRowGroup if self.is_internal() => atom!("table-row-group").write_css(sink),
+			&Self::TableHeaderGroup if self.is_internal() => atom!("table-header-group").write_css(sink),
+			&Self::TableFooterGroup if self.is_internal() => atom!("table-footer-group").write_css(sink),
+			&Self::TableRow if self.is_internal() => atom!("table-row").write_css(sink),
+			&Self::TableCell if self.is_internal() => atom!("table-cell").write_css(sink),
+			&Self::TableColumnGroup if self.is_internal() => atom!("table-column-group").write_css(sink),
+			&Self::TableColumn if self.is_internal() => atom!("table-column").write_css(sink),
+			&Self::TableCaption if self.is_internal() => atom!("table-caption").write_css(sink),
+			&Self::RubyBase if self.is_internal() => atom!("ruby-base").write_css(sink),
+			&Self::RubyText if self.is_internal() => atom!("ruby-text").write_css(sink),
+			&Self::RubyBaseContainer if self.is_internal() => atom!("ruby-base-container").write_css(sink),
+			&Self::RubyTextContainer if self.is_internal() => atom!("ruby-text-container").write_css(sink),
 			_ => {
 				if let Some(outside) = self.outside_to_atom() {
 					outside.write_css(sink)?;
@@ -271,7 +270,7 @@ impl<'a> WriteCss<'a> for Display {
 					}
 				}
 				if self.has_list_item() {
-					sink.write_str("list-item")?;
+					atom!("list-item").write_css(sink)?;
 				}
 				Ok(())
 			}

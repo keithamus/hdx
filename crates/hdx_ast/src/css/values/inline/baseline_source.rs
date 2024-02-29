@@ -3,7 +3,7 @@ use hdx_parser::FromToken;
 #[cfg(feature = "serde")]
 use serde::Serialize;
 
-use crate::{Value, Atomizable, Parsable, Writable};
+use crate::{Value, Atomizable, Writable};
 
 // https://drafts.csswg.org/css-inline/#propdef-baseline-source
 #[derive(Value, Writable, Atomizable, Default, Debug, PartialEq, Hash)]

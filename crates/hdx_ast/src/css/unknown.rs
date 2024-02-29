@@ -34,11 +34,11 @@ impl<'a> AtRule<'a> for UnknownAtRule<'a> {
 
 impl<'a> WriteCss<'a> for UnknownAtRule<'a> {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
-		sink.write_str("@")?;
+		sink.write_str('@')?;
 		sink.write_str(self.name.as_ref())?;
 		if let Some(prelude) = &self.prelude.0 {
 			prelude.write_css(sink)?;
-			sink.write_trivia_char(' ')?;
+			sink.write_whitespace()?;
 		}
 		self.block.write_css(sink)?;
 		Ok(())
@@ -66,7 +66,7 @@ impl<'a> QualifiedRule<'a> for UnknownRule<'a> {
 impl<'a> WriteCss<'a> for UnknownRule<'a> {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
 		self.prelude.write_css(sink)?;
-		sink.write_trivia_char(' ')?;
+		sink.write_whitespace()?;
 		self.block.write_css(sink)?;
 		Ok(())
 	}

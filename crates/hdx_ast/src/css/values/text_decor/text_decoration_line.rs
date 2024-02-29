@@ -49,28 +49,28 @@ impl<'a> Parse<'a> for TextDecorationLine {
 impl<'a> WriteCss<'a> for TextDecorationLine {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
 		if self.is_none() {
-			sink.write_str("none")?;
+			atom!("none").write_css(sink)?;
 		} else {
 			if self.contains(Self::Underline) {
-				sink.write_str("underline")?;
+				atom!("underline").write_css(sink)?;
 			}
 			if self.contains(Self::Overline) {
 				if self.intersects(Self::Overline) {
 					sink.write_char(' ')?;
 				}
-				sink.write_str("overline")?;
+				atom!("overline").write_css(sink)?;
 			}
 			if self.contains(Self::LineThrough) {
 				if self.intersects(Self::Underline | Self::Overline) {
 					sink.write_char(' ')?;
 				}
-				sink.write_str("line-through")?;
+				atom!("line-through").write_css(sink)?;
 			}
 			if self.contains(Self::Blink) {
 				if self.intersects(Self::Underline | Self::Overline | Self::LineThrough) {
 					sink.write_char(' ')?;
 				}
-				sink.write_str("blink")?;
+				atom!("blink").write_css(sink)?;
 			}
 		}
 		Ok(())

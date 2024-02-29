@@ -3,7 +3,7 @@ use std::{fmt::Debug, hash::Hash};
 use hdx_atom::{atom, Atom};
 use hdx_lexer::Token;
 use hdx_parser::{
-	discard, expect, unexpected, unexpected_ident, Parse, Parser, Result as ParserResult, State, DeclarationValue, Declaration,
+	unexpected, unexpected_ident, Declaration, DeclarationValue, Parse, Parser, Result as ParserResult, State,
 };
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 #[cfg(feature = "serde")]
@@ -88,7 +88,7 @@ impl<'a> Declaration<'a> for Property<'a> {
 
 	fn parse_declaration_value(name: &Atom, parser: &mut Parser<'a>) -> ParserResult<Self::DeclarationValue> {
 		if name.starts_with("--") {
-			return Ok(StyleValue::Custom(Custom::parse(parser)?))
+			return Ok(StyleValue::Custom(Custom::parse(parser)?));
 		}
 		match parser.cur() {
 			Token::Ident(atom) => match atom.to_ascii_lowercase() {
@@ -111,7 +111,7 @@ impl<'a> Declaration<'a> for Property<'a> {
 				atom!("revert-layer") => {
 					parser.advance();
 					return Ok(StyleValue::RevertLayer);
-				},
+				}
 				_ => {}
 			},
 			_ => {}
@@ -139,10 +139,12 @@ impl<'a> WriteCss<'a> for Property<'a> {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
 		sink.write_str(self.name.as_ref())?;
 		sink.write_char(':')?;
-		sink.write_trivia_char(' ')?;
+		sink.write_whitespace()?;
 		self.value.write_css(sink)?;
 		if self.important {
-			sink.write_str("!important")?;
+            sink.write_whitespace()?;
+            sink.write_char('!')?;
+            atom!("important").write_css(sink)?;
 		}
 		Ok(())
 	}
@@ -202,19 +204,18 @@ macro_rules! properties {
 		impl<'a> WriteCss<'a> for StyleValue<'a> {
 			fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
 				match self {
-					Self::Initial => sink.write_str("initial")?,
-					Self::Inherit => sink.write_str("inherit")?,
-					Self::Unset => sink.write_str("unset")?,
-					Self::Revert => sink.write_str("revert")?,
-					Self::RevertLayer => sink.write_str("revert-layer")?,
-					Self::Custom(v) => v.write_css(sink)?,
-					Self::Unknown(v) => v.write_css(sink)?,
-					Self::Computed(v) => v.write_css(sink)?,
+					Self::Initial => atom!("initial").write_css(sink),
+					Self::Inherit => atom!("inherit").write_css(sink),
+					Self::Unset => atom!("unset").write_css(sink),
+					Self::Revert => atom!("revert").write_css(sink),
+					Self::RevertLayer => atom!("revert-layer").write_css(sink),
+					Self::Custom(v) => v.write_css(sink),
+					Self::Unknown(v) => v.write_css(sink),
+					Self::Computed(v) => v.write_css(sink),
 					$(
-						Self::$name(v) => v.write_css(sink)?,
+						Self::$name(v) => v.write_css(sink),
 					)+
 				}
-				Ok(())
 			}
 		}
 

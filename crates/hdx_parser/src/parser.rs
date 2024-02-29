@@ -1,6 +1,6 @@
 use bitmask_enum::bitmask;
 use hdx_lexer::{Lexer, Token};
-use miette::{Error, Result};
+use miette::Error;
 use oxc_allocator::Allocator;
 
 use crate::{diagnostics, span::Spanned, traits::Parse};
@@ -24,9 +24,7 @@ pub struct Parser<'a> {
 }
 
 #[bitmask(u8)]
-pub enum Features {
-	Sloppy = 0x01,
-}
+pub enum Features {}
 
 impl Default for Features {
 	fn default() -> Self {
@@ -133,31 +131,6 @@ impl<'a> Parser<'a> {
 			}
 		};
 		ParserReturn { output, warnings: self.warnings, errors: self.errors, panicked }
-	}
-
-	pub fn parse_comma_list_of<T: Parse<'a>>(&mut self) -> Result<oxc_allocator::Vec<'a, Spanned<T>>> {
-		let mut vec = self.new_vec();
-		let mut last_kind;
-		loop {
-			vec.push(T::parse_spanned(self)?);
-			match self.cur() {
-				Token::Comma => {
-					self.advance();
-					last_kind = Token::Comma;
-				}
-				t => {
-					last_kind = t;
-					break;
-				}
-			}
-		}
-		if matches!(last_kind, Token::Comma) {
-			let warn: Error = diagnostics::WarnTrailing(self.cur(), self.span()).into();
-			if !self.enabled(Features::Sloppy) {
-				Err(warn)?;
-			}
-		}
-		Ok(vec)
 	}
 
 	pub fn warn(&mut self, error: Error) {

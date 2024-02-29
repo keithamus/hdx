@@ -181,6 +181,31 @@ pub trait StyleSheet<'a>: Sized + Parse<'a> {
 	}
 }
 
+// https://drafts.csswg.org/css-syntax-3/#typedef-rule-list
+pub trait RuleList<'a>: Sized + Parse<'a> {
+	type Rule: Parse<'a>;
+
+	fn parse_rule_list(
+		parser: &mut Parser<'a>,
+	) -> Result<Vec<'a, Spanned<Self::Rule>>> {
+		expect!(parser, Token::LeftCurly);
+		parser.advance();
+		let mut rules = parser.new_vec();
+		loop {
+			match parser.cur() {
+				Token::RightCurly => {
+					parser.advance();
+					return Ok(rules);
+				}
+				_ => {
+					rules.push(Self::Rule::parse_spanned(parser)?);
+				}
+			}
+		}
+	}
+}
+
+// https://drafts.csswg.org/css-syntax-3/#typedef-declaration-rule-list
 pub trait DeclarationRuleList<'a>: Sized + Parse<'a> {
 	type Declaration: Parse<'a>;
 	type AtRule: AtRule<'a> + Parse<'a>;

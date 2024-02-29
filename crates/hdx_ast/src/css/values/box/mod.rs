@@ -1,6 +1,3 @@
-#[cfg(feature = "serde")]
-use serde::Serialize;
-
 mod margin;
 mod margin_trim;
 mod padding;

@@ -5,6 +5,7 @@ use hdx_parser::{
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 #[cfg(feature = "serde")]
 use serde::Serialize;
+use smallvec::{SmallVec, smallvec};
 
 use super::NoPreludeAllowed;
 use crate::{atom, css::properties::Property, Atom, Atomizable, Specificity, ToSpecificity};
@@ -14,8 +15,7 @@ use crate::{atom, css::properties::Property, Atom, Atomizable, Specificity, ToSp
 #[derive(Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
 pub struct PageRule<'a> {
-	#[cfg_attr(feature = "serde", serde(borrow))]
-	pub selectors: Option<Spanned<PageSelectorList<'a>>>,
+	pub selectors: Option<Spanned<PageSelectorList>>,
 	pub style: Spanned<PageDeclaration<'a>>,
 }
 
@@ -35,12 +35,13 @@ impl<'a> Parse<'a> for PageRule<'a> {
 
 impl<'a> AtRule<'a> for PageRule<'a> {
 	type Block = PageDeclaration<'a>;
-	type Prelude = PageSelectorList<'a>;
+	type Prelude = PageSelectorList;
 }
 
 impl<'a> WriteCss<'a> for PageRule<'a> {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
-		sink.write_str("@page ")?;
+		sink.write_char('@')?;
+		atom!("page").write_css(sink)?;
 		self.selectors.write_css(sink)?;
 		self.style.write_css(sink)?;
 		Ok(())
@@ -48,25 +49,32 @@ impl<'a> WriteCss<'a> for PageRule<'a> {
 }
 
 #[derive(Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
-pub struct PageSelectorList<'a> {
-	pub children: Vec<'a, Spanned<PageSelector<'a>>>,
-}
+#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+pub struct PageSelectorList(pub SmallVec<[Spanned<PageSelector>; 1]>);
 
-impl<'a> Parse<'a> for PageSelectorList<'a> {
+impl<'a> Parse<'a> for PageSelectorList {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		Ok(Self { children: parser.parse_comma_list_of::<PageSelector>()? })
+		let mut selectors = smallvec![];
+		loop {
+			let selector = PageSelector::parse_spanned(parser)?;
+			selectors.push(selector);
+			if matches!(parser.cur(), Token::Comma) {
+				parser.advance();
+			} else {
+				return Ok(Self(selectors));
+			}
+		}
 	}
 }
 
-impl<'a> WriteCss<'a> for PageSelectorList<'a> {
+impl<'a> WriteCss<'a> for PageSelectorList {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
-		let mut iter = self.children.iter().peekable();
+		let mut iter = self.0.iter().peekable();
 		while let Some(selector) = iter.next() {
 			selector.write_css(sink)?;
 			if iter.peek().is_some() {
 				sink.write_char(',')?;
-				sink.write_trivia_char(' ')?;
+				sink.write_whitespace()?;
 			}
 		}
 		Ok(())
@@ -75,16 +83,15 @@ impl<'a> WriteCss<'a> for PageSelectorList<'a> {
 
 #[derive(Debug, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
-pub struct PageSelector<'a> {
+pub struct PageSelector {
 	pub page_type: Option<Atom>,
-	#[cfg_attr(feature = "serde", serde(borrow))]
-	pub pseudos: Vec<'a, Spanned<PagePseudoClass>>,
+	pub pseudos: SmallVec<[Spanned<PagePseudoClass>; 1]>,
 }
 
-impl<'a> Parse<'a> for PageSelector<'a> {
+impl<'a> Parse<'a> for PageSelector {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		let mut page_type = None;
-		let mut pseudos = parser.new_vec();
+		let mut pseudos = smallvec![];
 		match parser.cur() {
 			Token::Ident(atom) => {
 				page_type = Some(atom);
@@ -106,7 +113,7 @@ impl<'a> Parse<'a> for PageSelector<'a> {
 	}
 }
 
-impl<'a> WriteCss<'a> for PageSelector<'a> {
+impl<'a> WriteCss<'a> for PageSelector {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
 		if let Some(page_type) = &self.page_type {
 			sink.write_str(page_type.as_ref())?;
@@ -119,7 +126,7 @@ impl<'a> WriteCss<'a> for PageSelector<'a> {
 	}
 }
 
-impl<'a> PageSelector<'a> {
+impl<'a> PageSelector {
 	pub fn selector(&self) -> &str {
 		todo!();
 		// format!("{}{}", self.page_type.unwrap_or("").to_owned(),
@@ -200,7 +207,7 @@ impl<'a> WriteCss<'a> for PageDeclaration<'a> {
 		while let Some(decl) = iter.next() {
 			decl.write_css(sink)?;
 			if iter.peek().is_none() && rule_iter.peek().is_none() {
-				sink.write_trivia_char(';')?;
+				sink.write_trailing_char(';')?;
 			} else {
 				sink.write_char(';')?;
 			}
@@ -260,7 +267,7 @@ impl<'a> WriteCss<'a> for MarginRule<'a> {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
 		sink.write_char('@')?;
 		sink.write_str(self.name.to_atom().as_ref())?;
-		sink.write_trivia_char(' ')?;
+		sink.write_whitespace()?;
 		self.style.write_css(sink)
 	}
 }
@@ -317,7 +324,7 @@ impl<'a> WriteCss<'a> for MarginDeclaration<'a> {
 		while let Some(decl) = iter.next() {
 			decl.write_css(sink)?;
 			if iter.peek().is_none() && rule_iter.peek().is_none() {
-				sink.write_trivia_char(';')?;
+				sink.write_trailing_char(';')?;
 			} else {
 				sink.write_char(';')?;
 			}
@@ -342,7 +349,7 @@ mod tests {
 	#[test]
 	fn size_test() {
 		use std::mem::size_of;
-		assert_eq!(size_of::<PageRule>(), 112);
+		assert_eq!(size_of::<PageRule>(), 144);
 		assert_eq!(size_of::<MarginRule>(), 80);
 		assert_eq!(size_of::<PagePseudoClass>(), 1);
 		assert_eq!(size_of::<PageMarginBox>(), 1);
