@@ -1,47 +1,43 @@
 {
-  "end": 15,
+  "end": 14,
   "node": {
     "rules": [
       {
-        "end": 15,
+        "end": 14,
         "node": {
-          "end": 15,
-          "node": {
-            "selectors": {
-              "end": 13,
-              "node": [
-                {
-                  "end": 13,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 12,
-                        "node": {
-                          "type": "PseudoClass",
-                          "value": "fullscreen"
-                        },
-                        "start": 0
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 0
-                }
-              ],
-              "start": 0
-            },
-            "style": {
-              "end": 15,
-              "node": {
-                "declarations": [],
-                "rules": [],
-                "type": "StyleDeclaration"
-              },
-              "start": 12
-            },
-            "type": "StyleRule"
+          "selectors": {
+            "end": 12,
+            "node": [
+              {
+                "end": 12,
+                "node": {
+                  "components": [
+                    {
+                      "end": 11,
+                      "node": {
+                        "type": "PseudoClass",
+                        "value": "fullscreen"
+                      },
+                      "start": 0
+                    }
+                  ],
+                  "type": "Selector"
+                },
+                "start": 0
+              }
+            ],
+            "start": 0
           },
-          "start": 0
+          "style": {
+            "end": 14,
+            "node": {
+              "declarations": [],
+              "rules": [],
+              "type": "StyleDeclaration"
+            },
+            "start": 12
+          },
+          "type": "StyleRule"
         },
         "start": 0
       }

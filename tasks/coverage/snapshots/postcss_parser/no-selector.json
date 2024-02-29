@@ -1,38 +1,34 @@
 {
-  "end": 3,
+  "end": 2,
   "node": {
     "rules": [
       {
-        "end": 3,
+        "end": 2,
         "node": {
-          "end": 3,
-          "node": {
-            "selectors": {
-              "end": 1,
-              "node": [
-                {
-                  "end": 1,
-                  "node": {
-                    "components": [],
-                    "type": "Selector"
-                  },
-                  "start": 0
-                }
-              ],
-              "start": 0
-            },
-            "style": {
-              "end": 3,
-              "node": {
-                "declarations": [],
-                "rules": [],
-                "type": "StyleDeclaration"
-              },
-              "start": 0
-            },
-            "type": "StyleRule"
+          "selectors": {
+            "end": 0,
+            "node": [
+              {
+                "end": 0,
+                "node": {
+                  "components": [],
+                  "type": "Selector"
+                },
+                "start": 0
+              }
+            ],
+            "start": 0
           },
-          "start": 0
+          "style": {
+            "end": 2,
+            "node": {
+              "declarations": [],
+              "rules": [],
+              "type": "StyleDeclaration"
+            },
+            "start": 0
+          },
+          "type": "StyleRule"
         },
         "start": 0
       }

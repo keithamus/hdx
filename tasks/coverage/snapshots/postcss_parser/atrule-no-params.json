@@ -1,25 +1,21 @@
 {
-  "end": 9,
+  "end": 8,
   "node": {
     "rules": [
       {
-        "end": 9,
+        "end": 8,
         "node": {
-          "end": 9,
-          "node": {
-            "selectors": null,
-            "style": {
-              "end": 9,
-              "node": {
-                "properties": [],
-                "rules": [],
-                "type": "PageDeclaration"
-              },
-              "start": 5
+          "selectors": null,
+          "style": {
+            "end": 8,
+            "node": {
+              "properties": [],
+              "rules": [],
+              "type": "PageDeclaration"
             },
-            "type": "PageRule"
+            "start": 5
           },
-          "start": 0
+          "type": "PageRule"
         },
         "start": 0
       }

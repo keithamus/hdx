@@ -5,42 +5,38 @@
       {
         "end": 18,
         "node": {
-          "end": 18,
-          "node": {
-            "block": {
-              "end": 0,
-              "node": {
-                "declarations": [],
-                "rules": [],
-                "type": "Block"
-              },
-              "start": 0
+          "block": {
+            "end": 0,
+            "node": {
+              "declarations": [],
+              "rules": [],
+              "type": "Block"
             },
-            "name": "import",
-            "prelude": {
-              "end": 18,
-              "node": [
-                {
-                  "end": 17,
-                  "node": {
-                    "kind": "String",
-                    "value": "test.css"
-                  },
-                  "start": 7
-                },
-                {
-                  "end": 18,
-                  "node": {
-                    "kind": "Whitespace"
-                  },
-                  "start": 17
-                }
-              ],
-              "start": 7
-            },
-            "type": "AtRule"
+            "start": 0
           },
-          "start": 0
+          "name": "import",
+          "prelude": {
+            "end": 18,
+            "node": [
+              {
+                "end": 17,
+                "node": {
+                  "kind": "String",
+                  "value": "test.css"
+                },
+                "start": 7
+              },
+              {
+                "end": 18,
+                "node": {
+                  "kind": "Whitespace"
+                },
+                "start": 17
+              }
+            ],
+            "start": 7
+          },
+          "type": "AtRule"
         },
         "start": 0
       }

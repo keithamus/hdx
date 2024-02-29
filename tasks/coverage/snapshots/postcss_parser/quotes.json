@@ -1,92 +1,80 @@
 {
-  "end": 63,
+  "end": 62,
   "node": {
     "rules": [
       {
-        "end": 63,
+        "end": 62,
         "node": {
-          "end": 63,
-          "node": {
-            "selectors": {
-              "end": 11,
-              "node": [
-                {
-                  "end": 11,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 1,
-                        "node": {
-                          "type": "Type",
-                          "value": "a"
-                        },
-                        "start": 0
+          "selectors": {
+            "end": 10,
+            "node": [
+              {
+                "end": 10,
+                "node": {
+                  "components": [
+                    {
+                      "end": 1,
+                      "node": {
+                        "type": "Type",
+                        "value": "a"
                       },
-                      {
-                        "end": 10,
-                        "node": {
-                          "type": "PseudoElement",
-                          "value": {
-                            "type": "before"
-                          }
-                        },
-                        "start": 1
+                      "start": 0
+                    },
+                    {
+                      "end": 9,
+                      "node": {
+                        "type": "PseudoElement",
+                        "value": {
+                          "type": "before"
+                        }
+                      },
+                      "start": 1
+                    }
+                  ],
+                  "type": "Selector"
+                },
+                "start": 0
+              }
+            ],
+            "start": 0
+          },
+          "style": {
+            "end": 62,
+            "node": {
+              "declarations": [
+                {
+                  "end": 38,
+                  "node": {
+                    "important": false,
+                    "name": "content",
+                    "value": {
+                      "Content": {
+                        "String": ";'@ /**/\""
                       }
-                    ],
-                    "type": "Selector"
+                    }
                   },
-                  "start": 0
+                  "start": 11
+                },
+                {
+                  "end": 60,
+                  "node": {
+                    "important": false,
+                    "name": "content",
+                    "value": {
+                      "Content": {
+                        "String": "'\"\\"
+                      }
+                    }
+                  },
+                  "start": 38
                 }
               ],
-              "start": 0
+              "rules": [],
+              "type": "StyleDeclaration"
             },
-            "style": {
-              "end": 63,
-              "node": {
-                "declarations": [
-                  {
-                    "end": 50,
-                    "node": {
-                      "important": false,
-                      "name": "content",
-                      "value": {
-                        "Content": {
-                          "end": 38,
-                          "node": {
-                            "String": ";'@ /**/\""
-                          },
-                          "start": 24
-                        }
-                      }
-                    },
-                    "start": 11
-                  },
-                  {
-                    "end": 62,
-                    "node": {
-                      "important": false,
-                      "name": "content",
-                      "value": {
-                        "Content": {
-                          "end": 60,
-                          "node": {
-                            "String": "'\"\\"
-                          },
-                          "start": 51
-                        }
-                      }
-                    },
-                    "start": 38
-                  }
-                ],
-                "rules": [],
-                "type": "StyleDeclaration"
-              },
-              "start": 10
-            },
-            "type": "StyleRule"
+            "start": 10
           },
-          "start": 0
+          "type": "StyleRule"
         },
         "start": 0
       }

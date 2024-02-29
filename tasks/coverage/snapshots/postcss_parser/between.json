@@ -1,47 +1,43 @@
 {
-  "end": 9,
+  "end": 8,
   "node": {
     "rules": [
       {
-        "end": 9,
+        "end": 8,
         "node": {
-          "end": 9,
-          "node": {
-            "selectors": {
-              "end": 7,
-              "node": [
-                {
-                  "end": 7,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 1,
-                        "node": {
-                          "type": "Type",
-                          "value": "a"
-                        },
-                        "start": 0
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 0
-                }
-              ],
-              "start": 0
-            },
-            "style": {
-              "end": 9,
-              "node": {
-                "declarations": [],
-                "rules": [],
-                "type": "StyleDeclaration"
-              },
-              "start": 1
-            },
-            "type": "StyleRule"
+          "selectors": {
+            "end": 1,
+            "node": [
+              {
+                "end": 1,
+                "node": {
+                  "components": [
+                    {
+                      "end": 1,
+                      "node": {
+                        "type": "Type",
+                        "value": "a"
+                      },
+                      "start": 0
+                    }
+                  ],
+                  "type": "Selector"
+                },
+                "start": 0
+              }
+            ],
+            "start": 0
           },
-          "start": 0
+          "style": {
+            "end": 8,
+            "node": {
+              "declarations": [],
+              "rules": [],
+              "type": "StyleDeclaration"
+            },
+            "start": 1
+          },
+          "type": "StyleRule"
         },
         "start": 0
       }

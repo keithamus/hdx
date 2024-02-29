@@ -1,66 +1,54 @@
 {
-  "end": 70,
+  "end": 69,
   "node": {
     "rules": [
       {
-        "end": 70,
+        "end": 69,
         "node": {
-          "end": 70,
-          "node": {
-            "block": {
-              "end": 0,
-              "node": {
-                "declarations": [],
-                "rules": [],
-                "type": "Block"
-              },
-              "start": 0
+          "block": {
+            "end": 0,
+            "node": {
+              "declarations": [],
+              "rules": [],
+              "type": "Block"
             },
-            "name": "-moz-document",
-            "prelude": {
-              "end": 70,
-              "node": [
-                {
-                  "end": 68,
-                  "node": {
-                    "end": 68,
-                    "node": {
-                      "name": "url",
-                      "type": "Function",
-                      "values": [
-                        {
-                          "end": 57,
-                          "node": {
-                            "kind": "String",
-                            "value": "example.com/{"
-                          },
-                          "start": 42
-                        }
-                      ]
-                    },
-                    "start": 14
-                  },
-                  "start": 14
-                },
-                {
-                  "end": 70,
-                  "node": {
-                    "end": 70,
-                    "node": {
-                      "pairwise": "Curly",
-                      "type": "SimpleBlock",
-                      "values": []
-                    },
-                    "start": 58
-                  },
-                  "start": 58
-                }
-              ],
-              "start": 14
-            },
-            "type": "AtRule"
+            "start": 0
           },
-          "start": 0
+          "name": "-moz-document",
+          "prelude": {
+            "end": 69,
+            "node": [
+              {
+                "end": 58,
+                "node": {
+                  "name": "url",
+                  "type": "Function",
+                  "values": [
+                    {
+                      "end": 57,
+                      "node": {
+                        "kind": "String",
+                        "value": "example.com/{"
+                      },
+                      "start": 42
+                    }
+                  ]
+                },
+                "start": 14
+              },
+              {
+                "end": 69,
+                "node": {
+                  "pairwise": "Curly",
+                  "type": "SimpleBlock",
+                  "values": []
+                },
+                "start": 58
+              }
+            ],
+            "start": 14
+          },
+          "type": "AtRule"
         },
         "start": 0
       }
