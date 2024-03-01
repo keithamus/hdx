@@ -8,7 +8,7 @@ use serde::Serialize;
 
 use crate::{
 	css::{
-		rules::{CharsetRule, PageRule},
+		rules::{CharsetRule, PageRule, MediaRule},
 		stylerule::StyleRule,
 	},
 	syntax::{AtRule, QualifiedRule},
@@ -53,6 +53,7 @@ pub enum Rule<'a> {
 	Charset(CharsetRule),
 	Page(PageRule<'a>),
 	Style(StyleRule<'a>),
+	Media(MediaRule<'a>),
 	UnknownAt(AtRule<'a>),
 	Unknown(QualifiedRule<'a>),
 }
@@ -99,6 +100,7 @@ impl<'a> WriteCss<'a> for Rule<'a> {
 			Self::Style(rule) => rule.write_css(sink),
 			Self::Charset(rule) => rule.write_css(sink),
 			Self::Page(rule) => rule.write_css(sink),
+			Self::Media(rule) => rule.write_css(sink),
 			Self::UnknownAt(rule) => rule.write_css(sink),
 			Self::Unknown(rule) => rule.write_css(sink),
 		}

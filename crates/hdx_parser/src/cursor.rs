@@ -44,11 +44,9 @@ impl<'a> Parser<'a> {
 	}
 
 	#[inline]
-	pub fn advance(&mut self) -> Span {
-		let span = self.span();
-		self.prev_pos = span.end;
+	pub fn advance(&mut self) {
+		self.prev_pos = self.lexer.pos();
 		self.token = self.lexer.advance();
-		span
 	}
 
 	pub fn rewind(&mut self, checkpoint: ParserCheckpoint<'a>) {

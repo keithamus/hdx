@@ -1,12 +1,13 @@
 use hdx_atom::Atom;
 use hdx_lexer::Token;
 use hdx_parser::{
-	diagnostics, discard, expect, unexpected, unexpected_ident, Parse, Parser, Result as ParserResult, Span, Spanned,
+	diagnostics, discard, expect, peek, unexpected, unexpected_ident, Parse, Parser, Result as ParserResult, Span,
+	Spanned,
 };
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 #[cfg(feature = "serde")]
 use serde::Serialize;
-use smallvec::{SmallVec, smallvec};
+use smallvec::{smallvec, SmallVec};
 
 use crate::{Atomizable, Vec};
 
@@ -71,9 +72,7 @@ impl<'a> Parse<'a> for Selector<'a> {
 				Token::Eof | Token::Semicolon | Token::Comma | Token::LeftCurly => {
 					break;
 				}
-				Token::Whitespace
-					if matches!(parser.peek(), Token::Eof | Token::Semicolon | Token::Comma | Token::LeftCurly) =>
-				{
+				Token::Whitespace if peek!(parser, Token::Eof | Token::Semicolon | Token::Comma | Token::LeftCurly) => {
 					break;
 				}
 				token @ Token::RightCurly => unexpected!(parser, token),
@@ -386,11 +385,11 @@ pub struct ANBEvenOdd {
 
 pub(crate) fn parse_wq_name(parser: &mut Parser) -> ParserResult<(NSPrefix, Atom)> {
 	let nsprefix = match parser.cur() {
-		Token::Delim('|') if matches!(parser.peek(), Token::Ident(_)) => {
+		Token::Delim('|') if peek!(parser, Token::Ident(_)) => {
 			parser.advance_including_whitespace();
 			NSPrefix::None
 		}
-		Token::Delim('*') if matches!(parser.peek(), Token::Delim('|')) => {
+		Token::Delim('*') if peek!(parser, Token::Delim('|')) => {
 			parser.advance_including_whitespace();
 			expect!(parser, Token::Delim('|'));
 			parser.advance_including_whitespace();
@@ -399,7 +398,7 @@ pub(crate) fn parse_wq_name(parser: &mut Parser) -> ParserResult<(NSPrefix, Atom
 		Token::Ident(name) => {
 			parser.advance_including_whitespace();
 			match parser.cur() {
-				Token::Delim('|') if matches!(parser.peek(), Token::Ident(_)) => {
+				Token::Delim('|') if peek!(parser, Token::Ident(_)) => {
 					parser.advance_including_whitespace();
 					NSPrefix::Named(name)
 				}

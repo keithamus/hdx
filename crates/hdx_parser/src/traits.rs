@@ -1,7 +1,7 @@
 use hdx_atom::{atom, Atom};
 use hdx_lexer::Token;
 
-use crate::{expect, parser::Parser, span::Spanned, unexpected, unexpected_ident, Result, State, Vec, discard};
+use crate::{expect, parser::Parser, span::Spanned, unexpected, unexpected_ident, Result, State, Vec, discard, peek, expect_ident_ignore_case};
 
 // The FromToken trait produces a result of Self from an individual parser Token, guaranteeing that the parser will not
 // roll forward. Instead, the caller should advance the parser.
@@ -142,7 +142,7 @@ pub trait QualifiedRule<'a>: Sized + Parse<'a> {
 		match parser.cur() {
 			token @ Token::Eof => unexpected!(parser, token),
 			token @ Token::RightCurly if !parser.is(State::Nested) => unexpected!(parser, token),
-			Token::Ident(atom) if matches!(parser.peek(), Token::RightCurly) && atom.starts_with("--") => {
+			Token::Ident(atom) if peek!(parser, Token::RightCurly) && atom.starts_with("--") => {
 				unexpected!(parser);
 			}
 			_ => {}
@@ -151,7 +151,7 @@ pub trait QualifiedRule<'a>: Sized + Parse<'a> {
 		match parser.cur() {
 			token @ Token::Eof => unexpected!(parser, token),
 			token @ Token::RightCurly if !parser.is(State::Nested) => unexpected!(parser, token),
-			Token::Ident(atom) if matches!(parser.peek(), Token::RightCurly) && atom.starts_with("--") => {
+			Token::Ident(atom) if peek!(parser, Token::RightCurly) && atom.starts_with("--") => {
 				unexpected!(parser);
 			}
 			_ => {}
@@ -253,7 +253,7 @@ pub trait Declaration<'a>: Sized + Parse<'a> {
 	fn parse_declaration_value(name: &Atom, parser: &mut Parser<'a>) -> Result<Self::DeclarationValue>;
 
 	fn parse_important(parser: &mut Parser<'a>) -> Result<bool> {
-		if matches!(parser.cur(), Token::Delim('!')) && matches!(parser.peek(), Token::Ident(_)) {
+		if matches!(parser.cur(), Token::Delim('!')) && peek!(parser, Token::Ident(_)) {
 			parser.advance_including_whitespace_and_comments();
 			match parser.cur() {
 				Token::Ident(ident) => match ident.to_ascii_lowercase() {
@@ -280,4 +280,26 @@ pub trait Declaration<'a>: Sized + Parse<'a> {
 
 pub trait DeclarationValue<'a>: Sized {
 	fn parse_declaration_value(name: &Atom, parser: &mut Parser<'a>) -> Result<Self>;
+}
+
+pub trait MediaFeature<'a>: Sized + Default {
+	fn parse_media_feature_value(parser: &mut Parser<'a>) -> Result<Self>;
+
+	fn parse_media_feature(name: Atom, parser: &mut Parser<'a>) -> Result<Self> {
+		expect!(parser, Token::LeftParen);
+		parser.advance();
+		expect_ident_ignore_case!(parser, name);
+		parser.advance();
+		let value = match parser.cur() {
+			Token::RightParen => Self::default(),
+			Token::Colon => {
+				parser.advance();
+				Self::parse_media_feature_value(parser)?
+			}
+			token => unexpected!(parser, token),
+		};
+		expect!(parser, Token::RightParen);
+		parser.advance();
+		Ok(value)
+	}
 }
