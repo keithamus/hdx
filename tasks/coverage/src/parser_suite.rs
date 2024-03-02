@@ -127,7 +127,7 @@ pub trait ParserCase: Sized + Sync + Send + UnwindSafe {
 		let mut warnings = String::new();
 		for warn in ret.warnings {
 			let warn = warn.with_source_code(NamedSource::new(source_path.to_str().unwrap(), source_text.to_string()));
-			handler.render_report(&mut warnings, warn.as_ref()).unwrap();
+			let _ = handler.render_report(&mut warnings, warn.as_ref());
 		}
 		println!("{}", &warnings);
 		if !ret.errors.is_empty() {

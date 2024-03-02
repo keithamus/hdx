@@ -35,5 +35,5 @@ serde_json = { workspace = true }
 
 [features]
 default = []
-serde = ["dep:serde", "dep:serde_json", "hdx_lexer/serde", "smallvec/serde"]
+serde = ["dep:serde", "dep:serde_json", "hdx_atom/serde", "hdx_parser/serde", "hdx_lexer/serde", "smallvec/serde"]
 fancy = ["miette/fancy-no-backtrace"]
