@@ -66,27 +66,22 @@ impl<'a> WriteCss<'a> for AnimationFillMode {
 
 #[cfg(test)]
 mod tests {
-	use oxc_allocator::Allocator;
-
 	use super::*;
-	use crate::test_helpers::{test_write, test_write_min};
+	use crate::test_helpers::*;
 
 	#[test]
 	fn size_test() {
-		use std::mem::size_of;
-		assert_eq!(size_of::<AnimationFillMode>(), 24);
+		assert_size!(AnimationFillMode, 24);
 	}
 
 	#[test]
 	fn test_writes() {
-		let allocator = Allocator::default();
-		test_write::<AnimationFillMode>(&allocator, "both", "both");
-		test_write::<AnimationFillMode>(&allocator, "none, both, backwards, forwards", "none, both, backwards, forwards");
+		assert_parse!(AnimationFillMode, "both");
+		assert_parse!(AnimationFillMode, "none, both, backwards, forwards");
 	}
 
 	#[test]
 	fn test_minify() {
-		let allocator = Allocator::default();
-		test_write_min::<AnimationFillMode>(&allocator, "none, both, backwards, forwards", "none,both,backwards,forwards");
+		assert_minify!(AnimationFillMode, "none, both, backwards, forwards", "none,both,backwards,forwards");
 	}
 }

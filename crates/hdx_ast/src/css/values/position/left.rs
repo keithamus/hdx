@@ -14,21 +14,17 @@ pub enum Left {
 
 #[cfg(test)]
 mod tests {
-	use oxc_allocator::Allocator;
-
 	use super::*;
-	use crate::test_helpers::test_write;
+	use crate::test_helpers::*;
 
 	#[test]
 	fn size_test() {
-		use std::mem::size_of;
-		assert_eq!(size_of::<Left>(), 8);
+		assert_size!(Left, 8);
 	}
 
 	#[test]
 	fn test_writes() {
-		let allocator = Allocator::default();
-		test_write::<Left>(&allocator, "-10px", "-10px");
-		test_write::<Left>(&allocator, "auto", "auto");
+		assert_parse!(Left, "-10px");
+		assert_parse!(Left, "auto");
 	}
 }

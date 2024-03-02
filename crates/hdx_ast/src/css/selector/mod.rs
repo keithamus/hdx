@@ -413,50 +413,46 @@ pub(crate) fn parse_wq_name(parser: &mut Parser) -> ParserResult<(NSPrefix, Atom
 
 #[cfg(test)]
 mod test {
-	use oxc_allocator::Allocator;
-
 	use super::*;
-	use crate::test_helpers::{test_write, test_write_min};
+	use crate::test_helpers::*;
 
 	#[test]
 	fn size_test() {
-		assert_eq!(::std::mem::size_of::<Selectors>(), 56);
-		assert_eq!(::std::mem::size_of::<Selector>(), 32);
-		assert_eq!(::std::mem::size_of::<ForgivingSelector>(), 32);
-		assert_eq!(::std::mem::size_of::<RelativeSelector>(), 32);
-		assert_eq!(::std::mem::size_of::<Component>(), 48);
-		assert_eq!(::std::mem::size_of::<PseudoElement>(), 1);
-		assert_eq!(::std::mem::size_of::<LegacyPseudoElement>(), 1);
-		assert_eq!(::std::mem::size_of::<PseudoClass>(), 1);
-		assert_eq!(::std::mem::size_of::<PseudoFunction>(), 40);
-		assert_eq!(::std::mem::size_of::<DirValue>(), 1);
-		assert_eq!(::std::mem::size_of::<Combinator>(), 1);
-		assert_eq!(::std::mem::size_of::<ANB>(), 8);
-		assert_eq!(::std::mem::size_of::<ANBEvenOdd>(), 8);
+		assert_size!(Selectors, 56);
+		assert_size!(Selector, 32);
+		assert_size!(ForgivingSelector, 32);
+		assert_size!(RelativeSelector, 32);
+		assert_size!(Component, 48);
+		assert_size!(PseudoElement, 1);
+		assert_size!(LegacyPseudoElement, 1);
+		assert_size!(PseudoClass, 1);
+		assert_size!(PseudoFunction, 40);
+		assert_size!(DirValue, 1);
+		assert_size!(Combinator, 1);
+		assert_size!(ANB, 8);
+		assert_size!(ANBEvenOdd, 8);
 	}
 
 	#[test]
 	fn test_writes() {
-		let allocator = Allocator::default();
-		test_write::<Component>(&allocator, ":root", ":root");
-		test_write::<Component>(&allocator, "*", "*");
-		test_write::<Component>(&allocator, "[attr|='foo']", "[attr|='foo']");
-		// test_write::<Component>(&allocator, "*|x", "*|x");
-		test_write::<Selector>(&allocator, "a b ", "a b");
-		test_write::<Selector>(&allocator, ":root", ":root");
-		test_write::<Selector>(&allocator, "body [attr|='foo']", "body [attr|='foo']");
-		// test_write::<Selector>(&allocator, "*|x :focus-within", "*|x
+		assert_parse!(Component, ":root");
+		assert_parse!(Component, "*");
+		assert_parse!(Component, "[attr|='foo']");
+		// assert_parse!(Component, "*|x");
+		assert_parse!(Selector, "a b");
+		assert_parse!(Selector, ":root");
+		assert_parse!(Selector, "body [attr|='foo']");
+		// assert_parse!(Selector, "*|x
 		// :focus-within");
-		test_write::<Selectors>(&allocator, "a b ", "a b");
-		test_write::<Selectors>(&allocator, ":root", ":root");
-		test_write::<Selectors>(&allocator, "body [attr|='foo']", "body [attr|='foo']");
+		assert_parse!(Selectors, "a b");
+		assert_parse!(Selectors, ":root");
+		assert_parse!(Selectors, "body [attr|='foo']");
 	}
 
 	#[test]
 	fn test_minify() {
-		let allocator = Allocator::default();
-		test_write_min::<Component>(&allocator, "[attr|='foo']", "[attr|=foo]");
-		test_write_min::<Selector>(&allocator, "a   b", "a b");
-		test_write_min::<Selector>(&allocator, "a   b ", "a b");
+		assert_minify!(Component, "[attr|='foo']", "[attr|=foo]");
+		assert_minify!(Selector, "a   b", "a b");
+		assert_minify!(Selector, "a   b ", "a b");
 	}
 }

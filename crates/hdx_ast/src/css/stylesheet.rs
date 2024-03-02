@@ -8,7 +8,7 @@ use serde::Serialize;
 
 use crate::{
 	css::{
-		rules::{CharsetRule, PageRule, MediaRule},
+		rules::{CharsetRule, PageRule, MediaRule, SupportsRule},
 		stylerule::StyleRule,
 	},
 	syntax::{AtRule, QualifiedRule},
@@ -54,6 +54,7 @@ pub enum Rule<'a> {
 	Page(PageRule<'a>),
 	Style(StyleRule<'a>),
 	Media(MediaRule<'a>),
+	Supports(SupportsRule<'a>),
 	UnknownAt(AtRule<'a>),
 	Unknown(QualifiedRule<'a>),
 }
@@ -62,14 +63,11 @@ impl<'a> Parse<'a> for Rule<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		Ok(match parser.cur() {
 			Token::AtKeyword(atom) => match atom.to_ascii_lowercase() {
-				atom!("charset") => {
-					let rule = CharsetRule::parse(parser)?;
-					Rule::Charset(rule)
-				}
-				atom!("page") => {
-					let rule = PageRule::parse(parser)?;
-					Rule::Page(rule)
-				}
+				atom!("charset") => Rule::Charset(CharsetRule::parse(parser)?),
+				atom!("page") => Rule::Page(PageRule::parse(parser)?),
+				atom!("media") => Rule::Media(MediaRule::parse(parser)?),
+				atom!("media") => Rule::Media(MediaRule::parse(parser)?),
+				atom!("supports") => Rule::Supports(SupportsRule::parse(parser)?),
 				_ => {
 					let span = parser.span();
 					let rule = AtRule::parse(parser)?;
@@ -101,6 +99,7 @@ impl<'a> WriteCss<'a> for Rule<'a> {
 			Self::Charset(rule) => rule.write_css(sink),
 			Self::Page(rule) => rule.write_css(sink),
 			Self::Media(rule) => rule.write_css(sink),
+			Self::Supports(rule) => rule.write_css(sink),
 			Self::UnknownAt(rule) => rule.write_css(sink),
 			Self::Unknown(rule) => rule.write_css(sink),
 		}
@@ -116,24 +115,20 @@ pub enum AtRuleId {
 
 #[cfg(test)]
 mod tests {
-	use oxc_allocator::Allocator;
-
 	use super::*;
-	use crate::test_helpers::test_write;
+	use crate::test_helpers::*;
 
 	#[test]
 	fn size_test() {
-		use std::mem::size_of;
-		assert_eq!(size_of::<StyleSheet>(), 32);
-		assert_eq!(size_of::<Rule>(), 144);
-		assert_eq!(size_of::<AtRuleId>(), 1);
+		assert_size!(StyleSheet, 32);
+		assert_size!(Rule, 144);
+		assert_size!(AtRuleId, 1);
 	}
 
 	#[test]
 	fn test_writes() {
-		let allocator = Allocator::default();
-		// test_write::<StyleSheet>(&allocator, "body {}", "body{}");
-		// test_write::<StyleSheet>(&allocator, "body, body {}", "body,body{}");
-		// test_write::<StyleSheet>(&allocator, "body { width: 1px }", "body{width:1px}");
+		// assert_parse!(StyleSheet, "body{}");
+		// assert_parse!(StyleSheet, "body,body{}");
+		// assert_parse!(StyleSheet, "body{width:1px}");
 	}
 }

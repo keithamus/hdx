@@ -18,9 +18,10 @@ pub enum FloatDefer {
 mod tests {
 
 	use super::*;
+	use crate::test_helpers::*;
 
 	#[test]
 	fn size_test() {
-		assert_eq!(::std::mem::size_of::<FloatDefer>(), 8);
+		assert_size!(FloatDefer, 8);
 	}
 }

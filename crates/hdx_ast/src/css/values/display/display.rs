@@ -280,15 +280,12 @@ impl<'a> WriteCss<'a> for Display {
 
 #[cfg(test)]
 mod tests {
-
-	use oxc_allocator::Allocator;
-
 	use super::*;
-	use crate::test_helpers::test_write;
+	use crate::test_helpers::*;
 
 	#[test]
 	fn size_test() {
-		assert_eq!(::std::mem::size_of::<Display>(), 1);
+		assert_size!(Display, 1);
 	}
 
 	#[test]
@@ -301,24 +298,23 @@ mod tests {
 
 	#[test]
 	fn test_variants() {
-		let allocator = Allocator::default();
 		// Parsing a display value should be written identically
-		test_write::<Display>(&allocator, "none", "none");
-		test_write::<Display>(&allocator, "contents", "contents");
-		test_write::<Display>(&allocator, "block flow", "block flow");
-		test_write::<Display>(&allocator, "block flow-root", "block flow-root");
-		test_write::<Display>(&allocator, "inline flow", "inline flow");
-		test_write::<Display>(&allocator, "inline flow-root", "inline flow-root");
-		test_write::<Display>(&allocator, "run-in flow", "run-in flow");
-		test_write::<Display>(&allocator, "block flow list-item", "block flow list-item");
-		test_write::<Display>(&allocator, "inline flow list-item", "inline flow list-item");
-		test_write::<Display>(&allocator, "block flex", "block flex");
-		test_write::<Display>(&allocator, "inline flex", "inline flex");
-		test_write::<Display>(&allocator, "block grid", "block grid");
-		test_write::<Display>(&allocator, "inline grid", "inline grid");
-		test_write::<Display>(&allocator, "inline ruby", "inline ruby");
-		test_write::<Display>(&allocator, "block ruby", "block ruby");
-		test_write::<Display>(&allocator, "block table", "block table");
-		test_write::<Display>(&allocator, "inline table", "inline table");
+		assert_parse!(Display, "none");
+		assert_parse!(Display, "contents");
+		assert_parse!(Display, "block flow");
+		assert_parse!(Display, "block flow-root");
+		assert_parse!(Display, "inline flow");
+		assert_parse!(Display, "inline flow-root");
+		assert_parse!(Display, "run-in flow");
+		assert_parse!(Display, "block flow list-item");
+		assert_parse!(Display, "inline flow list-item");
+		assert_parse!(Display, "block flex");
+		assert_parse!(Display, "inline flex");
+		assert_parse!(Display, "block grid");
+		assert_parse!(Display, "inline grid");
+		assert_parse!(Display, "inline ruby");
+		assert_parse!(Display, "block ruby");
+		assert_parse!(Display, "block table");
+		assert_parse!(Display, "inline table");
 	}
 }

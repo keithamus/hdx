@@ -18,11 +18,11 @@ pub enum Zoom {
 
 #[cfg(test)]
 mod tests {
-
 	use super::*;
+	use crate::test_helpers::*;
 
 	#[test]
 	fn size_test() {
-		assert_eq!(::std::mem::size_of::<Zoom>(), 8);
+		assert_size!(Zoom, 8);
 	}
 }

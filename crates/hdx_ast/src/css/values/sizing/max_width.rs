@@ -26,25 +26,21 @@ pub enum MaxWidth {
 
 #[cfg(test)]
 mod tests {
-	use oxc_allocator::Allocator;
-
 	use super::*;
-	use crate::test_helpers::test_write;
+	use crate::test_helpers::*;
 
 	#[test]
 	fn size_test() {
-		use std::mem::size_of;
-		assert_eq!(size_of::<MaxWidth>(), 12);
+		assert_size!(MaxWidth, 12);
 	}
 
 	#[test]
 	fn test_writes() {
-		let allocator = Allocator::default();
-		test_write::<MaxWidth>(&allocator, "0", "0");
-		test_write::<MaxWidth>(&allocator, "1px", "1px");
-		test_write::<MaxWidth>(&allocator, "none", "none");
-		test_write::<MaxWidth>(&allocator, "fit-content", "fit-content");
-		test_write::<MaxWidth>(&allocator, "fit-content(20rem)", "fit-content(20rem)");
-		test_write::<MaxWidth>(&allocator, "fit-content(0)", "fit-content(0)");
+		assert_parse!(MaxWidth, "0");
+		assert_parse!(MaxWidth, "1px");
+		assert_parse!(MaxWidth, "none");
+		assert_parse!(MaxWidth, "fit-content");
+		assert_parse!(MaxWidth, "fit-content(20rem)");
+		assert_parse!(MaxWidth, "fit-content(0)");
 	}
 }

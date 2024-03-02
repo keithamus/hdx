@@ -5,7 +5,7 @@ pub use std::fmt::{Result, Write};
 
 use hdx_atom::Atom;
 use hdx_lexer::QuoteStyle;
-use hdx_parser::Spanned;
+use hdx_parser::{Spanned, Vec};
 
 pub trait WriteCss<'a>: Sized {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> Result;
@@ -161,6 +161,16 @@ impl<'a, T: WriteCss<'a>> WriteCss<'a> for Option<T> {
 		}
 	}
 }
+
+impl<'a, T: WriteCss<'a>> WriteCss<'a> for Vec<'a, T> {
+	fn write_css<W: CssWriter>(&self, sink: &mut W) -> Result {
+		for item in self.iter() {
+			item.write_css(sink)?;
+		}
+		Ok(())
+	}
+}
+
 
 impl<'a> WriteCss<'a> for QuoteStyle {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> Result {

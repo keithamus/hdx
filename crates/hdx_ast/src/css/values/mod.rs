@@ -263,15 +263,15 @@ impl<'a> WriteCss<'a> for Todo {
 // mod tests {
 //
 // 	use super::*;
+//	use crate::test_helpers::*;
 //
 // 	#[test]
 // 	fn size_test() {
-// 		use std::mem::size_of;
-// 		assert_eq!(size_of::<FrequencyPercentage>(), 8);
-// 		assert_eq!(size_of::<AnglePercentage>(), 8);
-// 		assert_eq!(size_of::<TimePercentage>(), 8);
-// 		assert_eq!(size_of::<PositionXY>(), 24);
-// 		assert_eq!(size_of::<HorizontalPosition>(), 12);
-// 		assert_eq!(size_of::<VerticalPosition>(), 12);
+// 		assert_size!(FrequencyPercentage, 8);
+// 		assert_size!(AnglePercentage, 8);
+// 		assert_size!(TimePercentage, 8);
+// 		assert_size!(PositionXY, 24);
+// 		assert_size!(HorizontalPosition, 12);
+// 		assert_size!(VerticalPosition, 12);
 // 	}
 // }

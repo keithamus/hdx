@@ -60,28 +60,23 @@ impl<'a> WriteCss<'a> for Content {
 
 #[cfg(test)]
 mod tests {
-	use oxc_allocator::Allocator;
-
 	use super::*;
-	use crate::test_helpers::{test_write, test_write_min};
+	use crate::test_helpers::*;
 
 	#[test]
 	fn size_test() {
-		use std::mem::size_of;
-		assert_eq!(size_of::<Content>(), 16);
+		assert_size!(Content, 16);
 	}
 
 	#[test]
 	fn test_writes() {
-		let allocator = Allocator::default();
-		test_write::<Content>(&allocator, "none", "none");
-		test_write::<Content>(&allocator, "'foo'", "'foo'");
+		assert_parse!(Content, "none");
+		assert_parse!(Content, "'foo'");
 	}
 
 	#[test]
 	fn test_minify() {
-		let allocator = Allocator::default();
-		test_write_min::<Content>(&allocator, "none", "none");
-		test_write_min::<Content>(&allocator, "'foo'", "\"foo\"");
+		assert_minify!(Content, "none", "none");
+		assert_minify!(Content, "'foo'", "\"foo\"");
 	}
 }

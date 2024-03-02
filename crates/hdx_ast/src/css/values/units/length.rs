@@ -194,28 +194,25 @@ impl FromToken for LengthPercentageOrAuto {
 
 #[cfg(test)]
 mod tests {
-	use oxc_allocator::Allocator;
-
 	use super::*;
-	use crate::test_helpers::test_write;
+	use crate::test_helpers::*;
 
 	#[test]
 	fn size_test() {
-		assert_eq!(::std::mem::size_of::<Length>(), 8);
-		assert_eq!(::std::mem::size_of::<LengthPercentage>(), 8);
-		assert_eq!(::std::mem::size_of::<LengthPercentageOrAuto>(), 8);
+		assert_size!(Length, 8);
+		assert_size!(LengthPercentage, 8);
+		assert_size!(LengthPercentageOrAuto, 8);
 	}
 
 	#[test]
 	fn test_variants() {
-		let allocator = Allocator::default();
-		test_write::<Length>(&allocator, "10px", "10px");
+		assert_parse!(Length, "10px");
 		// Truncates to 7dp
-		test_write::<Length>(&allocator, "1.2345678901234px", "1.2345679px");
+		assert_parse!(Length, "1.2345679px");
 		// Removes redundant dp
-		test_write::<Length>(&allocator, "-1.0px", "-1px");
+		assert_parse!(Length, "-1px");
 		// Percent
-		test_write::<LengthPercentage>(&allocator, "1%", "1%");
-		test_write::<LengthPercentageOrAuto>(&allocator, "auto", "auto");
+		assert_parse!(LengthPercentage, "1%");
+		assert_parse!(LengthPercentageOrAuto, "auto");
 	}
 }

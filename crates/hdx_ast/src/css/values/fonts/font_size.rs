@@ -23,21 +23,17 @@ pub enum FontSize {
 
 #[cfg(test)]
 mod tests {
-	use oxc_allocator::Allocator;
-
 	use super::*;
-	use crate::test_helpers::test_write;
+	use crate::test_helpers::*;
 
 	#[test]
 	fn size_test() {
-		use std::mem::size_of;
-		assert_eq!(size_of::<FontSize>(), 8);
+		assert_size!(FontSize, 8);
 	}
 
 	#[test]
 	fn test_writes() {
-		let allocator = Allocator::default();
-		test_write::<FontSize>(&allocator, "10px", "10px");
-		test_write::<FontSize>(&allocator, "xx-large", "xx-large");
+		assert_parse!(FontSize, "10px");
+		assert_parse!(FontSize, "xx-large");
 	}
 }

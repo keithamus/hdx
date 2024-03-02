@@ -1,5 +1,5 @@
 use hdx_atom::{atom, Atom};
-use hdx_lexer::{Token, QuoteStyle};
+use hdx_lexer::{QuoteStyle, Token};
 use hdx_parser::{unexpected, Parse, Parser, Result as ParserResult, Spanned};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 #[cfg(feature = "serde")]
@@ -122,37 +122,28 @@ impl<'a> WriteCss<'a> for FontFamily {
 
 #[cfg(test)]
 mod tests {
-	use oxc_allocator::Allocator;
-
 	use super::*;
-	use crate::test_helpers::{test_write, test_write_min};
+	use crate::test_helpers::*;
 
 	#[test]
 	fn size_test() {
-		use std::mem::size_of;
-		assert_eq!(size_of::<FontFamily>(), 40);
+		assert_size!(FontFamily, 40);
 	}
 
 	#[test]
 	fn test_writes() {
-		let allocator = Allocator::default();
-		test_write::<FontFamily>(&allocator, "serif", "serif");
-		test_write::<FontFamily>(&allocator, "Arial, sans-serif", "Arial, sans-serif");
-		test_write::<FontFamily>(
-			&allocator,
-			"'Gill Sans MS', Arial, system-ui, sans-serif",
-			"'Gill Sans MS', Arial, system-ui, sans-serif",
-		);
+		assert_parse!(FontFamily, "serif");
+		assert_parse!(FontFamily, "Arial, sans-serif");
+		assert_parse!(FontFamily, "'Gill Sans MS', Arial, system-ui, sans-serif");
 	}
 
 	#[test]
 	fn test_minify() {
-		let allocator = Allocator::default();
-		test_write_min::<FontFamily>(&allocator, "Arial, sans-serif", "Arial,sans-serif");
-		test_write_min::<FontFamily>(
-			&allocator,
+		assert_minify!(FontFamily, "Arial, sans-serif", "Arial,sans-serif");
+		assert_minify!(
+			FontFamily,
 			"'Gill Sans MS', Arial, system-ui, sans-serif",
-			"\"Gill Sans MS\",Arial,system-ui,sans-serif",
+			"\"Gill Sans MS\",Arial,system-ui,sans-serif"
 		);
 	}
 }

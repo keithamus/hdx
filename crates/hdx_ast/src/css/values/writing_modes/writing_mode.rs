@@ -17,11 +17,11 @@ pub enum WritingMode {
 
 #[cfg(test)]
 mod tests {
-
 	use super::*;
+	use crate::test_helpers::*;
 
 	#[test]
 	fn size_test() {
-		assert_eq!(::std::mem::size_of::<WritingMode>(), 1);
+		assert_size!(WritingMode, 1);
 	}
 }

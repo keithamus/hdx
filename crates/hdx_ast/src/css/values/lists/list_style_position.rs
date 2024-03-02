@@ -15,21 +15,17 @@ pub enum ListStylePosition {
 
 #[cfg(test)]
 mod tests {
-	use oxc_allocator::Allocator;
-
 	use super::*;
-	use crate::test_helpers::test_write;
+	use crate::test_helpers::*;
 
 	#[test]
 	fn size_test() {
-		use std::mem::size_of;
-		assert_eq!(size_of::<ListStylePosition>(), 1);
+		assert_size!(ListStylePosition, 1);
 	}
 
 	#[test]
 	fn test_writes() {
-		let allocator = Allocator::default();
-		test_write::<ListStylePosition>(&allocator, "inside", "inside");
-		test_write::<ListStylePosition>(&allocator, "outside", "outside");
+		assert_parse!(ListStylePosition, "inside");
+		assert_parse!(ListStylePosition, "outside");
 	}
 }

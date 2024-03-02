@@ -54,28 +54,23 @@ impl<'a> WriteCss<'a> for GridMediaFeature {
 
 #[cfg(test)]
 mod tests {
-	use oxc_allocator::Allocator;
-
 	use super::*;
-	use crate::test_helpers::{test_write, test_write_min};
+	use crate::test_helpers::*;
 
 	#[test]
 	fn size_test() {
-		use std::mem::size_of;
-		assert_eq!(size_of::<GridMediaFeature>(), 1);
+		assert_size!(GridMediaFeature, 1);
 	}
 
 	#[test]
 	fn test_writes() {
-		let allocator = Allocator::default();
-		test_write::<GridMediaFeature>(&allocator, "(grid: 1)", "(grid: 1)");
-		test_write::<GridMediaFeature>(&allocator, "(grid: 0)", "(grid)");
+		assert_parse!(GridMediaFeature, "(grid: 1)");
+		assert_parse!(GridMediaFeature, "(grid)");
 	}
 
 	#[test]
 	fn test_minify() {
-		let allocator = Allocator::default();
-		test_write_min::<GridMediaFeature>(&allocator, "(grid: 1)", "(grid:1)");
-		test_write_min::<GridMediaFeature>(&allocator, "(grid: 0)", "(grid)");
+		assert_minify!(GridMediaFeature, "(grid: 1)", "(grid:1)");
+		assert_minify!(GridMediaFeature, "(grid: 0)", "(grid)");
 	}
 }

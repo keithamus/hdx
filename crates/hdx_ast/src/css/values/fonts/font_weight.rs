@@ -18,22 +18,18 @@ pub enum FontWeight {
 
 #[cfg(test)]
 mod tests {
-	use oxc_allocator::Allocator;
-
 	use super::*;
-	use crate::test_helpers::test_write;
+	use crate::test_helpers::*;
 
 	#[test]
 	fn size_test() {
-		use std::mem::size_of;
-		assert_eq!(size_of::<FontWeight>(), 8);
+		assert_size!(FontWeight, 8);
 	}
 
 	#[test]
 	fn test_writes() {
-		let allocator = Allocator::default();
-		test_write::<FontWeight>(&allocator, "normal", "normal");
-		test_write::<FontWeight>(&allocator, "1", "1");
-		test_write::<FontWeight>(&allocator, "1000", "1000");
+		assert_parse!(FontWeight, "normal");
+		assert_parse!(FontWeight, "1");
+		assert_parse!(FontWeight, "1000");
 	}
 }

@@ -407,43 +407,38 @@ impl<'a> WriteCss<'a> for Function<'a> {
 
 #[cfg(test)]
 mod tests {
-	use oxc_allocator::Allocator;
-
 	use super::*;
-	use crate::test_helpers::{test_write, test_write_min};
+	use crate::test_helpers::*;
 
 	#[test]
 	fn size_test() {
-		use std::mem::size_of;
-		assert_eq!(size_of::<ComponentValues>(), 32);
-		assert_eq!(size_of::<ComponentValue>(), 48);
-		assert_eq!(size_of::<SimpleBlock>(), 40);
-		assert_eq!(size_of::<Function>(), 40);
+		assert_size!(ComponentValues, 32);
+		assert_size!(ComponentValue, 48);
+		assert_size!(SimpleBlock, 40);
+		assert_size!(Function, 40);
 	}
 
 	#[test]
 	fn test_writes() {
-		let allocator = Allocator::default();
-		test_write::<ComponentValue>(&allocator, "foo", "foo");
-		test_write::<SimpleBlock>(&allocator, "[foo]", "[foo]");
-		test_write::<SimpleBlock>(&allocator, "(one two three)", "(one two three)");
-		test_write::<SimpleBlock>(&allocator, "(one(two))", "(one(two))");
-		test_write::<SimpleBlock>(&allocator, "{one(two)}", "{one(two)}");
-		test_write::<SimpleBlock>(&allocator, "{}", "{}");
-		test_write::<SimpleBlock>(&allocator, "{foo}", "{foo}");
-		test_write::<SimpleBlock>(&allocator, "{foo:bar}", "{foo:bar}");
-		test_write::<Function>(&allocator, "one((two) three)", "one((two)three)");
-		test_write::<ComponentValues>(&allocator, "a b c d", "a b c d");
-		test_write::<ComponentValues>(&allocator, "body { color: black }", "body {color: black }");
-		test_write::<ComponentValues>(&allocator, "body ", "body ");
-		test_write::<Block>(&allocator, "{}", "{\n}");
-		test_write::<Block>(&allocator, "{foo:bar}", "{\n\tfoo: bar;\n}");
-		test_write::<Block>(&allocator, "{foo:bar;baz:bing}", "{\n\tfoo: bar;\n\tbaz: bing;\n}");
+		assert_parse!(ComponentValue, "foo");
+		assert_parse!(SimpleBlock, "[foo]");
+		assert_parse!(SimpleBlock, "(one two three)");
+		assert_parse!(SimpleBlock, "(one(two))");
+		assert_parse!(SimpleBlock, "{one(two)}");
+		assert_parse!(SimpleBlock, "{}");
+		assert_parse!(SimpleBlock, "{foo}");
+		assert_parse!(SimpleBlock, "{foo:bar}");
+		assert_parse!(Function, "one((two)three)");
+		assert_parse!(ComponentValues, "a b c d");
+		assert_parse!(ComponentValues, "body {color: black }");
+		assert_parse!(ComponentValues, "body ");
+		assert_parse!(Block, "{\n}");
+		assert_parse!(Block, "{\n\tfoo: bar;\n}");
+		assert_parse!(Block, "{\n\tfoo: bar;\n\tbaz: bing;\n}");
 	}
 
 	#[test]
 	fn test_minify() {
-		let allocator = Allocator::default();
-		test_write_min::<Block>(&allocator, "{\n\tfoo: bar;\n\tbaz:bing;\n}", "{foo:bar;baz:bing;}");
+		assert_minify!(Block, "{\n\tfoo: bar;\n\tbaz:bing;\n}", "{foo:bar;baz:bing;}");
 	}
 }

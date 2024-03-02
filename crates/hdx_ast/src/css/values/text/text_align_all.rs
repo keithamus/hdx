@@ -19,11 +19,11 @@ pub enum TextAlignAll {
 
 #[cfg(test)]
 mod tests {
-
 	use super::*;
+	use crate::test_helpers::*;
 
 	#[test]
 	fn size_test() {
-		assert_eq!(::std::mem::size_of::<TextAlignAll>(), 1);
+		assert_size!(TextAlignAll, 1);
 	}
 }

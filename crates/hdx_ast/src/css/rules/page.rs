@@ -343,17 +343,16 @@ impl<'a> WriteCss<'a> for MarginDeclaration<'a> {
 
 #[cfg(test)]
 mod tests {
-
 	use super::*;
+	use crate::test_helpers::*;
 
 	#[test]
 	fn size_test() {
-		use std::mem::size_of;
-		assert_eq!(size_of::<PageRule>(), 144);
-		assert_eq!(size_of::<MarginRule>(), 80);
-		assert_eq!(size_of::<PagePseudoClass>(), 1);
-		assert_eq!(size_of::<PageMarginBox>(), 1);
-		assert_eq!(size_of::<PagePseudoClass>(), 1);
+		assert_size!(PageRule, 144);
+		assert_size!(MarginRule, 80);
+		assert_size!(PagePseudoClass, 1);
+		assert_size!(PageMarginBox, 1);
+		assert_size!(PagePseudoClass, 1);
 	}
 
 	#[test]

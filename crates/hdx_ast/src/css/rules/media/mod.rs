@@ -6,10 +6,10 @@ use smallvec::{smallvec, SmallVec};
 use hdx_atom::{atom, Atom};
 use hdx_lexer::Token;
 use hdx_parser::{
-	diagnostics, expect, expect_ident_ignore_case, match_ident_ignore_case, peek, unexpected, unexpected_ident, AtRule,
-	FromToken, Parse, Parser, Result as ParserResult, RuleList, Spanned, Vec,
+	diagnostics, expect_ignore_case, match_ident_ignore_case, peek, unexpected, unexpected_ident, AtRule, RuleGroup,
+	FromToken, Parse, Parser, Result as ParserResult, Spanned, Vec,
 };
-use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
+use hdx_writer::{CssWriter, OutputOption, Result as WriterResult, WriteCss};
 
 use crate::css::stylerule::StyleRule;
 
@@ -21,16 +21,16 @@ use features::*;
 #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
 pub struct MediaRule<'a> {
 	pub query: Spanned<MediaQueryList>,
-	pub style: Spanned<MediaDeclaration<'a>>,
+	pub rules: Spanned<MediaRules<'a>>,
 }
 
 // https://drafts.csswg.org/css-conditional-3/#at-ruledef-media
 impl<'a> Parse<'a> for MediaRule<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		expect!(parser, Token::AtKeyword(atom!("media")));
+		expect_ignore_case!(parser, AtKeyword, atom!("media"));
 		let span = parser.span();
 		match Self::parse_at_rule(parser)? {
-			(Some(query), Some(style)) => Ok(Self { query, style }),
+			(Some(query), Some(rules)) => Ok(Self { query, rules }),
 			(Some(_), None) => Err(diagnostics::MissingAtRuleBlock(span.end(parser.pos())))?,
 			(None, Some(_)) => Err(diagnostics::MissingAtRulePrelude(span.end(parser.pos())))?,
 			(None, None) => Err(diagnostics::MissingAtRulePrelude(span.end(parser.pos())))?,
@@ -40,42 +40,59 @@ impl<'a> Parse<'a> for MediaRule<'a> {
 
 impl<'a> AtRule<'a> for MediaRule<'a> {
 	type Prelude = MediaQueryList;
-	type Block = MediaDeclaration<'a>;
+	type Block = MediaRules<'a>;
 }
 
 impl<'a> WriteCss<'a> for MediaRule<'a> {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
+		if !sink.can_output(OutputOption::RedundantRules) && self.rules.node.0.is_empty() {
+			return Ok(());
+		}
 		sink.write_char('@')?;
 		atom!("media").write_css(sink)?;
-		sink.write_char(' ')?;
+		if matches!(self.query.node.0.first(), Some(Spanned { node: MediaQuery::Condition(_), .. })) {
+			sink.write_whitespace()?;
+		} else {
+			sink.write_char(' ')?;
+		}
 		self.query.write_css(sink)?;
-		self.style.write_css(sink)?;
+		sink.write_whitespace()?;
+		sink.write_char('{')?;
+		sink.write_newline()?;
+		sink.indent();
+		self.rules.write_css(sink)?;
+		sink.write_newline()?;
+		sink.dedent();
+		sink.write_char('}')?;
 		Ok(())
 	}
 }
 
 #[derive(PartialEq, Debug, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
-pub struct MediaDeclaration<'a> {
-	#[cfg_attr(feature = "serde", serde(borrow))]
-	pub rules: Vec<'a, Spanned<StyleRule<'a>>>,
+#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+pub struct MediaRules<'a>(pub Vec<'a, Spanned<StyleRule<'a>>>);
+
+impl<'a> Parse<'a> for MediaRules<'a> {
+    fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
+        Ok(Self(Self::parse_rules(parser)?))
+    }
 }
 
-impl<'a> Parse<'a> for MediaDeclaration<'a> {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let rules = Self::parse_rule_list(parser)?;
-		Ok(Self { rules })
-	}
-}
-
-impl<'a> RuleList<'a> for MediaDeclaration<'a> {
+impl<'a> RuleGroup<'a> for MediaRules<'a> {
 	type Rule = StyleRule<'a>;
 }
 
-impl<'a> WriteCss<'a> for MediaDeclaration<'a> {
+impl<'a> WriteCss<'a> for MediaRules<'a> {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
-		todo!()
-	}
+		let mut rules = self.0.iter().peekable();
+		while let Some(rule) = rules.next() {
+			rule.write_css(sink)?;
+			if rules.peek().is_some() {
+				sink.write_newline()?;
+			}
+		}
+		Ok(())
+    }
 }
 
 #[derive(Debug, PartialEq, Hash)]
@@ -200,28 +217,31 @@ impl<'a> WriteCss<'a> for MediaQuery {
 			Self::Typed(mt) => mt.write_css(sink),
 			Self::NotTyped(mt) => {
 				atom!("not").write_css(sink)?;
-				sink.write_char(' ')?;
+				sink.write_whitespace()?;
 				mt.write_css(sink)
 			}
 			Self::OnlyTyped(mt) => {
 				atom!("only").write_css(sink)?;
-				sink.write_char(' ')?;
+				sink.write_whitespace()?;
 				mt.write_css(sink)
 			}
 			Self::TypedCondition(mt, mc) => {
 				mt.write_css(sink)?;
+				sink.write_whitespace()?;
 				mc.write_css(sink)
 			}
 			Self::NotTypedCondition(mt, mc) => {
 				atom!("not").write_css(sink)?;
 				sink.write_char(' ')?;
 				mt.write_css(sink)?;
+				sink.write_whitespace()?;
 				mc.write_css(sink)
 			}
 			Self::OnlyTypedCondition(mt, mc) => {
 				atom!("only").write_css(sink)?;
 				sink.write_char(' ')?;
 				mt.write_css(sink)?;
+				sink.write_whitespace()?;
 				mc.write_css(sink)
 			}
 		}
@@ -240,8 +260,8 @@ pub enum MediaCondition {
 impl<'a> Parse<'a> for MediaCondition {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		match parser.cur() {
-			Token::LeftCurly => {
-				if peek!(parser, Token::LeftCurly) {
+			Token::LeftParen => {
+				if peek!(parser, Token::LeftParen) {
 					todo!()
 				} else {
 					Ok(Self::Is(MediaFeature::parse(parser)?))
@@ -250,9 +270,8 @@ impl<'a> Parse<'a> for MediaCondition {
 			Token::Ident(ident) => match ident.to_ascii_lowercase() {
 				atom!("and") => {
 					let mut features = smallvec![];
-                    dbg!("parsing media features and condition", parser.cur());
 					loop {
-						expect_ident_ignore_case!(parser, atom!("and"));
+						expect_ignore_case!(parser, atom!("and"));
 						parser.advance();
 						features.push(MediaFeature::parse(parser)?);
 						if !match_ident_ignore_case!(parser, atom!("and")) {
@@ -263,7 +282,7 @@ impl<'a> Parse<'a> for MediaCondition {
 				atom!("or") => {
 					let mut features = smallvec![];
 					loop {
-						expect_ident_ignore_case!(parser, atom!("or"));
+						expect_ignore_case!(parser, atom!("or"));
 						parser.advance();
 						features.push(MediaFeature::parse(parser)?);
 						if !match_ident_ignore_case!(parser, atom!("or")) {
@@ -284,25 +303,27 @@ impl<'a> WriteCss<'a> for MediaCondition {
 		match self {
 			Self::Is(feature) => feature.write_css(sink),
 			Self::Not(feature) => {
-                sink.write_char(' ')?;
-                atom!("not").write_css(sink)?;
-                sink.write_char(' ')?;
+				atom!("not").write_css(sink)?;
+				sink.write_whitespace()?;
 				feature.write_css(sink)
 			}
 			Self::And(features) => {
-				for feature in features.iter() {
-					sink.write_char(' ')?;
+				let mut iter = features.iter().peekable();
+				while let Some(feature) = iter.next() {
 					atom!("and").write_css(sink)?;
-					sink.write_char(' ')?;
+					sink.write_whitespace()?;
 					feature.write_css(sink)?;
+					if iter.peek().is_some() {
+						sink.write_whitespace()?;
+					}
 				}
 				Ok(())
 			}
 			Self::Or(features) => {
 				for feature in features.iter() {
-                    sink.write_char(' ')?;
-                    atom!("or").write_css(sink)?;
-                    sink.write_char(' ')?;
+					sink.write_char(' ')?;
+					atom!("or").write_css(sink)?;
+					sink.write_char(' ')?;
 					feature.write_css(sink)?;
 				}
 				Ok(())
@@ -339,7 +360,6 @@ pub enum MediaFeature {
 
 impl<'a> Parse<'a> for MediaFeature {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-        dbg!("parsing media feature...", parser.cur(), parser.peek());
 		match parser.peek().clone() {
 			Token::Ident(ident) => match ident.to_ascii_lowercase() {
 				atom!("height") => Ok(Self::Height(HeightMediaFeature::parse(parser)?)),
@@ -439,33 +459,36 @@ impl<'a> WriteCss<'a> for MediaType {
 
 #[cfg(test)]
 mod tests {
-	use oxc_allocator::Allocator;
-
 	use super::*;
-	use crate::test_helpers::test_write;
+	use crate::test_helpers::*;
 
 	#[test]
 	fn size_test() {
-		use std::mem::size_of;
-		assert_eq!(size_of::<MediaRule>(), 128);
-		assert_eq!(size_of::<MediaDeclaration>(), 32);
-		assert_eq!(size_of::<MediaQueryList>(), 80);
-		assert_eq!(size_of::<MediaQuery>(), 56);
-		assert_eq!(size_of::<MediaCondition>(), 32);
-		assert_eq!(size_of::<MediaType>(), 16);
+		assert_size!(MediaRule, 128);
+		assert_size!(MediaQueryList, 80);
+		assert_size!(MediaQuery, 56);
+		assert_size!(MediaCondition, 32);
+		assert_size!(MediaType, 16);
 	}
 
 	#[test]
 	fn test_writes() {
-		let allocator = Allocator::default();
-		test_write::<MediaQuery>(&allocator, "print", "print");
-		test_write::<MediaQuery>(&allocator, "not embossed", "not embossed");
-		test_write::<MediaQuery>(&allocator, "only screen", "only screen");
-		test_write::<MediaQuery>(&allocator, "screen and (grid)", "screen and (grid)");
-		test_write::<MediaQuery>(&allocator, "screen and (grid)", "screen and (grid)");
-		// test_write::<MediaQuery>(&allocator, "screen and (orientation: landscape)", "screen and (orientation: landscape)");
-		// test_write::<MediaRule>(&allocator, "@media print {}", "@media print {}");
-		// test_write::<MediaRule>(&allocator, "@media (min-width: 1200px) {}", "@media (min-width: 1200px) {}");
-		// @media only screen and (max-device-width: 800px), only screen and (device-width: 1024px) and (device-height: 600px), only screen and (width: 1280px) and (orientation: landscape), only screen and (device-width: 800px), only screen and (max-width: 767px) {
+		assert_parse!(MediaQuery, "print");
+		assert_parse!(MediaQuery, "not embossed");
+		assert_parse!(MediaQuery, "only screen");
+		assert_parse!(MediaFeature, "(grid)");
+		assert_parse!(MediaCondition, "and (grid)");
+		assert_parse!(MediaQuery, "screen and (grid)");
+		assert_parse!(MediaQuery, "screen and (hover) and (pointer)");
+		// assert_parse!(MediaQuery, "screen and (orientation: landscape)");
+		assert_parse!(MediaRule, "@media print {\n\n}");
+		// assert_parse!(MediaRule, "@media (min-width: 1200px) {\n\n}");
+		// assert_parse!(MediaRUle, "@media only screen and (max-device-width: 800px), only screen and (device-width: 1024px) and (device-height: 600px), only screen and (width: 1280px) and (orientation: landscape), only screen and (device-width: 800px), only screen and (max-width: 767px)");
+	}
+
+	#[test]
+	fn test_minify() {
+		// Drop redundant rules
+		assert_minify!(MediaRule, "@media print {}", "");
 	}
 }

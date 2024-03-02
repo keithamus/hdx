@@ -47,24 +47,20 @@ impl<'a> WriteCss<'a> for Frequency {
 
 #[cfg(test)]
 mod tests {
-
-	use oxc_allocator::Allocator;
-
 	use super::*;
-	use crate::test_helpers::test_write;
+	use crate::test_helpers::*;
 
 	#[test]
 	fn size_test() {
-		assert_eq!(::std::mem::size_of::<Frequency>(), 8);
+		assert_size!(Frequency, 8);
 	}
 
 	#[test]
 	fn test_variants() {
-		let allocator = Allocator::default();
-		test_write::<Frequency>(&allocator, "40hz", "40hz");
+		assert_parse!(Frequency, "40hz");
 		// Truncates to 7dp
-		test_write::<Frequency>(&allocator, "1.2345678901234hz", "1.2345679hz");
+		assert_parse!(Frequency, "1.2345678901234hz", "1.2345679hz");
 		// Removes redundant dp
-		test_write::<Frequency>(&allocator, "-1.0hz", "-1hz");
+		assert_parse!(Frequency, "-1.0hz", "-1hz");
 	}
 }

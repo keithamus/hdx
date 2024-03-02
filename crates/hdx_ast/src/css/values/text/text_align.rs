@@ -22,11 +22,11 @@ pub enum TextAlign {
 
 #[cfg(test)]
 mod tests {
-
 	use super::*;
+	use crate::test_helpers::*;
 
 	#[test]
 	fn size_test() {
-		assert_eq!(::std::mem::size_of::<TextAlign>(), 1);
+		assert_size!(TextAlign, 1);
 	}
 }

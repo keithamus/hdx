@@ -14,21 +14,17 @@ pub enum ZIndex {
 
 #[cfg(test)]
 mod tests {
-	use oxc_allocator::Allocator;
-
 	use super::*;
-	use crate::test_helpers::test_write;
+	use crate::test_helpers::*;
 
 	#[test]
 	fn size_test() {
-		use std::mem::size_of;
-		assert_eq!(size_of::<ZIndex>(), 8);
+		assert_size!(ZIndex, 8);
 	}
 
 	#[test]
 	fn test_writes() {
-		let allocator = Allocator::default();
-		test_write::<ZIndex>(&allocator, "auto", "auto");
-		test_write::<ZIndex>(&allocator, "999", "999");
+		assert_parse!(ZIndex, "auto");
+		assert_parse!(ZIndex, "999");
 	}
 }

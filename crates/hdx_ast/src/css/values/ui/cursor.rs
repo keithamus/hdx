@@ -50,11 +50,11 @@ pub enum Cursor {
 
 #[cfg(test)]
 mod tests {
-
 	use super::*;
+	use crate::test_helpers::*;
 
 	#[test]
 	fn size_test() {
-		assert_eq!(::std::mem::size_of::<Cursor>(), 1);
+		assert_size!(Cursor, 1);
 	}
 }

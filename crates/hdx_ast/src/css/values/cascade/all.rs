@@ -27,20 +27,16 @@ impl<'a> WriteCss<'a> for All {
 
 #[cfg(test)]
 mod tests {
-	use oxc_allocator::Allocator;
-
 	use super::*;
-	use crate::test_helpers::test_write;
+	use crate::test_helpers::*;
 
 	#[test]
 	fn size_test() {
-		use std::mem::size_of;
-		assert_eq!(size_of::<All>(), 0);
+		assert_size!(All, 0);
 	}
 
 	#[test]
 	fn test_writes() {
-		let allocator = Allocator::default();
-		test_write::<All>(&allocator, "", "");
+		assert_parse!(All, "");
 	}
 }

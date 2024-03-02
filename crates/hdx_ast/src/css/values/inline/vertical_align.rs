@@ -43,22 +43,18 @@ write_simple_shorthand!(VerticalAlign, Spanned<BaselineSource>, Spanned<Alignmen
 
 #[cfg(test)]
 mod tests {
-	use oxc_allocator::Allocator;
-
 	use super::*;
-	use crate::test_helpers::test_write;
+	use crate::test_helpers::*;
 
 	#[test]
 	fn size_test() {
-		use std::mem::size_of;
-		assert_eq!(size_of::<VerticalAlign>(), 40);
+		assert_size!(VerticalAlign, 40);
 	}
 
 	#[test]
 	fn test_writes() {
-		let allocator = Allocator::default();
-		test_write::<VerticalAlign>(&allocator, "baseline", "baseline");
-		test_write::<VerticalAlign>(&allocator, "first baseline", "first baseline");
-		test_write::<VerticalAlign>(&allocator, "first text-top bottom", "first text-top bottom");
+		assert_parse!(VerticalAlign, "baseline");
+		assert_parse!(VerticalAlign, "first baseline");
+		assert_parse!(VerticalAlign, "first text-top bottom");
 	}
 }

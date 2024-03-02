@@ -73,32 +73,27 @@ impl<'a> WriteCss<'a> for AnyPointerMediaFeature {
 
 #[cfg(test)]
 mod tests {
-	use oxc_allocator::Allocator;
-
 	use super::*;
-	use crate::test_helpers::{test_write, test_write_min};
+	use crate::test_helpers::*;
 
 	#[test]
 	fn size_test() {
-		use std::mem::size_of;
-		assert_eq!(size_of::<AnyPointerMediaFeature>(), 1);
+		assert_size!(AnyPointerMediaFeature, 1);
 	}
 
 	#[test]
 	fn test_writes() {
-		let allocator = Allocator::default();
-		test_write::<AnyPointerMediaFeature>(&allocator, "(any-pointer)", "(any-pointer)");
-		test_write::<AnyPointerMediaFeature>(&allocator, "(any-pointer: none)", "(any-pointer: none)");
-		test_write::<AnyPointerMediaFeature>(&allocator, "(any-pointer: coarse)", "(any-pointer: coarse)");
-		test_write::<AnyPointerMediaFeature>(&allocator, "(any-pointer: fine)", "(any-pointer: fine)");
+		assert_parse!(AnyPointerMediaFeature, "(any-pointer)");
+		assert_parse!(AnyPointerMediaFeature, "(any-pointer: none)");
+		assert_parse!(AnyPointerMediaFeature, "(any-pointer: coarse)");
+		assert_parse!(AnyPointerMediaFeature, "(any-pointer: fine)");
 	}
 
 	#[test]
 	fn test_minify() {
-		let allocator = Allocator::default();
-		test_write_min::<AnyPointerMediaFeature>(&allocator, "(any-pointer)", "(any-pointer)");
-		test_write_min::<AnyPointerMediaFeature>(&allocator, "(any-pointer: none)", "(any-pointer:none)");
-		test_write_min::<AnyPointerMediaFeature>(&allocator, "(any-pointer: coarse)", "(any-pointer:coarse)");
-		test_write_min::<AnyPointerMediaFeature>(&allocator, "(any-pointer: fine)", "(any-pointer:fine)");
+		assert_minify!(AnyPointerMediaFeature, "(any-pointer)", "(any-pointer)");
+		assert_minify!(AnyPointerMediaFeature, "(any-pointer: none)", "(any-pointer:none)");
+		assert_minify!(AnyPointerMediaFeature, "(any-pointer: coarse)", "(any-pointer:coarse)");
+		assert_minify!(AnyPointerMediaFeature, "(any-pointer: fine)", "(any-pointer:fine)");
 	}
 }

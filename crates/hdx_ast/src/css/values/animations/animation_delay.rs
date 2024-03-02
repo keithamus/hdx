@@ -60,28 +60,23 @@ impl<'a> WriteCss<'a> for AnimationDelay {
 
 #[cfg(test)]
 mod tests {
-	use oxc_allocator::Allocator;
-
 	use super::*;
-	use crate::test_helpers::{test_write, test_write_min};
+	use crate::test_helpers::*;
 
 	#[test]
 	fn size_test() {
-		use std::mem::size_of;
-		assert_eq!(size_of::<AnimationDelay>(), 32);
+		assert_size!(AnimationDelay, 32);
 	}
 
 	#[test]
 	fn test_writes() {
-		let allocator = Allocator::default();
-		test_write::<AnimationDelay>(&allocator, "0s", "0s");
-		test_write::<AnimationDelay>(&allocator, "1ms", "1ms");
-		test_write::<AnimationDelay>(&allocator, "1ms, 400ms, 8s", "1ms, 400ms, 8s");
+		assert_parse!(AnimationDelay, "0s");
+		assert_parse!(AnimationDelay, "1ms");
+		assert_parse!(AnimationDelay, "1ms, 400ms, 8s");
 	}
 
 	#[test]
 	fn test_minify() {
-		let allocator = Allocator::default();
-		test_write_min::<AnimationDelay>(&allocator, "1ms, 400ms, 8s", "1ms,400ms,8s");
+		assert_minify!(AnimationDelay, "1ms, 400ms, 8s", "1ms,400ms,8s");
 	}
 }

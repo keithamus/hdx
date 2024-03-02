@@ -15,11 +15,11 @@ pub enum BorderCollapse {
 
 #[cfg(test)]
 mod tests {
-
 	use super::*;
+	use crate::test_helpers::*;
 
 	#[test]
 	fn size_test() {
-		assert_eq!(::std::mem::size_of::<BorderCollapse>(), 1);
+		assert_size!(BorderCollapse, 1);
 	}
 }

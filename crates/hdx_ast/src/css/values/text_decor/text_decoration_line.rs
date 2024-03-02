@@ -79,11 +79,11 @@ impl<'a> WriteCss<'a> for TextDecorationLine {
 
 #[cfg(test)]
 mod tests {
-
 	use super::*;
+	use crate::test_helpers::*;
 
 	#[test]
 	fn size_test() {
-		assert_eq!(::std::mem::size_of::<TextDecorationLine>(), 1);
+		assert_size!(TextDecorationLine, 1);
 	}
 }

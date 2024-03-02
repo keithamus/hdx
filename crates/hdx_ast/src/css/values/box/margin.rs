@@ -61,36 +61,32 @@ pub struct MarginRight(#[parsable(FromToken)] LengthPercentageOrAuto);
 
 #[cfg(test)]
 mod tests {
-	use oxc_allocator::Allocator;
-
 	use super::*;
-	use crate::test_helpers::test_write;
+	use crate::test_helpers::*;
 
 	#[test]
 	fn size_test() {
-		use std::mem::size_of;
-		assert_eq!(size_of::<Margin>(), 32);
-		assert_eq!(size_of::<MarginBlockStart>(), 8);
-		assert_eq!(size_of::<MarginBlockEnd>(), 8);
-		assert_eq!(size_of::<MarginInlineStart>(), 8);
-		assert_eq!(size_of::<MarginInlineEnd>(), 8);
-		assert_eq!(size_of::<MarginTop>(), 8);
-		assert_eq!(size_of::<MarginRight>(), 8);
-		assert_eq!(size_of::<MarginLeft>(), 8);
-		assert_eq!(size_of::<MarginBottom>(), 8);
+		assert_size!(Margin, 32);
+		assert_size!(MarginBlockStart, 8);
+		assert_size!(MarginBlockEnd, 8);
+		assert_size!(MarginInlineStart, 8);
+		assert_size!(MarginInlineEnd, 8);
+		assert_size!(MarginTop, 8);
+		assert_size!(MarginRight, 8);
+		assert_size!(MarginLeft, 8);
+		assert_size!(MarginBottom, 8);
 	}
 
 	#[test]
 	fn test_writes() {
-		let allocator = Allocator::default();
-		test_write::<MarginLeft>(&allocator, "auto", "auto");
-		test_write::<MarginBlock>(&allocator, "1px", "1px");
-		test_write::<MarginBlock>(&allocator, "1px 2px", "1px 2px");
-		test_write::<MarginInline>(&allocator, "1px", "1px");
-		test_write::<MarginInline>(&allocator, "1px 2px", "1px 2px");
-		test_write::<Margin>(&allocator, "1px", "1px");
-		test_write::<Margin>(&allocator, "1px 2px", "1px 2px");
-		test_write::<Margin>(&allocator, "1px 2px 3px", "1px 2px 3px");
-		test_write::<Margin>(&allocator, "1px 2px 3px 4px", "1px 2px 3px 4px");
+		assert_parse!(MarginLeft, "auto");
+		assert_parse!(MarginBlock, "1px");
+		assert_parse!(MarginBlock, "1px 2px");
+		assert_parse!(MarginInline, "1px");
+		assert_parse!(MarginInline, "1px 2px");
+		assert_parse!(Margin, "1px");
+		assert_parse!(Margin, "1px 2px");
+		assert_parse!(Margin, "1px 2px 3px");
+		assert_parse!(Margin, "1px 2px 3px 4px");
 	}
 }

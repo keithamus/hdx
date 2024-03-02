@@ -20,21 +20,17 @@ pub enum AlignmentBaseline {
 
 #[cfg(test)]
 mod tests {
-	use oxc_allocator::Allocator;
-
 	use super::*;
-	use crate::test_helpers::test_write;
+	use crate::test_helpers::*;
 
 	#[test]
 	fn size_test() {
-		use std::mem::size_of;
-		assert_eq!(size_of::<AlignmentBaseline>(), 1);
+		assert_size!(AlignmentBaseline, 1);
 	}
 
 	#[test]
 	fn test_writes() {
-		let allocator = Allocator::default();
-		test_write::<AlignmentBaseline>(&allocator, "baseline", "baseline");
-		test_write::<AlignmentBaseline>(&allocator, "text-bottom", "text-bottom");
+		assert_parse!(AlignmentBaseline, "baseline");
+		assert_parse!(AlignmentBaseline, "text-bottom");
 	}
 }

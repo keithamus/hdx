@@ -36,11 +36,29 @@ macro_rules! expect {
 }
 
 #[macro_export]
-macro_rules! expect_ident_ignore_case {
+macro_rules! expect_ignore_case {
+	($parser: ident, $tokenty: ident, $ident: ident) => {
+		match $parser.cur() {
+			Token::$tokenty(ident) => match ident.to_ascii_lowercase() {
+				i if i == $ident => {}
+				_ => $crate::unexpected_ident!($parser, ident),
+			},
+			token => $crate::unexpected!($parser, token),
+		}
+	};
 	($parser: ident, $ident: ident) => {
 		match $parser.cur() {
 			Token::Ident(ident) => match ident.to_ascii_lowercase() {
 				i if i == $ident => {}
+				_ => $crate::unexpected_ident!($parser, ident),
+			},
+			token => $crate::unexpected!($parser, token),
+		}
+	};
+	($parser: ident, $tokenty: ident, $ident: pat) => {
+		match $parser.cur() {
+			Token::$tokenty(ident) => match ident.to_ascii_lowercase() {
+				$ident => {}
 				_ => $crate::unexpected_ident!($parser, ident),
 			},
 			token => $crate::unexpected!($parser, token),

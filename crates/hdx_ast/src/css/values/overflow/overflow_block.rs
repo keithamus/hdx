@@ -17,20 +17,16 @@ pub enum OverflowBlock {
 
 #[cfg(test)]
 mod tests {
-	use oxc_allocator::Allocator;
-
 	use super::*;
-	use crate::test_helpers::test_write;
+	use crate::test_helpers::*;
 
 	#[test]
 	fn size_test() {
-		use std::mem::size_of;
-		assert_eq!(size_of::<OverflowBlock>(), 1);
+		assert_size!(OverflowBlock, 1);
 	}
 
 	#[test]
 	fn test_writes() {
-		let allocator = Allocator::default();
-		test_write::<OverflowBlock>(&allocator, "clip", "clip");
+		assert_parse!(OverflowBlock, "clip");
 	}
 }

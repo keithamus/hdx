@@ -61,36 +61,32 @@ pub struct PaddingRight(#[parsable(FromToken)] LengthPercentageOrAuto);
 
 #[cfg(test)]
 mod tests {
-	use oxc_allocator::Allocator;
-
 	use super::*;
-	use crate::test_helpers::test_write;
+	use crate::test_helpers::*;
 
 	#[test]
 	fn size_test() {
-		use std::mem::size_of;
-		assert_eq!(size_of::<Padding>(), 32);
-		assert_eq!(size_of::<PaddingBlockStart>(), 8);
-		assert_eq!(size_of::<PaddingBlockEnd>(), 8);
-		assert_eq!(size_of::<PaddingInlineStart>(), 8);
-		assert_eq!(size_of::<PaddingInlineEnd>(), 8);
-		assert_eq!(size_of::<PaddingTop>(), 8);
-		assert_eq!(size_of::<PaddingRight>(), 8);
-		assert_eq!(size_of::<PaddingLeft>(), 8);
-		assert_eq!(size_of::<PaddingBottom>(), 8);
+		assert_size!(Padding, 32);
+		assert_size!(PaddingBlockStart, 8);
+		assert_size!(PaddingBlockEnd, 8);
+		assert_size!(PaddingInlineStart, 8);
+		assert_size!(PaddingInlineEnd, 8);
+		assert_size!(PaddingTop, 8);
+		assert_size!(PaddingRight, 8);
+		assert_size!(PaddingLeft, 8);
+		assert_size!(PaddingBottom, 8);
 	}
 
 	#[test]
 	fn test_writes() {
-		let allocator = Allocator::default();
-		// test_write::<PaddingLeft>(&allocator, "auto", "auto");
-		// test_write::<PaddingBlock>(&allocator, "1px", "1px");
-		test_write::<PaddingBlock>(&allocator, "1px 2px", "1px 2px");
-		// test_write::<PaddingInline>(&allocator, "1px", "1px");
-		// test_write::<PaddingInline>(&allocator, "1px 2px", "1px 2px");
-		// test_write::<Padding>(&allocator, "1px", "1px");
-		// test_write::<Padding>(&allocator, "1px 2px", "1px 2px");
-		// test_write::<Padding>(&allocator, "1px 2px 3px", "1px 2px 3px");
-		// test_write::<Padding>(&allocator, "1px 2px 3px 4px", "1px 2px 3px 4px");
+		// assert_parse!(PaddingLeft, "auto");
+		// assert_parse!(PaddingBlock, "1px");
+		assert_parse!(PaddingBlock, "1px 2px");
+		// assert_parse!(PaddingInline, "1px");
+		// assert_parse!(PaddingInline, "1px 2px");
+		// assert_parse!(Padding, "1px");
+		// assert_parse!(Padding, "1px 2px");
+		// assert_parse!(Padding, "1px 2px 3px");
+		// assert_parse!(Padding, "1px 2px 3px 4px");
 	}
 }

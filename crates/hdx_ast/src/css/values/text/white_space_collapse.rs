@@ -18,11 +18,11 @@ pub enum WhiteSpaceCollapse {
 
 #[cfg(test)]
 mod tests {
-
 	use super::*;
+	use crate::test_helpers::*;
 
 	#[test]
 	fn size_test() {
-		assert_eq!(::std::mem::size_of::<WhiteSpaceCollapse>(), 1);
+		assert_size!(WhiteSpaceCollapse, 1);
 	}
 }

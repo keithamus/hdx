@@ -3,7 +3,7 @@ use serde::Serialize;
 
 use hdx_atom::atom;
 use hdx_lexer::Token;
-use hdx_parser::{unexpected, MediaFeature, Parse, Parser, Result as ParserResult, unexpected_ident};
+use hdx_parser::{unexpected, unexpected_ident, MediaFeature, Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 
 #[derive(PartialEq, Default, Debug, Hash)]
@@ -34,7 +34,7 @@ impl<'a> MediaFeature<'a> for HoverMediaFeature {
 					Ok(Self::Hover)
 				}
 				_ => unexpected_ident!(parser, ident),
-			}
+			},
 			token => unexpected!(parser, token),
 		}
 	}
@@ -49,7 +49,7 @@ impl<'a> WriteCss<'a> for HoverMediaFeature {
 				sink.write_char(':')?;
 				sink.write_whitespace()?;
 				atom!("none").write_css(sink)?;
-			},
+			}
 			Self::Hover => {
 				sink.write_char(':')?;
 				sink.write_whitespace()?;
@@ -63,36 +63,30 @@ impl<'a> WriteCss<'a> for HoverMediaFeature {
 
 #[cfg(test)]
 mod tests {
-	use oxc_allocator::Allocator;
-
 	use super::*;
-	use crate::test_helpers::{test_write, test_write_min, test_error};
+	use crate::test_helpers::*;
 
 	#[test]
 	fn size_test() {
-		use std::mem::size_of;
-		assert_eq!(size_of::<HoverMediaFeature>(), 1);
+		assert_size!(HoverMediaFeature, 1);
 	}
 
 	#[test]
 	fn test_writes() {
-		let allocator = Allocator::default();
-		test_write::<HoverMediaFeature>(&allocator, "(hover)", "(hover)");
-		test_write::<HoverMediaFeature>(&allocator, "(hover: hover)", "(hover: hover)");
-		test_write::<HoverMediaFeature>(&allocator, "(hover: none)", "(hover: none)");
+		assert_parse!(HoverMediaFeature, "(hover)");
+		assert_parse!(HoverMediaFeature, "(hover: hover)");
+		assert_parse!(HoverMediaFeature, "(hover: none)");
 	}
 
 	#[test]
 	fn test_minify() {
-		let allocator = Allocator::default();
-		test_write_min::<HoverMediaFeature>(&allocator, "(hover: hover)", "(hover:hover)");
-		test_write_min::<HoverMediaFeature>(&allocator, "(hover: none)", "(hover:none)");
+		assert_minify!(HoverMediaFeature, "(hover: hover)", "(hover:hover)");
+		assert_minify!(HoverMediaFeature, "(hover: none)", "(hover:none)");
 	}
 
 	#[test]
 	fn test_errors() {
-		let allocator = Allocator::default();
-		test_error::<HoverMediaFeature>(&allocator, "(hover:)");
-		test_error::<HoverMediaFeature>(&allocator, "(hover: hoover)");
+		assert_parse_error!(HoverMediaFeature, "(hover:)");
+		assert_parse_error!(HoverMediaFeature, "(hover: hoover)");
 	}
 }

@@ -1,11 +1,11 @@
 use crate::Atomizable;
 use hdx_atom::atom;
-use hdx_lexer::{Token, QuoteStyle};
+use hdx_lexer::{QuoteStyle, Token};
 use hdx_parser::{
 	diagnostics::{self},
 	expect, unexpected, Parse, Parser, Result as ParserResult,
 };
-use hdx_writer::{CssWriter, Result as WriterResult, WriteCss, OutputOption};
+use hdx_writer::{CssWriter, OutputOption, Result as WriterResult, WriteCss};
 #[cfg(feature = "serde")]
 use serde::Serialize;
 
@@ -104,28 +104,23 @@ impl<'a> WriteCss<'a> for CharsetRule {
 
 #[cfg(test)]
 mod tests {
-	use oxc_allocator::Allocator;
-
 	use super::*;
-	use crate::test_helpers::{test_write, test_write_min};
+	use crate::test_helpers::*;
 
 	#[test]
 	fn size_test() {
-		use std::mem::size_of;
-		assert_eq!(size_of::<CharsetRule>(), 1);
+		assert_size!(CharsetRule, 1);
 	}
 
 	#[test]
 	fn test_writes() {
-		let allocator = Allocator::default();
-		test_write::<CharsetRule>(&allocator, "@charset \"utf-8\";", "@charset \"utf-8\";");
-		test_write::<CharsetRule>(&allocator, "@charset \"UTF-8\";", "@charset \"utf-8\";");
+		assert_parse!(CharsetRule, "@charset \"utf-8\";", "@charset \"utf-8\";");
+		assert_parse!(CharsetRule, "@charset \"UTF-8\";", "@charset \"utf-8\";");
 	}
 
 	#[test]
 	fn test_minify() {
-		let allocator = Allocator::default();
 		// utf-8 is assumed, so we can drop the rule.
-		test_write_min::<CharsetRule>(&allocator, "@charset \"utf-8\";", "");
+		assert_minify!(CharsetRule, "@charset \"utf-8\";", "");
 	}
 }

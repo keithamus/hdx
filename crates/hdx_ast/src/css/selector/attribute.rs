@@ -184,37 +184,33 @@ pub enum AttributeModifier {
 
 #[cfg(test)]
 mod tests {
-	use oxc_allocator::Allocator;
-
 	use super::*;
-	use crate::test_helpers::{test_write, test_write_min};
+	use crate::test_helpers::*;
 
 	#[test]
 	fn size_test() {
-		assert_eq!(::std::mem::size_of::<Attribute>(), 40);
-		assert_eq!(::std::mem::size_of::<AttributeMatch>(), 1);
-		assert_eq!(::std::mem::size_of::<AttributeMatch>(), 1);
+		assert_size!(Attribute, 40);
+		assert_size!(AttributeMatch, 1);
+		assert_size!(AttributeMatch, 1);
 	}
 
 	#[test]
 	fn test_writes() {
-		let allocator = Allocator::default();
-		test_write::<Attribute>(&allocator, "[foo]", "[foo]");
-		test_write::<Attribute>(&allocator, "[foo='bar']", "[foo='bar']");
-		test_write::<Attribute>(&allocator, "[foo = 'bar']", "[foo='bar']");
-		test_write::<Attribute>(&allocator, "[attr*='foo']", "[attr*='foo']");
-		test_write::<Attribute>(&allocator, "[|attr='foo']", "[attr='foo']");
-		test_write::<Attribute>(&allocator, "[*|attr='foo']", "[*|attr='foo']");
-		test_write::<Attribute>(&allocator, "[x|attr='foo']", "[x|attr='foo']");
-		test_write::<Attribute>(&allocator, "[attr|='foo']", "[attr|='foo']");
+		assert_parse!(Attribute, "[foo]");
+		assert_parse!(Attribute, "[foo='bar']");
+		assert_parse!(Attribute, "[foo='bar']");
+		assert_parse!(Attribute, "[attr*='foo']");
+		assert_parse!(Attribute, "[attr='foo']");
+		assert_parse!(Attribute, "[*|attr='foo']");
+		assert_parse!(Attribute, "[x|attr='foo']");
+		assert_parse!(Attribute, "[attr|='foo']");
 	}
 
 	#[test]
 	fn test_minify() {
-		let allocator = Allocator::default();
-		test_write_min::<Attribute>(&allocator, "[foo]", "[foo]");
-		test_write_min::<Attribute>(&allocator, "[foo='bar']", "[foo=bar]");
-		test_write_min::<Attribute>(&allocator, "[foo|='bar']", "[foo|=bar]");
-		test_write_min::<Attribute>(&allocator, "[foo='value with spaces']", "[foo=\"value with spaces\"]");
+		assert_minify!(Attribute, "[foo]", "[foo]");
+		assert_minify!(Attribute, "[foo='bar']", "[foo=bar]");
+		assert_minify!(Attribute, "[foo|='bar']", "[foo|=bar]");
+		assert_minify!(Attribute, "[foo='value with spaces']", "[foo=\"value with spaces\"]");
 	}
 }

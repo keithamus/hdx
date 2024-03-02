@@ -26,9 +26,10 @@ pub enum Clear {
 mod tests {
 
 	use super::*;
+	use crate::test_helpers::*;
 
 	#[test]
 	fn size_test() {
-		assert_eq!(::std::mem::size_of::<Clear>(), 1);
+		assert_size!(Clear, 1);
 	}
 }

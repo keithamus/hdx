@@ -199,32 +199,27 @@ pub enum SnapInlineDirection {
 
 #[cfg(test)]
 mod tests {
-	use oxc_allocator::Allocator;
-
 	use super::*;
-	use crate::test_helpers::{test_write, test_write_min};
+	use crate::test_helpers::*;
 
 	#[test]
 	fn size_test() {
-		use std::mem::size_of;
-		assert_eq!(size_of::<Float>(), 12);
+		assert_size!(Float, 12);
 	}
 
 	#[test]
 	fn test_writes() {
-		let allocator = Allocator::default();
-		test_write::<Float>(&allocator, "none", "none");
-		test_write::<Float>(&allocator, "left", "left");
-		test_write::<Float>(&allocator, "right", "right");
-		test_write::<Float>(&allocator, "block-end", "block-end");
-		test_write::<Float>(&allocator, "snap-inline(20rem, left)", "snap-inline(20rem, left)");
-		test_write::<Float>(&allocator, "snap-block(4px, end)", "snap-block(4px, end)");
+		assert_parse!(Float, "none");
+		assert_parse!(Float, "left");
+		assert_parse!(Float, "right");
+		assert_parse!(Float, "block-end");
+		assert_parse!(Float, "snap-inline(20rem, left)");
+		assert_parse!(Float, "snap-block(4px, end)");
 	}
 
 	#[test]
 	fn test_minify() {
-		let allocator = Allocator::default();
-		test_write_min::<Float>(&allocator, "snap-inline(20rem, left)", "snap-inline(20rem,left)");
-		test_write_min::<Float>(&allocator, "snap-block(4.00px, end)", "snap-block(4px,end)");
+		assert_minify!(Float, "snap-inline(20rem, left)", "snap-inline(20rem,left)");
+		assert_minify!(Float, "snap-block(4.00px, end)", "snap-block(4px,end)");
 	}
 }

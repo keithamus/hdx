@@ -24,22 +24,18 @@ impl Default for BaselineShift {
 
 #[cfg(test)]
 mod tests {
-	use oxc_allocator::Allocator;
-
 	use super::*;
-	use crate::test_helpers::test_write;
+	use crate::test_helpers::*;
 
 	#[test]
 	fn size_test() {
-		use std::mem::size_of;
-		assert_eq!(size_of::<BaselineShift>(), 8);
+		assert_size!(BaselineShift, 8);
 	}
 
 	#[test]
 	fn test_writes() {
-		let allocator = Allocator::default();
-		test_write::<BaselineShift>(&allocator, "sub", "sub");
-		test_write::<BaselineShift>(&allocator, "0", "0");
-		test_write::<BaselineShift>(&allocator, "200px", "200px");
+		assert_parse!(BaselineShift, "sub");
+		assert_parse!(BaselineShift, "0");
+		assert_parse!(BaselineShift, "200px");
 	}
 }

@@ -63,29 +63,24 @@ impl<'a> WriteCss<'a> for AnyHoverMediaFeature {
 
 #[cfg(test)]
 mod tests {
-	use oxc_allocator::Allocator;
-
 	use super::*;
-	use crate::test_helpers::{test_write, test_write_min};
+	use crate::test_helpers::*;
 
 	#[test]
 	fn size_test() {
-		use std::mem::size_of;
-		assert_eq!(size_of::<AnyHoverMediaFeature>(), 1);
+		assert_size!(AnyHoverMediaFeature, 1);
 	}
 
 	#[test]
 	fn test_writes() {
-		let allocator = Allocator::default();
-		test_write::<AnyHoverMediaFeature>(&allocator, "(any-hover)", "(any-hover)");
-		test_write::<AnyHoverMediaFeature>(&allocator, "(any-hover: hover)", "(any-hover: hover)");
-		test_write::<AnyHoverMediaFeature>(&allocator, "(any-hover: none)", "(any-hover: none)");
+		assert_parse!(AnyHoverMediaFeature, "(any-hover)");
+		assert_parse!(AnyHoverMediaFeature, "(any-hover: hover)");
+		assert_parse!(AnyHoverMediaFeature, "(any-hover: none)");
 	}
 
 	#[test]
 	fn test_minify() {
-		let allocator = Allocator::default();
-		test_write_min::<AnyHoverMediaFeature>(&allocator, "(any-hover: hover)", "(any-hover:hover)");
-		test_write_min::<AnyHoverMediaFeature>(&allocator, "(any-hover: none)", "(any-hover:none)");
+		assert_minify!(AnyHoverMediaFeature, "(any-hover: hover)", "(any-hover:hover)");
+		assert_minify!(AnyHoverMediaFeature, "(any-hover: none)", "(any-hover:none)");
 	}
 }

@@ -142,9 +142,9 @@ impl<'a> WriteCss<'a> for Property<'a> {
 		sink.write_whitespace()?;
 		self.value.write_css(sink)?;
 		if self.important {
-            sink.write_whitespace()?;
-            sink.write_char('!')?;
-            atom!("important").write_css(sink)?;
+			sink.write_whitespace()?;
+			sink.write_char('!')?;
+			atom!("important").write_css(sink)?;
 		}
 		Ok(())
 	}
@@ -1336,31 +1336,26 @@ properties! {
 
 #[cfg(test)]
 mod tests {
-	use oxc_allocator::Allocator;
-
 	use super::*;
-	use crate::test_helpers::{test_write, test_write_min};
+	use crate::test_helpers::*;
 
 	#[test]
 	fn size_test() {
-		use std::mem::size_of;
-		assert_eq!(size_of::<Property>(), 64);
-		assert_eq!(size_of::<StyleValue>(), 48);
+		assert_size!(Property, 64);
+		assert_size!(StyleValue, 48);
 	}
 
 	#[test]
 	fn test_writes() {
-		let allocator = Allocator::default();
-		test_write::<Property>(&allocator, "float: none !important", "float: none !important");
-		test_write::<Property>(&allocator, "width: 1px", "width: 1px");
-		test_write::<Property>(&allocator, "width: min(1px, 2px)", "width: min(1px, 2px)");
+		assert_parse!(Property, "float: none !important");
+		assert_parse!(Property, "width: 1px");
+		assert_parse!(Property, "width: min(1px, 2px)");
 	}
 
 	#[test]
 	fn test_minify() {
-		let allocator = Allocator::default();
-		test_write_min::<Property>(&allocator, "float: none !important", "float:none!important");
-		test_write_min::<Property>(&allocator, "width: 1px", "width:1px");
-		test_write_min::<Property>(&allocator, "width: min(1px, 2px)", "width:min(1px, 2px)");
+		assert_minify!(Property, "float: none !important", "float:none!important");
+		assert_minify!(Property, "width: 1px", "width:1px");
+		assert_minify!(Property, "width: min(1px, 2px)", "width:min(1px, 2px)");
 	}
 }

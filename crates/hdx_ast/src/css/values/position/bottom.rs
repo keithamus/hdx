@@ -14,21 +14,17 @@ pub enum Bottom {
 
 #[cfg(test)]
 mod tests {
-	use oxc_allocator::Allocator;
-
 	use super::*;
-	use crate::test_helpers::test_write;
+	use crate::test_helpers::*;
 
 	#[test]
 	fn size_test() {
-		use std::mem::size_of;
-		assert_eq!(size_of::<Bottom>(), 8);
+		assert_size!(Bottom, 8);
 	}
 
 	#[test]
 	fn test_writes() {
-		let allocator = Allocator::default();
-		test_write::<Bottom>(&allocator, "-10px", "-10px");
-		test_write::<Bottom>(&allocator, "auto", "auto");
+		assert_parse!(Bottom, "-10px");
+		assert_parse!(Bottom, "auto");
 	}
 }

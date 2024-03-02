@@ -1,7 +1,7 @@
 use hdx_atom::{atom, Atom};
 use hdx_lexer::Token;
 
-use crate::{expect, parser::Parser, span::Spanned, unexpected, unexpected_ident, Result, State, Vec, discard, peek, expect_ident_ignore_case};
+use crate::{expect, parser::Parser, span::Spanned, unexpected, unexpected_ident, Result, State, Vec, discard, peek, expect_ignore_case};
 
 // The FromToken trait produces a result of Self from an individual parser Token, guaranteeing that the parser will not
 // roll forward. Instead, the caller should advance the parser.
@@ -17,6 +17,25 @@ impl<'a, T: FromToken> Parse<'a> for T {
 		} else {
 			unexpected!(parser)
 		}
+	}
+}
+
+impl<'a, T: Parse<'a>> Parse<'a> for Vec<'a, T> {
+	fn parse(parser: &mut Parser<'a>) -> Result<Vec<'a, T>> {
+		loop {
+			let mut vec = parser.new_vec();
+			if let Ok(t) = T::parse(parser) {
+				vec.push(t);
+			} else {
+				return Ok(vec);
+			}
+		}
+	}
+}
+
+impl<'a, T: Parse<'a>> Parse<'a> for Spanned<T> {
+	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<T>> {
+		T::parse_spanned(parser)
 	}
 }
 
@@ -118,6 +137,31 @@ pub trait AtRule<'a>: Sized + Parse<'a> {
 		}
 	}
 }
+
+// An AtRule represents a block or statement with an @keyword in the leading
+// position, such as @media, @supports
+pub trait RuleGroup<'a>: Sized + Parse<'a> {
+	type Rule: Parse<'a>;
+
+	fn parse_rules(parser: &mut Parser<'a>) -> Result<Vec<'a, Spanned<Self::Rule>>> {
+		match parser.cur() {
+			Token::LeftCurly => {
+				parser.advance();
+				let mut rules = parser.new_vec();
+				loop {
+					discard!(parser, Token::Semicolon);
+					if matches!(parser.cur(), Token::RightCurly) {
+						parser.advance();
+						return Ok(rules);
+					}
+					rules.push(Self::Rule::parse_spanned(parser)?);
+				}
+			}
+			token => unexpected!(parser, token),
+		}
+	}
+}
+
 
 pub trait QualifiedRule<'a>: Sized + Parse<'a> {
 	type Prelude: Parse<'a>;
@@ -288,7 +332,7 @@ pub trait MediaFeature<'a>: Sized + Default {
 	fn parse_media_feature(name: Atom, parser: &mut Parser<'a>) -> Result<Self> {
 		expect!(parser, Token::LeftParen);
 		parser.advance();
-		expect_ident_ignore_case!(parser, name);
+		expect_ignore_case!(parser, name);
 		parser.advance();
 		let value = match parser.cur() {
 			Token::RightParen => Self::default(),

@@ -15,11 +15,11 @@ pub enum TextDecorationSkipInk {
 
 #[cfg(test)]
 mod tests {
-
 	use super::*;
+	use crate::test_helpers::*;
 
 	#[test]
 	fn size_test() {
-		assert_eq!(::std::mem::size_of::<TextDecorationSkipInk>(), 1);
+		assert_size!(TextDecorationSkipInk, 1);
 	}
 }

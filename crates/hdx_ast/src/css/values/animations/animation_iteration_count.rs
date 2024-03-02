@@ -73,27 +73,22 @@ impl<'a> WriteCss<'a> for AnimationIterationCount {
 
 #[cfg(test)]
 mod tests {
-	use oxc_allocator::Allocator;
-
 	use super::*;
-	use crate::test_helpers::{test_write, test_write_min};
+	use crate::test_helpers::*;
 
 	#[test]
 	fn size_test() {
-		use std::mem::size_of;
-		assert_eq!(size_of::<AnimationIterationCount>(), 24);
+		assert_size!(AnimationIterationCount, 24);
 	}
 
 	#[test]
 	fn test_writes() {
-		let allocator = Allocator::default();
-		test_write::<AnimationIterationCount>(&allocator, "infinite", "infinite");
-		test_write::<AnimationIterationCount>(&allocator, "1, infinite, 7, 800", "1, infinite, 7, 800");
+		assert_parse!(AnimationIterationCount, "infinite");
+		assert_parse!(AnimationIterationCount, "1, infinite, 7, 800");
 	}
 
 	#[test]
 	fn test_minify() {
-		let allocator = Allocator::default();
-		test_write_min::<AnimationIterationCount>(&allocator, "1, infinite, 7, 800", "1,infinite,7,800");
+		assert_minify!(AnimationIterationCount, "1, infinite, 7, 800", "1,infinite,7,800");
 	}
 }

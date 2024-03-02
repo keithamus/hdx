@@ -55,23 +55,20 @@ impl FromToken for Time {
 
 #[cfg(test)]
 mod tests {
-	use oxc_allocator::Allocator;
-
 	use super::*;
-	use crate::test_helpers::test_write;
+	use crate::test_helpers::*;
 
 	#[test]
 	fn size_test() {
-		assert_eq!(::std::mem::size_of::<Time>(), 8);
+		assert_size!(Time, 8);
 	}
 
 	#[test]
 	fn test_variants() {
-		let allocator = Allocator::default();
-		test_write::<Time>(&allocator, "0s", "0s");
+		assert_parse!(Time, "0s");
 		// Truncates to 7dp
-		test_write::<Time>(&allocator, "1.2345678901234s", "1.2345679s");
+		assert_parse!(Time, "1.2345678901234s", "1.2345679s");
 		// Removes redundant dp
-		test_write::<Time>(&allocator, "-1.0s", "-1s");
+		assert_parse!(Time, "-1.0s", "-1s");
 	}
 }
