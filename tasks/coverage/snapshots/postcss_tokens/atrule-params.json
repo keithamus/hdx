@@ -44,7 +44,12 @@
     "escaped": false,
     "kind": "String",
     "start": 42,
-    "value": "example.com/{"
+    "value": [
+      "example.com/{",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 58,

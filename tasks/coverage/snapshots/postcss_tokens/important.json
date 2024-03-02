@@ -620,7 +620,12 @@
     "escaped": false,
     "kind": "String",
     "start": 302,
-    "value": ""
+    "value": [
+      "",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 305,

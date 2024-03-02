@@ -68,7 +68,12 @@
     "escaped": false,
     "kind": "String",
     "start": 35,
-    "value": "UTF-8"
+    "value": [
+      "UTF-8",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 43,

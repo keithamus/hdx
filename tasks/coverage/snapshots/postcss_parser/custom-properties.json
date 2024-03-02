@@ -214,7 +214,12 @@
                           "end": 147,
                           "node": {
                             "kind": "String",
-                            "value": "single quoted string"
+                            "value": [
+                              "single quoted string",
+                              {
+                                "kind": "Single"
+                              }
+                            ]
                           },
                           "start": 124
                         }
@@ -234,7 +239,12 @@
                           "end": 183,
                           "node": {
                             "kind": "String",
-                            "value": "double quoted string"
+                            "value": [
+                              "double quoted string",
+                              {
+                                "kind": "Double"
+                              }
+                            ]
                           },
                           "start": 160
                         }
@@ -643,7 +653,12 @@
                                 "end": 394,
                                 "node": {
                                   "kind": "String",
-                                  "value": "2"
+                                  "value": [
+                                    "2",
+                                    {
+                                      "kind": "Double"
+                                    }
+                                  ]
                                 },
                                 "start": 391
                               },
@@ -671,7 +686,12 @@
                                       "end": 404,
                                       "node": {
                                         "kind": "String",
-                                        "value": "three"
+                                        "value": [
+                                          "three",
+                                          {
+                                            "kind": "Double"
+                                          }
+                                        ]
                                       },
                                       "start": 397
                                     },
@@ -699,7 +719,12 @@
                                             "end": 410,
                                             "node": {
                                               "kind": "String",
-                                              "value": "a"
+                                              "value": [
+                                                "a",
+                                                {
+                                                  "kind": "Double"
+                                                }
+                                              ]
                                             },
                                             "start": 407
                                           },

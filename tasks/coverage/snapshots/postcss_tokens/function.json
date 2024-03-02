@@ -48,7 +48,12 @@
     "escaped": true,
     "kind": "Url",
     "start": 26,
-    "value": "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+    "value": [
+      "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7",
+      {
+        "kind": "None"
+      }
+    ]
   },
   {
     "end": 110,
@@ -93,7 +98,12 @@
     "escaped": false,
     "kind": "String",
     "start": 137,
-    "value": "./image (1).jpg"
+    "value": [
+      "./image (1).jpg",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 155,
@@ -150,7 +160,12 @@
     "escaped": false,
     "kind": "String",
     "start": 184,
-    "value": "./image (1).jpg"
+    "value": [
+      "./image (1).jpg",
+      {
+        "kind": "Single"
+      }
+    ]
   },
   {
     "end": 202,

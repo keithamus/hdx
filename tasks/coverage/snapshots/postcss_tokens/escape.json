@@ -55,7 +55,12 @@
     "escaped": false,
     "kind": "String",
     "start": 24,
-    "value": "a).png"
+    "value": [
+      "a).png",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 33,
@@ -99,7 +104,12 @@
     "escaped": true,
     "kind": "Url",
     "start": 51,
-    "value": "a;a"
+    "value": [
+      "a;a",
+      {
+        "kind": "None"
+      }
+    ]
   },
   {
     "end": 60,
@@ -137,7 +147,12 @@
     "escaped": true,
     "kind": "Url",
     "start": 77,
-    "value": "a/*"
+    "value": [
+      "a/*",
+      {
+        "kind": "None"
+      }
+    ]
   },
   {
     "end": 86,
@@ -239,7 +254,12 @@
     "escaped": false,
     "kind": "String",
     "start": 121,
-    "value": ")"
+    "value": [
+      ")",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 125,
@@ -429,7 +449,12 @@
     "escaped": false,
     "kind": "String",
     "start": 177,
-    "value": ")"
+    "value": [
+      ")",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 181,

@@ -17,7 +17,12 @@
     "escaped": false,
     "kind": "String",
     "start": 9,
-    "value": "UTF-8"
+    "value": [
+      "UTF-8",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 17,
@@ -3089,7 +3094,12 @@
     "escaped": true,
     "kind": "String",
     "start": 13543,
-    "value": "“"
+    "value": [
+      "“",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 13551,
@@ -3102,7 +3112,12 @@
     "escaped": true,
     "kind": "String",
     "start": 13551,
-    "value": "”"
+    "value": [
+      "”",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 13559,
@@ -3115,7 +3130,12 @@
     "escaped": true,
     "kind": "String",
     "start": 13559,
-    "value": "‘"
+    "value": [
+      "‘",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 13567,
@@ -3128,7 +3148,12 @@
     "escaped": true,
     "kind": "String",
     "start": 13567,
-    "value": "’"
+    "value": [
+      "’",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 13575,
@@ -4975,7 +5000,12 @@
     "escaped": false,
     "kind": "String",
     "start": 16149,
-    "value": "button"
+    "value": [
+      "button",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 16158,
@@ -5027,7 +5057,12 @@
     "escaped": false,
     "kind": "String",
     "start": 16171,
-    "value": "reset"
+    "value": [
+      "reset",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 16179,
@@ -5079,7 +5114,12 @@
     "escaped": false,
     "kind": "String",
     "start": 16192,
-    "value": "submit"
+    "value": [
+      "submit",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 16201,
@@ -5422,7 +5462,12 @@
     "escaped": false,
     "kind": "String",
     "start": 16508,
-    "value": "checkbox"
+    "value": [
+      "checkbox",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 16519,
@@ -5474,7 +5519,12 @@
     "escaped": false,
     "kind": "String",
     "start": 16532,
-    "value": "radio"
+    "value": [
+      "radio",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 16540,
@@ -5664,7 +5714,12 @@
     "escaped": false,
     "kind": "String",
     "start": 16806,
-    "value": "search"
+    "value": [
+      "search",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 16815,
@@ -5925,7 +5980,12 @@
     "escaped": false,
     "kind": "String",
     "start": 17070,
-    "value": "search"
+    "value": [
+      "search",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 17079,
@@ -5996,7 +6056,12 @@
     "escaped": false,
     "kind": "String",
     "start": 17122,
-    "value": "search"
+    "value": [
+      "search",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 17131,
@@ -8387,7 +8452,12 @@
     "escaped": false,
     "kind": "String",
     "start": 19385,
-    "value": ""
+    "value": [
+      "",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 19388,
@@ -13317,7 +13387,12 @@
     "escaped": false,
     "kind": "String",
     "start": 23374,
-    "value": "‘"
+    "value": [
+      "‘",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 23380,
@@ -13330,7 +13405,12 @@
     "escaped": false,
     "kind": "String",
     "start": 23380,
-    "value": "’"
+    "value": [
+      "’",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 23386,
@@ -13343,7 +13423,12 @@
     "escaped": false,
     "kind": "String",
     "start": 23386,
-    "value": "“"
+    "value": [
+      "“",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 23392,
@@ -13356,7 +13441,12 @@
     "escaped": false,
     "kind": "String",
     "start": 23392,
-    "value": "”"
+    "value": [
+      "”",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 23398,
@@ -13444,7 +13534,12 @@
     "escaped": false,
     "kind": "String",
     "start": 23427,
-    "value": "‘"
+    "value": [
+      "‘",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 23433,
@@ -13570,7 +13665,12 @@
     "escaped": false,
     "kind": "String",
     "start": 23486,
-    "value": "’"
+    "value": [
+      "’",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 23492,
@@ -13709,7 +13809,12 @@
     "escaped": false,
     "kind": "String",
     "start": 23549,
-    "value": "“"
+    "value": [
+      "“",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 23555,
@@ -13848,7 +13953,12 @@
     "escaped": false,
     "kind": "String",
     "start": 23610,
-    "value": "”"
+    "value": [
+      "”",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 23616,
@@ -13961,7 +14071,12 @@
     "escaped": false,
     "kind": "String",
     "start": 23669,
-    "value": "“"
+    "value": [
+      "“",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 23675,
@@ -13974,7 +14089,12 @@
     "escaped": false,
     "kind": "String",
     "start": 23675,
-    "value": "”"
+    "value": [
+      "”",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 23681,
@@ -14075,7 +14195,12 @@
     "escaped": false,
     "kind": "String",
     "start": 23721,
-    "value": "“"
+    "value": [
+      "“",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 23727,
@@ -14214,7 +14339,12 @@
     "escaped": false,
     "kind": "String",
     "start": 23791,
-    "value": ""
+    "value": [
+      "",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 23794,
@@ -14366,7 +14496,12 @@
     "escaped": false,
     "kind": "String",
     "start": 23875,
-    "value": "”"
+    "value": [
+      "”",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 23881,
@@ -14505,7 +14640,12 @@
     "escaped": false,
     "kind": "String",
     "start": 23947,
-    "value": "‘"
+    "value": [
+      "‘",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 23953,
@@ -14644,7 +14784,12 @@
     "escaped": false,
     "kind": "String",
     "start": 24017,
-    "value": "’"
+    "value": [
+      "’",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 24023,
@@ -15115,7 +15260,12 @@
     "escaped": false,
     "kind": "String",
     "start": 24515,
-    "value": "—"
+    "value": [
+      "—",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 24521,
@@ -18232,7 +18382,12 @@
     "escaped": false,
     "kind": "String",
     "start": 29293,
-    "value": "1"
+    "value": [
+      "1",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 29297,
@@ -18420,7 +18575,12 @@
     "escaped": false,
     "kind": "String",
     "start": 29373,
-    "value": "1"
+    "value": [
+      "1",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 29377,
@@ -40593,7 +40753,12 @@
     "escaped": false,
     "kind": "String",
     "start": 45876,
-    "value": "Helvetica Neue"
+    "value": [
+      "Helvetica Neue",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 45893,
@@ -40760,7 +40925,12 @@
     "escaped": false,
     "kind": "String",
     "start": 45976,
-    "value": "Helvetica Neue"
+    "value": [
+      "Helvetica Neue",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 45993,
@@ -48150,7 +48320,12 @@
     "escaped": true,
     "kind": "String",
     "start": 50502,
-    "value": " »"
+    "value": [
+      " »",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 50512,

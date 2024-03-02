@@ -248,7 +248,12 @@
     "escaped": false,
     "kind": "String",
     "start": 117,
-    "value": "A;' /**/"
+    "value": [
+      "A;' /**/",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 128,

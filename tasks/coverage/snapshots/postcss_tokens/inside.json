@@ -42,7 +42,12 @@
     "escaped": false,
     "kind": "String",
     "start": 12,
-    "value": "a.css"
+    "value": [
+      "a.css",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 20,

@@ -28,7 +28,12 @@
                       "end": 57,
                       "node": {
                         "kind": "String",
-                        "value": "example.com/{"
+                        "value": [
+                          "example.com/{",
+                          {
+                            "kind": "Double"
+                          }
+                        ]
                       },
                       "start": 42
                     }

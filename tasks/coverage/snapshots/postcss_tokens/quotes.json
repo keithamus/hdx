@@ -67,7 +67,12 @@
     "escaped": true,
     "kind": "String",
     "start": 25,
-    "value": ";'@ /**/\""
+    "value": [
+      ";'@ /**/\"",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 38,
@@ -105,7 +110,12 @@
     "escaped": true,
     "kind": "String",
     "start": 52,
-    "value": "'\"\\"
+    "value": [
+      "'\"\\",
+      {
+        "kind": "Single"
+      }
+    ]
   },
   {
     "end": 60,

@@ -34,7 +34,12 @@
                             "end": 32,
                             "node": {
                               "kind": "String",
-                              "value": ".minwidth"
+                              "value": [
+                                ".minwidth",
+                                {
+                                  "kind": "Double"
+                                }
+                              ]
                             },
                             "start": 21
                           },
@@ -62,7 +67,12 @@
                                   "end": 46,
                                   "node": {
                                     "kind": "String",
-                                    "value": "minWidth"
+                                    "value": [
+                                      "minWidth",
+                                      {
+                                        "kind": "Double"
+                                      }
+                                    ]
                                   },
                                   "start": 35
                                 },
@@ -225,7 +235,12 @@
                             "end": 128,
                             "node": {
                               "kind": "String",
-                              "value": "example"
+                              "value": [
+                                "example",
+                                {
+                                  "kind": "Double"
+                                }
+                              ]
                             },
                             "start": 119
                           },
@@ -374,7 +389,12 @@
                             "end": 185,
                             "node": {
                               "kind": "String",
-                              "value": "example"
+                              "value": [
+                                "example",
+                                {
+                                  "kind": "Double"
+                                }
+                              ]
                             },
                             "start": 176
                           },
@@ -523,7 +543,12 @@
                             "end": 246,
                             "node": {
                               "kind": "String",
-                              "value": "example"
+                              "value": [
+                                "example",
+                                {
+                                  "kind": "Double"
+                                }
+                              ]
                             },
                             "start": 237
                           },

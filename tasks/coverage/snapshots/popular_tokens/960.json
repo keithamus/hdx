@@ -15974,7 +15974,12 @@
     "escaped": false,
     "kind": "String",
     "start": 9607,
-    "value": "."
+    "value": [
+      ".",
+      {
+        "kind": "Single"
+      }
+    ]
   },
   {
     "end": 9611,

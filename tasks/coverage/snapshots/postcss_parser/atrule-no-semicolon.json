@@ -70,7 +70,12 @@
                 "end": 42,
                 "node": {
                   "kind": "String",
-                  "value": "UTF-8"
+                  "value": [
+                    "UTF-8",
+                    {
+                      "kind": "Double"
+                    }
+                  ]
                 },
                 "start": 35
               },

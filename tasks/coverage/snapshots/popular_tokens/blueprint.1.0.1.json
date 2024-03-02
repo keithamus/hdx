@@ -2449,7 +2449,12 @@
     "escaped": false,
     "kind": "String",
     "start": 1394,
-    "value": ""
+    "value": [
+      "",
+      {
+        "kind": "Single"
+      }
+    ]
   },
   {
     "end": 1397,
@@ -2543,7 +2548,12 @@
     "escaped": false,
     "kind": "String",
     "start": 1424,
-    "value": ""
+    "value": [
+      "",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 1427,
@@ -2556,7 +2566,12 @@
     "escaped": false,
     "kind": "String",
     "start": 1427,
-    "value": ""
+    "value": [
+      "",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 1430,
@@ -3052,7 +3067,12 @@
     "escaped": false,
     "kind": "String",
     "start": 1971,
-    "value": "Helvetica Neue"
+    "value": [
+      "Helvetica Neue",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 1988,
@@ -6483,7 +6503,12 @@
     "escaped": false,
     "kind": "String",
     "start": 3506,
-    "value": "andale mono"
+    "value": [
+      "andale mono",
+      {
+        "kind": "Single"
+      }
+    ]
   },
   {
     "end": 3520,
@@ -6502,7 +6527,12 @@
     "escaped": false,
     "kind": "String",
     "start": 3521,
-    "value": "lucida console"
+    "value": [
+      "lucida console",
+      {
+        "kind": "Single"
+      }
+    ]
   },
   {
     "end": 3538,
@@ -14089,7 +14119,12 @@
     "escaped": true,
     "kind": "Url",
     "start": 8520,
-    "value": "src/grid.png"
+    "value": [
+      "src/grid.png",
+      {
+        "kind": "None"
+      }
+    ]
   },
   {
     "end": 8538,
@@ -34064,7 +34099,12 @@
     "escaped": true,
     "kind": "String",
     "start": 17179,
-    "value": " "
+    "value": [
+      " ",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 17187,

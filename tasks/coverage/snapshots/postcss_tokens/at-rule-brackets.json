@@ -30,7 +30,12 @@
     "escaped": false,
     "kind": "String",
     "start": 21,
-    "value": ".minwidth"
+    "value": [
+      ".minwidth",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 33,
@@ -61,7 +66,12 @@
     "escaped": false,
     "kind": "String",
     "start": 36,
-    "value": "minWidth"
+    "value": [
+      "minWidth",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 47,
@@ -258,7 +268,12 @@
     "escaped": false,
     "kind": "String",
     "start": 119,
-    "value": "example"
+    "value": [
+      "example",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 129,
@@ -431,7 +446,12 @@
     "escaped": false,
     "kind": "String",
     "start": 176,
-    "value": "example"
+    "value": [
+      "example",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 186,
@@ -605,7 +625,12 @@
     "escaped": false,
     "kind": "String",
     "start": 237,
-    "value": "example"
+    "value": [
+      "example",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 247,

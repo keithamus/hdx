@@ -317,7 +317,12 @@
     "escaped": false,
     "kind": "String",
     "start": 125,
-    "value": "single quoted string"
+    "value": [
+      "single quoted string",
+      {
+        "kind": "Single"
+      }
+    ]
   },
   {
     "end": 148,
@@ -355,7 +360,12 @@
     "escaped": false,
     "kind": "String",
     "start": 161,
-    "value": "double quoted string"
+    "value": [
+      "double quoted string",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 184,
@@ -936,7 +946,12 @@
     "escaped": false,
     "kind": "String",
     "start": 391,
-    "value": "2"
+    "value": [
+      "2",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 395,
@@ -961,7 +976,12 @@
     "escaped": false,
     "kind": "String",
     "start": 397,
-    "value": "three"
+    "value": [
+      "three",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 405,
@@ -986,7 +1006,12 @@
     "escaped": false,
     "kind": "String",
     "start": 407,
-    "value": "a"
+    "value": [
+      "a",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 411,

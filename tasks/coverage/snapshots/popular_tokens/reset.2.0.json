@@ -2522,7 +2522,12 @@
     "escaped": false,
     "kind": "String",
     "start": 1013,
-    "value": ""
+    "value": [
+      "",
+      {
+        "kind": "Single"
+      }
+    ]
   },
   {
     "end": 1016,

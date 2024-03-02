@@ -2954,7 +2954,12 @@
     "escaped": false,
     "kind": "String",
     "start": 3739,
-    "value": "button"
+    "value": [
+      "button",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 3748,
@@ -2999,7 +3004,12 @@
     "escaped": false,
     "kind": "String",
     "start": 3756,
-    "value": "reset"
+    "value": [
+      "reset",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 3764,
@@ -3044,7 +3054,12 @@
     "escaped": false,
     "kind": "String",
     "start": 3772,
-    "value": "submit"
+    "value": [
+      "submit",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 3781,
@@ -3196,7 +3211,12 @@
     "escaped": false,
     "kind": "String",
     "start": 3909,
-    "value": "button"
+    "value": [
+      "button",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 3918,
@@ -3260,7 +3280,12 @@
     "escaped": false,
     "kind": "String",
     "start": 3944,
-    "value": "reset"
+    "value": [
+      "reset",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 3952,
@@ -3324,7 +3349,12 @@
     "escaped": false,
     "kind": "String",
     "start": 3978,
-    "value": "submit"
+    "value": [
+      "submit",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 3987,
@@ -3532,7 +3562,12 @@
     "escaped": false,
     "kind": "String",
     "start": 4141,
-    "value": "button"
+    "value": [
+      "button",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 4150,
@@ -3590,7 +3625,12 @@
     "escaped": false,
     "kind": "String",
     "start": 4173,
-    "value": "reset"
+    "value": [
+      "reset",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 4181,
@@ -3648,7 +3688,12 @@
     "escaped": false,
     "kind": "String",
     "start": 4204,
-    "value": "submit"
+    "value": [
+      "submit",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 4213,
@@ -4520,7 +4565,12 @@
     "escaped": false,
     "kind": "String",
     "start": 5131,
-    "value": "checkbox"
+    "value": [
+      "checkbox",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 5142,
@@ -4565,7 +4615,12 @@
     "escaped": false,
     "kind": "String",
     "start": 5150,
-    "value": "radio"
+    "value": [
+      "radio",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 5158,
@@ -4786,7 +4841,12 @@
     "escaped": false,
     "kind": "String",
     "start": 5351,
-    "value": "number"
+    "value": [
+      "number",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 5360,
@@ -4850,7 +4910,12 @@
     "escaped": false,
     "kind": "String",
     "start": 5395,
-    "value": "number"
+    "value": [
+      "number",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 5404,
@@ -4983,7 +5048,12 @@
     "escaped": false,
     "kind": "String",
     "start": 5566,
-    "value": "search"
+    "value": [
+      "search",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 5575,
@@ -5167,7 +5237,12 @@
     "escaped": false,
     "kind": "String",
     "start": 5728,
-    "value": "search"
+    "value": [
+      "search",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 5737,
@@ -6481,7 +6556,12 @@
     "escaped": false,
     "kind": "String",
     "start": 8107,
-    "value": "Droid Sans"
+    "value": [
+      "Droid Sans",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 8120,
@@ -7680,7 +7760,12 @@
     "escaped": false,
     "kind": "String",
     "start": 9334,
-    "value": "pure-u"
+    "value": [
+      "pure-u",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 9343,
@@ -17249,7 +17334,12 @@
     "escaped": false,
     "kind": "String",
     "start": 14538,
-    "value": "text"
+    "value": [
+      "text",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 14545,
@@ -17321,7 +17411,12 @@
     "escaped": false,
     "kind": "String",
     "start": 14569,
-    "value": "password"
+    "value": [
+      "password",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 14580,
@@ -17393,7 +17488,12 @@
     "escaped": false,
     "kind": "String",
     "start": 14604,
-    "value": "email"
+    "value": [
+      "email",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 14612,
@@ -17465,7 +17565,12 @@
     "escaped": false,
     "kind": "String",
     "start": 14636,
-    "value": "url"
+    "value": [
+      "url",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 14642,
@@ -17537,7 +17642,12 @@
     "escaped": false,
     "kind": "String",
     "start": 14666,
-    "value": "date"
+    "value": [
+      "date",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 14673,
@@ -17609,7 +17719,12 @@
     "escaped": false,
     "kind": "String",
     "start": 14697,
-    "value": "month"
+    "value": [
+      "month",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 14705,
@@ -17681,7 +17796,12 @@
     "escaped": false,
     "kind": "String",
     "start": 14729,
-    "value": "time"
+    "value": [
+      "time",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 14736,
@@ -17753,7 +17873,12 @@
     "escaped": false,
     "kind": "String",
     "start": 14760,
-    "value": "datetime"
+    "value": [
+      "datetime",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 14771,
@@ -17825,7 +17950,12 @@
     "escaped": false,
     "kind": "String",
     "start": 14795,
-    "value": "datetime-local"
+    "value": [
+      "datetime-local",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 14812,
@@ -17897,7 +18027,12 @@
     "escaped": false,
     "kind": "String",
     "start": 14836,
-    "value": "week"
+    "value": [
+      "week",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 14843,
@@ -17969,7 +18104,12 @@
     "escaped": false,
     "kind": "String",
     "start": 14867,
-    "value": "number"
+    "value": [
+      "number",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 14876,
@@ -18041,7 +18181,12 @@
     "escaped": false,
     "kind": "String",
     "start": 14900,
-    "value": "search"
+    "value": [
+      "search",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 14909,
@@ -18113,7 +18258,12 @@
     "escaped": false,
     "kind": "String",
     "start": 14933,
-    "value": "tel"
+    "value": [
+      "tel",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 14939,
@@ -18185,7 +18335,12 @@
     "escaped": false,
     "kind": "String",
     "start": 14963,
-    "value": "color"
+    "value": [
+      "color",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 14971,
@@ -19535,7 +19690,12 @@
     "escaped": false,
     "kind": "String",
     "start": 15963,
-    "value": "color"
+    "value": [
+      "color",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 15971,
@@ -19688,7 +19848,12 @@
     "escaped": false,
     "kind": "String",
     "start": 16026,
-    "value": "text"
+    "value": [
+      "text",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 16033,
@@ -19773,7 +19938,12 @@
     "escaped": false,
     "kind": "String",
     "start": 16063,
-    "value": "password"
+    "value": [
+      "password",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 16074,
@@ -19858,7 +20028,12 @@
     "escaped": false,
     "kind": "String",
     "start": 16104,
-    "value": "email"
+    "value": [
+      "email",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 16112,
@@ -19943,7 +20118,12 @@
     "escaped": false,
     "kind": "String",
     "start": 16142,
-    "value": "url"
+    "value": [
+      "url",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 16148,
@@ -20028,7 +20208,12 @@
     "escaped": false,
     "kind": "String",
     "start": 16178,
-    "value": "date"
+    "value": [
+      "date",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 16185,
@@ -20113,7 +20298,12 @@
     "escaped": false,
     "kind": "String",
     "start": 16215,
-    "value": "month"
+    "value": [
+      "month",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 16223,
@@ -20198,7 +20388,12 @@
     "escaped": false,
     "kind": "String",
     "start": 16253,
-    "value": "time"
+    "value": [
+      "time",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 16260,
@@ -20283,7 +20478,12 @@
     "escaped": false,
     "kind": "String",
     "start": 16290,
-    "value": "datetime"
+    "value": [
+      "datetime",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 16301,
@@ -20368,7 +20568,12 @@
     "escaped": false,
     "kind": "String",
     "start": 16331,
-    "value": "datetime-local"
+    "value": [
+      "datetime-local",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 16348,
@@ -20453,7 +20658,12 @@
     "escaped": false,
     "kind": "String",
     "start": 16378,
-    "value": "week"
+    "value": [
+      "week",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 16385,
@@ -20538,7 +20748,12 @@
     "escaped": false,
     "kind": "String",
     "start": 16415,
-    "value": "number"
+    "value": [
+      "number",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 16424,
@@ -20623,7 +20838,12 @@
     "escaped": false,
     "kind": "String",
     "start": 16454,
-    "value": "search"
+    "value": [
+      "search",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 16463,
@@ -20708,7 +20928,12 @@
     "escaped": false,
     "kind": "String",
     "start": 16493,
-    "value": "tel"
+    "value": [
+      "tel",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 16499,
@@ -20793,7 +21018,12 @@
     "escaped": false,
     "kind": "String",
     "start": 16529,
-    "value": "color"
+    "value": [
+      "color",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 16537,
@@ -21283,7 +21513,12 @@
     "escaped": false,
     "kind": "String",
     "start": 16894,
-    "value": "file"
+    "value": [
+      "file",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 16901,
@@ -21368,7 +21603,12 @@
     "escaped": false,
     "kind": "String",
     "start": 16931,
-    "value": "radio"
+    "value": [
+      "radio",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 16939,
@@ -21453,7 +21693,12 @@
     "escaped": false,
     "kind": "String",
     "start": 16969,
-    "value": "checkbox"
+    "value": [
+      "checkbox",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 16980,
@@ -21900,7 +22145,12 @@
     "escaped": false,
     "kind": "String",
     "start": 17173,
-    "value": "text"
+    "value": [
+      "text",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 17180,
@@ -21991,7 +22241,12 @@
     "escaped": false,
     "kind": "String",
     "start": 17214,
-    "value": "password"
+    "value": [
+      "password",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 17225,
@@ -22082,7 +22337,12 @@
     "escaped": false,
     "kind": "String",
     "start": 17259,
-    "value": "email"
+    "value": [
+      "email",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 17267,
@@ -22173,7 +22433,12 @@
     "escaped": false,
     "kind": "String",
     "start": 17301,
-    "value": "url"
+    "value": [
+      "url",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 17307,
@@ -22264,7 +22529,12 @@
     "escaped": false,
     "kind": "String",
     "start": 17341,
-    "value": "date"
+    "value": [
+      "date",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 17348,
@@ -22355,7 +22625,12 @@
     "escaped": false,
     "kind": "String",
     "start": 17382,
-    "value": "month"
+    "value": [
+      "month",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 17390,
@@ -22446,7 +22721,12 @@
     "escaped": false,
     "kind": "String",
     "start": 17424,
-    "value": "time"
+    "value": [
+      "time",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 17431,
@@ -22537,7 +22817,12 @@
     "escaped": false,
     "kind": "String",
     "start": 17465,
-    "value": "datetime"
+    "value": [
+      "datetime",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 17476,
@@ -22628,7 +22913,12 @@
     "escaped": false,
     "kind": "String",
     "start": 17510,
-    "value": "datetime-local"
+    "value": [
+      "datetime-local",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 17527,
@@ -22719,7 +23009,12 @@
     "escaped": false,
     "kind": "String",
     "start": 17561,
-    "value": "week"
+    "value": [
+      "week",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 17568,
@@ -22810,7 +23105,12 @@
     "escaped": false,
     "kind": "String",
     "start": 17602,
-    "value": "number"
+    "value": [
+      "number",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 17611,
@@ -22901,7 +23201,12 @@
     "escaped": false,
     "kind": "String",
     "start": 17645,
-    "value": "search"
+    "value": [
+      "search",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 17654,
@@ -22992,7 +23297,12 @@
     "escaped": false,
     "kind": "String",
     "start": 17688,
-    "value": "tel"
+    "value": [
+      "tel",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 17694,
@@ -23083,7 +23393,12 @@
     "escaped": false,
     "kind": "String",
     "start": 17728,
-    "value": "color"
+    "value": [
+      "color",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 17736,
@@ -24284,7 +24599,12 @@
     "escaped": false,
     "kind": "String",
     "start": 18533,
-    "value": "file"
+    "value": [
+      "file",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 18540,
@@ -24395,7 +24715,12 @@
     "escaped": false,
     "kind": "String",
     "start": 18584,
-    "value": "radio"
+    "value": [
+      "radio",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 18592,
@@ -24506,7 +24831,12 @@
     "escaped": false,
     "kind": "String",
     "start": 18636,
-    "value": "checkbox"
+    "value": [
+      "checkbox",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 18647,
@@ -25724,7 +26054,12 @@
     "escaped": false,
     "kind": "String",
     "start": 19234,
-    "value": "text"
+    "value": [
+      "text",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 19241,
@@ -25796,7 +26131,12 @@
     "escaped": false,
     "kind": "String",
     "start": 19273,
-    "value": "password"
+    "value": [
+      "password",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 19284,
@@ -25868,7 +26208,12 @@
     "escaped": false,
     "kind": "String",
     "start": 19316,
-    "value": "email"
+    "value": [
+      "email",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 19324,
@@ -25940,7 +26285,12 @@
     "escaped": false,
     "kind": "String",
     "start": 19356,
-    "value": "url"
+    "value": [
+      "url",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 19362,
@@ -26012,7 +26362,12 @@
     "escaped": false,
     "kind": "String",
     "start": 19394,
-    "value": "date"
+    "value": [
+      "date",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 19401,
@@ -26084,7 +26439,12 @@
     "escaped": false,
     "kind": "String",
     "start": 19433,
-    "value": "month"
+    "value": [
+      "month",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 19441,
@@ -26156,7 +26516,12 @@
     "escaped": false,
     "kind": "String",
     "start": 19473,
-    "value": "time"
+    "value": [
+      "time",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 19480,
@@ -26228,7 +26593,12 @@
     "escaped": false,
     "kind": "String",
     "start": 19512,
-    "value": "datetime"
+    "value": [
+      "datetime",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 19523,
@@ -26300,7 +26670,12 @@
     "escaped": false,
     "kind": "String",
     "start": 19555,
-    "value": "datetime-local"
+    "value": [
+      "datetime-local",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 19572,
@@ -26372,7 +26747,12 @@
     "escaped": false,
     "kind": "String",
     "start": 19604,
-    "value": "week"
+    "value": [
+      "week",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 19611,
@@ -26444,7 +26824,12 @@
     "escaped": false,
     "kind": "String",
     "start": 19643,
-    "value": "number"
+    "value": [
+      "number",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 19652,
@@ -26516,7 +26901,12 @@
     "escaped": false,
     "kind": "String",
     "start": 19684,
-    "value": "search"
+    "value": [
+      "search",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 19693,
@@ -26588,7 +26978,12 @@
     "escaped": false,
     "kind": "String",
     "start": 19725,
-    "value": "tel"
+    "value": [
+      "tel",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 19731,
@@ -26660,7 +27055,12 @@
     "escaped": false,
     "kind": "String",
     "start": 19763,
-    "value": "color"
+    "value": [
+      "color",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 19771,
@@ -26732,7 +27132,12 @@
     "escaped": false,
     "kind": "String",
     "start": 19803,
-    "value": "file"
+    "value": [
+      "file",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 19810,
@@ -31553,7 +31958,12 @@
     "escaped": false,
     "kind": "String",
     "start": 22391,
-    "value": "submit"
+    "value": [
+      "submit",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 22400,
@@ -31800,7 +32210,12 @@
     "escaped": false,
     "kind": "String",
     "start": 22497,
-    "value": "text"
+    "value": [
+      "text",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 22504,
@@ -31872,7 +32287,12 @@
     "escaped": false,
     "kind": "String",
     "start": 22532,
-    "value": "password"
+    "value": [
+      "password",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 22543,
@@ -31944,7 +32364,12 @@
     "escaped": false,
     "kind": "String",
     "start": 22571,
-    "value": "email"
+    "value": [
+      "email",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 22579,
@@ -32016,7 +32441,12 @@
     "escaped": false,
     "kind": "String",
     "start": 22607,
-    "value": "url"
+    "value": [
+      "url",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 22613,
@@ -32088,7 +32518,12 @@
     "escaped": false,
     "kind": "String",
     "start": 22641,
-    "value": "date"
+    "value": [
+      "date",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 22648,
@@ -32160,7 +32595,12 @@
     "escaped": false,
     "kind": "String",
     "start": 22676,
-    "value": "month"
+    "value": [
+      "month",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 22684,
@@ -32232,7 +32672,12 @@
     "escaped": false,
     "kind": "String",
     "start": 22712,
-    "value": "time"
+    "value": [
+      "time",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 22719,
@@ -32304,7 +32749,12 @@
     "escaped": false,
     "kind": "String",
     "start": 22747,
-    "value": "datetime"
+    "value": [
+      "datetime",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 22758,
@@ -32376,7 +32826,12 @@
     "escaped": false,
     "kind": "String",
     "start": 22786,
-    "value": "datetime-local"
+    "value": [
+      "datetime-local",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 22803,
@@ -32448,7 +32903,12 @@
     "escaped": false,
     "kind": "String",
     "start": 22831,
-    "value": "week"
+    "value": [
+      "week",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 22838,
@@ -32520,7 +32980,12 @@
     "escaped": false,
     "kind": "String",
     "start": 22866,
-    "value": "number"
+    "value": [
+      "number",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 22875,
@@ -32592,7 +33057,12 @@
     "escaped": false,
     "kind": "String",
     "start": 22903,
-    "value": "search"
+    "value": [
+      "search",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 22912,
@@ -32664,7 +33134,12 @@
     "escaped": false,
     "kind": "String",
     "start": 22940,
-    "value": "tel"
+    "value": [
+      "tel",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 22946,
@@ -32736,7 +33211,12 @@
     "escaped": false,
     "kind": "String",
     "start": 22974,
-    "value": "color"
+    "value": [
+      "color",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 22982,
@@ -33024,7 +33504,12 @@
     "escaped": false,
     "kind": "String",
     "start": 23130,
-    "value": "text"
+    "value": [
+      "text",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 23137,
@@ -33096,7 +33581,12 @@
     "escaped": false,
     "kind": "String",
     "start": 23166,
-    "value": "password"
+    "value": [
+      "password",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 23177,
@@ -33168,7 +33658,12 @@
     "escaped": false,
     "kind": "String",
     "start": 23206,
-    "value": "email"
+    "value": [
+      "email",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 23214,
@@ -33240,7 +33735,12 @@
     "escaped": false,
     "kind": "String",
     "start": 23243,
-    "value": "url"
+    "value": [
+      "url",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 23249,
@@ -33312,7 +33812,12 @@
     "escaped": false,
     "kind": "String",
     "start": 23278,
-    "value": "date"
+    "value": [
+      "date",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 23285,
@@ -33384,7 +33889,12 @@
     "escaped": false,
     "kind": "String",
     "start": 23314,
-    "value": "month"
+    "value": [
+      "month",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 23322,
@@ -33456,7 +33966,12 @@
     "escaped": false,
     "kind": "String",
     "start": 23351,
-    "value": "time"
+    "value": [
+      "time",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 23358,
@@ -33528,7 +34043,12 @@
     "escaped": false,
     "kind": "String",
     "start": 23387,
-    "value": "datetime"
+    "value": [
+      "datetime",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 23398,
@@ -33600,7 +34120,12 @@
     "escaped": false,
     "kind": "String",
     "start": 23427,
-    "value": "datetime-local"
+    "value": [
+      "datetime-local",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 23444,
@@ -33672,7 +34197,12 @@
     "escaped": false,
     "kind": "String",
     "start": 23473,
-    "value": "week"
+    "value": [
+      "week",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 23480,
@@ -33744,7 +34274,12 @@
     "escaped": false,
     "kind": "String",
     "start": 23509,
-    "value": "number"
+    "value": [
+      "number",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 23518,
@@ -33816,7 +34351,12 @@
     "escaped": false,
     "kind": "String",
     "start": 23547,
-    "value": "search"
+    "value": [
+      "search",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 23556,
@@ -33888,7 +34428,12 @@
     "escaped": false,
     "kind": "String",
     "start": 23585,
-    "value": "tel"
+    "value": [
+      "tel",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 23591,
@@ -33960,7 +34505,12 @@
     "escaped": false,
     "kind": "String",
     "start": 23620,
-    "value": "color"
+    "value": [
+      "color",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 23628,
@@ -37184,7 +37734,12 @@
     "escaped": true,
     "kind": "String",
     "start": 25714,
-    "value": "▸"
+    "value": [
+      "▸",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 25722,
@@ -37383,7 +37938,12 @@
     "escaped": true,
     "kind": "String",
     "start": 25882,
-    "value": "▾"
+    "value": [
+      "▾",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 25890,

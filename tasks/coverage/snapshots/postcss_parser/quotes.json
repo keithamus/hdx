@@ -49,7 +49,12 @@
                     "name": "content",
                     "value": {
                       "Content": {
-                        "String": ";'@ /**/\""
+                        "String": [
+                          ";'@ /**/\"",
+                          {
+                            "kind": "Double"
+                          }
+                        ]
                       }
                     }
                   },
@@ -62,7 +67,12 @@
                     "name": "content",
                     "value": {
                       "Content": {
-                        "String": "'\"\\"
+                        "String": [
+                          "'\"\\",
+                          {
+                            "kind": "Single"
+                          }
+                        ]
                       }
                     }
                   },

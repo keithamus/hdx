@@ -22,7 +22,12 @@
                 "end": 17,
                 "node": {
                   "kind": "String",
-                  "value": "test.css"
+                  "value": [
+                    "test.css",
+                    {
+                      "kind": "Double"
+                    }
+                  ]
                 },
                 "start": 7
               },

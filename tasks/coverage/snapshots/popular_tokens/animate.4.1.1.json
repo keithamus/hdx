@@ -17,7 +17,12 @@
     "escaped": false,
     "kind": "String",
     "start": 9,
-    "value": "UTF-8"
+    "value": [
+      "UTF-8",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 17,
@@ -5952,7 +5957,12 @@
     "escaped": false,
     "kind": "String",
     "start": 3844,
-    "value": "Out"
+    "value": [
+      "Out",
+      {
+        "kind": "Double"
+      }
+    ]
   },
   {
     "end": 3850,
