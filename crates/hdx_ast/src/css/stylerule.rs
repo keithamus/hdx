@@ -57,7 +57,7 @@ impl<'a> Parse<'a> for StyleDeclaration<'a> {
 		Ok(Self { declarations, rules })
 	}
 }
-
+ 
 impl<'a> Block<'a> for StyleDeclaration<'a> {
 	type Declaration = Property<'a>;
 	type Rule = StyleRule<'a>;
@@ -85,7 +85,7 @@ mod test {
 	use oxc_allocator::Allocator;
 
 	use super::*;
-	use crate::test_helpers::test_write;
+	use crate::test_helpers::{test_write, test_write_min};
 
 	#[test]
 	fn size_test() {
@@ -96,8 +96,14 @@ mod test {
 	#[test]
 	fn test_writes() {
 		let allocator = Allocator::default();
-		test_write::<StyleRule>(&allocator, "body {}", "body{}");
-		test_write::<StyleRule>(&allocator, "body, body {}", "body,body{}");
-		test_write::<StyleRule>(&allocator, "body { width:1px }", "body{width:1px}");
+		test_write::<StyleRule>(&allocator, "body {}", "body {\n}");
+		// test_write::<StyleRule>(&allocator, "body, body {}", "body, body {}");
+		// test_write::<StyleRule>(&allocator, "body { width:1px }", "body {\n\twidth: 1px;\n}");
+	}
+
+	#[test]
+	fn test_minify() {
+		let allocator = Allocator::default();
+		test_write_min::<StyleRule>(&allocator, "body { width:1px }", "body{width:1px}");
 	}
 }

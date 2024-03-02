@@ -70,13 +70,13 @@ pub enum Token {
 	HashId(Atom),
 
 	// <string-token> (https://drafts.csswg.org/css-syntax/#string-token-diagram)
-	String(Atom),
+	String(Atom, QuoteStyle),
 
 	// <bad-string-token> (https://drafts.csswg.org/css-syntax/#typedef-bad-string-token)
 	BadString,
 
 	// <url-token> (https://drafts.csswg.org/css-syntax/#url-token-diagram)
-	Url(Atom),
+	Url(Atom, QuoteStyle),
 
 	// <bad-url-token> (https://drafts.csswg.org/css-syntax/#typedef-bad-url-token)
 	BadUrl,
@@ -127,22 +127,17 @@ pub enum Token {
 	RightCurly,
 }
 
-impl Token {
-	#[inline]
-	pub fn constains_escape(&self) -> bool {
-		match *self {
-			Token::Ident(_)
-			| Token::Function(_)
-			| Token::AtKeyword(_)
-			| Token::Hash(_)
-			| Token::HashId(_)
-			| Token::String(_)
-			| Token::BadString
-			| Token::Url(_) => true,
-			_ => false,
-		}
-	}
+#[derive(Debug, Copy, Clone, PartialEq, Default, Hash)]
+#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "kind", content = "value"))]
+pub enum QuoteStyle {
+	// Some tokens/ast nodesthat would otherwise be strings (e.g. url(), named fonts) can have no quotes.
+	None,
+	Single,
+	#[default]
+	Double,
+}
 
+impl Token {
 	#[inline]
 	pub fn is_trivia(&self) -> bool {
 		matches!(self, Token::Whitespace | Token::Comment(_))
@@ -161,8 +156,8 @@ impl Token {
 			| Token::AtKeyword(value)
 			| Token::Hash(value)
 			| Token::HashId(value)
-			| Token::String(value)
-			| Token::Url(value) => Some(value.clone()),
+			| Token::String(value, _)
+			| Token::Url(value, _) => Some(value.clone()),
 			_ => None,
 		}
 	}
@@ -177,7 +172,7 @@ impl Token {
 	}
 
 	pub fn is_function_like(&self) -> bool {
-		matches!(self, Token::Url(_) | Token::Function(_))
+		matches!(self, Token::Url(_, _) | Token::Function(_))
 	}
 
 	pub fn is_dashed_ident(&self) -> bool {
@@ -305,16 +300,18 @@ impl Hash for Token {
 				6.hash(state);
 				a.hash(state);
 			}
-			Token::String(a) => {
+			Token::String(a, s) => {
 				7.hash(state);
 				a.hash(state);
+				s.hash(state);
 			}
 			Token::BadString => {
 				8.hash(state);
 			}
-			Token::Url(a) => {
+			Token::Url(a, s) => {
 				9.hash(state);
 				a.hash(state);
+				s.hash(state);
 			}
 			Token::BadUrl => {
 				10.hash(state);

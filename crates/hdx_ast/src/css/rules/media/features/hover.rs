@@ -66,7 +66,7 @@ mod tests {
 	use oxc_allocator::Allocator;
 
 	use super::*;
-	use crate::test_helpers::test_write;
+	use crate::test_helpers::{test_write, test_write_min, test_error};
 
 	#[test]
 	fn size_test() {
@@ -78,7 +78,21 @@ mod tests {
 	fn test_writes() {
 		let allocator = Allocator::default();
 		test_write::<HoverMediaFeature>(&allocator, "(hover)", "(hover)");
-		test_write::<HoverMediaFeature>(&allocator, "(hover: hover)", "(hover:hover)");
-		test_write::<HoverMediaFeature>(&allocator, "(hover: none)", "(hover:none)");
+		test_write::<HoverMediaFeature>(&allocator, "(hover: hover)", "(hover: hover)");
+		test_write::<HoverMediaFeature>(&allocator, "(hover: none)", "(hover: none)");
+	}
+
+	#[test]
+	fn test_minify() {
+		let allocator = Allocator::default();
+		test_write_min::<HoverMediaFeature>(&allocator, "(hover: hover)", "(hover:hover)");
+		test_write_min::<HoverMediaFeature>(&allocator, "(hover: none)", "(hover:none)");
+	}
+
+	#[test]
+	fn test_errors() {
+		let allocator = Allocator::default();
+		test_error::<HoverMediaFeature>(&allocator, "(hover:)");
+		test_error::<HoverMediaFeature>(&allocator, "(hover: hoover)");
 	}
 }

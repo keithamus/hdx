@@ -57,7 +57,7 @@ mod tests {
 	use oxc_allocator::Allocator;
 
 	use super::*;
-	use crate::test_helpers::test_write;
+	use crate::test_helpers::{test_write, test_write_min};
 
 	#[test]
 	fn size_test() {
@@ -68,7 +68,14 @@ mod tests {
 	#[test]
 	fn test_writes() {
 		let allocator = Allocator::default();
-		test_write::<GridMediaFeature>(&allocator, "(grid: 1)", "(grid:1)");
+		test_write::<GridMediaFeature>(&allocator, "(grid: 1)", "(grid: 1)");
 		test_write::<GridMediaFeature>(&allocator, "(grid: 0)", "(grid)");
+	}
+
+	#[test]
+	fn test_minify() {
+		let allocator = Allocator::default();
+		test_write_min::<GridMediaFeature>(&allocator, "(grid: 1)", "(grid:1)");
+		test_write_min::<GridMediaFeature>(&allocator, "(grid: 0)", "(grid)");
 	}
 }

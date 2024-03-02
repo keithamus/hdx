@@ -1,5 +1,5 @@
 use hdx_atom::{atom, Atom};
-use hdx_lexer::Token;
+use hdx_lexer::{Token, QuoteStyle};
 use hdx_parser::{unexpected, unexpected_ident, Parse, Parser, Result as ParserResult};
 
 use hdx_writer::WriteCss;
@@ -15,7 +15,7 @@ pub enum Content {
 	Normal,
 	None,
 	// Image(),  // TODO: Implement image
-	String(Atom),
+	String(Atom, QuoteStyle),
 	// CounterFunction(), // TODO: Implement counter()
 	// CountersFunction(), // TODO: Implement counters()
 	// ContentFunction(), // TODO: Implement content()
@@ -36,9 +36,9 @@ impl<'a> Parse<'a> for Content {
 				}
 				atom => unexpected_ident!(parser, atom),
 			},
-			Token::String(atom) => {
+			Token::String(atom, quote) => {
 				parser.advance();
-				Self::String(atom)
+				Self::String(atom, quote)
 			}
 			token => unexpected!(parser, token),
 		};
@@ -51,10 +51,8 @@ impl<'a> WriteCss<'a> for Content {
 		match self {
 			Self::None => atom!("none").write_css(sink),
 			Self::Normal => atom!("normal").write_css(sink),
-			Self::String(str) => {
-				sink.write_char('"')?;
-				sink.write_str(str)?;
-				sink.write_char('"')
+			Self::String(str, quote) => {
+				sink.write_with_quotes(str.as_ref(), *quote, false)
 			}
 		}
 	}
@@ -65,7 +63,7 @@ mod tests {
 	use oxc_allocator::Allocator;
 
 	use super::*;
-	use crate::test_helpers::test_write;
+	use crate::test_helpers::{test_write, test_write_min};
 
 	#[test]
 	fn size_test() {
@@ -77,6 +75,13 @@ mod tests {
 	fn test_writes() {
 		let allocator = Allocator::default();
 		test_write::<Content>(&allocator, "none", "none");
-		test_write::<Content>(&allocator, "'foo'", "\"foo\"");
+		test_write::<Content>(&allocator, "'foo'", "'foo'");
+	}
+
+	#[test]
+	fn test_minify() {
+		let allocator = Allocator::default();
+		test_write_min::<Content>(&allocator, "none", "none");
+		test_write_min::<Content>(&allocator, "'foo'", "\"foo\"");
 	}
 }

@@ -69,7 +69,7 @@ mod tests {
 	use oxc_allocator::Allocator;
 
 	use super::*;
-	use crate::test_helpers::test_write;
+	use crate::test_helpers::{test_write, test_write_min};
 
 	#[test]
 	fn size_test() {
@@ -81,6 +81,12 @@ mod tests {
 	fn test_writes() {
 		let allocator = Allocator::default();
 		test_write::<AnimationFillMode>(&allocator, "both", "both");
-		test_write::<AnimationFillMode>(&allocator, "none, both, backwards, forwards", "none,both,backwards,forwards");
+		test_write::<AnimationFillMode>(&allocator, "none, both, backwards, forwards", "none, both, backwards, forwards");
+	}
+
+	#[test]
+	fn test_minify() {
+		let allocator = Allocator::default();
+		test_write_min::<AnimationFillMode>(&allocator, "none, both, backwards, forwards", "none,both,backwards,forwards");
 	}
 }

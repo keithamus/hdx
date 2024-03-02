@@ -88,8 +88,8 @@ impl LexerCase for PostCSSTokenizerTestCase {
 
 	fn convert_token(&self, start: usize, end: usize, token: &Token) -> Value {
 		let escaped = match token {
-			Token::String(a) => end - start > a.len() + 2,
-			Token::Url(a) => end - start > a.len(),
+			Token::String(a, _) => end - start > a.len() + 2,
+			Token::Url(a, _) => end - start > a.len(),
 			Token::Function(a) => end - start > a.len() + 1,
 			Token::AtKeyword(a) => end - start > a.len() + 1,
 			Token::Hash(a) => end - start > a.len() + 1,

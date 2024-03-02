@@ -196,10 +196,10 @@ impl LexerCase for CSSTokenizerTestCase {
 				}
 			}
 			Token::Ident(value)
-			| Token::String(value)
+			| Token::String(value, _)
 			| Token::AtKeyword(value)
 			| Token::Function(value)
-			| Token::Url(value)
+			| Token::Url(value, _)
 			| Token::Hash(value)
 			| Token::HashId(value) => Some(Structured::String(StringStructured { value: (**value).into() })),
 			Token::Delim(value) => {
@@ -219,9 +219,9 @@ impl LexerCase for CSSTokenizerTestCase {
 				Token::AtKeyword(_) => RomainKind::AtKeyword,
 				Token::Hash(_) => RomainKind::Hash,
 				Token::HashId(_) => RomainKind::Hash,
-				Token::String(_) => RomainKind::String,
+				Token::String(_, _) => RomainKind::String,
 				Token::BadString => RomainKind::BadString,
-				Token::Url(_) => RomainKind::Url,
+				Token::Url(_, _) => RomainKind::Url,
 				Token::BadUrl => RomainKind::BadUrl,
 				Token::Delim(_) => RomainKind::Delim,
 				Token::Number(_, _) => RomainKind::Number,

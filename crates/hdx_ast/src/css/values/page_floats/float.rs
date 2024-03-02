@@ -8,6 +8,7 @@ use hdx_writer::WriteCss;
 
 use crate::{css::values::units::Length, Atomizable, Value};
 
+// https://drafts.csswg.org/css-page-floats-3/#float-property
 #[derive(Value, Debug, PartialEq, Default, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde())]
 pub enum Float {
@@ -201,7 +202,7 @@ mod tests {
 	use oxc_allocator::Allocator;
 
 	use super::*;
-	use crate::test_helpers::test_write;
+	use crate::test_helpers::{test_write, test_write_min};
 
 	#[test]
 	fn size_test() {
@@ -216,7 +217,14 @@ mod tests {
 		test_write::<Float>(&allocator, "left", "left");
 		test_write::<Float>(&allocator, "right", "right");
 		test_write::<Float>(&allocator, "block-end", "block-end");
-		test_write::<Float>(&allocator, "snap-inline(20rem, left)", "snap-inline(20rem,left)");
-		test_write::<Float>(&allocator, "snap-block(4px, end)", "snap-block(4px,end)");
+		test_write::<Float>(&allocator, "snap-inline(20rem, left)", "snap-inline(20rem, left)");
+		test_write::<Float>(&allocator, "snap-block(4px, end)", "snap-block(4px, end)");
+	}
+
+	#[test]
+	fn test_minify() {
+		let allocator = Allocator::default();
+		test_write_min::<Float>(&allocator, "snap-inline(20rem, left)", "snap-inline(20rem,left)");
+		test_write_min::<Float>(&allocator, "snap-block(4.00px, end)", "snap-block(4px,end)");
 	}
 }

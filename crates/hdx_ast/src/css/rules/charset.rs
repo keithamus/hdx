@@ -1,11 +1,11 @@
 use crate::Atomizable;
 use hdx_atom::atom;
-use hdx_lexer::Token;
+use hdx_lexer::{Token, QuoteStyle};
 use hdx_parser::{
 	diagnostics::{self},
 	expect, unexpected, Parse, Parser, Result as ParserResult,
 };
-use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
+use hdx_writer::{CssWriter, Result as WriterResult, WriteCss, OutputOption};
 #[cfg(feature = "serde")]
 use serde::Serialize;
 
@@ -71,7 +71,7 @@ impl<'a> Parse<'a> for CharsetRule {
 		expect!(parser, Token::Whitespace);
 		parser.advance();
 		let rule = match parser.cur() {
-			Token::String(atom) => {
+			Token::String(atom, QuoteStyle::Double) => {
 				if let Some(rule) = Self::from_atom(atom.to_ascii_lowercase()) {
 					parser.advance();
 					rule
@@ -89,6 +89,9 @@ impl<'a> Parse<'a> for CharsetRule {
 
 impl<'a> WriteCss<'a> for CharsetRule {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
+		if matches!(self, CharsetRule::Utf8) && !sink.can_output(OutputOption::RedundantRules) {
+			return Ok(());
+		}
 		sink.write_char('@')?;
 		atom!("charset").write_css(sink)?;
 		sink.write_char(' ')?;
@@ -104,7 +107,7 @@ mod tests {
 	use oxc_allocator::Allocator;
 
 	use super::*;
-	use crate::test_helpers::test_write;
+	use crate::test_helpers::{test_write, test_write_min};
 
 	#[test]
 	fn size_test() {
@@ -117,5 +120,12 @@ mod tests {
 		let allocator = Allocator::default();
 		test_write::<CharsetRule>(&allocator, "@charset \"utf-8\";", "@charset \"utf-8\";");
 		test_write::<CharsetRule>(&allocator, "@charset \"UTF-8\";", "@charset \"utf-8\";");
+	}
+
+	#[test]
+	fn test_minify() {
+		let allocator = Allocator::default();
+		// utf-8 is assumed, so we can drop the rule.
+		test_write_min::<CharsetRule>(&allocator, "@charset \"utf-8\";", "");
 	}
 }

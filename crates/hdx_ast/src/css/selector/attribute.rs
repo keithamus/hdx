@@ -1,5 +1,5 @@
 use hdx_atom::{atom, Atom};
-use hdx_lexer::Token;
+use hdx_lexer::{Token, QuoteStyle};
 use hdx_parser::{discard, expect, unexpected, unexpected_ident, Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 #[cfg(feature = "serde")]
@@ -13,12 +13,14 @@ pub struct Attribute {
 	pub ns_prefix: NSPrefix,
 	pub name: Atom,
 	pub value: Atom,
+	pub quote: QuoteStyle,
 	pub matcher: AttributeMatch,
 	pub modifier: AttributeModifier,
 }
 
 impl<'a> Parse<'a> for Attribute {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
+		let mut quote = QuoteStyle::None;
 		match parser.cur() {
 			Token::LeftSquare => {
 				parser.advance();
@@ -33,6 +35,7 @@ impl<'a> Parse<'a> for Attribute {
 							ns_prefix,
 							name,
 							value: atom!(""),
+							quote,
 							modifier: AttributeModifier::None,
 							matcher: AttributeMatch::Any,
 						});
@@ -74,7 +77,12 @@ impl<'a> Parse<'a> for Attribute {
 					token => unexpected!(parser, token),
 				};
 				let value = match parser.cur() {
-					Token::Ident(value) | Token::String(value) => {
+					Token::Ident(value) => {
+						parser.advance();
+						value
+					},
+					Token::String(value, q) => {
+						quote = q;
 						parser.advance();
 						value
 					}
@@ -83,7 +91,7 @@ impl<'a> Parse<'a> for Attribute {
 				match parser.cur() {
 					Token::RightSquare => {
 						parser.advance_including_whitespace_and_comments();
-						Ok(Self { ns_prefix, name, value, modifier: AttributeModifier::None, matcher })
+						Ok(Self { ns_prefix, name, value, quote, modifier: AttributeModifier::None, matcher })
 					}
 					Token::Ident(ident) => {
 						let modifier = match ident.to_ascii_lowercase() {
@@ -94,7 +102,7 @@ impl<'a> Parse<'a> for Attribute {
 						parser.advance();
 						expect!(parser, Token::RightSquare);
 						parser.advance_including_whitespace_and_comments();
-						Ok(Self { ns_prefix, name, value, modifier, matcher })
+						Ok(Self { ns_prefix, name, value, quote, modifier, matcher })
 					}
 					token => unexpected!(parser, token),
 				}
@@ -145,10 +153,8 @@ impl<'a> WriteCss<'a> for Attribute {
 				sink.write_char('=')?;
 			}
 		}
-		if &self.matcher != &AttributeMatch::Any {
-			sink.write_char('"')?;
-			sink.write_str(self.value.as_ref())?;
-			sink.write_char('"')?;
+		if self.matcher != AttributeMatch::Any {
+			sink.write_with_quotes(self.value.as_ref(), self.quote, true)?;
 		}
 
 		sink.write_char(']')?;
@@ -181,7 +187,7 @@ mod tests {
 	use oxc_allocator::Allocator;
 
 	use super::*;
-	use crate::test_helpers::test_write;
+	use crate::test_helpers::{test_write, test_write_min};
 
 	#[test]
 	fn size_test() {
@@ -194,12 +200,21 @@ mod tests {
 	fn test_writes() {
 		let allocator = Allocator::default();
 		test_write::<Attribute>(&allocator, "[foo]", "[foo]");
-		test_write::<Attribute>(&allocator, "[foo='bar']", "[foo=\"bar\"]");
-		test_write::<Attribute>(&allocator, "[foo = 'bar']", "[foo=\"bar\"]");
-		test_write::<Attribute>(&allocator, "[attr*='foo']", "[attr*=\"foo\"]");
-		test_write::<Attribute>(&allocator, "[|attr='foo']", "[attr=\"foo\"]");
-		test_write::<Attribute>(&allocator, "[*|attr='foo']", "[*|attr=\"foo\"]");
-		test_write::<Attribute>(&allocator, "[x|attr='foo']", "[x|attr=\"foo\"]");
-		test_write::<Attribute>(&allocator, "[attr|='foo']", "[attr|=\"foo\"]");
+		test_write::<Attribute>(&allocator, "[foo='bar']", "[foo='bar']");
+		test_write::<Attribute>(&allocator, "[foo = 'bar']", "[foo='bar']");
+		test_write::<Attribute>(&allocator, "[attr*='foo']", "[attr*='foo']");
+		test_write::<Attribute>(&allocator, "[|attr='foo']", "[attr='foo']");
+		test_write::<Attribute>(&allocator, "[*|attr='foo']", "[*|attr='foo']");
+		test_write::<Attribute>(&allocator, "[x|attr='foo']", "[x|attr='foo']");
+		test_write::<Attribute>(&allocator, "[attr|='foo']", "[attr|='foo']");
+	}
+
+	#[test]
+	fn test_minify() {
+		let allocator = Allocator::default();
+		test_write_min::<Attribute>(&allocator, "[foo]", "[foo]");
+		test_write_min::<Attribute>(&allocator, "[foo='bar']", "[foo=bar]");
+		test_write_min::<Attribute>(&allocator, "[foo|='bar']", "[foo|=bar]");
+		test_write_min::<Attribute>(&allocator, "[foo='value with spaces']", "[foo=\"value with spaces\"]");
 	}
 }

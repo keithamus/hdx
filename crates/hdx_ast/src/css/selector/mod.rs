@@ -45,8 +45,8 @@ impl<'a> WriteCss<'a> for Selectors<'a> {
 			selector.write_css(sink)?;
 			if iter.peek().is_some() {
 				sink.write_char(',')?;
+				sink.write_whitespace()?;
 			}
-			sink.write_whitespace()?;
 		}
 		Ok(())
 	}
@@ -239,61 +239,56 @@ impl<'a> Parse<'a> for Component<'a> {
 impl<'a> WriteCss<'a> for Component<'a> {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
 		match self {
-			Self::Type(ty) => {
-				sink.write_str(ty)?;
-			}
+			Self::Type(ty) => sink.write_str(ty),
 			Self::Id(id) => {
 				sink.write_char('#')?;
-				sink.write_str(id)?;
+				sink.write_str(id)
 			}
 			Self::Class(class) => {
 				sink.write_char('.')?;
-				sink.write_str(class)?;
+				sink.write_str(class)
 			}
 			Self::PseudoClass(pseudo) => {
 				sink.write_char(':')?;
-				sink.write_str(pseudo.to_atom().as_ref())?;
+				sink.write_str(pseudo.to_atom().as_ref())
 			}
 			Self::LegacyPseudoElement(pseudo) => {
 				sink.write_char(':')?;
-				sink.write_str(pseudo.to_atom().as_ref())?;
+				sink.write_str(pseudo.to_atom().as_ref())
 			}
 			Self::PseudoElement(pseudo) => {
 				sink.write_char(':')?;
 				sink.write_char(':')?;
-				sink.write_str(pseudo.to_atom().as_ref())?;
+				sink.write_str(pseudo.to_atom().as_ref())
 			}
-			Self::Attribute(attr) => {
-				attr.write_css(sink)?;
-			}
-			Self::Combinator(combinator) => {
-				sink.write_whitespace()?;
-				match combinator {
-					Combinator::Descendant => {
-						sink.write_char(' ')?;
-					}
-					Combinator::Child => {
-						sink.write_char('>')?;
-					}
-					Combinator::NextSibling => {
-						sink.write_char('+')?;
-					}
-					Combinator::SubsequentSibling => {
-						sink.write_char('~')?;
-					}
-					Combinator::ColumnCombintor => {
-						sink.write_char('|')?;
-						sink.write_char('|')?;
-					}
+			Self::Attribute(attr) => attr.write_css(sink),
+			Self::Combinator(combinator) => match combinator {
+				Combinator::Descendant => sink.write_char(' '),
+				Combinator::Child => {
+					sink.write_whitespace()?;
+					sink.write_char('>')?;
+					sink.write_whitespace()
 				}
-				sink.write_whitespace()?;
-			}
-			Self::Wildcard => {
-				sink.write_char('*')?;
-			}
+				Combinator::NextSibling => {
+					sink.write_whitespace()?;
+					sink.write_char('+')?;
+					sink.write_whitespace()
+				}
+				Combinator::SubsequentSibling => {
+					sink.write_whitespace()?;
+					sink.write_char('~')?;
+					sink.write_whitespace()
+				}
+				Combinator::ColumnCombintor => {
+					sink.write_whitespace()?;
+					sink.write_char('|')?;
+					sink.write_char('|')?;
+					sink.write_whitespace()
+				}
+			},
+			Self::Wildcard => sink.write_char('*'),
 			_ => todo!(),
 		}
-		Ok(())
 	}
 }
 
@@ -421,7 +416,7 @@ mod test {
 	use oxc_allocator::Allocator;
 
 	use super::*;
-	use crate::test_helpers::test_write;
+	use crate::test_helpers::{test_write, test_write_min};
 
 	#[test]
 	fn size_test() {
@@ -445,15 +440,23 @@ mod test {
 		let allocator = Allocator::default();
 		test_write::<Component>(&allocator, ":root", ":root");
 		test_write::<Component>(&allocator, "*", "*");
-		test_write::<Component>(&allocator, "[attr|='foo']", "[attr|=\"foo\"]");
+		test_write::<Component>(&allocator, "[attr|='foo']", "[attr|='foo']");
 		// test_write::<Component>(&allocator, "*|x", "*|x");
 		test_write::<Selector>(&allocator, "a b ", "a b");
 		test_write::<Selector>(&allocator, ":root", ":root");
-		test_write::<Selector>(&allocator, "body [attr|='foo']", "body [attr|=\"foo\"]");
+		test_write::<Selector>(&allocator, "body [attr|='foo']", "body [attr|='foo']");
 		// test_write::<Selector>(&allocator, "*|x :focus-within", "*|x
 		// :focus-within");
 		test_write::<Selectors>(&allocator, "a b ", "a b");
 		test_write::<Selectors>(&allocator, ":root", ":root");
-		test_write::<Selectors>(&allocator, "body [attr|='foo']", "body [attr|=\"foo\"]");
+		test_write::<Selectors>(&allocator, "body [attr|='foo']", "body [attr|='foo']");
+	}
+
+	#[test]
+	fn test_minify() {
+		let allocator = Allocator::default();
+		test_write_min::<Component>(&allocator, "[attr|='foo']", "[attr|=foo]");
+		test_write_min::<Selector>(&allocator, "a   b", "a b");
+		test_write_min::<Selector>(&allocator, "a   b ", "a b");
 	}
 }

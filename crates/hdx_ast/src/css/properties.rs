@@ -1339,7 +1339,7 @@ mod tests {
 	use oxc_allocator::Allocator;
 
 	use super::*;
-	use crate::test_helpers::test_write;
+	use crate::test_helpers::{test_write, test_write_min};
 
 	#[test]
 	fn size_test() {
@@ -1351,8 +1351,16 @@ mod tests {
 	#[test]
 	fn test_writes() {
 		let allocator = Allocator::default();
-		test_write::<Property>(&allocator, "float: none !important", "float:none!important");
-		test_write::<Property>(&allocator, "width: 1px", "width:1px");
-		test_write::<Property>(&allocator, "width: min(1px, 2px)", "width:min(1px, 2px)");
+		test_write::<Property>(&allocator, "float: none !important", "float: none !important");
+		test_write::<Property>(&allocator, "width: 1px", "width: 1px");
+		test_write::<Property>(&allocator, "width: min(1px, 2px)", "width: min(1px, 2px)");
+	}
+
+	#[test]
+	fn test_minify() {
+		let allocator = Allocator::default();
+		test_write_min::<Property>(&allocator, "float: none !important", "float:none!important");
+		test_write_min::<Property>(&allocator, "width: 1px", "width:1px");
+		test_write_min::<Property>(&allocator, "width: min(1px, 2px)", "width:min(1px, 2px)");
 	}
 }

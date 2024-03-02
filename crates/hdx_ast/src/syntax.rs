@@ -73,26 +73,22 @@ impl<'a> WriteCss<'a> for ComponentValue<'a> {
 			Self::Function(f) => f.write_css(sink),
 			Self::Token(token) => {
 				match token {
-					Token::Ident(name) => sink.write_str(name.as_ref())?,
+					Token::Ident(name) => sink.write_str(name)?,
 					Token::AtKeyword(name) => {
 						sink.write_char('@')?;
-						sink.write_str(name.as_ref())?;
+						sink.write_str(name)?;
 					}
 					Token::Hash(hash) | Token::HashId(hash) => {
 						sink.write_char('#')?;
-						sink.write_str(hash.as_ref())?;
+						sink.write_str(hash)?;
 					}
-					Token::String(string) => {
-						sink.write_char('"')?;
-						sink.write_str(string.as_ref())?;
-						sink.write_char('"')?;
+					Token::String(string, quote) => {
+						sink.write_with_quotes(string, *quote, false)?;
 					}
-					Token::Url(url) => {
+					Token::Url(url, quote) => {
 						atom!("url").write_css(sink)?;
 						sink.write_char('(')?;
-						sink.write_char('"')?;
-						sink.write_str(url.as_ref())?;
-						sink.write_char('"')?;
+						sink.write_with_quotes(url.as_ref(), *quote, true)?;
 						sink.write_char(')')?;
 					}
 					Token::Delim(ch) => {
@@ -101,7 +97,7 @@ impl<'a> WriteCss<'a> for ComponentValue<'a> {
 					Token::Number(n, _) => sink.write_str(&format!("{}", n))?,
 					Token::Dimension(n, unit, _) => {
 						sink.write_str(&format!("{}", n))?;
-						sink.write_str(unit.as_ref())?;
+						sink.write_str(unit)?;
 					}
 					Token::Whitespace => sink.write_char(' ')?,
 					Token::Cdo => atom!("<!--").write_css(sink)?,
@@ -116,9 +112,9 @@ impl<'a> WriteCss<'a> for ComponentValue<'a> {
 					Token::LeftCurly => sink.write_char('{')?,
 					Token::RightCurly => sink.write_char('}')?,
 					Token::Undetermined => {}
-					Token::Comment(content) => sink.write_comment(content.as_ref())?,
+					Token::Comment(content) => sink.write_comment(content)?,
 					Token::Function(name) => {
-						sink.write_str(name.as_ref())?;
+						sink.write_str(name)?;
 						sink.write_char('(')?;
 					}
 					Token::Eof | Token::BadString | Token::BadUrl => {}
@@ -279,12 +275,19 @@ impl<'a> WriteCss<'a> for Declaration<'a> {
 impl<'a> WriteCss<'a> for Block<'a> {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
 		sink.write_char('{')?;
+		sink.write_newline()?;
+		sink.indent();
 		for decl in &self.declarations {
+			sink.write_indent()?;
 			decl.write_css(sink)?;
+			sink.write_newline()?;
 		}
 		for rule in &self.rules {
+			sink.write_indent()?;
 			rule.write_css(sink)?;
+			sink.write_newline()?;
 		}
+		sink.dedent();
 		sink.write_char('}')
 	}
 }
@@ -407,7 +410,7 @@ mod tests {
 	use oxc_allocator::Allocator;
 
 	use super::*;
-	use crate::test_helpers::test_write;
+	use crate::test_helpers::{test_write, test_write_min};
 
 	#[test]
 	fn size_test() {
@@ -433,8 +436,14 @@ mod tests {
 		test_write::<ComponentValues>(&allocator, "a b c d", "a b c d");
 		test_write::<ComponentValues>(&allocator, "body { color: black }", "body {color: black }");
 		test_write::<ComponentValues>(&allocator, "body ", "body ");
-		test_write::<Block>(&allocator, "{}", "{}");
-		test_write::<Block>(&allocator, "{foo:bar}", "{foo:bar;}");
-		test_write::<Block>(&allocator, "{foo:bar;baz:bing}", "{foo:bar;baz:bing;}");
+		test_write::<Block>(&allocator, "{}", "{\n}");
+		test_write::<Block>(&allocator, "{foo:bar}", "{\n\tfoo: bar;\n}");
+		test_write::<Block>(&allocator, "{foo:bar;baz:bing}", "{\n\tfoo: bar;\n\tbaz: bing;\n}");
+	}
+
+	#[test]
+	fn test_minify() {
+		let allocator = Allocator::default();
+		test_write_min::<Block>(&allocator, "{\n\tfoo: bar;\n\tbaz:bing;\n}", "{foo:bar;baz:bing;}");
 	}
 }

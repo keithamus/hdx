@@ -152,8 +152,16 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 								});
 							}
 							WritableKind::String => {
-								head = Some(quote! { sink.write_char('"')?; });
-								tail = Some(quote! { sink.write_char('"')?; });
+								if unnamed.len() == 2 {
+									let quotes = field_writes.pop().unwrap();
+									// Writable unnamed types with two fields are using the second field as the quote style.
+									// We need to shuffle stuff around to take that field and make it the head/tail
+									head = Some(quotes.clone());
+									tail = Some(quotes);
+								} else {
+									head = Some(quote! { sink.write_char('"')?; });
+									tail = Some(quote! { sink.write_char('"')?; });
+								}
 							}
 							WritableKind::None => {}
 						}
@@ -168,7 +176,7 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 							});
 						}
 						matchers.push(quote! {
-							Self::#var_ident(#(#field_extract)*) => {
+							Self::#var_ident(#(#field_extract),*) => {
 								#head
 								#prefix
 								#(#field_writes)*

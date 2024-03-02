@@ -1,20 +1,24 @@
 use bitmask_enum::bitmask;
+use hdx_syntax::identifier::is_ident_str;
 
 pub use std::fmt::{Result, Write};
 
 use hdx_atom::Atom;
+use hdx_lexer::QuoteStyle;
 use hdx_parser::Spanned;
 
 pub trait WriteCss<'a>: Sized {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> Result;
 }
 
-#[bitmask(u8)]
+#[bitmask(u16)]
 pub enum OutputOption {
 	Nesting,
 	Whitespace,
 	Comments,
 	Trailing,
+	InconsistentQuotes,
+	QuotedIdentLikeStrings,
 	RedundantRules,
 	RedundantDeclarations,
 	RedundantShorthandValues,
@@ -25,6 +29,7 @@ pub trait CssWriter {
 	fn write_str(&mut self, str: &str) -> Result;
 	fn write_char(&mut self, ch: char) -> Result;
 	fn write_comment(&mut self, str: &str) -> Result;
+	fn write_with_quotes(&mut self, str: &str, quote: QuoteStyle, could_be_ident: bool) -> Result;
 	fn write_trailing_char(&mut self, ch: char) -> Result;
 	fn write_whitespace(&mut self) -> Result;
 	fn write_indent(&mut self) -> Result;
@@ -71,7 +76,7 @@ where
 	#[inline]
 	fn write_char(&mut self, ch: char) -> Result {
 		if ch == '\n' {
-			return self.write_newline();
+			self.line += 1
 		} else {
 			self.col += 1
 		}
@@ -82,7 +87,6 @@ where
 	fn write_newline(&mut self) -> Result {
 		if self.can_output(OutputOption::Whitespace) {
 			self.write_char('\n')?;
-			self.line += 1;
 		}
 		Ok(())
 	}
@@ -93,6 +97,21 @@ where
 			self.write_str(str)?;
 		}
 		Ok(())
+	}
+	
+	#[inline]
+	fn write_with_quotes(&mut self, str: &str, quote: QuoteStyle, could_be_ident: bool) -> Result {
+		if could_be_ident && !self.can_output(OutputOption::QuotedIdentLikeStrings) && is_ident_str(str) {
+			self.write_str(str)
+		} else if !self.can_output(OutputOption::InconsistentQuotes) {
+			QuoteStyle::Double.write_css(self)?;
+			self.write_str(str)?;
+			QuoteStyle::Double.write_css(self)
+		} else {
+			quote.write_css(self)?;
+			self.write_str(str)?;
+			quote.write_css(self)
+		}
 	}
 
 	#[inline]
@@ -139,6 +158,22 @@ impl<'a, T: WriteCss<'a>> WriteCss<'a> for Option<T> {
 			value.write_css(sink)
 		} else {
 			Ok(())
+		}
+	}
+}
+
+impl<'a> WriteCss<'a> for QuoteStyle {
+	fn write_css<W: CssWriter>(&self, sink: &mut W) -> Result {
+		match self {
+			Self::Double => sink.write_char('"'),
+			Self::Single => {
+				if sink.can_output(OutputOption::InconsistentQuotes) {
+					sink.write_char('\'')
+				} else {
+					sink.write_char('"')
+				}
+			}
+			Self::None => Ok(()),
 		}
 	}
 }

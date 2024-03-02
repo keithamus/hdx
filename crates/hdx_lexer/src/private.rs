@@ -9,7 +9,7 @@ use hdx_syntax::{
 use crate::{
 	constants::{SINGLE_CHAR_TOKENS, SURROGATE_RANGE},
 	string_builder::AutoCow,
-	token::{NumType, Token},
+	token::{NumType, Token, QuoteStyle},
 	Include, Lexer,
 };
 
@@ -188,7 +188,7 @@ impl<'a> Lexer<'a> {
 		REPLACEMENT
 	}
 
-	fn consume_url_sequence(&mut self) -> Token {
+	fn consume_url_sequence(&mut self, quote: QuoteStyle) -> Token {
 		self.consume_whitespace();
 		let mut builder = AutoCow::new(self);
 		builder.start = self.remaining();
@@ -239,7 +239,7 @@ impl<'a> Lexer<'a> {
 				}
 			}
 		}
-		Token::Url(Atom::from(builder.finish(self)))
+		Token::Url(Atom::from(builder.finish(self)), quote)
 	}
 
 	fn consume_remnants_of_bad_url(&mut self) -> Token {
@@ -333,7 +333,7 @@ impl<'a> Lexer<'a> {
 				}
 				if !is_quote(char) {
 					self.consume_whitespace();
-					return self.consume_url_sequence();
+					return self.consume_url_sequence(QuoteStyle::None);
 				}
 			}
 			return Token::Function(ident);
@@ -343,6 +343,11 @@ impl<'a> Lexer<'a> {
 
 	fn consume_string_token(&mut self) -> Token {
 		let delimiter = self.current.chars.next().unwrap();
+		let quote = if delimiter == '"' {
+			QuoteStyle::Double
+		} else {
+			QuoteStyle::Single
+		};
 		let mut builder = AutoCow::new(self);
 		loop {
 			match self.nth(0) {
@@ -350,12 +355,12 @@ impl<'a> Lexer<'a> {
 					return Token::BadString;
 				}
 				EOF => {
-					return Token::String(Atom::from(builder.finish(self)));
+					return Token::String(Atom::from(builder.finish(self)), quote);
 				}
 				c @ ('"' | '\'') => {
 					self.current.chars.next();
 					if c == delimiter {
-						return Token::String(Atom::from(builder.finish_without_push(self)));
+						return Token::String(Atom::from(builder.finish_without_push(self)), quote);
 					}
 					builder.push_matching(c);
 				}
@@ -364,7 +369,7 @@ impl<'a> Lexer<'a> {
 					builder.force_allocation_without_current_ascii_char(self);
 					match self.nth(0) {
 						EOF => {
-							return Token::String(Atom::from(builder.finish(self)));
+							return Token::String(Atom::from(builder.finish(self)), quote);
 						}
 						p if is_newline(p) => {
 							self.current.chars.next();

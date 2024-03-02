@@ -1,5 +1,5 @@
 use hdx_atom::{atom, Atom};
-use hdx_lexer::Token;
+use hdx_lexer::{Token, QuoteStyle};
 use hdx_parser::{unexpected, Parse, Parser, Result as ParserResult, Spanned};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 #[cfg(feature = "serde")]
@@ -17,7 +17,7 @@ pub struct FontFamily(pub SmallVec<[Spanned<SingleFontFamily>; 1]>);
 #[cfg_attr(feature = "serde", derive(Serialize), serde())]
 pub enum SingleFontFamily {
 	#[writable(String)]
-	Named(Atom),
+	Named(Atom, QuoteStyle),
 	Generic(Atom),
 	// Generic Font Families
 	Serif, // atom!("serif")
@@ -67,7 +67,7 @@ impl<'a> Parse<'a> for SingleFontFamily {
 					atom!("message-box") => Self::MessageBox,
 					atom!("small-caption") => Self::SmallCaption,
 					atom!("status-bar") => Self::StatusBar,
-					_ => Self::Named(ident),
+					_ => Self::Named(ident, QuoteStyle::None),
 				}
 			}
 			Token::Function(atom!("generic")) => {
@@ -77,9 +77,9 @@ impl<'a> Parse<'a> for SingleFontFamily {
 					token => unexpected!(parser, token),
 				}
 			}
-			Token::String(atom) => {
+			Token::String(atom, quote) => {
 				parser.advance();
-				Self::Named(atom)
+				Self::Named(atom, quote)
 			}
 			token => unexpected!(parser, token),
 		};
@@ -125,7 +125,7 @@ mod tests {
 	use oxc_allocator::Allocator;
 
 	use super::*;
-	use crate::test_helpers::test_write;
+	use crate::test_helpers::{test_write, test_write_min};
 
 	#[test]
 	fn size_test() {
@@ -137,11 +137,22 @@ mod tests {
 	fn test_writes() {
 		let allocator = Allocator::default();
 		test_write::<FontFamily>(&allocator, "serif", "serif");
-		test_write::<FontFamily>(&allocator, "Arial, sans-serif", "\"Arial\",sans-serif");
+		test_write::<FontFamily>(&allocator, "Arial, sans-serif", "Arial, sans-serif");
 		test_write::<FontFamily>(
 			&allocator,
 			"'Gill Sans MS', Arial, system-ui, sans-serif",
-			"\"Gill Sans MS\",\"Arial\",system-ui,sans-serif",
+			"'Gill Sans MS', Arial, system-ui, sans-serif",
+		);
+	}
+
+	#[test]
+	fn test_minify() {
+		let allocator = Allocator::default();
+		test_write_min::<FontFamily>(&allocator, "Arial, sans-serif", "Arial,sans-serif");
+		test_write_min::<FontFamily>(
+			&allocator,
+			"'Gill Sans MS', Arial, system-ui, sans-serif",
+			"\"Gill Sans MS\",Arial,system-ui,sans-serif",
 		);
 	}
 }

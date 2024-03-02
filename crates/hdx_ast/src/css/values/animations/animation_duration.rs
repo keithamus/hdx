@@ -80,7 +80,7 @@ mod tests {
 	use oxc_allocator::Allocator;
 
 	use super::*;
-	use crate::test_helpers::test_write;
+	use crate::test_helpers::{test_write, test_write_min};
 
 	#[test]
 	fn size_test() {
@@ -94,6 +94,12 @@ mod tests {
 		test_write::<AnimationDuration>(&allocator, "auto", "auto");
 		test_write::<AnimationDuration>(&allocator, "0s", "0s");
 		test_write::<AnimationDuration>(&allocator, "1ms", "1ms");
-		test_write::<AnimationDuration>(&allocator, "1ms, 400ms, 8s", "1ms,400ms,8s");
+		test_write::<AnimationDuration>(&allocator, "1ms, 400ms, 8s", "1ms, 400ms, 8s");
+	}
+
+	#[test]
+	fn test_minify() {
+		let allocator = Allocator::default();
+		test_write_min::<AnimationDuration>(&allocator, "1ms, 400ms, 8s", "1ms,400ms,8s");
 	}
 }

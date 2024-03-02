@@ -76,7 +76,7 @@ mod tests {
 	use oxc_allocator::Allocator;
 
 	use super::*;
-	use crate::test_helpers::test_write;
+	use crate::test_helpers::{test_write, test_write_min};
 
 	#[test]
 	fn size_test() {
@@ -88,8 +88,17 @@ mod tests {
 	fn test_writes() {
 		let allocator = Allocator::default();
 		test_write::<AnyPointerMediaFeature>(&allocator, "(any-pointer)", "(any-pointer)");
-		test_write::<AnyPointerMediaFeature>(&allocator, "(any-pointer: none)", "(any-pointer:none)");
-		test_write::<AnyPointerMediaFeature>(&allocator, "(any-pointer: coarse)", "(any-pointer:coarse)");
-		test_write::<AnyPointerMediaFeature>(&allocator, "(any-pointer: fine)", "(any-pointer:fine)");
+		test_write::<AnyPointerMediaFeature>(&allocator, "(any-pointer: none)", "(any-pointer: none)");
+		test_write::<AnyPointerMediaFeature>(&allocator, "(any-pointer: coarse)", "(any-pointer: coarse)");
+		test_write::<AnyPointerMediaFeature>(&allocator, "(any-pointer: fine)", "(any-pointer: fine)");
+	}
+
+	#[test]
+	fn test_minify() {
+		let allocator = Allocator::default();
+		test_write_min::<AnyPointerMediaFeature>(&allocator, "(any-pointer)", "(any-pointer)");
+		test_write_min::<AnyPointerMediaFeature>(&allocator, "(any-pointer: none)", "(any-pointer:none)");
+		test_write_min::<AnyPointerMediaFeature>(&allocator, "(any-pointer: coarse)", "(any-pointer:coarse)");
+		test_write_min::<AnyPointerMediaFeature>(&allocator, "(any-pointer: fine)", "(any-pointer:fine)");
 	}
 }
