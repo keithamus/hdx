@@ -17,7 +17,7 @@ pub enum FontSize {
 	XxLarge, // atom!("xx-large")
 	Larger,  // atom!("larger")
 	Smaller, // atom!("smaller")
-	#[parsable(DimensionOrZero, FromToken, Check::Range(1.0..))]
+	#[parsable(DimensionOrZero, FromToken, Check::Range(0.0..))]
 	LengthPercentage(LengthPercentage),
 }
 
@@ -33,6 +33,7 @@ mod tests {
 
 	#[test]
 	fn test_writes() {
+		assert_parse!(FontSize, "0");
 		assert_parse!(FontSize, "10px");
 		assert_parse!(FontSize, "xx-large");
 	}
