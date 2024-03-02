@@ -9,7 +9,7 @@ use crate::{
 };
 
 // https://drafts.csswg.org/cssom-1/#the-cssstylerule-interface
-#[derive(Debug, Hash)]
+#[derive(PartialEq, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
 pub struct StyleRule<'a> {
 	pub selectors: Spanned<Selectors<'a>>,
@@ -44,7 +44,7 @@ impl<'a> WriteCss<'a> for StyleRule<'a> {
 }
 
 // https://drafts.csswg.org/cssom-1/#the-cssstylerule-interface
-#[derive(Debug, Hash)]
+#[derive(PartialEq, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
 pub struct StyleDeclaration<'a> {
 	pub declarations: Vec<'a, Spanned<Property<'a>>>,

@@ -11,7 +11,7 @@ use serde::Serialize;
 
 use crate::{css::values, syntax::ComponentValues};
 
-#[derive(Debug, Hash)]
+#[derive(PartialEq, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde())]
 pub struct Custom<'a>(pub ComponentValues<'a>);
 
@@ -30,7 +30,7 @@ impl<'a> Parse<'a> for Custom<'a> {
 	}
 }
 
-#[derive(Debug, Hash)]
+#[derive(PartialEq, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde())]
 pub struct Computed<'a>(pub ComponentValues<'a>);
 
@@ -49,7 +49,7 @@ impl<'a> Parse<'a> for Computed<'a> {
 	}
 }
 
-#[derive(Debug, Hash)]
+#[derive(PartialEq, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde())]
 pub struct Unknown<'a>(pub ComponentValues<'a>);
 
@@ -68,7 +68,7 @@ impl<'a> WriteCss<'a> for Unknown<'a> {
 	}
 }
 
-#[derive(Debug, Hash)]
+#[derive(PartialEq, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde())]
 pub struct Property<'a> {
 	name: Atom,
@@ -185,7 +185,7 @@ macro_rules! properties {
     ( $(
         $name: ident$(<$a: lifetime>)?: $atom: pat,
     )+ ) => {
-		#[derive(Debug, Hash)]
+		#[derive(PartialEq, Debug, Hash)]
 		#[cfg_attr(feature = "serde", derive(Serialize), serde())]
 		pub enum StyleValue<'a> {
 			Initial,

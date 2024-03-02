@@ -12,7 +12,7 @@ use crate::{atom, css::properties::Property, Atom, Atomizable, Specificity, ToSp
 
 // https://drafts.csswg.org/cssom-1/#csspagerule
 // https://drafts.csswg.org/css-page-3/#at-page-rule
-#[derive(Debug, Hash)]
+#[derive(PartialEq, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
 pub struct PageRule<'a> {
 	pub selectors: Option<Spanned<PageSelectorList>>,
@@ -176,7 +176,7 @@ impl ToSpecificity for PagePseudoClass {
 	}
 }
 
-#[derive(Debug, Hash)]
+#[derive(PartialEq, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
 pub struct PageDeclaration<'a> {
 	#[cfg_attr(feature = "serde", serde(borrow))]
@@ -225,7 +225,7 @@ impl<'a> WriteCss<'a> for PageDeclaration<'a> {
 }
 
 // https://drafts.csswg.org/cssom-1/#cssmarginrule
-#[derive(Debug, Hash)]
+#[derive(PartialEq, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
 pub struct MarginRule<'a> {
 	pub name: PageMarginBox,
@@ -293,7 +293,7 @@ pub enum PageMarginBox {
 	LeftTop,           // atom!("left-top")
 }
 
-#[derive(Debug, Hash)]
+#[derive(PartialEq, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
 pub struct MarginDeclaration<'a> {
 	#[cfg_attr(feature = "serde", serde(borrow))]

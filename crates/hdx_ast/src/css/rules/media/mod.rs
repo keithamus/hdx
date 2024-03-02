@@ -17,14 +17,14 @@ mod features;
 use features::*;
 
 // https://drafts.csswg.org/mediaqueries-4/
-#[derive(Debug, Hash)]
+#[derive(PartialEq, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
 pub struct MediaRule<'a> {
 	pub query: Spanned<MediaQueryList>,
 	pub style: Spanned<MediaDeclaration<'a>>,
 }
 
-// https://drafts.csswg.org/css-page-3/#syntax-page-selector
+// https://drafts.csswg.org/css-conditional-3/#at-ruledef-media
 impl<'a> Parse<'a> for MediaRule<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		expect!(parser, Token::AtKeyword(atom!("media")));
@@ -54,7 +54,7 @@ impl<'a> WriteCss<'a> for MediaRule<'a> {
 	}
 }
 
-#[derive(Debug, Hash)]
+#[derive(PartialEq, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
 pub struct MediaDeclaration<'a> {
 	#[cfg_attr(feature = "serde", serde(borrow))]

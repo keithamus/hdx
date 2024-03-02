@@ -16,7 +16,7 @@ use crate::{
 };
 
 // https://drafts.csswg.org/cssom-1/#the-cssstylesheet-interface
-#[derive(Debug, Hash)]
+#[derive(Debug, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
 pub struct StyleSheet<'a> {
 	pub rules: Vec<'a, Spanned<Rule<'a>>>,
@@ -47,7 +47,7 @@ impl<'a> WriteCss<'a> for StyleSheet<'a> {
 }
 
 // https://drafts.csswg.org/cssom-1/#the-cssrule-interface
-#[derive(Debug, Hash)]
+#[derive(PartialEq, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde(untagged))]
 pub enum Rule<'a> {
 	Charset(CharsetRule),

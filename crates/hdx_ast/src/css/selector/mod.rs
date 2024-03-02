@@ -17,7 +17,7 @@ mod pseudo_class;
 use attribute::Attribute;
 use pseudo_class::PseudoClass;
 
-#[derive(Debug, Hash)]
+#[derive(PartialEq, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde())]
 pub struct Selectors<'a>(pub SmallVec<[Spanned<Selector<'a>>; 1]>);
 
@@ -56,7 +56,7 @@ impl<'a> WriteCss<'a> for Selectors<'a> {
 // As `simple-selector` is a `compound-selector` but with only one `Component`.
 // Having `Selector` be both ` simple-selector` and `compound-selector` makes
 // parsing and visiting more practical.
-#[derive(Debug, Hash)]
+#[derive(PartialEq, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
 pub struct Selector<'a> {
 	pub components: Vec<'a, Spanned<Component<'a>>>,
@@ -126,13 +126,13 @@ impl<'a> WriteCss<'a> for Selector<'a> {
 	}
 }
 
-#[derive(Debug, Hash)]
+#[derive(PartialEq, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
 pub struct ForgivingSelector<'a> {
 	pub components: Vec<'a, Spanned<Component<'a>>>,
 }
 
-#[derive(Debug, Hash)]
+#[derive(PartialEq, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
 pub struct RelativeSelector<'a> {
 	pub components: Vec<'a, Spanned<Component<'a>>>,
@@ -141,7 +141,7 @@ pub struct RelativeSelector<'a> {
 // This encapsulates all `simple-selector` subtypes (e.g. `wq-name`,
 // `id-selector`) into one enum, as it makes parsing and visiting much more
 // practical.
-#[derive(Debug, Hash)]
+#[derive(PartialEq, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type", content = "value"))]
 pub enum Component<'a> {
 	Id(Atom),
@@ -321,7 +321,7 @@ pub enum LegacyPseudoElement {
 	FirstLine,   // atom!("first-line")
 }
 
-#[derive(Debug, Hash)]
+#[derive(PartialEq, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
 pub enum PseudoFunction<'a> {
 	Dir(DirValue),                // atom!("dir")
