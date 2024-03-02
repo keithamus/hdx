@@ -12,9 +12,9 @@ use crate::{
 pub enum LineHeight {
 	#[default]
 	Normal, // atom!("normal")
-	#[parsable(Number, Check::Range(1.0..))]
+	#[parsable(Number, Check::Range(0.0..))]
 	Number(CSSFloat),
-	#[parsable(Dimension, FromToken, Check::Range(1.0..))]
+	#[parsable(Dimension, FromToken, Check::Range(0.0..))]
 	LengthPercentage(LengthPercentage),
 }
 
@@ -30,6 +30,8 @@ mod tests {
 
 	#[test]
 	fn test_writes() {
+		assert_parse!(LineHeight, "0");
+		assert_parse!(LineHeight, "0px");
 		assert_parse!(LineHeight, "10px");
 		assert_parse!(LineHeight, "1.25");
 		assert_parse!(LineHeight, "normal");
