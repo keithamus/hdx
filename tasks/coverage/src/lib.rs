@@ -30,7 +30,7 @@ pub struct AppArgs {
 impl AppArgs {
 	pub fn run_all(&self) {
 		self.run_lexer();
-		// self.run_parser();
+		self.run_parser();
 	}
 
 	pub fn run_lexer(&self) {
