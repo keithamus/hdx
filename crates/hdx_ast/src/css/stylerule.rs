@@ -1,5 +1,5 @@
 use hdx_parser::{Block, Parse, Parser, QualifiedRule, Result as ParserResult};
-use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
+use hdx_writer::{CssWriter, Result as WriterResult, WriteCss, OutputOption};
 #[cfg(feature = "serde")]
 use serde::Serialize;
 
@@ -30,6 +30,9 @@ impl<'a> QualifiedRule<'a> for StyleRule<'a> {
 
 impl<'a> WriteCss<'a> for StyleRule<'a> {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
+		if !sink.can_output(OutputOption::RedundantRules) && self.style.node.is_empty() {
+			return Ok(());
+		}
 		self.selectors.write_css(sink)?;
 		sink.write_whitespace()?;
 		sink.write_char('{')?;
@@ -63,6 +66,12 @@ impl<'a> Block<'a> for StyleDeclaration<'a> {
 	type Rule = StyleRule<'a>;
 }
 
+impl<'a> StyleDeclaration<'a> {
+	fn is_empty(&self) -> bool {
+		return self.declarations.is_empty() && self.rules.is_empty();
+	}
+}
+
 impl<'a> WriteCss<'a> for StyleDeclaration<'a> {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
 		let mut iter = self.declarations.iter().peekable();
@@ -93,12 +102,13 @@ mod test {
 	#[test]
 	fn test_writes() {
 		assert_parse!(StyleRule, "body {\n}");
-		// assert_parse!(StyleRule, "body, body {}");
-		// assert_parse!(StyleRule, "body {\n\twidth: 1px;\n}");
+		assert_parse!(StyleRule, "body, body {\n}");
+		assert_parse!(StyleRule, "body {\n\twidth: 1px;\n}");
 	}
 
 	#[test]
 	fn test_minify() {
 		assert_minify!(StyleRule, "body { width:1px }", "body{width:1px}");
+		assert_minify!(StyleRule, "body {}", "");
 	}
 }
