@@ -1,7 +1,5 @@
 use hdx_parser::{Block, Parse, Parser, QualifiedRule, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss, OutputOption};
-#[cfg(feature = "serde")]
-use serde::Serialize;
 
 use crate::{
 	css::{properties::Property, selector::Selectors},
@@ -10,7 +8,7 @@ use crate::{
 
 // https://drafts.csswg.org/cssom-1/#the-cssstylerule-interface
 #[derive(PartialEq, Debug, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
 pub struct StyleRule<'a> {
 	pub selectors: Spanned<Selectors<'a>>,
 	pub style: Spanned<StyleDeclaration<'a>>,
@@ -48,7 +46,7 @@ impl<'a> WriteCss<'a> for StyleRule<'a> {
 
 // https://drafts.csswg.org/cssom-1/#the-cssstylerule-interface
 #[derive(PartialEq, Debug, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
 pub struct StyleDeclaration<'a> {
 	pub declarations: Vec<'a, Spanned<Property<'a>>>,
 	pub rules: Vec<'a, Spanned<StyleRule<'a>>>,

@@ -1,11 +1,8 @@
-#[cfg(feature = "serde")]
-use serde::Serialize;
-
-use crate::{Parsable, Value, Writable, css::values::units::LengthPercentage};
+use crate::{css::values::units::LengthPercentage, Parsable, Value, Writable};
 
 // https://drafts.csswg.org/css-inline/#propdef-alignment-baseline
 #[derive(Value, Parsable, Writable, Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type", rename_all = "kebab-case"))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", rename_all = "kebab-case"))]
 pub enum BaselineShift {
 	#[parsable(DimensionOrZero, FromToken)]
 	LengthPercentage(LengthPercentage),
@@ -17,9 +14,9 @@ pub enum BaselineShift {
 }
 
 impl Default for BaselineShift {
-    fn default() -> Self {
+	fn default() -> Self {
 		Self::LengthPercentage(LengthPercentage::Zero)
-    }
+	}
 }
 
 #[cfg(test)]

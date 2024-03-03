@@ -5,8 +5,6 @@ use hdx_parser::{
 	Spanned,
 };
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
-#[cfg(feature = "serde")]
-use serde::Serialize;
 use smallvec::{smallvec, SmallVec};
 
 use crate::{Atomizable, Vec};
@@ -18,7 +16,7 @@ use attribute::Attribute;
 use pseudo_class::PseudoClass;
 
 #[derive(PartialEq, Debug, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct Selectors<'a>(pub SmallVec<[Spanned<Selector<'a>>; 1]>);
 
 impl<'a> Parse<'a> for Selectors<'a> {
@@ -57,7 +55,7 @@ impl<'a> WriteCss<'a> for Selectors<'a> {
 // Having `Selector` be both ` simple-selector` and `compound-selector` makes
 // parsing and visiting more practical.
 #[derive(PartialEq, Debug, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
 pub struct Selector<'a> {
 	pub components: Vec<'a, Spanned<Component<'a>>>,
 }
@@ -127,13 +125,13 @@ impl<'a> WriteCss<'a> for Selector<'a> {
 }
 
 #[derive(PartialEq, Debug, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
 pub struct ForgivingSelector<'a> {
 	pub components: Vec<'a, Spanned<Component<'a>>>,
 }
 
 #[derive(PartialEq, Debug, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
 pub struct RelativeSelector<'a> {
 	pub components: Vec<'a, Spanned<Component<'a>>>,
 }
@@ -142,7 +140,7 @@ pub struct RelativeSelector<'a> {
 // `id-selector`) into one enum, as it makes parsing and visiting much more
 // practical.
 #[derive(PartialEq, Debug, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type", content = "value"))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", content = "value"))]
 pub enum Component<'a> {
 	Id(Atom),
 	Class(Atom),
@@ -294,7 +292,7 @@ impl<'a> WriteCss<'a> for Component<'a> {
 
 // https://drafts.csswg.org/css-pseudo/#index-defined-here
 #[derive(Atomizable, Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type", rename_all = "kebab-case"))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", rename_all = "kebab-case"))]
 pub enum PseudoElement {
 	After,              // atom!("after")
 	Backdrop,           // atom!("backdrop")
@@ -313,7 +311,7 @@ pub enum PseudoElement {
 }
 
 #[derive(Atomizable, Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type", rename_all = "kebab-case"))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", rename_all = "kebab-case"))]
 pub enum LegacyPseudoElement {
 	After,       // atom!("after")
 	Before,      // atom!("before")
@@ -322,7 +320,7 @@ pub enum LegacyPseudoElement {
 }
 
 #[derive(PartialEq, Debug, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
 pub enum PseudoFunction<'a> {
 	Dir(DirValue),                // atom!("dir")
 	Has(RelativeSelector<'a>),    // atom!("has")
@@ -341,14 +339,14 @@ pub enum PseudoFunction<'a> {
 }
 
 #[derive(Atomizable, Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type", rename_all = "kebab-case"))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", rename_all = "kebab-case"))]
 pub enum DirValue {
 	Rtl, // atom!("rtl")
 	Ltr, // atom!("ltr")
 }
 
 #[derive(Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type", content = "value"))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", content = "value"))]
 pub enum NSPrefix {
 	None,
 	Wildcard,
@@ -356,7 +354,7 @@ pub enum NSPrefix {
 }
 
 #[derive(Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
 // https://drafts.csswg.org/selectors/#combinators
 pub enum Combinator {
 	Descendant,        // (Space)
@@ -367,13 +365,13 @@ pub enum Combinator {
 }
 
 #[derive(Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
 pub struct ANB {
 	string: Atom,
 }
 
 #[derive(Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
 pub struct ANBEvenOdd {
 	string: Atom,
 }

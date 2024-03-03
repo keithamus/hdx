@@ -1,8 +1,5 @@
 use hdx_parser::{diagnostics, Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
-#[cfg(feature = "serde")]
-use serde::Serialize;
-
 /// Values
 mod align;
 mod anchor_position;
@@ -126,7 +123,7 @@ mod units;
 
 // TODO!
 #[derive(Default, Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(untagged))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(untagged))]
 pub enum Todo {
 	#[default]
 	Todo,
@@ -145,7 +142,7 @@ impl<'a> WriteCss<'a> for Todo {
 }
 
 // #[derive(Debug, PartialEq, Hash)]
-// #[cfg_attr(feature = "serde", derive(Serialize), serde(untagged))]
+// #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(untagged))]
 // pub enum ValueLike<'a> {
 // 	Color(Box<'a, Spanned<Expr<'a, ColorValue<'a>>>>),
 // 	Length(Box<'a, Spanned<MathExpr<'a, Length>>>),
@@ -156,14 +153,14 @@ impl<'a> WriteCss<'a> for Todo {
 //
 // // https://drafts.csswg.org/css-values-4/#typedef-position
 // #[derive(Debug, PartialEq, Hash)]
-// #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
+// #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
 // pub struct PositionXY {
 // 	pub x: HorizontalPosition,
 // 	pub y: VerticalPosition,
 // }
 //
 // #[derive(Debug, PartialEq, Hash)]
-// #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
+// #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
 // pub enum HorizontalPosition {
 // 	Center,
 // 	Length(LengthPercentage),
@@ -172,7 +169,7 @@ impl<'a> WriteCss<'a> for Todo {
 // }
 //
 // #[derive(Debug, PartialEq, Hash)]
-// #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
+// #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
 // pub enum VerticalPosition {
 // 	Center,
 // 	Length(LengthPercentage),
@@ -181,11 +178,11 @@ impl<'a> WriteCss<'a> for Todo {
 // }
 //
 // #[derive(Default, Debug, PartialEq, Hash)]
-// #[cfg_attr(feature = "serde", derive(Serialize), serde())]
+// #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 // pub struct NoNonGlobalValuesAllowed;
 //
 // #[derive(Atomizable, Default, Debug, PartialEq, Hash)]
-// #[cfg_attr(feature = "serde", derive(Serialize), serde())]
+// #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 // pub enum AutoOrNone {
 // 	#[default]
 // 	Auto,
@@ -194,11 +191,11 @@ impl<'a> WriteCss<'a> for Todo {
 //
 // // https://drafts.csswg.org/css-values-4/#ratio-value
 // #[derive(Default, Debug, PartialEq, Hash)]
-// #[cfg_attr(feature = "serde", derive(Serialize), serde())]
+// #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 // pub struct Ratio(u8, u8);
 //
 // #[derive(Default, Debug, PartialEq, Hash)]
-// #[cfg_attr(feature = "serde", derive(Serialize), serde())]
+// #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 // pub enum TimeOrAuto {
 // 	#[default]
 // 	Auto,
@@ -207,7 +204,7 @@ impl<'a> WriteCss<'a> for Todo {
 //
 // // https://drafts.csswg.org/css-values/#typedef-length-percentage
 // #[derive(Debug, PartialEq)]
-// #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
+// #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
 // pub enum FrequencyPercentage {
 // 	Frequency(Frequency),
 // 	Percentage(f32),
@@ -225,7 +222,7 @@ impl<'a> WriteCss<'a> for Todo {
 //
 // // https://drafts.csswg.org/css-values/#typedef-length-percentage
 // #[derive(Debug, PartialEq)]
-// #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
+// #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
 // pub enum AnglePercentage {
 // 	Angle(Angle),
 // 	Percentage(f32),
@@ -243,7 +240,7 @@ impl<'a> WriteCss<'a> for Todo {
 //
 // // https://drafts.csswg.org/css-values/#typedef-length-percentage
 // #[derive(Debug, PartialEq)]
-// #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
+// #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
 // pub enum TimePercentage {
 // 	Time(Time),
 // 	Percentage(f32),

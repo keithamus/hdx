@@ -3,9 +3,7 @@ use hdx_parser::{
 	diagnostics, expect, unexpected, AtRule, DeclarationRuleList, Parse, Parser, Result as ParserResult, Spanned, Vec,
 };
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
-#[cfg(feature = "serde")]
-use serde::Serialize;
-use smallvec::{SmallVec, smallvec};
+use smallvec::{smallvec, SmallVec};
 
 use super::NoPreludeAllowed;
 use crate::{atom, css::properties::Property, Atom, Atomizable, Specificity, ToSpecificity};
@@ -13,7 +11,7 @@ use crate::{atom, css::properties::Property, Atom, Atomizable, Specificity, ToSp
 // https://drafts.csswg.org/cssom-1/#csspagerule
 // https://drafts.csswg.org/css-page-3/#at-page-rule
 #[derive(PartialEq, Debug, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
 pub struct PageRule<'a> {
 	pub selectors: Option<Spanned<PageSelectorList>>,
 	pub style: Spanned<PageDeclaration<'a>>,
@@ -49,7 +47,7 @@ impl<'a> WriteCss<'a> for PageRule<'a> {
 }
 
 #[derive(Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct PageSelectorList(pub SmallVec<[Spanned<PageSelector>; 1]>);
 
 impl<'a> Parse<'a> for PageSelectorList {
@@ -82,7 +80,7 @@ impl<'a> WriteCss<'a> for PageSelectorList {
 }
 
 #[derive(Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
 pub struct PageSelector {
 	pub page_type: Option<Atom>,
 	pub pseudos: SmallVec<[Spanned<PagePseudoClass>; 1]>,
@@ -143,7 +141,7 @@ impl<'a> PageSelector {
 }
 
 #[derive(Atomizable, Debug, Clone, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(rename_all = "kebab-case"))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(rename_all = "kebab-case"))]
 pub enum PagePseudoClass {
 	Left,
 	Right,
@@ -177,7 +175,7 @@ impl ToSpecificity for PagePseudoClass {
 }
 
 #[derive(PartialEq, Debug, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
 pub struct PageDeclaration<'a> {
 	#[cfg_attr(feature = "serde", serde(borrow))]
 	pub properties: Vec<'a, Spanned<Property<'a>>>,
@@ -226,7 +224,7 @@ impl<'a> WriteCss<'a> for PageDeclaration<'a> {
 
 // https://drafts.csswg.org/cssom-1/#cssmarginrule
 #[derive(PartialEq, Debug, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
 pub struct MarginRule<'a> {
 	pub name: PageMarginBox,
 	#[cfg_attr(feature = "serde", serde(borrow))]
@@ -273,7 +271,7 @@ impl<'a> WriteCss<'a> for MarginRule<'a> {
 }
 
 #[derive(Atomizable, Debug, Clone, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(rename_all = "kebab-case"))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(rename_all = "kebab-case"))]
 pub enum PageMarginBox {
 	TopLeftCorner,     // atom!("top-left-corner")
 	TopLeft,           // atom!("top-left")
@@ -294,7 +292,7 @@ pub enum PageMarginBox {
 }
 
 #[derive(PartialEq, Debug, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
 pub struct MarginDeclaration<'a> {
 	#[cfg_attr(feature = "serde", serde(borrow))]
 	pub properties: Vec<'a, Spanned<Property<'a>>>,

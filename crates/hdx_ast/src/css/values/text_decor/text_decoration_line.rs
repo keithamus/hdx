@@ -2,15 +2,13 @@ use hdx_atom::atom;
 use hdx_lexer::Token;
 use hdx_parser::{unexpected, Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
-#[cfg(feature = "serde")]
-use serde::Serialize;
 
 use crate::{bitmask, Value};
 
 // https://drafts.csswg.org/css-text/#text-align-property
 #[derive(Value, Default)]
 #[bitmask(u8)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub enum TextDecorationLine {
 	#[default]
 	None = 0b0000,

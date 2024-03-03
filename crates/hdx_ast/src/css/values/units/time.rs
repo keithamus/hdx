@@ -1,7 +1,5 @@
 use hdx_atom::{atom, Atom};
 use hdx_lexer::Token;
-#[cfg(feature = "serde")]
-use serde::Serialize;
 
 use super::{AbsoluteUnit, CSSFloat};
 use crate::Writable;
@@ -9,7 +7,7 @@ use hdx_parser::FromToken;
 
 // https://drafts.csswg.org/css-values/#resolution
 #[derive(Writable, Debug, Clone, Copy, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub enum Time {
 	#[writable(suffix = "ms")]
 	Ms(CSSFloat),

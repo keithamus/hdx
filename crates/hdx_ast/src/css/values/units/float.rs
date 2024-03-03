@@ -5,12 +5,10 @@ use std::{
 };
 
 use hdx_derive::Writable;
-#[cfg(feature = "serde")]
-use serde::Serialize;
 
 // CSS floats are different to f32s in that they do not represent NaN
 #[derive(Writable, Debug, Clone, Copy, PartialEq)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(transparent))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(transparent))]
 pub struct CSSFloat(f32);
 
 impl CSSFloat {

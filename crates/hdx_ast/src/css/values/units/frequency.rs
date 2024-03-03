@@ -1,14 +1,12 @@
 use hdx_atom::atom;
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
-#[cfg(feature = "serde")]
-use serde::Serialize;
 
 use super::{AbsoluteUnit, CSSFloat};
 use crate::Parsable;
 
 // https://drafts.csswg.org/css-values/#resolution
 #[derive(Parsable, Debug, Clone, Copy, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub enum Frequency {
 	#[parsable(Dimension)]
 	Hz(CSSFloat),

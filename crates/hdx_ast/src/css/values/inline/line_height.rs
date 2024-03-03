@@ -1,6 +1,3 @@
-#[cfg(feature = "serde")]
-use serde::Serialize;
-
 use crate::{
 	css::values::units::{CSSFloat, LengthPercentage},
 	Parsable, Value, Writable,
@@ -8,7 +5,7 @@ use crate::{
 
 #[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Hash)]
 #[value(Inherits)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub enum LineHeight {
 	#[default]
 	Normal, // atom!("normal")

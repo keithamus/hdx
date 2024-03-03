@@ -3,14 +3,16 @@ use hdx_atom::{atom, Atom};
 use hdx_lexer::Token;
 use hdx_parser::{unexpected, unexpected_ident, FromToken, Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
-#[cfg(feature = "serde")]
-use serde::Serialize;
 use smallvec::{smallvec, SmallVec};
 
 // https://drafts.csswg.org/css-color-adjust/#color-scheme-prop
 #[derive(Value, Default, Debug, PartialEq, Hash)]
 #[value(Inherits)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type", content = "value", rename_all = "kebab-case"))]
+#[cfg_attr(
+	feature = "serde",
+	derive(serde::Serialize),
+	serde(tag = "type", content = "value", rename_all = "kebab-case")
+)]
 pub enum ColorScheme {
 	#[default]
 	Normal,
@@ -83,7 +85,7 @@ impl<'a> WriteCss<'a> for ColorScheme {
 }
 
 #[derive(Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(rename_all = "kebab-case"))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(rename_all = "kebab-case"))]
 pub enum ColorSchemeKeyword {
 	Light,
 	Dark,

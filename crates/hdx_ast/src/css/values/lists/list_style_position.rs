@@ -1,12 +1,9 @@
-#[cfg(feature = "serde")]
-use serde::Serialize;
-
-use crate::{Value, Atomizable, Parsable, Writable};
+use crate::{Atomizable, Parsable, Value, Writable};
 
 // https://drafts.csswg.org/css-inline/#propdef-baseline-source
 #[derive(Value, Parsable, Writable, Atomizable, Default, Debug, PartialEq, Hash)]
 #[value(Inherits)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type", rename_all = "kebab-case"))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", rename_all = "kebab-case"))]
 pub enum ListStylePosition {
 	#[default]
 	Outside, // atom!("outside")

@@ -2,15 +2,13 @@ use hdx_atom::atom;
 use hdx_lexer::Token;
 use hdx_parser::{unexpected, unexpected_ident, Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
-#[cfg(feature = "serde")]
-use serde::Serialize;
 
 use crate::{bitmask, Atomizable, Value};
 
 // https://drafts.csswg.org/css-box-4/#propdef-margin-trim
 #[derive(Value, Atomizable, Default)]
 #[bitmask(u8)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub enum MarginTrim {
 	#[default]
 	None,

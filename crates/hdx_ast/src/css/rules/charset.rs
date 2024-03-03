@@ -6,11 +6,9 @@ use hdx_parser::{
 	expect, unexpected, Parse, Parser, Result as ParserResult,
 };
 use hdx_writer::{CssWriter, OutputOption, Result as WriterResult, WriteCss};
-#[cfg(feature = "serde")]
-use serde::Serialize;
 
 #[derive(Atomizable, Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
 pub enum CharsetRule {
 	#[atomizable("utf-8")]
 	Utf8,

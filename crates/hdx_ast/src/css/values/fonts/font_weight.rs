@@ -1,16 +1,13 @@
-#[cfg(feature = "serde")]
-use serde::Serialize;
-
 use crate::{css::values::units::CSSFloat, Parsable, Value, Writable};
 
 // https://drafts.csswg.org/css-inline/#propdef-alignment-baseline
 #[derive(Value, Parsable, Writable, Default, Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type", rename_all = "kebab-case"))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", rename_all = "kebab-case"))]
 pub enum FontWeight {
 	#[parsable(Number, Check::Range(1.0..=1000.0), Check::Int)]
 	Number(CSSFloat),
-	#[default]	
-	Normal,  // atom!("normal")
+	#[default]
+	Normal, // atom!("normal")
 	Bold,    // atom!("bold")
 	Bolder,  // atom!("bolder")
 	Lighter, // atom!("lighter")

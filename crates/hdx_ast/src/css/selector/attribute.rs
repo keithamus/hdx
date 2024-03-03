@@ -1,14 +1,12 @@
 use hdx_atom::{atom, Atom};
-use hdx_lexer::{Token, QuoteStyle};
+use hdx_lexer::{QuoteStyle, Token};
 use hdx_parser::{discard, expect, unexpected, unexpected_ident, Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
-#[cfg(feature = "serde")]
-use serde::Serialize;
 
 use super::{parse_wq_name, NSPrefix};
 
 #[derive(Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
 pub struct Attribute {
 	pub ns_prefix: NSPrefix,
 	pub name: Atom,
@@ -80,7 +78,7 @@ impl<'a> Parse<'a> for Attribute {
 					Token::Ident(value) => {
 						parser.advance();
 						value
-					},
+					}
 					Token::String(value, q) => {
 						quote = q;
 						parser.advance();
@@ -163,7 +161,7 @@ impl<'a> WriteCss<'a> for Attribute {
 }
 
 #[derive(Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type", content = "value"))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", content = "value"))]
 pub enum AttributeMatch {
 	Any,        // [attr]
 	Exact,      // [attr=val]
@@ -175,7 +173,7 @@ pub enum AttributeMatch {
 }
 
 #[derive(Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
 pub enum AttributeModifier {
 	None,
 	Sensitive,

@@ -1,6 +1,3 @@
-#[cfg(feature = "serde")]
-use serde::Serialize;
-
 use hdx_atom::atom;
 use hdx_lexer::Token;
 use hdx_parser::{diagnostics, expect, unexpected, unexpected_ident, FromToken, Parse, Parser, Result as ParserResult};
@@ -10,7 +7,7 @@ use crate::{css::values::units::Length, Atomizable, Value};
 
 // https://drafts.csswg.org/css-page-floats-3/#float-property
 #[derive(Value, Debug, PartialEq, Default, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub enum Float {
 	#[default]
 	None,
@@ -182,7 +179,7 @@ impl<'a> WriteCss<'a> for Float {
 }
 
 #[derive(Atomizable, Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub enum SnapBlockDirection {
 	Start, // atom!("start")
 	End,   // atom!("end")
@@ -190,7 +187,7 @@ pub enum SnapBlockDirection {
 }
 
 #[derive(Atomizable, Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub enum SnapInlineDirection {
 	Left,  // atom!("left")
 	Right, // atom!("right")

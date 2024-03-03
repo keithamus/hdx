@@ -1,15 +1,13 @@
 use hdx_atom::{atom, Atom};
-use hdx_lexer::{Token, QuoteStyle};
+use hdx_lexer::{QuoteStyle, Token};
 use hdx_parser::{unexpected, unexpected_ident, Parse, Parser, Result as ParserResult};
 
 use hdx_writer::WriteCss;
-#[cfg(feature = "serde")]
-use serde::Serialize;
 
 use crate::Value;
 
 #[derive(Value, Default, PartialEq, Debug, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub enum Content {
 	#[default]
 	Normal,
@@ -51,9 +49,7 @@ impl<'a> WriteCss<'a> for Content {
 		match self {
 			Self::None => atom!("none").write_css(sink),
 			Self::Normal => atom!("normal").write_css(sink),
-			Self::String(str, quote) => {
-				sink.write_with_quotes(str.as_ref(), *quote, false)
-			}
+			Self::String(str, quote) => sink.write_with_quotes(str.as_ref(), *quote, false),
 		}
 	}
 }

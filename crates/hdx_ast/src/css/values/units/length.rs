@@ -1,8 +1,6 @@
 use hdx_atom::{atom, Atom};
 use hdx_lexer::Token;
 use hdx_parser::FromToken;
-#[cfg(feature = "serde")]
-use serde::Serialize;
 
 use super::CSSFloat;
 use crate::Writable;
@@ -20,7 +18,7 @@ macro_rules! length {
     )+ ) => {
 
 		#[derive(Writable, Default, Debug, Clone, Copy, PartialEq, Hash)]
-		#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+		#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 		pub enum Length {
 			#[writable(rename = "0")]
 			#[default]
@@ -60,7 +58,7 @@ macro_rules! length {
 		}
 
 		#[derive(Writable, Default, Debug, Clone, Copy, PartialEq, Hash)]
-		#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+		#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 		pub enum LengthPercentage {
 			#[default]
 			#[writable(rename = "0")]
@@ -165,7 +163,7 @@ length! {
 }
 
 #[derive(Writable, Default, Debug, Clone, Copy, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub enum LengthPercentageOrAuto {
 	#[default]
 	Auto,

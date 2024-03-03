@@ -1,6 +1,3 @@
-#[cfg(feature = "serde")]
-use serde::Serialize;
-
 const DPPX_IN: f32 = 96.0;
 const DPPX_CM: f32 = DPPX_IN / 2.54;
 
@@ -9,7 +6,7 @@ use crate::{Parsable, Writable};
 
 // https://drafts.csswg.org/css-values/#resolution
 #[derive(Parsable, Writable, Debug, Clone, Copy, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub enum Resolution {
 	#[writable(suffix = "dpi")]
 	#[parsable(Dimension)]

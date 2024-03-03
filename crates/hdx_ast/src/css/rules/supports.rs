@@ -10,11 +10,9 @@ use hdx_parser::{
 	Result as ParserResult, RuleGroup, RuleList, Spanned, Vec,
 };
 use hdx_writer::{CssWriter, OutputOption, Result as WriterResult, WriteCss};
-#[cfg(feature = "serde")]
-use serde::Serialize;
 
 #[derive(Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
 pub struct SupportsRule<'a> {
 	pub condition: Spanned<SupportsCondition<'a>>,
 	pub rules: Spanned<SupportsRules<'a>>,
@@ -65,7 +63,7 @@ impl<'a> WriteCss<'a> for SupportsRule<'a> {
 }
 
 #[derive(Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct SupportsRules<'a>(pub Vec<'a, Spanned<Rule<'a>>>);
 
 impl<'a> Parse<'a> for SupportsRules<'a> {
@@ -93,7 +91,7 @@ impl<'a> WriteCss<'a> for SupportsRules<'a> {
 }
 
 #[derive(PartialEq, Debug, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
 pub enum SupportsCondition<'a> {
 	Is(SupportsFeature<'a>),
 	Not(SupportsFeature<'a>),
@@ -223,7 +221,7 @@ impl<'a> WriteCss<'a> for SupportsCondition<'a> {
 }
 
 #[derive(PartialEq, Debug, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct SupportsFeature<'a>(pub SimpleBlock<'a>);
 
 impl<'a> Parse<'a> for SupportsFeature<'a> {
@@ -240,7 +238,7 @@ impl<'a> WriteCss<'a> for SupportsFeature<'a> {
 }
 
 #[derive(PartialEq, Debug, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
 pub struct SupportsDeclaration<'a> {
 	#[cfg_attr(feature = "serde", serde(borrow))]
 	pub rules: Vec<'a, Spanned<StyleRule<'a>>>,
@@ -286,7 +284,11 @@ mod tests {
 
 	#[test]
 	fn test_minify() {
-		assert_minify!(SupportsRule, "@supports (width: 1px) { body { width:1px; } }", "@supports(width: 1px){body{width:1px}}");
+		assert_minify!(
+			SupportsRule,
+			"@supports (width: 1px) { body { width:1px; } }",
+			"@supports(width: 1px){body{width:1px}}"
+		);
 		assert_minify!(
 			SupportsRule,
 			"@supports not (width: 1--foo) { a { width:1px } }",

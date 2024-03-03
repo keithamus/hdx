@@ -1,19 +1,17 @@
 use hdx_lexer::Token;
 use hdx_parser::{unexpected, unexpected_ident, Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
-#[cfg(feature = "serde")]
-use serde::Serialize;
 
 use crate::{Atomizable, Value, Writable};
 use smallvec::{smallvec, SmallVec};
 
 // https://drafts.csswg.org/css-animations-2/#animation-fill-mode
 #[derive(Value, Default, Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct AnimationFillMode(pub SmallVec<[SingleAnimationFillMode; 8]>);
 
 #[derive(Atomizable, Writable, Default, Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub enum SingleAnimationFillMode {
 	#[default]
 	None, // atom!("none")

@@ -6,13 +6,11 @@ use hdx_parser::{
 	unexpected, unexpected_ident, Declaration, DeclarationValue, Parse, Parser, Result as ParserResult, State,
 };
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
-#[cfg(feature = "serde")]
-use serde::Serialize;
 
 use crate::{css::values, syntax::ComponentValues};
 
 #[derive(PartialEq, Debug, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct Custom<'a>(pub ComponentValues<'a>);
 
 impl<'a> WriteCss<'a> for Custom<'a> {
@@ -31,7 +29,7 @@ impl<'a> Parse<'a> for Custom<'a> {
 }
 
 #[derive(PartialEq, Debug, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct Computed<'a>(pub ComponentValues<'a>);
 
 impl<'a> WriteCss<'a> for Computed<'a> {
@@ -50,7 +48,7 @@ impl<'a> Parse<'a> for Computed<'a> {
 }
 
 #[derive(PartialEq, Debug, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct Unknown<'a>(pub ComponentValues<'a>);
 
 impl<'a> Parse<'a> for Unknown<'a> {
@@ -69,7 +67,7 @@ impl<'a> WriteCss<'a> for Unknown<'a> {
 }
 
 #[derive(PartialEq, Debug, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct Property<'a> {
 	name: Atom,
 	value: StyleValue<'a>,
@@ -186,7 +184,7 @@ macro_rules! properties {
         $name: ident$(<$a: lifetime>)?: $atom: pat,
     )+ ) => {
 		#[derive(PartialEq, Debug, Hash)]
-		#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+		#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 		pub enum StyleValue<'a> {
 			Initial,
 			Inherit,
@@ -1328,6 +1326,10 @@ properties! {
 	Zoom: atom!("zoom"),
 
 	// Webkit NonStandards
+	WebkitAnimationDuration: atom!("-webkit-animation-duration"),
+	WebkitAnimationDelay: atom!("-webkit-animation-delay"),
+	WebkitAnimationFillMode: atom!("-webkit-animation-fill-mode"),
+	WebkitAnimationIterationCount: atom!("-webkit-animation-iteration-count"),
 	// WebkitTextSizeAdjust: atom!("-webkit-text-size-adjust"),
 	// WebkitTextDecoration: atom!("-webkit-text-decoration"),
 	// WebkitTapHighlightColor: atom!("-webkit-tap-highlight-color"),

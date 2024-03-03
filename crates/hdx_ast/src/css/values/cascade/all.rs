@@ -1,11 +1,9 @@
 use hdx_parser::{Parse, Parser, Result as ParserResult, Span, Spanned};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
-#[cfg(feature = "serde")]
-use serde::Serialize;
 
 // https://drafts.csswg.org/css-cascade-5/#propdef-all
 #[derive(Default, Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct All();
 
 impl<'a> Parse<'a> for All {

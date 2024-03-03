@@ -1,11 +1,8 @@
-#[cfg(feature = "serde")]
-use serde::Serialize;
-
 use crate::{css::values::units::LengthPercentage, Parsable, Value, Writable};
 
 #[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Hash)]
 #[value(Inherits)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub enum FontSize {
 	XxSmall, // atom!("xx-small")
 	XSmall,  // atom!("x-small")

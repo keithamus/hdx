@@ -1,10 +1,7 @@
-#[cfg(feature = "serde")]
-use serde::Serialize;
-
 use crate::{css::values::units::LengthPercentage, Parsable, Value, Writable};
 
 #[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub enum Top {
 	#[default]
 	Auto, // atom!("auto"),

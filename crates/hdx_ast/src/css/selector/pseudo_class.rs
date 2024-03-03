@@ -1,10 +1,7 @@
-#[cfg(feature = "serde")]
-use serde::Serialize;
-
 use crate::Atomizable;
 
 #[derive(Atomizable, Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(rename_all = "kebab-case"))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(rename_all = "kebab-case"))]
 pub enum PseudoClass {
 	Active,           // atom!("active")
 	AnyLink,          // atom!("any-link")

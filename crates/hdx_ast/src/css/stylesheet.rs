@@ -3,8 +3,6 @@ use hdx_derive::Atomizable;
 use hdx_lexer::Token;
 use hdx_parser::{diagnostics, Parse, Parser, Result as ParserResult, StyleSheet as StyleSheetTrait};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
-#[cfg(feature = "serde")]
-use serde::Serialize;
 
 use crate::{
 	css::{
@@ -17,7 +15,7 @@ use crate::{
 
 // https://drafts.csswg.org/cssom-1/#the-cssstylesheet-interface
 #[derive(Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
 pub struct StyleSheet<'a> {
 	pub rules: Vec<'a, Spanned<Rule<'a>>>,
 }
@@ -48,7 +46,7 @@ impl<'a> WriteCss<'a> for StyleSheet<'a> {
 
 // https://drafts.csswg.org/cssom-1/#the-cssrule-interface
 #[derive(PartialEq, Debug, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(untagged))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(untagged))]
 pub enum Rule<'a> {
 	Charset(CharsetRule),
 	Page(PageRule<'a>),
@@ -107,7 +105,7 @@ impl<'a> WriteCss<'a> for Rule<'a> {
 }
 
 #[derive(Atomizable, PartialEq, Debug, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(untagged))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(untagged))]
 pub enum AtRuleId {
 	Charset, // atom!("charset")
 	Page,    // atom!("page")

@@ -1,12 +1,9 @@
-#[cfg(feature = "serde")]
-use serde::Serialize;
-
 use smallvec::{smallvec, SmallVec};
 
 use hdx_atom::{atom, Atom};
 use hdx_lexer::Token;
 use hdx_parser::{
-	diagnostics, expect_ignore_case, match_ident_ignore_case, peek, unexpected, unexpected_ident, AtRule, RuleGroup,
+	diagnostics, expect, expect_ignore_case, match_ident_ignore_case, peek, unexpected, unexpected_ident, AtRule, RuleGroup,
 	FromToken, Parse, Parser, Result as ParserResult, Spanned, Vec,
 };
 use hdx_writer::{CssWriter, OutputOption, Result as WriterResult, WriteCss};
@@ -18,7 +15,7 @@ use features::*;
 
 // https://drafts.csswg.org/mediaqueries-4/
 #[derive(PartialEq, Debug, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
 pub struct MediaRule<'a> {
 	pub query: Spanned<MediaQueryList>,
 	pub rules: Spanned<MediaRules<'a>>,
@@ -69,7 +66,7 @@ impl<'a> WriteCss<'a> for MediaRule<'a> {
 }
 
 #[derive(PartialEq, Debug, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct MediaRules<'a>(pub Vec<'a, Spanned<StyleRule<'a>>>);
 
 impl<'a> Parse<'a> for MediaRules<'a> {
@@ -96,7 +93,7 @@ impl<'a> WriteCss<'a> for MediaRules<'a> {
 }
 
 #[derive(Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct MediaQueryList(pub SmallVec<[Spanned<MediaQuery>; 1]>);
 
 impl<'a> Parse<'a> for MediaQueryList {
@@ -129,7 +126,7 @@ impl<'a> WriteCss<'a> for MediaQueryList {
 }
 
 #[derive(Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub enum MediaQuery {
 	Condition(MediaCondition),
 	Typed(MediaType),
@@ -249,7 +246,7 @@ impl<'a> WriteCss<'a> for MediaQuery {
 }
 
 #[derive(Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
 pub enum MediaCondition {
 	Is(MediaFeature),
 	Not(MediaFeature),
@@ -332,96 +329,86 @@ impl<'a> WriteCss<'a> for MediaCondition {
 	}
 }
 
-#[derive(Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
-pub enum MediaFeature {
-	Height(HeightMediaFeature),
-	Width(WidthMediaFeature),
-	AspectRatio(AspectRatioMediaFeature),
-	Orientation(OrientationMediaFeature),
-	Resolution(ResolutionMediaFeature),
-	Scan(ScanMediaFeature),
-	Grid(GridMediaFeature),
-	Update(UpdateMediaFeature),
-	OverflowBlock(OverflowBlockMediaFeature),
-	OverflowInline(OverflowInlineMediaFeature),
-	Color(ColorMediaFeature),
-	ColorIndex(ColorIndexMediaFeature),
-	Monochrome(MonochromeMediaFeature),
-	ColorGamut(ColorGamutMediaFeature),
-	Pointer(PointerMediaFeature),
-	Hover(HoverMediaFeature),
-	AnyPointer(AnyPointerMediaFeature),
-	AnyHover(AnyHoverMediaFeature),
-	DeviceWidth(DeviceWidthMediaFeature),
-	DeviceHeight(DeviceHeightMediaFeature),
-	DeviceAspectRatio(DeviceAspectRatioMediaFeature),
-}
+macro_rules! media_features {
+	( $($name: ident($typ: ident): atom!($atom: tt),)+ ) => {
+		// https://drafts.csswg.org/mediaqueries-5/#media-descriptor-table
+		#[derive(Debug, PartialEq, Hash)]
+		#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
+		pub enum MediaFeature {
+			$($name($typ),)+
+		}
 
-impl<'a> Parse<'a> for MediaFeature {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		match parser.peek().clone() {
-			Token::Ident(ident) => match ident.to_ascii_lowercase() {
-				atom!("height") => Ok(Self::Height(HeightMediaFeature::parse(parser)?)),
-				atom!("width") => Ok(Self::Width(WidthMediaFeature::parse(parser)?)),
-				atom!("aspect-ratio") => Ok(Self::AspectRatio(AspectRatioMediaFeature::parse(parser)?)),
-				atom!("orientation") => Ok(Self::Orientation(OrientationMediaFeature::parse(parser)?)),
-				atom!("resolution") => Ok(Self::Resolution(ResolutionMediaFeature::parse(parser)?)),
-				atom!("scan") => Ok(Self::Scan(ScanMediaFeature::parse(parser)?)),
-				atom!("grid") => Ok(Self::Grid(GridMediaFeature::parse(parser)?)),
-				atom!("update") => Ok(Self::Update(UpdateMediaFeature::parse(parser)?)),
-				atom!("overflow-block") => Ok(Self::OverflowBlock(OverflowBlockMediaFeature::parse(parser)?)),
-				atom!("overflow-inline") => Ok(Self::OverflowInline(OverflowInlineMediaFeature::parse(parser)?)),
-				atom!("color") => Ok(Self::Color(ColorMediaFeature::parse(parser)?)),
-				atom!("color-index") => Ok(Self::ColorIndex(ColorIndexMediaFeature::parse(parser)?)),
-				atom!("monochrome") => Ok(Self::Monochrome(MonochromeMediaFeature::parse(parser)?)),
-				atom!("color-gamut") => Ok(Self::ColorGamut(ColorGamutMediaFeature::parse(parser)?)),
-				atom!("pointer") => Ok(Self::Pointer(PointerMediaFeature::parse(parser)?)),
-				atom!("hover") => Ok(Self::Hover(HoverMediaFeature::parse(parser)?)),
-				atom!("any-pointer") => Ok(Self::AnyPointer(AnyPointerMediaFeature::parse(parser)?)),
-				atom!("any-hover") => Ok(Self::AnyHover(AnyHoverMediaFeature::parse(parser)?)),
-				atom!("device-width") => Ok(Self::DeviceWidth(DeviceWidthMediaFeature::parse(parser)?)),
-				atom!("device-height") => Ok(Self::DeviceHeight(DeviceHeightMediaFeature::parse(parser)?)),
-				atom!("device-aspect-ratio") => {
-					Ok(Self::DeviceAspectRatio(DeviceAspectRatioMediaFeature::parse(parser)?))
+		impl<'a> Parse<'a> for MediaFeature {
+			fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
+				expect!(parser, Token::LeftParen);
+				parser.advance();
+				let value = match parser.cur() {
+					Token::Ident(ident) => match ident.to_ascii_lowercase() {
+						$(atom!($atom) => Self::$name($typ::parse(parser)?),)+
+						_ => unexpected_ident!(parser, ident),
+					},
+					token => unexpected!(parser, token),
+				};
+				expect!(parser, Token::RightParen);
+				parser.advance();
+				Ok(value)
+			}
+		}
+
+		impl<'a> WriteCss<'a> for MediaFeature {
+			fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
+				sink.write_char('(')?;
+				match self {
+					$(Self::$name(f) => f.write_css(sink)?,)+
 				}
-				_ => unexpected_ident!(parser, ident),
-			},
-			token => unexpected!(parser, token),
+				sink.write_char(')')
+			}
 		}
 	}
 }
 
-impl<'a> WriteCss<'a> for MediaFeature {
-	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
-		match self {
-			Self::Height(f) => f.write_css(sink),
-			Self::Width(f) => f.write_css(sink),
-			Self::AspectRatio(f) => f.write_css(sink),
-			Self::Orientation(f) => f.write_css(sink),
-			Self::Resolution(f) => f.write_css(sink),
-			Self::Scan(f) => f.write_css(sink),
-			Self::Grid(f) => f.write_css(sink),
-			Self::Update(f) => f.write_css(sink),
-			Self::OverflowBlock(f) => f.write_css(sink),
-			Self::OverflowInline(f) => f.write_css(sink),
-			Self::Color(f) => f.write_css(sink),
-			Self::ColorIndex(f) => f.write_css(sink),
-			Self::Monochrome(f) => f.write_css(sink),
-			Self::ColorGamut(f) => f.write_css(sink),
-			Self::Pointer(f) => f.write_css(sink),
-			Self::Hover(f) => f.write_css(sink),
-			Self::AnyPointer(f) => f.write_css(sink),
-			Self::AnyHover(f) => f.write_css(sink),
-			Self::DeviceWidth(f) => f.write_css(sink),
-			Self::DeviceHeight(f) => f.write_css(sink),
-			Self::DeviceAspectRatio(f) => f.write_css(sink),
-		}
-	}
-}
+media_features!(
+	AnyHover(AnyHoverMediaFeature): atom!("any-hover"),
+	AnyPointer(AnyPointerMediaFeature): atom!("any-pointer"),
+	AspectRatio(AspectRatioMediaFeature): atom!("aspect-ratio"),
+	Color(ColorMediaFeature): atom!("color"),
+	ColorGamut(ColorGamutMediaFeature): atom!("color-gamut"),
+	ColorIndex(ColorIndexMediaFeature): atom!("color-index"),
+	DeviceAspectRatio(DeviceAspectRatioMediaFeature): atom!("device-aspect-ratio"),
+	DeviceHeight(DeviceHeightMediaFeature): atom!("device-height"),
+	DeviceWidth(DeviceWidthMediaFeature): atom!("device-width"),
+	DisplayMode(DisplayModeMediaFeature): atom!("display-mode"),
+	DynamicRange(DynamicRangeMediaFeature): atom!("dynamic-range"),
+	EnvironmentBlending(EnvironmentBlendingMediaFeature): atom!("environment-blending"),
+	ForcedColors(ForcedColorsMediaFeature): atom!("forced-colors"),
+	Grid(GridMediaFeature): atom!("grid"),
+	Height(HeightMediaFeature): atom!("height"),
+	// HorizontalViewportSegments(HorizontalViewportSegmentsMediaFeature): atom!("horizontal-viewport-segments"),
+	Hover(HoverMediaFeature): atom!("hover"),
+	InvertedColors(InvertedColorsMediaFeature): atom!("inverted-colors"),
+	Monochrome(MonochromeMediaFeature): atom!("monochrome"),
+	NavControls(NavControlsMediaFeature): atom!("nav-controls"),
+	Orientation(OrientationMediaFeature): atom!("orientation"),
+	OverflowBlock(OverflowBlockMediaFeature): atom!("overflow-block"),
+	OverflowInline(OverflowInlineMediaFeature): atom!("overflow-inline"),
+	Pointer(PointerMediaFeature): atom!("pointer"),
+	PrefersColorScheme(PrefersColorSchemeMediaFeature): atom!("prefers-color-scheme"),
+	PrefersContrast(PrefersContrastMediaFeature): atom!("prefers-contrast"),
+	PrefersReducedData(PrefersReducedDataMediaFeature): atom!("prefers-reduced-data"),
+	PrefersReducedMotion(PrefersReducedMotionMediaFeature): atom!("prefers-reduced-motion"),
+	PrefersReducedTransparency(PrefersReducedTransparencyMediaFeature): atom!("prefers-reduced-transparency"),
+	Resolution(ResolutionMediaFeature): atom!("resolution"),
+	Scan(ScanMediaFeature): atom!("scan"),
+	Scripting(ScriptingMediaFeature): atom!("scripting"),
+	Update(UpdateMediaFeature): atom!("update"),
+	// VerticalViewportSegments(VerticalViewportSegmentsMediaFeature): atom!("vertical-viewport-segments"),
+	VideoColorGamut(VideoColorGamutMediaFeature): atom!("video-color-gamut"),
+	VideoDynamicRange(VideoDynamicRangeMediaFeature): atom!("video-dynamic-range"),
+	Width(WidthMediaFeature): atom!("width"),
+);
 
 #[derive(Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
 pub enum MediaType {
 	All,          // atom!("all")
 	Print,        // atom!("print")
@@ -482,6 +469,7 @@ mod tests {
 		assert_parse!(MediaQuery, "screen and (hover) and (pointer)");
 		// assert_parse!(MediaQuery, "screen and (orientation: landscape)");
 		assert_parse!(MediaRule, "@media print {\n\n}");
+		assert_parse!(MediaRule, "@media print, (prefers-reduced-motion: reduce) {\n\n}");
 		// assert_parse!(MediaRule, "@media (min-width: 1200px) {\n\n}");
 		// assert_parse!(MediaRUle, "@media only screen and (max-device-width: 800px), only screen and (device-width: 1024px) and (device-height: 600px), only screen and (width: 1280px) and (orientation: landscape), only screen and (device-width: 800px), only screen and (max-width: 767px)");
 	}

@@ -330,20 +330,15 @@ pub trait MediaFeature<'a>: Sized + Default {
 	fn parse_media_feature_value(parser: &mut Parser<'a>) -> Result<Self>;
 
 	fn parse_media_feature(name: Atom, parser: &mut Parser<'a>) -> Result<Self> {
-		expect!(parser, Token::LeftParen);
-		parser.advance();
 		expect_ignore_case!(parser, name);
 		parser.advance();
 		let value = match parser.cur() {
-			Token::RightParen => Self::default(),
 			Token::Colon => {
 				parser.advance();
 				Self::parse_media_feature_value(parser)?
 			}
-			token => unexpected!(parser, token),
+			_ => Self::default(),
 		};
-		expect!(parser, Token::RightParen);
-		parser.advance();
 		Ok(value)
 	}
 }

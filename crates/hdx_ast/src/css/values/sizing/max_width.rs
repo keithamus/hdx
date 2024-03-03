@@ -1,12 +1,9 @@
-#[cfg(feature = "serde")]
-use serde::Serialize;
-
 use super::super::units::LengthPercentage;
-use crate::{Value, Parsable, Writable};
+use crate::{Parsable, Value, Writable};
 
 // https://drafts.csswg.org/css-sizing-4/#sizing-values
 #[derive(Value, Parsable, Writable, Default, Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type", rename_all = "kebab-case"))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", rename_all = "kebab-case"))]
 pub enum MaxWidth {
 	#[default]
 	None, // atom!("none")

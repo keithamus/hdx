@@ -1,10 +1,7 @@
-#[cfg(feature = "serde")]
-use serde::Serialize;
-
 use crate::{css::values::units::CSSFloat, Parsable, Value, Writable};
 
 #[derive(Value, Parsable, Writable, Default, Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type", content = "value"))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", content = "value"))]
 pub enum ZIndex {
 	#[default]
 	Auto,

@@ -1,8 +1,6 @@
 use hdx_lexer::Token;
 use hdx_parser::{unexpected, FromToken, Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
-#[cfg(feature = "serde")]
-use serde::Serialize;
 
 use super::super::units::Time;
 use crate::Value;
@@ -10,7 +8,7 @@ use smallvec::{smallvec, SmallVec};
 
 // https://drafts.csswg.org/css-animations-2/#animation-duration
 #[derive(Default, Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct AnimationDelay(pub SmallVec<[Time; 2]>);
 
 impl<'a> Value for AnimationDelay {}

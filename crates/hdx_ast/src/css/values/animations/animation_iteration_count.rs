@@ -2,19 +2,17 @@ use hdx_atom::atom;
 use hdx_lexer::Token;
 use hdx_parser::{unexpected, unexpected_ident, Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
-#[cfg(feature = "serde")]
-use serde::Serialize;
 
 use crate::{css::values::units::CSSFloat, Value, Writable};
 use smallvec::{smallvec, SmallVec};
 
 // https://drafts.csswg.org/css-animations-2/#animation-fill-mode
 #[derive(Value, Default, Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct AnimationIterationCount(pub SmallVec<[SingleAnimationIterationCount; 1]>);
 
 #[derive(Writable, Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub enum SingleAnimationIterationCount {
 	Infinite, // atom!("infinite")
 	Number(CSSFloat),

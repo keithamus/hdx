@@ -5,12 +5,10 @@ use hdx_parser::{
 	Result as ParserResult, Span, Spanned, State, Vec,
 };
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
-#[cfg(feature = "serde")]
-use serde::Serialize;
 
 // https://drafts.csswg.org/css-syntax-3/#consume-list-of-components
 #[derive(PartialEq, Debug, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde())]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct ComponentValues<'a>(pub Vec<'a, Spanned<ComponentValue<'a>>>);
 
 impl<'a> Parse<'a> for ComponentValues<'a> {
@@ -43,7 +41,7 @@ impl<'a> WriteCss<'a> for ComponentValues<'a> {
 
 // https://drafts.csswg.org/css-syntax-3/#consume-component-value
 #[derive(PartialEq, Debug, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(untagged))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(untagged))]
 pub enum ComponentValue<'a> {
 	SimpleBlock(SimpleBlock<'a>),
 	Function(Function<'a>),
@@ -126,7 +124,7 @@ impl<'a> WriteCss<'a> for ComponentValue<'a> {
 }
 
 #[derive(PartialEq, Debug, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
 pub struct SimpleBlock<'a> {
 	pub pairwise: PairWise,
 	pub values: Vec<'a, Spanned<ComponentValue<'a>>>,
@@ -178,7 +176,7 @@ impl<'a> WriteCss<'a> for SimpleBlock<'a> {
 }
 
 #[derive(PartialEq, Debug, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
 pub enum Rule<'a> {
 	AtRule(AtRule<'a>),
 	QualifiedRule(QualifiedRule<'a>),
@@ -203,7 +201,7 @@ impl<'a> WriteCss<'a> for Rule<'a> {
 }
 
 #[derive(PartialEq, Debug, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
 pub struct Block<'a> {
 	pub declarations: Vec<'a, Spanned<Declaration<'a>>>,
 	pub rules: Vec<'a, Spanned<Rule<'a>>>,
@@ -222,7 +220,7 @@ impl<'a> BlockTrait<'a> for Block<'a> {
 }
 
 #[derive(PartialEq, Debug, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
 pub struct Declaration<'a> {
 	pub name: Atom,
 	pub value: Spanned<ComponentValues<'a>>,
@@ -293,7 +291,7 @@ impl<'a> WriteCss<'a> for Block<'a> {
 }
 
 #[derive(PartialEq, Debug, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
 pub struct AtRule<'a> {
 	pub name: Atom,
 	pub prelude: Spanned<ComponentValues<'a>>,
@@ -336,7 +334,7 @@ impl<'a> WriteCss<'a> for AtRule<'a> {
 }
 
 #[derive(PartialEq, Debug, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
 pub struct QualifiedRule<'a> {
 	pub prelude: Spanned<ComponentValues<'a>>,
 	pub block: Spanned<Block<'a>>,
@@ -365,7 +363,7 @@ impl<'a> WriteCss<'a> for QualifiedRule<'a> {
 }
 
 #[derive(PartialEq, Debug, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
 pub struct Function<'a> {
 	pub name: Atom,
 	pub values: Vec<'a, Spanned<ComponentValue<'a>>>,

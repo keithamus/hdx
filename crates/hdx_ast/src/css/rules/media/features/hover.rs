@@ -1,65 +1,10 @@
 #[cfg(feature = "serde")]
-use serde::Serialize;
+use crate::macros::discrete_media_feature;
 
-use hdx_atom::atom;
-use hdx_lexer::Token;
-use hdx_parser::{unexpected, unexpected_ident, MediaFeature, Parse, Parser, Result as ParserResult};
-use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
-
-#[derive(PartialEq, Default, Debug, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "type"))]
-pub enum HoverMediaFeature {
-	#[default]
-	Any,
-	None,
-	Hover,
-}
-
-impl<'a> Parse<'a> for HoverMediaFeature {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		Self::parse_media_feature(atom!("hover"), parser)
-	}
-}
-
-impl<'a> MediaFeature<'a> for HoverMediaFeature {
-	fn parse_media_feature_value(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		match parser.cur() {
-			Token::Ident(ident) => match ident.to_ascii_lowercase() {
-				atom!("none") => {
-					parser.advance();
-					Ok(Self::None)
-				}
-				atom!("hover") => {
-					parser.advance();
-					Ok(Self::Hover)
-				}
-				_ => unexpected_ident!(parser, ident),
-			},
-			token => unexpected!(parser, token),
-		}
-	}
-}
-
-impl<'a> WriteCss<'a> for HoverMediaFeature {
-	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
-		sink.write_char('(')?;
-		atom!("hover").write_css(sink)?;
-		match self {
-			Self::None => {
-				sink.write_char(':')?;
-				sink.write_whitespace()?;
-				atom!("none").write_css(sink)?;
-			}
-			Self::Hover => {
-				sink.write_char(':')?;
-				sink.write_whitespace()?;
-				atom!("hover").write_css(sink)?;
-			}
-			Self::Any => {}
-		}
-		sink.write_char(')')
-	}
-}
+discrete_media_feature!(HoverMediaFeature[atom!("hover")] {
+	None: atom!("none"),
+	Hover: atom!("hover"),
+});
 
 #[cfg(test)]
 mod tests {
@@ -73,20 +18,20 @@ mod tests {
 
 	#[test]
 	fn test_writes() {
-		assert_parse!(HoverMediaFeature, "(hover)");
-		assert_parse!(HoverMediaFeature, "(hover: hover)");
-		assert_parse!(HoverMediaFeature, "(hover: none)");
+		assert_parse!(HoverMediaFeature, "hover");
+		assert_parse!(HoverMediaFeature, "hover: hover");
+		assert_parse!(HoverMediaFeature, "hover: none");
 	}
 
 	#[test]
 	fn test_minify() {
-		assert_minify!(HoverMediaFeature, "(hover: hover)", "(hover:hover)");
-		assert_minify!(HoverMediaFeature, "(hover: none)", "(hover:none)");
+		assert_minify!(HoverMediaFeature, "hover: hover", "hover:hover");
+		assert_minify!(HoverMediaFeature, "hover: none", "hover:none");
 	}
 
 	#[test]
 	fn test_errors() {
-		assert_parse_error!(HoverMediaFeature, "(hover:)");
-		assert_parse_error!(HoverMediaFeature, "(hover: hoover)");
+		assert_parse_error!(HoverMediaFeature, "hover:");
+		assert_parse_error!(HoverMediaFeature, "hover: hoover");
 	}
 }
