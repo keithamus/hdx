@@ -1,3 +1,4 @@
+mod animation;
 mod animation_composition;
 mod animation_delay;
 mod animation_direction;
@@ -9,6 +10,7 @@ mod animation_name;
 mod animation_play_state;
 mod animation_timeline;
 mod animation_timing_function;
+pub use animation::*;
 pub use animation_composition::*;
 pub use animation_delay::*;
 pub use animation_direction::*;

@@ -5,6 +5,8 @@ use std::{
 };
 
 use hdx_derive::Writable;
+use hdx_lexer::Token;
+use hdx_parser::FromToken;
 
 // CSS floats are different to f32s in that they do not represent NaN
 #[derive(Writable, Debug, Clone, Copy, PartialEq)]
@@ -100,4 +102,13 @@ impl PartialOrd<f32> for CSSFloat {
 	fn partial_cmp(&self, rhs: &f32) -> Option<std::cmp::Ordering> {
 		self.0.partial_cmp(rhs)
 	}
+}
+
+impl FromToken for CSSFloat {
+    fn from_token(token: hdx_lexer::Token) -> Option<Self> {
+		match token {
+			Token::Number(f, _) => Some(f.into()),
+			_ => None
+		}
+    }
 }
