@@ -372,7 +372,7 @@ class HdxViewer extends HTMLElement {
         } else if (this.format === "errors") {
           const start = performance.now();
           const { diagnostics } = parse(this.code);
-          this.dispatchEvent(new MetricEvent("parseend"));
+          this.dispatchEvent(new MetricEvent("parseend", performance.now() - start));
           const report = parse_error_report(this.code);
           this.view.dispatch(
             this.view.state.update({
