@@ -7,11 +7,9 @@ use crate::Value;
 use smallvec::{smallvec, SmallVec};
 
 // https://drafts.csswg.org/css-animations-2/#animation-duration
-#[derive(Default, Debug, PartialEq, Hash)]
+#[derive(Value, Default, Debug, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct AnimationDelay(pub SmallVec<[Time; 2]>);
-
-impl<'a> Value for AnimationDelay {}
 
 impl<'a> Parse<'a> for AnimationDelay {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
