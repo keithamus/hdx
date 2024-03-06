@@ -9,20 +9,13 @@
             "end": 6,
             "node": [
               {
-                "end": 6,
-                "node": {
-                  "components": [
-                    {
-                      "end": 5,
-                      "node": {
-                        "type": "PseudoClass",
-                        "value": "root"
-                      },
-                      "start": 0
-                    }
-                  ],
-                  "type": "Selector"
-                },
+                "end": 7,
+                "node": [
+                  {
+                    "type": "PseudoClass",
+                    "value": "root"
+                  }
+                ],
                 "start": 0
               }
             ],

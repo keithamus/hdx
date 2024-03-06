@@ -9,20 +9,13 @@
             "end": 6,
             "node": [
               {
-                "end": 6,
-                "node": {
-                  "components": [
-                    {
-                      "end": 5,
-                      "node": {
-                        "type": "PseudoClass",
-                        "value": "root"
-                      },
-                      "start": 0
-                    }
-                  ],
-                  "type": "Selector"
-                },
+                "end": 7,
+                "node": [
+                  {
+                    "type": "PseudoClass",
+                    "value": "root"
+                  }
+                ],
                 "start": 0
               }
             ],
@@ -893,20 +886,13 @@
             "end": 484,
             "node": [
               {
-                "end": 484,
-                "node": {
-                  "components": [
-                    {
-                      "end": 484,
-                      "node": {
-                        "type": "PseudoClass",
-                        "value": "root"
-                      },
-                      "start": 477
-                    }
-                  ],
-                  "type": "Selector"
-                },
+                "end": 485,
+                "node": [
+                  {
+                    "type": "PseudoClass",
+                    "value": "root"
+                  }
+                ],
                 "start": 477
               }
             ],
@@ -958,20 +944,13 @@
             "end": 509,
             "node": [
               {
-                "end": 509,
-                "node": {
-                  "components": [
-                    {
-                      "end": 508,
-                      "node": {
-                        "type": "Class",
-                        "value": "semicolon-less"
-                      },
-                      "start": 491
-                    }
-                  ],
-                  "type": "Selector"
-                },
+                "end": 510,
+                "node": [
+                  {
+                    "type": "Class",
+                    "value": "semicolon-less"
+                  }
+                ],
                 "start": 491
               }
             ],
@@ -1009,20 +988,13 @@
             "end": 536,
             "node": [
               {
-                "end": 536,
-                "node": {
-                  "components": [
-                    {
-                      "end": 536,
-                      "node": {
-                        "type": "Class",
-                        "value": "empty"
-                      },
-                      "start": 528
-                    }
-                  ],
-                  "type": "Selector"
-                },
+                "end": 537,
+                "node": [
+                  {
+                    "type": "Class",
+                    "value": "empty"
+                  }
+                ],
                 "start": 528
               }
             ],

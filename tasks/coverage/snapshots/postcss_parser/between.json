@@ -9,20 +9,13 @@
             "end": 1,
             "node": [
               {
-                "end": 1,
-                "node": {
-                  "components": [
-                    {
-                      "end": 1,
-                      "node": {
-                        "type": "Type",
-                        "value": "a"
-                      },
-                      "start": 0
-                    }
-                  ],
-                  "type": "Selector"
-                },
+                "end": 7,
+                "node": [
+                  {
+                    "type": "Type",
+                    "value": "a"
+                  }
+                ],
                 "start": 0
               }
             ],
