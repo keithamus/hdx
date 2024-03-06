@@ -26,6 +26,13 @@ macro_rules! unexpected_ident {
 }
 
 #[macro_export]
+macro_rules! unexpected_function {
+	($parser: ident, $atom: ident) => {
+		Err($crate::diagnostics::UnexpectedFunction($atom, $parser.span()))?
+	};
+}
+
+#[macro_export]
 macro_rules! expect {
 	($parser: ident, $pattern:pat $(if $guard:expr)? $(,)?) => {
 		match $parser.cur() {

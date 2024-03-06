@@ -2,7 +2,7 @@ use hdx_parser::{Block, Parse, Parser, QualifiedRule, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss, OutputOption};
 
 use crate::{
-	css::{properties::Property, selector::Selectors},
+	css::{properties::Property, selector::SelectorList},
 	Spanned, Vec,
 };
 
@@ -10,7 +10,7 @@ use crate::{
 #[derive(PartialEq, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
 pub struct StyleRule<'a> {
-	pub selectors: Spanned<Selectors<'a>>,
+	pub selectors: Spanned<SelectorList<'a>>,
 	pub style: Spanned<StyleDeclaration<'a>>,
 }
 
@@ -23,7 +23,7 @@ impl<'a> Parse<'a> for StyleRule<'a> {
 
 impl<'a> QualifiedRule<'a> for StyleRule<'a> {
 	type Block = StyleDeclaration<'a>;
-	type Prelude = Selectors<'a>;
+	type Prelude = SelectorList<'a>;
 }
 
 impl<'a> WriteCss<'a> for StyleRule<'a> {
@@ -94,7 +94,7 @@ mod test {
 
 	#[test]
 	fn size_test() {
-		assert_size!(StyleRule, 136);
+		assert_size!(StyleRule, 112);
 	}
 
 	#[test]

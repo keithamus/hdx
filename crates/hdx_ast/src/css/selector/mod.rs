@@ -1,47 +1,49 @@
 use hdx_atom::Atom;
 use hdx_lexer::Token;
 use hdx_parser::{
-	diagnostics, discard, expect, peek, unexpected, unexpected_ident, Parse, Parser, Result as ParserResult, Span,
-	Spanned,
+	FromToken, Parse, Parser, Result as ParserResult, SelectorComponent as SelectorComponentTrait,
+	SelectorList as SelectorListTrait, Spanned,
 };
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
-use smallvec::{smallvec, SmallVec};
 
 use crate::{Atomizable, Vec};
 
+mod anb;
 mod attribute;
+mod combinator;
+mod functional_pseudo_class;
+mod functional_pseudo_element;
 mod pseudo_class;
+mod pseudo_element;
 
-use attribute::Attribute;
-use pseudo_class::PseudoClass;
+use anb::*;
+use attribute::*;
+use combinator::*;
+use functional_pseudo_class::*;
+use functional_pseudo_element::*;
+use pseudo_class::*;
+use pseudo_element::*;
 
 #[derive(PartialEq, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-pub struct Selectors<'a>(pub SmallVec<[Spanned<Selector<'a>>; 1]>);
+pub struct SelectorList<'a>(pub Vec<'a, Spanned<Vec<'a, SelectorComponent<'a>>>>);
 
-impl<'a> Parse<'a> for Selectors<'a> {
+impl<'a> Parse<'a> for SelectorList<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let mut selectors = smallvec![];
-		loop {
-			selectors.push(Selector::parse_spanned(parser)?);
-			discard!(parser, Token::Whitespace);
-			match parser.cur() {
-				Token::Comma => {
-					parser.advance();
-				}
-				_ => break,
-			}
-		}
-		Ok(Selectors(selectors))
+		Ok(Self(Self::parse_selector_list(parser)?))
 	}
 }
 
-impl<'a> WriteCss<'a> for Selectors<'a> {
+impl<'a> SelectorListTrait<'a> for SelectorList<'a> {
+	type SelectorComponent = SelectorComponent<'a>;
+}
+
+impl<'a> WriteCss<'a> for SelectorList<'a> {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
-		let mut iter = self.0.iter().peekable();
-		while let Some(selector) = iter.next() {
+		let mut selectors = self.0.iter().peekable();
+		while let Some(selector) = selectors.next() {
 			selector.write_css(sink)?;
-			if iter.peek().is_some() {
+			if selectors.peek().is_some() {
 				sink.write_char(',')?;
 				sink.write_whitespace()?;
 			}
@@ -50,98 +52,15 @@ impl<'a> WriteCss<'a> for Selectors<'a> {
 	}
 }
 
-// This encapsulates both `simple-selector` and `compound-selector`.
-// As `simple-selector` is a `compound-selector` but with only one `Component`.
-// Having `Selector` be both ` simple-selector` and `compound-selector` makes
-// parsing and visiting more practical.
-#[derive(PartialEq, Debug, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
-pub struct Selector<'a> {
-	pub components: Vec<'a, Spanned<Component<'a>>>,
-}
-
-impl<'a> Parse<'a> for Selector<'a> {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		discard!(parser, Token::Whitespace);
-
-		let mut components: Vec<'a, Spanned<Component>> = parser.new_vec();
-		loop {
-			match parser.cur() {
-				Token::Eof | Token::Semicolon | Token::Comma | Token::LeftCurly => {
-					break;
-				}
-				Token::Whitespace if peek!(parser, Token::Eof | Token::Semicolon | Token::Comma | Token::LeftCurly) => {
-					break;
-				}
-				token @ Token::RightCurly => unexpected!(parser, token),
-				_ => {
-					let span = parser.span();
-					let component = Component::parse_spanned(parser)?;
-					if let Some(Spanned { node, span: component_span }) = components.last() {
-						match (node, &component.node) {
-							// A selector like `a /**/ b` would parse as // <Type>, <Descendant>,
-							// <Descendant>, <Type>. The CSS selector grammar implicitly swallows adjacent
-							// descendant combinators as whitespace, but due to simplifying AST nodes in our
-							// parser, it means we must explicitly check for, and elide adjacent descendant
-							// combinators. Adjacent Descendant Combinator Elision is the name of my metal
-							// band, btw.
-							(Component::Combinator(_), Component::Combinator(Combinator::Descendant))
-							| (Component::Combinator(Combinator::Descendant), Component::Combinator(_)) => {
-								continue;
-							}
-							// Combinators cannot be next to eachother.
-							(Component::Combinator(_), Component::Combinator(_)) => {
-								Err(diagnostics::AdjacentSelectorCombinators(
-									*component_span,
-									Span::new(span.start, component_span.start),
-								))?
-							}
-							// Types cannot be next to eachother.
-							(Component::Type(_), Component::Type(_)) => Err(diagnostics::AdjacentSelectorTypes(
-								*component_span,
-								Span::new(span.start, component_span.start),
-							))?,
-							_ => {}
-						}
-					}
-					components.push(component);
-				}
-			}
-		}
-		// Given selector parsing is Whitespace sensitive, trailing whitespace should be
-		// discarded before moving onto the next parser which is likely a block parser
-		discard!(parser, Token::Whitespace);
-		Ok(Self { components })
-	}
-}
-
-impl<'a> WriteCss<'a> for Selector<'a> {
-	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
-		for component in &(*self.components) {
-			component.write_css(sink)?;
-		}
-		Ok(())
-	}
-}
-
-#[derive(PartialEq, Debug, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
-pub struct ForgivingSelector<'a> {
-	pub components: Vec<'a, Spanned<Component<'a>>>,
-}
-
-#[derive(PartialEq, Debug, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
-pub struct RelativeSelector<'a> {
-	pub components: Vec<'a, Spanned<Component<'a>>>,
-}
+pub type ForgivingSelector<'a> = SelectorList<'a>;
+pub type RelativeSelector<'a> = SelectorList<'a>;
 
 // This encapsulates all `simple-selector` subtypes (e.g. `wq-name`,
 // `id-selector`) into one enum, as it makes parsing and visiting much more
 // practical.
 #[derive(PartialEq, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", content = "value"))]
-pub enum Component<'a> {
+pub enum SelectorComponent<'a> {
 	Id(Atom),
 	Class(Atom),
 	Type(Atom),
@@ -151,90 +70,71 @@ pub enum Component<'a> {
 	PseudoClass(PseudoClass),
 	PseudoElement(PseudoElement),
 	LegacyPseudoElement(LegacyPseudoElement),
-	PseudoFunction(PseudoFunction<'a>),
+	FunctionalPseudoClass(FunctionalPseudoClass<'a>),
+	FunctionalPseudoElement(FunctionalPseudoElement<'a>),
 	NSPrefixedType((NSPrefix, Atom)),
 	NSPrefixedWildcard(NSPrefix),
 }
 
-impl<'a> Parse<'a> for Component<'a> {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		match parser.cur() {
-			Token::Whitespace => {
-				parser.advance();
-				Ok(Self::Combinator(Combinator::Descendant))
+impl<'a> SelectorComponentTrait<'a> for SelectorComponent<'a> {
+	fn wildcard() -> Self {
+		Self::Wildcard
+	}
+
+	fn id_from_atom(atom: Atom) -> Option<Self> {
+		Some(Self::Id(atom))
+	}
+
+	fn class_from_atom(atom: Atom) -> Option<Self> {
+		Some(Self::Class(atom))
+	}
+
+	fn type_from_atom(atom: Atom) -> Option<Self> {
+		Some(Self::Type(atom))
+	}
+
+	fn pseudo_class_from_atom(atom: Atom) -> Option<Self> {
+		PseudoClass::from_atom(atom).map(Self::PseudoClass)
+	}
+
+	fn legacy_pseudo_element_from_token(atom: Atom) -> Option<Self> {
+		LegacyPseudoElement::from_atom(atom).map(Self::LegacyPseudoElement)
+	}
+
+	fn pseudo_element_from_atom(atom: Atom) -> Option<Self> {
+		PseudoElement::from_atom(atom).map(Self::PseudoElement)
+	}
+
+	fn ns_type_from_token(ns_token: &Token, type_token: &Token) -> Option<Self> {
+		if let Some(prefix) = NSPrefix::from_token(ns_token.clone()) {
+			match type_token {
+				Token::Ident(atom) => Some(Self::NSPrefixedType((prefix, atom.clone()))),
+				Token::Delim('*') => Some(Self::NSPrefixedWildcard(prefix)),
+				_ => None,
 			}
-			Token::Ident(name) => {
-				parser.advance_including_whitespace();
-				Ok(Self::Type(name.to_ascii_lowercase()))
-			}
-			Token::Colon => {
-				parser.advance_including_whitespace();
-				match parser.cur() {
-					Token::Colon => {
-						parser.advance_including_whitespace();
-						match parser.cur() {
-							Token::Ident(name) => {
-								if let Some(selector) = PseudoElement::from_atom(name.clone()) {
-									parser.advance_including_whitespace();
-									Ok(Self::PseudoElement(selector))
-								} else {
-									unexpected_ident!(parser, name)
-								}
-							}
-							token => unexpected!(parser, token),
-						}
-					}
-					Token::Ident(ident) => {
-						if let Some(selector) = PseudoClass::from_atom(ident.clone()) {
-							parser.advance_including_whitespace();
-							Ok(Self::PseudoClass(selector))
-						} else if let Some(e) = LegacyPseudoElement::from_atom(ident.clone()) {
-							parser.advance_including_whitespace();
-							Ok(Self::LegacyPseudoElement(e))
-						} else {
-							Err(diagnostics::UnexpectedIdent(ident, parser.span()))?
-						}
-					}
-					_ => Err(diagnostics::Unimplemented(parser.span()))?,
-				}
-			}
-			Token::Hash(name) => {
-				parser.advance_including_whitespace();
-				Ok(Self::Id(name))
-			}
-			Token::Delim(char) => match char {
-				'.' => {
-					parser.advance_including_whitespace();
-					match parser.cur() {
-						Token::Ident(ident) => {
-							parser.advance_including_whitespace();
-							Ok(Self::Class(ident))
-						}
-						_ => Err(diagnostics::Unimplemented(parser.span()))?,
-					}
-				}
-				'*' => match parser.peek() {
-					Token::Delim('|') => {
-						let (prefix, atom) = parse_wq_name(parser)?;
-						Ok(Self::NSPrefixedType((prefix, atom)))
-					}
-					_ => {
-						parser.advance_including_whitespace();
-						Ok(Self::Wildcard)
-					}
-				},
-				_ => Err(diagnostics::Unimplemented(parser.span()))?,
-			},
-			Token::LeftSquare => {
-				let attr = Attribute::parse(parser)?;
-				Ok(Component::Attribute(attr))
-			}
-			_ => Err(diagnostics::Unimplemented(parser.span()))?,
+		} else {
+			None
 		}
+	}
+
+	fn parse_combinator(parser: &mut Parser<'a>) -> ParserResult<Self> {
+		Ok(Self::Combinator(Combinator::parse(parser)?))
+	}
+
+	fn parse_attribute(parser: &mut Parser<'a>) -> ParserResult<Self> {
+		Ok(Self::Attribute(Attribute::parse(parser)?))
+	}
+
+	fn parse_functional_pseudo_class(parser: &mut Parser<'a>) -> ParserResult<Self> {
+		Ok(Self::FunctionalPseudoClass(FunctionalPseudoClass::parse(parser)?))
+	}
+
+	fn parse_functional_pseudo_element(parser: &mut Parser<'a>) -> ParserResult<Self> {
+		Ok(Self::FunctionalPseudoElement(FunctionalPseudoElement::parse(parser)?))
 	}
 }
 
-impl<'a> WriteCss<'a> for Component<'a> {
+impl<'a> WriteCss<'a> for SelectorComponent<'a> {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
 		match self {
 			Self::Type(ty) => sink.write_str(ty),
@@ -259,90 +159,34 @@ impl<'a> WriteCss<'a> for Component<'a> {
 				sink.write_char(':')?;
 				sink.write_str(pseudo.to_atom().as_ref())
 			}
-			Self::Attribute(attr) => attr.write_css(sink),
-			Self::Combinator(combinator) => match combinator {
-				Combinator::Descendant => sink.write_char(' '),
-				Combinator::Child => {
-					sink.write_whitespace()?;
-					sink.write_char('>')?;
-					sink.write_whitespace()
-				}
-				Combinator::NextSibling => {
-					sink.write_whitespace()?;
-					sink.write_char('+')?;
-					sink.write_whitespace()
-				}
-				Combinator::SubsequentSibling => {
-					sink.write_whitespace()?;
-					sink.write_char('~')?;
-					sink.write_whitespace()
-				}
-				Combinator::ColumnCombintor => {
-					sink.write_whitespace()?;
-					sink.write_char('|')?;
-					sink.write_char('|')?;
-					sink.write_whitespace()
-				}
-			},
+			Self::Attribute(attr) => {
+				sink.write_char('[')?;
+				attr.write_css(sink)?;
+				sink.write_char(']')
+			}
+			Self::Combinator(combinator) => combinator.write_css(sink),
 			Self::Wildcard => sink.write_char('*'),
-			_ => todo!(),
+			Self::FunctionalPseudoClass(pseudo) => {
+				sink.write_char(':')?;
+				pseudo.write_css(sink)
+			}
+			Self::FunctionalPseudoElement(pseudo) => {
+				sink.write_char(':')?;
+				sink.write_char(':')?;
+				pseudo.write_css(sink)
+			}
+			Self::NSPrefixedType((prefix, ty)) => {
+				prefix.write_css(sink)?;
+				sink.write_char('|')?;
+				ty.write_css(sink)
+			}
+			Self::NSPrefixedWildcard(prefix) => {
+				prefix.write_css(sink)?;
+				sink.write_char('|')?;
+				sink.write_char('*')
+			}
 		}
 	}
-}
-
-// https://drafts.csswg.org/css-pseudo/#index-defined-here
-#[derive(Atomizable, Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", rename_all = "kebab-case"))]
-pub enum PseudoElement {
-	After,              // atom!("after")
-	Backdrop,           // atom!("backdrop")
-	Before,             // atom!("after")
-	Cue,                // atom!("cue")
-	CueRegion,          // atom!("cue-region")
-	FirstLetter,        // atom!("first-letter")
-	FirstLine,          // atom!("first-line")
-	FileSelectorButton, // atom!("file-selector-button")
-	GrammarError,       // atom!("grammar-error")
-	Marker,             // atom!("marker")
-	Placeholder,        // atom!("placeholder")
-	Selection,          // atom!("selection")
-	SpellingError,      // atom!("spelling-error")
-	TargetText,         // atom!("target-text")
-}
-
-#[derive(Atomizable, Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", rename_all = "kebab-case"))]
-pub enum LegacyPseudoElement {
-	After,       // atom!("after")
-	Before,      // atom!("before")
-	FirstLetter, // atom!("first-letter")
-	FirstLine,   // atom!("first-line")
-}
-
-#[derive(PartialEq, Debug, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
-pub enum PseudoFunction<'a> {
-	Dir(DirValue),                // atom!("dir")
-	Has(RelativeSelector<'a>),    // atom!("has")
-	Host(Selector<'a>),           // atom!("host")
-	HostContext(Selector<'a>),    // atom!("host-context")
-	Is(ForgivingSelector<'a>),    // atom!("is")
-	Lang(SmallVec<[Atom; 3]>),    // atom!("lang")
-	Not(Selector<'a>),            // atom!("not")
-	NthChild(ANBEvenOdd),         // atom!("nth-child")
-	NthCol(ANB),                  // atom!("nth-col")
-	NthLastChild(ANBEvenOdd),     // atom!("nth-last-child")
-	NthLastCol(ANB),              // atom!("nth-last-col")
-	NthLastOfType(ANBEvenOdd),    // atom!("nth-last-of-type")
-	NthOfType(ANBEvenOdd),        // atom!("nth-of-type")
-	Where(ForgivingSelector<'a>), // atom!("where")
-}
-
-#[derive(Atomizable, Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", rename_all = "kebab-case"))]
-pub enum DirValue {
-	Rtl, // atom!("rtl")
-	Ltr, // atom!("ltr")
 }
 
 #[derive(Debug, PartialEq, Hash)]
@@ -353,59 +197,24 @@ pub enum NSPrefix {
 	Named(Atom),
 }
 
-#[derive(Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
-// https://drafts.csswg.org/selectors/#combinators
-pub enum Combinator {
-	Descendant,        // (Space)
-	Child,             // >
-	NextSibling,       // +
-	SubsequentSibling, // ~
-	ColumnCombintor,   // ||
+impl FromToken for NSPrefix {
+	fn from_token(token: Token) -> Option<Self> {
+		match token {
+			Token::Delim('*') => Some(Self::Wildcard),
+			Token::Ident(atom) => Some(Self::Named(atom)),
+			Token::Delim('|') => Some(Self::None),
+			_ => None,
+		}
+	}
 }
 
-#[derive(Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
-pub struct ANB {
-	string: Atom,
-}
-
-#[derive(Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
-pub struct ANBEvenOdd {
-	string: Atom,
-}
-
-pub(crate) fn parse_wq_name(parser: &mut Parser) -> ParserResult<(NSPrefix, Atom)> {
-	let nsprefix = match parser.cur() {
-		Token::Delim('|') if peek!(parser, Token::Ident(_)) => {
-			parser.advance_including_whitespace();
-			NSPrefix::None
+impl<'a> WriteCss<'a> for NSPrefix {
+	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
+		match self {
+			Self::None => Ok(()),
+			Self::Wildcard => sink.write_char('*'),
+			Self::Named(atom) => atom.write_css(sink),
 		}
-		Token::Delim('*') if peek!(parser, Token::Delim('|')) => {
-			parser.advance_including_whitespace();
-			expect!(parser, Token::Delim('|'));
-			parser.advance_including_whitespace();
-			NSPrefix::Wildcard
-		}
-		Token::Ident(name) => {
-			parser.advance_including_whitespace();
-			match parser.cur() {
-				Token::Delim('|') if peek!(parser, Token::Ident(_)) => {
-					parser.advance_including_whitespace();
-					NSPrefix::Named(name)
-				}
-				_ => return Ok((NSPrefix::None, name)),
-			}
-		}
-		token => unexpected!(parser, token),
-	};
-	match parser.cur() {
-		Token::Ident(name) => {
-			parser.advance_including_whitespace();
-			Ok((nsprefix, name))
-		}
-		token => unexpected!(parser, token),
 	}
 }
 
@@ -416,16 +225,11 @@ mod test {
 
 	#[test]
 	fn size_test() {
-		assert_size!(Selectors, 56);
-		assert_size!(Selector, 32);
+		assert_size!(SelectorList, 32);
 		assert_size!(ForgivingSelector, 32);
 		assert_size!(RelativeSelector, 32);
-		assert_size!(Component, 48);
-		assert_size!(PseudoElement, 1);
+		assert_size!(SelectorComponent, 48);
 		assert_size!(LegacyPseudoElement, 1);
-		assert_size!(PseudoClass, 1);
-		assert_size!(PseudoFunction, 40);
-		assert_size!(DirValue, 1);
 		assert_size!(Combinator, 1);
 		assert_size!(ANB, 8);
 		assert_size!(ANBEvenOdd, 8);
@@ -433,24 +237,19 @@ mod test {
 
 	#[test]
 	fn test_writes() {
-		assert_parse!(Component, ":root");
-		assert_parse!(Component, "*");
-		assert_parse!(Component, "[attr|='foo']");
-		// assert_parse!(Component, "*|x");
-		assert_parse!(Selector, "a b");
-		assert_parse!(Selector, ":root");
-		assert_parse!(Selector, "body [attr|='foo']");
-		// assert_parse!(Selector, "*|x
-		// :focus-within");
-		assert_parse!(Selectors, "a b");
-		assert_parse!(Selectors, ":root");
-		assert_parse!(Selectors, "body [attr|='foo']");
+		assert_parse!(SelectorList, ":root");
+		assert_parse!(SelectorList, "*");
+		assert_parse!(SelectorList, "[attr|='foo']");
+		assert_parse!(SelectorList, "*|x");
+		assert_parse!(SelectorList, "a b");
+		assert_parse!(SelectorList, "body [attr|='foo']");
+		assert_parse!(SelectorList, "*|x :focus-within");
 	}
 
 	#[test]
 	fn test_minify() {
-		assert_minify!(Component, "[attr|='foo']", "[attr|=foo]");
-		assert_minify!(Selector, "a   b", "a b");
-		assert_minify!(Selector, "a   b ", "a b");
+		assert_minify!(SelectorList, "[attr|='foo']", "[attr|=foo]");
+		assert_minify!(SelectorList, "a   b", "a b");
+		assert_minify!(SelectorList, "a   b ", "a b");
 	}
 }

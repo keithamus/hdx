@@ -54,3 +54,15 @@ pub enum PseudoClass {
 	Valid,            // atom!("valid")
 	Visited,          // atom!("visited")
 }
+
+
+#[cfg(test)]
+mod test {
+	use super::*;
+	use crate::test_helpers::*;
+
+	#[test]
+	fn size_test() {
+		assert_size!(PseudoClass, 1);
+	}
+}

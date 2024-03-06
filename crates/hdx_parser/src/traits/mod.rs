@@ -3,9 +3,11 @@ use hdx_lexer::Token;
 
 mod declarations;
 mod rules;
+mod selectors;
 
 pub use declarations::*;
 pub use rules::*;
+pub use selectors::*;
 
 use crate::{expect, expect_ignore_case, parser::Parser, span::Spanned, unexpected, Result, State, Vec};
 
