@@ -2,7 +2,7 @@ use crate::css::values::{
 	AlignContent, AlignItems, AlignSelf, Animation, AnimationDelay, AnimationDuration, AnimationFillMode,
 	AnimationIterationCount, AnimationName, AnimationTimingFunction, Appearance, BackdropFilter, BackgroundClip,
 	BoxAlign, BoxDecorationBreak, BoxDirection, BoxFlex, BoxOrdinalGroup, BoxOrient, BoxPack, BoxSizing, Todo,
-	TransitionDuration, BoxShadow, FlexBasis, FlexDirection, FlexFlow, FlexGrow, FlexWrap, JustifyContent,
+	TransitionDuration, BoxShadow, FlexBasis, FlexDirection, FlexFlow, FlexGrow, FlexWrap, JustifyContent, TextSizeAdjust,
 };
 
 pub type WebkitAlignContent = AlignContent;
@@ -64,7 +64,7 @@ pub type WebkitTextDecorationColor = Todo;
 pub type WebkitTextDecorationSkipInk = Todo;
 pub type WebkitTextFillColor = Todo;
 pub type WebkitTextSecurity = Todo;
-pub type WebkitTextSizeAdjust = Todo;
+pub type WebkitTextSizeAdjust = TextSizeAdjust;
 pub type WebkitTextStroke = Todo;
 pub type WebkitTextStrokeColor = Todo;
 pub type WebkitTextStrokeWidth = Todo;

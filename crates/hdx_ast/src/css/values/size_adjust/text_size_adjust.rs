@@ -1,4 +1,4 @@
-use crate::{css::values::units::CSSFloat, Parsable, Writable};
+use crate::{css::values::units::{Percent}, Parsable, Writable};
 
 // https://drafts.csswg.org/css-size-adjust-1/#propdef-text-size-adjust
 #[derive(Parsable, Writable, Default, Debug, PartialEq, Hash)]
@@ -7,9 +7,8 @@ pub enum TextSizeAdjust {
 	None,
 	#[default]
 	Auto,
-	#[writable(suffix = "%")]
-	#[parsable(Dimension, atom = "%")]
-	Percentage(CSSFloat),
+	#[parsable(Dimension, Check::Range(0.0..), atom = "%")]
+	Percentage(Percent),
 }
 
 #[cfg(test)]
@@ -20,5 +19,12 @@ mod tests {
 	#[test]
 	fn size_test() {
 		assert_size!(TextSizeAdjust, 8);
+	}
+
+	#[test]
+	fn test_writes() {
+		assert_parse!(TextSizeAdjust, "0%");
+		assert_parse!(TextSizeAdjust, "120%");
+		assert_parse!(TextSizeAdjust, "auto");
 	}
 }
