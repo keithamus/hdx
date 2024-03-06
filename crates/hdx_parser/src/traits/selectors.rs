@@ -72,7 +72,6 @@ pub trait SelectorComponent<'a>: Sized {
 	fn parse_functional_pseudo_element(parser: &mut Parser<'a>) -> Result<Self>;
 
 	fn parse_selector_component(prev: Option<&Self>, parser: &mut Parser<'a>) -> Result<Self> {
-		dbg!("parsing select_component", parser.cur());
 		let node = match parser.cur() {
 			Token::Ident(atom) => {
 				let ns_token = parser.cur();
@@ -141,7 +140,6 @@ pub trait SelectorComponent<'a>: Sized {
 			},
 			Token::Colon => {
 				parser.advance_including_whitespace();
-				dbg!("found pseudo something", parser.cur());
 				match parser.cur() {
 					Token::Colon => {
 						parser.advance_including_whitespace();
