@@ -21,10 +21,7 @@ impl<'a> WriteCss<'a> for Custom<'a> {
 
 impl<'a> Parse<'a> for Custom<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		parser.set(State::StopOnSemicolon);
-		let value = ComponentValues::parse(parser)?;
-		parser.unset(State::StopOnSemicolon);
-		Ok(Self(value))
+		Ok(Self(ComponentValues::parse_with_state(parser, State::StopOnSemicolon)?))
 	}
 }
 
@@ -40,10 +37,7 @@ impl<'a> WriteCss<'a> for Computed<'a> {
 
 impl<'a> Parse<'a> for Computed<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		parser.set(State::StopOnSemicolon);
-		let value = ComponentValues::parse(parser)?;
-		parser.unset(State::StopOnSemicolon);
-		Ok(Self(value))
+		Ok(Self(ComponentValues::parse_with_state(parser, State::StopOnSemicolon)?))
 	}
 }
 
@@ -53,10 +47,7 @@ pub struct Unknown<'a>(pub ComponentValues<'a>);
 
 impl<'a> Parse<'a> for Unknown<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		parser.set(State::StopOnSemicolon);
-		let value = ComponentValues::parse(parser)?;
-		parser.unset(State::StopOnSemicolon);
-		Ok(Self(value))
+		Ok(Self(ComponentValues::parse_with_state(parser, State::StopOnSemicolon)?))
 	}
 }
 

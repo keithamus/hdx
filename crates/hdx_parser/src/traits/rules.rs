@@ -1,97 +1,8 @@
-use hdx_atom::{atom, Atom};
 use hdx_lexer::Token;
 
-use crate::{expect, parser::Parser, span::Spanned, unexpected, unexpected_ident, Result, State, Vec, discard, peek, expect_ignore_case};
+use crate::{discard, expect, parser::Parser, peek, span::Spanned, unexpected, Result, State, Vec};
 
-// The FromToken trait produces a result of Self from an individual parser Token, guaranteeing that the parser will not
-// roll forward. Instead, the caller should advance the parser.
-pub trait FromToken: Sized {
-	fn from_token(token: Token) -> Option<Self>;
-}
-
-impl<'a, T: FromToken> Parse<'a> for T {
-	fn parse(parser: &mut Parser<'a>) -> Result<Self> {
-		if let Some(result) = Self::from_token(parser.cur()) {
-			parser.advance();
-			Ok(result)
-		} else {
-			unexpected!(parser)
-		}
-	}
-}
-
-impl<'a, T: Parse<'a>> Parse<'a> for Vec<'a, T> {
-	fn parse(parser: &mut Parser<'a>) -> Result<Vec<'a, T>> {
-		loop {
-			let mut vec = parser.new_vec();
-			if let Ok(t) = T::parse(parser) {
-				vec.push(t);
-			} else {
-				return Ok(vec);
-			}
-		}
-	}
-}
-
-impl<'a, T: Parse<'a>> Parse<'a> for Spanned<T> {
-	fn parse(parser: &mut Parser<'a>) -> Result<Spanned<T>> {
-		T::parse_spanned(parser)
-	}
-}
-
-pub trait Parse<'a>: Sized {
-	fn parse(parser: &mut Parser<'a>) -> Result<Self>;
-
-	fn parse_spanned(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
-		let span = parser.span();
-		let node = Self::parse(parser)?;
-		Ok(Spanned { node, span: span.end(parser.prev_pos) })
-	}
-}
-
-pub trait Block<'a>: Sized + Parse<'a> {
-	type Declaration: Parse<'a>;
-	type Rule: Parse<'a>;
-
-	// https://drafts.csswg.org/css-syntax-3/#consume-block-contents
-	fn parse_block(
-		parser: &mut Parser<'a>,
-	) -> Result<(Vec<'a, Spanned<Self::Declaration>>, Vec<'a, Spanned<Self::Rule>>)> {
-		expect!(parser, Token::LeftCurly);
-		parser.advance();
-		let mut declarations = parser.new_vec();
-		let mut rules = parser.new_vec();
-		loop {
-			match parser.cur() {
-				Token::Semicolon => {
-					parser.advance();
-				}
-				Token::Eof | Token::RightCurly => {
-					parser.advance();
-					break;
-				}
-				Token::AtKeyword(_) => {
-					parser.set(State::Nested);
-					rules.push(Self::Rule::parse_spanned(parser)?);
-					parser.unset(State::Nested);
-				}
-				_ => {
-					let checkpoint = parser.checkpoint();
-					parser.set(State::Nested);
-					if let Ok(decl) = Self::Declaration::parse_spanned(parser) {
-						declarations.push(decl);
-						parser.unset(State::Nested);
-					} else {
-						parser.rewind(checkpoint);
-						rules.push(Self::Rule::parse_spanned(parser)?);
-						parser.unset(State::Nested);
-					}
-				}
-			}
-		}
-		Ok((declarations, rules))
-	}
-}
+use super::Parse;
 
 // An AtRule represents a block or statement with an @keyword in the leading
 // position, such as @media, @charset, @import and so-on.
@@ -162,7 +73,6 @@ pub trait RuleGroup<'a>: Sized + Parse<'a> {
 	}
 }
 
-
 pub trait QualifiedRule<'a>: Sized + Parse<'a> {
 	type Prelude: Parse<'a>;
 	type Block: Parse<'a>;
@@ -204,34 +114,11 @@ pub trait QualifiedRule<'a>: Sized + Parse<'a> {
 	}
 }
 
-pub trait StyleSheet<'a>: Sized + Parse<'a> {
-	type Rule: Parse<'a>;
-
-	fn parse_stylesheet(parser: &mut Parser<'a>) -> Result<Vec<'a, Spanned<Self::Rule>>> {
-		let mut rules: Vec<'a, Spanned<Self::Rule>> = parser.new_vec();
-		loop {
-			match parser.cur() {
-				Token::Eof => {
-					return Ok(rules);
-				}
-				Token::Cdc | Token::Cdo => {
-					parser.advance();
-				}
-				_ => {
-					rules.push(Self::Rule::parse_spanned(parser)?);
-				}
-			}
-		}
-	}
-}
-
 // https://drafts.csswg.org/css-syntax-3/#typedef-rule-list
 pub trait RuleList<'a>: Sized + Parse<'a> {
 	type Rule: Parse<'a>;
 
-	fn parse_rule_list(
-		parser: &mut Parser<'a>,
-	) -> Result<Vec<'a, Spanned<Self::Rule>>> {
+	fn parse_rule_list(parser: &mut Parser<'a>) -> Result<Vec<'a, Spanned<Self::Rule>>> {
 		expect!(parser, Token::LeftCurly);
 		parser.advance();
 		let mut rules = parser.new_vec();
@@ -276,69 +163,5 @@ pub trait DeclarationRuleList<'a>: Sized + Parse<'a> {
 				token => unexpected!(parser, token),
 			}
 		}
-	}
-}
-
-pub trait Declaration<'a>: Sized + Parse<'a> {
-	type DeclarationValue: DeclarationValue<'a>;
-
-	fn parse_name(parser: &mut Parser<'a>) -> Result<Atom> {
-		match parser.cur() {
-			Token::Ident(atom) => {
-				parser.advance();
-				expect!(parser, Token::Colon);
-				parser.advance();
-				Ok(atom.to_ascii_lowercase())
-			}
-			token => unexpected!(parser, token),
-		}
-	}
-
-	fn parse_declaration_value(name: &Atom, parser: &mut Parser<'a>) -> Result<Self::DeclarationValue>;
-
-	fn parse_important(parser: &mut Parser<'a>) -> Result<bool> {
-		if matches!(parser.cur(), Token::Delim('!')) && peek!(parser, Token::Ident(_)) {
-			parser.advance_including_whitespace_and_comments();
-			match parser.cur() {
-				Token::Ident(ident) => match ident.to_ascii_lowercase() {
-					atom!("important") => {}
-					_ => unexpected_ident!(parser, ident),
-				},
-				token => unexpected!(parser, token),
-			}
-			parser.advance();
-			Ok(true)
-		} else {
-			Ok(false)
-		}
-	}
-
-	fn parse_declaration(parser: &mut Parser<'a>) -> Result<(Atom, Self::DeclarationValue, bool)> {
-		let name = Self::parse_name(parser)?;
-		let value = Self::parse_declaration_value(&name, parser)?;
-		let important = Self::parse_important(parser)?;
-		discard!(parser, Token::Semicolon);
-		Ok((name, value, important))
-	}
-}
-
-pub trait DeclarationValue<'a>: Sized {
-	fn parse_declaration_value(name: &Atom, parser: &mut Parser<'a>) -> Result<Self>;
-}
-
-pub trait MediaFeature<'a>: Sized + Default {
-	fn parse_media_feature_value(parser: &mut Parser<'a>) -> Result<Self>;
-
-	fn parse_media_feature(name: Atom, parser: &mut Parser<'a>) -> Result<Self> {
-		expect_ignore_case!(parser, name);
-		parser.advance();
-		let value = match parser.cur() {
-			Token::Colon => {
-				parser.advance();
-				Self::parse_media_feature_value(parser)?
-			}
-			_ => Self::default(),
-		};
-		Ok(value)
 	}
 }

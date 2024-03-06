@@ -78,27 +78,6 @@ impl<'a> Parser<'a> {
 		self.state.contains(state)
 	}
 
-	#[inline]
-	pub fn set(&mut self, state: State) {
-		self.state |= state;
-	}
-
-	#[inline]
-	pub fn unset(&mut self, state: State) {
-		self.state &= !state;
-	}
-
-	#[inline]
-	pub fn with_state<F, T>(&mut self, state: State, call: F) -> T
-	where
-		F: FnOnce(&mut Parser) -> T,
-	{
-		self.set(state);
-		let ret = call(self);
-		self.unset(state);
-		ret
-	}
-
 	pub fn parse_entirely_with<T: Parse<'a>>(mut self) -> ParserReturn<Spanned<T>> {
 		self.advance();
 		let (output, panicked) = match T::parse_spanned(&mut self) {

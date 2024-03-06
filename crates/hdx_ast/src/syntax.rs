@@ -235,10 +235,7 @@ impl<'a> Parse<'a> for Declaration<'a> {
 				parser.advance();
 				expect!(parser, Token::Colon);
 				parser.advance();
-				parser.set(State::StopOnSemicolon);
-				parser.set(State::Nested);
-				let mut value = ComponentValues::parse_spanned(parser)?;
-				parser.unset(State::StopOnSemicolon | State::StopOnComma);
+				let mut value = ComponentValues::parse_spanned_with_state(parser, State::StopOnSemicolon | State::Nested)?;
 				let mut iter = value.node.0.iter_mut();
 				let important = matches!(
 					iter.nth_back(1),
