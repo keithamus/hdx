@@ -4,6 +4,9 @@ pub use zoom::*;
 mod r#box;
 pub use r#box::*;
 
+mod text;
+pub use text::*;
+
 mod webkit;
 pub use webkit::*;
 

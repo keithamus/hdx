@@ -1322,6 +1322,7 @@ properties! {
 	BoxOrdinalGroup: atom!("box-ordinal-group"),
 	BoxOrient: atom!("box-orient"),
 	BoxPack: atom!("box-pack"),
+	TextRendering: atom!("text-rendering"),
 
 	// Webkit NonStandards
 	WebkitAlignContent: atom!("-webkit-align-content"),
