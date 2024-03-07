@@ -1,6 +1,6 @@
 use crate::css::values::{
-	AlignContent, AlignSelf, BoxAlign, BoxOrdinalGroup, BoxPack, BoxSizing, Filter, Flex, FlexDirection, FlexWrap,
-	Order, TextSizeAdjust, Todo, Transition, UserSelect, FlexFlow, FlexGrow, FlexShrink, FlexBasis,
+	AlignContent, AlignSelf, BoxAlign, BoxPack, BoxSizing, Filter, Flex, FlexBasis, FlexDirection, FlexFlow, FlexGrow,
+	FlexShrink, FlexWrap, Order, TextSizeAdjust, Todo, Transition, UserSelect,
 };
 
 pub type MsBoxSizing = BoxSizing;

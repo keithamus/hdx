@@ -1,7 +1,4 @@
-use crate::{
-	css::values::{units::CSSFloat, Todo},
-	Atomizable, Parsable, Value, Writable,
-};
+use crate::{css::values::units::CSSFloat, Atomizable, Parsable, Value, Writable};
 
 // https://developer.mozilla.org/en-US/docs/Web/CSS/box-align
 #[derive(Value, Parsable, Writable, Atomizable, Default, Debug, PartialEq, Hash)]
@@ -82,7 +79,7 @@ pub enum BoxOrient {
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", rename_all = "kebab-case"))]
 pub enum BoxPack {
 	#[default]
-	Start,   // atom!("start")
+	Start, // atom!("start")
 	Center,  // atom!("center")
 	End,     // atom!("end")
 	Justify, // atom!("justify")

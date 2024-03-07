@@ -1,3 +1,5 @@
+use crate::{Atomizable, Parsable, Value, Writable};
+
 use crate::css::values::{Appearance, BoxSizing, ColumnCount, ColumnGap, TabSize, Todo, Transition, UserSelect};
 
 pub type MozAppearance = Appearance;
@@ -7,7 +9,16 @@ pub type MozColumnGap = ColumnGap;
 pub type MozFloatEdge = Todo;
 pub type MozForceBrokenImageIcon = Todo;
 pub type MozImageRegion = Todo;
-pub type MozOsxFontSmoothing = Todo;
+
+// https://developer.mozilla.org/en-US/docs/Web/CSS/font-smooth
+#[derive(Value, Parsable, Writable, Atomizable, Default, Debug, PartialEq, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", rename_all = "kebab-case"))]
+pub enum MozOsxFontSmoothing {
+	#[default]
+	Auto, // atom!("auto")
+	Grayscale, // atom!("grayscale")
+}
+
 pub type MozRangeThumb = Todo;
 pub type MozTabSize = TabSize;
 pub type MozTransition = Transition;

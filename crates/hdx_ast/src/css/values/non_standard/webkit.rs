@@ -1,9 +1,10 @@
 use crate::css::values::{
 	AlignContent, AlignItems, AlignSelf, Animation, AnimationDelay, AnimationDuration, AnimationFillMode,
 	AnimationIterationCount, AnimationName, AnimationTimingFunction, Appearance, BackdropFilter, BackgroundClip,
-	BoxAlign, BoxDecorationBreak, BoxDirection, BoxFlex, BoxOrdinalGroup, BoxOrient, BoxPack, BoxSizing, Todo,
-	TransitionDuration, BoxShadow, FlexBasis, FlexDirection, FlexFlow, FlexGrow, FlexWrap, JustifyContent, TextSizeAdjust,
+	BoxAlign, BoxDecorationBreak, BoxDirection, BoxFlex, BoxOrdinalGroup, BoxOrient, BoxPack, BoxShadow, BoxSizing,
+	FlexBasis, FlexDirection, FlexFlow, FlexGrow, FlexWrap, JustifyContent, TextSizeAdjust, Todo, TransitionDuration,
 };
+use crate::{Atomizable, Parsable, Value, Writable};
 
 pub type WebkitAlignContent = AlignContent;
 pub type WebkitAlignItems = AlignItems;
@@ -40,7 +41,18 @@ pub type WebkitFlexDirection = FlexDirection;
 pub type WebkitFlexFlow = FlexFlow;
 pub type WebkitFlexGrow = FlexGrow;
 pub type WebkitFlexWrap = FlexWrap;
-pub type WebkitFontSmoothing = Todo;
+
+// https://developer.mozilla.org/en-US/docs/Web/CSS/font-smooth
+#[derive(Value, Parsable, Writable, Atomizable, Default, Debug, PartialEq, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", rename_all = "kebab-case"))]
+pub enum WebkitFontSmoothing {
+	#[default]
+	Auto, // atom!("auto")
+	None,        // atom!("none")
+	Antialiased, // atom!("antialiased")
+	Grayscale,   // atom!("grayscale")
+}
+
 pub type WebkitJustifyContent = JustifyContent;
 pub type WebkitLineClamp = Todo;
 pub type WebkitMarginEnd = Todo;
