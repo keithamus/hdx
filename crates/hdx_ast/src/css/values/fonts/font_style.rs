@@ -9,6 +9,7 @@ use crate::css::values::units::Angle;
 
 // https://drafts.csswg.org/css-fonts/#font-style-prop
 #[derive(Value, Default, Debug, PartialEq, Hash)]
+#[value(Inherits)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", rename_all = "kebab-case"))]
 pub enum FontStyle {
 	#[default]
