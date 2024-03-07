@@ -245,6 +245,9 @@ mod test {
 		assert_parse!(SelectorList, "body [attr|='foo']");
 		assert_parse!(SelectorList, "*|x :focus-within");
 		assert_parse!(SelectorList, ".foo[attr*=foo]");
+		assert_parse!(SelectorList, "a > b");
+		assert_parse!(SelectorList, ".foo[attr*=foo] > *");
+		assert_parse!(SelectorList, ".foo[attr*=foo] > * + *");
 	}
 
 	#[test]
@@ -252,5 +255,6 @@ mod test {
 		assert_minify!(SelectorList, "[attr|='foo']", "[attr|=foo]");
 		assert_minify!(SelectorList, "a   b", "a b");
 		assert_minify!(SelectorList, "a   b ", "a b");
+		assert_minify!(SelectorList, ".foo[attr*='foo'] > * + *", ".foo[attr*=foo]>*+*");
 	}
 }
