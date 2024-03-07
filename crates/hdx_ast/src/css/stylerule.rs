@@ -102,6 +102,7 @@ mod test {
 		assert_parse!(StyleRule, "body {\n}");
 		assert_parse!(StyleRule, "body, body {\n}");
 		assert_parse!(StyleRule, "body {\n\twidth: 1px;\n}");
+		assert_parse!(StyleRule, "body {\n\topacity: 0;\n}");
 	}
 
 	#[test]

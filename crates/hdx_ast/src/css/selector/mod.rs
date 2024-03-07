@@ -244,6 +244,7 @@ mod test {
 		assert_parse!(SelectorList, "a b");
 		assert_parse!(SelectorList, "body [attr|='foo']");
 		assert_parse!(SelectorList, "*|x :focus-within");
+		assert_parse!(SelectorList, ".foo[attr*=foo]");
 	}
 
 	#[test]
