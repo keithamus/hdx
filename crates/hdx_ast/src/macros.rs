@@ -104,6 +104,256 @@ macro_rules! write_logical_sides {
 pub(crate) use write_logical_sides;
 
 macro_rules! write_simple_shorthand {
+	($name: ident, $first: ty, $second: ty, $third: ty, $fourth: ty, $fifth: ty, $sixth: ty, $seventh: ty, $eighth: ty) => {
+		impl<'a> hdx_writer::WriteCss<'a> for $name {
+			fn write_css<W: hdx_writer::CssWriter>(&self, sink: &mut W) -> hdx_writer::Result {
+				let mut wrote = false;
+				if self.0 != <$first>::default() {
+					self.0.write_css(sink)?;
+					wrote = true
+				}
+				if self.1 != <$second>::default() {
+					if wrote {
+						sink.write_char(' ')?;
+					}
+					self.1.write_css(sink)?;
+					wrote = true
+				}
+				if self.2 != <$third>::default() {
+					if wrote {
+						sink.write_char(' ')?;
+					}
+					self.2.write_css(sink)?;
+					wrote = true
+				}
+				if self.3 != <$fourth>::default() {
+					if wrote {
+						sink.write_char(' ')?;
+					}
+					self.3.write_css(sink)?;
+					wrote = true
+				}
+				if self.4 != <$fifth>::default() {
+					if wrote {
+						sink.write_char(' ')?;
+					}
+					self.4.write_css(sink)?;
+					wrote = true
+				}
+				if self.5 != <$sixth>::default() {
+					if wrote {
+						sink.write_char(' ')?;
+					}
+					self.5.write_css(sink)?;
+					wrote = true
+				}
+				if self.6 != <$seventh>::default() {
+					if wrote {
+						sink.write_char(' ')?;
+					}
+					self.6.write_css(sink)?;
+					wrote = true
+				}
+				if self.7 != <$eigth>::default() {
+					if wrote {
+						sink.write_char(' ')?;
+					}
+					self.7.write_css(sink)?;
+					wrote = true
+				}
+				if !wrote {
+					self.0.write_css(sink)?;
+				}
+				Ok(())
+			}
+		}
+	};
+	($name: ident, $first: ty, $second: ty, $third: ty, $fourth: ty, $fifth: ty, $sixth: ty, $seventh: ty) => {
+		impl<'a> hdx_writer::WriteCss<'a> for $name {
+			fn write_css<W: hdx_writer::CssWriter>(&self, sink: &mut W) -> hdx_writer::Result {
+				let mut wrote = false;
+				if self.0 != <$first>::default() {
+					self.0.write_css(sink)?;
+					wrote = true
+				}
+				if self.1 != <$second>::default() {
+					if wrote {
+						sink.write_char(' ')?;
+					}
+					self.1.write_css(sink)?;
+					wrote = true
+				}
+				if self.2 != <$third>::default() {
+					if wrote {
+						sink.write_char(' ')?;
+					}
+					self.2.write_css(sink)?;
+					wrote = true
+				}
+				if self.3 != <$fourth>::default() {
+					if wrote {
+						sink.write_char(' ')?;
+					}
+					self.3.write_css(sink)?;
+					wrote = true
+				}
+				if self.4 != <$fifth>::default() {
+					if wrote {
+						sink.write_char(' ')?;
+					}
+					self.4.write_css(sink)?;
+					wrote = true
+				}
+				if self.5 != <$sixth>::default() {
+					if wrote {
+						sink.write_char(' ')?;
+					}
+					self.5.write_css(sink)?;
+					wrote = true
+				}
+				if self.6 != <$seventh>::default() {
+					if wrote {
+						sink.write_char(' ')?;
+					}
+					self.6.write_css(sink)?;
+					wrote = true
+				}
+				if !wrote {
+					self.0.write_css(sink)?;
+				}
+				Ok(())
+			}
+		}
+	};
+	($name: ident, $first: ty, $second: ty, $third: ty, $fourth: ty, $fifth: ty, $sixth: ty) => {
+		impl<'a> hdx_writer::WriteCss<'a> for $name {
+			fn write_css<W: hdx_writer::CssWriter>(&self, sink: &mut W) -> hdx_writer::Result {
+				let mut wrote = false;
+				if self.0 != <$first>::default() {
+					self.0.write_css(sink)?;
+					wrote = true
+				}
+				if self.1 != <$second>::default() {
+					if wrote {
+						sink.write_char(' ')?;
+					}
+					self.1.write_css(sink)?;
+					wrote = true
+				}
+				if self.2 != <$third>::default() {
+					if wrote {
+						sink.write_char(' ')?;
+					}
+					self.2.write_css(sink)?;
+					wrote = true
+				}
+				if self.3 != <$fourth>::default() {
+					if wrote {
+						sink.write_char(' ')?;
+					}
+					self.3.write_css(sink)?;
+					wrote = true
+				}
+				if self.4 != <$fifth>::default() {
+					if wrote {
+						sink.write_char(' ')?;
+					}
+					self.4.write_css(sink)?;
+					wrote = true
+				}
+				if self.5 != <$sixth>::default() {
+					if wrote {
+						sink.write_char(' ')?;
+					}
+					self.5.write_css(sink)?;
+					wrote = true
+				}
+				if !wrote {
+					self.0.write_css(sink)?;
+				}
+				Ok(())
+			}
+		}
+	};
+	($name: ident, $first: ty, $second: ty, $third: ty, $fourth: ty, $fifth: ty) => {
+		impl<'a> hdx_writer::WriteCss<'a> for $name {
+			fn write_css<W: hdx_writer::CssWriter>(&self, sink: &mut W) -> hdx_writer::Result {
+				let mut wrote = false;
+				if self.0 != <$first>::default() {
+					self.0.write_css(sink)?;
+					wrote = true
+				}
+				if self.1 != <$second>::default() {
+					if wrote {
+						sink.write_char(' ')?;
+					}
+					self.1.write_css(sink)?;
+					wrote = true
+				}
+				if self.2 != <$third>::default() {
+					if wrote {
+						sink.write_char(' ')?;
+					}
+					self.2.write_css(sink)?;
+					wrote = true
+				}
+				if self.3 != <$fourth>::default() {
+					if wrote {
+						sink.write_char(' ')?;
+					}
+					self.3.write_css(sink)?;
+					wrote = true
+				}
+				if self.4 != <$fifth>::default() {
+					if wrote {
+						sink.write_char(' ')?;
+					}
+					self.4.write_css(sink)?;
+					wrote = true
+				}
+				if !wrote {
+					self.0.write_css(sink)?;
+				}
+				Ok(())
+			}
+		}
+	};
+	($name: ident, $first: ty, $second: ty, $third: ty, $fourth: ty) => {
+		impl<'a> hdx_writer::WriteCss<'a> for $name {
+			fn write_css<W: hdx_writer::CssWriter>(&self, sink: &mut W) -> hdx_writer::Result {
+				let mut wrote = false;
+				if self.0 != <$first>::default() {
+					self.0.write_css(sink)?;
+					wrote = true
+				}
+				if self.1 != <$second>::default() {
+					if wrote {
+						sink.write_char(' ')?;
+					}
+					self.1.write_css(sink)?;
+					wrote = true
+				}
+				if self.2 != <$third>::default() {
+					if wrote {
+						sink.write_char(' ')?;
+					}
+					self.2.write_css(sink)?;
+					wrote = true
+				}
+				if self.3 != <$fourth>::default() {
+					if wrote {
+						sink.write_char(' ')?;
+					}
+					self.3.write_css(sink)?;
+					wrote = true
+				}
+				if !wrote {
+					self.0.write_css(sink)?;
+				}
+				Ok(())
+			}
+		}
+	};
 	($name: ident, $first: ty, $second: ty, $third: ty) => {
 		impl<'a> hdx_writer::WriteCss<'a> for $name {
 			fn write_css<W: hdx_writer::CssWriter>(&self, sink: &mut W) -> hdx_writer::Result {
@@ -119,11 +369,15 @@ macro_rules! write_simple_shorthand {
 					self.1.write_css(sink)?;
 					wrote = true
 				}
-				if !wrote || self.2 != <$third>::default() {
+				if self.2 != <$third>::default() {
 					if wrote {
 						sink.write_char(' ')?;
 					}
 					self.2.write_css(sink)?;
+					wrote = true
+				}
+				if !wrote {
+					self.0.write_css(sink)?;
 				}
 				Ok(())
 			}
@@ -141,7 +395,11 @@ macro_rules! write_simple_shorthand {
 					if wrote {
 						sink.write_char(' ')?;
 					}
-					self.1.write_css(sink)
+					self.1.write_css(sink)?;
+					wrote = true
+				}
+				if !wrote {
+					self.0.write_css(sink)?;
 				}
 				Ok(())
 			}

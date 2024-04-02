@@ -58,17 +58,7 @@ impl<'a> WriteCss<'a> for AnimationDuration {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
 		match self {
 			Self::Auto => atom!("auto").write_css(sink),
-			Self::Absolute(vals) => {
-				let mut iter = vals.iter().peekable();
-				while let Some(time) = iter.next() {
-					time.write_css(sink)?;
-					if iter.peek().is_some() {
-						sink.write_char(',')?;
-						sink.write_whitespace()?;
-					}
-				}
-				Ok(())
-			}
+			Self::Absolute(vals) => vals.write_css(sink),
 		}
 	}
 }

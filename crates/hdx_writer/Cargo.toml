@@ -17,6 +17,7 @@ hdx_syntax = { workspace = true }
 
 oxc_allocator = { workspace = true }
 bitmask-enum = { workspace = true }
+smallvec = { workspace = true }
 
 [dev-dependencies]
 hdx_parser = { workspace = true }

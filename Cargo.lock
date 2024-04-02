@@ -637,6 +637,7 @@ dependencies = [
  "hdx_parser",
  "hdx_syntax",
  "oxc_allocator",
+ "smallvec",
 ]
 
 [[package]]

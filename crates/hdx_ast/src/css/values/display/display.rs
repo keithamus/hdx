@@ -143,9 +143,9 @@ impl Display {
 	#[inline]
 	fn outside_to_atom(&self) -> Option<Atom> {
 		match self.outside_bits() {
-			Display::RunIn => Some(atom!("run-in")),
-			Display::Block => Some(atom!("block")),
-			Display::Inline => Some(atom!("inline")),
+			Self::RunIn => Some(atom!("run-in")),
+			Self::Block => Some(atom!("block")),
+			Self::Inline => Some(atom!("inline")),
 			_ => None,
 		}
 	}
@@ -153,12 +153,12 @@ impl Display {
 	#[inline]
 	fn inside_to_atom(&self) -> Option<Atom> {
 		match self.inside_bits() {
-			Display::Flow => Some(atom!("flow")),
-			Display::FlowRoot => Some(atom!("flow-root")),
-			Display::Flex => Some(atom!("flex")),
-			Display::Grid => Some(atom!("grid")),
-			Display::Ruby => Some(atom!("ruby")),
-			Display::Table => Some(atom!("table")),
+			Self::Flow => Some(atom!("flow")),
+			Self::FlowRoot => Some(atom!("flow-root")),
+			Self::Flex => Some(atom!("flex")),
+			Self::Grid => Some(atom!("grid")),
+			Self::Ruby => Some(atom!("ruby")),
+			Self::Table => Some(atom!("table")),
 			_ => None,
 		}
 	}
@@ -172,26 +172,26 @@ impl<'a> Parse<'a> for Display {
 		let single_value = match parser.cur() {
 			Token::Ident(atom) => match atom.to_ascii_lowercase() {
 				// <display-box>
-				atom!("none") => Some(Display::None),
-				atom!("contents") => Some(Display::Contents),
+				atom!("none") => Some(Self::None),
+				atom!("contents") => Some(Self::Contents),
 				// <display-legacy>
-				atom!("inline-block") => Some(Display::InlineBlock),
-				atom!("inline-table") => Some(Display::InlineTable),
-				atom!("inline-flex") => Some(Display::InlineFlex),
-				atom!("inline-grid") => Some(Display::InlineGrid),
+				atom!("inline-block") => Some(Self::InlineBlock),
+				atom!("inline-table") => Some(Self::InlineTable),
+				atom!("inline-flex") => Some(Self::InlineFlex),
+				atom!("inline-grid") => Some(Self::InlineGrid),
 				// <display-internal>
-				atom!("table-row-group") => Some(Display::TableRowGroup),
-				atom!("table-header-group") => Some(Display::TableHeaderGroup),
-				atom!("table-footer-group") => Some(Display::TableFooterGroup),
-				atom!("table-row") => Some(Display::TableRow),
-				atom!("table-cell") => Some(Display::TableCell),
-				atom!("table-column-group") => Some(Display::TableColumnGroup),
-				atom!("table-column") => Some(Display::TableColumn),
-				atom!("table-caption") => Some(Display::TableCaption),
-				atom!("ruby-base") => Some(Display::RubyBase),
-				atom!("ruby-text") => Some(Display::RubyText),
-				atom!("ruby-base-container") => Some(Display::RubyBaseContainer),
-				atom!("ruby-text-container") => Some(Display::RubyTextContainer),
+				atom!("table-row-group") => Some(Self::TableRowGroup),
+				atom!("table-header-group") => Some(Self::TableHeaderGroup),
+				atom!("table-footer-group") => Some(Self::TableFooterGroup),
+				atom!("table-row") => Some(Self::TableRow),
+				atom!("table-cell") => Some(Self::TableCell),
+				atom!("table-column-group") => Some(Self::TableColumnGroup),
+				atom!("table-column") => Some(Self::TableColumn),
+				atom!("table-caption") => Some(Self::TableCaption),
+				atom!("ruby-base") => Some(Self::RubyBase),
+				atom!("ruby-text") => Some(Self::RubyText),
+				atom!("ruby-base-container") => Some(Self::RubyBaseContainer),
+				atom!("ruby-text-container") => Some(Self::RubyTextContainer),
 				_ => None,
 			},
 			_ => None,
@@ -202,25 +202,25 @@ impl<'a> Parse<'a> for Display {
 		}
 
 		// If a legacy/internal/box value is not applied then it must be a pair/triplet
-		let mut value = Display::None;
+		let mut value = Self::None;
 		loop {
 			match parser.cur() {
 				Token::Ident(atom) => match atom.to_ascii_lowercase() {
 					// <display-outside>
-					atom!("block") if !value.has_outside() => value |= Display::Block,
-					atom!("inline") if !value.has_outside() => value |= Display::Inline,
-					atom!("run-in") if !value.has_outside() => value |= Display::RunIn,
+					atom!("block") if !value.has_outside() => value |= Self::Block,
+					atom!("inline") if !value.has_outside() => value |= Self::Inline,
+					atom!("run-in") if !value.has_outside() => value |= Self::RunIn,
 					// <display-inside>
-					atom!("flow") if !value.has_inside() => value |= Display::Flow,
-					atom!("flow-root") if !value.has_inside() => value |= Display::FlowRoot,
-					atom!("flex") if !value.has_inside() => value |= Display::Flex,
-					atom!("grid") if !value.has_inside() => value |= Display::Grid,
-					atom!("ruby") if !value.has_inside() => value |= Display::Ruby,
-					atom!("table") if !value.has_inside() => value |= Display::Table,
+					atom!("flow") if !value.has_inside() => value |= Self::Flow,
+					atom!("flow-root") if !value.has_inside() => value |= Self::FlowRoot,
+					atom!("flex") if !value.has_inside() => value |= Self::Flex,
+					atom!("grid") if !value.has_inside() => value |= Self::Grid,
+					atom!("ruby") if !value.has_inside() => value |= Self::Ruby,
+					atom!("table") if !value.has_inside() => value |= Self::Table,
 					// <display-listitem>
-					atom!("list-item") if !value.has_list_item() => value |= Display::ListItem,
+					atom!("list-item") if !value.has_list_item() => value |= Self::ListItem,
 
-					atom => unexpected_ident!(parser, atom),
+					_ => unexpected_ident!(parser, atom),
 				},
 				_ => break,
 			}

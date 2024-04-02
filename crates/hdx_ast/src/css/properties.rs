@@ -1446,8 +1446,8 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(Property, 64);
-		assert_size!(StyleValue, 48);
+		assert_size!(Property, 128);
+		assert_size!(StyleValue, 112);
 	}
 
 	#[test]

@@ -3,11 +3,11 @@ use hdx_parser::{unexpected, FromToken, Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 
 use super::super::units::Time;
-use crate::Value;
+use crate::{Value, Writable};
 use smallvec::{smallvec, SmallVec};
 
 // https://drafts.csswg.org/css-transitions-1/#propdef-transition-duration
-#[derive(Value, Default, Debug, PartialEq, Hash)]
+#[derive(Value, Writable, Default, Debug, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct TransitionDuration(pub SmallVec<[Time; 2]>);
 
@@ -37,20 +37,6 @@ impl<'a> Parse<'a> for TransitionDuration {
 			token => unexpected!(parser, token),
 		};
 		Ok(value)
-	}
-}
-
-impl<'a> WriteCss<'a> for TransitionDuration {
-	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
-		let mut iter = self.0.iter().peekable();
-		while let Some(time) = iter.next() {
-			time.write_css(sink)?;
-			if iter.peek().is_some() {
-				sink.write_char(',')?;
-				sink.write_whitespace()?;
-			}
-		}
-		Ok(())
 	}
 }
 

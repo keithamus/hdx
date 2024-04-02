@@ -1,5 +1,6 @@
 use bitmask_enum::bitmask;
 use hdx_syntax::identifier::is_ident_str;
+use smallvec::SmallVec;
 
 pub use std::fmt::{Result, Write};
 
@@ -166,6 +167,34 @@ impl<'a, T: WriteCss<'a>> WriteCss<'a> for Vec<'a, T> {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> Result {
 		for item in self.iter() {
 			item.write_css(sink)?;
+		}
+		Ok(())
+	}
+}
+
+// TODO: const N: usize?
+impl<'a, T: WriteCss<'a>> WriteCss<'a> for SmallVec<[T; 1]> {
+	fn write_css<W: CssWriter>(&self, sink: &mut W) -> Result {
+		let mut iter = self.iter().peekable();
+		while let Some(w) = iter.next() {
+			w.write_css(sink)?;
+			if iter.peek().is_some() {
+				sink.write_char(',')?;
+				sink.write_whitespace()?;
+			}
+		}
+		Ok(())
+	}
+}
+impl<'a, T: WriteCss<'a>> WriteCss<'a> for SmallVec<[T; 2]> {
+	fn write_css<W: CssWriter>(&self, sink: &mut W) -> Result {
+		let mut iter = self.iter().peekable();
+		while let Some(w) = iter.next() {
+			w.write_css(sink)?;
+			if iter.peek().is_some() {
+				sink.write_char(',')?;
+				sink.write_whitespace()?;
+			}
 		}
 		Ok(())
 	}
