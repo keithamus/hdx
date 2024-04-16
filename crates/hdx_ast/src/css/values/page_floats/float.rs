@@ -1,7 +1,7 @@
 use hdx_atom::atom;
 use hdx_lexer::Token;
 use hdx_parser::{diagnostics, expect, unexpected, unexpected_ident, FromToken, Parse, Parser, Result as ParserResult};
-use hdx_writer::WriteCss;
+use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 
 use crate::{css::values::units::Length, Atomizable, Value};
 
@@ -139,7 +139,7 @@ impl<'a> Parse<'a> for Float {
 }
 
 impl<'a> WriteCss<'a> for Float {
-	fn write_css<W: hdx_writer::CssWriter>(&self, sink: &mut W) -> hdx_writer::Result {
+	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
 		match self {
 			Self::None => atom!("none").write_css(sink),
 			Self::Left => atom!("left").write_css(sink),
