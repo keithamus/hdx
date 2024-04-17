@@ -8,6 +8,7 @@ use crate::{bitmask, Value};
 // https://drafts.csswg.org/css-display-4/#propdef-display
 #[derive(Value, Default)]
 #[bitmask(u8)]
+#[bitmask_config(vec_debug)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub enum Display {
 	// The anatomy of the u8 for Display values is:
@@ -117,7 +118,8 @@ impl Display {
 
 	#[inline]
 	fn valid_list_item(&self) -> bool {
-		self.bits & 0b0000_1100 == 0 && self.bits & 0b0000_0011 > 0 && self.bits & 0b0000_0011 != 0b0000_0011
+		// valid list item must be either isolated, or with a <display-outside> or flow/flow-root
+		self.bits & 0b1000_1100 == 0 && (self.bits & 0b0011_0011 > 0 || self.bits == Self::ListItem.bits) && !self.contains(Self::Flex)
 	}
 
 	#[inline]
@@ -295,10 +297,11 @@ mod tests {
 	}
 
 	#[test]
-	fn test_variants() {
+	fn test_writes() {
 		// Parsing a display value should be written identically
 		assert_parse!(Display, "none");
 		assert_parse!(Display, "contents");
+		assert_parse!(Display, "list-item");
 		assert_parse!(Display, "block flow");
 		assert_parse!(Display, "block flow-root");
 		assert_parse!(Display, "inline flow");
@@ -314,5 +317,22 @@ mod tests {
 		assert_parse!(Display, "block ruby");
 		assert_parse!(Display, "block table");
 		assert_parse!(Display, "inline table");
+	}
+
+	#[test]
+	fn test_errors() {
+		// Parsing a display value should be written identically
+		assert_parse_error!(Display, "none contents");
+		assert_parse_error!(Display, "block contents");
+		assert_parse_error!(Display, "list-item table");
+		assert_parse_error!(Display, "list-item flex");
+		assert_parse_error!(Display, "list-item grid");
+		assert_parse_error!(Display, "list-item ruby");
+		assert_parse_error!(Display, "ruby list-item");
+		assert_parse_error!(Display, "block block");
+		assert_parse_error!(Display, "flow flow-root");
+		assert_parse_error!(Display, "inline inline");
+		assert_parse_error!(Display, "inline inline-table");
+		assert_parse_error!(Display, "block inline-grid");
 	}
 }
