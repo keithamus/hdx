@@ -58,7 +58,7 @@ impl<'a> WriteCss<'a> for Unknown<'a> {
 }
 
 #[derive(PartialEq, Debug, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", rename = "property"))]
 pub struct Property<'a> {
 	name: Atom,
 	value: StyleValue<'a>,
@@ -175,17 +175,21 @@ macro_rules! properties {
         $name: ident$(<$a: lifetime>)?: $atom: pat,
     )+ ) => {
 		#[derive(PartialEq, Debug, Hash)]
-		#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+		#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", rename_all = "kebab-case"))]
 		pub enum StyleValue<'a> {
 			Initial,
 			Inherit,
 			Unset,
 			Revert,
 			RevertLayer,
+			#[cfg_attr(feature = "serde", serde(untagged))]
 			Custom(Custom<'a>),
+			#[cfg_attr(feature = "serde", serde(untagged))]
 			Computed(Computed<'a>),
+			#[cfg_attr(feature = "serde", serde(untagged))]
 			Unknown(Unknown<'a>),
 			$(
+				#[cfg_attr(feature = "serde", serde(untagged))]
 				$name(values::$name$(<$a>)?),
 			)+
 		}
