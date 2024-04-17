@@ -1,4 +1,3 @@
-#[cfg(feature = "serde")]
 use crate::macros::discrete_media_feature;
 
 discrete_media_feature!(OverflowInlineMediaFeature[atom!("overflow-inline")] {
