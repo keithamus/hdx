@@ -2,7 +2,7 @@ use clap::Parser;
 use hdx_ast::css::StyleSheet;
 use hdx_writer::{BaseCssWriter, WriteCss, OutputOption};
 use miette::{GraphicalReportHandler, GraphicalTheme, NamedSource};
-use oxc_allocator::Allocator;
+use bumpalo::Bump;
 
 #[derive(Debug, Parser)]
 #[clap(author, version, about, long_about = None)]
@@ -28,7 +28,7 @@ fn main() {
 
 	let file_name = args.input.first().unwrap();
 	let source_text = std::fs::read_to_string(file_name).unwrap();
-	let allocator = Allocator::default();
+	let allocator = Bump::default();
 	let result = hdx_parser::Parser::new(&allocator, source_text.as_str(), hdx_parser::Features::default())
 		.parse_with::<StyleSheet>();
 	{

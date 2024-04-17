@@ -16,9 +16,6 @@ hdx_lexer = { workspace = true, features = ["serde"] }
 hdx_ast = { workspace = true, features = ["serde"] }
 hdx_parser = { workspace = true, features = ["serde"] }
 
-# Use OXC Allocator until https://github.com/fitzgen/bumpalo/pull/210 is resolved
-oxc_allocator = { workspace = true }
-
 miette = { workspace = true, features = ["fancy-no-backtrace"] }
 serde = { workspace = true, features = ["derive"] }
 serde_json = { workspace = true }

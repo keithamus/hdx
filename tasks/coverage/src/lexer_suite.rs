@@ -5,7 +5,7 @@ use std::{
 
 use console::Style;
 use hdx_lexer::{Lexer, Token};
-use oxc_allocator::Allocator;
+use bumpalo::Bump;
 use serde::Serialize;
 use serde_json::to_string_pretty;
 use similar::{ChangeTag, TextDiff};
@@ -97,7 +97,7 @@ pub trait LexerCase: Sized {
 
 	/// Execute the parser once and get the test result
 	fn execute(&mut self, args: &AppArgs) -> TestResult {
-		let allocator = Allocator::default();
+		let allocator = Bump::default();
 		let source_text = self.source_text();
 		let mut lexer = Lexer::new(&allocator, source_text);
 		let mut tokens = vec![];

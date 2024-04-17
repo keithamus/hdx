@@ -6,7 +6,7 @@ mod token;
 use std::{collections::VecDeque, str::Chars};
 
 use bitmask_enum::bitmask;
-use oxc_allocator::Allocator;
+use bumpalo::Bump;
 pub use token::{NumType, PairWise, Token, QuoteStyle};
 
 #[derive(Debug, Clone)]
@@ -22,7 +22,7 @@ pub(crate) enum Include {
 }
 
 pub struct Lexer<'a> {
-	allocator: &'a Allocator,
+	allocator: &'a Bump,
 	source: &'a str,
 	current: LexerCheckpoint<'a>,
 	lookahead: VecDeque<LexerCheckpoint<'a>>,
@@ -30,7 +30,7 @@ pub struct Lexer<'a> {
 }
 
 impl<'a> Lexer<'a> {
-	pub fn new(allocator: &'a Allocator, source: &'a str) -> Self {
+	pub fn new(allocator: &'a Bump, source: &'a str) -> Self {
 		let token = Token::default();
 		let current = LexerCheckpoint { chars: source.chars(), token };
 		Self { allocator, source, current, lookahead: VecDeque::with_capacity(4), include: Include::none() }

@@ -1,6 +1,6 @@
 use hdx_atom::{atom, Atom};
 use hdx_lexer::{Lexer, Token};
-use oxc_allocator::Allocator;
+use bumpalo::Bump;
 
 #[test]
 fn size_test() {
@@ -9,7 +9,7 @@ fn size_test() {
 
 #[test]
 fn empty() {
-	let allocator = Allocator::default();
+	let allocator = Bump::default();
 	let mut lex = Lexer::new(&allocator, "");
 	assert_eq!(lex.pos(), 0);
 	assert_eq!(lex.advance_including_whitespace_and_comments(), Token::Eof);
@@ -20,7 +20,7 @@ fn empty() {
 
 #[test]
 fn tokenizes_tilde_as_ddelim() {
-	let allocator = Allocator::default();
+	let allocator = Bump::default();
 	let mut lex = Lexer::new(&allocator, "~");
 	assert_eq!(lex.pos(), 0);
 	assert_eq!(lex.advance_including_whitespace_and_comments(), Token::Delim('~'));
@@ -33,7 +33,7 @@ fn tokenizes_tilde_as_ddelim() {
 
 #[test]
 fn tokenizes_newlines_as_whitespace() {
-	let allocator = Allocator::default();
+	let allocator = Bump::default();
 	let mut lex = Lexer::new(&allocator, "\r\n");
 	assert_eq!(lex.pos(), 0);
 	assert_eq!(lex.advance_including_whitespace_and_comments(), Token::Whitespace);
@@ -46,7 +46,7 @@ fn tokenizes_newlines_as_whitespace() {
 
 #[test]
 fn tokenizes_multiple_newlines_as_whitespace() {
-	let allocator = Allocator::default();
+	let allocator = Bump::default();
 	let mut lex = Lexer::new(&allocator, "\r\n");
 	assert_eq!(lex.pos(), 0);
 	assert_eq!(lex.advance_including_whitespace_and_comments(), Token::Whitespace);
@@ -59,7 +59,7 @@ fn tokenizes_multiple_newlines_as_whitespace() {
 
 #[test]
 fn tokenizes_multiple_whitespace_as_whitespace() {
-	let allocator = Allocator::default();
+	let allocator = Bump::default();
 	let mut lex = Lexer::new(&allocator, "\t \t \t");
 	assert_eq!(lex.pos(), 0);
 	assert_eq!(lex.advance_including_whitespace_and_comments(), Token::Whitespace);
@@ -72,7 +72,7 @@ fn tokenizes_multiple_whitespace_as_whitespace() {
 
 #[test]
 fn tokenizes_trivial_css_file() {
-	let allocator = Allocator::default();
+	let allocator = Bump::default();
 	let mut lex = Lexer::new(&allocator, "body { color: black }/* fin */");
 	assert_eq!(lex.pos(), 0);
 	assert_eq!(lex.advance_including_whitespace_and_comments(), Token::Ident(atom!("body")));
@@ -103,7 +103,7 @@ fn tokenizes_trivial_css_file() {
 
 #[test]
 fn skips_whitespace_and_comments_with_next() {
-	let allocator = Allocator::default();
+	let allocator = Bump::default();
 	let mut lex = Lexer::new(&allocator, "body { color: black }/* fin */");
 	assert_eq!(lex.pos(), 0);
 	assert_eq!(lex.advance(), Token::Ident(atom!("body")));

@@ -21,8 +21,6 @@ hdx_derive = { workspace = true }
 clap = { workspace = true, features = ["derive", "cargo"] }
 miette = { workspace = true }
 
-# Use OXC Allocator until https://github.com/fitzgen/bumpalo/pull/210 is resolved
-oxc_allocator = { workspace = true }
 bumpalo = { workspace = true, features = ["collections", "boxed"] }
 
 serde = { workspace = true, optional = true }

@@ -15,7 +15,7 @@ hdx_atom = { workspace = true }
 hdx_parser = { workspace = true }
 hdx_syntax = { workspace = true }
 
-oxc_allocator = { workspace = true }
+bumpalo = { workspace = true }
 bitmask-enum = { workspace = true }
 smallvec = { workspace = true }
 

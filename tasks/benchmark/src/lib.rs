@@ -8,7 +8,7 @@ use hdx_parser::{Parser, Features};
 use hdx_writer::{BaseCssWriter, WriteCss, OutputOption};
 // use hdx_parser::{Parser, Features};
 // use hdx_writer::{BaseCssWriter, WriteCss};
-use oxc_allocator::Allocator;
+use bumpalo::Bump;
 
 /// # Panics
 /// Invalid Project Root
@@ -62,7 +62,7 @@ impl AppArgs {
 					// Otherwise the allocator will allocate huge memory chunks (by power of two)
 					// from the system allocator, which makes time measurement unequal during long
 					// runs.
-					let allocator = Allocator::default();
+					let allocator = Bump::default();
 					let mut lexer = Lexer::new(&allocator, source_text);
 					loop {
 						if lexer.advance() == hdx_lexer::Token::Eof {
