@@ -1,7 +1,7 @@
 use bitmask_enum::bitmask;
 use hdx_lexer::{Lexer, Token};
 use miette::Error;
-use oxc_allocator::Allocator;
+use bumpalo::Bump;
 
 use crate::{diagnostics, span::Spanned, traits::Parse};
 
@@ -20,7 +20,7 @@ pub struct Parser<'a> {
 
 	pub(crate) prev_pos: u32,
 
-	pub(crate) allocator: &'a Allocator,
+	pub(crate) allocator: &'a Bump,
 }
 
 #[bitmask(u8)]
@@ -50,7 +50,7 @@ pub struct ParserReturn<T> {
 
 impl<'a> Parser<'a> {
 	/// Create a new parser
-	pub fn new(allocator: &'a Allocator, source_text: &'a str, features: Features) -> Self {
+	pub fn new(allocator: &'a Bump, source_text: &'a str, features: Features) -> Self {
 		Self {
 			lexer: Lexer::new(allocator, source_text),
 			features,

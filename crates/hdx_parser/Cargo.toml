@@ -16,8 +16,6 @@ hdx_atom = { workspace = true }
 
 closestmatch = { workspace = true }
 
-# Use OXC Allocator until https://github.com/fitzgen/bumpalo/pull/210 is resolved
-oxc_allocator = { workspace = true }
 bumpalo = { workspace = true }
 
 miette = { workspace = true, features = ["derive"] }
@@ -31,5 +29,5 @@ glob = { workspace = true }
 
 [features]
 default = []
-serde = ["dep:serde", "dep:serde_json", "hdx_lexer/serde"]
+serde = ["dep:serde", "dep:serde_json", "hdx_lexer/serde", "bumpalo/serde"]
 fancy = ["miette/fancy-no-backtrace"]
