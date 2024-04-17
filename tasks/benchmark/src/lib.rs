@@ -88,7 +88,7 @@ impl AppArgs {
 			group.throughput(Throughput::Bytes(file.source_text.len() as u64));
 			group.bench_with_input(BenchmarkId::from_parameter(&file.name), &file.source_text, |b, source_text| {
 				b.iter_with_large_drop(|| {
-					let allocator = Allocator::default();
+					let allocator = Bump::default();
 					let _ = Parser::new(&allocator, source_text, Features::default()).parse_with::<StyleSheet>();
 					allocator
 				});
@@ -109,7 +109,7 @@ impl AppArgs {
 			group.throughput(Throughput::Bytes(file.source_text.len() as u64));
 			group.bench_with_input(BenchmarkId::from_parameter(&file.name), &file.source_text, |b, source_text| {
 				b.iter_with_large_drop(|| {
-					let allocator = Allocator::default();
+					let allocator = Bump::default();
 					let result =
 						Parser::new(&allocator, source_text.as_str(), Features::default()).parse_with::<StyleSheet>();
 					{

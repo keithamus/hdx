@@ -546,6 +546,7 @@ dependencies = [
 name = "hdx_coverage"
 version = "0.0.0"
 dependencies = [
+ "bumpalo",
  "console",
  "encoding_rs",
  "encoding_rs_io",
