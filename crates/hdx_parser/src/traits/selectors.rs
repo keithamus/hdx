@@ -21,7 +21,7 @@ pub trait SelectorList<'a>: Sized + Parse<'a> {
 	fn parse_selector_list(parser: &mut Parser<'a>) -> Result<Vec<'a, Spanned<Vec<'a, Self::SelectorComponent>>>> {
 		let mut selectors = parser.new_vec();
 		loop {
-			discard!(parser, Include::Whitespace, Token::Whitespace);
+			while discard!(parser, Include::Whitespace, Token::Whitespace) {}
 			let span = parser.span();
 			let mut selector = parser.new_vec();
 			while !peek!(parser, Token::Comma | Token::LeftCurly | Token::RightParen | Token::Eof) {

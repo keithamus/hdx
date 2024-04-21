@@ -108,21 +108,13 @@
                 "end": 40,
                 "node": [
                   {
-                    "type": "combinator",
-                    "value": "descendant"
-                  },
-                  {
-                    "type": "combinator",
-                    "value": "descendant"
-                  },
-                  {
                     "type": "tag",
                     "value": {
                       "Html": "Div"
                     }
                   }
                 ],
-                "start": 25
+                "start": 36
               }
             ],
             "start": 0
@@ -163,17 +155,13 @@
                 "end": 151,
                 "node": [
                   {
-                    "type": "combinator",
-                    "value": "descendant"
-                  },
-                  {
                     "type": "tag",
                     "value": {
                       "Html": "A"
                     }
                   }
                 ],
-                "start": 140
+                "start": 149
               }
             ],
             "start": 139

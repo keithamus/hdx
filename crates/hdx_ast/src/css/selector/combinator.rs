@@ -19,7 +19,7 @@ impl<'a> Parse<'a> for Combinator {
 		if !peek!(parser, Token::Delim(_)) && could_be_descendant_combinator {
 			return Ok(Self::Descendant);
 		}
-		let val = match parser.next() {
+		let val = match parser.peek() {
 			Token::Delim(c) => match c {
 				'>' => Self::Child,
 				'+' => Self::NextSibling,
@@ -28,10 +28,12 @@ impl<'a> Parse<'a> for Combinator {
 					expect!(parser.next_with(Include::Whitespace), Token::Delim('|'));
 					Self::Column
 				}
+				_ if could_be_descendant_combinator => return Ok(Self::Descendant),
 				_ => unexpected!(parser),
 			},
 			token => unexpected!(parser, token),
 		};
+		parser.advance();
 		discard!(parser, Include::Whitespace, Token::Whitespace);
 		Ok(val)
 	}

@@ -254,6 +254,7 @@ mod tests {
 	fn test_writes() {
 		assert_parse!(SelectorList, ":root");
 		assert_parse!(SelectorList, "body, body");
+		assert_parse!(SelectorList, ".body .body");
 		assert_parse!(SelectorList, "*");
 		assert_parse!(SelectorList, "[attr|='foo']");
 		assert_parse!(SelectorList, "*|x");
@@ -272,6 +273,7 @@ mod tests {
 		assert_parse!(SelectorList, "::before:focus:target:right:playing:popover-open:blank");
 		assert_parse!(SelectorList, ":dir(ltr)");
 		assert_parse!(SelectorList, "tr:nth-child(n-1):state(foo)");
+		assert_parse!(SelectorList, " /**/ .foo", ".foo");
 		// Non Standard
 		assert_parse!(SelectorList, "::-moz-focus-inner");
 		assert_parse!(SelectorList, "::-moz-list-bullet::-webkit-scrollbar");
