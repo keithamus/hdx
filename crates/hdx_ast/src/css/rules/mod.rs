@@ -1,13 +1,13 @@
 pub mod charset;
-pub mod page;
 pub mod media;
+pub mod page;
 pub mod supports;
 
 pub use charset::*;
 use hdx_lexer::Token;
 use hdx_parser::{unexpected, Parse, Parser, Result as ParserResult};
-pub use page::*;
 pub use media::*;
+pub use page::*;
 pub use supports::*;
 
 pub struct NoPreludeAllowed;

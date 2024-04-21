@@ -24,8 +24,16 @@ mod tests {
 
 	#[test]
 	fn test_minify() {
-		assert_minify!(PrefersReducedMotionMediaFeature, "prefers-reduced-motion: no-preference", "prefers-reduced-motion:no-preference");
-		assert_minify!(PrefersReducedMotionMediaFeature, "prefers-reduced-motion: reduce", "prefers-reduced-motion:reduce");
+		assert_minify!(
+			PrefersReducedMotionMediaFeature,
+			"prefers-reduced-motion: no-preference",
+			"prefers-reduced-motion:no-preference"
+		);
+		assert_minify!(
+			PrefersReducedMotionMediaFeature,
+			"prefers-reduced-motion: reduce",
+			"prefers-reduced-motion:reduce"
+		);
 	}
 
 	#[test]

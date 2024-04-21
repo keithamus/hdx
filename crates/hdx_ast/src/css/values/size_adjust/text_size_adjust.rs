@@ -1,4 +1,4 @@
-use crate::{css::values::units::{Percent}, Parsable, Writable};
+use crate::{css::units::Percent, Parsable, Writable};
 
 // https://drafts.csswg.org/css-size-adjust-1/#propdef-text-size-adjust
 #[derive(Parsable, Writable, Default, Debug, PartialEq, Hash)]

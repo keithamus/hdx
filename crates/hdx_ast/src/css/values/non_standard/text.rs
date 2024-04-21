@@ -6,9 +6,9 @@ use crate::{Atomizable, Parsable, Writable};
 pub enum TextRendering {
 	#[default]
 	Auto, // atom!("auto")
-	Optimizespeed, // atom!("optimizespeed")
-	Optimizelegibility,   // atom!("optimizelegibility")
-	Geometricprecision,   // atom!("geometricprecision")
+	Optimizespeed,      // atom!("optimizespeed")
+	Optimizelegibility, // atom!("optimizelegibility")
+	Geometricprecision, // atom!("geometricprecision")
 }
 
 #[cfg(test)]

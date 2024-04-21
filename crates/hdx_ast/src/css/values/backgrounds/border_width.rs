@@ -51,11 +51,22 @@ write_logical_sides!(BorderInlineWidth);
 // https://drafts.csswg.org/css-backgrounds/#propdef-border-width
 #[derive(Value, Default, PartialEq, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-pub struct BorderWidth(pub BorderBlockStartWidth, pub BorderInlineEndWidth, pub BorderBlockEndWidth, pub BorderInlineStartWidth);
+pub struct BorderWidth(
+	pub BorderBlockStartWidth,
+	pub BorderInlineEndWidth,
+	pub BorderBlockEndWidth,
+	pub BorderInlineStartWidth,
+);
 
-parse_rect!(BorderWidth, LineWidth, BorderBlockStartWidth, BorderInlineEndWidth, BorderBlockEndWidth, BorderInlineStartWidth);
+parse_rect!(
+	BorderWidth,
+	LineWidth,
+	BorderBlockStartWidth,
+	BorderInlineEndWidth,
+	BorderBlockEndWidth,
+	BorderInlineStartWidth
+);
 write_rect!(BorderWidth);
-
 
 #[cfg(test)]
 mod tests {

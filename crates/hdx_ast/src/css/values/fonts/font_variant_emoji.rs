@@ -6,8 +6,8 @@ use crate::{Atomizable, Parsable, Writable};
 pub enum FontVariantEmoji {
 	#[default]
 	Normal, // atom!("normal")
-	Text, // atom!("text")
-	Emoji, // atom!("emoji")
+	Text,    // atom!("text")
+	Emoji,   // atom!("emoji")
 	Unicode, // atom!("unicode")
 }
 

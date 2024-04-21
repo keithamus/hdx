@@ -24,8 +24,16 @@ mod tests {
 
 	#[test]
 	fn test_minify() {
-		assert_minify!(PrefersReducedTransparencyMediaFeature, "prefers-reduced-transparency: no-preference", "prefers-reduced-transparency:no-preference");
-		assert_minify!(PrefersReducedTransparencyMediaFeature, "prefers-reduced-transparency: reduce", "prefers-reduced-transparency:reduce");
+		assert_minify!(
+			PrefersReducedTransparencyMediaFeature,
+			"prefers-reduced-transparency: no-preference",
+			"prefers-reduced-transparency:no-preference"
+		);
+		assert_minify!(
+			PrefersReducedTransparencyMediaFeature,
+			"prefers-reduced-transparency: reduce",
+			"prefers-reduced-transparency:reduce"
+		);
 	}
 
 	#[test]

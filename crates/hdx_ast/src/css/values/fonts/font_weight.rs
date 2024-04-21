@@ -1,4 +1,4 @@
-use crate::{css::values::units::CSSFloat, Parsable, Value, Writable};
+use crate::{css::units::CSSFloat, Parsable, Value, Writable};
 
 // https://drafts.csswg.org/css-inline/#propdef-alignment-baseline
 #[derive(Value, Parsable, Writable, Default, Debug, PartialEq, Hash)]

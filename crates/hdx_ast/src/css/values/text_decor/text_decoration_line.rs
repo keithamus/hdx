@@ -8,6 +8,7 @@ use crate::{bitmask, Value};
 // https://drafts.csswg.org/css-text/#text-align-property
 #[derive(Value, Default)]
 #[bitmask(u8)]
+#[bitmask_config(vec_debug)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub enum TextDecorationLine {
 	#[default]
@@ -25,9 +26,10 @@ impl<'a> Parse<'a> for TextDecorationLine {
 			if value.is_all() {
 				break;
 			}
-			match parser.cur() {
+			match parser.peek() {
 				Token::Ident(atom) => match atom.to_ascii_lowercase() {
 					atom!("none") if value.is_none() => {
+						parser.advance();
 						return Ok(Self::None);
 					}
 					atom!("underline") if !value.contains(Self::Underline) => value |= Self::Underline,
@@ -36,9 +38,15 @@ impl<'a> Parse<'a> for TextDecorationLine {
 					atom!("blink") if !value.contains(Self::Blink) => value |= Self::Blink,
 					_ => break,
 				},
-				token => unexpected!(parser, token),
+				_ => {
+					break;
+				}
 			}
 			parser.advance();
+		}
+		// Explicit "none" is handled above, so if there are no other collected values this is a parse error
+		if value == Self::none() {
+			unexpected!(parser);
 		}
 		Ok(value)
 	}
@@ -53,7 +61,7 @@ impl<'a> WriteCss<'a> for TextDecorationLine {
 				atom!("underline").write_css(sink)?;
 			}
 			if self.contains(Self::Overline) {
-				if self.intersects(Self::Overline) {
+				if self.contains(Self::Underline) {
 					sink.write_char(' ')?;
 				}
 				atom!("overline").write_css(sink)?;
@@ -83,5 +91,20 @@ mod tests {
 	#[test]
 	fn size_test() {
 		assert_size!(TextDecorationLine, 1);
+	}
+
+	#[test]
+	fn test_writes() {
+		assert_parse!(TextDecorationLine, "none");
+		assert_parse!(TextDecorationLine, "overline");
+		assert_parse!(TextDecorationLine, "line-through");
+		assert_parse!(TextDecorationLine, "blink");
+	}
+
+	#[test]
+	fn test_errors() {
+		assert_parse_error!(TextDecorationLine, "");
+		assert_parse_error!(TextDecorationLine, "none overline");
+		assert_parse_error!(TextDecorationLine, "overline overline");
 	}
 }

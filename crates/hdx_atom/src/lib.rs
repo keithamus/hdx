@@ -3,12 +3,12 @@ extern crate string_cache;
 include!(concat!(env!("OUT_DIR"), "/hdx_atom.rs"));
 
 pub trait Atomizable: Sized {
-	fn from_atom(atom: Atom) -> Option<Self>;
+	fn from_atom(atom: &Atom) -> Option<Self>;
 	fn to_atom(&self) -> Atom;
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
 	use crate::*;
 
 	#[test]

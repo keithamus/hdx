@@ -1,4 +1,4 @@
-use crate::css::values::units::{CSSFloat, Percent};
+use crate::css::units::{CSSFloat, Percent};
 use crate::{Parsable, Value, Writable};
 
 // https://drafts.csswg.org/css-color/#transparency
@@ -12,9 +12,9 @@ pub enum Opacity {
 }
 
 impl Default for Opacity {
-    fn default() -> Self {
-        Self::Number(1.0.into())
-    }
+	fn default() -> Self {
+		Self::Number(1.0.into())
+	}
 }
 
 #[cfg(test)]

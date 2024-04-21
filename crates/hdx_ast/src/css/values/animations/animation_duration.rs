@@ -1,10 +1,9 @@
 use hdx_atom::atom;
 use hdx_lexer::Token;
-use hdx_parser::{unexpected, unexpected_ident, FromToken, Parse, Parser, Result as ParserResult};
+use hdx_parser::{discard, unexpected, unexpected_ident, FromToken, Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 
-use super::super::units::Time;
-use crate::Value;
+use crate::{css::units::Time, Value};
 use smallvec::{smallvec, SmallVec};
 
 // https://drafts.csswg.org/css-animations-2/#animation-duration
@@ -20,7 +19,7 @@ impl<'a> Value for AnimationDuration {}
 
 impl<'a> Parse<'a> for AnimationDuration {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let value = match parser.cur() {
+		Ok(match parser.peek() {
 			Token::Ident(atom) => match atom.to_ascii_lowercase() {
 				atom!("auto") => {
 					parser.advance();
@@ -31,26 +30,19 @@ impl<'a> Parse<'a> for AnimationDuration {
 			Token::Dimension(_, _, _) => {
 				let mut values = smallvec![];
 				loop {
-					if let Some(time) = Time::from_token(parser.cur()) {
-						parser.advance();
+					if let Some(time) = Time::from_token(&parser.next()) {
 						values.push(time);
 					} else {
 						unexpected!(parser);
 					}
-					match parser.cur() {
-						Token::Comma => {
-							parser.advance();
-						}
-						_ => {
-							break;
-						}
+					if !discard!(parser, Token::Comma) {
+						break;
 					}
 				}
 				AnimationDuration::Absolute(values)
 			}
 			token => unexpected!(parser, token),
-		};
-		Ok(value)
+		})
 	}
 }
 

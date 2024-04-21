@@ -27,8 +27,16 @@ mod tests {
 	#[test]
 	fn test_minify() {
 		assert_minify!(EnvironmentBlendingMediaFeature, "environment-blending: opaque", "environment-blending:opaque");
-		assert_minify!(EnvironmentBlendingMediaFeature, "environment-blending: additive", "environment-blending:additive");
-		assert_minify!(EnvironmentBlendingMediaFeature, "environment-blending: subtractive", "environment-blending:subtractive");
+		assert_minify!(
+			EnvironmentBlendingMediaFeature,
+			"environment-blending: additive",
+			"environment-blending:additive"
+		);
+		assert_minify!(
+			EnvironmentBlendingMediaFeature,
+			"environment-blending: subtractive",
+			"environment-blending:subtractive"
+		);
 	}
 
 	#[test]

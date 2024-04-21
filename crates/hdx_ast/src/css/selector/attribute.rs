@@ -1,13 +1,11 @@
 use hdx_atom::{atom, Atom};
-use hdx_lexer::{QuoteStyle, Token};
-use hdx_parser::{
-	discard, expect, peek, unexpected, unexpected_ident, Parse, Parser, Result as ParserResult,
-};
-use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
+use hdx_lexer::{Include, QuoteStyle, Token};
+use hdx_parser::{expect, peek, unexpected, unexpected_ident, Parse, Parser, Result as ParserResult};
+use hdx_writer::{write_css, CssWriter, Result as WriterResult, WriteCss};
 
 use super::NSPrefix;
 
-#[derive(Debug, PartialEq, Hash)]
+#[derive(Default, Debug, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
 pub struct Attribute {
 	pub ns_prefix: NSPrefix,
@@ -20,190 +18,112 @@ pub struct Attribute {
 
 impl<'a> Parse<'a> for Attribute {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let mut quote = QuoteStyle::None;
-		let (ns_prefix, name) = match parser.cur() {
-			Token::Delim('|') => {
-				parser.advance_including_whitespace();
-				match parser.cur() {
+		expect!(parser.next(), Token::LeftSquare);
+		let mut attr = Self::default();
+		match parser.next().clone() {
+			Token::Delim('|') => match parser.next_with(Include::Whitespace) {
+				Token::Ident(name) => {
+					attr.name = name.clone();
+				}
+				token => unexpected!(parser, token),
+			},
+			Token::Delim('*') => match parser.next_with(Include::Whitespace) {
+				Token::Delim('|') => match parser.next_with(Include::Whitespace) {
 					Token::Ident(name) => {
-						parser.advance();
-						(NSPrefix::None, name)
+						attr.ns_prefix = NSPrefix::Wildcard;
+						attr.name = name.clone();
 					}
 					token => unexpected!(parser, token),
-				}
-			}
-			Token::Delim('*') => {
-				parser.advance_including_whitespace();
-				match parser.cur() {
-					Token::Delim('|') => {
-						parser.advance_including_whitespace();
-						match parser.cur() {
-							Token::Ident(name) => {
-								parser.advance();
-								(NSPrefix::Wildcard, name)
-							}
-							token => unexpected!(parser, token),
+				},
+				token => unexpected!(parser, token),
+			},
+			Token::Ident(ns) => match parser.peek_with(Include::Whitespace).clone() {
+				Token::Delim('|') if peek!(parser, 2, Token::Ident(_)) => {
+					expect!(parser.next_with(Include::Whitespace), Token::Delim('|'));
+					match parser.next_with(Include::Whitespace) {
+						Token::Ident(name) => {
+							attr.ns_prefix = NSPrefix::Named(ns);
+							attr.name = name.clone();
 						}
+						token => unexpected!(parser, token),
 					}
-					token => unexpected!(parser, token),
 				}
-			}
-			Token::Ident(ns) => {
-				parser.advance_including_whitespace();
-				match parser.cur() {
-					Token::Delim('|') if peek!(parser, Token::Ident(_)) => {
-						parser.advance_including_whitespace();
-						match parser.cur() {
-							Token::Ident(name) => {
-								parser.advance();
-								(NSPrefix::Named(ns), name)
-							}
-							token => unexpected!(parser, token),
-						}
-					}
-					_ => (NSPrefix::None, ns),
+				_ => {
+					attr.name = ns;
 				}
-			}
+			},
 			token => unexpected!(parser, token),
 		};
-		// last advance may have included WS/Comments so discard
-		// any as attribute selectors aren't WS sensitive.
-		discard!(parser, Token::Whitespace | Token::Comment(_));
-		let matcher = match parser.cur() {
-			Token::Delim('=') => {
-				parser.advance();
-				AttributeMatch::Exact
-			}
+		match parser.next() {
+			Token::Delim('=') => attr.matcher = AttributeMatch::Exact,
 			Token::Delim('~') => {
-				parser.advance_including_whitespace_and_comments();
-				expect!(parser, Token::Delim('='));
-				parser.advance();
-				AttributeMatch::SpaceList
+				expect!(parser.next_with(Include::all()), Token::Delim('='));
+				attr.matcher = AttributeMatch::SpaceList
 			}
 			Token::Delim('|') => {
-				parser.advance_including_whitespace_and_comments();
-				expect!(parser, Token::Delim('='));
-				parser.advance();
-				AttributeMatch::LangPrefix
+				expect!(parser.next_with(Include::all()), Token::Delim('='));
+				attr.matcher = AttributeMatch::LangPrefix
 			}
 			Token::Delim('^') => {
-				parser.advance_including_whitespace_and_comments();
-				expect!(parser, Token::Delim('='));
-				parser.advance();
-				AttributeMatch::Prefix
+				expect!(parser.next_with(Include::all()), Token::Delim('='));
+				attr.matcher = AttributeMatch::Prefix
 			}
 			Token::Delim('$') => {
-				parser.advance_including_whitespace_and_comments();
-				expect!(parser, Token::Delim('='));
-				parser.advance();
-				AttributeMatch::Suffix
+				expect!(parser.next_with(Include::all()), Token::Delim('='));
+				attr.matcher = AttributeMatch::Suffix
 			}
 			Token::Delim('*') => {
-				parser.advance_including_whitespace_and_comments();
-				expect!(parser, Token::Delim('='));
-				parser.advance();
-				AttributeMatch::Contains
+				expect!(parser.next_with(Include::all()), Token::Delim('='));
+				attr.matcher = AttributeMatch::Contains
 			}
-			_ => {
-				return Ok(Self {
-					ns_prefix,
-					name,
-					value: atom!(""),
-					quote,
-					modifier: AttributeModifier::None,
-					matcher: AttributeMatch::Any,
-				});
+			Token::RightSquare => {
+				return Ok(attr);
 			}
-		};
-		let value = match parser.cur() {
-			Token::Ident(value) => {
-				parser.advance();
-				value
-			}
-			Token::String(value, q) => {
-				quote = q;
-				parser.advance();
-				value
+			token => unexpected!(parser, token),
+		}
+		match parser.next().clone() {
+			Token::Ident(value) => attr.value = value,
+			Token::String(value, quote_style) => {
+				attr.quote = quote_style;
+				attr.value = value;
 			}
 			token => unexpected!(parser, token),
 		};
-		match parser.cur() {
+		match parser.next() {
 			Token::Ident(ident) => {
-				let modifier = match ident.to_ascii_lowercase() {
+				attr.modifier = match ident.to_ascii_lowercase() {
 					atom!("i") => AttributeModifier::Insensitive,
 					atom!("s") => AttributeModifier::Sensitive,
 					atom => unexpected_ident!(parser, atom),
 				};
-				parser.advance();
-				Ok(Self { ns_prefix, name, value, quote, modifier, matcher })
+				expect!(parser.next(), Token::RightSquare);
+				Ok(attr)
 			}
-			_ => Ok(Self { ns_prefix, name, value, quote, modifier: AttributeModifier::None, matcher }),
+			Token::RightSquare => Ok(attr),
+			token => unexpected!(parser, token),
 		}
 	}
 }
 
 impl<'a> WriteCss<'a> for Attribute {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
-		match &self.ns_prefix {
-			NSPrefix::None => {}
-			NSPrefix::Named(ns) => {
-				sink.write_str(ns.as_ref())?;
-				sink.write_char('|')?;
-			}
-			NSPrefix::Wildcard => {
-				sink.write_char('*')?;
-				sink.write_char('|')?;
-			}
-		}
-		sink.write_str(self.name.as_ref())?;
-		match &self.matcher {
-			AttributeMatch::Any => {}
-			AttributeMatch::Exact => {
-				sink.write_char('=')?;
-			}
-			AttributeMatch::SpaceList => {
-				sink.write_char('~')?;
-				sink.write_char('=')?;
-			}
-			AttributeMatch::LangPrefix => {
-				sink.write_char('|')?;
-				sink.write_char('=')?;
-			}
-			AttributeMatch::Prefix => {
-				sink.write_char('^')?;
-				sink.write_char('=')?;
-			}
-			AttributeMatch::Suffix => {
-				sink.write_char('$')?;
-				sink.write_char('=')?;
-			}
-			AttributeMatch::Contains => {
-				sink.write_char('*')?;
-				sink.write_char('=')?;
-			}
-		}
+		write_css!(sink, '[', self.ns_prefix, self.name, self.matcher);
 		if self.matcher != AttributeMatch::Any {
 			sink.write_with_quotes(self.value.as_ref(), self.quote, true)?;
 		}
-		match self.modifier {
-			AttributeModifier::Sensitive => {
-				sink.write_char(' ')?;
-				sink.write_char('s')?;
-			}
-			AttributeModifier::Insensitive => {
-				sink.write_char(' ')?;
-				sink.write_char('i')?;
-			},
-			AttributeModifier::None => {}
+		if self.modifier != AttributeModifier::None {
+			write_css!(sink, ' ', self.modifier);
 		}
+		write_css!(sink, ']');
 		Ok(())
 	}
 }
 
-#[derive(Debug, PartialEq, Hash)]
+#[derive(Default, Debug, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", content = "value"))]
 pub enum AttributeMatch {
-	Any,        // [attr]
+	#[default]
+	Any, // [attr]
 	Exact,      // [attr=val]
 	SpaceList,  // [attr~=val]
 	LangPrefix, // [attr|=val]
@@ -212,12 +132,39 @@ pub enum AttributeMatch {
 	Contains,   // [attr*=val]
 }
 
-#[derive(Debug, PartialEq, Hash)]
+impl<'a> WriteCss<'a> for AttributeMatch {
+	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
+		match self {
+			AttributeMatch::Any => {}
+			AttributeMatch::Exact => write_css!(sink, '='),
+			AttributeMatch::SpaceList => write_css!(sink, '~', '='),
+			AttributeMatch::LangPrefix => write_css!(sink, '|', '='),
+			AttributeMatch::Prefix => write_css!(sink, '^', '='),
+			AttributeMatch::Suffix => write_css!(sink, '$', '='),
+			AttributeMatch::Contains => write_css!(sink, '*', '='),
+		}
+		Ok(())
+	}
+}
+
+#[derive(Default, Debug, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
 pub enum AttributeModifier {
+	#[default]
 	None,
 	Sensitive,
 	Insensitive,
+}
+
+impl<'a> WriteCss<'a> for AttributeModifier {
+	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
+		match self {
+			Self::Sensitive => write_css!(sink, 's'),
+			Self::Insensitive => write_css!(sink, 'i'),
+			Self::None => {}
+		}
+		Ok(())
+	}
 }
 
 #[cfg(test)]
@@ -234,25 +181,25 @@ mod tests {
 
 	#[test]
 	fn test_writes() {
-		assert_parse!(Attribute, "foo");
-		assert_parse!(Attribute, "foo='bar'");
-		assert_parse!(Attribute, "foo='bar'");
-		assert_parse!(Attribute, "attr*='foo'");
-		assert_parse!(Attribute, "attr='foo'");
-		assert_parse!(Attribute, "*|attr='foo'");
-		assert_parse!(Attribute, "x|attr='foo'");
-		assert_parse!(Attribute, "attr|='foo'");
-		assert_parse!(Attribute, "attr|='foo' i");
-		assert_parse!(Attribute, "attr|='foo' s");
+		assert_parse!(Attribute, "[foo]");
+		assert_parse!(Attribute, "[foo='bar']");
+		assert_parse!(Attribute, "[foo='bar']");
+		assert_parse!(Attribute, "[attr*='foo']");
+		assert_parse!(Attribute, "[attr='foo']");
+		assert_parse!(Attribute, "[*|attr='foo']");
+		assert_parse!(Attribute, "[x|attr='foo']");
+		assert_parse!(Attribute, "[attr|='foo']");
+		assert_parse!(Attribute, "[attr|='foo' i]");
+		assert_parse!(Attribute, "[attr|='foo' s]");
 	}
 
 	#[test]
 	fn test_minify() {
-		assert_minify!(Attribute, "foo", "foo");
-		assert_minify!(Attribute, "foo='bar'", "foo=bar");
-		assert_minify!(Attribute, "foo|='bar'", "foo|=bar");
-		assert_minify!(Attribute, "foo|='bar' s", "foo|=bar s");
-		assert_minify!(Attribute, "foo='value with spaces'", "foo=\"value with spaces\"");
-		assert_minify!(Attribute, "attr|='foo' s", "attr|=foo s");
+		assert_minify!(Attribute, "[ foo ]", "[foo]");
+		assert_minify!(Attribute, "[foo='bar']", "[foo=bar]");
+		assert_minify!(Attribute, "[foo|='bar']", "[foo|=bar]");
+		assert_minify!(Attribute, "[foo|='bar' s]", "[foo|=bar s]");
+		assert_minify!(Attribute, "[foo='value with spaces']", "[foo=\"value with spaces\"]");
+		assert_minify!(Attribute, "[attr|='foo' s]", "[attr|=foo s]");
 	}
 }

@@ -1,6 +1,5 @@
 use hdx_atom::atom;
-use hdx_lexer::Token;
-use hdx_parser::{unexpected, unexpected_ident, Parse, Parser, Result as ParserResult};
+use hdx_parser::{expect_ignore_case, unexpected, Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 
 use crate::{bitmask, Atomizable, Value};
@@ -8,6 +7,7 @@ use crate::{bitmask, Atomizable, Value};
 // https://drafts.csswg.org/css-box-4/#propdef-margin-trim
 #[derive(Value, Atomizable, Default)]
 #[bitmask(u8)]
+#[bitmask_config(vec_debug)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub enum MarginTrim {
 	#[default]
@@ -27,19 +27,14 @@ impl<'a> Parse<'a> for MarginTrim {
 			if value.is_all() {
 				break;
 			}
-			match parser.cur() {
-				Token::Ident(atom) => match atom.to_ascii_lowercase() {
-					atom!("block") => value |= MarginTrim::Block,
-					atom!("inline") => value |= MarginTrim::Inline,
-					atom!("block-start") => value |= MarginTrim::BlockStart,
-					atom!("block-end") => value |= MarginTrim::BlockEnd,
-					atom!("inline-start") => value |= MarginTrim::InlineStart,
-					atom!("inline-end") => value |= MarginTrim::InlineEnd,
-					atom => unexpected_ident!(parser, atom),
-				},
-				token => unexpected!(parser, token),
+			expect_ignore_case! { parser.next(), Token::Ident(_):
+				atom!("block") => value |= MarginTrim::Block,
+				atom!("inline") => value |= MarginTrim::Inline,
+				atom!("block-start") => value |= MarginTrim::BlockStart,
+				atom!("block-end") => value |= MarginTrim::BlockEnd,
+				atom!("inline-start") => value |= MarginTrim::InlineStart,
+				atom!("inline-end") => value |= MarginTrim::InlineEnd,
 			}
-			parser.advance();
 			if value == Self::None || value == Self::Block || value == Self::Inline {
 				break;
 			}

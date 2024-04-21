@@ -1,12 +1,12 @@
 use smallvec::{smallvec, SmallVec};
 
-use hdx_atom::{atom, Atom};
+use hdx_atom::{atom, Atom, Atomizable};
 use hdx_lexer::Token;
 use hdx_parser::{
-	diagnostics, expect, expect_ignore_case, match_ident_ignore_case, peek, unexpected, unexpected_ident, AtRule, RuleGroup,
-	FromToken, Parse, Parser, Result as ParserResult, Spanned, Vec,
+	diagnostics, discard, expect, expect_ignore_case, match_ignore_case, peek, todo, unexpected, unexpected_ident,
+	AtRule, Parse, Parser, Result as ParserResult, RuleList, Spanned, Vec,
 };
-use hdx_writer::{CssWriter, OutputOption, Result as WriterResult, WriteCss};
+use hdx_writer::{write_css, write_list, CssWriter, OutputOption, Result as WriterResult, WriteCss};
 
 use crate::css::stylerule::StyleRule;
 
@@ -24,7 +24,7 @@ pub struct MediaRule<'a> {
 // https://drafts.csswg.org/css-conditional-3/#at-ruledef-media
 impl<'a> Parse<'a> for MediaRule<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		expect_ignore_case!(parser, AtKeyword, atom!("media"));
+		expect_ignore_case!(parser.next(), Token::AtKeyword(atom!("media")));
 		let span = parser.span();
 		match Self::parse_at_rule(parser)? {
 			(Some(query), Some(rules)) => Ok(Self { query, rules }),
@@ -45,8 +45,7 @@ impl<'a> WriteCss<'a> for MediaRule<'a> {
 		if !sink.can_output(OutputOption::RedundantRules) && self.rules.node.0.is_empty() {
 			return Ok(());
 		}
-		sink.write_char('@')?;
-		atom!("media").write_css(sink)?;
+		write_css!(sink, '@', atom!("media"));
 		if matches!(self.query.node.0.first(), Some(Spanned { node: MediaQuery::Condition(_), .. })) {
 			sink.write_whitespace()?;
 		} else {
@@ -70,12 +69,12 @@ impl<'a> WriteCss<'a> for MediaRule<'a> {
 pub struct MediaRules<'a>(pub Vec<'a, Spanned<StyleRule<'a>>>);
 
 impl<'a> Parse<'a> for MediaRules<'a> {
-    fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-        Ok(Self(Self::parse_rules(parser)?))
-    }
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
+		Ok(Self(Self::parse_rule_list(parser)?))
+	}
 }
 
-impl<'a> RuleGroup<'a> for MediaRules<'a> {
+impl<'a> RuleList<'a> for MediaRules<'a> {
 	type Rule = StyleRule<'a>;
 }
 
@@ -89,7 +88,7 @@ impl<'a> WriteCss<'a> for MediaRules<'a> {
 			}
 		}
 		Ok(())
-    }
+	}
 }
 
 #[derive(Debug, PartialEq, Hash)]
@@ -100,11 +99,8 @@ impl<'a> Parse<'a> for MediaQueryList {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		let mut queries = smallvec![];
 		loop {
-			let query = MediaQuery::parse_spanned(parser)?;
-			queries.push(query);
-			if matches!(parser.cur(), Token::Comma) {
-				parser.advance();
-			} else {
+			queries.push(MediaQuery::parse_spanned(parser)?);
+			if !discard!(parser, Token::Comma) {
 				return Ok(Self(queries));
 			}
 		}
@@ -113,14 +109,7 @@ impl<'a> Parse<'a> for MediaQueryList {
 
 impl<'a> WriteCss<'a> for MediaQueryList {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
-		let mut queries = self.0.iter().peekable();
-		while let Some(query) = queries.next() {
-			query.write_css(sink)?;
-			if queries.peek().is_some() {
-				sink.write_char(',')?;
-				sink.write_whitespace()?;
-			}
-		}
+		write_list!(sink, self.0,);
 		Ok(())
 	}
 }
@@ -142,35 +131,27 @@ impl<'a> Parse<'a> for MediaQuery {
 		let mut not = false;
 		let mut only = false;
 		let mut media_type = None;
-		match parser.cur() {
-			Token::Ident(ident) => match ident.to_ascii_lowercase() {
-				atom!("not") => {
-					parser.advance();
-					not = true;
-				}
-				atom!("only") => {
-					parser.advance();
-					only = true;
-				}
-				_ => {
-					if let Some(ty) = MediaType::from_token(parser.cur()) {
-						parser.advance();
-						media_type = Some(ty);
-					} else {
-						unexpected_ident!(parser, ident);
-					}
-				}
+		if peek!(parser, Token::LeftParen) {
+			return Ok(Self::Condition(MediaCondition::parse(parser)?));
+		}
+		expect_ignore_case! { parser.next(), Token::Ident(_):
+			atom!("not") => {
+				not = true;
 			},
-			Token::LeftParen => {
-				return Ok(Self::Condition(MediaCondition::parse(parser)?));
-			}
-			token => {
-				unexpected!(parser, token);
+			atom!("only") => {
+				only = true;
+			},
+			atom => {
+				if let Some(ty) = MediaType::from_atom(&atom) {
+					media_type = Some(ty);
+				} else {
+					unexpected_ident!(parser, atom);
+				}
 			}
 		}
-		match parser.cur() {
+		match parser.peek() {
 			Token::Ident(ident) if only || not => {
-				if let Some(ty) = MediaType::from_token(parser.cur()) {
+				if let Some(ty) = MediaType::from_atom(ident) {
 					parser.advance();
 					media_type = Some(ty);
 				} else {
@@ -189,7 +170,7 @@ impl<'a> Parse<'a> for MediaQuery {
 				}
 			}
 		}
-		match parser.cur() {
+		match parser.next() {
 			Token::Ident(ident) if matches!(ident.to_ascii_lowercase(), atom!("and")) => {
 				// Must not advance because we need "and" to be consumed by MediaCondition
 				if only {
@@ -210,38 +191,15 @@ impl<'a> Parse<'a> for MediaQuery {
 impl<'a> WriteCss<'a> for MediaQuery {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
 		match self {
-			Self::Condition(mc) => mc.write_css(sink),
-			Self::Typed(mt) => mt.write_css(sink),
-			Self::NotTyped(mt) => {
-				atom!("not").write_css(sink)?;
-				sink.write_whitespace()?;
-				mt.write_css(sink)
-			}
-			Self::OnlyTyped(mt) => {
-				atom!("only").write_css(sink)?;
-				sink.write_whitespace()?;
-				mt.write_css(sink)
-			}
-			Self::TypedCondition(mt, mc) => {
-				mt.write_css(sink)?;
-				sink.write_whitespace()?;
-				mc.write_css(sink)
-			}
-			Self::NotTypedCondition(mt, mc) => {
-				atom!("not").write_css(sink)?;
-				sink.write_char(' ')?;
-				mt.write_css(sink)?;
-				sink.write_whitespace()?;
-				mc.write_css(sink)
-			}
-			Self::OnlyTypedCondition(mt, mc) => {
-				atom!("only").write_css(sink)?;
-				sink.write_char(' ')?;
-				mt.write_css(sink)?;
-				sink.write_whitespace()?;
-				mc.write_css(sink)
-			}
+			Self::Condition(mc) => mc.write_css(sink)?,
+			Self::Typed(mt) => mt.write_css(sink)?,
+			Self::NotTyped(mt) => write_css!(sink, atom!("not"), (), mt),
+			Self::OnlyTyped(mt) => write_css!(sink, atom!("only"), (), mt),
+			Self::TypedCondition(mt, mc) => write_css!(sink, mt, (), mc),
+			Self::NotTypedCondition(mt, mc) => write_css!(sink, atom!("not"), ' ', mt, (), mc),
+			Self::OnlyTypedCondition(mt, mc) => write_css!(sink, atom!("only"), ' ', mt, (), mc),
 		}
+		Ok(())
 	}
 }
 
@@ -256,41 +214,38 @@ pub enum MediaCondition {
 
 impl<'a> Parse<'a> for MediaCondition {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		match parser.cur() {
-			Token::LeftParen => {
-				if peek!(parser, Token::LeftParen) {
-					todo!()
-				} else {
-					Ok(Self::Is(MediaFeature::parse(parser)?))
-				}
+		if matches!(parser.peek(), Token::LeftParen) {
+			if peek!(parser, 2, Token::LeftParen) {
+				todo!(parser)
+			} else {
+				return Ok(Self::Is(MediaFeature::parse(parser)?));
 			}
-			Token::Ident(ident) => match ident.to_ascii_lowercase() {
-				atom!("and") => {
-					let mut features = smallvec![];
-					loop {
-						expect_ignore_case!(parser, atom!("and"));
-						parser.advance();
-						features.push(MediaFeature::parse(parser)?);
-						if !match_ident_ignore_case!(parser, atom!("and")) {
-							return Ok(Self::And(features));
-						}
+		}
+		expect_ignore_case! { parser.peek(), Token::Ident(_):
+			atom!("and") => {
+				let mut features = smallvec![];
+				loop {
+					expect_ignore_case!(parser.next(), Token::Ident(atom!("and")));
+					features.push(MediaFeature::parse(parser)?);
+					if !match_ignore_case!(parser.peek(), Token::Ident(atom!("and"))) {
+						return Ok(Self::And(features));
 					}
 				}
-				atom!("or") => {
-					let mut features = smallvec![];
-					loop {
-						expect_ignore_case!(parser, atom!("or"));
-						parser.advance();
-						features.push(MediaFeature::parse(parser)?);
-						if !match_ident_ignore_case!(parser, atom!("or")) {
-							return Ok(Self::And(features));
-						}
-					}
-				}
-				atom!("not") => Ok(Self::Not(MediaFeature::parse(parser)?)),
-				_ => unexpected_ident!(parser, ident),
 			},
-			token => unexpected!(parser, token),
+			atom!("or") => {
+				let mut features = smallvec![];
+				loop {
+					expect_ignore_case!(parser.next(), Token::Ident(atom!("or")));
+					features.push(MediaFeature::parse(parser)?);
+					if !match_ignore_case!(parser.peek(), Token::Ident(atom!("or"))) {
+						return Ok(Self::And(features));
+					}
+				}
+			},
+			atom!("not") => {
+				parser.advance();
+				Ok(Self::Not(MediaFeature::parse(parser)?))
+			},
 		}
 	}
 }
@@ -329,7 +284,7 @@ impl<'a> WriteCss<'a> for MediaCondition {
 	}
 }
 
-macro_rules! media_features {
+macro_rules! media_feature {
 	( $($name: ident($typ: ident): atom!($atom: tt),)+ ) => {
 		// https://drafts.csswg.org/mediaqueries-5/#media-descriptor-table
 		#[derive(Debug, PartialEq, Hash)]
@@ -337,98 +292,115 @@ macro_rules! media_features {
 		pub enum MediaFeature {
 			$($name($typ),)+
 		}
-
-		impl<'a> Parse<'a> for MediaFeature {
-			fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-				expect!(parser, Token::LeftParen);
-				parser.advance();
-				let value = match parser.cur() {
-					Token::Ident(ident) => match ident.to_ascii_lowercase() {
-						$(atom!($atom) => Self::$name($typ::parse(parser)?),)+
-						_ => unexpected_ident!(parser, ident),
-					},
-					token => unexpected!(parser, token),
-				};
-				expect!(parser, Token::RightParen);
-				parser.advance();
-				Ok(value)
-			}
-		}
-
-		impl<'a> WriteCss<'a> for MediaFeature {
-			fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
-				sink.write_char('(')?;
-				match self {
-					$(Self::$name(f) => f.write_css(sink)?,)+
-				}
-				sink.write_char(')')
-			}
-		}
 	}
 }
 
-media_features!(
-	AnyHover(AnyHoverMediaFeature): atom!("any-hover"),
-	AnyPointer(AnyPointerMediaFeature): atom!("any-pointer"),
-	AspectRatio(AspectRatioMediaFeature): atom!("aspect-ratio"),
-	Color(ColorMediaFeature): atom!("color"),
-	ColorGamut(ColorGamutMediaFeature): atom!("color-gamut"),
-	ColorIndex(ColorIndexMediaFeature): atom!("color-index"),
-	DeviceAspectRatio(DeviceAspectRatioMediaFeature): atom!("device-aspect-ratio"),
-	DeviceHeight(DeviceHeightMediaFeature): atom!("device-height"),
-	DeviceWidth(DeviceWidthMediaFeature): atom!("device-width"),
-	DisplayMode(DisplayModeMediaFeature): atom!("display-mode"),
-	DynamicRange(DynamicRangeMediaFeature): atom!("dynamic-range"),
-	EnvironmentBlending(EnvironmentBlendingMediaFeature): atom!("environment-blending"),
-	ForcedColors(ForcedColorsMediaFeature): atom!("forced-colors"),
-	Grid(GridMediaFeature): atom!("grid"),
-	Height(HeightMediaFeature): atom!("height"),
-	// HorizontalViewportSegments(HorizontalViewportSegmentsMediaFeature): atom!("horizontal-viewport-segments"),
-	Hover(HoverMediaFeature): atom!("hover"),
-	InvertedColors(InvertedColorsMediaFeature): atom!("inverted-colors"),
-	Monochrome(MonochromeMediaFeature): atom!("monochrome"),
-	NavControls(NavControlsMediaFeature): atom!("nav-controls"),
-	Orientation(OrientationMediaFeature): atom!("orientation"),
-	OverflowBlock(OverflowBlockMediaFeature): atom!("overflow-block"),
-	OverflowInline(OverflowInlineMediaFeature): atom!("overflow-inline"),
-	Pointer(PointerMediaFeature): atom!("pointer"),
-	PrefersColorScheme(PrefersColorSchemeMediaFeature): atom!("prefers-color-scheme"),
-	PrefersContrast(PrefersContrastMediaFeature): atom!("prefers-contrast"),
-	PrefersReducedData(PrefersReducedDataMediaFeature): atom!("prefers-reduced-data"),
-	PrefersReducedMotion(PrefersReducedMotionMediaFeature): atom!("prefers-reduced-motion"),
-	PrefersReducedTransparency(PrefersReducedTransparencyMediaFeature): atom!("prefers-reduced-transparency"),
-	Resolution(ResolutionMediaFeature): atom!("resolution"),
-	Scan(ScanMediaFeature): atom!("scan"),
-	Scripting(ScriptingMediaFeature): atom!("scripting"),
-	Update(UpdateMediaFeature): atom!("update"),
-	// VerticalViewportSegments(VerticalViewportSegmentsMediaFeature): atom!("vertical-viewport-segments"),
-	VideoColorGamut(VideoColorGamutMediaFeature): atom!("video-color-gamut"),
-	VideoDynamicRange(VideoDynamicRangeMediaFeature): atom!("video-dynamic-range"),
-	Width(WidthMediaFeature): atom!("width"),
-);
+apply_medias!(media_feature);
+
+impl<'a> Parse<'a> for MediaFeature {
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
+		expect!(parser.next(), Token::LeftParen);
+		macro_rules! match_media {
+			( $($name: ident($typ: ident): atom!($atom: tt),)+ ) => {
+				expect_ignore_case!{ parser.peek(), Token::Ident(_):
+					$(atom!($atom) => Self::$name($typ::parse(parser)?),)+
+				}
+			}
+		}
+		let value = apply_medias!(match_media);
+		expect!(parser.next(), Token::RightParen);
+		Ok(value)
+	}
+}
+
+impl<'a> WriteCss<'a> for MediaFeature {
+	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
+		sink.write_char('(')?;
+		macro_rules! write_media {
+			( $($name: ident($typ: ident): atom!($atom: tt),)+ ) => {
+				match self {
+					$(Self::$name(f) => f.write_css(sink)?,)+
+				}
+			}
+		}
+		apply_medias!(write_media);
+		sink.write_char(')')
+	}
+}
+
+macro_rules! apply_medias {
+	($macro: ident) => {
+		$macro! {
+			AnyHover(AnyHoverMediaFeature): atom!("any-hover"),
+			AnyPointer(AnyPointerMediaFeature): atom!("any-pointer"),
+			AspectRatio(AspectRatioMediaFeature): atom!("aspect-ratio"),
+			Color(ColorMediaFeature): atom!("color"),
+			ColorGamut(ColorGamutMediaFeature): atom!("color-gamut"),
+			ColorIndex(ColorIndexMediaFeature): atom!("color-index"),
+			DeviceAspectRatio(DeviceAspectRatioMediaFeature): atom!("device-aspect-ratio"),
+			DeviceHeight(DeviceHeightMediaFeature): atom!("device-height"),
+			DeviceWidth(DeviceWidthMediaFeature): atom!("device-width"),
+			DisplayMode(DisplayModeMediaFeature): atom!("display-mode"),
+			DynamicRange(DynamicRangeMediaFeature): atom!("dynamic-range"),
+			EnvironmentBlending(EnvironmentBlendingMediaFeature): atom!("environment-blending"),
+			ForcedColors(ForcedColorsMediaFeature): atom!("forced-colors"),
+			Grid(GridMediaFeature): atom!("grid"),
+			Height(HeightMediaFeature): atom!("height"),
+			// HorizontalViewportSegments(HorizontalViewportSegmentsMediaFeature): atom!("horizontal-viewport-segments"),
+			Hover(HoverMediaFeature): atom!("hover"),
+			InvertedColors(InvertedColorsMediaFeature): atom!("inverted-colors"),
+			Monochrome(MonochromeMediaFeature): atom!("monochrome"),
+			NavControls(NavControlsMediaFeature): atom!("nav-controls"),
+			Orientation(OrientationMediaFeature): atom!("orientation"),
+			OverflowBlock(OverflowBlockMediaFeature): atom!("overflow-block"),
+			OverflowInline(OverflowInlineMediaFeature): atom!("overflow-inline"),
+			Pointer(PointerMediaFeature): atom!("pointer"),
+			PrefersColorScheme(PrefersColorSchemeMediaFeature): atom!("prefers-color-scheme"),
+			PrefersContrast(PrefersContrastMediaFeature): atom!("prefers-contrast"),
+			PrefersReducedData(PrefersReducedDataMediaFeature): atom!("prefers-reduced-data"),
+			PrefersReducedMotion(PrefersReducedMotionMediaFeature): atom!("prefers-reduced-motion"),
+			PrefersReducedTransparency(PrefersReducedTransparencyMediaFeature): atom!("prefers-reduced-transparency"),
+			Resolution(ResolutionMediaFeature): atom!("resolution"),
+			Scan(ScanMediaFeature): atom!("scan"),
+			Scripting(ScriptingMediaFeature): atom!("scripting"),
+			Update(UpdateMediaFeature): atom!("update"),
+			// VerticalViewportSegments(VerticalViewportSegmentsMediaFeature): atom!("vertical-viewport-segments"),
+			VideoColorGamut(VideoColorGamutMediaFeature): atom!("video-color-gamut"),
+			VideoDynamicRange(VideoDynamicRangeMediaFeature): atom!("video-dynamic-range"),
+			Width(WidthMediaFeature): atom!("width"),
+		}
+	};
+}
+use apply_medias;
 
 #[derive(Debug, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
 pub enum MediaType {
-	All,          // atom!("all")
-	Print,        // atom!("print")
-	Screen,       // atom!("screen")
-	Custom(Atom), // atom!("tty")
+	All,
+	Print,
+	Screen,
+	Custom(Atom),
 }
 
-impl FromToken for MediaType {
-	fn from_token(token: Token) -> Option<Self> {
-		match token {
-			Token::Ident(ident) => match ident.to_ascii_lowercase() {
-				atom!("all") => Some(Self::All),
-				atom!("print") => Some(Self::Print),
-				atom!("screen") => Some(Self::Screen),
-				// https://drafts.csswg.org/mediaqueries/#mq-syntax
-				// The <media-type> production does not include the keywords only, not, and, or, and layer.
-				atom!("only") | atom!("not") | atom!("and") | atom!("or") | atom!("layer") => None,
-				_ => Some(Self::Custom(ident)),
-			},
-			_ => None,
+impl Atomizable for MediaType {
+	fn from_atom(atom: &Atom) -> Option<Self> {
+		match atom.to_ascii_lowercase() {
+			atom!("all") => Some(Self::All),
+			atom!("print") => Some(Self::Print),
+			atom!("screen") => Some(Self::Screen),
+			// https://drafts.csswg.org/mediaqueries/#mq-syntax
+			// The <media-type> production does not include the keywords only, not, and, or, and layer.
+			atom!("only") | atom!("not") | atom!("and") | atom!("or") | atom!("layer") => None,
+			custom => Some(Self::Custom(custom)),
+		}
+	}
+
+	fn to_atom(&self) -> Atom {
+		match self {
+			Self::All => atom!("all"),
+			Self::Print => atom!("print"),
+			Self::Screen => atom!("screen"),
+			Self::Custom(atom) => atom.clone(),
 		}
 	}
 }
@@ -467,11 +439,11 @@ mod tests {
 		assert_parse!(MediaCondition, "and (grid)");
 		assert_parse!(MediaQuery, "screen and (grid)");
 		assert_parse!(MediaQuery, "screen and (hover) and (pointer)");
-		// assert_parse!(MediaQuery, "screen and (orientation: landscape)");
+		assert_parse!(MediaQuery, "screen and (orientation: landscape)");
 		assert_parse!(MediaRule, "@media print {\n\n}");
 		assert_parse!(MediaRule, "@media print, (prefers-reduced-motion: reduce) {\n\n}");
 		// assert_parse!(MediaRule, "@media (min-width: 1200px) {\n\n}");
-		// assert_parse!(MediaRUle, "@media only screen and (max-device-width: 800px), only screen and (device-width: 1024px) and (device-height: 600px), only screen and (width: 1280px) and (orientation: landscape), only screen and (device-width: 800px), only screen and (max-width: 767px)");
+		// assert_parse!(MediaRule, "@media only screen and (max-device-width: 800px), only screen and (device-width: 1024px) and (device-height: 600px), only screen and (width: 1280px) and (orientation: landscape), only screen and (device-width: 800px), only screen and (max-width: 767px)");
 	}
 
 	#[test]

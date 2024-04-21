@@ -53,7 +53,7 @@ impl From<Span> for SourceSpan {
 	}
 }
 
-#[derive(Debug, PartialEq, Hash)]
+#[derive(Debug, Clone, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde())]
 pub struct Spanned<T> {
 	pub node: T,
@@ -68,7 +68,7 @@ impl<T> Spanned<T> {
 }
 
 impl<T: Atomizable> Atomizable for Spanned<T> {
-	fn from_atom(atom: Atom) -> Option<Self> {
+	fn from_atom(atom: &Atom) -> Option<Self> {
 		T::from_atom(atom).map(|node| Self { node, span: Span::dummy() })
 	}
 

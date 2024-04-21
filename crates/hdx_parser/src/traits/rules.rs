@@ -15,8 +15,7 @@ pub trait AtRule<'a>: Sized + Parse<'a> {
 	// parse_prelude returns an Option, and rules that either require can check
 	// in parse() or override parse_prelude() to err.
 	fn parse_prelude(parser: &mut Parser<'a>) -> Result<Option<Spanned<Self::Prelude>>> {
-		// Prelude lands just after the at-keyword token.
-		match parser.cur() {
+		match parser.peek() {
 			Token::LeftCurly | Token::Semicolon | Token::Eof => Ok(None),
 			_ => Ok(Some(Self::Prelude::parse_spanned(parser)?)),
 		}
@@ -26,8 +25,11 @@ pub trait AtRule<'a>: Sized + Parse<'a> {
 	// one). The default parse_prelude returns an Option, and rules that either
 	// require can check in parse() or override parse_prelude() to err.
 	fn parse_block(parser: &mut Parser<'a>) -> Result<Option<Spanned<Self::Block>>> {
-		match parser.cur() {
-			Token::Semicolon | Token::Eof => Ok(None),
+		match parser.peek() {
+			Token::Semicolon | Token::Eof => {
+				parser.advance();
+				Ok(None)
+			}
 			Token::LeftCurly => Ok(Some(Self::Block::parse_spanned(parser)?)),
 			token => unexpected!(parser, token),
 		}
@@ -37,39 +39,10 @@ pub trait AtRule<'a>: Sized + Parse<'a> {
 	fn parse_at_rule(
 		parser: &mut Parser<'a>,
 	) -> Result<(Option<Spanned<Self::Prelude>>, Option<Spanned<Self::Block>>)> {
-		match parser.cur() {
-			Token::AtKeyword(_) => {
-				parser.advance();
-				let prelude = Self::parse_prelude(parser)?;
-				let block = Self::parse_block(parser)?;
-				Ok((prelude, block))
-			}
-			token => unexpected!(parser, token),
-		}
-	}
-}
-
-// An AtRule represents a block or statement with an @keyword in the leading
-// position, such as @media, @supports
-pub trait RuleGroup<'a>: Sized + Parse<'a> {
-	type Rule: Parse<'a>;
-
-	fn parse_rules(parser: &mut Parser<'a>) -> Result<Vec<'a, Spanned<Self::Rule>>> {
-		match parser.cur() {
-			Token::LeftCurly => {
-				parser.advance();
-				let mut rules = parser.new_vec();
-				loop {
-					discard!(parser, Token::Semicolon);
-					if matches!(parser.cur(), Token::RightCurly) {
-						parser.advance();
-						return Ok(rules);
-					}
-					rules.push(Self::Rule::parse_spanned(parser)?);
-				}
-			}
-			token => unexpected!(parser, token),
-		}
+		expect!(parser.cur(), Token::AtKeyword(_));
+		let prelude = Self::parse_prelude(parser)?;
+		let block = Self::parse_block(parser)?;
+		Ok((prelude, block))
 	}
 }
 
@@ -93,19 +66,19 @@ pub trait QualifiedRule<'a>: Sized + Parse<'a> {
 
 	// https://drafts.csswg.org/css-syntax-3/#consume-a-qualified-rule
 	fn parse_qualified_rule(parser: &mut Parser<'a>) -> Result<(Spanned<Self::Prelude>, Spanned<Self::Block>)> {
-		match parser.cur() {
+		match parser.peek().clone() {
 			token @ Token::Eof => unexpected!(parser, token),
 			token @ Token::RightCurly if !parser.is(State::Nested) => unexpected!(parser, token),
-			Token::Ident(atom) if peek!(parser, Token::RightCurly) && atom.starts_with("--") => {
+			Token::Ident(atom) if peek!(parser, 2, Token::RightCurly) && atom.starts_with("--") => {
 				unexpected!(parser);
 			}
 			_ => {}
 		}
 		let prelude = Self::parse_prelude(parser)?;
-		match parser.cur() {
+		match parser.peek().clone() {
 			token @ Token::Eof => unexpected!(parser, token),
 			token @ Token::RightCurly if !parser.is(State::Nested) => unexpected!(parser, token),
-			Token::Ident(atom) if peek!(parser, Token::RightCurly) && atom.starts_with("--") => {
+			Token::Ident(atom) if peek!(parser, 2, Token::RightCurly) && atom.starts_with("--") => {
 				unexpected!(parser);
 			}
 			_ => {}
@@ -119,19 +92,14 @@ pub trait RuleList<'a>: Sized + Parse<'a> {
 	type Rule: Parse<'a>;
 
 	fn parse_rule_list(parser: &mut Parser<'a>) -> Result<Vec<'a, Spanned<Self::Rule>>> {
-		expect!(parser, Token::LeftCurly);
-		parser.advance();
+		expect!(parser.next(), Token::LeftCurly);
 		let mut rules = parser.new_vec();
 		loop {
-			match parser.cur() {
-				Token::RightCurly => {
-					parser.advance();
-					return Ok(rules);
-				}
-				_ => {
-					rules.push(Self::Rule::parse_spanned(parser)?);
-				}
+			discard!(parser, Token::Semicolon);
+			if discard!(parser, Token::RightCurly) {
+				return Ok(rules);
 			}
+			rules.push(Self::Rule::parse_spanned(parser)?);
 		}
 	}
 }
@@ -144,12 +112,11 @@ pub trait DeclarationRuleList<'a>: Sized + Parse<'a> {
 	fn parse_declaration_rule_list(
 		parser: &mut Parser<'a>,
 	) -> Result<(Vec<'a, Spanned<Self::Declaration>>, Vec<'a, Spanned<Self::AtRule>>)> {
-		expect!(parser, Token::LeftCurly);
-		parser.advance();
+		expect!(parser.next(), Token::LeftCurly);
 		let mut declarations = parser.new_vec();
 		let mut rules = parser.new_vec();
 		loop {
-			match parser.cur() {
+			match parser.peek() {
 				Token::AtKeyword(_) => {
 					rules.push(Self::AtRule::parse_spanned(parser)?);
 				}

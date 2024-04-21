@@ -1,6 +1,6 @@
-use hdx_atom::{atom, Atom};
+use hdx_atom::atom;
 use hdx_lexer::Token;
-use hdx_parser::{diagnostics, unexpected_ident, Parse, Parser, Result as ParserResult, unexpected};
+use hdx_parser::{unexpected, Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 
 use crate::{bitmask, Value};
@@ -9,6 +9,7 @@ use crate::{bitmask, Value};
 #[derive(Value, Default)]
 #[value(Inherits)]
 #[bitmask(u16)]
+#[bitmask_config(vec_debug)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub enum FontVariantLigatures {
 	#[default]
@@ -52,7 +53,7 @@ impl FontVariantLigatures {
 
 impl<'a> Parse<'a> for FontVariantLigatures {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		match parser.cur() {
+		match parser.peek() {
 			Token::Ident(atom) => match atom.to_ascii_lowercase() {
 				atom!("none") => {
 					parser.advance();
@@ -61,28 +62,32 @@ impl<'a> Parse<'a> for FontVariantLigatures {
 				atom!("normal") => {
 					parser.advance();
 					return Ok(Self::Normal);
-				},
-				_ => {},
-			}
+				}
+				_ => {}
+			},
 			token => unexpected!(parser, token),
 		}
 		let mut value = Self::Normal;
-		loop {
-			match parser.cur() {
-				Token::Ident(atom) => match atom.to_ascii_lowercase() {
-					atom!("common-ligatures") if !value.has_common_lig() => value |= Self::CommonLigatures,
-					atom!("no-common-ligatures") if !value.has_common_lig() => value |= Self::NoCommonLigatures,
-					atom!("discretionary-ligatures") if !value.has_discretionary_lig() => value |= Self::DiscretionaryLigatures,
-					atom!("no-discretionary-ligatures") if !value.has_discretionary_lig() => value |= Self::NoDiscretionaryLigatures,
-					atom!("historical-ligatures") if !value.has_historical_lig() => value |= Self::HistoricalLigatures,
-					atom!("no-historical-ligatures") if !value.has_historical_lig() => value |= Self::NoHistoricalLigatures,
-					atom!("contextual") if !value.has_contextual() => value |= Self::Contextual,
-					atom!("no-contextual") if !value.has_contextual() => value |= Self::NoContextual,
-					_ => break,
+		while let Token::Ident(atom) = parser.peek() {
+			match atom.to_ascii_lowercase() {
+				atom!("common-ligatures") if !value.has_common_lig() => value |= Self::CommonLigatures,
+				atom!("no-common-ligatures") if !value.has_common_lig() => value |= Self::NoCommonLigatures,
+				atom!("discretionary-ligatures") if !value.has_discretionary_lig() => {
+					value |= Self::DiscretionaryLigatures
 				}
+				atom!("no-discretionary-ligatures") if !value.has_discretionary_lig() => {
+					value |= Self::NoDiscretionaryLigatures
+				}
+				atom!("historical-ligatures") if !value.has_historical_lig() => value |= Self::HistoricalLigatures,
+				atom!("no-historical-ligatures") if !value.has_historical_lig() => value |= Self::NoHistoricalLigatures,
+				atom!("contextual") if !value.has_contextual() => value |= Self::Contextual,
+				atom!("no-contextual") if !value.has_contextual() => value |= Self::NoContextual,
 				_ => break,
 			}
 			parser.advance();
+		}
+		if value == Self::Normal {
+			unexpected!(parser)
 		}
 		Ok(value)
 	}
@@ -155,12 +160,16 @@ mod tests {
 		assert_parse!(FontVariantLigatures, "common-ligatures contextual");
 		assert_parse!(FontVariantLigatures, "no-common-ligatures contextual");
 		assert_parse!(FontVariantLigatures, "common-ligatures discretionary-ligatures historical-ligatures contextual");
-		assert_parse!(FontVariantLigatures, "no-common-ligatures discretionary-ligatures no-historical-ligatures contextual");
+		assert_parse!(
+			FontVariantLigatures,
+			"no-common-ligatures discretionary-ligatures no-historical-ligatures contextual"
+		);
 	}
 
 	#[test]
 	fn test_errors() {
 		assert_parse_error!(FontVariantLigatures, "none normal");
+		assert_parse_error!(FontVariantLigatures, "small-caps");
 		assert_parse_error!(FontVariantLigatures, "common-ligatures normal");
 		assert_parse_error!(FontVariantLigatures, "common-ligatures common-ligatures");
 	}

@@ -1,0 +1,3 @@
+hr {
+  background: linear-gradient(to right, transparent, var(--border-color) 20%, var(--border-color) 80%, transparent);
+}

@@ -6,7 +6,7 @@ use crate::{Atomizable, Parsable, Writable};
 pub enum FontVariantPosition {
 	#[default]
 	Normal, // atom!("normal")
-	Sub, // atom!("sub")
+	Sub,   // atom!("sub")
 	Super, // atom!("super")
 }
 

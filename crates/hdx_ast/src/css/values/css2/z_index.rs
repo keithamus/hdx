@@ -1,4 +1,4 @@
-use crate::{css::values::units::CSSFloat, Parsable, Value, Writable};
+use crate::{css::units::CSSFloat, Parsable, Value, Writable};
 
 #[derive(Value, Parsable, Writable, Default, Debug, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", content = "value"))]

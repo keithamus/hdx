@@ -1,9 +1,6 @@
 use hdx_atom::{atom, Atom};
-use hdx_lexer::Token;
-use hdx_parser::{
-	expect, unexpected, unexpected_function, Parse, Parser, Result as ParserResult,
-	SelectorComponent as SelectorComponentTrait, Vec,
-};
+use hdx_lexer::{Include, Token};
+use hdx_parser::{expect, todo, unexpected, unexpected_function, Parse, Parser, Result as ParserResult, Vec};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 use smallvec::{smallvec, SmallVec};
 
@@ -22,31 +19,25 @@ pub enum FunctionalPseudoElement<'a> {
 
 impl<'a> Parse<'a> for FunctionalPseudoElement<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		match parser.cur() {
+		match parser.next().clone() {
 			Token::Function(ident) => match ident.to_ascii_lowercase() {
-				atom!("highlight") => {
-					parser.advance();
-					match parser.cur() {
-						Token::Ident(name) => {
-							parser.advance();
-							expect!(parser, Token::RightParen);
-							parser.advance_including_whitespace();
-							Ok(Self::Highlight(name))
-						}
-						token => unexpected!(parser, token),
+				atom!("highlight") => match parser.next().clone() {
+					Token::Ident(name) => {
+						expect!(parser.next(), Token::RightParen);
+						parser.advance_with(Include::Whitespace);
+						Ok(Self::Highlight(name))
 					}
-				}
+					token => unexpected!(parser, token),
+				},
 				atom!("part") => {
-					parser.advance();
 					let mut parts = smallvec![];
 					loop {
-						match parser.cur() {
+						match parser.next() {
 							Token::Ident(name) => {
-								parser.advance();
-								parts.push(name);
+								parts.push(name.clone());
 							}
 							Token::RightParen => {
-								parser.advance_including_whitespace();
+								parser.advance_with(Include::Whitespace);
 								break;
 							}
 							token => unexpected!(parser, token),
@@ -56,19 +47,22 @@ impl<'a> Parse<'a> for FunctionalPseudoElement<'a> {
 				}
 				atom!("slotted") => {
 					parser.advance();
-					let mut selector = parser.new_vec();
+					let selector = parser.new_vec();
 					loop {
 						if matches!(parser.cur(), Token::RightParen) {
 							break;
 						}
 						let checkpoint = parser.checkpoint();
-						let component = SelectorComponent::parse_selector_component(selector.iter().last(), parser)?;
+						let component = SelectorComponent::parse(parser)?;
 						match component {
-							SelectorComponent::Type(_)
-							| SelectorComponent::NSPrefixedType(_)
+							SelectorComponent::Tag(_)
+							| SelectorComponent::NSPrefixedTag(_)
 							| SelectorComponent::NSPrefixedWildcard(_)
 							| SelectorComponent::Wildcard
-								if selector.is_empty() => {}
+								if selector.is_empty() =>
+							{
+								todo!(parser);
+							}
 							SelectorComponent::Id(_)
 							| SelectorComponent::Class(_)
 							| SelectorComponent::Attribute(_)
@@ -96,7 +90,7 @@ impl<'a> WriteCss<'a> for FunctionalPseudoElement<'a> {
 				sink.write_char('(')?;
 				atom.write_css(sink)?;
 				sink.write_char(')')?;
-			},
+			}
 			Self::Part(parts) => {
 				atom!("part").write_css(sink)?;
 				sink.write_char('(')?;

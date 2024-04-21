@@ -6,7 +6,7 @@ use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 
 use crate::{
 	css::{
-		rules::{CharsetRule, PageRule, MediaRule, SupportsRule},
+		rules::{CharsetRule, MediaRule, PageRule, SupportsRule},
 		stylerule::StyleRule,
 	},
 	syntax::{AtRule, QualifiedRule},
@@ -15,7 +15,7 @@ use crate::{
 
 // https://drafts.csswg.org/cssom-1/#the-cssstylesheet-interface
 #[derive(Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", rename = "stylesheet"))]
 pub struct StyleSheet<'a> {
 	pub rules: Vec<'a, Spanned<Rule<'a>>>,
 }
@@ -59,7 +59,7 @@ pub enum Rule<'a> {
 
 impl<'a> Parse<'a> for Rule<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		Ok(match parser.cur() {
+		Ok(match parser.peek() {
 			Token::AtKeyword(atom) => match atom.to_ascii_lowercase() {
 				atom!("charset") => Rule::Charset(CharsetRule::parse(parser)?),
 				atom!("page") => Rule::Page(PageRule::parse(parser)?),
@@ -125,8 +125,13 @@ mod tests {
 
 	#[test]
 	fn test_writes() {
-		// assert_parse!(StyleSheet, "body{}");
-		// assert_parse!(StyleSheet, "body,body{}");
-		// assert_parse!(StyleSheet, "body{width:1px}");
+		assert_parse!(StyleSheet, "body {\n}\n");
+		assert_parse!(StyleSheet, "body, tr:nth-child(n-1) {\n}\n");
+		assert_parse!(StyleSheet, "body {\n\twidth: 1px;\n}\n");
+	}
+
+	#[test]
+	fn test_minify() {
+		assert_minify!(StyleSheet, "body {\n\twidth: 1px;\n}\n", "body{width:1px}");
 	}
 }

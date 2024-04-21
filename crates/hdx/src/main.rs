@@ -1,8 +1,8 @@
+use bumpalo::Bump;
 use clap::Parser;
 use hdx_ast::css::StyleSheet;
-use hdx_writer::{BaseCssWriter, WriteCss, OutputOption};
+use hdx_writer::{BaseCssWriter, OutputOption, WriteCss};
 use miette::{GraphicalReportHandler, GraphicalTheme, NamedSource};
-use bumpalo::Bump;
 
 #[derive(Debug, Parser)]
 #[clap(author, version, about, long_about = None)]
@@ -34,11 +34,7 @@ fn main() {
 	{
 		let start = std::time::Instant::now();
 		let mut str = String::new();
-		let opts = if args.minify {
-			OutputOption::none()
-		} else {
-			OutputOption::all()
-		};
+		let opts = if args.minify { OutputOption::none() } else { OutputOption::all() };
 		let mut writer = BaseCssWriter::new(&mut str, opts);
 		if let Some(stylesheet) = &result.output {
 			stylesheet.write_css(&mut writer).unwrap();

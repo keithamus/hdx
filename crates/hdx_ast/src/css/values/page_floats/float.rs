@@ -3,11 +3,11 @@ use hdx_lexer::Token;
 use hdx_parser::{diagnostics, expect, unexpected, unexpected_ident, FromToken, Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 
-use crate::{css::values::units::Length, Atomizable, Value};
+use crate::{css::units::Length, Atomizable, Value};
 
 // https://drafts.csswg.org/css-page-floats-3/#float-property
 #[derive(Value, Debug, PartialEq, Default, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(rename_all = "kebab-case"))]
 pub enum Float {
 	#[default]
 	None,
@@ -27,108 +27,65 @@ pub enum Float {
 
 impl<'a> Parse<'a> for Float {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let value = match parser.cur() {
+		let value = match parser.next() {
 			Token::Ident(atom) => match atom.to_ascii_lowercase() {
-				atom!("none") => {
-					parser.advance();
-					Float::None
-				}
-				atom!("left") => {
-					parser.advance();
-					Float::Left
-				}
-				atom!("right") => {
-					parser.advance();
-					Float::Right
-				}
-				atom!("top") => {
-					parser.advance();
-					Float::Top
-				}
-				atom!("bottom") => {
-					parser.advance();
-					Float::Bottom
-				}
-				atom!("block-start") => {
-					parser.advance();
-					Float::BlockStart
-				}
-				atom!("block-end") => {
-					parser.advance();
-					Float::BlockEnd
-				}
-				atom!("inline-start") => {
-					parser.advance();
-					Float::InlineStart
-				}
-				atom!("inline-end") => {
-					parser.advance();
-					Float::InlineEnd
-				}
-				atom!("snap-block") => {
-					parser.advance();
-					Float::SnapBlock
-				}
-				atom!("snap-inline") => {
-					parser.advance();
-					Float::SnapInline
-				}
+				atom!("none") => Self::None,
+				atom!("left") => Self::Left,
+				atom!("right") => Self::Right,
+				atom!("top") => Self::Top,
+				atom!("bottom") => Self::Bottom,
+				atom!("block-start") => Self::BlockStart,
+				atom!("block-end") => Self::BlockEnd,
+				atom!("inline-start") => Self::InlineStart,
+				atom!("inline-end") => Self::InlineEnd,
+				atom!("snap-block") => Self::SnapBlock,
+				atom!("snap-inline") => Self::SnapInline,
 				atom => unexpected_ident!(parser, atom),
 			},
 			Token::Function(atom) => match atom.to_ascii_lowercase() {
 				atom!("snap-block") => {
-					parser.advance();
-					let length =
-						if let Some(length) = Length::from_token(parser.cur()) { length } else { unexpected!(parser) };
-					parser.advance();
-					let dir = match parser.cur() {
-						Token::Comma => {
-							parser.advance();
-							match parser.cur() {
-								Token::Ident(atom) => {
-									if let Some(dir) = SnapBlockDirection::from_atom(atom.to_ascii_lowercase()) {
-										parser.advance();
-										Some(dir)
-									} else {
-										unexpected_ident!(parser, atom)
-									}
-								}
-								token => unexpected!(parser, token),
-							}
-						}
-						Token::RightParen => None,
-						token => unexpected!(parser, token),
+					let length = if let Some(length) = Length::from_token(&parser.next()) {
+						length
+					} else {
+						unexpected!(parser)
 					};
-					expect!(parser, Token::RightParen);
-					parser.advance();
-					Float::SnapBlockFunction(length, dir)
+					match parser.next() {
+						Token::Comma => match parser.next() {
+							Token::Ident(atom) => {
+								if let Some(dir) = SnapBlockDirection::from_atom(&atom.to_ascii_lowercase()) {
+									expect!(parser.next(), Token::RightParen);
+									Self::SnapBlockFunction(length, Some(dir))
+								} else {
+									unexpected_ident!(parser, atom)
+								}
+							}
+							token => unexpected!(parser, token),
+						},
+						Token::RightParen => Self::SnapBlockFunction(length, None),
+						token => unexpected!(parser, token),
+					}
 				}
 				atom!("snap-inline") => {
-					parser.advance();
-					let length =
-						if let Some(length) = Length::from_token(parser.cur()) { length } else { unexpected!(parser) };
-					parser.advance();
-					let dir = match parser.cur() {
-						Token::Comma => {
-							parser.advance();
-							match parser.cur() {
-								Token::Ident(atom) => {
-									if let Some(dir) = SnapInlineDirection::from_atom(atom.to_ascii_lowercase()) {
-										parser.advance();
-										Some(dir)
-									} else {
-										unexpected_ident!(parser, atom)
-									}
-								}
-								token => unexpected!(parser, token),
-							}
-						}
-						Token::RightParen => None,
-						token => unexpected!(parser, token),
+					let length = if let Some(length) = Length::from_token(&parser.next()) {
+						length
+					} else {
+						unexpected!(parser)
 					};
-					expect!(parser, Token::RightParen);
-					parser.advance();
-					Float::SnapInlineFunction(length, dir)
+					match parser.next() {
+						Token::Comma => match parser.next() {
+							Token::Ident(atom) => {
+								if let Some(dir) = SnapInlineDirection::from_atom(&atom.to_ascii_lowercase()) {
+									expect!(parser.next(), Token::RightParen);
+									Self::SnapInlineFunction(length, Some(dir))
+								} else {
+									unexpected_ident!(parser, atom)
+								}
+							}
+							token => unexpected!(parser, token),
+						},
+						Token::RightParen => Self::SnapInlineFunction(length, None),
+						token => unexpected!(parser, token),
+					}
 				}
 				atom => Err(diagnostics::UnexpectedFunction(atom, parser.span()))?,
 			},

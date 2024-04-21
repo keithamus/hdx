@@ -74,7 +74,38 @@ pub struct UnexpectedDelim(pub char, #[label("This character wasn't understood")
 #[derive(Debug, Error, Diagnostic)]
 #[error("Unexpected pseudo selector ':{0}'")]
 #[diagnostic(help("This isn't a valid psuedo selector for this rule."), code(hdx_parser::UnexpectedPseudo))]
-pub struct UnexpectedPseudo(pub Atom, #[label("This psuedo selector")] pub Span);
+pub struct UnexpectedPseudoClass(pub Atom, #[label("This psuedo selector")] pub Span);
+
+#[derive(Debug, Error, Diagnostic)]
+#[error("Unexpected pseudo selector ':{0}'()")]
+#[diagnostic(
+	help("This isn't a valid psuedo selector for this rule."),
+	code(hdx_parser::UnexpectedPseudoClassFunction)
+)]
+pub struct UnexpectedPseudoClassFunction(pub Atom, #[label("This psuedo selector")] pub Span);
+
+#[derive(Debug, Error, Diagnostic)]
+#[error("Unexpected pseudo element ':{0}'")]
+#[diagnostic(help("This isn't a valid psuedo selector for this rule."), code(hdx_parser::UnexpectedPseudoElement))]
+pub struct UnexpectedPseudoElement(pub Atom, #[label("This psuedo selector")] pub Span);
+
+#[derive(Debug, Error, Diagnostic)]
+#[error("Unexpected pseudo element ':{0}'")]
+#[diagnostic(
+	help("This isn't a valid psuedo selector for this rule."),
+	code(hdx_parser::UnexpectedPseudoElementFunction)
+)]
+pub struct UnexpectedPseudoElementFunction(pub Atom, #[label("This psuedo selector")] pub Span);
+
+#[derive(Debug, Error, Diagnostic)]
+#[error("Unexpected tag name ':{0}'")]
+#[diagnostic(help("This isn't a valid tag name."), code(hdx_parser::UnexpectedTag))]
+pub struct UnexpectedTag(pub Atom, #[label("This tag")] pub Span);
+
+#[derive(Debug, Error, Diagnostic)]
+#[error("Unexpected ID selector ':{0}'")]
+#[diagnostic(help("This isn't a valid ID."), code(hdx_parser::UnexpectedId))]
+pub struct UnexpectedId(pub Atom, #[label("This ID")] pub Span);
 
 #[derive(Debug, Error, Diagnostic)]
 #[error("The dimension '{0}' wasn't recognised for this value type")]

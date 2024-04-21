@@ -5,24 +5,61 @@
       {
         "end": 62,
         "node": {
+          "end": 62,
+          "node": {
+            "declarations": [
+              {
+                "end": 38,
+                "node": {
+                  "important": false,
+                  "name": "content",
+                  "type": "property",
+                  "value": {
+                    "String": [
+                      ";'@ /**/\"",
+                      {
+                        "kind": "Double"
+                      }
+                    ]
+                  }
+                },
+                "start": 11
+              },
+              {
+                "end": 60,
+                "node": {
+                  "important": false,
+                  "name": "content",
+                  "type": "property",
+                  "value": {
+                    "String": [
+                      "'\"\\",
+                      {
+                        "kind": "Single"
+                      }
+                    ]
+                  }
+                },
+                "start": 38
+              }
+            ],
+            "rules": [],
+            "type": "style-declaration"
+          },
           "selectors": {
-            "end": 10,
+            "end": 9,
             "node": [
               {
-                "end": 11,
+                "end": 9,
                 "node": [
                   {
-                    "type": "Type",
-                    "value": "a"
-                  },
-                  {
-                    "type": "PseudoElement",
+                    "type": "tag",
                     "value": {
-                      "type": "before"
+                      "Html": "A"
                     }
                   },
                   {
-                    "type": "Type",
+                    "type": "pseudo-element",
                     "value": "before"
                   }
                 ],
@@ -31,58 +68,13 @@
             ],
             "start": 0
           },
-          "style": {
-            "end": 62,
-            "node": {
-              "declarations": [
-                {
-                  "end": 38,
-                  "node": {
-                    "important": false,
-                    "name": "content",
-                    "value": {
-                      "Content": {
-                        "String": [
-                          ";'@ /**/\"",
-                          {
-                            "kind": "Double"
-                          }
-                        ]
-                      }
-                    }
-                  },
-                  "start": 11
-                },
-                {
-                  "end": 60,
-                  "node": {
-                    "important": false,
-                    "name": "content",
-                    "value": {
-                      "Content": {
-                        "String": [
-                          "'\"\\",
-                          {
-                            "kind": "Single"
-                          }
-                        ]
-                      }
-                    }
-                  },
-                  "start": 38
-                }
-              ],
-              "rules": [],
-              "type": "StyleDeclaration"
-            },
-            "start": 10
-          },
-          "type": "StyleRule"
+          "start": 9,
+          "type": "stylerule"
         },
         "start": 0
       }
     ],
-    "type": "StyleSheet"
+    "type": "stylesheet"
   },
   "start": 0
 }

@@ -5,77 +5,85 @@
       {
         "end": 16,
         "node": {
+          "end": 16,
+          "node": {
+            "declarations": [],
+            "rules": [],
+            "type": "style-declaration"
+          },
           "selectors": {
             "end": 14,
             "node": [
               {
-                "end": 15,
+                "end": 14,
                 "node": [
                   {
-                    "type": "Type",
-                    "value": "a"
+                    "type": "tag",
+                    "value": {
+                      "Html": "A"
+                    }
                   },
                   {
-                    "type": "Type",
-                    "value": "b"
+                    "type": "combinator",
+                    "value": "descendant"
+                  },
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "B"
+                    }
                   }
                 ],
-                "start": 0
+                "start": 1
               }
             ],
             "start": 0
           },
-          "style": {
-            "end": 16,
-            "node": {
-              "declarations": [],
-              "rules": [],
-              "type": "StyleDeclaration"
-            },
-            "start": 14
-          },
-          "type": "StyleRule"
+          "start": 14,
+          "type": "stylerule"
         },
         "start": 0
       },
       {
         "end": 33,
         "node": {
+          "end": 33,
+          "node": {
+            "declarations": [],
+            "rules": [],
+            "type": "style-declaration"
+          },
           "selectors": {
             "end": 31,
             "node": [
               {
-                "end": 32,
+                "end": 31,
                 "node": [
                   {
-                    "type": "Type",
-                    "value": "a"
+                    "type": "tag",
+                    "value": {
+                      "Html": "A"
+                    }
                   },
                   {
-                    "type": "Type",
-                    "value": "b"
+                    "type": "tag",
+                    "value": {
+                      "Html": "B"
+                    }
                   }
                 ],
-                "start": 16
+                "start": 18
               }
             ],
             "start": 16
           },
-          "style": {
-            "end": 33,
-            "node": {
-              "declarations": [],
-              "rules": [],
-              "type": "StyleDeclaration"
-            },
-            "start": 31
-          },
-          "type": "StyleRule"
+          "start": 31,
+          "type": "stylerule"
         },
         "start": 16
       }
     ],
-    "type": "StyleSheet"
+    "type": "stylesheet"
   },
   "start": 0
 }

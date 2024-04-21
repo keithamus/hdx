@@ -1,6 +1,7 @@
 use hdx_parser::{FromToken, Parse, Parser, Result as ParserResult, Span, Spanned};
+use hdx_writer::{CssWriter, OutputOption, Result as WriterResult, WriteCss};
 
-use crate::{macros::*, Value};
+use crate::Value;
 
 use super::{AlignmentBaseline, BaselineShift, BaselineSource};
 
@@ -12,7 +13,7 @@ pub struct VerticalAlign(pub Spanned<BaselineSource>, pub Spanned<AlignmentBasel
 impl<'a> Parse<'a> for VerticalAlign {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		let span = parser.span();
-		let baseline_source = if let Some(baseline_source) = BaselineSource::from_token(parser.cur()) {
+		let baseline_source = if let Some(baseline_source) = BaselineSource::from_token(parser.peek()) {
 			// "auto" keyword is not allowed in VerticalAlign shorthand
 			if baseline_source != BaselineSource::default() {
 				parser.advance();
@@ -37,7 +38,33 @@ impl<'a> Parse<'a> for VerticalAlign {
 	}
 }
 
-write_simple_shorthand!(VerticalAlign, Spanned<BaselineSource>, Spanned<AlignmentBaseline>, Spanned<BaselineShift>);
+impl<'a> WriteCss<'a> for VerticalAlign {
+	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
+		let mut wrote = false;
+		if self.0 != <Spanned<BaselineSource>>::default() {
+			self.0.write_css(sink)?;
+			wrote = true
+		}
+		if self.1 != <Spanned<AlignmentBaseline>>::default() || sink.can_output(OutputOption::RedundantDefaultValues) {
+			if wrote {
+				sink.write_char(' ')?;
+			}
+			self.1.write_css(sink)?;
+			wrote = true
+		}
+		if self.2 != <Spanned<BaselineShift>>::default() {
+			if wrote {
+				sink.write_char(' ')?;
+			}
+			self.2.write_css(sink)?;
+			wrote = true
+		}
+		if !wrote {
+			self.0.write_css(sink)?;
+		}
+		Ok(())
+	}
+}
 
 #[cfg(test)]
 mod tests {

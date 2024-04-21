@@ -1,4 +1,4 @@
-use crate::{css::values::units::CSSFloat, Atomizable, Parsable, Value, Writable};
+use crate::{css::units::CSSFloat, Atomizable, Parsable, Value, Writable};
 
 // https://developer.mozilla.org/en-US/docs/Web/CSS/box-align
 #[derive(Value, Parsable, Writable, Atomizable, Default, Debug, PartialEq, Hash)]

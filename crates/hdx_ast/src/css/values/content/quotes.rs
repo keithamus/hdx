@@ -19,39 +19,25 @@ pub enum Quotes {
 
 impl<'a> Parse<'a> for Quotes {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		Ok(match parser.cur() {
+		Ok(match parser.next() {
 			Token::Ident(atom) => match atom.to_ascii_lowercase() {
-				atom!("none") => {
-					parser.advance();
-					Quotes::None
-				}
-				atom!("auto") => {
-					parser.advance();
-					Quotes::Auto
-				}
-				atom!("match-parent") => {
-					parser.advance();
-					Quotes::MatchParent
-				}
+				atom!("none") => Quotes::None,
+				atom!("auto") => Quotes::Auto,
+				atom!("match-parent") => Quotes::MatchParent,
 				_ => unexpected_ident!(parser, atom),
 			},
-			Token::String(_, _) => {
-				let mut quotes = smallvec![];
+			Token::String(atom, style) => {
+				let mut quotes = smallvec![(atom.clone(), *style)];
 				loop {
-					let first = if let Token::String(atom, style) = parser.cur() {
+					if let Token::String(atom, style) = parser.peek().clone() {
 						parser.advance();
-						(atom, style)
+						quotes.push((atom, style));
 					} else {
 						break;
 					};
-					let second = if let Token::String(atom, style) = parser.cur() {
-						parser.advance();
-						(atom, style)
-					} else {
-						unexpected!(parser)
-					};
-					quotes.push(first);
-					quotes.push(second);
+				}
+				if quotes.len() % 2 != 0 {
+					unexpected!(parser, parser.peek());
 				}
 				Quotes::Pairs(quotes)
 			}

@@ -7,7 +7,7 @@ use std::{collections::VecDeque, str::Chars};
 
 use bitmask_enum::bitmask;
 use bumpalo::Bump;
-pub use token::{NumType, PairWise, Token, QuoteStyle};
+pub use token::{NumType, PairWise, QuoteStyle, Token};
 
 #[derive(Debug, Clone)]
 pub struct LexerCheckpoint<'a> {
@@ -16,7 +16,8 @@ pub struct LexerCheckpoint<'a> {
 }
 
 #[bitmask(u8)]
-pub(crate) enum Include {
+#[bitmask_config(vec_debug)]
+pub enum Include {
 	Whitespace = 0b0001,
 	Comments = 0b0010,
 }
@@ -89,6 +90,16 @@ impl<'a> Lexer<'a> {
 		&self.lookahead[n - 1].token
 	}
 
+	pub fn lookahead_with(&mut self, n: u8, inc: Include) -> &Token {
+		self.include = inc;
+		// we need to clear the lookahead if different characteristics
+		// are used, as it will influence token count.
+		self.lookahead.clear();
+		self.lookahead(n);
+		self.include = Include::none();
+		self.lookahead(n)
+	}
+
 	pub fn jump(&mut self) -> Token {
 		if let Some(checkpoint) = self.lookahead.pop_back() {
 			self.current.chars = checkpoint.chars;
@@ -98,23 +109,15 @@ impl<'a> Lexer<'a> {
 		self.advance()
 	}
 
+	#[inline]
 	pub fn advance(&mut self) -> Token {
-		if let Some(checkpoint) = self.lookahead.pop_front() {
-			self.current.chars = checkpoint.chars;
-			return checkpoint.token;
-		}
+		self.lookahead.clear();
 		self.read_next_token()
 	}
 
-	pub fn advance_including_whitespace(&mut self) -> Token {
-		self.include = Include::Whitespace;
-		let token = self.advance();
-		self.include = Include::none();
-		token
-	}
-
-	pub fn advance_including_whitespace_and_comments(&mut self) -> Token {
-		self.include = Include::all();
+	#[inline]
+	pub fn advance_with(&mut self, inc: Include) -> Token {
+		self.include = inc;
 		let token = self.advance();
 		self.include = Include::none();
 		token

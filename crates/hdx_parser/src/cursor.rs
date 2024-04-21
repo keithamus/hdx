@@ -1,4 +1,4 @@
-use hdx_lexer::{LexerCheckpoint, Token};
+use hdx_lexer::{Include, LexerCheckpoint, Token};
 
 use crate::{span::Span, Parser};
 
@@ -12,8 +12,8 @@ pub struct ParserCheckpoint<'a> {
 
 impl<'a> Parser<'a> {
 	#[inline]
-	pub fn cur(&self) -> Token {
-		self.token.clone()
+	pub fn cur(&self) -> &Token {
+		&self.token
 	}
 
 	#[inline]
@@ -23,7 +23,7 @@ impl<'a> Parser<'a> {
 
 	#[inline]
 	pub fn span(&self) -> Span {
-		Span::new(self.prev_pos, self.lexer.pos())
+		Span::new(self.pos(), self.pos())
 	}
 
 	#[inline]
@@ -32,21 +32,39 @@ impl<'a> Parser<'a> {
 	}
 
 	#[inline]
-	pub fn advance_including_whitespace_and_comments(&mut self) {
-		self.prev_pos = self.lexer.pos();
-		self.token = self.lexer.advance_including_whitespace_and_comments();
+	pub fn peek_with(&mut self, inc: Include) -> &Token {
+		self.lexer.lookahead_with(1, inc)
 	}
 
 	#[inline]
-	pub fn advance_including_whitespace(&mut self) {
-		self.prev_pos = self.lexer.pos();
-		self.token = self.lexer.advance_including_whitespace();
+	pub fn peek_n(&mut self, n: u8) -> &Token {
+		self.lexer.lookahead(n)
 	}
 
 	#[inline]
 	pub fn advance(&mut self) {
 		self.prev_pos = self.lexer.pos();
 		self.token = self.lexer.advance()
+	}
+
+	#[inline]
+	pub fn advance_with(&mut self, inc: Include) {
+		self.prev_pos = self.lexer.pos();
+		self.token = self.lexer.advance_with(inc);
+	}
+
+	#[inline]
+	pub fn next(&mut self) -> &Token {
+		self.prev_pos = self.lexer.pos();
+		self.token = self.lexer.advance();
+		&self.token
+	}
+
+	#[inline]
+	pub fn next_with(&mut self, inc: Include) -> &Token {
+		self.prev_pos = self.lexer.pos();
+		self.token = self.lexer.advance_with(inc);
+		&self.token
 	}
 
 	pub fn rewind(&mut self, checkpoint: ParserCheckpoint<'a>) {

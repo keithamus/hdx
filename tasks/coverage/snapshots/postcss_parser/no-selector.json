@@ -5,35 +5,30 @@
       {
         "end": 2,
         "node": {
+          "end": 2,
+          "node": {
+            "declarations": [],
+            "rules": [],
+            "type": "style-declaration"
+          },
           "selectors": {
             "end": 0,
             "node": [
               {
                 "end": 0,
-                "node": {
-                  "components": [],
-                  "type": "Selector"
-                },
+                "node": [],
                 "start": 0
               }
             ],
             "start": 0
           },
-          "style": {
-            "end": 2,
-            "node": {
-              "declarations": [],
-              "rules": [],
-              "type": "StyleDeclaration"
-            },
-            "start": 0
-          },
-          "type": "StyleRule"
+          "start": 0,
+          "type": "stylerule"
         },
         "start": 0
       }
     ],
-    "type": "StyleSheet"
+    "type": "stylesheet"
   },
   "start": 0
 }

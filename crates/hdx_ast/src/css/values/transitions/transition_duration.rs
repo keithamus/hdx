@@ -1,9 +1,7 @@
 use hdx_lexer::Token;
-use hdx_parser::{unexpected, FromToken, Parse, Parser, Result as ParserResult};
-use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
+use hdx_parser::{discard, expect, unexpected, FromToken, Parse, Parser, Result as ParserResult};
 
-use super::super::units::Time;
-use crate::{Value, Writable};
+use crate::{css::units::Time, Value, Writable};
 use smallvec::{smallvec, SmallVec};
 
 // https://drafts.csswg.org/css-transitions-1/#propdef-transition-duration
@@ -13,30 +11,18 @@ pub struct TransitionDuration(pub SmallVec<[Time; 2]>);
 
 impl<'a> Parse<'a> for TransitionDuration {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let value = match parser.cur() {
-			Token::Dimension(_, _, _) => {
-				let mut values = smallvec![];
-				loop {
-					if let Some(time) = Time::from_token(parser.cur()) {
-						parser.advance();
-						values.push(time);
-					} else {
-						unexpected!(parser);
-					}
-					match parser.cur() {
-						Token::Comma => {
-							parser.advance();
-						}
-						_ => {
-							break;
-						}
-					}
-				}
-				TransitionDuration(values)
+		expect!(parser.peek(), Token::Dimension(_, _, _));
+		let mut values = smallvec![];
+		loop {
+			if let Some(time) = Time::from_token(&parser.next()) {
+				values.push(time);
+			} else {
+				unexpected!(parser);
 			}
-			token => unexpected!(parser, token),
-		};
-		Ok(value)
+			if !discard!(parser, Token::Comma) {
+				return Ok(TransitionDuration(values));
+			}
+		}
 	}
 }
 

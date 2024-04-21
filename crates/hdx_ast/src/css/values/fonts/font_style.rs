@@ -1,11 +1,11 @@
 use hdx_atom::atom;
 use hdx_lexer::Token;
-use hdx_parser::{diagnostics, unexpected, unexpected_ident, Parse, Parser, Result as ParserResult};
-use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
+use hdx_parser::{diagnostics, expect_ignore_case, Parse, Parser, Result as ParserResult};
+use hdx_writer::{write_css, CssWriter, Result as WriterResult, WriteCss};
 
 use crate::Value;
 
-use crate::css::values::units::Angle;
+use crate::css::units::Angle;
 
 // https://drafts.csswg.org/css-fonts/#font-style-prop
 #[derive(Value, Default, Debug, PartialEq, Hash)]
@@ -21,35 +21,22 @@ pub enum FontStyle {
 
 impl<'a> Parse<'a> for FontStyle {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		match parser.cur() {
-			Token::Ident(ident) => match ident.to_ascii_lowercase() {
-				atom!("normal") => {
+		expect_ignore_case! { parser.next(), Token::Ident(_):
+			atom!("normal") => Ok(Self::Normal),
+			atom!("italic") => Ok(Self::Italic),
+			atom!("oblique") => match parser.peek().clone() {
+				Token::Dimension(val, unit, _) => {
 					parser.advance();
-					Ok(Self::Normal)
-				}
-				atom!("italic") => {
-					parser.advance();
-					Ok(Self::Italic)
-				}
-				atom!("oblique") => {
-					parser.advance();
-					match parser.cur() {
-						Token::Dimension(val, unit, _) => {
-							if !matches!(unit.to_ascii_lowercase(), atom!("deg")) {
-								Err(diagnostics::UnexpectedDimension(unit, parser.span()))?
-							}
-							if !(-90.0..=90.0).contains(&val) {
-								Err(diagnostics::NumberOutOfBounds(val, "-90..=90".into(), parser.span()))?
-							}
-							parser.advance();
-							Ok(Self::ObliqueAngle(Angle::Deg(val.into())))
-						}
-						_ => Ok(Self::Oblique),
+					if !matches!(unit.to_ascii_lowercase(), atom!("deg")) {
+						Err(diagnostics::UnexpectedDimension(unit, parser.span()))?
 					}
+					if !(-90.0..=90.0).contains(&val) {
+						Err(diagnostics::NumberOutOfBounds(val, "-90..=90".into(), parser.span()))?
+					}
+					Ok(Self::ObliqueAngle(Angle::Deg(val.into())))
 				}
-				_ => unexpected_ident!(parser, ident),
-			},
-			token => unexpected!(parser, token),
+				_ => Ok(Self::Oblique),
+			}
 		}
 	}
 }
@@ -61,9 +48,8 @@ impl<'a> WriteCss<'a> for FontStyle {
 			Self::Italic => atom!("italic").write_css(sink),
 			Self::Oblique => atom!("oblique").write_css(sink),
 			Self::ObliqueAngle(deg) => {
-				atom!("oblique").write_css(sink)?;
-				sink.write_char(' ')?;
-				deg.write_css(sink)
+				write_css!(sink, atom!("oblique"), ' ', deg);
+				Ok(())
 			}
 		}
 	}

@@ -28,7 +28,11 @@ mod tests {
 
 	#[test]
 	fn test_minify() {
-		assert_minify!(PrefersContrastMediaFeature, "prefers-contrast: no-preference", "prefers-contrast:no-preference");
+		assert_minify!(
+			PrefersContrastMediaFeature,
+			"prefers-contrast: no-preference",
+			"prefers-contrast:no-preference"
+		);
 		assert_minify!(PrefersContrastMediaFeature, "prefers-contrast: less", "prefers-contrast:less");
 		assert_minify!(PrefersContrastMediaFeature, "prefers-contrast: more", "prefers-contrast:more");
 		assert_minify!(PrefersContrastMediaFeature, "prefers-contrast: custom", "prefers-contrast:custom");

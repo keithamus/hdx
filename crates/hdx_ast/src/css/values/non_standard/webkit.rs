@@ -1,8 +1,10 @@
+use crate::css::types::Color;
 use crate::css::values::{
 	AlignContent, AlignItems, AlignSelf, Animation, AnimationDelay, AnimationDuration, AnimationFillMode,
 	AnimationIterationCount, AnimationName, AnimationTimingFunction, Appearance, BackdropFilter, BackgroundClip,
 	BoxAlign, BoxDecorationBreak, BoxDirection, BoxFlex, BoxOrdinalGroup, BoxOrient, BoxPack, BoxShadow, BoxSizing,
-	FlexBasis, FlexDirection, FlexFlow, FlexGrow, FlexWrap, JustifyContent, TextSizeAdjust, Todo, TransitionDuration,
+	FlexBasis, FlexDirection, FlexFlow, FlexGrow, FlexWrap, JustifyContent, TextDecoration, TextDecorationColor,
+	TextDecorationSkipInk, TextSizeAdjust, Todo, TransitionDuration,
 };
 use crate::{Atomizable, Parsable, Value, Writable};
 
@@ -70,10 +72,14 @@ pub type WebkitOrder = Todo;
 pub type WebkitOverflowScrolling = Todo;
 pub type WebkitPrintColorAdjust = Todo;
 pub type WebkitSlideThumb = Todo;
-pub type WebkitTapHighlightColor = Todo;
-pub type WebkitTextDecoration = Todo;
-pub type WebkitTextDecorationColor = Todo;
-pub type WebkitTextDecorationSkipInk = Todo;
+
+#[derive(Value, Parsable, Writable, Default, Debug, PartialEq, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+pub struct WebkitTapHighlightColor(pub Color);
+
+pub type WebkitTextDecoration = TextDecoration;
+pub type WebkitTextDecorationColor = TextDecorationColor;
+pub type WebkitTextDecorationSkipInk = TextDecorationSkipInk;
 pub type WebkitTextFillColor = Todo;
 pub type WebkitTextSecurity = Todo;
 pub type WebkitTextSizeAdjust = TextSizeAdjust;

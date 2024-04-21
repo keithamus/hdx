@@ -1,191 +1,232 @@
 {
-  "end": 125,
-  "rules": [
-    {
-      "end": 124,
-      "prelude": {
-        "end": 1,
-        "start": 0,
-        "value": [
-          {
-            "end": 1,
-            "escaped": false,
-            "kind": "Ident",
-            "start": 0,
-            "value": "a"
-          }
-        ]
-      },
-      "properties": [
-        {
-          "end": 122,
-          "important": false,
-          "name": "filter",
-          "start": 8,
-          "type": "UnknownDeclaration",
-          "value": {
-            "end": 121,
-            "start": 16,
-            "value": [
+  "end": 124,
+  "node": {
+    "rules": [
+      {
+        "end": 124,
+        "node": {
+          "end": 124,
+          "node": {
+            "declarations": [
               {
-                "end": 22,
-                "escaped": false,
-                "kind": "Ident",
-                "start": 16,
-                "value": "progid"
-              },
-              {
-                "end": 23,
-                "escaped": false,
-                "kind": "Colon",
-                "start": 22,
-                "value": null
-              },
-              {
-                "end": 39,
-                "escaped": false,
-                "kind": "Ident",
-                "start": 23,
-                "value": "DXImageTransform"
-              },
-              {
-                "end": 40,
-                "escaped": false,
-                "kind": "Delim",
-                "start": 39,
-                "value": "."
-              },
-              {
-                "end": 49,
-                "escaped": false,
-                "kind": "Ident",
-                "start": 40,
-                "value": "Microsoft"
-              },
-              {
-                "end": 50,
-                "escaped": false,
-                "kind": "Delim",
-                "start": 49,
-                "value": "."
-              },
-              {
-                "end": 69,
-                "name": "blur",
-                "start": 50,
-                "type": "Function",
-                "value": [
-                  {
-                    "end": 66,
-                    "escaped": false,
-                    "kind": "Ident",
-                    "start": 55,
-                    "value": "pixelradius"
-                  },
-                  {
-                    "end": 67,
-                    "escaped": false,
-                    "kind": "Delim",
-                    "start": 66,
-                    "value": "="
-                  },
-                  {
-                    "end": 68,
-                    "escaped": false,
-                    "kind": "Number",
-                    "start": 67,
-                    "value": {
-                      "int": true,
-                      "signed": false,
-                      "value": 2.0
+                "end": 122,
+                "node": {
+                  "important": false,
+                  "name": "filter",
+                  "type": "property",
+                  "value": [
+                    {
+                      "end": 22,
+                      "node": {
+                        "kind": "Ident",
+                        "value": "progid"
+                      },
+                      "start": 16
+                    },
+                    {
+                      "end": 23,
+                      "node": {
+                        "kind": "Colon"
+                      },
+                      "start": 22
+                    },
+                    {
+                      "end": 39,
+                      "node": {
+                        "kind": "Ident",
+                        "value": "DXImageTransform"
+                      },
+                      "start": 23
+                    },
+                    {
+                      "end": 40,
+                      "node": {
+                        "kind": "Delim",
+                        "value": "."
+                      },
+                      "start": 39
+                    },
+                    {
+                      "end": 49,
+                      "node": {
+                        "kind": "Ident",
+                        "value": "Microsoft"
+                      },
+                      "start": 40
+                    },
+                    {
+                      "end": 50,
+                      "node": {
+                        "kind": "Delim",
+                        "value": "."
+                      },
+                      "start": 49
+                    },
+                    {
+                      "end": 69,
+                      "node": {
+                        "name": "Blur",
+                        "type": "Function",
+                        "values": [
+                          {
+                            "end": 66,
+                            "node": {
+                              "kind": "Ident",
+                              "value": "pixelradius"
+                            },
+                            "start": 55
+                          },
+                          {
+                            "end": 67,
+                            "node": {
+                              "kind": "Delim",
+                              "value": "="
+                            },
+                            "start": 66
+                          },
+                          {
+                            "end": 68,
+                            "node": {
+                              "kind": "Number",
+                              "value": [
+                                2.0,
+                                {
+                                  "bits": 0
+                                }
+                              ]
+                            },
+                            "start": 67
+                          }
+                        ]
+                      },
+                      "start": 50
+                    },
+                    {
+                      "end": 70,
+                      "node": {
+                        "kind": "Whitespace"
+                      },
+                      "start": 69
+                    },
+                    {
+                      "end": 76,
+                      "node": {
+                        "kind": "Ident",
+                        "value": "progid"
+                      },
+                      "start": 70
+                    },
+                    {
+                      "end": 77,
+                      "node": {
+                        "kind": "Colon"
+                      },
+                      "start": 76
+                    },
+                    {
+                      "end": 93,
+                      "node": {
+                        "kind": "Ident",
+                        "value": "DXImageTransform"
+                      },
+                      "start": 77
+                    },
+                    {
+                      "end": 94,
+                      "node": {
+                        "kind": "Delim",
+                        "value": "."
+                      },
+                      "start": 93
+                    },
+                    {
+                      "end": 103,
+                      "node": {
+                        "kind": "Ident",
+                        "value": "Microsoft"
+                      },
+                      "start": 94
+                    },
+                    {
+                      "end": 104,
+                      "node": {
+                        "kind": "Delim",
+                        "value": "."
+                      },
+                      "start": 103
+                    },
+                    {
+                      "end": 121,
+                      "node": {
+                        "name": "Wheel",
+                        "type": "Function",
+                        "values": [
+                          {
+                            "end": 118,
+                            "node": {
+                              "kind": "Ident",
+                              "value": "duration"
+                            },
+                            "start": 110
+                          },
+                          {
+                            "end": 119,
+                            "node": {
+                              "kind": "Delim",
+                              "value": "="
+                            },
+                            "start": 118
+                          },
+                          {
+                            "end": 120,
+                            "node": {
+                              "kind": "Number",
+                              "value": [
+                                3.0,
+                                {
+                                  "bits": 0
+                                }
+                              ]
+                            },
+                            "start": 119
+                          }
+                        ]
+                      },
+                      "start": 104
                     }
-                  }
-                ]
-              },
-              {
-                "end": 76,
-                "escaped": false,
-                "kind": "Ident",
-                "start": 70,
-                "value": "progid"
-              },
-              {
-                "end": 77,
-                "escaped": false,
-                "kind": "Colon",
-                "start": 76,
-                "value": null
-              },
-              {
-                "end": 93,
-                "escaped": false,
-                "kind": "Ident",
-                "start": 77,
-                "value": "DXImageTransform"
-              },
-              {
-                "end": 94,
-                "escaped": false,
-                "kind": "Delim",
-                "start": 93,
-                "value": "."
-              },
-              {
-                "end": 103,
-                "escaped": false,
-                "kind": "Ident",
-                "start": 94,
-                "value": "Microsoft"
-              },
-              {
-                "end": 104,
-                "escaped": false,
-                "kind": "Delim",
-                "start": 103,
-                "value": "."
-              },
-              {
-                "end": 121,
-                "name": "wheel",
-                "start": 104,
-                "type": "Function",
-                "value": [
-                  {
-                    "end": 118,
-                    "escaped": false,
-                    "kind": "Ident",
-                    "start": 110,
-                    "value": "duration"
-                  },
-                  {
-                    "end": 119,
-                    "escaped": false,
-                    "kind": "Delim",
-                    "start": 118,
-                    "value": "="
-                  },
-                  {
-                    "end": 120,
-                    "escaped": false,
-                    "kind": "Number",
-                    "start": 119,
-                    "value": {
-                      "int": true,
-                      "signed": false,
-                      "value": 3.0
-                    }
-                  }
-                ]
+                  ]
+                },
+                "start": 3
               }
-            ]
-          }
-        }
-      ],
-      "rules": [],
-      "start": 0,
-      "type": "UnknownRule"
-    }
-  ],
-  "start": 0,
-  "type": "Stylesheet"
+            ],
+            "rules": [],
+            "type": "style-declaration"
+          },
+          "selectors": {
+            "end": 2,
+            "node": [
+              {
+                "end": 2,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "A"
+                    }
+                  }
+                ],
+                "start": 0
+              }
+            ],
+            "start": 0
+          },
+          "start": 2,
+          "type": "stylerule"
+        },
+        "start": 0
+      }
+    ],
+    "type": "stylesheet"
+  },
+  "start": 0
 }

@@ -1,16 +1,14 @@
-use hdx_atom::{atom, Atom};
+use hdx_atom::atom;
 use hdx_lexer::Token;
-use hdx_parser::{
-	diagnostics, expect, unexpected, unexpected_function, unexpected_ident, Parse, Parser, Result as ParserResult,
-};
+use hdx_parser::{match_ignore_case, unexpected, Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
-use smallvec::{smallvec, SmallVec};
 
-use crate::{bitmask, Parsable, Value, Writable};
+use crate::{bitmask, Value};
 
 // https://drafts.csswg.org/css-fonts/#font-variant-east-asian-prop
 #[derive(Value, Default)]
 #[bitmask(u16)]
+#[bitmask_config(vec_debug)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", rename_all = "kebab-case"))]
 pub enum FontVariantEastAsian {
 	#[default]
@@ -46,45 +44,30 @@ impl FontVariantEastAsian {
 impl<'a> Parse<'a> for FontVariantEastAsian {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		let mut value = Self::Normal;
-		match parser.cur() {
-			Token::Ident(atom) => {
-				if atom.to_ascii_lowercase() == atom!("normal") {
+		while let Token::Ident(atom) = parser.peek() {
+			match atom.to_ascii_lowercase() {
+				atom!("normal") if value == Self::Normal => {
 					parser.advance();
-					return Ok(Self::Normal);
+					return Ok(value);
 				}
-			},
-			token => unexpected!(parser, token),
-		}
-		loop {
-			match parser.cur() {
-				Token::Ident(atom) => match atom.to_ascii_lowercase() {
-					atom!("jis78") if !value.has_variant_values() => value |= Self::Jis78,
-					atom!("jis83") if !value.has_variant_values() => value |= Self::Jis83,
-					atom!("jis90") if !value.has_variant_values() => value |= Self::Jis90,
-					atom!("jis04") if !value.has_variant_values() => value |= Self::Jis04,
-					atom!("simplified") if !value.has_variant_values() => value |= Self::Simplified,
-					atom!("traditional") if !value.has_variant_values() => value |= Self::Traditional,
-					atom!("full-width") if !value.has_width_values() => value |= Self::FullWidth,
-					atom!("proportional-width") if !value.has_width_values() => value |= Self::ProportionalWidth,
-					_ => break,
-				},
+				atom!("jis78") if !value.has_variant_values() => value |= Self::Jis78,
+				atom!("jis83") if !value.has_variant_values() => value |= Self::Jis83,
+				atom!("jis90") if !value.has_variant_values() => value |= Self::Jis90,
+				atom!("jis04") if !value.has_variant_values() => value |= Self::Jis04,
+				atom!("simplified") if !value.has_variant_values() => value |= Self::Simplified,
+				atom!("traditional") if !value.has_variant_values() => value |= Self::Traditional,
+				atom!("full-width") if !value.has_width_values() => value |= Self::FullWidth,
+				atom!("proportional-width") if !value.has_width_values() => value |= Self::ProportionalWidth,
 				_ => break,
 			}
 			parser.advance();
 		}
-		match parser.cur() {
-			Token::Ident(atom) => match atom.to_ascii_lowercase() {
-				atom!("ruby") => {
-					parser.advance();
-					value |= Self::Ruby
-				}
-				_ => {
-					if value == Self::Normal {
-						unexpected_ident!(parser, atom);
-					}
-				}
-			},
-			_ => {},
+		if match_ignore_case!(parser.peek(), Token::Ident(atom!("ruby"))) {
+			parser.advance();
+			return Ok(value | Self::Ruby);
+		}
+		if value == Self::Normal {
+			unexpected!(parser);
 		}
 		Ok(value)
 	}

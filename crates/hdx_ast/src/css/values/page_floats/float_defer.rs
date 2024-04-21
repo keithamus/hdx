@@ -1,4 +1,4 @@
-use crate::{css::values::units::CSSFloat, Parsable, Writable};
+use crate::{css::units::CSSFloat, Parsable, Writable};
 
 // https://drafts.csswg.org/css-page-floats-3/#propdef-float-defer
 #[derive(Parsable, Writable, Default, Debug, PartialEq, Hash)]

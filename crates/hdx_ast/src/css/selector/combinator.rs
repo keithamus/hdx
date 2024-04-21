@@ -1,9 +1,9 @@
-use hdx_lexer::Token;
+use hdx_lexer::{Include, Token};
 use hdx_parser::{discard, expect, peek, unexpected, Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 
 #[derive(Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(rename_all = "kebab-case"))]
 // https://drafts.csswg.org/selectors/#combinators
 pub enum Combinator {
 	Descendant,        // (Space)
@@ -15,42 +15,25 @@ pub enum Combinator {
 
 impl<'a> Parse<'a> for Combinator {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		if matches!(parser.cur(), Token::Whitespace)
-			&& !peek!(parser, Token::Delim('>') | Token::Delim('+') | Token::Delim('~') | Token::Delim('|'))
-		{
-			loop {
-				parser.advance_including_whitespace();
-				if !matches!(parser.cur(), Token::Whitespace) {
-					break;
-				}
-			}
+		let could_be_descendant_combinator = discard!(parser, Include::Whitespace, Token::Whitespace);
+		if !peek!(parser, Token::Delim(_)) && could_be_descendant_combinator {
 			return Ok(Self::Descendant);
 		}
-		discard!(parser, Token::Whitespace);
-		match parser.cur() {
+		let val = match parser.next() {
 			Token::Delim(c) => match c {
-				'>' => {
-					parser.advance();
-					Ok(Self::Child)
-				}
-				'+' => {
-					parser.advance();
-					Ok(Self::NextSibling)
-				}
-				'~' => {
-					parser.advance();
-					Ok(Self::SubsequentSibling)
-				}
+				'>' => Self::Child,
+				'+' => Self::NextSibling,
+				'~' => Self::SubsequentSibling,
 				'|' => {
-					parser.advance_including_whitespace();
-					expect!(parser, Token::Delim('|'));
-					parser.advance();
-					Ok(Self::Column)
+					expect!(parser.next_with(Include::Whitespace), Token::Delim('|'));
+					Self::Column
 				}
 				_ => unexpected!(parser),
 			},
 			token => unexpected!(parser, token),
-		}
+		};
+		discard!(parser, Include::Whitespace, Token::Whitespace);
+		Ok(val)
 	}
 }
 
@@ -80,5 +63,30 @@ impl<'a> WriteCss<'a> for Combinator {
 				sink.write_whitespace()
 			}
 		}
+	}
+}
+
+#[cfg(test)]
+mod tests {
+	use super::*;
+	use crate::test_helpers::*;
+
+	#[test]
+	fn size_test() {
+		assert_size!(Combinator, 1);
+	}
+
+	#[test]
+	fn test_writes() {
+		assert_parse!(Combinator, ">", " > ");
+		assert_parse!(Combinator, "+", " + ");
+		assert_parse!(Combinator, "~", " ~ ");
+		// Descendent combinator
+		assert_parse!(Combinator, "     ", " ");
+		assert_parse!(Combinator, "     ", " ");
+		assert_parse!(Combinator, "  /**/   /**/   /**/ ", " ");
+		// Column
+		assert_parse!(Combinator, "||", " || ");
+		assert_parse!(Combinator, " || ", " || ");
 	}
 }

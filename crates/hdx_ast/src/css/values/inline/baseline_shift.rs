@@ -1,4 +1,4 @@
-use crate::{css::values::units::LengthPercentage, Parsable, Value, Writable};
+use crate::{css::units::LengthPercentage, Parsable, Value, Writable};
 
 // https://drafts.csswg.org/css-inline/#propdef-alignment-baseline
 #[derive(Value, Parsable, Writable, Debug, PartialEq, Hash)]

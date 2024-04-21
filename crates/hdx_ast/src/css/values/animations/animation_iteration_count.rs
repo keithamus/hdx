@@ -1,9 +1,9 @@
 use hdx_atom::atom;
 use hdx_lexer::Token;
-use hdx_parser::{unexpected, unexpected_ident, Parse, Parser, Result as ParserResult};
+use hdx_parser::{discard, unexpected, unexpected_ident, Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 
-use crate::{css::values::units::CSSFloat, Value, Writable};
+use crate::{css::units::CSSFloat, Value, Writable};
 use smallvec::{smallvec, SmallVec};
 
 // https://drafts.csswg.org/css-animations-2/#animation-fill-mode
@@ -28,27 +28,18 @@ impl<'a> Parse<'a> for AnimationIterationCount {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		let mut values = smallvec![];
 		loop {
-			match parser.cur() {
+			match parser.next() {
 				Token::Ident(ident) => match ident.to_ascii_lowercase() {
-					atom!("infinite") => {
-						parser.advance();
-						values.push(SingleAnimationIterationCount::Infinite);
-					}
+					atom!("infinite") => values.push(SingleAnimationIterationCount::Infinite),
 					atom => unexpected_ident!(parser, atom),
 				},
 				Token::Number(val, ty) if ty.is_int() && !ty.is_signed() => {
-					parser.advance();
 					values.push(SingleAnimationIterationCount::Number(val.into()))
 				}
 				token => unexpected!(parser, token),
 			}
-			match parser.cur() {
-				Token::Comma => {
-					parser.advance();
-				}
-				_ => {
-					break;
-				}
+			if !discard!(parser, Token::Comma) {
+				break;
 			}
 		}
 		Ok(Self(values))

@@ -14,13 +14,12 @@ use crate::{expect, expect_ignore_case, parser::Parser, span::Spanned, unexpecte
 // The FromToken trait produces a result of Self from an individual parser Token, guaranteeing that the parser will not
 // roll forward. Instead, the caller should advance the parser.
 pub trait FromToken: Sized {
-	fn from_token(token: Token) -> Option<Self>;
+	fn from_token(token: &Token) -> Option<Self>;
 }
 
 impl<'a, T: FromToken> Parse<'a> for T {
 	fn parse(parser: &mut Parser<'a>) -> Result<Self> {
-		if let Some(result) = Self::from_token(parser.cur()) {
-			parser.advance();
+		if let Some(result) = Self::from_token(parser.next()) {
 			Ok(result)
 		} else {
 			unexpected!(parser)
@@ -50,6 +49,14 @@ impl<'a, T: Parse<'a>> Parse<'a> for Spanned<T> {
 pub trait Parse<'a>: Sized {
 	fn parse(parser: &mut Parser<'a>) -> Result<Self>;
 
+	fn try_parse(parser: &mut Parser<'a>) -> Result<Self> {
+		let checkpoint = parser.checkpoint();
+		Self::parse(parser).map_err(|e| {
+			parser.rewind(checkpoint);
+			e
+		})
+	}
+
 	fn parse_with_state(parser: &mut Parser<'a>, state: State) -> Result<Self> {
 		let old = parser.state;
 		parser.state = old | state;
@@ -61,6 +68,12 @@ pub trait Parse<'a>: Sized {
 	fn parse_spanned(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
 		let span = parser.span();
 		let node = Self::parse(parser)?;
+		Ok(Spanned { node, span: span.end(parser.pos()) })
+	}
+
+	fn try_parse_spanned(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
+		let span = parser.span();
+		let node = Self::try_parse(parser)?;
 		Ok(Spanned { node, span: span.end(parser.prev_pos) })
 	}
 
@@ -81,12 +94,11 @@ pub trait Block<'a>: Sized + Parse<'a> {
 	fn parse_block(
 		parser: &mut Parser<'a>,
 	) -> Result<(Vec<'a, Spanned<Self::Declaration>>, Vec<'a, Spanned<Self::Rule>>)> {
-		expect!(parser, Token::LeftCurly);
-		parser.advance();
+		expect!(parser.next(), Token::LeftCurly);
 		let mut declarations = parser.new_vec();
 		let mut rules = parser.new_vec();
 		loop {
-			match parser.cur() {
+			match parser.peek() {
 				Token::Semicolon => {
 					parser.advance();
 				}
@@ -112,14 +124,13 @@ pub trait Block<'a>: Sized + Parse<'a> {
 	}
 }
 
-
 pub trait StyleSheet<'a>: Sized + Parse<'a> {
 	type Rule: Parse<'a>;
 
 	fn parse_stylesheet(parser: &mut Parser<'a>) -> Result<Vec<'a, Spanned<Self::Rule>>> {
 		let mut rules: Vec<'a, Spanned<Self::Rule>> = parser.new_vec();
 		loop {
-			match parser.cur() {
+			match parser.peek() {
 				Token::Eof => {
 					return Ok(rules);
 				}
@@ -138,9 +149,8 @@ pub trait MediaFeature<'a>: Sized + Default {
 	fn parse_media_feature_value(parser: &mut Parser<'a>) -> Result<Self>;
 
 	fn parse_media_feature(name: Atom, parser: &mut Parser<'a>) -> Result<Self> {
-		expect_ignore_case!(parser, name);
-		parser.advance();
-		let value = match parser.cur() {
+		expect_ignore_case!(parser.next(), Token::Ident(name));
+		let value = match parser.peek() {
 			Token::Colon => {
 				parser.advance();
 				Self::parse_media_feature_value(parser)?

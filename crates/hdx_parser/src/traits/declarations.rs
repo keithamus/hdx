@@ -1,7 +1,7 @@
 use hdx_atom::{atom, Atom};
-use hdx_lexer::Token;
+use hdx_lexer::{Include, Token};
 
-use crate::{discard, expect, parser::Parser, peek, unexpected, unexpected_ident, Result};
+use crate::{discard, expect, expect_ignore_case, match_ignore_case, parser::Parser, unexpected, Result};
 
 use super::Parse;
 
@@ -9,30 +9,21 @@ pub trait Declaration<'a>: Sized + Parse<'a> {
 	type DeclarationValue: DeclarationValue<'a>;
 
 	fn parse_name(parser: &mut Parser<'a>) -> Result<Atom> {
-		match parser.cur() {
+		match parser.next().clone() {
 			Token::Ident(atom) => {
-				parser.advance();
-				expect!(parser, Token::Colon);
-				parser.advance();
+				expect!(parser.next(), Token::Colon);
 				Ok(atom.to_ascii_lowercase())
 			}
 			token => unexpected!(parser, token),
 		}
 	}
 
-	fn parse_declaration_value(name: &Atom, parser: &mut Parser<'a>) -> Result<Self::DeclarationValue>;
-
 	fn parse_important(parser: &mut Parser<'a>) -> Result<bool> {
-		if matches!(parser.cur(), Token::Delim('!')) && peek!(parser, Token::Ident(_)) {
-			parser.advance_including_whitespace_and_comments();
-			match parser.cur() {
-				Token::Ident(ident) => match ident.to_ascii_lowercase() {
-					atom!("important") => {}
-					_ => unexpected_ident!(parser, ident),
-				},
-				token => unexpected!(parser, token),
-			}
+		if matches!(parser.peek(), Token::Delim('!'))
+			&& match_ignore_case!(parser.peek_n(2), Token::Ident(atom!("important")))
+		{
 			parser.advance();
+			expect_ignore_case!(parser.next_with(Include::all()), Token::Ident(atom!("important")));
 			Ok(true)
 		} else {
 			Ok(false)
@@ -41,7 +32,7 @@ pub trait Declaration<'a>: Sized + Parse<'a> {
 
 	fn parse_declaration(parser: &mut Parser<'a>) -> Result<(Atom, Self::DeclarationValue, bool)> {
 		let name = Self::parse_name(parser)?;
-		let value = Self::parse_declaration_value(&name, parser)?;
+		let value = Self::DeclarationValue::parse_declaration_value(&name, parser)?;
 		let important = Self::parse_important(parser)?;
 		discard!(parser, Token::Semicolon);
 		Ok((name, value, important))

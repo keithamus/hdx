@@ -22,25 +22,15 @@ pub enum Content {
 
 impl<'a> Parse<'a> for Content {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let value = match parser.cur() {
+		Ok(match parser.next() {
 			Token::Ident(atom) => match atom.to_ascii_lowercase() {
-				atom!("normal") => {
-					parser.advance();
-					Self::Normal
-				}
-				atom!("none") => {
-					parser.advance();
-					Self::None
-				}
+				atom!("normal") => Self::Normal,
+				atom!("none") => Self::None,
 				atom => unexpected_ident!(parser, atom),
 			},
-			Token::String(atom, quote) => {
-				parser.advance();
-				Self::String(atom, quote)
-			}
+			Token::String(atom, quote) => Self::String(atom.clone(), *quote),
 			token => unexpected!(parser, token),
-		};
-		Ok(value)
+		})
 	}
 }
 

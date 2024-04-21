@@ -55,9 +55,8 @@ pub enum PseudoClass {
 	Visited,          // atom!("visited")
 }
 
-
 #[cfg(test)]
-mod test {
+mod tests {
 	use super::*;
 	use crate::test_helpers::*;
 

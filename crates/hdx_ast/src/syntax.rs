@@ -1,5 +1,5 @@
 use hdx_atom::{atom, Atom};
-use hdx_lexer::{PairWise, Token};
+use hdx_lexer::{Include, PairWise, Token};
 use hdx_parser::{
 	expect, unexpected, AtRule as AtRuleTrait, Block as BlockTrait, Parse, Parser, QualifiedRule as QualifiedRuleTrait,
 	Result as ParserResult, Span, Spanned, State, Vec,
@@ -15,8 +15,11 @@ impl<'a> Parse<'a> for ComponentValues<'a> {
 	// https://drafts.csswg.org/css-syntax-3/#consume-list-of-components
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		let mut values = parser.new_vec();
+		if matches!(parser.peek_with(Include::Whitespace), Token::Whitespace) {
+			parser.advance_with(Include::Whitespace);
+		}
 		loop {
-			match parser.cur() {
+			match parser.peek_with(Include::Whitespace).clone() {
 				Token::Eof => break,
 				Token::RightCurly if parser.is(State::Nested) => break,
 				// ComponentValues can be passed a "stop token" which could be any token.
@@ -51,15 +54,12 @@ pub enum ComponentValue<'a> {
 // https://drafts.csswg.org/css-syntax-3/#consume-component-value
 impl<'a> Parse<'a> for ComponentValue<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		match parser.cur() {
+		match parser.peek_with(Include::Whitespace) {
 			Token::LeftCurly | Token::LeftSquare | Token::LeftParen => {
 				Ok(Self::SimpleBlock(SimpleBlock::parse(parser)?))
 			}
 			Token::Function(_) => Ok(Self::Function(Function::parse(parser)?)),
-			token => {
-				parser.advance_including_whitespace();
-				Ok(Self::Token(token))
-			}
+			_ => Ok(Self::Token(parser.next_with(Include::Whitespace).clone())),
 		}
 	}
 }
@@ -133,20 +133,17 @@ pub struct SimpleBlock<'a> {
 // https://drafts.csswg.org/css-syntax-3/#consume-a-simple-block
 impl<'a> Parse<'a> for SimpleBlock<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		if let Some(pairwise) = parser.cur().to_pairwise() {
+		if let Some(pairwise) = parser.next().to_pairwise() {
 			let mut values = parser.new_vec();
 			let ending_token = pairwise.end();
-			parser.advance();
 			loop {
-				match parser.cur() {
+				match parser.peek_with(Include::Whitespace) {
 					Token::Eof => break,
 					t if t == ending_token => break,
 					_ => values.push(ComponentValue::parse_spanned(parser)?),
 				}
 			}
-			if parser.cur() == pairwise.end() {
-				parser.advance();
-			} else {
+			if parser.next() != pairwise.end() {
 				unexpected!(parser)
 			}
 			Ok(Self { values, pairwise })
@@ -184,7 +181,7 @@ pub enum Rule<'a> {
 
 impl<'a> Parse<'a> for Rule<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		Ok(match parser.cur() {
+		Ok(match parser.next() {
 			Token::AtKeyword(_) => Rule::AtRule(AtRule::parse(parser)?),
 			_ => Rule::QualifiedRule(QualifiedRule::parse(parser)?),
 		})
@@ -230,12 +227,11 @@ pub struct Declaration<'a> {
 // https://drafts.csswg.org/css-syntax-3/#consume-a-declaration
 impl<'a> Parse<'a> for Declaration<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		match parser.cur() {
+		match parser.next().clone() {
 			Token::Ident(name) => {
-				parser.advance();
-				expect!(parser, Token::Colon);
-				parser.advance();
-				let mut value = ComponentValues::parse_spanned_with_state(parser, State::StopOnSemicolon | State::Nested)?;
+				expect!(parser.next(), Token::Colon);
+				let mut value =
+					ComponentValues::parse_spanned_with_state(parser, State::StopOnSemicolon | State::Nested)?;
 				let mut iter = value.node.0.iter_mut();
 				let important = matches!(
 					iter.nth_back(1),
@@ -244,7 +240,7 @@ impl<'a> Parse<'a> for Declaration<'a> {
 					iter.nth_back(2),
 					Some(Spanned { node: ComponentValue::Token(Token::Delim('!')), .. })
 				);
-				Ok(Self { name, value, important })
+				Ok(Self { name: name.clone(), value, important })
 			}
 			token => unexpected!(parser, token),
 		}
@@ -298,7 +294,7 @@ pub struct AtRule<'a> {
 // https://drafts.csswg.org/css-syntax-3/#consume-an-at-rule
 impl<'a> Parse<'a> for AtRule<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		match parser.cur() {
+		match parser.next().clone() {
 			Token::AtKeyword(name) => {
 				let (prelude_opt, block_opt) = Self::parse_at_rule(parser)?;
 				let prelude = prelude_opt
@@ -369,20 +365,18 @@ pub struct Function<'a> {
 // https://drafts.csswg.org/css-syntax-3/#consume-function
 impl<'a> Parse<'a> for Function<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		match parser.cur() {
+		match parser.next().clone() {
 			Token::Function(name) => {
 				let mut values = parser.new_vec();
-				parser.advance();
 				loop {
-					match parser.cur() {
+					match parser.peek() {
 						Token::Eof => break,
 						Token::RightParen => break,
 						_ => values.push(ComponentValue::parse_spanned(parser)?),
 					}
 				}
-				expect!(parser, Token::RightParen);
-				parser.advance();
-				Ok(Self { name, values })
+				expect!(parser.next(), Token::RightParen);
+				Ok(Self { name: name.clone(), values })
 			}
 			token => unexpected!(parser, token),
 		}
@@ -416,6 +410,7 @@ mod tests {
 	#[test]
 	fn test_writes() {
 		assert_parse!(ComponentValue, "foo");
+		assert_parse!(Function, "one(two)");
 		assert_parse!(SimpleBlock, "[foo]");
 		assert_parse!(SimpleBlock, "(one two three)");
 		assert_parse!(SimpleBlock, "(one(two))");

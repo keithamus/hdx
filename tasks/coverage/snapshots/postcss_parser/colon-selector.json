@@ -5,14 +5,20 @@
       {
         "end": 14,
         "node": {
+          "end": 14,
+          "node": {
+            "declarations": [],
+            "rules": [],
+            "type": "style-declaration"
+          },
           "selectors": {
-            "end": 12,
+            "end": 11,
             "node": [
               {
-                "end": 13,
+                "end": 11,
                 "node": [
                   {
-                    "type": "PseudoClass",
+                    "type": "pseudo-class",
                     "value": "fullscreen"
                   }
                 ],
@@ -21,21 +27,13 @@
             ],
             "start": 0
           },
-          "style": {
-            "end": 14,
-            "node": {
-              "declarations": [],
-              "rules": [],
-              "type": "StyleDeclaration"
-            },
-            "start": 12
-          },
-          "type": "StyleRule"
+          "start": 11,
+          "type": "stylerule"
         },
         "start": 0
       }
     ],
-    "type": "StyleSheet"
+    "type": "stylesheet"
   },
   "start": 0
 }

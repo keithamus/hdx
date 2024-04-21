@@ -1,89 +1,75 @@
 {
-  "end": 47,
+  "end": 46,
   "node": {
     "rules": [
       {
         "end": 46,
         "node": {
-          "properties": [
-            {
-              "end": 26,
-              "node": {
-                "end": 26,
+          "end": 46,
+          "node": {
+            "declarations": [
+              {
+                "end": 21,
                 "node": {
                   "important": false,
-                  "type": "Color",
+                  "name": "color",
+                  "type": "property",
                   "value": {
-                    "end": 20,
-                    "node": {
-                      "type": "Named",
-                      "value": {
-                        "name": "black"
-                      }
-                    },
-                    "start": 15
+                    "Named": {
+                      "type": "black"
+                    }
                   }
                 },
-                "start": 8
+                "start": 3
               },
-              "start": 8
-            },
-            {
-              "end": 45,
-              "node": {
-                "end": 45,
+              {
+                "end": 44,
                 "node": {
                   "important": false,
-                  "type": "Background",
-                  "value": {
-                    "end": 43,
-                    "node": {
-                      "type": "Named",
-                      "value": {
-                        "name": "white"
-                      }
-                    },
-                    "start": 38
-                  }
+                  "name": "background",
+                  "type": "property",
+                  "value": [
+                    {
+                      "end": 43,
+                      "node": {
+                        "kind": "Ident",
+                        "value": "white"
+                      },
+                      "start": 38
+                    }
+                  ]
                 },
-                "start": 26
-              },
-              "start": 26
-            }
-          ],
-          "rules": [],
+                "start": 21
+              }
+            ],
+            "rules": [],
+            "type": "style-declaration"
+          },
           "selectors": {
-            "end": 1,
-            "node": {
-              "children": [
-                {
-                  "end": 1,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 1,
-                        "node": {
-                          "type": "Type",
-                          "value": "a"
-                        },
-                        "start": 0
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 0
-                }
-              ],
-              "type": "SelectorSet"
-            },
+            "end": 2,
+            "node": [
+              {
+                "end": 2,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "A"
+                    }
+                  }
+                ],
+                "start": 0
+              }
+            ],
             "start": 0
           },
-          "type": "StyleRule"
+          "start": 2,
+          "type": "stylerule"
         },
         "start": 0
       }
     ],
-    "type": "Stylesheet"
+    "type": "stylesheet"
   },
   "start": 0
 }

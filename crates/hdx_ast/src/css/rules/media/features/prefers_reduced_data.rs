@@ -24,7 +24,11 @@ mod tests {
 
 	#[test]
 	fn test_minify() {
-		assert_minify!(PrefersReducedDataMediaFeature, "prefers-reduced-data: no-preference", "prefers-reduced-data:no-preference");
+		assert_minify!(
+			PrefersReducedDataMediaFeature,
+			"prefers-reduced-data: no-preference",
+			"prefers-reduced-data:no-preference"
+		);
 		assert_minify!(PrefersReducedDataMediaFeature, "prefers-reduced-data: reduce", "prefers-reduced-data:reduce");
 	}
 

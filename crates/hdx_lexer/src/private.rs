@@ -9,7 +9,7 @@ use hdx_syntax::{
 use crate::{
 	constants::{SINGLE_CHAR_TOKENS, SURROGATE_RANGE},
 	string_builder::AutoCow,
-	token::{NumType, Token, QuoteStyle},
+	token::{NumType, QuoteStyle, Token},
 	Include, Lexer,
 };
 
@@ -25,7 +25,7 @@ impl<'a> Lexer<'a> {
 	}
 
 	#[inline]
-	fn nth(&self, n: usize) -> char {
+	fn nth_char(&self, n: usize) -> char {
 		self.current.chars.clone().nth(n).unwrap_or(EOF)
 	}
 
@@ -34,7 +34,7 @@ impl<'a> Lexer<'a> {
 		if remaining.is_empty() {
 			return Token::Eof;
 		}
-		let c = self.nth(0);
+		let c = self.nth_char(0);
 		// fast path for single character tokens
 		// '{'  '}'  '('  ')'  '['  ']'  ';' ',' ':'
 		let size = c as usize;
@@ -64,13 +64,13 @@ impl<'a> Lexer<'a> {
 			c if c.is_ascii_digit() => self.consume_numeric_token(),
 			// Sign Range
 			'-' => {
-				if self.nth(1) == '-' && self.nth(2) == '>' {
+				if self.nth_char(1) == '-' && self.nth_char(2) == '>' {
 					self.current.chars.next();
 					self.current.chars.next();
 					self.current.chars.next();
 					return Token::Cdc;
 				}
-				if is_ident_start_sequence(c, self.nth(1), self.nth(2)) {
+				if is_ident_start_sequence(c, self.nth_char(1), self.nth_char(2)) {
 					return self.consume_ident_like_token();
 				}
 				if self.is_number_start() {
@@ -87,7 +87,7 @@ impl<'a> Lexer<'a> {
 			}
 			// Less Than
 			'<' => {
-				if self.nth(1) == '!' && self.nth(2) == '-' && self.nth(3) == '-' {
+				if self.nth_char(1) == '!' && self.nth_char(2) == '-' && self.nth_char(3) == '-' {
 					self.current.chars.next();
 					self.current.chars.next();
 					self.current.chars.next();
@@ -98,7 +98,7 @@ impl<'a> Lexer<'a> {
 			}
 			// Hash / Pound Sign
 			'#' => {
-				if is_ident(self.nth(1)) || is_escape_sequence(self.nth(1), self.nth(2)) {
+				if is_ident(self.nth_char(1)) || is_escape_sequence(self.nth_char(1), self.nth_char(2)) {
 					self.current.chars.next();
 					self.consume_hash_token()
 				} else {
@@ -107,7 +107,7 @@ impl<'a> Lexer<'a> {
 			}
 			// Commercial At
 			'@' => {
-				if is_ident_start_sequence(self.nth(1), self.nth(2), self.nth(3)) {
+				if is_ident_start_sequence(self.nth_char(1), self.nth_char(2), self.nth_char(3)) {
 					self.current.chars.next();
 					let ident = self.consume_ident_sequence();
 					return Token::AtKeyword(ident);
@@ -116,20 +116,20 @@ impl<'a> Lexer<'a> {
 			}
 			// Reverse Solidus
 			'\\' => {
-				if is_escape_sequence(c, self.nth(1)) {
+				if is_escape_sequence(c, self.nth_char(1)) {
 					return self.consume_ident_like_token();
 				}
 				Token::Delim(self.current.chars.next().unwrap())
 			}
 			// Solidus
-			'/' => match self.nth(1) {
+			'/' => match self.nth_char(1) {
 				'*' => {
 					self.current.chars.next();
 					self.current.chars.next();
 					if self.include_comments() {
 						let mut builder = AutoCow::new(self);
 						loop {
-							if self.nth(0) == EOF || (self.nth(0) == '*' && self.nth(1) == '/') {
+							if self.nth_char(0) == EOF || (self.nth_char(0) == '*' && self.nth_char(1) == '/') {
 								let str = builder.finish(self);
 								self.current.chars.next();
 								self.current.chars.next();
@@ -139,7 +139,7 @@ impl<'a> Lexer<'a> {
 						}
 					} else {
 						while let Some(c) = self.current.chars.next() {
-							if c == '*' && self.nth(0) == '/' {
+							if c == '*' && self.nth_char(0) == '/' {
 								self.current.chars.next();
 								break;
 							}
@@ -155,7 +155,7 @@ impl<'a> Lexer<'a> {
 	}
 
 	fn consume_whitespace(&mut self) {
-		while is_whitespace(self.nth(0)) {
+		while is_whitespace(self.nth_char(0)) {
 			self.current.chars.next();
 		}
 	}
@@ -163,11 +163,11 @@ impl<'a> Lexer<'a> {
 	fn consume_ident_sequence(&mut self) -> Atom {
 		let mut builder = AutoCow::new(self);
 		loop {
-			let mut c = self.nth(0);
+			let mut c = self.nth_char(0);
 			if is_ident(c) {
 				c = self.current.chars.next().unwrap();
 				builder.push_matching(c);
-			} else if is_escape_sequence(c, self.nth(1)) {
+			} else if is_escape_sequence(c, self.nth_char(1)) {
 				self.current.chars.next();
 				builder.force_allocation_without_current_ascii_char(self);
 				builder.push_different(self.consume_escape_sequence());
@@ -178,7 +178,7 @@ impl<'a> Lexer<'a> {
 	}
 
 	fn consume_escape_sequence(&mut self) -> char {
-		if !self.nth(0).is_ascii_hexdigit() {
+		if !self.nth_char(0).is_ascii_hexdigit() {
 			let char = self.current.chars.next().unwrap_or(REPLACEMENT);
 			return char;
 		}
@@ -225,7 +225,7 @@ impl<'a> Lexer<'a> {
 					return self.consume_remnants_of_bad_url();
 				}
 				'\\' => {
-					if is_escape_sequence(c, self.nth(0)) {
+					if is_escape_sequence(c, self.nth_char(0)) {
 						builder.force_allocation_without_current_ascii_char(self);
 						let c = self.consume_escape_sequence();
 						builder.push_different(c);
@@ -252,7 +252,7 @@ impl<'a> Lexer<'a> {
 					break;
 				}
 				c @ '\\' => {
-					if is_escape_sequence(c, self.nth(0)) {
+					if is_escape_sequence(c, self.nth_char(0)) {
 						self.current.chars.next();
 						self.consume_escape_sequence();
 					}
@@ -275,28 +275,29 @@ impl<'a> Lexer<'a> {
 			num_type = num_type.float();
 		}
 		self.consume_decimal_digits();
-		if num_type.is_int() && self.nth(0) == '.' && self.nth(1).is_ascii_digit() {
+		if num_type.is_int() && self.nth_char(0) == '.' && self.nth_char(1).is_ascii_digit() {
 			self.current.chars.next();
 			self.consume_decimal_digits();
 			num_type = num_type.float();
 		}
-		if matches!(self.nth(0), 'e' | 'E')
-			&& (self.nth(1).is_ascii_digit() || (matches!(self.nth(1), '-' | '+') && self.nth(2).is_ascii_digit()))
+		if matches!(self.nth_char(0), 'e' | 'E')
+			&& (self.nth_char(1).is_ascii_digit()
+				|| (matches!(self.nth_char(1), '-' | '+') && self.nth_char(2).is_ascii_digit()))
 		{
 			self.current.chars.next();
-			if matches!(self.nth(0), '-' | '+') {
+			if matches!(self.nth_char(0), '-' | '+') {
 				self.current.chars.next();
 			}
 			self.consume_decimal_digits();
 			num_type = num_type.float();
 		}
 		let value = self.parse_number(builder.finish(self));
-		match self.nth(0) {
+		match self.nth_char(0) {
 			'%' => {
 				self.current.chars.next();
 				Token::Dimension(value, atom!("%"), num_type)
 			}
-			c if is_ident_start_sequence(c, self.nth(1), self.nth(2)) => {
+			c if is_ident_start_sequence(c, self.nth_char(1), self.nth_char(2)) => {
 				let unit = self.consume_ident_sequence();
 				Token::Dimension(value, unit, num_type)
 			}
@@ -314,14 +315,14 @@ impl<'a> Lexer<'a> {
 	}
 
 	fn consume_decimal_digits(&mut self) {
-		while self.nth(0).is_ascii_digit() {
+		while self.nth_char(0).is_ascii_digit() {
 			self.current.chars.next();
 		}
 	}
 
 	fn consume_ident_like_token(&mut self) -> Token {
 		let ident = self.consume_ident_sequence();
-		if self.nth(0) == '(' {
+		if self.nth_char(0) == '(' {
 			self.current.chars.next();
 			if is_url_ident(&ident) {
 				let mut chars = self.current.chars.clone();
@@ -343,14 +344,10 @@ impl<'a> Lexer<'a> {
 
 	fn consume_string_token(&mut self) -> Token {
 		let delimiter = self.current.chars.next().unwrap();
-		let quote = if delimiter == '"' {
-			QuoteStyle::Double
-		} else {
-			QuoteStyle::Single
-		};
+		let quote = if delimiter == '"' { QuoteStyle::Double } else { QuoteStyle::Single };
 		let mut builder = AutoCow::new(self);
 		loop {
-			match self.nth(0) {
+			match self.nth_char(0) {
 				c if is_newline(c) => {
 					return Token::BadString;
 				}
@@ -367,7 +364,7 @@ impl<'a> Lexer<'a> {
 				'\\' => {
 					let c = self.current.chars.next().unwrap();
 					builder.force_allocation_without_current_ascii_char(self);
-					match self.nth(0) {
+					match self.nth_char(0) {
 						EOF => {
 							return Token::String(Atom::from(builder.finish(self)), quote);
 						}
@@ -391,14 +388,14 @@ impl<'a> Lexer<'a> {
 	}
 
 	fn is_number_start(&mut self) -> bool {
-		self.nth(0).is_ascii_digit()
-			|| (is_sign(self.nth(0))
-				&& (self.nth(1).is_ascii_digit() || self.nth(1) == '.' && self.nth(2).is_ascii_digit()))
-			|| (self.nth(0) == '.' && self.nth(1).is_ascii_digit())
+		self.nth_char(0).is_ascii_digit()
+			|| (is_sign(self.nth_char(0))
+				&& (self.nth_char(1).is_ascii_digit() || self.nth_char(1) == '.' && self.nth_char(2).is_ascii_digit()))
+			|| (self.nth_char(0) == '.' && self.nth_char(1).is_ascii_digit())
 	}
 
 	fn hex_digit(&mut self) -> Option<u32> {
-		let value = match self.nth(0) {
+		let value = match self.nth_char(0) {
 			c if c.is_ascii_digit() => c as u32 - '0' as u32,
 			c @ 'a'..='f' => 10 + (c as u32 - 'a' as u32),
 			c @ 'A'..='F' => 10 + (c as u32 - 'A' as u32),
@@ -418,7 +415,7 @@ impl<'a> Lexer<'a> {
 				break;
 			}
 		}
-		if is_whitespace(self.nth(0)) {
+		if is_whitespace(self.nth_char(0)) {
 			self.current.chars.next();
 		}
 		if value == 0 || SURROGATE_RANGE.contains(&value) {

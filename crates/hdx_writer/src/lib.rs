@@ -2,6 +2,8 @@ use bitmask_enum::bitmask;
 use hdx_syntax::identifier::is_ident_str;
 use smallvec::SmallVec;
 
+mod macros;
+
 pub use std::fmt::{Result, Write};
 
 use hdx_atom::Atom;
@@ -23,6 +25,7 @@ pub enum OutputOption {
 	RedundantRules,
 	RedundantDeclarations,
 	RedundantShorthandValues,
+	RedundantDefaultValues,
 }
 
 pub trait CssWriter {
@@ -99,7 +102,7 @@ where
 		}
 		Ok(())
 	}
-	
+
 	#[inline]
 	fn write_with_quotes(&mut self, str: &str, quote: QuoteStyle, could_be_ident: bool) -> Result {
 		if could_be_ident && !self.can_output(OutputOption::QuotedIdentLikeStrings) && is_ident_str(str) {
@@ -173,6 +176,19 @@ impl<'a, T: WriteCss<'a>> WriteCss<'a> for Vec<'a, T> {
 }
 
 // TODO: const N: usize?
+impl<'a, T: WriteCss<'a>> WriteCss<'a> for SmallVec<[T; 0]> {
+	fn write_css<W: CssWriter>(&self, sink: &mut W) -> Result {
+		let mut iter = self.iter().peekable();
+		while let Some(w) = iter.next() {
+			w.write_css(sink)?;
+			if iter.peek().is_some() {
+				sink.write_char(',')?;
+				sink.write_whitespace()?;
+			}
+		}
+		Ok(())
+	}
+}
 impl<'a, T: WriteCss<'a>> WriteCss<'a> for SmallVec<[T; 1]> {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> Result {
 		let mut iter = self.iter().peekable();
@@ -199,7 +215,6 @@ impl<'a, T: WriteCss<'a>> WriteCss<'a> for SmallVec<[T; 2]> {
 		Ok(())
 	}
 }
-
 
 impl<'a> WriteCss<'a> for QuoteStyle {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> Result {
@@ -244,5 +259,11 @@ impl<'a> WriteCss<'a> for i32 {
 impl<'a> WriteCss<'a> for char {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> Result {
 		sink.write_char(*self)
+	}
+}
+
+impl<'a> WriteCss<'a> for () {
+	fn write_css<W: CssWriter>(&self, sink: &mut W) -> Result {
+		sink.write_whitespace()
 	}
 }

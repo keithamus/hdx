@@ -19,13 +19,11 @@ impl<'a> Parse<'a> for GridMediaFeature {
 
 impl<'a> MediaFeature<'a> for GridMediaFeature {
 	fn parse_media_feature_value(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		match parser.cur() {
+		match parser.next() {
 			Token::Number(val, ty) => {
-				if val == 1.0 && ty.is_int() {
-					parser.advance();
+				if *val == 1.0 && ty.is_int() {
 					Ok(Self::One)
-				} else if val == 0.0 && ty.is_int() {
-					parser.advance();
+				} else if *val == 0.0 && ty.is_int() {
 					Ok(Self::Zero)
 				} else {
 					unexpected!(parser)

@@ -7,6 +7,7 @@ use serde::Serialize;
 
 #[derive(Default)]
 #[bitmask(u8)]
+#[bitmask_config(vec_debug)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde())]
 pub enum NumType {
 	#[default]
@@ -28,6 +29,11 @@ impl NumType {
 	#[inline]
 	pub fn is_signed(&self) -> bool {
 		self.contains(NumType::Signed)
+	}
+
+	#[inline]
+	pub fn is_signed_int(&self) -> bool {
+		self.contains(NumType::Signed) && !self.contains(NumType::Float)
 	}
 
 	#[inline]
@@ -148,33 +154,6 @@ impl Token {
 		matches!(self, Token::BadString | Token::BadUrl)
 	}
 
-	#[inline]
-	pub fn as_atom(&self) -> Option<Atom> {
-		match self {
-			Token::Ident(value)
-			| Token::Function(value)
-			| Token::AtKeyword(value)
-			| Token::Hash(value)
-			| Token::HashId(value)
-			| Token::String(value, _)
-			| Token::Url(value, _) => Some(value.clone()),
-			_ => None,
-		}
-	}
-
-	#[inline]
-	pub fn as_atom_lower(&self) -> Option<Atom> {
-		self.as_atom().map(|s| s.to_ascii_lowercase())
-	}
-
-	pub fn matches_ignore_case(&self, str: &Atom) -> bool {
-		self.as_atom().map_or(false, |s| s.eq_ignore_ascii_case(str))
-	}
-
-	pub fn is_function_like(&self) -> bool {
-		matches!(self, Token::Url(_, _) | Token::Function(_))
-	}
-
 	pub fn is_dashed_ident(&self) -> bool {
 		match self {
 			Token::Ident(value) => value.starts_with("--"),
@@ -185,45 +164,6 @@ impl Token {
 	#[inline]
 	pub fn to_pairwise(&self) -> Option<PairWise> {
 		PairWise::from_token(self)
-	}
-
-	pub fn as_f32(&self) -> Option<f32> {
-		match self {
-			Self::Number(value, _) => Some(*value),
-			Self::Dimension(value, _, _) => Some(*value),
-			_ => None,
-		}
-	}
-
-	pub fn as_i32(&self) -> Option<i32> {
-		match self {
-			Self::Number(value, _) => Some(*value as i32),
-			Self::Dimension(value, _, _) => Some(*value as i32),
-			_ => None,
-		}
-	}
-
-	pub fn as_char(&self) -> Option<char> {
-		match self {
-			Self::Delim(s) => Some(*s),
-			_ => None,
-		}
-	}
-
-	pub fn is_signed(&self) -> bool {
-		match self {
-			Self::Number(_, ty) => ty.is_signed(),
-			Self::Dimension(_, _, ty) => ty.is_signed(),
-			_ => false,
-		}
-	}
-
-	pub fn is_int(&self) -> bool {
-		match self {
-			Self::Number(_, ty) => ty.is_int(),
-			Self::Dimension(_, _, ty) => ty.is_int(),
-			_ => false,
-		}
 	}
 }
 
@@ -248,19 +188,19 @@ impl PairWise {
 		}
 	}
 
-	pub fn start(&self) -> Token {
+	pub fn start(&self) -> &Token {
 		match self {
-			Self::Paren => Token::LeftParen,
-			Self::Curly => Token::LeftCurly,
-			Self::Square => Token::LeftSquare,
+			Self::Paren => &Token::LeftParen,
+			Self::Curly => &Token::LeftCurly,
+			Self::Square => &Token::LeftSquare,
 		}
 	}
 
-	pub fn end(&self) -> Token {
+	pub fn end(&self) -> &Token {
 		match self {
-			Self::Paren => Token::RightParen,
-			Self::Curly => Token::RightCurly,
-			Self::Square => Token::RightSquare,
+			Self::Paren => &Token::RightParen,
+			Self::Curly => &Token::RightCurly,
+			Self::Square => &Token::RightSquare,
 		}
 	}
 }

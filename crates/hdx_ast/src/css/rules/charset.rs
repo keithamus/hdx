@@ -1,11 +1,11 @@
 use crate::Atomizable;
 use hdx_atom::atom;
-use hdx_lexer::{QuoteStyle, Token};
+use hdx_lexer::{Include, QuoteStyle, Token};
 use hdx_parser::{
 	diagnostics::{self},
 	expect, unexpected, Parse, Parser, Result as ParserResult,
 };
-use hdx_writer::{CssWriter, OutputOption, Result as WriterResult, WriteCss};
+use hdx_writer::{write_css, CssWriter, OutputOption, Result as WriterResult, WriteCss};
 
 #[derive(Atomizable, Debug, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
@@ -64,39 +64,28 @@ pub enum CharsetRule {
 
 impl<'a> Parse<'a> for CharsetRule {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		expect!(parser, Token::AtKeyword(atom!("charset")));
-		parser.advance_including_whitespace_and_comments();
-		expect!(parser, Token::Whitespace);
-		parser.advance();
-		let rule = match parser.cur() {
+		expect!(parser.next(), Token::AtKeyword(atom!("charset")));
+		expect!(parser.next_with(Include::Whitespace), Token::Whitespace);
+		match parser.next_with(Include::Whitespace) {
 			Token::String(atom, QuoteStyle::Double) => {
-				if let Some(rule) = Self::from_atom(atom.to_ascii_lowercase()) {
-					parser.advance();
-					rule
+				if let Some(rule) = Self::from_atom(atom) {
+					expect!(parser.next_with(Include::Whitespace), Token::Semicolon);
+					Ok(rule)
 				} else {
-					Err(diagnostics::UnexpectedCharset(atom, parser.span()))?
+					Err(diagnostics::UnexpectedCharset(atom.clone(), parser.span()))?
 				}
 			}
 			token => unexpected!(parser, token),
-		};
-		expect!(parser, Token::Semicolon);
-		parser.advance();
-		Ok(rule)
+		}
 	}
 }
 
 impl<'a> WriteCss<'a> for CharsetRule {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
-		if matches!(self, CharsetRule::Utf8) && !sink.can_output(OutputOption::RedundantRules) {
-			return Ok(());
+		if !matches!(self, CharsetRule::Utf8) || sink.can_output(OutputOption::RedundantRules) {
+			write_css!(sink, '@', atom!("charset"), ' ', '"', self.to_atom(), '"', ';');
 		}
-		sink.write_char('@')?;
-		atom!("charset").write_css(sink)?;
-		sink.write_char(' ')?;
-		sink.write_char('"')?;
-		self.to_atom().write_css(sink)?;
-		sink.write_char('"')?;
-		sink.write_char(';')
+		Ok(())
 	}
 }
 

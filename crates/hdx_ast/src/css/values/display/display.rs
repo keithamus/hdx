@@ -119,7 +119,9 @@ impl Display {
 	#[inline]
 	fn valid_list_item(&self) -> bool {
 		// valid list item must be either isolated, or with a <display-outside> or flow/flow-root
-		self.bits & 0b1000_1100 == 0 && (self.bits & 0b0011_0011 > 0 || self.bits == Self::ListItem.bits) && !self.contains(Self::Flex)
+		self.bits & 0b1000_1100 == 0
+			&& (self.bits & 0b0011_0011 > 0 || self.bits == Self::ListItem.bits)
+			&& !self.contains(Self::Flex)
 	}
 
 	#[inline]
@@ -171,7 +173,7 @@ impl<'a> Parse<'a> for Display {
 		let span = parser.span();
 		// Certain values can only be used in a "standalone way" and so complete the
 		// value:
-		let single_value = match parser.cur() {
+		let single_value = match parser.peek() {
 			Token::Ident(atom) => match atom.to_ascii_lowercase() {
 				// <display-box>
 				atom!("none") => Some(Self::None),
@@ -205,28 +207,23 @@ impl<'a> Parse<'a> for Display {
 
 		// If a legacy/internal/box value is not applied then it must be a pair/triplet
 		let mut value = Self::None;
-		loop {
-			match parser.cur() {
-				Token::Ident(atom) => match atom.to_ascii_lowercase() {
-					// <display-outside>
-					atom!("block") if !value.has_outside() => value |= Self::Block,
-					atom!("inline") if !value.has_outside() => value |= Self::Inline,
-					atom!("run-in") if !value.has_outside() => value |= Self::RunIn,
-					// <display-inside>
-					atom!("flow") if !value.has_inside() => value |= Self::Flow,
-					atom!("flow-root") if !value.has_inside() => value |= Self::FlowRoot,
-					atom!("flex") if !value.has_inside() => value |= Self::Flex,
-					atom!("grid") if !value.has_inside() => value |= Self::Grid,
-					atom!("ruby") if !value.has_inside() => value |= Self::Ruby,
-					atom!("table") if !value.has_inside() => value |= Self::Table,
-					// <display-listitem>
-					atom!("list-item") if !value.has_list_item() => value |= Self::ListItem,
-
-					_ => unexpected_ident!(parser, atom),
-				},
-				_ => break,
+		while let Token::Ident(atom) = parser.next() {
+			match atom.to_ascii_lowercase() {
+				// <display-outside>
+				atom!("block") if !value.has_outside() => value |= Self::Block,
+				atom!("inline") if !value.has_outside() => value |= Self::Inline,
+				atom!("run-in") if !value.has_outside() => value |= Self::RunIn,
+				// <display-inside>
+				atom!("flow") if !value.has_inside() => value |= Self::Flow,
+				atom!("flow-root") if !value.has_inside() => value |= Self::FlowRoot,
+				atom!("flex") if !value.has_inside() => value |= Self::Flex,
+				atom!("grid") if !value.has_inside() => value |= Self::Grid,
+				atom!("ruby") if !value.has_inside() => value |= Self::Ruby,
+				atom!("table") if !value.has_inside() => value |= Self::Table,
+				// <display-listitem>
+				atom!("list-item") if !value.has_list_item() => value |= Self::ListItem,
+				_ => unexpected_ident!(parser, atom),
 			}
-			parser.advance();
 		}
 		if value.has_list_item() && !value.valid_list_item() {
 			Err(diagnostics::DisplayHasInvalidListItemCombo(value.inside_to_atom().unwrap(), span.end(parser.pos())))?;

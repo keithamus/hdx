@@ -1,4 +1,4 @@
-use crate::{css::values::units::LengthPercentageOrAuto, macros::*, Parsable, Value, Writable};
+use crate::{css::units::LengthPercentageOrAuto, macros::*, Parsable, Value, Writable};
 
 // https://drafts.csswg.org/css-box-4/#margin-physical
 #[derive(Value, Default, PartialEq, Debug, Hash)]
@@ -77,13 +77,20 @@ mod tests {
 	#[test]
 	fn test_writes() {
 		assert_parse!(MarginLeft, "auto");
-		assert_parse!(MarginBlock, "1px");
+		assert_parse!(MarginBlock, "1px 1px");
 		assert_parse!(MarginBlock, "1px 2px");
-		assert_parse!(MarginInline, "1px");
+		assert_parse!(MarginInline, "1px 1px");
 		assert_parse!(MarginInline, "1px 2px");
-		assert_parse!(Margin, "1px");
-		assert_parse!(Margin, "1px 2px");
-		assert_parse!(Margin, "1px 2px 3px");
 		assert_parse!(Margin, "1px 2px 3px 4px");
+	}
+
+	#[test]
+	fn test_minify() {
+		assert_minify!(MarginBlock, "1px 1px", "1px");
+		assert_minify!(MarginInline, "1px 1px", "1px");
+		assert_minify!(Margin, "1px", "1px");
+		assert_minify!(Margin, "1px 2px 1px 2px", "1px 2px");
+		assert_minify!(Margin, "1px 2px 3px", "1px 2px 3px");
+		assert_minify!(Margin, "1px 2px 3px 2px", "1px 2px 3px");
 	}
 }

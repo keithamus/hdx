@@ -1,8 +1,12 @@
-use crate::{css::values::units::LengthPercentage, Parsable, Value, Writable};
+use crate::{css::units::LengthPercentage, Parsable, Value, Writable};
 
 #[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Hash)]
 #[value(Inherits)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+#[cfg_attr(
+	feature = "serde",
+	derive(serde::Serialize),
+	serde(tag = "type", content = "value", rename_all = "kebab-case")
+)]
 pub enum FontSize {
 	XxSmall, // atom!("xx-small")
 	XSmall,  // atom!("x-small")

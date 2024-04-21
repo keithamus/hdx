@@ -27,6 +27,9 @@ serde_json = { workspace = true, optional = true }
 [dev-dependencies]
 glob = { workspace = true }
 
+[lib]
+doctest = false
+
 [features]
 default = []
 serde = ["dep:serde", "dep:serde_json", "hdx_lexer/serde", "bumpalo/serde"]

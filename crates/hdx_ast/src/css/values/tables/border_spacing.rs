@@ -1,6 +1,6 @@
-use crate::css::values::units::Length;
+use crate::css::units::Length;
 use hdx_parser::{unexpected, FromToken, Parse, Parser, Result as ParserResult};
-use hdx_writer::{CssWriter, Result as WriterResult, WriteCss, OutputOption};
+use hdx_writer::{CssWriter, OutputOption, Result as WriterResult, WriteCss};
 
 use crate::Value;
 
@@ -10,10 +10,8 @@ pub struct BorderSpacing(Length, Length);
 
 impl<'a> Parse<'a> for BorderSpacing {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		if let Some(horiz) = Length::from_token(parser.cur()) {
-			parser.advance();
-			if let Some(vert) = Length::from_token(parser.cur()) {
-				parser.advance();
+		if let Some(horiz) = Length::from_token(&parser.next()) {
+			if let Some(vert) = Length::from_token(&parser.next()) {
 				Ok(Self(horiz, vert))
 			} else {
 				Ok(Self(horiz, horiz))
@@ -25,14 +23,14 @@ impl<'a> Parse<'a> for BorderSpacing {
 }
 
 impl<'a> WriteCss<'a> for BorderSpacing {
-    fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
+	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
 		self.0.write_css(sink)?;
-		if self.0 != self.1 || sink.can_output(OutputOption::RedundantRules) {
+		if self.0 != self.1 || sink.can_output(OutputOption::RedundantShorthandValues) {
 			sink.write_char(' ')?;
 			self.1.write_css(sink)?;
 		}
 		Ok(())
-    }
+	}
 }
 
 #[cfg(test)]

@@ -21,4 +21,10 @@ mod tests {
 	fn size_test() {
 		assert_size!(TextDecorationStyle, 1);
 	}
+
+	#[test]
+	fn test_writes() {
+		assert_parse!(TextDecorationStyle, "solid");
+		assert_parse!(TextDecorationStyle, "dotted");
+	}
 }

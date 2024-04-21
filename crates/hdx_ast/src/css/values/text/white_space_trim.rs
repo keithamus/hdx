@@ -8,6 +8,7 @@ use crate::{bitmask, Atomizable, Value};
 // https://drafts.csswg.org/css-text-4/#propdef-white-space-trim
 #[derive(Value, Default, Atomizable)]
 #[bitmask(u8)]
+#[bitmask_config(vec_debug)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub enum WhiteSpaceTrim {
 	#[default]
@@ -24,7 +25,7 @@ impl<'a> Parse<'a> for WhiteSpaceTrim {
 			if value.is_all() {
 				break;
 			}
-			match parser.cur() {
+			match parser.next() {
 				Token::Ident(atom) => match atom.to_ascii_lowercase() {
 					atom!("none") if value.is_none() => return Ok(Self::None),
 					atom!("discard-before") if !value.contains(Self::DiscardBefore) => value |= Self::DiscardBefore,
@@ -34,7 +35,6 @@ impl<'a> Parse<'a> for WhiteSpaceTrim {
 				},
 				token => unexpected!(parser, token),
 			}
-			parser.advance();
 		}
 		Ok(value)
 	}

@@ -1,5 +1,5 @@
 use hdx_lexer::Token;
-use hdx_parser::{unexpected, unexpected_ident, Parse, Parser, Result as ParserResult};
+use hdx_parser::{discard, unexpected, unexpected_ident, Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 
 use crate::{Atomizable, Value, Writable};
@@ -24,10 +24,9 @@ impl<'a> Parse<'a> for AnimationFillMode {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		let mut values = smallvec![];
 		loop {
-			match parser.cur() {
+			match parser.next() {
 				Token::Ident(atom) => {
-					if let Some(fill) = SingleAnimationFillMode::from_atom(atom.to_ascii_lowercase()) {
-						parser.advance();
+					if let Some(fill) = SingleAnimationFillMode::from_atom(&atom) {
 						values.push(fill);
 					} else {
 						unexpected_ident!(parser, atom);
@@ -35,13 +34,8 @@ impl<'a> Parse<'a> for AnimationFillMode {
 				}
 				token => unexpected!(parser, token),
 			}
-			match parser.cur() {
-				Token::Comma => {
-					parser.advance();
-				}
-				_ => {
-					break;
-				}
+			if !discard!(parser, Token::Comma) {
+				break;
 			}
 		}
 		Ok(Self(values))

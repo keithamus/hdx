@@ -24,31 +24,18 @@ impl<'a> Parse<'a> for ColorScheme {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		let mut only = false;
 		let mut keywords = smallvec![];
-		while let Token::Ident(ident) = parser.cur() {
+		while let Token::Ident(ident) = parser.next() {
 			match ident.to_ascii_lowercase() {
-				atom!("normal") => {
-					parser.advance();
-					return Ok(Self::Normal);
-				}
+				atom!("normal") => return Ok(Self::Normal),
 				atom!("only") => {
 					if only {
 						unexpected_ident!(parser, ident)
 					}
-					parser.advance();
 					only = true;
 				}
-				atom!("light") => {
-					parser.advance();
-					keywords.push(ColorSchemeKeyword::Light);
-				}
-				atom!("dark") => {
-					parser.advance();
-					keywords.push(ColorSchemeKeyword::Dark);
-				}
-				_ => {
-					parser.advance();
-					keywords.push(ColorSchemeKeyword::Custom(ident));
-				}
+				atom!("light") => keywords.push(ColorSchemeKeyword::Light),
+				atom!("dark") => keywords.push(ColorSchemeKeyword::Dark),
+				_ => keywords.push(ColorSchemeKeyword::Custom(ident.clone())),
 			}
 		}
 		if only && keywords.is_empty() {
@@ -92,13 +79,13 @@ pub enum ColorSchemeKeyword {
 	Custom(Atom),
 }
 
-impl<'a> FromToken for ColorSchemeKeyword {
-	fn from_token(token: Token) -> Option<Self> {
+impl FromToken for ColorSchemeKeyword {
+	fn from_token(token: &Token) -> Option<Self> {
 		match token {
 			Token::Ident(ident) => match ident.to_ascii_lowercase() {
 				atom!("light") => Some(Self::Light),
 				atom!("dark") => Some(Self::Dark),
-				_ => Some(Self::Custom(ident)),
+				_ => Some(Self::Custom(ident.clone())),
 			},
 			_ => None,
 		}
@@ -140,17 +127,17 @@ mod tests {
 	#[cfg(feature = "serde")]
 	#[test]
 	fn test_serializes() {
-		assert_json!(ColorSchemeKeyword, "light" == {
+		assert_json!(ColorSchemeKeyword, "light", {
 			"node": "light",
 			"start": 0,
 			"end": 5,
 		});
-		assert_json!(ColorScheme, "normal" == {
+		assert_json!(ColorScheme, "normal", {
 			"node": { "type": "normal" },
 			"start": 0,
 			"end": 6,
 		});
-		assert_json!(ColorScheme, "light" == {
+		assert_json!(ColorScheme, "light", {
 			"node": {
 				"type": "defined",
 				"value": ["light"],

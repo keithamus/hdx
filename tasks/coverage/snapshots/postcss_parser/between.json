@@ -5,15 +5,23 @@
       {
         "end": 8,
         "node": {
+          "end": 8,
+          "node": {
+            "declarations": [],
+            "rules": [],
+            "type": "style-declaration"
+          },
           "selectors": {
-            "end": 1,
+            "end": 6,
             "node": [
               {
-                "end": 7,
+                "end": 6,
                 "node": [
                   {
-                    "type": "Type",
-                    "value": "a"
+                    "type": "tag",
+                    "value": {
+                      "Html": "A"
+                    }
                   }
                 ],
                 "start": 0
@@ -21,21 +29,13 @@
             ],
             "start": 0
           },
-          "style": {
-            "end": 8,
-            "node": {
-              "declarations": [],
-              "rules": [],
-              "type": "StyleDeclaration"
-            },
-            "start": 1
-          },
-          "type": "StyleRule"
+          "start": 6,
+          "type": "stylerule"
         },
         "start": 0
       }
     ],
-    "type": "StyleSheet"
+    "type": "stylesheet"
   },
   "start": 0
 }

@@ -1,13 +1,13 @@
+use bumpalo::Bump;
 use hdx_ast::css::StyleSheet;
 use hdx_lexer::{Lexer, Token};
 use hdx_parser::{Features, Parser};
-use hdx_writer::{BaseCssWriter, WriteCss, OutputOption};
+use hdx_writer::{BaseCssWriter, OutputOption, WriteCss};
 #[cfg(not(feature = "fancy"))]
 use miette::JSONReportHandler;
 use miette::NamedSource;
 #[cfg(feature = "fancy")]
 use miette::{GraphicalReportHandler, GraphicalTheme};
-use bumpalo::Bump;
 use serde::Serialize;
 use wasm_bindgen::prelude::*;
 

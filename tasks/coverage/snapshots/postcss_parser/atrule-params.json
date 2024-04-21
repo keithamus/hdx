@@ -1,9 +1,9 @@
 {
-  "end": 69,
+  "end": 70,
   "node": {
     "rules": [
       {
-        "end": 69,
+        "end": 70,
         "node": {
           "block": {
             "end": 0,
@@ -16,8 +16,15 @@
           },
           "name": "-moz-document",
           "prelude": {
-            "end": 69,
+            "end": 70,
             "node": [
+              {
+                "end": 38,
+                "node": {
+                  "kind": "Whitespace"
+                },
+                "start": 25
+              },
               {
                 "end": 58,
                 "node": {
@@ -39,7 +46,21 @@
                     }
                   ]
                 },
-                "start": 14
+                "start": 38
+              },
+              {
+                "end": 59,
+                "node": {
+                  "kind": "Whitespace"
+                },
+                "start": 58
+              },
+              {
+                "end": 67,
+                "node": {
+                  "kind": "Whitespace"
+                },
+                "start": 59
               },
               {
                 "end": 69,
@@ -48,7 +69,14 @@
                   "type": "SimpleBlock",
                   "values": []
                 },
-                "start": 58
+                "start": 67
+              },
+              {
+                "end": 70,
+                "node": {
+                  "kind": "Whitespace"
+                },
+                "start": 69
               }
             ],
             "start": 14
@@ -58,7 +86,7 @@
         "start": 0
       }
     ],
-    "type": "StyleSheet"
+    "type": "stylesheet"
   },
   "start": 0
 }

@@ -4,7 +4,7 @@ discrete_media_feature!(DisplayModeMediaFeature[atom!("display-mode")] {
 	Fullscreen: atom!("fullscreen"),
 	Standalone: atom!("standalone"),
 	MinimalUi: atom!("minimal-ui"),
-	Browser: atom!("browser"), 
+	Browser: atom!("browser"),
 	PictureInPicture: atom!("picture-in-picture"),
 });
 

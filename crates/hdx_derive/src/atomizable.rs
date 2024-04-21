@@ -1,35 +1,69 @@
 use proc_macro2::TokenStream;
 use quote::quote;
 use syn::{
-	parse::Parse, punctuated::Punctuated, Attribute, Data, DataEnum, DataStruct, DeriveInput, Fields, LitStr, Meta,
-	Token,
+	parse::Parse, punctuated::Punctuated, Attribute, Data, DataEnum, DataStruct, DeriveInput, Error, Fields, Ident,
+	LitStr, Meta, Token,
 };
 
 use crate::{err, kebab};
 
-#[derive(Debug)]
-struct AtomizableArgs(String);
+#[derive(Clone, Debug)]
+enum AtomizableArg {
+	FromToken,
+	Atom(String),
+}
 
-impl Parse for AtomizableArgs {
+impl Parse for AtomizableArg {
 	fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
-		Ok(Self(input.parse::<LitStr>()?.value()))
+		match input.parse::<Ident>() {
+			Ok(i) if i == "FromToken" => Ok(Self::FromToken),
+			Ok(ident) => Err(Error::new(ident.span(), format!("Unrecognized Parsable arg {:?}", ident)))?,
+			Err(_) => Ok(Self::Atom(input.parse::<LitStr>()?.value())),
+		}
 	}
 }
 
+#[derive(Debug)]
+pub struct AtomizableArgs {
+	from_token: bool,
+	atom: Option<String>,
+}
+
 impl AtomizableArgs {
-	fn parse(attrs: &[Attribute]) -> Option<Self> {
+	fn parse(attrs: &[Attribute]) -> Self {
+		let mut ret = Self { from_token: false, atom: None };
 		if let Some(Attribute { meta: Meta::List(meta), .. }) = &attrs.iter().find(|a| a.path().is_ident("atomizable"))
 		{
-			let args = meta.parse_args_with(Punctuated::<AtomizableArgs, Token![,]>::parse_terminated).unwrap();
-			args.into_iter().next()
-		} else {
-			None
+			let args = meta.parse_args_with(Punctuated::<AtomizableArg, Token![,]>::parse_terminated).unwrap();
+			for arg in args {
+				match arg {
+					AtomizableArg::Atom(s) => ret.atom = Some(s),
+					AtomizableArg::FromToken => ret.from_token = true,
+				}
+			}
 		}
+		ret
 	}
 }
 
 pub fn derive(input: DeriveInput) -> TokenStream {
 	let ident = input.ident;
+	let input_args = AtomizableArgs::parse(&input.attrs);
+	let from_token = if input_args.from_token {
+		Some(quote! {
+			#[automatically_derived]
+			impl hdx_parser::FromToken for #ident {
+				fn from_token(token: &hdx_lexer::Token) -> Option<Self> {
+					match token {
+						hdx_lexer::Token::Ident(atom) => Self::from_atom(atom),
+						_ => None,
+					}
+				}
+			}
+		})
+	} else {
+		None
+	};
 	match input.data {
 		Data::Enum(DataEnum { variants, .. }) => {
 			let mut match_atom_to_enum_variant = Vec::new();
@@ -37,7 +71,7 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 			for var in variants {
 				let var_ident = var.ident;
 				let var_args = AtomizableArgs::parse(&var.attrs);
-				let ident = if let Some(name) = var_args { name.0 } else { kebab(format!("{}", var_ident)) };
+				let ident = if let Some(name) = var_args.atom { name } else { kebab(format!("{}", var_ident)) };
 				let str = LitStr::new(&ident, var_ident.span());
 				match_atom_to_enum_variant.push(quote! {
 					hdx_atom::atom!(#str) => Some(Self::#var_ident),
@@ -62,13 +96,14 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 			quote! {
 				#[automatically_derived]
 				impl hdx_atom::Atomizable for #ident {
-					fn from_atom(atom: hdx_atom::Atom) -> Option<Self> {
+					fn from_atom(atom: &hdx_atom::Atom) -> Option<Self> {
 						#from_atom_match
 					}
 					fn to_atom(&self) -> hdx_atom::Atom {
 						#to_atom_match
 					}
 				}
+				#from_token
 			}
 		}
 		Data::Struct(DataStruct { fields: Fields::Unnamed(fields), .. }) => {
@@ -79,7 +114,7 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 			quote! {
 				#[automatically_derived]
 				impl hdx_atom::Atomizable for #ident {
-					fn from_atom(atom: hdx_atom::Atom) -> Option<Self> {
+					fn from_atom(atom: &hdx_atom::Atom) -> Option<Self> {
 						if atom == hdx_atom::atom!(#str) {
 							Some(Self(::core::default::Default::default()))
 						} else {
@@ -90,6 +125,7 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 						hdx_atom::atom!(#str)
 					}
 				}
+				#from_token
 			}
 		}
 		Data::Struct(_) => err(ident.span(), "Cannot derive Atomizable on a struct with named or no fields"),

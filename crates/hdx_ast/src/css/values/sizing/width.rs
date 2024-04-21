@@ -1,5 +1,4 @@
-use super::super::units::LengthPercentage;
-use crate::{Parsable, Value, Writable};
+use crate::{css::units::LengthPercentage, Parsable, Value, Writable};
 
 // https://drafts.csswg.org/css-sizing-4/#sizing-values
 #[derive(Value, Parsable, Writable, Default, Debug, PartialEq, Hash)]

@@ -1,13 +1,13 @@
 use hdx_atom::{atom, Atom};
 use hdx_lexer::{QuoteStyle, Token};
-use hdx_parser::{unexpected, Parse, Parser, Result as ParserResult, Spanned};
+use hdx_parser::{discard, expect, unexpected, Parse, Parser, Result as ParserResult, Spanned};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 
 use crate::{Value, Writable};
 use smallvec::{smallvec, SmallVec};
 
 // https://drafts.csswg.org/css-animations-2/#animation-duration
-#[derive(Default, Debug, PartialEq, Hash)]
+#[derive(Value, Default, Debug, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct FontFamily(pub SmallVec<[Spanned<SingleFontFamily>; 1]>);
 
@@ -16,6 +16,7 @@ pub struct FontFamily(pub SmallVec<[Spanned<SingleFontFamily>; 1]>);
 pub enum SingleFontFamily {
 	#[writable(String)]
 	Named(Atom, QuoteStyle),
+	#[writable(as_function = "generic")]
 	Generic(Atom),
 	// Generic Font Families
 	Serif, // atom!("serif")
@@ -41,44 +42,36 @@ pub enum SingleFontFamily {
 	StatusBar,    // atom!("status-bar")
 }
 
-impl<'a> Value for FontFamily {}
-
 impl<'a> Parse<'a> for SingleFontFamily {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let value = match parser.cur() {
-			Token::Ident(ident) => {
-				parser.advance();
-				match ident.to_ascii_lowercase() {
-					atom!("serif") => Self::Serif,
-					atom!("sans-serif") => Self::SansSerif,
-					atom!("cursive") => Self::Cursive,
-					atom!("fantasy") => Self::Fantasy,
-					atom!("monospace") => Self::Monospace,
-					atom!("system-ui") => Self::SystemUi,
-					atom!("math") => Self::Math,
-					atom!("ui-serif") => Self::UiSerif,
-					atom!("ui-monospace") => Self::UiMonospace,
-					atom!("ui-rounded") => Self::UiRounded,
-					atom!("caption") => Self::Caption,
-					atom!("icon") => Self::Icon,
-					atom!("menu") => Self::Menu,
-					atom!("message-box") => Self::MessageBox,
-					atom!("small-caption") => Self::SmallCaption,
-					atom!("status-bar") => Self::StatusBar,
-					_ => Self::Named(ident, QuoteStyle::None),
+		let value = match parser.next() {
+			Token::String(atom, quote) => Self::Named(atom.clone(), *quote),
+			Token::Ident(ident) => match ident.to_ascii_lowercase() {
+				atom!("serif") => Self::Serif,
+				atom!("sans-serif") => Self::SansSerif,
+				atom!("cursive") => Self::Cursive,
+				atom!("fantasy") => Self::Fantasy,
+				atom!("monospace") => Self::Monospace,
+				atom!("system-ui") => Self::SystemUi,
+				atom!("math") => Self::Math,
+				atom!("ui-serif") => Self::UiSerif,
+				atom!("ui-monospace") => Self::UiMonospace,
+				atom!("ui-rounded") => Self::UiRounded,
+				atom!("caption") => Self::Caption,
+				atom!("icon") => Self::Icon,
+				atom!("menu") => Self::Menu,
+				atom!("message-box") => Self::MessageBox,
+				atom!("small-caption") => Self::SmallCaption,
+				atom!("status-bar") => Self::StatusBar,
+				_ => Self::Named(ident.clone(), QuoteStyle::None),
+			},
+			Token::Function(atom!("generic")) => match parser.next().clone() {
+				Token::Ident(ident) => {
+					expect!(parser.next(), Token::RightParen);
+					Self::Generic(ident)
 				}
-			}
-			Token::Function(atom!("generic")) => {
-				parser.advance();
-				match parser.cur() {
-					Token::Ident(ident) => Self::Generic(ident),
-					token => unexpected!(parser, token),
-				}
-			}
-			Token::String(atom, quote) => {
-				parser.advance();
-				Self::Named(atom, quote)
-			}
+				token => unexpected!(parser, token),
+			},
 			token => unexpected!(parser, token),
 		};
 		Ok(value)
@@ -89,18 +82,12 @@ impl<'a> Parse<'a> for FontFamily {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		let mut values = smallvec![];
 		loop {
-			let value = SingleFontFamily::parse_spanned(parser)?;
-			values.push(value);
-			match parser.cur() {
-				Token::Comma => {
-					parser.advance();
-				}
-				_ => {
-					break;
-				}
+			values.push(SingleFontFamily::parse_spanned(parser)?);
+			if !discard!(parser, Token::Comma) {
+				break;
 			}
 		}
-		Ok(FontFamily(values))
+		Ok(Self(values))
 	}
 }
 
@@ -133,6 +120,7 @@ mod tests {
 		assert_parse!(FontFamily, "serif");
 		assert_parse!(FontFamily, "Arial, sans-serif");
 		assert_parse!(FontFamily, "'Gill Sans MS', Arial, system-ui, sans-serif");
+		assert_parse!(FontFamily, "generic(foo)");
 	}
 
 	#[test]

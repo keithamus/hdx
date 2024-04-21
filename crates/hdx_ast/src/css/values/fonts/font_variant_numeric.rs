@@ -1,6 +1,6 @@
-use hdx_atom::{atom, Atom};
+use hdx_atom::atom;
 use hdx_lexer::Token;
-use hdx_parser::{diagnostics, unexpected_ident, Parse, Parser, Result as ParserResult};
+use hdx_parser::{unexpected_ident, Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 
 use crate::{bitmask, Value};
@@ -9,6 +9,7 @@ use crate::{bitmask, Value};
 #[derive(Value, Default)]
 #[value(Inherits)]
 #[bitmask(u16)]
+#[bitmask_config(vec_debug)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub enum FontVariantNumeric {
 	#[default]
@@ -49,7 +50,7 @@ impl<'a> Parse<'a> for FontVariantNumeric {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		let mut value = Self::Normal;
 		loop {
-			match parser.cur() {
+			match parser.peek() {
 				Token::Ident(atom) => match atom.to_ascii_lowercase() {
 					atom!("normal") => {
 						parser.advance();
@@ -64,7 +65,7 @@ impl<'a> Parse<'a> for FontVariantNumeric {
 					atom!("ordinal") if !value.contains(Self::Ordinal) => value |= Self::Ordinal,
 					atom!("slashed-zero") if !value.contains(Self::SlashedZero) => value |= Self::SlashedZero,
 					_ => unexpected_ident!(parser, atom),
-				}
+				},
 				_ => break,
 			}
 			parser.advance();
@@ -80,12 +81,20 @@ impl<'a> WriteCss<'a> for FontVariantNumeric {
 			val => {
 				if val.contains(Self::LiningNums) {
 					atom!("lining-nums").write_css(sink)?;
-					if val.has_spacing_values() || val.has_fraction_values() || val.contains(Self::Ordinal) || val.contains(Self::SlashedZero) {
+					if val.has_spacing_values()
+						|| val.has_fraction_values()
+						|| val.contains(Self::Ordinal)
+						|| val.contains(Self::SlashedZero)
+					{
 						sink.write_char(' ')?;
 					}
 				} else if val.contains(Self::OldstyleNums) {
 					atom!("oldstyle-nums").write_css(sink)?;
-					if val.has_spacing_values() || val.has_fraction_values() || val.contains(Self::Ordinal) || val.contains(Self::SlashedZero) {
+					if val.has_spacing_values()
+						|| val.has_fraction_values()
+						|| val.contains(Self::Ordinal)
+						|| val.contains(Self::SlashedZero)
+					{
 						sink.write_char(' ')?;
 					}
 				}

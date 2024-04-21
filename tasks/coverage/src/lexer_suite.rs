@@ -3,9 +3,9 @@ use std::{
 	path::Path,
 };
 
-use console::Style;
-use hdx_lexer::{Lexer, Token};
 use bumpalo::Bump;
+use console::Style;
+use hdx_lexer::{Include, Lexer, Token};
 use serde::Serialize;
 use serde_json::to_string_pretty;
 use similar::{ChangeTag, TextDiff};
@@ -103,7 +103,7 @@ pub trait LexerCase: Sized {
 		let mut tokens = vec![];
 		let mut pos = 0;
 		loop {
-			let token = lexer.advance_including_whitespace_and_comments();
+			let token = lexer.advance_with(Include::all());
 			if token == Token::Eof {
 				break;
 			}

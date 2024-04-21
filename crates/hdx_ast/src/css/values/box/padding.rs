@@ -1,4 +1,4 @@
-use crate::{css::values::units::LengthPercentageOrAuto, macros::*, Parsable, Value, Writable};
+use crate::{css::units::LengthPercentageOrAuto, macros::*, Parsable, Value, Writable};
 
 // https://drafts.csswg.org/css-box-4/#padding-physical
 #[derive(Value, Default, PartialEq, Debug, Hash)]
@@ -76,14 +76,14 @@ mod tests {
 
 	#[test]
 	fn test_writes() {
-		// assert_parse!(PaddingLeft, "auto");
-		// assert_parse!(PaddingBlock, "1px");
+		assert_parse!(PaddingLeft, "auto");
+		assert_parse!(PaddingBlock, "1px", "1px 1px");
 		assert_parse!(PaddingBlock, "1px 2px");
-		// assert_parse!(PaddingInline, "1px");
-		// assert_parse!(PaddingInline, "1px 2px");
-		// assert_parse!(Padding, "1px");
-		// assert_parse!(Padding, "1px 2px");
-		// assert_parse!(Padding, "1px 2px 3px");
-		// assert_parse!(Padding, "1px 2px 3px 4px");
+		assert_parse!(PaddingInline, "1px", "1px 1px");
+		assert_parse!(PaddingInline, "1px 2px");
+		assert_parse!(Padding, "1px", "1px 1px 1px 1px");
+		assert_parse!(Padding, "1px 2px", "1px 2px 1px 2px");
+		assert_parse!(Padding, "1px 2px 3px", "1px 2px 3px 2px");
+		assert_parse!(Padding, "1px 2px 3px 4px");
 	}
 }

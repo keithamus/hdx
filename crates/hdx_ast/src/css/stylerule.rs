@@ -1,5 +1,5 @@
 use hdx_parser::{Block, Parse, Parser, QualifiedRule, Result as ParserResult};
-use hdx_writer::{CssWriter, Result as WriterResult, WriteCss, OutputOption};
+use hdx_writer::{CssWriter, OutputOption, Result as WriterResult, WriteCss};
 
 use crate::{
 	css::{properties::Property, selector::SelectorList},
@@ -8,9 +8,10 @@ use crate::{
 
 // https://drafts.csswg.org/cssom-1/#the-cssstylerule-interface
 #[derive(PartialEq, Debug, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", rename = "stylerule"))]
 pub struct StyleRule<'a> {
 	pub selectors: Spanned<SelectorList<'a>>,
+	#[cfg_attr(feature = "serde", serde(flatten))]
 	pub style: Spanned<StyleDeclaration<'a>>,
 }
 
@@ -46,7 +47,7 @@ impl<'a> WriteCss<'a> for StyleRule<'a> {
 
 // https://drafts.csswg.org/cssom-1/#the-cssstylerule-interface
 #[derive(PartialEq, Debug, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", rename = "style-declaration"))]
 pub struct StyleDeclaration<'a> {
 	pub declarations: Vec<'a, Spanned<Property<'a>>>,
 	pub rules: Vec<'a, Spanned<StyleRule<'a>>>,
@@ -58,7 +59,7 @@ impl<'a> Parse<'a> for StyleDeclaration<'a> {
 		Ok(Self { declarations, rules })
 	}
 }
- 
+
 impl<'a> Block<'a> for StyleDeclaration<'a> {
 	type Declaration = Property<'a>;
 	type Rule = StyleRule<'a>;
@@ -66,7 +67,7 @@ impl<'a> Block<'a> for StyleDeclaration<'a> {
 
 impl<'a> StyleDeclaration<'a> {
 	fn is_empty(&self) -> bool {
-		return self.declarations.is_empty() && self.rules.is_empty();
+		self.declarations.is_empty() && self.rules.is_empty()
 	}
 }
 
@@ -88,7 +89,7 @@ impl<'a> WriteCss<'a> for StyleDeclaration<'a> {
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
 	use super::*;
 	use crate::test_helpers::*;
 
@@ -103,6 +104,7 @@ mod test {
 		assert_parse!(StyleRule, "body, body {\n}");
 		assert_parse!(StyleRule, "body {\n\twidth: 1px;\n}");
 		assert_parse!(StyleRule, "body {\n\topacity: 0;\n}");
+		assert_parse!(StyleRule, ":nth-child(1) {\n\topacity: 0;\n}");
 	}
 
 	#[test]

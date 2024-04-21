@@ -1,12 +1,11 @@
 use hdx_atom::{atom, Atom};
 use hdx_lexer::Token;
 use hdx_parser::{
-	diagnostics, expect, unexpected, unexpected_function, unexpected_ident, Parse, Parser, Result as ParserResult,
+	discard, expect, unexpected, unexpected_function, unexpected_ident, Parse, Parser, Result as ParserResult,
 };
-use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 use smallvec::{smallvec, SmallVec};
 
-use crate::{Parsable, Writable, Value};
+use crate::{Value, Writable};
 
 // https://drafts.csswg.org/css-fonts/#font-variant-alternates-prop
 #[derive(Value, Writable, Debug, Default, PartialEq, Hash)]
@@ -33,85 +32,61 @@ pub enum FontVariantAlternates {
 
 impl<'a> Parse<'a> for FontVariantAlternates {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		Ok(match parser.cur() {
+		Ok(match parser.next().clone() {
 			Token::Ident(atom) => match atom.to_ascii_lowercase() {
-				atom!("normal") => {
-					parser.advance();
-					Self::Normal
-				}
-				atom!("historical-forms") => {
-					parser.advance();
-					Self::HistoricalForms
-				}
+				atom!("normal") => Self::Normal,
+				atom!("historical-forms") => Self::HistoricalForms,
 				_ => unexpected_ident!(parser, atom),
 			},
 			Token::Function(atom) => match atom.to_ascii_lowercase() {
-				atom!("stylistic") => {
-					parser.advance();
-					match parser.cur() {
-						Token::Ident(atom) => Self::Stylistic(atom),
-						token => unexpected!(parser, token),
+				atom!("stylistic") => match parser.next().clone() {
+					Token::Ident(atom) => {
+						expect!(parser.next(), Token::RightParen);
+						Self::Stylistic(atom.clone())
 					}
-				}
-				atom!("swash") => {
-					parser.advance();
-					match parser.cur() {
-						Token::Ident(atom) => Self::Swash(atom),
-						token => unexpected!(parser, token),
+					token => unexpected!(parser, token),
+				},
+				atom!("swash") => match parser.next().clone() {
+					Token::Ident(atom) => {
+						expect!(parser.next(), Token::RightParen);
+						Self::Swash(atom.clone())
 					}
-				}
-				atom!("ornaments") => {
-					parser.advance();
-					match parser.cur() {
-						Token::Ident(atom) => Self::Ornaments(atom),
-						token => unexpected!(parser, token),
+					token => unexpected!(parser, token),
+				},
+				atom!("ornaments") => match parser.next().clone() {
+					Token::Ident(atom) => {
+						expect!(parser.next(), Token::RightParen);
+						Self::Ornaments(atom.clone())
 					}
-				}
-				atom!("annotation") => {
-					parser.advance();
-					match parser.cur() {
-						Token::Ident(atom) => Self::Annotation(atom),
-						token => unexpected!(parser, token),
+					token => unexpected!(parser, token),
+				},
+				atom!("annotation") => match parser.next().clone() {
+					Token::Ident(atom) => {
+						expect!(parser.next(), Token::RightParen);
+						Self::Annotation(atom.clone())
 					}
-				}
+					token => unexpected!(parser, token),
+				},
 				atom!("styleset") => {
-					parser.advance();
 					let mut idents = smallvec![];
-					loop {
-						match parser.cur() {
-							Token::Ident(atom) => {
-								idents.push(atom);
-								parser.advance();
-								expect!(parser, Token::Comma | Token::RightParen);
-								if matches!(parser.cur(), Token::Comma) {
-									parser.advance();
-								}
-							}
-							_ => break,
+					while let Token::Ident(atom) = parser.next() {
+						idents.push(atom.clone());
+						if !discard!(parser, Token::Comma) {
+							break;
 						}
 					}
-					expect!(parser, Token::RightParen);
-					parser.advance();
+					expect!(parser.next(), Token::RightParen);
 					Self::Styleset(idents)
 				}
 				atom!("character-variant") => {
-					parser.advance();
 					let mut idents = smallvec![];
-					loop {
-						match parser.cur() {
-							Token::Ident(atom) => {
-								idents.push(atom);
-								parser.advance();
-								expect!(parser, Token::Comma | Token::RightParen);
-								if matches!(parser.cur(), Token::Comma) {
-									parser.advance();
-								}
-							}
-							_ => break,
+					while let Token::Ident(atom) = parser.next() {
+						idents.push(atom.clone());
+						if !discard!(parser, Token::Comma) {
+							break;
 						}
 					}
-					expect!(parser, Token::RightParen);
-					parser.advance();
+					expect!(parser.next(), Token::RightParen);
 					Self::CharacterVariant(idents)
 				}
 				_ => unexpected_function!(parser, atom),
@@ -136,6 +111,12 @@ mod tests {
 		assert_parse!(FontVariantAlternates, "normal");
 		assert_parse!(FontVariantAlternates, "historical-forms");
 		assert_parse!(FontVariantAlternates, "styleset(dots)");
+		assert_parse!(FontVariantAlternates, "swash(dots)");
+		assert_parse!(FontVariantAlternates, "stylistic(foo)");
+		assert_parse!(FontVariantAlternates, "swash(foo)");
+		assert_parse!(FontVariantAlternates, "ornaments(foo)");
+		assert_parse!(FontVariantAlternates, "annotation(foo)");
+		assert_parse!(FontVariantAlternates, "styleset(foo)");
 		assert_parse!(FontVariantAlternates, "styleset(dots, chomp)");
 		assert_parse!(FontVariantAlternates, "character-variant(a, b, c, d)");
 	}

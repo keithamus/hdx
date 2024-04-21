@@ -1,4 +1,4 @@
-use hdx_parser::{diagnostics, Parse, Parser, Result as ParserResult};
+use hdx_parser::{todo, Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 /// Values
 mod align;
@@ -117,8 +117,6 @@ pub use view_transitions::*;
 pub use will_change::*;
 pub use writing_modes::*;
 
-mod units;
-
 // TODO!
 #[derive(Default, Debug, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(untagged))]
@@ -129,13 +127,13 @@ pub enum Todo {
 
 impl<'a> Parse<'a> for Todo {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		Err(diagnostics::Unimplemented(parser.span()))?
+		todo!(parser)
 	}
 }
 
 impl<'a> WriteCss<'a> for Todo {
 	fn write_css<W: CssWriter>(&self, _sink: &mut W) -> WriterResult {
-		todo!("Cannot write out Todo values")
+		std::todo!("Cannot write out Todo values")
 	}
 }
 

@@ -1,7 +1,7 @@
 use crate::Atomizable;
 
 #[derive(Atomizable, Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", rename_all = "kebab-case"))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(rename_all = "kebab-case"))]
 pub enum PseudoElement {
 	After,              // atom!("after")
 	Backdrop,           // atom!("backdrop")
@@ -20,7 +20,7 @@ pub enum PseudoElement {
 }
 
 #[derive(Atomizable, Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", rename_all = "kebab-case"))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(rename_all = "kebab-case"))]
 pub enum LegacyPseudoElement {
 	After,       // atom!("after")
 	Before,      // atom!("before")
@@ -29,7 +29,7 @@ pub enum LegacyPseudoElement {
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
 	use super::*;
 	use crate::test_helpers::*;
 
@@ -38,5 +38,4 @@ mod test {
 		assert_size!(PseudoElement, 1);
 		assert_size!(LegacyPseudoElement, 1);
 	}
-
 }

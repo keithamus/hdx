@@ -1,67 +1,56 @@
 {
-  "end": 15,
+  "end": 14,
   "node": {
     "rules": [
       {
         "end": 14,
         "node": {
-          "properties": [
-            {
-              "end": 13,
-              "node": {
+          "end": 14,
+          "node": {
+            "declarations": [
+              {
                 "end": 13,
                 "node": {
                   "important": false,
-                  "type": "Color",
+                  "name": "color",
+                  "type": "property",
                   "value": {
-                    "end": 13,
-                    "node": {
-                      "type": "Named",
-                      "value": {
-                        "name": "black"
-                      }
-                    },
-                    "start": 8
+                    "Named": {
+                      "type": "black"
+                    }
                   }
                 },
                 "start": 2
-              },
-              "start": 2
-            }
-          ],
-          "rules": [],
+              }
+            ],
+            "rules": [],
+            "type": "style-declaration"
+          },
           "selectors": {
             "end": 1,
-            "node": {
-              "children": [
-                {
-                  "end": 1,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 1,
-                        "node": {
-                          "type": "Type",
-                          "value": "a"
-                        },
-                        "start": 0
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 0
-                }
-              ],
-              "type": "SelectorSet"
-            },
+            "node": [
+              {
+                "end": 1,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "A"
+                    }
+                  }
+                ],
+                "start": 0
+              }
+            ],
             "start": 0
           },
-          "type": "StyleRule"
+          "start": 1,
+          "type": "stylerule"
         },
         "start": 0
       }
     ],
-    "type": "Stylesheet"
+    "type": "stylesheet"
   },
   "start": 0
 }

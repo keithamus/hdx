@@ -1,7 +1,7 @@
 use bitmask_enum::bitmask;
+use bumpalo::Bump;
 use hdx_lexer::{Lexer, Token};
 use miette::Error;
-use bumpalo::Bump;
 
 use crate::{diagnostics, span::Spanned, traits::Parse};
 
@@ -33,6 +33,7 @@ impl Default for Features {
 }
 
 #[bitmask(u8)]
+#[bitmask_config(vec_debug)]
 pub enum State {
 	Nested = 0b0000_0001,
 
@@ -79,7 +80,6 @@ impl<'a> Parser<'a> {
 	}
 
 	pub fn parse_entirely_with<T: Parse<'a>>(mut self) -> ParserReturn<Spanned<T>> {
-		self.advance();
 		let (output, panicked) = match T::parse_spanned(&mut self) {
 			Ok(output) => (Some(output), false),
 			Err(error) => {
@@ -87,11 +87,10 @@ impl<'a> Parser<'a> {
 				(None, true)
 			}
 		};
-		if !matches!(self.cur(), Token::Eof) {
+		if !matches!(self.next(), Token::Eof) {
 			let span = self.span();
 			loop {
-				self.advance();
-				if matches!(self.cur(), Token::Eof) {
+				if matches!(self.next(), Token::Eof) {
 					break;
 				}
 			}
@@ -101,7 +100,6 @@ impl<'a> Parser<'a> {
 	}
 
 	pub fn parse_with<T: Parse<'a>>(mut self) -> ParserReturn<Spanned<T>> {
-		self.advance();
 		let (output, panicked) = match T::parse_spanned(&mut self) {
 			Ok(output) => (Some(output), false),
 			Err(error) => {
