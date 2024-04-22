@@ -35,6 +35,8 @@ pub enum WebkitPseudoElement {
 	DatetimeEditMeridiemField,
 	#[atomizable("-webkit-datetime-edit-millisecond-field")]
 	DatetimeEditMillisecondField,
+	#[atomizable("-webkit-datetime-edit-minute")]
+	DatetimeEditMinute,
 	#[atomizable("-webkit-datetime-edit-minute-field")]
 	DatetimeEditMinuteField,
 	#[atomizable("-webkit-datetime-edit-month-field")]
@@ -43,7 +45,7 @@ pub enum WebkitPseudoElement {
 	DatetimeEditSecondField,
 	#[atomizable("-webkit-datetime-edit-text")]
 	DatetimeEditText,
-	#[atomizable("-webkit-datetime-year-field")]
+	#[atomizable("-webkit-datetime-edit-year-field")]
 	DatetimeEditYearField,
 	#[atomizable("-webkit-details-marker")]
 	DetailsMarker,

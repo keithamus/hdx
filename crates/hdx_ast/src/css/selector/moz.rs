@@ -27,6 +27,8 @@ pub enum MozPseudoElement {
 	FieldsetContent,
 	#[atomizable("-moz-first-letter-continuation")]
 	FirstLetterContinuation,
+	#[atomizable("-moz-focus-outer")]
+	FocusOuter,
 	#[atomizable("-moz-html-canvas-content")]
 	HtmlCanvasContent,
 	#[atomizable("-moz-inline-table")]
@@ -35,6 +37,8 @@ pub enum MozPseudoElement {
 	LineFrame,
 	#[atomizable("-moz-mathml-anonymous-block")]
 	MathmlAnonymousBlock,
+	#[atomizable("-moz-placeholder")]
+	Placeholder,
 	#[atomizable("-moz-table")]
 	Table,
 	#[atomizable("-moz-table-cell")]
