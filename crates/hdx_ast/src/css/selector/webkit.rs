@@ -7,6 +7,8 @@ use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 #[derive(Atomizable, Debug, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(rename_all = "kebab-case"))]
 pub enum WebkitPseudoElement {
+	#[atomizable("-webkit-calendar-picker-indicator")]
+	CalendarDatePickerIndicator,
 	#[atomizable("-webkit-caps-lock-indicator")]
 	CapsLockIndicator,
 	#[atomizable("-webkit-color-swatch")]
