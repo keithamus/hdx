@@ -544,7 +544,7 @@ pub(crate) use discrete_media_feature;
 macro_rules! ranged_media_feature {
 	($feat: tt[atom!($atom: tt)], $ty: ty) => {
 		#[derive(PartialEq, Debug, Hash)]
-		#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
+		#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", content = "value"))]
 		pub enum $feat {
 			Legacy((hdx_parser::Comparison, $ty)),
 			Single((hdx_parser::Comparison, $ty)),
