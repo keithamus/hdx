@@ -1,4 +1,4 @@
-mod aspec_ratio;
+mod aspect_ratio;
 mod box_sizing;
 mod contain_intrinsic_block_size;
 mod contain_intrinsic_height;
@@ -12,7 +12,7 @@ mod min_height;
 mod min_intrinsic_sizing;
 mod min_width;
 mod width;
-pub use aspec_ratio::*;
+pub use aspect_ratio::*;
 pub use box_sizing::*;
 pub use contain_intrinsic_block_size::*;
 pub use contain_intrinsic_height::*;

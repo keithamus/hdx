@@ -654,7 +654,7 @@ macro_rules! apply_properties {
 			Width: atom!("width"),
 
 			// https://drafts.csswg.org/css-sizing-4/#property-index
-			AspecRatio: atom!("aspect-ratio"),
+			AspectRatio: atom!("aspect-ratio"),
 			ContainIntrinsicBlockSize: atom!("contain-intrinsic-block-size"),
 			ContainIntrinsicHeight: atom!("contain-intrinsic-height"),
 			ContainIntrinsicInlineSize: atom!("contain-intrinsic-inline-size"),
