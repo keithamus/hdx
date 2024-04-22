@@ -76,7 +76,6 @@ impl<'a> WriteCss<'a> for SupportsRules<'a> {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
 		let mut rules = self.0.iter().peekable();
 		while let Some(rule) = rules.next() {
-			sink.write_indent()?;
 			rule.write_css(sink)?;
 			if rules.peek().is_some() {
 				sink.write_newline()?;

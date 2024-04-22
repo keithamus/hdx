@@ -32,6 +32,7 @@ impl<'a> WriteCss<'a> for StyleRule<'a> {
 		if !sink.can_output(OutputOption::RedundantRules) && self.style.node.is_empty() {
 			return Ok(());
 		}
+		sink.write_indent()?;
 		self.selectors.write_css(sink)?;
 		sink.write_whitespace()?;
 		sink.write_char('{')?;

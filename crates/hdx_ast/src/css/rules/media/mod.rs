@@ -8,7 +8,7 @@ use hdx_parser::{
 };
 use hdx_writer::{write_css, write_list, CssWriter, OutputOption, Result as WriterResult, WriteCss};
 
-use crate::css::stylerule::StyleRule;
+use crate::css::stylesheet::Rule;
 
 mod features;
 use features::*;
@@ -66,7 +66,7 @@ impl<'a> WriteCss<'a> for MediaRule<'a> {
 
 #[derive(PartialEq, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-pub struct MediaRules<'a>(pub Vec<'a, Spanned<StyleRule<'a>>>);
+pub struct MediaRules<'a>(pub Vec<'a, Spanned<Rule<'a>>>);
 
 impl<'a> Parse<'a> for MediaRules<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
@@ -75,7 +75,7 @@ impl<'a> Parse<'a> for MediaRules<'a> {
 }
 
 impl<'a> RuleList<'a> for MediaRules<'a> {
-	type Rule = StyleRule<'a>;
+	type Rule = Rule<'a>;
 }
 
 impl<'a> WriteCss<'a> for MediaRules<'a> {
@@ -457,6 +457,8 @@ mod tests {
 		assert_parse!(MediaRule, "@media print {\n\n}");
 		assert_parse!(MediaRule, "@media print, (prefers-reduced-motion: reduce) {\n\n}");
 		assert_parse!(MediaRule, "@media (min-width: 1200px) {\n\n}");
+		assert_parse!(MediaRule, "@media (min-width: 1200px) {\n\tbody {\n\t\tcolor: red;\n\t}\n}");
+		assert_parse!(MediaRule, "@media (min-width: 1200px) {\n@page {\n}\n}");
 		// assert_parse!(MediaRule, "@media only screen and (max-device-width: 800px), only screen and (device-width: 1024px) and (device-height: 600px), only screen and (width: 1280px) and (orientation: landscape), only screen and (device-width: 800px), only screen and (max-width: 767px)");
 	}
 
