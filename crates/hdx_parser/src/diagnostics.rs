@@ -85,12 +85,12 @@ pub struct UnexpectedPseudoClass(pub Atom, #[label("This psuedo selector")] pub 
 pub struct UnexpectedPseudoClassFunction(pub Atom, #[label("This psuedo selector")] pub Span);
 
 #[derive(Debug, Error, Diagnostic)]
-#[error("Unexpected pseudo element ':{0}'")]
+#[error("Unexpected pseudo element '::{0}'")]
 #[diagnostic(help("This isn't a valid psuedo selector for this rule."), code(hdx_parser::UnexpectedPseudoElement))]
 pub struct UnexpectedPseudoElement(pub Atom, #[label("This psuedo selector")] pub Span);
 
 #[derive(Debug, Error, Diagnostic)]
-#[error("Unexpected pseudo element ':{0}'")]
+#[error("Unexpected pseudo element '::{0}'")]
 #[diagnostic(
 	help("This isn't a valid psuedo selector for this rule."),
 	code(hdx_parser::UnexpectedPseudoElementFunction)

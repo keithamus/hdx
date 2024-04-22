@@ -13,7 +13,9 @@ mod combinator;
 mod functional_pseudo_class;
 mod functional_pseudo_element;
 mod moz;
+mod ms;
 mod nth;
+mod o;
 mod pseudo_class;
 mod pseudo_element;
 mod tag;
@@ -24,7 +26,9 @@ use combinator::*;
 use functional_pseudo_class::*;
 use functional_pseudo_element::*;
 use moz::*;
+use ms::*;
 use nth::*;
+use o::*;
 use pseudo_class::*;
 use pseudo_element::*;
 use tag::*;
@@ -79,9 +83,13 @@ pub enum SelectorComponent<'a> {
 	Attribute(Attribute),
 	PseudoClass(PseudoClass),
 	MozPseudoClass(MozPseudoClass),
+	MsPseudoClass(MsPseudoClass),
+	OPseudoClass(OPseudoClass),
 	WebkitPseudoClass(WebkitPseudoClass),
 	PseudoElement(PseudoElement),
 	MozPseudoElement(MozPseudoElement),
+	MsPseudoElement(MsPseudoElement),
+	OPseudoElement(OPseudoElement),
 	WebkitPseudoElement(WebkitPseudoElement),
 	LegacyPseudoElement(LegacyPseudoElement),
 	FunctionalPseudoClass(FunctionalPseudoClass<'a>),
@@ -122,6 +130,8 @@ impl<'a> SelectorComponentTrait<'a> for SelectorComponent<'a> {
 			.map(Self::PseudoClass)
 			.or_else(|| MozPseudoClass::from_atom(atom).map(Self::MozPseudoClass))
 			.or_else(|| WebkitPseudoClass::from_atom(atom).map(Self::WebkitPseudoClass))
+			.or_else(|| MsPseudoClass::from_atom(atom).map(Self::MsPseudoClass))
+			.or_else(|| OPseudoClass::from_atom(atom).map(Self::OPseudoClass))
 	}
 
 	fn legacy_pseudo_element_from_token(atom: &Atom) -> Option<Self> {
@@ -133,6 +143,8 @@ impl<'a> SelectorComponentTrait<'a> for SelectorComponent<'a> {
 			.map(Self::PseudoElement)
 			.or_else(|| MozPseudoElement::from_atom(atom).map(Self::MozPseudoElement))
 			.or_else(|| WebkitPseudoElement::from_atom(atom).map(Self::WebkitPseudoElement))
+			.or_else(|| MsPseudoElement::from_atom(atom).map(Self::MsPseudoElement))
+			.or_else(|| OPseudoElement::from_atom(atom).map(Self::OPseudoElement))
 	}
 
 	fn ns_type_from_token(ns_token: &Token, type_token: &Token) -> Option<Self> {
@@ -158,12 +170,8 @@ impl<'a> SelectorComponentTrait<'a> for SelectorComponent<'a> {
 	fn parse_functional_pseudo_class(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		FunctionalPseudoClass::parse(parser)
 			.map(Self::FunctionalPseudoClass)
-			.or_else(|_| {
-				MozFunctionalPseudoClass::parse(parser).map(Self::MozFunctionalPseudoClass)
-			})
-			.or_else(|_| {
-				WebkitFunctionalPseudoClass::parse(parser).map(Self::WebkitFunctionalPseudoClass)
-			})
+			.or_else(|_| MozFunctionalPseudoClass::parse(parser).map(Self::MozFunctionalPseudoClass))
+			.or_else(|_| WebkitFunctionalPseudoClass::parse(parser).map(Self::WebkitFunctionalPseudoClass))
 	}
 
 	fn parse_functional_pseudo_element(parser: &mut Parser<'a>) -> ParserResult<Self> {
@@ -179,12 +187,16 @@ impl<'a> WriteCss<'a> for SelectorComponent<'a> {
 			Self::Class(class) => write_css!(sink, '.', class),
 			Self::PseudoClass(pseudo) => write_css!(sink, ':', pseudo.to_atom()),
 			Self::MozPseudoClass(pseudo) => write_css!(sink, ':', pseudo.to_atom()),
+			Self::MsPseudoClass(pseudo) => write_css!(sink, ':', pseudo.to_atom()),
+			Self::OPseudoClass(pseudo) => write_css!(sink, ':', pseudo.to_atom()),
 			Self::WebkitPseudoClass(pseudo) => write_css!(sink, ':', pseudo.to_atom()),
 			Self::MozFunctionalPseudoClass(pseudo) => write_css!(sink, ':', pseudo),
 			Self::WebkitFunctionalPseudoClass(pseudo) => write_css!(sink, ':', pseudo),
 			Self::LegacyPseudoElement(pseudo) => write_css!(sink, ':', pseudo.to_atom()),
 			Self::PseudoElement(pseudo) => write_css!(sink, ':', ':', pseudo.to_atom()),
 			Self::MozPseudoElement(pseudo) => write_css!(sink, ':', ':', pseudo.to_atom()),
+			Self::MsPseudoElement(pseudo) => write_css!(sink, ':', ':', pseudo.to_atom()),
+			Self::OPseudoElement(pseudo) => write_css!(sink, ':', ':', pseudo.to_atom()),
 			Self::WebkitPseudoElement(pseudo) => write_css!(sink, ':', ':', pseudo.to_atom()),
 			Self::MozFunctionalPseudoElement(pseudo) => write_css!(sink, ':', ':', pseudo),
 			Self::WebkitFunctionalPseudoElement(pseudo) => write_css!(sink, ':', ':', pseudo),
@@ -276,7 +288,7 @@ mod tests {
 		assert_parse!(SelectorList, " /**/ .foo", ".foo");
 		// Non Standard
 		assert_parse!(SelectorList, "::-moz-focus-inner");
-		assert_parse!(SelectorList, "::-moz-list-bullet::-webkit-scrollbar");
+		assert_parse!(SelectorList, "::-moz-list-bullet::-webkit-scrollbar::-ms-clear:-ms-input-placeholder::-o-scrollbar:-o-prefocus");
 		assert_parse!(SelectorList, "button:-moz-focusring");
 	}
 
