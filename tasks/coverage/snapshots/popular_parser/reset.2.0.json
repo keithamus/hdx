@@ -1,2311 +1,1629 @@
 {
-  "end": 1093,
+  "end": 1092,
   "node": {
     "rules": [
       {
         "end": 696,
         "node": {
-          "properties": [
-            {
-              "end": 610,
-              "node": {
-                "end": 610,
+          "end": 696,
+          "node": {
+            "declarations": [
+              {
+                "end": 608,
                 "node": {
                   "important": false,
-                  "type": "Margin",
-                  "value": {
-                    "end": 607,
-                    "node": {
-                      "bottom": "Implicit",
-                      "left": "Implicit",
-                      "right": "Implicit",
-                      "top": {
-                        "Explicit": {
-                          "end": 607,
-                          "node": {
-                            "Literal": {
-                              "end": 607,
-                              "node": "Zero",
-                              "start": 606
-                            }
-                          },
-                          "start": 606
-                        }
-                      }
-                    },
-                    "start": 606
-                  }
-                },
-                "start": 598
-              },
-              "start": 598
-            },
-            {
-              "end": 623,
-              "node": {
-                "end": 623,
-                "node": {
-                  "important": false,
-                  "type": "Padding",
-                  "value": {
-                    "end": 620,
-                    "node": {
-                      "bottom": "Implicit",
-                      "left": "Implicit",
-                      "right": "Implicit",
-                      "top": {
-                        "Explicit": {
-                          "end": 620,
-                          "node": {
-                            "Literal": {
-                              "end": 620,
-                              "node": "Zero",
-                              "start": 619
-                            }
-                          },
-                          "start": 619
-                        }
-                      }
-                    },
-                    "start": 619
-                  }
-                },
-                "start": 610
-              },
-              "start": 610
-            },
-            {
-              "end": 635,
-              "node": {
-                "end": 635,
-                "node": {
-                  "important": false,
-                  "type": "Border",
-                  "value": {
-                    "end": 632,
-                    "node": {
-                      "color": "Implicit",
-                      "line_style": "Implicit",
-                      "line_width": {
-                        "Explicit": {
-                          "end": 632,
-                          "node": {
-                            "Literal": {
-                              "end": 632,
-                              "node": {
-                                "Length": {
-                                  "end": 632,
-                                  "node": "Zero",
-                                  "start": 631
-                                }
-                              },
-                              "start": 631
-                            }
-                          },
-                          "start": 631
-                        }
-                      }
-                    },
-                    "start": 631
-                  }
-                },
-                "start": 623
-              },
-              "start": 623
-            },
-            {
-              "end": 653,
-              "node": {
-                "end": 653,
-                "node": {
-                  "important": false,
-                  "type": "FontSize",
-                  "value": {
-                    "end": 650,
-                    "node": {
-                      "Literal": {
-                        "end": 650,
-                        "node": {
-                          "LengthPercentage": {
-                            "end": 650,
-                            "node": {
-                              "Percentage": 100.0
-                            },
-                            "start": 646
+                  "name": "margin",
+                  "type": "property",
+                  "value": [
+                    {
+                      "end": 607,
+                      "node": {
+                        "kind": "Number",
+                        "value": [
+                          0.0,
+                          {
+                            "bits": 0
                           }
-                        },
-                        "start": 646
-                      }
-                    },
-                    "start": 646
-                  }
-                },
-                "start": 635
-              },
-              "start": 635
-            },
-            {
-              "end": 669,
-              "node": {
-                "end": 669,
-                "node": {
-                  "important": false,
-                  "type": "Font",
-                  "value": {
-                    "end": 666,
-                    "node": {
-                      "GlobalValue": "Inherit"
-                    },
-                    "start": 659
-                  }
-                },
-                "start": 653
-              },
-              "start": 653
-            },
-            {
-              "end": 695,
-              "node": {
-                "end": 695,
-                "node": {
-                  "important": false,
-                  "type": "VerticalAlign",
-                  "value": {
-                    "end": 693,
-                    "node": {
-                      "alignment_baseline": {
-                        "Explicit": {
-                          "end": 693,
-                          "node": {
-                            "Literal": {
-                              "end": 693,
-                              "node": "Baseline",
-                              "start": 685
-                            }
-                          },
-                          "start": 685
-                        }
+                        ]
                       },
-                      "baseline_shift": "Implicit",
-                      "baseline_source": "Implicit"
+                      "start": 606
+                    }
+                  ]
+                },
+                "start": 596
+              },
+              {
+                "end": 621,
+                "node": {
+                  "important": false,
+                  "name": "padding",
+                  "type": "property",
+                  "value": [
+                    {
+                      "end": 620,
+                      "node": {
+                        "kind": "Number",
+                        "value": [
+                          0.0,
+                          {
+                            "bits": 0
+                          }
+                        ]
+                      },
+                      "start": 619
+                    }
+                  ]
+                },
+                "start": 608
+              },
+              {
+                "end": 633,
+                "node": {
+                  "important": false,
+                  "name": "border",
+                  "type": "property",
+                  "value": [
+                    {
+                      "length": {
+                        "type": "zero"
+                      }
                     },
-                    "start": 685
+                    null,
+                    null
+                  ]
+                },
+                "start": 621
+              },
+              {
+                "end": 651,
+                "node": {
+                  "important": false,
+                  "name": "font-size",
+                  "type": "property",
+                  "value": {
+                    "type": "length-percentage",
+                    "value": {
+                      "type": "%",
+                      "value": 100.0
+                    }
                   }
                 },
-                "start": 669
+                "start": 633
               },
-              "start": 669
-            }
-          ],
-          "rules": [],
-          "selectors": {
-            "end": 594,
-            "node": {
-              "children": [
-                {
-                  "end": 106,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 106,
-                        "node": {
-                          "type": "Type",
-                          "value": "html"
-                        },
-                        "start": 102
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 102
-                },
-                {
-                  "end": 112,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 112,
-                        "node": {
-                          "type": "Type",
-                          "value": "body"
-                        },
-                        "start": 108
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 108
-                },
-                {
-                  "end": 117,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 117,
-                        "node": {
-                          "type": "Type",
-                          "value": "div"
-                        },
-                        "start": 114
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 114
-                },
-                {
-                  "end": 123,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 123,
-                        "node": {
-                          "type": "Type",
-                          "value": "span"
-                        },
-                        "start": 119
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 119
-                },
-                {
-                  "end": 131,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 131,
-                        "node": {
-                          "type": "Type",
-                          "value": "applet"
-                        },
-                        "start": 125
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 125
-                },
-                {
-                  "end": 139,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 139,
-                        "node": {
-                          "type": "Type",
-                          "value": "object"
-                        },
-                        "start": 133
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 133
-                },
-                {
-                  "end": 147,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 147,
-                        "node": {
-                          "type": "Type",
-                          "value": "iframe"
-                        },
-                        "start": 141
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 141
-                },
-                {
-                  "end": 151,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 151,
-                        "node": {
-                          "type": "Type",
-                          "value": "h1"
-                        },
-                        "start": 149
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 149
-                },
-                {
-                  "end": 155,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 155,
-                        "node": {
-                          "type": "Type",
-                          "value": "h2"
-                        },
-                        "start": 153
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 153
-                },
-                {
-                  "end": 159,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 159,
-                        "node": {
-                          "type": "Type",
-                          "value": "h3"
-                        },
-                        "start": 157
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 157
-                },
-                {
-                  "end": 163,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 163,
-                        "node": {
-                          "type": "Type",
-                          "value": "h4"
-                        },
-                        "start": 161
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 161
-                },
-                {
-                  "end": 167,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 167,
-                        "node": {
-                          "type": "Type",
-                          "value": "h5"
-                        },
-                        "start": 165
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 165
-                },
-                {
-                  "end": 171,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 171,
-                        "node": {
-                          "type": "Type",
-                          "value": "h6"
-                        },
-                        "start": 169
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 169
-                },
-                {
-                  "end": 174,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 174,
-                        "node": {
-                          "type": "Type",
-                          "value": "p"
-                        },
-                        "start": 173
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 173
-                },
-                {
-                  "end": 186,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 186,
-                        "node": {
-                          "type": "Type",
-                          "value": "blockquote"
-                        },
-                        "start": 176
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 176
-                },
-                {
-                  "end": 191,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 191,
-                        "node": {
-                          "type": "Type",
-                          "value": "pre"
-                        },
-                        "start": 188
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 188
-                },
-                {
-                  "end": 194,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 194,
-                        "node": {
-                          "type": "Type",
-                          "value": "a"
-                        },
-                        "start": 193
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 193
-                },
-                {
-                  "end": 200,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 200,
-                        "node": {
-                          "type": "Type",
-                          "value": "abbr"
-                        },
-                        "start": 196
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 196
-                },
-                {
-                  "end": 209,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 209,
-                        "node": {
-                          "type": "Type",
-                          "value": "acronym"
-                        },
-                        "start": 202
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 202
-                },
-                {
-                  "end": 218,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 218,
-                        "node": {
-                          "type": "Type",
-                          "value": "address"
-                        },
-                        "start": 211
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 211
-                },
-                {
-                  "end": 223,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 223,
-                        "node": {
-                          "type": "Type",
-                          "value": "big"
-                        },
-                        "start": 220
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 220
-                },
-                {
-                  "end": 229,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 229,
-                        "node": {
-                          "type": "Type",
-                          "value": "cite"
-                        },
-                        "start": 225
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 225
-                },
-                {
-                  "end": 235,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 235,
-                        "node": {
-                          "type": "Type",
-                          "value": "code"
-                        },
-                        "start": 231
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 231
-                },
-                {
-                  "end": 240,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 240,
-                        "node": {
-                          "type": "Type",
-                          "value": "del"
-                        },
-                        "start": 237
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 237
-                },
-                {
-                  "end": 245,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 245,
-                        "node": {
-                          "type": "Type",
-                          "value": "dfn"
-                        },
-                        "start": 242
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 242
-                },
-                {
-                  "end": 249,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 249,
-                        "node": {
-                          "type": "Type",
-                          "value": "em"
-                        },
-                        "start": 247
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 247
-                },
-                {
-                  "end": 254,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 254,
-                        "node": {
-                          "type": "Type",
-                          "value": "img"
-                        },
-                        "start": 251
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 251
-                },
-                {
-                  "end": 259,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 259,
-                        "node": {
-                          "type": "Type",
-                          "value": "ins"
-                        },
-                        "start": 256
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 256
-                },
-                {
-                  "end": 264,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 264,
-                        "node": {
-                          "type": "Type",
-                          "value": "kbd"
-                        },
-                        "start": 261
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 261
-                },
-                {
-                  "end": 267,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 267,
-                        "node": {
-                          "type": "Type",
-                          "value": "q"
-                        },
-                        "start": 266
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 266
-                },
-                {
-                  "end": 270,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 270,
-                        "node": {
-                          "type": "Type",
-                          "value": "s"
-                        },
-                        "start": 269
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 269
-                },
-                {
-                  "end": 276,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 276,
-                        "node": {
-                          "type": "Type",
-                          "value": "samp"
-                        },
-                        "start": 272
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 272
-                },
-                {
-                  "end": 283,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 283,
-                        "node": {
-                          "type": "Type",
-                          "value": "small"
-                        },
-                        "start": 278
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 278
-                },
-                {
-                  "end": 291,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 291,
-                        "node": {
-                          "type": "Type",
-                          "value": "strike"
-                        },
-                        "start": 285
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 285
-                },
-                {
-                  "end": 299,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 299,
-                        "node": {
-                          "type": "Type",
-                          "value": "strong"
-                        },
-                        "start": 293
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 293
-                },
-                {
-                  "end": 304,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 304,
-                        "node": {
-                          "type": "Type",
-                          "value": "sub"
-                        },
-                        "start": 301
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 301
-                },
-                {
-                  "end": 309,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 309,
-                        "node": {
-                          "type": "Type",
-                          "value": "sup"
-                        },
-                        "start": 306
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 306
-                },
-                {
-                  "end": 313,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 313,
-                        "node": {
-                          "type": "Type",
-                          "value": "tt"
-                        },
-                        "start": 311
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 311
-                },
-                {
-                  "end": 318,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 318,
-                        "node": {
-                          "type": "Type",
-                          "value": "var"
-                        },
-                        "start": 315
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 315
-                },
-                {
-                  "end": 321,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 321,
-                        "node": {
-                          "type": "Type",
-                          "value": "b"
-                        },
-                        "start": 320
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 320
-                },
-                {
-                  "end": 324,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 324,
-                        "node": {
-                          "type": "Type",
-                          "value": "u"
-                        },
-                        "start": 323
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 323
-                },
-                {
-                  "end": 327,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 327,
-                        "node": {
-                          "type": "Type",
-                          "value": "i"
-                        },
-                        "start": 326
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 326
-                },
-                {
-                  "end": 335,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 335,
-                        "node": {
-                          "type": "Type",
-                          "value": "center"
-                        },
-                        "start": 329
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 329
-                },
-                {
-                  "end": 339,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 339,
-                        "node": {
-                          "type": "Type",
-                          "value": "dl"
-                        },
-                        "start": 337
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 337
-                },
-                {
-                  "end": 343,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 343,
-                        "node": {
-                          "type": "Type",
-                          "value": "dt"
-                        },
-                        "start": 341
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 341
-                },
-                {
-                  "end": 347,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 347,
-                        "node": {
-                          "type": "Type",
-                          "value": "dd"
-                        },
-                        "start": 345
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 345
-                },
-                {
-                  "end": 351,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 351,
-                        "node": {
-                          "type": "Type",
-                          "value": "ol"
-                        },
-                        "start": 349
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 349
-                },
-                {
-                  "end": 355,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 355,
-                        "node": {
-                          "type": "Type",
-                          "value": "ul"
-                        },
-                        "start": 353
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 353
-                },
-                {
-                  "end": 359,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 359,
-                        "node": {
-                          "type": "Type",
-                          "value": "li"
-                        },
-                        "start": 357
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 357
-                },
-                {
-                  "end": 369,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 369,
-                        "node": {
-                          "type": "Type",
-                          "value": "fieldset"
-                        },
-                        "start": 361
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 361
-                },
-                {
-                  "end": 375,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 375,
-                        "node": {
-                          "type": "Type",
-                          "value": "form"
-                        },
-                        "start": 371
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 371
-                },
-                {
-                  "end": 382,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 382,
-                        "node": {
-                          "type": "Type",
-                          "value": "label"
-                        },
-                        "start": 377
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 377
-                },
-                {
-                  "end": 390,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 390,
-                        "node": {
-                          "type": "Type",
-                          "value": "legend"
-                        },
-                        "start": 384
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 384
-                },
-                {
-                  "end": 397,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 397,
-                        "node": {
-                          "type": "Type",
-                          "value": "table"
-                        },
-                        "start": 392
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 392
-                },
-                {
-                  "end": 406,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 406,
-                        "node": {
-                          "type": "Type",
-                          "value": "caption"
-                        },
-                        "start": 399
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 399
-                },
-                {
-                  "end": 413,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 413,
-                        "node": {
-                          "type": "Type",
-                          "value": "tbody"
-                        },
-                        "start": 408
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 408
-                },
-                {
-                  "end": 420,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 420,
-                        "node": {
-                          "type": "Type",
-                          "value": "tfoot"
-                        },
-                        "start": 415
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 415
-                },
-                {
-                  "end": 427,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 427,
-                        "node": {
-                          "type": "Type",
-                          "value": "thead"
-                        },
-                        "start": 422
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 422
-                },
-                {
-                  "end": 431,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 431,
-                        "node": {
-                          "type": "Type",
-                          "value": "tr"
-                        },
-                        "start": 429
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 429
-                },
-                {
-                  "end": 435,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 435,
-                        "node": {
-                          "type": "Type",
-                          "value": "th"
-                        },
-                        "start": 433
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 433
-                },
-                {
-                  "end": 439,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 439,
-                        "node": {
-                          "type": "Type",
-                          "value": "td"
-                        },
-                        "start": 437
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 437
-                },
-                {
-                  "end": 448,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 448,
-                        "node": {
-                          "type": "Type",
-                          "value": "article"
-                        },
-                        "start": 441
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 441
-                },
-                {
-                  "end": 455,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 455,
-                        "node": {
-                          "type": "Type",
-                          "value": "aside"
-                        },
-                        "start": 450
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 450
-                },
-                {
-                  "end": 463,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 463,
-                        "node": {
-                          "type": "Type",
-                          "value": "canvas"
-                        },
-                        "start": 457
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 457
-                },
-                {
-                  "end": 472,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 472,
-                        "node": {
-                          "type": "Type",
-                          "value": "details"
-                        },
-                        "start": 465
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 465
-                },
-                {
-                  "end": 479,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 479,
-                        "node": {
-                          "type": "Type",
-                          "value": "embed"
-                        },
-                        "start": 474
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 474
-                },
-                {
-                  "end": 488,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 488,
-                        "node": {
-                          "type": "Type",
-                          "value": "figure"
-                        },
-                        "start": 482
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 482
-                },
-                {
-                  "end": 500,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 500,
-                        "node": {
-                          "type": "Type",
-                          "value": "figcaption"
-                        },
-                        "start": 490
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 490
-                },
-                {
-                  "end": 508,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 508,
-                        "node": {
-                          "type": "Type",
-                          "value": "footer"
-                        },
-                        "start": 502
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 502
-                },
-                {
-                  "end": 516,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 516,
-                        "node": {
-                          "type": "Type",
-                          "value": "header"
-                        },
-                        "start": 510
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 510
-                },
-                {
-                  "end": 524,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 524,
-                        "node": {
-                          "type": "Type",
-                          "value": "hgroup"
-                        },
-                        "start": 518
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 518
-                },
-                {
-                  "end": 531,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 531,
-                        "node": {
-                          "type": "Type",
-                          "value": "menu"
-                        },
-                        "start": 527
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 527
-                },
-                {
-                  "end": 536,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 536,
-                        "node": {
-                          "type": "Type",
-                          "value": "nav"
-                        },
-                        "start": 533
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 533
-                },
-                {
-                  "end": 544,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 544,
-                        "node": {
-                          "type": "Type",
-                          "value": "output"
-                        },
-                        "start": 538
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 538
-                },
-                {
-                  "end": 550,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 550,
-                        "node": {
-                          "type": "Type",
-                          "value": "ruby"
-                        },
-                        "start": 546
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 546
-                },
-                {
-                  "end": 559,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 559,
-                        "node": {
-                          "type": "Type",
-                          "value": "section"
-                        },
-                        "start": 552
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 552
-                },
-                {
-                  "end": 568,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 568,
-                        "node": {
-                          "type": "Type",
-                          "value": "summary"
-                        },
-                        "start": 561
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 561
-                },
-                {
-                  "end": 574,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 574,
-                        "node": {
-                          "type": "Type",
-                          "value": "time"
-                        },
-                        "start": 570
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 570
-                },
-                {
-                  "end": 580,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 580,
-                        "node": {
-                          "type": "Type",
-                          "value": "mark"
-                        },
-                        "start": 576
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 576
-                },
-                {
-                  "end": 587,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 587,
-                        "node": {
-                          "type": "Type",
-                          "value": "audio"
-                        },
-                        "start": 582
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 582
-                },
-                {
-                  "end": 594,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 594,
-                        "node": {
-                          "type": "Type",
-                          "value": "video"
-                        },
-                        "start": 589
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 589
-                }
-              ],
-              "type": "SelectorSet"
-            },
-            "start": 102
+              {
+                "end": 667,
+                "node": {
+                  "important": false,
+                  "name": "font",
+                  "type": "property",
+                  "value": {
+                    "type": "inherit"
+                  }
+                },
+                "start": 651
+              },
+              {
+                "end": 694,
+                "node": {
+                  "important": false,
+                  "name": "vertical-align",
+                  "type": "property",
+                  "value": [
+                    {
+                      "end": 0,
+                      "node": {
+                        "type": "auto"
+                      },
+                      "start": 0
+                    },
+                    {
+                      "end": 693,
+                      "node": {
+                        "type": "baseline"
+                      },
+                      "start": 684
+                    },
+                    {
+                      "end": 0,
+                      "node": {
+                        "type": "zero"
+                      },
+                      "start": 0
+                    }
+                  ]
+                },
+                "start": 667
+              }
+            ],
+            "rules": [],
+            "type": "style-declaration"
           },
-          "type": "StyleRule"
+          "selectors": {
+            "end": 595,
+            "node": [
+              {
+                "end": 106,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Html"
+                    }
+                  }
+                ],
+                "start": 102
+              },
+              {
+                "end": 112,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Body"
+                    }
+                  }
+                ],
+                "start": 108
+              },
+              {
+                "end": 117,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Div"
+                    }
+                  }
+                ],
+                "start": 114
+              },
+              {
+                "end": 123,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Span"
+                    }
+                  }
+                ],
+                "start": 119
+              },
+              {
+                "end": 131,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Unknown": "applet"
+                    }
+                  }
+                ],
+                "start": 125
+              },
+              {
+                "end": 139,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Object"
+                    }
+                  }
+                ],
+                "start": 133
+              },
+              {
+                "end": 147,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Iframe"
+                    }
+                  }
+                ],
+                "start": 141
+              },
+              {
+                "end": 151,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Unknown": "h1"
+                    }
+                  }
+                ],
+                "start": 149
+              },
+              {
+                "end": 155,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Unknown": "h2"
+                    }
+                  }
+                ],
+                "start": 153
+              },
+              {
+                "end": 159,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Unknown": "h3"
+                    }
+                  }
+                ],
+                "start": 157
+              },
+              {
+                "end": 163,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Unknown": "h4"
+                    }
+                  }
+                ],
+                "start": 161
+              },
+              {
+                "end": 167,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Unknown": "h5"
+                    }
+                  }
+                ],
+                "start": 165
+              },
+              {
+                "end": 171,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Unknown": "h6"
+                    }
+                  }
+                ],
+                "start": 169
+              },
+              {
+                "end": 174,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "P"
+                    }
+                  }
+                ],
+                "start": 173
+              },
+              {
+                "end": 186,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Blockquote"
+                    }
+                  }
+                ],
+                "start": 176
+              },
+              {
+                "end": 191,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Pre"
+                    }
+                  }
+                ],
+                "start": 188
+              },
+              {
+                "end": 194,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "A"
+                    }
+                  }
+                ],
+                "start": 193
+              },
+              {
+                "end": 200,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Abbr"
+                    }
+                  }
+                ],
+                "start": 196
+              },
+              {
+                "end": 209,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Acronym"
+                    }
+                  }
+                ],
+                "start": 202
+              },
+              {
+                "end": 218,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Address"
+                    }
+                  }
+                ],
+                "start": 211
+              },
+              {
+                "end": 223,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Big"
+                    }
+                  }
+                ],
+                "start": 220
+              },
+              {
+                "end": 229,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Cite"
+                    }
+                  }
+                ],
+                "start": 225
+              },
+              {
+                "end": 235,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Code"
+                    }
+                  }
+                ],
+                "start": 231
+              },
+              {
+                "end": 240,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Del"
+                    }
+                  }
+                ],
+                "start": 237
+              },
+              {
+                "end": 245,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Dfn"
+                    }
+                  }
+                ],
+                "start": 242
+              },
+              {
+                "end": 249,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Em"
+                    }
+                  }
+                ],
+                "start": 247
+              },
+              {
+                "end": 254,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Img"
+                    }
+                  }
+                ],
+                "start": 251
+              },
+              {
+                "end": 259,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Ins"
+                    }
+                  }
+                ],
+                "start": 256
+              },
+              {
+                "end": 264,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Kbd"
+                    }
+                  }
+                ],
+                "start": 261
+              },
+              {
+                "end": 267,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Q"
+                    }
+                  }
+                ],
+                "start": 266
+              },
+              {
+                "end": 270,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "S"
+                    }
+                  }
+                ],
+                "start": 269
+              },
+              {
+                "end": 276,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Samp"
+                    }
+                  }
+                ],
+                "start": 272
+              },
+              {
+                "end": 283,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Small"
+                    }
+                  }
+                ],
+                "start": 278
+              },
+              {
+                "end": 291,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Strike"
+                    }
+                  }
+                ],
+                "start": 285
+              },
+              {
+                "end": 299,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Strong"
+                    }
+                  }
+                ],
+                "start": 293
+              },
+              {
+                "end": 304,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Sub"
+                    }
+                  }
+                ],
+                "start": 301
+              },
+              {
+                "end": 309,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Sup"
+                    }
+                  }
+                ],
+                "start": 306
+              },
+              {
+                "end": 313,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Tt"
+                    }
+                  }
+                ],
+                "start": 311
+              },
+              {
+                "end": 318,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Var"
+                    }
+                  }
+                ],
+                "start": 315
+              },
+              {
+                "end": 321,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "B"
+                    }
+                  }
+                ],
+                "start": 320
+              },
+              {
+                "end": 324,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "U"
+                    }
+                  }
+                ],
+                "start": 323
+              },
+              {
+                "end": 327,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "I"
+                    }
+                  }
+                ],
+                "start": 326
+              },
+              {
+                "end": 335,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Center"
+                    }
+                  }
+                ],
+                "start": 329
+              },
+              {
+                "end": 339,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Dl"
+                    }
+                  }
+                ],
+                "start": 337
+              },
+              {
+                "end": 343,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Dt"
+                    }
+                  }
+                ],
+                "start": 341
+              },
+              {
+                "end": 347,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Dd"
+                    }
+                  }
+                ],
+                "start": 345
+              },
+              {
+                "end": 351,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Ol"
+                    }
+                  }
+                ],
+                "start": 349
+              },
+              {
+                "end": 355,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Ul"
+                    }
+                  }
+                ],
+                "start": 353
+              },
+              {
+                "end": 359,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Li"
+                    }
+                  }
+                ],
+                "start": 357
+              },
+              {
+                "end": 369,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Fieldset"
+                    }
+                  }
+                ],
+                "start": 361
+              },
+              {
+                "end": 375,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Form"
+                    }
+                  }
+                ],
+                "start": 371
+              },
+              {
+                "end": 382,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Label"
+                    }
+                  }
+                ],
+                "start": 377
+              },
+              {
+                "end": 390,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Legend"
+                    }
+                  }
+                ],
+                "start": 384
+              },
+              {
+                "end": 397,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Table"
+                    }
+                  }
+                ],
+                "start": 392
+              },
+              {
+                "end": 406,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Caption"
+                    }
+                  }
+                ],
+                "start": 399
+              },
+              {
+                "end": 413,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Tbody"
+                    }
+                  }
+                ],
+                "start": 408
+              },
+              {
+                "end": 420,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Tfoot"
+                    }
+                  }
+                ],
+                "start": 415
+              },
+              {
+                "end": 427,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Thead"
+                    }
+                  }
+                ],
+                "start": 422
+              },
+              {
+                "end": 431,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Tr"
+                    }
+                  }
+                ],
+                "start": 429
+              },
+              {
+                "end": 435,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Th"
+                    }
+                  }
+                ],
+                "start": 433
+              },
+              {
+                "end": 439,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Td"
+                    }
+                  }
+                ],
+                "start": 437
+              },
+              {
+                "end": 448,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Article"
+                    }
+                  }
+                ],
+                "start": 441
+              },
+              {
+                "end": 455,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Aside"
+                    }
+                  }
+                ],
+                "start": 450
+              },
+              {
+                "end": 463,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Canvas"
+                    }
+                  }
+                ],
+                "start": 457
+              },
+              {
+                "end": 472,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Details"
+                    }
+                  }
+                ],
+                "start": 465
+              },
+              {
+                "end": 479,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Embed"
+                    }
+                  }
+                ],
+                "start": 474
+              },
+              {
+                "end": 488,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Figure"
+                    }
+                  }
+                ],
+                "start": 482
+              },
+              {
+                "end": 500,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Figcaption"
+                    }
+                  }
+                ],
+                "start": 490
+              },
+              {
+                "end": 508,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Footer"
+                    }
+                  }
+                ],
+                "start": 502
+              },
+              {
+                "end": 516,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Header"
+                    }
+                  }
+                ],
+                "start": 510
+              },
+              {
+                "end": 524,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Hgroup"
+                    }
+                  }
+                ],
+                "start": 518
+              },
+              {
+                "end": 531,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Menu"
+                    }
+                  }
+                ],
+                "start": 527
+              },
+              {
+                "end": 536,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Nav"
+                    }
+                  }
+                ],
+                "start": 533
+              },
+              {
+                "end": 544,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Output"
+                    }
+                  }
+                ],
+                "start": 538
+              },
+              {
+                "end": 550,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Ruby"
+                    }
+                  }
+                ],
+                "start": 546
+              },
+              {
+                "end": 559,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Section"
+                    }
+                  }
+                ],
+                "start": 552
+              },
+              {
+                "end": 568,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Summary"
+                    }
+                  }
+                ],
+                "start": 561
+              },
+              {
+                "end": 574,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Time"
+                    }
+                  }
+                ],
+                "start": 570
+              },
+              {
+                "end": 580,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Mark"
+                    }
+                  }
+                ],
+                "start": 576
+              },
+              {
+                "end": 587,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Audio"
+                    }
+                  }
+                ],
+                "start": 582
+              },
+              {
+                "end": 595,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Video"
+                    }
+                  }
+                ],
+                "start": 589
+              }
+            ],
+            "start": 0
+          },
+          "start": 595,
+          "type": "stylerule"
         },
-        "start": 102
+        "start": 0
       },
       {
         "end": 856,
         "node": {
-          "properties": [
-            {
-              "end": 855,
-              "node": {
-                "end": 855,
+          "end": 856,
+          "node": {
+            "declarations": [
+              {
+                "end": 854,
                 "node": {
                   "important": false,
-                  "type": "Display",
+                  "name": "display",
+                  "type": "property",
                   "value": {
-                    "end": 853,
-                    "node": {
-                      "Pair": [
-                        "Block",
-                        "Implicit"
-                      ]
-                    },
-                    "start": 848
+                    "bits": 16
                   }
                 },
-                "start": 839
-              },
-              "start": 839
-            }
-          ],
-          "rules": [],
-          "selectors": {
-            "end": 835,
-            "node": {
-              "children": [
-                {
-                  "end": 754,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 754,
-                        "node": {
-                          "type": "Type",
-                          "value": "article"
-                        },
-                        "start": 747
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 747
-                },
-                {
-                  "end": 761,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 761,
-                        "node": {
-                          "type": "Type",
-                          "value": "aside"
-                        },
-                        "start": 756
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 756
-                },
-                {
-                  "end": 770,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 770,
-                        "node": {
-                          "type": "Type",
-                          "value": "details"
-                        },
-                        "start": 763
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 763
-                },
-                {
-                  "end": 782,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 782,
-                        "node": {
-                          "type": "Type",
-                          "value": "figcaption"
-                        },
-                        "start": 772
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 772
-                },
-                {
-                  "end": 790,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 790,
-                        "node": {
-                          "type": "Type",
-                          "value": "figure"
-                        },
-                        "start": 784
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 784
-                },
-                {
-                  "end": 799,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 799,
-                        "node": {
-                          "type": "Type",
-                          "value": "footer"
-                        },
-                        "start": 793
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 793
-                },
-                {
-                  "end": 807,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 807,
-                        "node": {
-                          "type": "Type",
-                          "value": "header"
-                        },
-                        "start": 801
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 801
-                },
-                {
-                  "end": 815,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 815,
-                        "node": {
-                          "type": "Type",
-                          "value": "hgroup"
-                        },
-                        "start": 809
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 809
-                },
-                {
-                  "end": 821,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 821,
-                        "node": {
-                          "type": "Type",
-                          "value": "menu"
-                        },
-                        "start": 817
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 817
-                },
-                {
-                  "end": 826,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 826,
-                        "node": {
-                          "type": "Type",
-                          "value": "nav"
-                        },
-                        "start": 823
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 823
-                },
-                {
-                  "end": 835,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 835,
-                        "node": {
-                          "type": "Type",
-                          "value": "section"
-                        },
-                        "start": 828
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 828
-                }
-              ],
-              "type": "SelectorSet"
-            },
-            "start": 747
+                "start": 837
+              }
+            ],
+            "rules": [],
+            "type": "style-declaration"
           },
-          "type": "StyleRule"
+          "selectors": {
+            "end": 836,
+            "node": [
+              {
+                "end": 754,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Article"
+                    }
+                  }
+                ],
+                "start": 747
+              },
+              {
+                "end": 761,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Aside"
+                    }
+                  }
+                ],
+                "start": 756
+              },
+              {
+                "end": 770,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Details"
+                    }
+                  }
+                ],
+                "start": 763
+              },
+              {
+                "end": 782,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Figcaption"
+                    }
+                  }
+                ],
+                "start": 772
+              },
+              {
+                "end": 790,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Figure"
+                    }
+                  }
+                ],
+                "start": 784
+              },
+              {
+                "end": 799,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Footer"
+                    }
+                  }
+                ],
+                "start": 793
+              },
+              {
+                "end": 807,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Header"
+                    }
+                  }
+                ],
+                "start": 801
+              },
+              {
+                "end": 815,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Hgroup"
+                    }
+                  }
+                ],
+                "start": 809
+              },
+              {
+                "end": 821,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Menu"
+                    }
+                  }
+                ],
+                "start": 817
+              },
+              {
+                "end": 826,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Nav"
+                    }
+                  }
+                ],
+                "start": 823
+              },
+              {
+                "end": 836,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Section"
+                    }
+                  }
+                ],
+                "start": 828
+              }
+            ],
+            "start": 696
+          },
+          "start": 836,
+          "type": "stylerule"
         },
-        "start": 747
+        "start": 696
       },
       {
         "end": 882,
         "node": {
-          "properties": [
-            {
-              "end": 881,
-              "node": {
-                "end": 881,
+          "end": 882,
+          "node": {
+            "declarations": [
+              {
+                "end": 880,
                 "node": {
                   "important": false,
-                  "type": "LineHeight",
+                  "name": "line-height",
+                  "type": "property",
                   "value": {
-                    "end": 879,
-                    "node": {
-                      "Literal": {
-                        "end": 879,
-                        "node": {
-                          "Number": 1.0
-                        },
-                        "start": 878
-                      }
-                    },
-                    "start": 878
+                    "type": "number",
+                    "value": 1.0
                   }
                 },
-                "start": 865
-              },
-              "start": 865
-            }
-          ],
-          "rules": [],
-          "selectors": {
-            "end": 861,
-            "node": {
-              "children": [
-                {
-                  "end": 861,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 861,
-                        "node": {
-                          "type": "Type",
-                          "value": "body"
-                        },
-                        "start": 857
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 857
-                }
-              ],
-              "type": "SelectorSet"
-            },
-            "start": 857
+                "start": 863
+              }
+            ],
+            "rules": [],
+            "type": "style-declaration"
           },
-          "type": "StyleRule"
+          "selectors": {
+            "end": 862,
+            "node": [
+              {
+                "end": 862,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Body"
+                    }
+                  }
+                ],
+                "start": 857
+              }
+            ],
+            "start": 856
+          },
+          "start": 862,
+          "type": "stylerule"
         },
-        "start": 857
+        "start": 856
       },
       {
         "end": 912,
         "node": {
-          "properties": [
-            {
-              "end": 911,
-              "node": {
-                "end": 911,
+          "end": 912,
+          "node": {
+            "declarations": [
+              {
+                "end": 910,
                 "node": {
                   "important": false,
-                  "type": "ListStyle",
-                  "value": {
-                    "end": 909,
-                    "node": {
-                      "image": {
-                        "Explicit": {
-                          "end": 909,
-                          "node": {
-                            "Literal": {
-                              "end": 909,
-                              "node": "None",
-                              "start": 905
-                            }
-                          },
-                          "start": 905
-                        }
-                      },
-                      "marker": "Implicit",
-                      "position": "Implicit"
+                  "name": "list-style",
+                  "type": "property",
+                  "value": [
+                    {
+                      "type": "outside"
                     },
-                    "start": 905
-                  }
+                    "None",
+                    "None"
+                  ]
                 },
-                "start": 893
-              },
-              "start": 893
-            }
-          ],
-          "rules": [],
-          "selectors": {
-            "end": 889,
-            "node": {
-              "children": [
-                {
-                  "end": 885,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 885,
-                        "node": {
-                          "type": "Type",
-                          "value": "ol"
-                        },
-                        "start": 883
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 883
-                },
-                {
-                  "end": 889,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 889,
-                        "node": {
-                          "type": "Type",
-                          "value": "ul"
-                        },
-                        "start": 887
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 887
-                }
-              ],
-              "type": "SelectorSet"
-            },
-            "start": 883
+                "start": 891
+              }
+            ],
+            "rules": [],
+            "type": "style-declaration"
           },
-          "type": "StyleRule"
+          "selectors": {
+            "end": 890,
+            "node": [
+              {
+                "end": 885,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Ol"
+                    }
+                  }
+                ],
+                "start": 883
+              },
+              {
+                "end": 890,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Ul"
+                    }
+                  }
+                ],
+                "start": 887
+              }
+            ],
+            "start": 882
+          },
+          "start": 890,
+          "type": "stylerule"
         },
-        "start": 883
+        "start": 882
       },
       {
         "end": 945,
         "node": {
-          "properties": [
-            {
-              "end": 944,
-              "node": {
-                "end": 944,
+          "end": 945,
+          "node": {
+            "declarations": [
+              {
+                "end": 943,
                 "node": {
                   "important": false,
-                  "type": "Quotes",
-                  "value": {
-                    "end": 944,
-                    "node": {
-                      "Literal": {
-                        "end": 944,
-                        "node": "None",
-                        "start": 938
-                      }
-                    },
-                    "start": 938
-                  }
+                  "name": "quotes",
+                  "type": "property",
+                  "value": "None"
                 },
-                "start": 930
-              },
-              "start": 930
-            }
-          ],
-          "rules": [],
-          "selectors": {
-            "end": 926,
-            "node": {
-              "children": [
-                {
-                  "end": 923,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 923,
-                        "node": {
-                          "type": "Type",
-                          "value": "blockquote"
-                        },
-                        "start": 913
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 913
-                },
-                {
-                  "end": 926,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 926,
-                        "node": {
-                          "type": "Type",
-                          "value": "q"
-                        },
-                        "start": 925
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 925
-                }
-              ],
-              "type": "SelectorSet"
-            },
-            "start": 913
+                "start": 928
+              }
+            ],
+            "rules": [],
+            "type": "style-declaration"
           },
-          "type": "StyleRule"
+          "selectors": {
+            "end": 927,
+            "node": [
+              {
+                "end": 923,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Blockquote"
+                    }
+                  }
+                ],
+                "start": 913
+              },
+              {
+                "end": 927,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Q"
+                    }
+                  }
+                ],
+                "start": 925
+              }
+            ],
+            "start": 912
+          },
+          "start": 927,
+          "type": "stylerule"
         },
-        "start": 913
+        "start": 912
       },
       {
         "end": 1034,
         "node": {
-          "properties": [
-            {
-              "end": 1018,
-              "node": {
-                "end": 1018,
+          "end": 1034,
+          "node": {
+            "declarations": [
+              {
+                "end": 1016,
                 "node": {
                   "important": false,
-                  "type": "Content",
+                  "name": "content",
+                  "type": "property",
                   "value": {
-                    "end": 1015,
-                    "node": {
-                      "List": {
-                        "end": 1015,
-                        "node": {
-                          "alt": [],
-                          "values": [
-                            {
-                              "String": ""
-                            }
-                          ]
-                        },
-                        "start": 1013
+                    "String": [
+                      "",
+                      {
+                        "kind": "Single"
                       }
-                    },
-                    "start": 1013
+                    ]
                   }
                 },
-                "start": 1004
+                "start": 1002
               },
-              "start": 1004
-            },
-            {
-              "end": 1033,
-              "node": {
-                "end": 1033,
+              {
+                "end": 1032,
                 "node": {
                   "important": false,
-                  "type": "Content",
-                  "value": {
-                    "end": 1031,
-                    "node": "None",
-                    "start": 1027
-                  }
+                  "name": "content",
+                  "type": "property",
+                  "value": "None"
                 },
-                "start": 1018
-              },
-              "start": 1018
-            }
-          ],
-          "rules": [],
+                "start": 1016
+              }
+            ],
+            "rules": [],
+            "type": "style-declaration"
+          },
           "selectors": {
             "end": 1000,
-            "node": {
-              "children": [
-                {
-                  "end": 963,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 956,
-                        "node": {
-                          "type": "Type",
-                          "value": "blockquote"
-                        },
-                        "start": 946
-                      },
-                      {
-                        "end": 963,
-                        "node": {
-                          "type": "LegacyPseudoElement",
-                          "value": {
-                            "type": "before"
-                          }
-                        },
-                        "start": 956
-                      }
-                    ],
-                    "type": "Selector"
+            "node": [
+              {
+                "end": 963,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Blockquote"
+                    }
                   },
-                  "start": 946
-                },
-                {
-                  "end": 981,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 975,
-                        "node": {
-                          "type": "Type",
-                          "value": "blockquote"
-                        },
-                        "start": 965
-                      },
-                      {
-                        "end": 981,
-                        "node": {
-                          "type": "LegacyPseudoElement",
-                          "value": {
-                            "type": "after"
-                          }
-                        },
-                        "start": 975
-                      }
-                    ],
-                    "type": "Selector"
+                  {
+                    "type": "legacy-pseudo-element",
+                    "value": "before"
+                  }
+                ],
+                "start": 946
+              },
+              {
+                "end": 981,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Blockquote"
+                    }
                   },
-                  "start": 965
-                },
-                {
-                  "end": 991,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 984,
-                        "node": {
-                          "type": "Type",
-                          "value": "q"
-                        },
-                        "start": 983
-                      },
-                      {
-                        "end": 991,
-                        "node": {
-                          "type": "LegacyPseudoElement",
-                          "value": {
-                            "type": "before"
-                          }
-                        },
-                        "start": 984
-                      }
-                    ],
-                    "type": "Selector"
+                  {
+                    "type": "legacy-pseudo-element",
+                    "value": "after"
+                  }
+                ],
+                "start": 965
+              },
+              {
+                "end": 991,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Q"
+                    }
                   },
-                  "start": 983
-                },
-                {
-                  "end": 1000,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 994,
-                        "node": {
-                          "type": "Type",
-                          "value": "q"
-                        },
-                        "start": 993
-                      },
-                      {
-                        "end": 1000,
-                        "node": {
-                          "type": "LegacyPseudoElement",
-                          "value": {
-                            "type": "after"
-                          }
-                        },
-                        "start": 994
-                      }
-                    ],
-                    "type": "Selector"
+                  {
+                    "type": "legacy-pseudo-element",
+                    "value": "before"
+                  }
+                ],
+                "start": 983
+              },
+              {
+                "end": 1000,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Q"
+                    }
                   },
-                  "start": 993
-                }
-              ],
-              "type": "SelectorSet"
-            },
-            "start": 946
+                  {
+                    "type": "legacy-pseudo-element",
+                    "value": "after"
+                  }
+                ],
+                "start": 993
+              }
+            ],
+            "start": 945
           },
-          "type": "StyleRule"
+          "start": 1000,
+          "type": "stylerule"
         },
-        "start": 946
+        "start": 945
       },
       {
         "end": 1092,
         "node": {
-          "properties": [
-            {
-              "end": 1072,
-              "node": {
-                "end": 1072,
+          "end": 1092,
+          "node": {
+            "declarations": [
+              {
+                "end": 1070,
                 "node": {
                   "important": false,
-                  "type": "BorderCollapse",
+                  "name": "border-collapse",
+                  "type": "property",
                   "value": {
-                    "end": 1069,
-                    "node": {
-                      "Literal": {
-                        "end": 1069,
-                        "node": "Collapse",
-                        "start": 1061
-                      }
+                    "type": "collapse"
+                  }
+                },
+                "start": 1042
+              },
+              {
+                "end": 1090,
+                "node": {
+                  "important": false,
+                  "name": "border-spacing",
+                  "type": "property",
+                  "value": [
+                    {
+                      "type": "zero"
                     },
-                    "start": 1061
-                  }
+                    {
+                      "type": "zero"
+                    }
+                  ]
                 },
-                "start": 1044
-              },
-              "start": 1044
-            },
-            {
-              "end": 1091,
-              "node": {
-                "end": 1091,
-                "node": {
-                  "important": false,
-                  "type": "BorderSpacing",
-                  "value": {
-                    "end": 1089,
-                    "node": [
-                      {
-                        "Explicit": {
-                          "end": 1089,
-                          "node": {
-                            "Literal": {
-                              "end": 1089,
-                              "node": "Zero",
-                              "start": 1088
-                            }
-                          },
-                          "start": 1088
-                        }
-                      },
-                      "Implicit"
-                    ],
-                    "start": 1088
-                  }
-                },
-                "start": 1072
-              },
-              "start": 1072
-            }
-          ],
-          "rules": [],
-          "selectors": {
-            "end": 1040,
-            "node": {
-              "children": [
-                {
-                  "end": 1040,
-                  "node": {
-                    "components": [
-                      {
-                        "end": 1040,
-                        "node": {
-                          "type": "Type",
-                          "value": "table"
-                        },
-                        "start": 1035
-                      }
-                    ],
-                    "type": "Selector"
-                  },
-                  "start": 1035
-                }
-              ],
-              "type": "SelectorSet"
-            },
-            "start": 1035
+                "start": 1070
+              }
+            ],
+            "rules": [],
+            "type": "style-declaration"
           },
-          "type": "StyleRule"
+          "selectors": {
+            "end": 1041,
+            "node": [
+              {
+                "end": 1041,
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Table"
+                    }
+                  }
+                ],
+                "start": 1035
+              }
+            ],
+            "start": 1034
+          },
+          "start": 1041,
+          "type": "stylerule"
         },
-        "start": 1035
+        "start": 1034
       }
     ],
-    "type": "Stylesheet"
+    "type": "stylesheet"
   },
-  "start": 102
+  "start": 0
 }
