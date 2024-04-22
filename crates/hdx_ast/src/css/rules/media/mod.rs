@@ -382,6 +382,16 @@ macro_rules! apply_medias {
 			// https://searchfox.org/mozilla-central/source/servo/components/style/gecko/media_features.rs#744
 			MozDeviceOrientationMediaFeature(MozDeviceOrientationMediaFeature): atom!("-moz-device-orientation"),
 			MozDevicePixelRatioMediaFeature(MozDevicePixelRatioMediaFeature): atom!("-moz-device-pixel-ratio") | atom!("max--moz-device-pixel-ratio") | atom!("min--moz-device-pixel-ratio"),
+
+			// https://github.com/search?q=%2F%5C(-ms-%5B%5E)%3A%5D%2B%5B)%3A%5D%2F%20language%3ACSS&type=code
+			MsHighContrastMediaFeature(MsHighContrastMediaFeature): atom!("-ms-high-contrast"),
+			MsViewStateMediaFeature(MsViewStateMediaFeature): atom!("-ms-view-state"),
+			MsImeAlignMediaFeature(MsImeAlignMediaFeature): atom!("-ms-ime-align"),
+			MsDevicePixelRatioMediaFeature(MsDevicePixelRatioMediaFeature): atom!("-ms-device-pixel-ratio"),
+			MsColumnCountMediaFeature(MsColumnCountMediaFeature): atom!("-ms-column-count"),
+
+			// https://github.com/search?q=%2F%5C(-o-%5B%5E)%3A%5D%2B%5B)%3A%5D%2F%20language%3ACSS&type=code
+			ODevicePixelRatioMediaFeature(ODevicePixelRatioMediaFeature): atom!("-o-device-pixel-ratio"),
 		}
 	};
 }
