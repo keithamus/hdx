@@ -6,7 +6,7 @@ use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 // https://searchfox.org/wubkat/source/Source/WebCore/css/CSSPseudoSelectors.json
 #[derive(Atomizable, Debug, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(rename_all = "kebab-case"))]
-pub enum NonStandardWebkitPseudoElement {
+pub enum WebkitPseudoElement {
 	#[atomizable("-webkit-caps-lock-indicator")]
 	CapsLockIndicator,
 	#[atomizable("-webkit-color-swatch")]
@@ -133,11 +133,11 @@ pub enum NonStandardWebkitPseudoElement {
 
 #[derive(Debug, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(rename_all = "kebab-case"))]
-pub enum NonStandardWebkitFunctionalPseudoElement {
+pub enum WebkitFunctionalPseudoElement {
 	Distributed(()), // atom!("-webkit-distributed")
 }
 
-impl<'a> Parse<'a> for NonStandardWebkitFunctionalPseudoElement {
+impl<'a> Parse<'a> for WebkitFunctionalPseudoElement {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		expect_ignore_case! { parser.next(), Token::Function(_):
 			atom!("-webkit-distributed") => todo!(parser),
@@ -145,7 +145,7 @@ impl<'a> Parse<'a> for NonStandardWebkitFunctionalPseudoElement {
 	}
 }
 
-impl<'a> WriteCss<'a> for NonStandardWebkitFunctionalPseudoElement {
+impl<'a> WriteCss<'a> for WebkitFunctionalPseudoElement {
 	fn write_css<W: CssWriter>(&self, _sink: &mut W) -> WriterResult {
 		std::todo!("Cannot write non-standard webkit functional pseudos yet")
 	}
@@ -155,11 +155,11 @@ impl<'a> WriteCss<'a> for NonStandardWebkitFunctionalPseudoElement {
 // -webkit-any() alias of :is()
 #[derive(Debug, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(rename_all = "kebab-case"))]
-pub enum NonStandardWebkitFunctionalPseudoClass {
+pub enum WebkitFunctionalPseudoClass {
 	Any(()),
 }
 
-impl<'a> Parse<'a> for NonStandardWebkitFunctionalPseudoClass {
+impl<'a> Parse<'a> for WebkitFunctionalPseudoClass {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		expect_ignore_case! { parser.next(), Token::Function(_):
 			atom!("-webkit-any") => todo!(parser),
@@ -167,7 +167,7 @@ impl<'a> Parse<'a> for NonStandardWebkitFunctionalPseudoClass {
 	}
 }
 
-impl<'a> WriteCss<'a> for NonStandardWebkitFunctionalPseudoClass {
+impl<'a> WriteCss<'a> for WebkitFunctionalPseudoClass {
 	fn write_css<W: CssWriter>(&self, _sink: &mut W) -> WriterResult {
 		std::todo!("Cannot write webkit functional pseudo class yet")
 	}
@@ -175,7 +175,7 @@ impl<'a> WriteCss<'a> for NonStandardWebkitFunctionalPseudoClass {
 
 #[derive(Atomizable, Debug, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(rename_all = "kebab-case"))]
-pub enum NonStandardWebkitPseudoClass {
+pub enum WebkitPseudoClass {
 	#[atomizable("-webkit-any-link")]
 	AnyLink, // Alias for :any-link
 	#[atomizable("-webkit-autofill")]

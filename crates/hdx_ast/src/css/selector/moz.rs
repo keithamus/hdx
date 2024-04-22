@@ -8,7 +8,7 @@ use super::functional_pseudo_class::DirValue;
 
 #[derive(Atomizable, Debug, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(rename_all = "kebab-case"))]
-pub enum NonStandardMozPseudoElement {
+pub enum MozPseudoElement {
 	#[atomizable("-moz-block-inside-inline-wrapper")]
 	BlockInsideInlineWrapper,
 	#[atomizable("-moz-button-content")]
@@ -143,7 +143,7 @@ pub enum NonStandardMozPseudoElement {
 
 #[derive(Debug, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(rename_all = "kebab-case"))]
-pub enum NonStandardMozFunctionalPseudoElement {
+pub enum MozFunctionalPseudoElement {
 	TreeCell(()),
 	TreeCellText(()),
 	TreeCheckbox(()),
@@ -157,7 +157,7 @@ pub enum NonStandardMozFunctionalPseudoElement {
 	TreeTwisty(()),
 }
 
-impl<'a> Parse<'a> for NonStandardMozFunctionalPseudoElement {
+impl<'a> Parse<'a> for MozFunctionalPseudoElement {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		expect_ignore_case! { parser.next(), Token::Function(_):
 			atom!("-moz-tree-cell") => todo!(parser),
@@ -175,7 +175,7 @@ impl<'a> Parse<'a> for NonStandardMozFunctionalPseudoElement {
 	}
 }
 
-impl<'a> WriteCss<'a> for NonStandardMozFunctionalPseudoElement {
+impl<'a> WriteCss<'a> for MozFunctionalPseudoElement {
 	fn write_css<W: CssWriter>(&self, _sink: &mut W) -> WriterResult {
 		std::todo!()
 	}
@@ -184,7 +184,7 @@ impl<'a> WriteCss<'a> for NonStandardMozFunctionalPseudoElement {
 // https://searchfox.org/mozilla-central/source/xpcom/ds/StaticAtoms.py#2502
 #[derive(Atomizable, Debug, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(rename_all = "kebab-case"))]
-pub enum NonStandardMozPseudoClass {
+pub enum MozPseudoClass {
 	#[atomizable("-moz-broken")]
 	Broken,
 	#[atomizable("-moz-drag-over")]
@@ -217,11 +217,11 @@ pub enum NonStandardMozPseudoClass {
 
 #[derive(Debug, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(rename_all = "kebab-case"))]
-pub enum NonStandardMozFunctionalPseudoClass {
+pub enum MozFunctionalPseudoClass {
 	LocaleDir(DirValue),
 }
 
-impl<'a> Parse<'a> for NonStandardMozFunctionalPseudoClass {
+impl<'a> Parse<'a> for MozFunctionalPseudoClass {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		expect_ignore_case! { parser.next(), Token::Function(_):
 			atom!("-moz-locale-dir") => {
@@ -236,7 +236,7 @@ impl<'a> Parse<'a> for NonStandardMozFunctionalPseudoClass {
 	}
 }
 
-impl<'a> WriteCss<'a> for NonStandardMozFunctionalPseudoClass {
+impl<'a> WriteCss<'a> for MozFunctionalPseudoClass {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
 		match self {
 			Self::LocaleDir(dir) => {

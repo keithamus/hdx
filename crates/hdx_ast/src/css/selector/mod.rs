@@ -78,18 +78,18 @@ pub enum SelectorComponent<'a> {
 	Combinator(Combinator),
 	Attribute(Attribute),
 	PseudoClass(PseudoClass),
-	NonStandardMozPseudoClass(NonStandardMozPseudoClass),
-	NonStandardWebkitPseudoClass(NonStandardWebkitPseudoClass),
+	MozPseudoClass(MozPseudoClass),
+	WebkitPseudoClass(WebkitPseudoClass),
 	PseudoElement(PseudoElement),
-	NonStandardMozPseudoElement(NonStandardMozPseudoElement),
-	NonStandardWebkitPseudoElement(NonStandardWebkitPseudoElement),
+	MozPseudoElement(MozPseudoElement),
+	WebkitPseudoElement(WebkitPseudoElement),
 	LegacyPseudoElement(LegacyPseudoElement),
 	FunctionalPseudoClass(FunctionalPseudoClass<'a>),
-	NonStandardMozFunctionalPseudoClass(NonStandardMozFunctionalPseudoClass),
-	NonStandardWebkitFunctionalPseudoClass(NonStandardWebkitFunctionalPseudoClass),
+	MozFunctionalPseudoClass(MozFunctionalPseudoClass),
+	WebkitFunctionalPseudoClass(WebkitFunctionalPseudoClass),
 	FunctionalPseudoElement(FunctionalPseudoElement<'a>),
-	NonStandardMozFunctionalPseudoElement(NonStandardMozFunctionalPseudoElement),
-	NonStandardWebkitFunctionalPseudoElement(NonStandardWebkitFunctionalPseudoElement),
+	MozFunctionalPseudoElement(MozFunctionalPseudoElement),
+	WebkitFunctionalPseudoElement(WebkitFunctionalPseudoElement),
 	NSPrefixedTag((NSPrefix, Atom)),
 	NSPrefixedWildcard(NSPrefix),
 }
@@ -120,8 +120,8 @@ impl<'a> SelectorComponentTrait<'a> for SelectorComponent<'a> {
 	fn pseudo_class_from_atom(atom: &Atom) -> Option<Self> {
 		PseudoClass::from_atom(atom)
 			.map(Self::PseudoClass)
-			.or_else(|| NonStandardMozPseudoClass::from_atom(atom).map(Self::NonStandardMozPseudoClass))
-			.or_else(|| NonStandardWebkitPseudoClass::from_atom(atom).map(Self::NonStandardWebkitPseudoClass))
+			.or_else(|| MozPseudoClass::from_atom(atom).map(Self::MozPseudoClass))
+			.or_else(|| WebkitPseudoClass::from_atom(atom).map(Self::WebkitPseudoClass))
 	}
 
 	fn legacy_pseudo_element_from_token(atom: &Atom) -> Option<Self> {
@@ -131,8 +131,8 @@ impl<'a> SelectorComponentTrait<'a> for SelectorComponent<'a> {
 	fn pseudo_element_from_atom(atom: &Atom) -> Option<Self> {
 		PseudoElement::from_atom(atom)
 			.map(Self::PseudoElement)
-			.or_else(|| NonStandardMozPseudoElement::from_atom(atom).map(Self::NonStandardMozPseudoElement))
-			.or_else(|| NonStandardWebkitPseudoElement::from_atom(atom).map(Self::NonStandardWebkitPseudoElement))
+			.or_else(|| MozPseudoElement::from_atom(atom).map(Self::MozPseudoElement))
+			.or_else(|| WebkitPseudoElement::from_atom(atom).map(Self::WebkitPseudoElement))
 	}
 
 	fn ns_type_from_token(ns_token: &Token, type_token: &Token) -> Option<Self> {
@@ -159,10 +159,10 @@ impl<'a> SelectorComponentTrait<'a> for SelectorComponent<'a> {
 		FunctionalPseudoClass::parse(parser)
 			.map(Self::FunctionalPseudoClass)
 			.or_else(|_| {
-				NonStandardMozFunctionalPseudoClass::parse(parser).map(Self::NonStandardMozFunctionalPseudoClass)
+				MozFunctionalPseudoClass::parse(parser).map(Self::MozFunctionalPseudoClass)
 			})
 			.or_else(|_| {
-				NonStandardWebkitFunctionalPseudoClass::parse(parser).map(Self::NonStandardWebkitFunctionalPseudoClass)
+				WebkitFunctionalPseudoClass::parse(parser).map(Self::WebkitFunctionalPseudoClass)
 			})
 	}
 
@@ -178,16 +178,16 @@ impl<'a> WriteCss<'a> for SelectorComponent<'a> {
 			Self::Id(id) => write_css!(sink, '#', id),
 			Self::Class(class) => write_css!(sink, '.', class),
 			Self::PseudoClass(pseudo) => write_css!(sink, ':', pseudo.to_atom()),
-			Self::NonStandardMozPseudoClass(pseudo) => write_css!(sink, ':', pseudo.to_atom()),
-			Self::NonStandardWebkitPseudoClass(pseudo) => write_css!(sink, ':', pseudo.to_atom()),
-			Self::NonStandardMozFunctionalPseudoClass(pseudo) => write_css!(sink, ':', pseudo),
-			Self::NonStandardWebkitFunctionalPseudoClass(pseudo) => write_css!(sink, ':', pseudo),
+			Self::MozPseudoClass(pseudo) => write_css!(sink, ':', pseudo.to_atom()),
+			Self::WebkitPseudoClass(pseudo) => write_css!(sink, ':', pseudo.to_atom()),
+			Self::MozFunctionalPseudoClass(pseudo) => write_css!(sink, ':', pseudo),
+			Self::WebkitFunctionalPseudoClass(pseudo) => write_css!(sink, ':', pseudo),
 			Self::LegacyPseudoElement(pseudo) => write_css!(sink, ':', pseudo.to_atom()),
 			Self::PseudoElement(pseudo) => write_css!(sink, ':', ':', pseudo.to_atom()),
-			Self::NonStandardMozPseudoElement(pseudo) => write_css!(sink, ':', ':', pseudo.to_atom()),
-			Self::NonStandardWebkitPseudoElement(pseudo) => write_css!(sink, ':', ':', pseudo.to_atom()),
-			Self::NonStandardMozFunctionalPseudoElement(pseudo) => write_css!(sink, ':', ':', pseudo),
-			Self::NonStandardWebkitFunctionalPseudoElement(pseudo) => write_css!(sink, ':', ':', pseudo),
+			Self::MozPseudoElement(pseudo) => write_css!(sink, ':', ':', pseudo.to_atom()),
+			Self::WebkitPseudoElement(pseudo) => write_css!(sink, ':', ':', pseudo.to_atom()),
+			Self::MozFunctionalPseudoElement(pseudo) => write_css!(sink, ':', ':', pseudo),
+			Self::WebkitFunctionalPseudoElement(pseudo) => write_css!(sink, ':', ':', pseudo),
 			Self::Attribute(attr) => write_css!(sink, attr),
 			Self::Combinator(combinator) => write_css!(sink, combinator),
 			Self::Wildcard => write_css!(sink, '*'),
