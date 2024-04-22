@@ -505,12 +505,12 @@ macro_rules! discrete_media_feature {
 
 		impl<'a> hdx_parser::Parse<'a> for $feat {
 			fn parse(parser: &mut hdx_parser::Parser<'a>) -> hdx_parser::Result<Self> {
-				use hdx_parser::MediaFeature;
-				Self::parse_media_feature(hdx_atom::atom!($atom), parser)
+				use hdx_parser::DiscreteMediaFeature;
+				Self::parse_descrete_media_feature(hdx_atom::atom!($atom), parser)
 			}
 		}
 
-		impl<'a> hdx_parser::MediaFeature<'a> for $feat {
+		impl<'a> hdx_parser::DiscreteMediaFeature<'a> for $feat {
 			fn parse_media_feature_value(parser: &mut hdx_parser::Parser<'a>) -> hdx_parser::Result<Self> {
 				hdx_parser::expect_ignore_case!{ parser.next(), Token::Ident(_):
 					$(
@@ -540,3 +540,82 @@ macro_rules! discrete_media_feature {
 }
 
 pub(crate) use discrete_media_feature;
+
+macro_rules! ranged_media_feature {
+	($feat: tt[atom!($atom: tt)], $ty: ty) => {
+		#[derive(PartialEq, Debug, Hash)]
+		#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
+		pub enum $feat {
+			Legacy((hdx_parser::Comparison, $ty)),
+			Single((hdx_parser::Comparison, $ty)),
+			Double((hdx_parser::Comparison, $ty, hdx_parser::Comparison, $ty)),
+		}
+
+		impl<'a> hdx_parser::Parse<'a> for $feat {
+			fn parse(parser: &mut hdx_parser::Parser<'a>) -> hdx_parser::Result<Self> {
+				use hdx_parser::RangedMediaFeature;
+				Self::parse_ranged_media_feature(hdx_atom::atom!($atom), parser)
+			}
+		}
+
+		impl<'a> hdx_parser::RangedMediaFeature<'a> for $feat {
+			type Type = $ty;
+
+			fn new(
+				left: (hdx_parser::Comparison, Self::Type),
+				right: Option<(hdx_parser::Comparison, Self::Type)>,
+				legacy: bool,
+			) -> Self {
+				if legacy {
+					Self::Legacy(left)
+				} else if let Some(right) = right {
+					Self::Double((left.0, left.1, right.0, right.1))
+				} else {
+					Self::Single(left)
+				}
+			}
+		}
+
+		impl<'a> hdx_writer::WriteCss<'a> for $feat {
+			fn write_css<W: hdx_writer::CssWriter>(&self, sink: &mut W) -> hdx_writer::Result {
+				use hdx_atom::atom;
+				use hdx_parser::Comparison::*;
+				match self {
+					Self::Legacy((Equal, u)) => hdx_writer::write_css!(sink, atom!($atom), ':', (), u),
+					Self::Legacy((LessThanEqual, u)) => hdx_writer::write_css!(sink, atom!("min-"), atom!($atom), ':', (), u),
+					Self::Legacy((GreaterThanEqual, u)) => {
+						hdx_writer::write_css!(sink, atom!("max-"), atom!($atom), ':', (), u)
+					}
+					Self::Legacy(_) => debug_assert!(false, "Legacy media feature syntax does not support gt, or lt"),
+					Self::Single((Equal, u)) => hdx_writer::write_css!(sink, atom!($atom), (), '=', (), u),
+					Self::Single((LessThan, u)) => hdx_writer::write_css!(sink, atom!($atom), (), '<', (), u),
+					Self::Single((LessThanEqual, u)) => hdx_writer::write_css!(sink, atom!($atom), (), '<', '=', (), u),
+					Self::Single((GreaterThan, u)) => hdx_writer::write_css!(sink, atom!($atom), (), '>', (), u),
+					Self::Single((GreaterThanEqual, u)) => hdx_writer::write_css!(sink, atom!($atom), (), '>', '=', (), u),
+					Self::Double((left_cmp, left, right_cmp, right)) => {
+						hdx_writer::write_css!(sink, left, ());
+						match left_cmp {
+							Equal => hdx_writer::write_css!(sink, '='),
+							LessThan => hdx_writer::write_css!(sink, '<'),
+							LessThanEqual => hdx_writer::write_css!(sink, '<', '='),
+							GreaterThan => hdx_writer::write_css!(sink, '>'),
+							GreaterThanEqual => hdx_writer::write_css!(sink, '>', '='),
+						}
+						hdx_writer::write_css!(sink, (), atom!($atom), ());
+						match right_cmp {
+							Equal => hdx_writer::write_css!(sink, '='),
+							LessThan => hdx_writer::write_css!(sink, '<'),
+							LessThanEqual => hdx_writer::write_css!(sink, '<', '='),
+							GreaterThan => hdx_writer::write_css!(sink, '>'),
+							GreaterThanEqual => hdx_writer::write_css!(sink, '>', '='),
+						}
+						hdx_writer::write_css!(sink, (), right);
+					}
+				}
+				Ok(())
+			}
+		}
+	};
+}
+
+pub(crate) use ranged_media_feature;

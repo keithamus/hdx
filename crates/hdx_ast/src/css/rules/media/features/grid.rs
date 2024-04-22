@@ -1,6 +1,6 @@
 use hdx_atom::atom;
 use hdx_lexer::Token;
-use hdx_parser::{unexpected, MediaFeature, Parse, Parser, Result as ParserResult};
+use hdx_parser::{unexpected, DiscreteMediaFeature, Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 
 #[derive(PartialEq, Default, Debug, Hash)]
@@ -13,11 +13,11 @@ pub enum GridMediaFeature {
 
 impl<'a> Parse<'a> for GridMediaFeature {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		Self::parse_media_feature(atom!("grid"), parser)
+		Self::parse_descrete_media_feature(atom!("grid"), parser)
 	}
 }
 
-impl<'a> MediaFeature<'a> for GridMediaFeature {
+impl<'a> DiscreteMediaFeature<'a> for GridMediaFeature {
 	fn parse_media_feature_value(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		match parser.next() {
 			Token::Number(val, ty) => {

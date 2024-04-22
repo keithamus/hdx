@@ -9,12 +9,24 @@ pub use declarations::*;
 pub use rules::*;
 pub use selectors::*;
 
-use crate::{expect, expect_ignore_case, parser::Parser, span::Spanned, unexpected, Result, State, Vec};
+use crate::{
+	expect, expect_ignore_case, parser::Parser, peek, span::Spanned, unexpected, unexpected_ident, Comparison, Result,
+	State, Vec,
+};
 
 // The FromToken trait produces a result of Self from an individual parser Token, guaranteeing that the parser will not
 // roll forward. Instead, the caller should advance the parser.
 pub trait FromToken: Sized {
 	fn from_token(token: &Token) -> Option<Self>;
+}
+
+impl FromToken for i32 {
+	fn from_token(token: &Token) -> Option<i32> {
+		match token {
+			Token::Number(f, ty) if !ty.is_float() => Some(*f as i32),
+			_ => None,
+		}
+	}
 }
 
 impl<'a, T: FromToken> Parse<'a> for T {
@@ -145,10 +157,10 @@ pub trait StyleSheet<'a>: Sized + Parse<'a> {
 	}
 }
 
-pub trait MediaFeature<'a>: Sized + Default {
+pub trait DiscreteMediaFeature<'a>: Sized + Default {
 	fn parse_media_feature_value(parser: &mut Parser<'a>) -> Result<Self>;
 
-	fn parse_media_feature(name: Atom, parser: &mut Parser<'a>) -> Result<Self> {
+	fn parse_descrete_media_feature(name: Atom, parser: &mut Parser<'a>) -> Result<Self> {
 		expect_ignore_case!(parser.next(), Token::Ident(name));
 		let value = match parser.peek() {
 			Token::Colon => {
@@ -158,5 +170,70 @@ pub trait MediaFeature<'a>: Sized + Default {
 			_ => Self::default(),
 		};
 		Ok(value)
+	}
+}
+
+pub trait RangedMediaFeature<'a>: Sized {
+	type Type: FromToken;
+
+	fn new(left: (Comparison, Self::Type), right: Option<(Comparison, Self::Type)>, legacy: bool) -> Self;
+
+	fn parse_ranged_media_feature(name: Atom, parser: &mut Parser<'a>) -> Result<Self> {
+		let left = match parser.next() {
+			Token::Ident(atom) => {
+				let mut legacy = false;
+				let legacy_cmp = match atom.to_ascii_lowercase() {
+					atom if atom == name => {
+						legacy = peek!(parser, Token::Colon);
+						Comparison::Equal
+					}
+					atom if atom.strip_prefix("max-").unwrap_or("") == name.as_ref() => {
+						legacy = true;
+						Comparison::GreaterThanEqual
+					}
+					atom if atom.strip_prefix("min-").unwrap_or("") == name.as_ref() => {
+						legacy = true;
+						Comparison::LessThanEqual
+					}
+					_ => unexpected_ident!(parser, atom),
+				};
+				if legacy {
+					expect!(parser.next(), Token::Colon);
+					if let Some(val) = Self::Type::from_token(parser.next()) {
+						return Ok(Self::new((legacy_cmp, val), None, true));
+					} else {
+						unexpected!(parser)
+					}
+				} else {
+					let cmp = Comparison::parse(parser)?;
+					if let Some(val) = Self::Type::from_token(parser.next()) {
+						return Ok(Self::new((cmp, val), None, false));
+					} else {
+						unexpected!(parser)
+					}
+				}
+			}
+			token => {
+				if let Some(left) = Self::Type::from_token(token) {
+					left
+				} else {
+					unexpected!(parser, token)
+				}
+			}
+		};
+		let left_cmp = Comparison::parse(parser)?;
+		expect_ignore_case!(parser.next(), Token::Ident(name));
+		if !peek!(parser, Token::Delim(_)) {
+			return Ok(Self::new((left_cmp, left), None, false));
+		}
+		let right_cmp = Comparison::parse(parser)?;
+		if left_cmp == Comparison::Equal && right_cmp == Comparison::Equal {
+			unexpected!(parser)
+		}
+		if let Some(right) = Self::Type::from_token(parser.next()) {
+			Ok(Self::new((left_cmp, left), Some((right_cmp, right)), false))
+		} else {
+			unexpected!(parser)
+		}
 	}
 }

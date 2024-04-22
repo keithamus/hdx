@@ -285,7 +285,7 @@ impl<'a> WriteCss<'a> for MediaCondition {
 }
 
 macro_rules! media_feature {
-	( $($name: ident($typ: ident): atom!($atom: tt),)+ ) => {
+	( $($name: ident($typ: ident): atom!($atom: tt)$(| $alts:pat)*,)+) => {
 		// https://drafts.csswg.org/mediaqueries-5/#media-descriptor-table
 		#[derive(Debug, PartialEq, Hash)]
 		#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
@@ -301,9 +301,9 @@ impl<'a> Parse<'a> for MediaFeature {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		expect!(parser.next(), Token::LeftParen);
 		macro_rules! match_media {
-			( $($name: ident($typ: ident): atom!($atom: tt),)+ ) => {
+			( $($name: ident($typ: ident): atom!($atom: tt)$(| $alts:pat)*,)+) => {
 				expect_ignore_case!{ parser.peek(), Token::Ident(_):
-					$(atom!($atom) => Self::$name($typ::parse(parser)?),)+
+					$(atom!($atom)$(| $alts)* => Self::$name($typ::parse(parser)?),)+
 				}
 			}
 		}
@@ -317,7 +317,7 @@ impl<'a> WriteCss<'a> for MediaFeature {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
 		sink.write_char('(')?;
 		macro_rules! write_media {
-			( $($name: ident($typ: ident): atom!($atom: tt),)+ ) => {
+			( $($name: ident($typ: ident): atom!($atom: tt)$(| $alts:pat)*,)+) => {
 				match self {
 					$(Self::$name(f) => f.write_css(sink)?,)+
 				}
@@ -331,25 +331,27 @@ impl<'a> WriteCss<'a> for MediaFeature {
 macro_rules! apply_medias {
 	($macro: ident) => {
 		$macro! {
+			// https://drafts.csswg.org/mediaqueries/#media-descriptor-table
+
 			AnyHover(AnyHoverMediaFeature): atom!("any-hover"),
 			AnyPointer(AnyPointerMediaFeature): atom!("any-pointer"),
-			AspectRatio(AspectRatioMediaFeature): atom!("aspect-ratio"),
-			Color(ColorMediaFeature): atom!("color"),
+			AspectRatio(AspectRatioMediaFeature): atom!("aspect-ratio") | atom!("max-aspect-ratio") | atom!("min-aspect-ratio"),
+			Color(ColorMediaFeature): atom!("color") | atom!("max-color") | atom!("min-color"),
 			ColorGamut(ColorGamutMediaFeature): atom!("color-gamut"),
-			ColorIndex(ColorIndexMediaFeature): atom!("color-index"),
-			DeviceAspectRatio(DeviceAspectRatioMediaFeature): atom!("device-aspect-ratio"),
-			DeviceHeight(DeviceHeightMediaFeature): atom!("device-height"),
-			DeviceWidth(DeviceWidthMediaFeature): atom!("device-width"),
+			ColorIndex(ColorIndexMediaFeature): atom!("color-index") | atom!("max-color-index") | atom!("min-color-index"),
+			DeviceAspectRatio(DeviceAspectRatioMediaFeature): atom!("device-aspect-ratio") | atom!("max-device-aspect-ratio") | atom!("min-device-aspect-ratio"),
+			DeviceHeight(DeviceHeightMediaFeature): atom!("device-height") | atom!("max-device-height") | atom!("min-device-height"),
+			DeviceWidth(DeviceWidthMediaFeature): atom!("device-width") | atom!("max-device-width") | atom!("min-device-width"),
 			DisplayMode(DisplayModeMediaFeature): atom!("display-mode"),
 			DynamicRange(DynamicRangeMediaFeature): atom!("dynamic-range"),
 			EnvironmentBlending(EnvironmentBlendingMediaFeature): atom!("environment-blending"),
 			ForcedColors(ForcedColorsMediaFeature): atom!("forced-colors"),
 			Grid(GridMediaFeature): atom!("grid"),
-			Height(HeightMediaFeature): atom!("height"),
-			// HorizontalViewportSegments(HorizontalViewportSegmentsMediaFeature): atom!("horizontal-viewport-segments"),
+			Height(HeightMediaFeature): atom!("height") | atom!("max-height") | atom!("min-height"),
+			HorizontalViewportSegments(HorizontalViewportSegmentsMediaFeature): atom!("horizontal-viewport-segments") | atom!("max-horizontal-viewport-segments") | atom!("min-horizontal-viewport-segments"),
 			Hover(HoverMediaFeature): atom!("hover"),
 			InvertedColors(InvertedColorsMediaFeature): atom!("inverted-colors"),
-			Monochrome(MonochromeMediaFeature): atom!("monochrome"),
+			Monochrome(MonochromeMediaFeature): atom!("monochrome") | atom!("max-monochrome") | atom!("min-monochrome"),
 			NavControls(NavControlsMediaFeature): atom!("nav-controls"),
 			Orientation(OrientationMediaFeature): atom!("orientation"),
 			OverflowBlock(OverflowBlockMediaFeature): atom!("overflow-block"),
@@ -360,14 +362,26 @@ macro_rules! apply_medias {
 			PrefersReducedData(PrefersReducedDataMediaFeature): atom!("prefers-reduced-data"),
 			PrefersReducedMotion(PrefersReducedMotionMediaFeature): atom!("prefers-reduced-motion"),
 			PrefersReducedTransparency(PrefersReducedTransparencyMediaFeature): atom!("prefers-reduced-transparency"),
-			Resolution(ResolutionMediaFeature): atom!("resolution"),
+			Resolution(ResolutionMediaFeature): atom!("resolution") | atom!("max-resolution") | atom!("min-resolution"),
 			Scan(ScanMediaFeature): atom!("scan"),
 			Scripting(ScriptingMediaFeature): atom!("scripting"),
 			Update(UpdateMediaFeature): atom!("update"),
-			// VerticalViewportSegments(VerticalViewportSegmentsMediaFeature): atom!("vertical-viewport-segments"),
+			VerticalViewportSegments(VerticalViewportSegmentsMediaFeature): atom!("vertical-viewport-segments") | atom!("max-vertical-viewport-segments") | atom!("min-vertical-viewport-segments"),
 			VideoColorGamut(VideoColorGamutMediaFeature): atom!("video-color-gamut"),
 			VideoDynamicRange(VideoDynamicRangeMediaFeature): atom!("video-dynamic-range"),
-			Width(WidthMediaFeature): atom!("width"),
+			Width(WidthMediaFeature): atom!("width") | atom!("max-width") | atom!("min-width"),
+
+			// https://searchfox.org/wubkat/source/Source/WebCore/css/query/MediaQueryFeatures.cpp#192
+			WebkitAnimationMediaFeature(WebkitAnimationMediaFeature): atom!("-webkit-animation"),
+			WebkitDevicePixelRatioMediaFeature(WebkitDevicePixelRatioMediaFeature): atom!("-webkit-device-pixel-ratio"),
+			WebkitTransform2dMediaFeature(WebkitTransform2dMediaFeature): atom!("-webkit-transform-2d"),
+			WebkitTransform3dMediaFeature(WebkitTransform3dMediaFeature): atom!("-webkit-transform-3d"),
+			WebkitTransitionMediaFeature(WebkitTransitionMediaFeature): atom!("-webkit-transition"),
+			WebkitVideoPlayableInlineMediaFeature(WebkitVideoPlayableInlineMediaFeature): atom!("-webkit-video-playable-inline"),
+
+			// https://searchfox.org/mozilla-central/source/servo/components/style/gecko/media_features.rs#744
+			MozDeviceOrientationMediaFeature(MozDeviceOrientationMediaFeature): atom!("-moz-device-orientation"),
+			MozDevicePixelRatioMediaFeature(MozDevicePixelRatioMediaFeature): atom!("-moz-device-pixel-ratio") | atom!("max--moz-device-pixel-ratio") | atom!("min--moz-device-pixel-ratio"),
 		}
 	};
 }
@@ -423,10 +437,10 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(MediaRule, 128);
-		assert_size!(MediaQueryList, 80);
-		assert_size!(MediaQuery, 56);
-		assert_size!(MediaCondition, 32);
+		assert_size!(MediaRule, 216);
+		assert_size!(MediaQueryList, 168);
+		assert_size!(MediaQuery, 144);
+		assert_size!(MediaCondition, 120);
 		assert_size!(MediaType, 16);
 	}
 
@@ -442,7 +456,7 @@ mod tests {
 		assert_parse!(MediaQuery, "screen and (orientation: landscape)");
 		assert_parse!(MediaRule, "@media print {\n\n}");
 		assert_parse!(MediaRule, "@media print, (prefers-reduced-motion: reduce) {\n\n}");
-		// assert_parse!(MediaRule, "@media (min-width: 1200px) {\n\n}");
+		assert_parse!(MediaRule, "@media (min-width: 1200px) {\n\n}");
 		// assert_parse!(MediaRule, "@media only screen and (max-device-width: 800px), only screen and (device-width: 1024px) and (device-height: 600px), only screen and (width: 1280px) and (orientation: landscape), only screen and (device-width: 800px), only screen and (max-width: 767px)");
 	}
 
