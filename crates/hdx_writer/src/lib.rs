@@ -26,6 +26,7 @@ pub enum OutputOption {
 	RedundantDeclarations,
 	RedundantShorthandValues,
 	RedundantDefaultValues,
+	RedundantBooleanMediaFeatures,
 }
 
 pub trait CssWriter {

@@ -541,6 +541,58 @@ macro_rules! discrete_media_feature {
 
 pub(crate) use discrete_media_feature;
 
+macro_rules! bool_media_feature {
+	($feat: tt[atom!($atom: tt)]) => {
+		#[derive(PartialEq, Default, Debug, Hash)]
+		#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
+		pub enum $feat {
+			#[default]
+			Zero,
+			One,
+		}
+
+		impl<'a> hdx_parser::Parse<'a> for $feat {
+			fn parse(parser: &mut hdx_parser::Parser<'a>) -> hdx_parser::Result<Self> {
+				use hdx_parser::DiscreteMediaFeature;
+				Self::parse_descrete_media_feature(hdx_atom::atom!($atom), parser)
+			}
+		}
+
+		impl<'a> hdx_parser::DiscreteMediaFeature<'a> for $feat {
+			fn parse_media_feature_value(parser: &mut hdx_parser::Parser<'a>) -> hdx_parser::Result<Self> {
+				match parser.next() {
+					hdx_lexer::Token::Number(val, ty) => {
+						if *val == 1.0 && ty.is_int() {
+							Ok(Self::One)
+						} else if *val == 0.0 && ty.is_int() {
+							Ok(Self::Zero)
+						} else {
+							hdx_parser::unexpected!(parser)
+						}
+					}
+					token => hdx_parser::unexpected!(parser, token),
+				}
+			}
+		}
+
+		impl<'a> hdx_writer::WriteCss<'a> for $feat {
+			fn write_css<W: hdx_writer::CssWriter>(&self, sink: &mut W) -> hdx_writer::Result {
+				if matches!(self, Self::Zero) && !sink.can_output(hdx_writer::OutputOption::RedundantBooleanMediaFeatures) {
+					return hdx_atom::atom!($atom).write_css(sink);
+				}
+				hdx_writer::write_css!(sink, hdx_atom::atom!($atom), ':', ());
+				match self {
+					Self::One => sink.write_char('1'),
+					Self::Zero => sink.write_char('0'),
+				}
+			}
+		}
+
+	};
+}
+
+pub(crate) use bool_media_feature;
+
 macro_rules! ranged_media_feature {
 	($feat: tt[atom!($atom: tt)], $ty: ty) => {
 		#[derive(PartialEq, Debug, Hash)]
