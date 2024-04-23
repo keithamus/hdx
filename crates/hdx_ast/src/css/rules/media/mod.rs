@@ -16,13 +16,13 @@ use features::*;
 // https://drafts.csswg.org/mediaqueries-4/
 #[derive(PartialEq, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
-pub struct MediaRule<'a> {
+pub struct Media<'a> {
 	pub query: Spanned<MediaQueryList>,
 	pub rules: Spanned<MediaRules<'a>>,
 }
 
 // https://drafts.csswg.org/css-conditional-3/#at-ruledef-media
-impl<'a> Parse<'a> for MediaRule<'a> {
+impl<'a> Parse<'a> for Media<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		expect_ignore_case!(parser.next(), Token::AtKeyword(atom!("media")));
 		let span = parser.span();
@@ -35,12 +35,12 @@ impl<'a> Parse<'a> for MediaRule<'a> {
 	}
 }
 
-impl<'a> AtRule<'a> for MediaRule<'a> {
+impl<'a> AtRule<'a> for Media<'a> {
 	type Prelude = MediaQueryList;
 	type Block = MediaRules<'a>;
 }
 
-impl<'a> WriteCss<'a> for MediaRule<'a> {
+impl<'a> WriteCss<'a> for Media<'a> {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
 		if !sink.can_output(OutputOption::RedundantRules) && self.rules.node.0.is_empty() {
 			return Ok(());
@@ -382,6 +382,10 @@ macro_rules! apply_medias {
 			// https://searchfox.org/mozilla-central/source/servo/components/style/gecko/media_features.rs#744
 			MozDeviceOrientationMediaFeature(MozDeviceOrientationMediaFeature): atom!("-moz-device-orientation"),
 			MozDevicePixelRatioMediaFeature(MozDevicePixelRatioMediaFeature): atom!("-moz-device-pixel-ratio") | atom!("max--moz-device-pixel-ratio") | atom!("min--moz-device-pixel-ratio"),
+			MozMacGraphiteThemeMediaFeature(MozDevicePixelRatioMediaFeature): atom!("-moz-mac-graphite-theme"),
+			MozMaemoClassicMediaFeature(MozDevicePixelRatioMediaFeature): atom!("-moz-maemo-classic"),
+			MozImagesInMenusMediaFeature(MozDevicePixelRatioMediaFeature): atom!("-moz-images-in-menus"),
+			MozOsVersionMenusMediaFeature(MozDevicePixelRatioMediaFeature): atom!("-moz-os-version"),
 
 			// https://github.com/search?q=%2F%5C(-ms-%5B%5E)%3A%5D%2B%5B)%3A%5D%2F%20language%3ACSS&type=code
 			MsHighContrastMediaFeature(MsHighContrastMediaFeature): atom!("-ms-high-contrast"),
@@ -447,7 +451,7 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(MediaRule, 216);
+		assert_size!(Media, 216);
 		assert_size!(MediaQueryList, 168);
 		assert_size!(MediaQuery, 144);
 		assert_size!(MediaCondition, 120);
@@ -459,22 +463,22 @@ mod tests {
 		assert_parse!(MediaQuery, "print");
 		assert_parse!(MediaQuery, "not embossed");
 		assert_parse!(MediaQuery, "only screen");
-		assert_parse!(MediaFeature, "(grid)");
-		assert_parse!(MediaCondition, "and (grid)");
-		assert_parse!(MediaQuery, "screen and (grid)");
+		assert_parse!(MediaFeature, "(grid)", "(grid: 0)");
+		assert_parse!(MediaCondition, "and (grid)", "and (grid: 0)");
+		assert_parse!(MediaQuery, "screen and (grid)", "screen and (grid: 0)");
 		assert_parse!(MediaQuery, "screen and (hover) and (pointer)");
 		assert_parse!(MediaQuery, "screen and (orientation: landscape)");
-		assert_parse!(MediaRule, "@media print {\n\n}");
-		assert_parse!(MediaRule, "@media print, (prefers-reduced-motion: reduce) {\n\n}");
-		assert_parse!(MediaRule, "@media (min-width: 1200px) {\n\n}");
-		assert_parse!(MediaRule, "@media (min-width: 1200px) {\n\tbody {\n\t\tcolor: red;\n\t}\n}");
-		assert_parse!(MediaRule, "@media (min-width: 1200px) {\n@page {\n}\n}");
-		// assert_parse!(MediaRule, "@media only screen and (max-device-width: 800px), only screen and (device-width: 1024px) and (device-height: 600px), only screen and (width: 1280px) and (orientation: landscape), only screen and (device-width: 800px), only screen and (max-width: 767px)");
+		assert_parse!(Media, "@media print {\n\n}");
+		assert_parse!(Media, "@media print, (prefers-reduced-motion: reduce) {\n\n}");
+		assert_parse!(Media, "@media (min-width: 1200px) {\n\n}");
+		assert_parse!(Media, "@media (min-width: 1200px) {\n\tbody {\n\t\tcolor: red;\n\t}\n}");
+		assert_parse!(Media, "@media (min-width: 1200px) {\n@page {\n}\n}");
+		// assert_parse!(Media, "@media only screen and (max-device-width: 800px), only screen and (device-width: 1024px) and (device-height: 600px), only screen and (width: 1280px) and (orientation: landscape), only screen and (device-width: 800px), only screen and (max-width: 767px)");
 	}
 
 	#[test]
 	fn test_minify() {
 		// Drop redundant rules
-		assert_minify!(MediaRule, "@media print {}", "");
+		assert_minify!(Media, "@media print {}", "");
 	}
 }

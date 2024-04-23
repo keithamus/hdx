@@ -7,9 +7,10 @@ use hdx_parser::{
 };
 use hdx_writer::{write_css, CssWriter, OutputOption, Result as WriterResult, WriteCss};
 
+// https://drafts.csswg.org/css-syntax-3/#charset-rule
 #[derive(Atomizable, Debug, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
-pub enum CharsetRule {
+pub enum Charset {
 	#[atomizable("utf-8")]
 	Utf8,
 	#[atomizable("us-ascii")]
@@ -62,7 +63,7 @@ pub enum CharsetRule {
 	Koi8R,
 }
 
-impl<'a> Parse<'a> for CharsetRule {
+impl<'a> Parse<'a> for Charset {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		expect!(parser.next(), Token::AtKeyword(atom!("charset")));
 		expect!(parser.next_with(Include::Whitespace), Token::Whitespace);
@@ -80,9 +81,9 @@ impl<'a> Parse<'a> for CharsetRule {
 	}
 }
 
-impl<'a> WriteCss<'a> for CharsetRule {
+impl<'a> WriteCss<'a> for Charset {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
-		if !matches!(self, CharsetRule::Utf8) || sink.can_output(OutputOption::RedundantRules) {
+		if !matches!(self, Charset::Utf8) || sink.can_output(OutputOption::RedundantRules) {
 			write_css!(sink, '@', atom!("charset"), ' ', '"', self.to_atom(), '"', ';');
 		}
 		Ok(())
@@ -96,18 +97,18 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(CharsetRule, 1);
+		assert_size!(Charset, 1);
 	}
 
 	#[test]
 	fn test_writes() {
-		assert_parse!(CharsetRule, "@charset \"utf-8\";", "@charset \"utf-8\";");
-		assert_parse!(CharsetRule, "@charset \"UTF-8\";", "@charset \"utf-8\";");
+		assert_parse!(Charset, "@charset \"utf-8\";", "@charset \"utf-8\";");
+		assert_parse!(Charset, "@charset \"UTF-8\";", "@charset \"utf-8\";");
 	}
 
 	#[test]
 	fn test_minify() {
 		// utf-8 is assumed, so we can drop the rule.
-		assert_minify!(CharsetRule, "@charset \"utf-8\";", "");
+		assert_minify!(Charset, "@charset \"utf-8\";", "");
 	}
 }

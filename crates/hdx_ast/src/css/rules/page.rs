@@ -13,13 +13,13 @@ use crate::{atom, css::properties::Property, Atom, Atomizable, Specificity, ToSp
 // https://drafts.csswg.org/css-page-3/#at-page-rule
 #[derive(PartialEq, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
-pub struct PageRule<'a> {
+pub struct Page<'a> {
 	pub selectors: Option<Spanned<PageSelectorList>>,
 	pub style: Spanned<PageDeclaration<'a>>,
 }
 
 // https://drafts.csswg.org/css-page-3/#syntax-page-selector
-impl<'a> Parse<'a> for PageRule<'a> {
+impl<'a> Parse<'a> for Page<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		expect_ignore_case!(parser.next(), Token::AtKeyword(atom!("page")));
 		let span = parser.span();
@@ -32,12 +32,12 @@ impl<'a> Parse<'a> for PageRule<'a> {
 	}
 }
 
-impl<'a> AtRule<'a> for PageRule<'a> {
+impl<'a> AtRule<'a> for Page<'a> {
 	type Block = PageDeclaration<'a>;
 	type Prelude = PageSelectorList;
 }
 
-impl<'a> WriteCss<'a> for PageRule<'a> {
+impl<'a> WriteCss<'a> for Page<'a> {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
 		if !sink.can_output(OutputOption::RedundantRules) && self.style.node.is_empty() {
 			return Ok(());
@@ -340,7 +340,7 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(PageRule, 144);
+		assert_size!(Page, 144);
 		assert_size!(MarginRule, 80);
 		assert_size!(PagePseudoClass, 1);
 		assert_size!(PageMarginBox, 1);
@@ -349,15 +349,15 @@ mod tests {
 
 	#[test]
 	fn test_writes() {
-		assert_parse!(PageRule, "@page {\n\tmargin-top: 4in;\n}");
-		assert_parse!(PageRule, "@page wide {\n}");
-		assert_parse!(PageRule, "@page wide:left {\n\n\t@top-right {\n\t}\n}");
+		assert_parse!(Page, "@page {\n\tmargin-top: 4in;\n}");
+		assert_parse!(Page, "@page wide {\n}");
+		assert_parse!(Page, "@page wide:left {\n\n\t@top-right {\n\t}\n}");
 	}
 
 	#[test]
 	fn test_minify() {
 		// empty rulesets get dropped
-		assert_minify!(PageRule, "@page :left {}", "");
+		assert_minify!(Page, "@page :left {}", "");
 	}
 
 	#[test]

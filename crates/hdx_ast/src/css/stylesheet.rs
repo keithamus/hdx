@@ -5,10 +5,7 @@ use hdx_parser::{diagnostics, Parse, Parser, Result as ParserResult, StyleSheet 
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 
 use crate::{
-	css::{
-		rules::{CharsetRule, MediaRule, PageRule, SupportsRule},
-		stylerule::StyleRule,
-	},
+	css::{rules, stylerule::StyleRule},
 	syntax::{AtRule, QualifiedRule},
 	Spanned, Vec,
 };
@@ -44,63 +41,108 @@ impl<'a> WriteCss<'a> for StyleSheet<'a> {
 	}
 }
 
-// https://drafts.csswg.org/cssom-1/#the-cssrule-interface
-#[derive(PartialEq, Debug, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(untagged))]
-pub enum Rule<'a> {
-	Charset(CharsetRule),
-	Page(PageRule<'a>),
-	Style(StyleRule<'a>),
-	Media(MediaRule<'a>),
-	Supports(SupportsRule<'a>),
-	UnknownAt(AtRule<'a>),
-	Unknown(QualifiedRule<'a>),
+macro_rules! apply_rules {
+	($macro: ident) => {
+		$macro! {
+			Charset: atom!("charset"),
+			ColorProfile: atom!("color-profile"),
+			Container: atom!("container"),
+			CounterStyle: atom!("counter-style"),
+			FontFace: atom!("font-face"),
+			FontFeatureValues: atom!("font-feature-values"),
+			FontPaletteValues: atom!("font-palette-values"),
+			Import: atom!("import"),
+			Keyframes<'a>: atom!("keyframes"),
+			Layer: atom!("layer"),
+			Media<'a>: atom!("media"),
+			Namespace: atom!("namespace"),
+			Page<'a>: atom!("page"),
+			Property: atom!("property"),
+			Scope: atom!("scope"),
+			StartingStyle: atom!("starting-style"),
+			Supports<'a>: atom!("supports"),
+
+			// Deprecated Rules
+			Document: atom!("document"),
+
+			// Vendor Prefixed
+			WebkitKeyframes<'a>: atom!("-webkit-keyframes"),
+
+			// https://developer.mozilla.org/en-US/docs/Web/CSS/Mozilla_Extensions#at-rules
+			MozDocument: atom!("-moz-document"),
+		}
+	};
 }
+
+macro_rules! rule {
+    ( $(
+        $name: ident$(<$a: lifetime>)?: $atom: pat,
+    )+ ) => {
+		// https://drafts.csswg.org/cssom-1/#the-cssrule-interface
+		#[derive(PartialEq, Debug, Hash)]
+		#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(untagged))]
+		pub enum Rule<'a> {
+			$(
+				$name(rules::$name$(<$a>)?),
+			)+
+			UnknownAt(AtRule<'a>),
+			Style(StyleRule<'a>),
+			Unknown(QualifiedRule<'a>)
+		}
+	}
+}
+
+apply_rules!(rule);
 
 impl<'a> Parse<'a> for Rule<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		Ok(match parser.peek() {
-			Token::AtKeyword(atom) => match atom.to_ascii_lowercase() {
-				atom!("charset") => Rule::Charset(CharsetRule::parse(parser)?),
-				atom!("page") => Rule::Page(PageRule::parse(parser)?),
-				atom!("media") => Rule::Media(MediaRule::parse(parser)?),
-				atom!("media") => Rule::Media(MediaRule::parse(parser)?),
-				atom!("supports") => Rule::Supports(SupportsRule::parse(parser)?),
-				_ => {
-					let span = parser.span();
-					let rule = AtRule::parse(parser)?;
-					parser.warn(diagnostics::UnknownRule(span.end(parser.pos())).into());
-					Rule::UnknownAt(rule)
-				}
-			},
-			// "Consume a qualified rule from input. If anything is returned, append it to rules."
-			_ => {
-				let checkpoint = parser.checkpoint();
-				match StyleRule::parse(parser) {
-					Ok(rule) => Rule::Style(rule),
-					Err(err) => {
-						parser.rewind(checkpoint);
-						parser.warn(err);
-						let rule = QualifiedRule::parse(parser)?;
-						Rule::Unknown(rule)
+			Token::AtKeyword(atom) => {
+				macro_rules! parse_rule {
+					( $(
+						$name: ident$(<$a: lifetime>)?: $atom: pat,
+					)+ ) => {
+						match atom.to_ascii_lowercase() {
+							$($atom => rules::$name::try_parse(parser).map(Self::$name),)+
+							_ => {
+								let rule = AtRule::parse_spanned(parser)?;
+								parser.warn(diagnostics::UnknownRule(rule.span).into());
+								Ok(Self::UnknownAt(rule.node))
+							}
+						}
 					}
 				}
+				apply_rules!(parse_rule).or_else(|err| {
+					parser.warn(err);
+					AtRule::parse(parser).map(Self::UnknownAt)
+				})?
 			}
+			// "Consume a qualified rule from input. If anything is returned, append it to rules."
+			_ => StyleRule::try_parse(parser).map(Self::Style).or_else(|err| {
+				parser.warn(err);
+				QualifiedRule::parse(parser).map(Self::Unknown)
+			})?,
 		})
 	}
 }
 
 impl<'a> WriteCss<'a> for Rule<'a> {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
-		match self {
-			Self::Style(rule) => rule.write_css(sink),
-			Self::Charset(rule) => rule.write_css(sink),
-			Self::Page(rule) => rule.write_css(sink),
-			Self::Media(rule) => rule.write_css(sink),
-			Self::Supports(rule) => rule.write_css(sink),
-			Self::UnknownAt(rule) => rule.write_css(sink),
-			Self::Unknown(rule) => rule.write_css(sink),
+		macro_rules! write_css {
+			( $(
+				$name: ident$(<$a: lifetime>)?: $atom: pat,
+			)+ ) => {
+				match self {
+					Self::Unknown(v) => v.write_css(sink),
+					Self::UnknownAt(v) => v.write_css(sink),
+					Self::Style(v) => v.write_css(sink),
+					$(
+						Self::$name(v) => v.write_css(sink),
+					)+
+				}
+			}
 		}
+		apply_rules!(write_css)
 	}
 }
 

@@ -7,15 +7,16 @@ use hdx_parser::{
 };
 use hdx_writer::{CssWriter, OutputOption, Result as WriterResult, WriteCss};
 
+// https://drafts.csswg.org/css-conditional-3/#at-supports
 #[derive(Debug, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
-pub struct SupportsRule<'a> {
+pub struct Supports<'a> {
 	pub condition: Spanned<SupportsCondition<'a>>,
 	pub rules: Spanned<SupportsRules<'a>>,
 }
 
 // https://drafts.csswg.org/css-conditional-3/#at-ruledef-supports
-impl<'a> Parse<'a> for SupportsRule<'a> {
+impl<'a> Parse<'a> for Supports<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		expect_ignore_case!(parser.next(), Token::AtKeyword(atom!("supports")));
 		let span = parser.span();
@@ -28,12 +29,12 @@ impl<'a> Parse<'a> for SupportsRule<'a> {
 	}
 }
 
-impl<'a> AtRule<'a> for SupportsRule<'a> {
+impl<'a> AtRule<'a> for Supports<'a> {
 	type Prelude = SupportsCondition<'a>;
 	type Block = SupportsRules<'a>;
 }
 
-impl<'a> WriteCss<'a> for SupportsRule<'a> {
+impl<'a> WriteCss<'a> for Supports<'a> {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
 		if !sink.can_output(OutputOption::RedundantRules) && self.rules.node.0.is_empty() {
 			return Ok(());
@@ -98,37 +99,54 @@ impl<'a> Parse<'a> for SupportsCondition<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		match parser.peek() {
 			Token::LeftParen => {
-				if peek!(parser, 2, Token::LeftParen) {
-					todo!(parser)
-				} else {
-					let feature = SupportsFeature::parse(parser)?;
-					match parser.peek() {
-						Token::Ident(ident) => match ident.to_ascii_lowercase() {
-							atom!("and") => {
-								let mut features = parser.new_vec();
-								features.push(feature);
-								loop {
-									expect_ignore_case!(parser.next(), Token::Ident(atom!("and")));
-									features.push(SupportsFeature::parse(parser)?);
-									if !match_ignore_case!(parser.peek(), Token::Ident(atom!("and"))) {
-										return Ok(Self::And(features));
+				let wrapped = peek!(parser, 2, Token::LeftParen);
+				if wrapped {
+					parser.next();
+
+				}
+				let feature = SupportsFeature::parse(parser)?;
+				match parser.peek() {
+					Token::Ident(ident) => match ident.to_ascii_lowercase() {
+						atom!("and") => {
+							let mut features = parser.new_vec();
+							features.push(feature);
+							loop {
+								expect_ignore_case!(parser.next(), Token::Ident(atom!("and")));
+								features.push(SupportsFeature::parse(parser)?);
+								if !match_ignore_case!(parser.peek(), Token::Ident(atom!("and"))) {
+									if wrapped {
+										expect!(parser.next(), Token::RightParen);
 									}
+									return Ok(Self::And(features));
 								}
 							}
-							atom!("or") => {
-								let mut features = parser.new_vec();
-								features.push(feature);
-								loop {
-									expect_ignore_case!(parser.next(), Token::Ident(atom!("or")));
-									features.push(SupportsFeature::parse(parser)?);
-									if !match_ignore_case!(parser.peek(), Token::Ident(atom!("or"))) {
-										return Ok(Self::Or(features));
+						}
+						atom!("or") => {
+							let mut features = parser.new_vec();
+							features.push(feature);
+							loop {
+								expect_ignore_case!(parser.next(), Token::Ident(atom!("or")));
+								features.push(SupportsFeature::parse(parser)?);
+								if !match_ignore_case!(parser.peek(), Token::Ident(atom!("or"))) {
+									if wrapped {
+										expect!(parser.next(), Token::RightParen);
 									}
+									return Ok(Self::Or(features));
 								}
 							}
-							_ => Ok(Self::Is(feature)),
-						},
-						_ => Ok(Self::Is(feature)),
+						}
+						_ => {
+							if wrapped {
+								expect!(parser.next(), Token::RightParen);
+							}
+							Ok(Self::Is(feature))
+						}
+					},
+					_ => {
+						if wrapped {
+							expect!(parser.next(), Token::RightParen);
+						}
+						Ok(Self::Is(feature))
 					}
 				}
 			}
@@ -235,37 +253,38 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(SupportsRule, 96);
+		assert_size!(Supports, 96);
 		assert_size!(SupportsCondition, 48);
 		assert_size!(SupportsRules, 32);
 	}
 
 	#[test]
 	fn test_writes() {
-		assert_parse!(SupportsRule, "@supports (color: black) {\n\n}");
-		assert_parse!(SupportsRule, "@supports (width: 1px) {\n\tbody {\n\t\twidth: 1px;\n\t}\n}");
-		assert_parse!(SupportsRule, "@supports not (width: 1--foo) {\n\n}");
-		assert_parse!(SupportsRule, "@supports (width: 1--foo) or (width: 1foo) {\n\n}");
-		assert_parse!(SupportsRule, "@supports (width: 1--foo) and (width: 1foo) {\n\n}");
-		assert_parse!(SupportsRule, "@supports (width: 100vw) {\n\tbody {\n\t\twidth: 100vw;\n\t}\n}");
+		assert_parse!(Supports, "@supports (color: black) {\n\n}");
+		assert_parse!(Supports, "@supports (width: 1px) {\n\tbody {\n\t\twidth: 1px;\n\t}\n}");
+		assert_parse!(Supports, "@supports not (width: 1--foo) {\n\n}");
+		assert_parse!(Supports, "@supports (width: 1--foo) or (width: 1foo) {\n\n}");
+		assert_parse!(Supports, "@supports (width: 1--foo) and (width: 1foo) {\n\n}");
+		assert_parse!(Supports, "@supports (width: 100vw) {\n\tbody {\n\t\twidth: 100vw;\n\t}\n}");
 		assert_parse!(
-			SupportsRule,
+			Supports,
 			"@supports not ((text-align-last: justify) or (-moz-text-align-last: justify)) {\n\n}"
 		);
+		// assert_parse!(Supports, "@supports ((position: -webkit-sticky) or (position: sticky)) {}");
 	}
 
 	#[test]
 	fn test_minify() {
 		assert_minify!(
-			SupportsRule,
+			Supports,
 			"@supports (width: 1px) { body { width:1px; } }",
 			"@supports(width: 1px){body{width:1px}}"
 		);
 		assert_minify!(
-			SupportsRule,
+			Supports,
 			"@supports not (width: 1--foo) { a { width:1px } }",
 			"@supports not(width: 1--foo){a{width:1px}}"
 		);
-		assert_minify!(SupportsRule, "@supports (color: black) {}", "");
+		assert_minify!(Supports, "@supports (color: black) {}", "");
 	}
 }
