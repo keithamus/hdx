@@ -286,6 +286,7 @@ mod tests {
 		assert_parse!(SelectorList, ":dir(ltr)");
 		assert_parse!(SelectorList, "tr:nth-child(n-1):state(foo)");
 		assert_parse!(SelectorList, " /**/ .foo", ".foo");
+		assert_parse!(SelectorList, ":lang(en-gb, en-us)");
 		// Non Standard
 		assert_parse!(SelectorList, "::-moz-focus-inner");
 		assert_parse!(SelectorList, "::-moz-list-bullet::-webkit-scrollbar::-ms-clear:-ms-input-placeholder::-o-scrollbar:-o-prefocus");

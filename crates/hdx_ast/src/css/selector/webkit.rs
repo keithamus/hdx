@@ -180,6 +180,8 @@ impl<'a> WriteCss<'a> for WebkitFunctionalPseudoClass {
 #[derive(Atomizable, Debug, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(rename_all = "kebab-case"))]
 pub enum WebkitPseudoClass {
+	#[atomizable("-webkit-animating-full-screen-transition")]
+	AnimatingFullScreenTransition,
 	#[atomizable("-webkit-any-link")]
 	AnyLink, // Alias for :any-link
 	#[atomizable("-webkit-autofill")]
@@ -192,4 +194,14 @@ pub enum WebkitPseudoClass {
 	AutofillStrongPasswordViewable,
 	#[atomizable("-webkit-drag")]
 	Drag,
+	#[atomizable("-webkit-full-page-media")]
+	FullPageMedia,
+	#[atomizable("-webkit-full-screen")]
+	FullScreen,
+	#[atomizable("-webkit-full-screen-ancestor")]
+	FullScreenAncestor,
+	#[atomizable("-webkit-full-screen-controls-hidden")]
+	FullScreenControlsHidden,
+	#[atomizable("-webkit-full-screen-document")]
+	FullScreenDocument,
 }

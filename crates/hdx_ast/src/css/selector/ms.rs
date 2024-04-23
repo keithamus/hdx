@@ -11,12 +11,16 @@ pub enum MsPseudoElement {
 	Check,
 	#[atomizable("-ms-clear")]
 	Clear,
+	#[atomizable("-ms-expand")]
+	Expand,
 	#[atomizable("-ms-fill")]
 	Fill,
 	#[atomizable("-ms-fill-upper")]
 	FillUpper,
 	#[atomizable("-ms-fill-lower")]
 	FillLower,
+	#[atomizable("-ms-input-placeholder")]
+	InputPlaceholder,
 	#[atomizable("-ms-reveal")]
 	Reveal,
 	#[atomizable("-ms-selection")]

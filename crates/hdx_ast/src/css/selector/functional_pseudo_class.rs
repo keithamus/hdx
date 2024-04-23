@@ -1,9 +1,9 @@
 use hdx_atom::{atom, Atom};
 use hdx_derive::Writable;
 use hdx_lexer::Token;
-use hdx_parser::{expect, todo, unexpected, unexpected_function, FromToken, Parse, Parser, Result as ParserResult};
+use hdx_parser::{discard, expect, unexpected, unexpected_function, FromToken, Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
-use smallvec::SmallVec;
+use smallvec::{smallvec, SmallVec};
 
 use crate::Atomizable;
 
@@ -48,7 +48,19 @@ impl<'a> Parse<'a> for FunctionalPseudoClass<'a> {
 				atom!("host") => Self::Host(SelectorList::parse(parser)?),
 				atom!("host-context") => Self::HostContext(SelectorList::parse(parser)?),
 				atom!("is") => Self::Is(ForgivingSelector::parse(parser)?),
-				atom!("lang") => todo!(parser),
+				atom!("lang") => {
+					let mut langs = smallvec![];
+					loop {
+						match parser.next() {
+							Token::Ident(atom) | Token::String(atom, _) => langs.push(atom.clone()),
+							token => unexpected!(parser, token),
+						}
+						if !discard!(parser, Token::Comma) {
+							break;
+						}
+					}
+					Self::Lang(langs)
+				}
 				atom!("not") => Self::Not(SelectorList::parse(parser)?),
 				atom!("nth-child") => Self::NthChild(Nth::parse(parser)?),
 				atom!("nth-col") => Self::NthCol(Nth::parse(parser)?),
