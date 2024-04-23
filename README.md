@@ -40,7 +40,7 @@ Here is a rough order of operations to get there:
     - [x] with CSS output
   - [ ] Produces a usable AST for:
     - [x] [960.gs][4]
-    - [ ] [animate][5]
+    - [x] [animate][5]
     - [x] [blueprint][6]
     - [ ] [bootstrap 4][7]
     - [ ] [bootstrap 5][7]
