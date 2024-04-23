@@ -87,7 +87,7 @@ impl<'a> WriteCss<'a> for SupportsRules<'a> {
 }
 
 #[derive(PartialEq, Debug, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", content = "value"))]
 pub enum SupportsCondition<'a> {
 	Is(SupportsFeature<'a>),
 	Not(SupportsFeature<'a>),
