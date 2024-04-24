@@ -36,7 +36,9 @@ impl<'a> Parse<'a> for Combinator {
 			token => unexpected!(parser, token),
 		};
 		parser.advance();
-		discard!(parser, Include::Whitespace, Token::Whitespace);
+		if val != Self::Nesting {
+			discard!(parser, Include::Whitespace, Token::Whitespace);
+		}
 		Ok(val)
 	}
 }
@@ -45,7 +47,7 @@ impl<'a> WriteCss<'a> for Combinator {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
 		match self {
 			Self::Descendant => sink.write_char(' ')?,
-			Self::Nesting => write_css!(sink, (), '&', ()),
+			Self::Nesting => write_css!(sink, '&'),
 			Self::Child => write_css!(sink, (), '>', ()),
 			Self::NextSibling => write_css!(sink, (), '+', ()),
 			Self::SubsequentSibling => write_css!(sink, (), '~', ()),
@@ -70,6 +72,7 @@ mod tests {
 		assert_parse!(Combinator, ">", " > ");
 		assert_parse!(Combinator, "+", " + ");
 		assert_parse!(Combinator, "~", " ~ ");
+		assert_parse!(Combinator, "&", "&");
 		// Descendent combinator
 		assert_parse!(Combinator, "     ", " ");
 		assert_parse!(Combinator, "     ", " ");
