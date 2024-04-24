@@ -1,6 +1,6 @@
 use hdx_lexer::{Include, Token};
 use hdx_parser::{discard, expect, peek, unexpected, Parse, Parser, Result as ParserResult};
-use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
+use hdx_writer::{CssWriter, Result as WriterResult, WriteCss, write_css};
 
 #[derive(Debug, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(rename_all = "kebab-case"))]
@@ -11,6 +11,7 @@ pub enum Combinator {
 	NextSibling,       // +
 	SubsequentSibling, // ~
 	Column,            // ||
+	Nesting,           // &
 }
 
 impl<'a> Parse<'a> for Combinator {
@@ -24,6 +25,7 @@ impl<'a> Parse<'a> for Combinator {
 				'>' => Self::Child,
 				'+' => Self::NextSibling,
 				'~' => Self::SubsequentSibling,
+				'&' => Self::Nesting,
 				'|' => {
 					expect!(parser.next_with(Include::Whitespace), Token::Delim('|'));
 					Self::Column
@@ -42,29 +44,14 @@ impl<'a> Parse<'a> for Combinator {
 impl<'a> WriteCss<'a> for Combinator {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
 		match self {
-			Self::Descendant => sink.write_char(' '),
-			Self::Child => {
-				sink.write_whitespace()?;
-				sink.write_char('>')?;
-				sink.write_whitespace()
-			}
-			Self::NextSibling => {
-				sink.write_whitespace()?;
-				sink.write_char('+')?;
-				sink.write_whitespace()
-			}
-			Self::SubsequentSibling => {
-				sink.write_whitespace()?;
-				sink.write_char('~')?;
-				sink.write_whitespace()
-			}
-			Self::Column => {
-				sink.write_whitespace()?;
-				sink.write_char('|')?;
-				sink.write_char('|')?;
-				sink.write_whitespace()
-			}
+			Self::Descendant => sink.write_char(' ')?,
+			Self::Nesting => write_css!(sink, (), '&', ()),
+			Self::Child => write_css!(sink, (), '>', ()),
+			Self::NextSibling => write_css!(sink, (), '+', ()),
+			Self::SubsequentSibling => write_css!(sink, (), '~', ()),
+			Self::Column => write_css!(sink, (), '|', '|', ()),
 		}
+		Ok(())
 	}
 }
 
