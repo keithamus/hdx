@@ -290,6 +290,11 @@ mod tests {
 		assert_parse!(SelectorList, "& .foo", "& .foo");
 		assert_parse!(SelectorList, "&:hover", "&:hover");
 		assert_parse!(SelectorList, ".foo &:hover", ".foo &:hover");
+		assert_parse!(SelectorList, ".foo & & &", ".foo & & &");
+		assert_parse!(SelectorList, ".class&", ".class&");
+		assert_parse!(SelectorList, "&&", "&&");
+		assert_parse!(SelectorList, "& + .foo, &.bar", "& + .foo, &.bar");
+		assert_parse!(SelectorList, ":state(foo)&", ":state(foo)&");
 		// Non Standard
 		assert_parse!(SelectorList, "::-moz-focus-inner");
 		assert_parse!(SelectorList, "::-moz-list-bullet::-webkit-scrollbar::-ms-clear:-ms-input-placeholder::-o-scrollbar:-o-prefocus");
