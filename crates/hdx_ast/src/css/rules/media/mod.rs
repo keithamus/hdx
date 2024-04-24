@@ -1,10 +1,11 @@
+use hdx_derive::Atomizable;
 use smallvec::{smallvec, SmallVec};
 
 use hdx_atom::{atom, Atom, Atomizable};
 use hdx_lexer::Token;
 use hdx_parser::{
-	diagnostics, discard, expect, expect_ignore_case, match_ignore_case, peek, todo, unexpected, unexpected_ident,
-	AtRule, Parse, Parser, Result as ParserResult, RuleList, Spanned, Vec,
+	diagnostics, discard, expect, expect_ignore_case, match_ignore_case, peek, todo, unexpected_ident, AtRule, Parse,
+	Parser, Result as ParserResult, RuleList, Spanned, Vec,
 };
 use hdx_writer::{write_css, write_list, CssWriter, OutputOption, Result as WriterResult, WriteCss};
 
@@ -46,21 +47,16 @@ impl<'a> WriteCss<'a> for Media<'a> {
 			return Ok(());
 		}
 		write_css!(sink, '@', atom!("media"));
-		if matches!(self.query.node.0.first(), Some(Spanned { node: MediaQuery::Condition(_), .. })) {
-			sink.write_whitespace()?;
-		} else {
+		if self.query.node.len() > 0 {
 			sink.write_char(' ')?;
 		}
-		self.query.write_css(sink)?;
-		sink.write_whitespace()?;
-		sink.write_char('{')?;
+		write_css!(sink, self.query, (), '{');
 		sink.write_newline()?;
 		sink.indent();
 		self.rules.write_css(sink)?;
 		sink.write_newline()?;
 		sink.dedent();
-		sink.write_char('}')?;
-		Ok(())
+		sink.write_char('}')
 	}
 }
 
@@ -95,6 +91,12 @@ impl<'a> WriteCss<'a> for MediaRules<'a> {
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct MediaQueryList(pub SmallVec<[Spanned<MediaQuery>; 1]>);
 
+impl MediaQueryList {
+	pub fn len(&self) -> usize {
+		self.0.len()
+	}
+}
+
 impl<'a> Parse<'a> for MediaQueryList {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		let mut queries = smallvec![];
@@ -114,35 +116,40 @@ impl<'a> WriteCss<'a> for MediaQueryList {
 	}
 }
 
+#[derive(Atomizable, Debug, PartialEq, Hash)]
+#[atomizable(FromToken)]
+#[cfg_attr(
+	feature = "serde",
+	derive(serde::Serialize),
+	serde(tag = "type", content = "value", rename_all = "kebab-case")
+)]
+pub enum MediaPreCondition {
+	Not,
+	Only,
+}
+
 #[derive(Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", content = "value", rename_all = "kebab-case"))]
-pub enum MediaQuery {
-	Condition(MediaCondition),
-	Typed(MediaType),
-	NotTyped(MediaType),
-	OnlyTyped(MediaType),
-	TypedCondition(MediaType, MediaCondition),
-	NotTypedCondition(MediaType, MediaCondition),
-	OnlyTypedCondition(MediaType, MediaCondition),
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+pub struct MediaQuery {
+	precondition: Option<MediaPreCondition>,
+	media_type: Option<MediaType>,
+	condition: Option<MediaCondition>,
 }
 
 impl<'a> Parse<'a> for MediaQuery {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let mut not = false;
-		let mut only = false;
+		let mut precondition = None;
 		let mut media_type = None;
+		let mut condition = None;
 		if peek!(parser, Token::LeftParen) {
-			return Ok(Self::Condition(MediaCondition::parse(parser)?));
+			condition = Some(MediaCondition::parse(parser)?);
+			return Ok(Self { precondition, media_type, condition });
 		}
 		expect_ignore_case! { parser.next(), Token::Ident(_):
-			atom!("not") => {
-				not = true;
-			},
-			atom!("only") => {
-				only = true;
-			},
 			atom => {
-				if let Some(ty) = MediaType::from_atom(&atom) {
+				if let Some(cond) = MediaPreCondition::from_atom(&atom) {
+					precondition = Some(cond);
+				} else if let Some(ty) = MediaType::from_atom(&atom) {
 					media_type = Some(ty);
 				} else {
 					unexpected_ident!(parser, atom);
@@ -150,56 +157,88 @@ impl<'a> Parse<'a> for MediaQuery {
 			}
 		}
 		match parser.peek() {
-			Token::Ident(ident) if only || not => {
-				if let Some(ty) = MediaType::from_atom(ident) {
+			Token::Ident(ident) if precondition.is_some() => {
+				media_type = MediaType::from_atom(ident);
+				if media_type.is_some() {
 					parser.advance();
-					media_type = Some(ty);
 				} else {
 					unexpected_ident!(parser, ident)
 				}
 			}
-			Token::Ident(ident) if media_type.is_some() && matches!(ident.to_ascii_lowercase(), atom!("and")) => {
-				// Must not advance because we need "and" to be consumed by MediaCondition
-				return Ok(Self::TypedCondition(media_type.unwrap(), MediaCondition::parse(parser)?));
-			}
-			token => {
-				if let Some(mt) = media_type {
-					return Ok(Self::Typed(mt));
-				} else {
-					unexpected!(parser, token)
-				}
-			}
+			_ => {}
 		}
-		match parser.next() {
-			Token::Ident(ident) if matches!(ident.to_ascii_lowercase(), atom!("and")) => {
-				// Must not advance because we need "and" to be consumed by MediaCondition
-				if only {
-					Ok(Self::OnlyTypedCondition(media_type.unwrap(), MediaCondition::parse(parser)?))
-				} else if not {
-					Ok(Self::NotTypedCondition(media_type.unwrap(), MediaCondition::parse(parser)?))
-				} else {
-					unexpected_ident!(parser, ident)
-				}
-			}
-			_ if only => Ok(Self::OnlyTyped(media_type.unwrap())),
-			_ if not => Ok(Self::NotTyped(media_type.unwrap())),
-			token => unexpected!(parser, token),
+		dbg!(&precondition, &media_type, &condition);
+		if media_type.is_some() && match_ignore_case!(parser.peek(), Token::Ident(atom!("and"))) {
+			parser.advance();
+			condition = Some(MediaCondition::parse(parser)?);
+		} else if media_type.is_none() {
+			condition = Some(MediaCondition::parse(parser)?);
 		}
+		Ok(Self { precondition, media_type, condition })
 	}
 }
 
 impl<'a> WriteCss<'a> for MediaQuery {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
-		match self {
-			Self::Condition(mc) => mc.write_css(sink)?,
-			Self::Typed(mt) => mt.write_css(sink)?,
-			Self::NotTyped(mt) => write_css!(sink, atom!("not"), (), mt),
-			Self::OnlyTyped(mt) => write_css!(sink, atom!("only"), (), mt),
-			Self::TypedCondition(mt, mc) => write_css!(sink, mt, (), mc),
-			Self::NotTypedCondition(mt, mc) => write_css!(sink, atom!("not"), ' ', mt, (), mc),
-			Self::OnlyTypedCondition(mt, mc) => write_css!(sink, atom!("only"), ' ', mt, (), mc),
+		if let Some(precondition) = &self.precondition {
+			write_css!(sink, precondition.to_atom(), ' ');
+		}
+		if let Some(media_type) = &self.media_type {
+			write_css!(sink, media_type);
+			if self.condition.is_some() {
+				write_css!(sink, ' ');
+			}
+		}
+		if let Some(condition) = &self.condition {
+			if self.media_type.is_some() {
+				write_css!(sink, atom!("and"), ' ');
+			}
+			write_css!(sink, condition);
 		}
 		Ok(())
+	}
+}
+
+#[derive(Debug, PartialEq, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
+pub enum MediaType {
+	All,
+	Print,
+	Screen,
+	Custom(Atom),
+}
+
+impl Atomizable for MediaType {
+	fn from_atom(atom: &Atom) -> Option<Self> {
+		match atom.to_ascii_lowercase() {
+			atom!("all") => Some(Self::All),
+			atom!("print") => Some(Self::Print),
+			atom!("screen") => Some(Self::Screen),
+			// https://drafts.csswg.org/mediaqueries/#mq-syntax
+			// The <media-type> production does not include the keywords only, not, and, or, and layer.
+			atom!("only") | atom!("not") | atom!("and") | atom!("or") | atom!("layer") => None,
+			custom => Some(Self::Custom(custom)),
+		}
+	}
+
+	fn to_atom(&self) -> Atom {
+		match self {
+			Self::All => atom!("all"),
+			Self::Print => atom!("print"),
+			Self::Screen => atom!("screen"),
+			Self::Custom(atom) => atom.clone(),
+		}
+	}
+}
+
+impl<'a> WriteCss<'a> for MediaType {
+	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
+		match self {
+			Self::All => atom!("all").write_css(sink),
+			Self::Print => atom!("print").write_css(sink),
+			Self::Screen => atom!("screen").write_css(sink),
+			Self::Custom(atom) => atom.write_css(sink),
+		}
 	}
 }
 
@@ -208,22 +247,30 @@ impl<'a> WriteCss<'a> for MediaQuery {
 pub enum MediaCondition {
 	Is(MediaFeature),
 	Not(MediaFeature),
-	And(SmallVec<[MediaFeature; 4]>),
-	Or(SmallVec<[MediaFeature; 4]>),
+	And(SmallVec<[MediaFeature; 1]>),
+	Or(SmallVec<[MediaFeature; 1]>),
 }
 
 impl<'a> Parse<'a> for MediaCondition {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		if matches!(parser.peek(), Token::LeftParen) {
+		let feature = if matches!(parser.peek(), Token::LeftParen) {
 			if peek!(parser, 2, Token::LeftParen) {
 				todo!(parser)
 			} else {
-				return Ok(Self::Is(MediaFeature::parse(parser)?));
+				Some(MediaFeature::parse(parser)?)
 			}
+		} else {
+			None
+		};
+		let mut features = smallvec![];
+		if let Some(feature) = feature {
+			if !peek!(parser, Token::Ident(_)) {
+				return Ok(Self::Is(feature));
+			}
+			features.push(feature);
 		}
 		expect_ignore_case! { parser.peek(), Token::Ident(_):
 			atom!("and") => {
-				let mut features = smallvec![];
 				loop {
 					expect_ignore_case!(parser.next(), Token::Ident(atom!("and")));
 					features.push(MediaFeature::parse(parser)?);
@@ -233,12 +280,11 @@ impl<'a> Parse<'a> for MediaCondition {
 				}
 			},
 			atom!("or") => {
-				let mut features = smallvec![];
 				loop {
 					expect_ignore_case!(parser.next(), Token::Ident(atom!("or")));
 					features.push(MediaFeature::parse(parser)?);
 					if !match_ignore_case!(parser.peek(), Token::Ident(atom!("or"))) {
-						return Ok(Self::And(features));
+						return Ok(Self::Or(features));
 					}
 				}
 			},
@@ -262,21 +308,24 @@ impl<'a> WriteCss<'a> for MediaCondition {
 			Self::And(features) => {
 				let mut iter = features.iter().peekable();
 				while let Some(feature) = iter.next() {
-					atom!("and").write_css(sink)?;
-					sink.write_whitespace()?;
 					feature.write_css(sink)?;
 					if iter.peek().is_some() {
+						sink.write_whitespace()?;
+						atom!("and").write_css(sink)?;
 						sink.write_whitespace()?;
 					}
 				}
 				Ok(())
 			}
 			Self::Or(features) => {
-				for feature in features.iter() {
-					sink.write_char(' ')?;
-					atom!("or").write_css(sink)?;
-					sink.write_char(' ')?;
+				let mut iter = features.iter().peekable();
+				while let Some(feature) = iter.next() {
 					feature.write_css(sink)?;
+					if iter.peek().is_some() {
+						sink.write_whitespace()?;
+						atom!("or").write_css(sink)?;
+						sink.write_whitespace()?;
+					}
 				}
 				Ok(())
 			}
@@ -401,49 +450,6 @@ macro_rules! apply_medias {
 }
 use apply_medias;
 
-#[derive(Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
-pub enum MediaType {
-	All,
-	Print,
-	Screen,
-	Custom(Atom),
-}
-
-impl Atomizable for MediaType {
-	fn from_atom(atom: &Atom) -> Option<Self> {
-		match atom.to_ascii_lowercase() {
-			atom!("all") => Some(Self::All),
-			atom!("print") => Some(Self::Print),
-			atom!("screen") => Some(Self::Screen),
-			// https://drafts.csswg.org/mediaqueries/#mq-syntax
-			// The <media-type> production does not include the keywords only, not, and, or, and layer.
-			atom!("only") | atom!("not") | atom!("and") | atom!("or") | atom!("layer") => None,
-			custom => Some(Self::Custom(custom)),
-		}
-	}
-
-	fn to_atom(&self) -> Atom {
-		match self {
-			Self::All => atom!("all"),
-			Self::Print => atom!("print"),
-			Self::Screen => atom!("screen"),
-			Self::Custom(atom) => atom.clone(),
-		}
-	}
-}
-
-impl<'a> WriteCss<'a> for MediaType {
-	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
-		match self {
-			Self::All => atom!("all").write_css(sink),
-			Self::Print => atom!("print").write_css(sink),
-			Self::Screen => atom!("screen").write_css(sink),
-			Self::Custom(atom) => atom.write_css(sink),
-		}
-	}
-}
-
 #[cfg(test)]
 mod tests {
 	use super::*;
@@ -451,10 +457,10 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(Media, 216);
-		assert_size!(MediaQueryList, 168);
-		assert_size!(MediaQuery, 144);
-		assert_size!(MediaCondition, 120);
+		assert_size!(Media, 144);
+		assert_size!(MediaQueryList, 96);
+		assert_size!(MediaQuery, 72);
+		assert_size!(MediaCondition, 48);
 		assert_size!(MediaType, 16);
 	}
 
@@ -464,21 +470,35 @@ mod tests {
 		assert_parse!(MediaQuery, "not embossed");
 		assert_parse!(MediaQuery, "only screen");
 		assert_parse!(MediaFeature, "(grid)", "(grid: 0)");
-		assert_parse!(MediaCondition, "and (grid)", "and (grid: 0)");
 		assert_parse!(MediaQuery, "screen and (grid)", "screen and (grid: 0)");
 		assert_parse!(MediaQuery, "screen and (hover) and (pointer)");
 		assert_parse!(MediaQuery, "screen and (orientation: landscape)");
+		assert_parse!(MediaQuery, "(hover) and (pointer)");
+		assert_parse!(MediaQuery, "(hover) or (pointer)");
+		assert_parse!(MediaQuery, "not (hover) and (pointer)");
+		assert_parse!(MediaQuery, "not (hover) or (pointer)");
+		assert_parse!(MediaQuery, "only (hover) or (pointer)");
 		assert_parse!(Media, "@media print {\n\n}");
 		assert_parse!(Media, "@media print, (prefers-reduced-motion: reduce) {\n\n}");
 		assert_parse!(Media, "@media (min-width: 1200px) {\n\n}");
 		assert_parse!(Media, "@media (min-width: 1200px) {\n\tbody {\n\t\tcolor: red;\n\t}\n}");
 		assert_parse!(Media, "@media (min-width: 1200px) {\n@page {\n}\n}");
-		// assert_parse!(Media, "@media only screen and (max-device-width: 800px), only screen and (device-width: 1024px) and (device-height: 600px), only screen and (width: 1280px) and (orientation: landscape), only screen and (device-width: 800px), only screen and (max-width: 767px)");
+		assert_parse!(Media, "@media (max-width: 575.98px) and (prefers-reduced-motion: reduce) {\n\n}");
+		assert_parse!(Media, "@media only screen and (max-device-width: 800px), only screen and (device-width: 1024px) and (device-height: 600px), only screen and (width: 1280px) and (orientation: landscape), only screen and (device-width: 800px), only screen and (max-width: 767px) {\n\n}");
 	}
 
 	#[test]
 	fn test_minify() {
 		// Drop redundant rules
 		assert_minify!(Media, "@media print {}", "");
+	}
+
+	#[test]
+	fn test_errors() {
+		assert_parse_error!(MediaQuery, "(hover) and or (pointer)");
+		assert_parse_error!(MediaQuery, "(pointer) or and (pointer)");
+		assert_parse_error!(MediaQuery, "(pointer) not and (pointer)");
+		assert_parse_error!(MediaQuery, "only and (pointer)");
+		assert_parse_error!(MediaQuery, "not and (pointer)");
 	}
 }

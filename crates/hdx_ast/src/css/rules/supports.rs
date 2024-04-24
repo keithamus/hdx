@@ -2,8 +2,8 @@ use crate::{css::stylesheet::Rule, syntax::SimpleBlock};
 use hdx_atom::atom;
 use hdx_lexer::Token;
 use hdx_parser::{
-	diagnostics, expect, expect_ignore_case, match_ignore_case, peek, todo, unexpected, unexpected_ident, AtRule,
-	Parse, Parser, Result as ParserResult, RuleList, Spanned, Vec,
+	diagnostics, expect, expect_ignore_case, match_ignore_case, peek, unexpected, unexpected_ident, AtRule, Parse,
+	Parser, Result as ParserResult, RuleList, Spanned, Vec,
 };
 use hdx_writer::{CssWriter, OutputOption, Result as WriterResult, WriteCss};
 
@@ -102,7 +102,6 @@ impl<'a> Parse<'a> for SupportsCondition<'a> {
 				let wrapped = peek!(parser, 2, Token::LeftParen);
 				if wrapped {
 					parser.next();
-
 				}
 				let feature = SupportsFeature::parse(parser)?;
 				match parser.peek() {
@@ -266,10 +265,7 @@ mod tests {
 		assert_parse!(Supports, "@supports (width: 1--foo) or (width: 1foo) {\n\n}");
 		assert_parse!(Supports, "@supports (width: 1--foo) and (width: 1foo) {\n\n}");
 		assert_parse!(Supports, "@supports (width: 100vw) {\n\tbody {\n\t\twidth: 100vw;\n\t}\n}");
-		assert_parse!(
-			Supports,
-			"@supports not ((text-align-last: justify) or (-moz-text-align-last: justify)) {\n\n}"
-		);
+		assert_parse!(Supports, "@supports not ((text-align-last: justify) or (-moz-text-align-last: justify)) {\n\n}");
 		// assert_parse!(Supports, "@supports ((position: -webkit-sticky) or (position: sticky)) {}");
 	}
 
