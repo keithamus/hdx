@@ -85,6 +85,12 @@ impl<'a> WriteCss<'a> for StyleDeclaration<'a> {
 			}
 			sink.write_newline()?;
 		}
+		for rule in self.rules.iter() {
+			sink.write_indent()?;
+			sink.write_newline()?;
+			rule.write_css(sink)?;
+			sink.write_newline()?;
+		}
 		Ok(())
 	}
 }
