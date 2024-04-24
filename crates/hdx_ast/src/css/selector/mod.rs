@@ -288,6 +288,8 @@ mod tests {
 		assert_parse!(SelectorList, " /**/ .foo", ".foo");
 		assert_parse!(SelectorList, ":lang(en-gb, en-us)");
 		assert_parse!(SelectorList, "& .foo", "& .foo");
+		assert_parse!(SelectorList, "&:hover", "&:hover");
+		assert_parse!(SelectorList, ".foo &:hover", ".foo &:hover");
 		// Non Standard
 		assert_parse!(SelectorList, "::-moz-focus-inner");
 		assert_parse!(SelectorList, "::-moz-list-bullet::-webkit-scrollbar::-ms-clear:-ms-input-placeholder::-o-scrollbar:-o-prefocus");

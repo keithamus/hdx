@@ -1,6 +1,6 @@
 use hdx_lexer::{Include, Token};
 use hdx_parser::{discard, expect, peek, unexpected, Parse, Parser, Result as ParserResult};
-use hdx_writer::{CssWriter, Result as WriterResult, WriteCss, write_css};
+use hdx_writer::{write_css, CssWriter, Result as WriterResult, WriteCss};
 
 #[derive(Debug, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(rename_all = "kebab-case"))]
@@ -17,7 +17,7 @@ pub enum Combinator {
 impl<'a> Parse<'a> for Combinator {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		let could_be_descendant_combinator = discard!(parser, Include::Whitespace, Token::Whitespace);
-		if !peek!(parser, Token::Delim(_)) && could_be_descendant_combinator {
+		if !peek!(parser, Token::Delim('>' | '+' | '~' | '|')) && could_be_descendant_combinator {
 			return Ok(Self::Descendant);
 		}
 		let val = match parser.peek() {
