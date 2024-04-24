@@ -24,7 +24,7 @@
                   "kind": "Ident",
                   "value": "screen"
                 },
-                "start": 6
+                "start": 7
               },
               {
                 "end": 14,
@@ -52,12 +52,19 @@
                 "start": 14
               },
               {
+                "end": 26,
+                "node": {
+                  "kind": "Whitespace"
+                },
+                "start": 24
+              },
+              {
                 "end": 34,
                 "node": {
                   "kind": "AtKeyword",
                   "value": "charset"
                 },
-                "start": 24
+                "start": 26
               },
               {
                 "end": 35,
@@ -94,7 +101,7 @@
         "start": 0
       }
     ],
-    "type": "StyleSheet"
+    "type": "stylesheet"
   },
   "start": 0
 }

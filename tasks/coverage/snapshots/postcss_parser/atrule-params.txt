@@ -1,9 +1,9 @@
-hdx_parser::UnknownRule
+hdx_parser::Unimplemented
 
-  × Unknown Rule
+  × The token at [0..0) cannot yet be parsed by the parser :(
    ╭─[tasks/coverage/postcss-parser-tests/cases/atrule-params.css:1:1]
  1 │ @-moz-document/* near */ /* filter */ url("example.com/{") /* a */ {}
-   · ───────────────────────────────────┬──────────────────────────────────
-   ·                                    ╰── Don't know how to interpret this
+   · ▲
+   · ╰── Didn't recognise this bit
    ╰────
-  help: This might be a mistake in the parser, please file an issue!
+  help: This feature needs to be implemented within hdx. This file won't parse without it.

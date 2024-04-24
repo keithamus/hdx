@@ -3215,33 +3215,30 @@
               {
                 "end": 8729,
                 "node": {
-                  "type": "typed-condition",
-                  "value": [
-                    {
-                      "type": "All"
-                    },
-                    {
-                      "type": "And",
-                      "value": [
-                        {
-                          "type": "None"
-                        }
-                      ]
+                  "condition": {
+                    "type": "Is",
+                    "value": {
+                      "type": "None"
                     }
-                  ]
+                  },
+                  "media_type": {
+                    "type": "All"
+                  },
+                  "precondition": null
                 },
                 "start": 8695
               },
               {
                 "end": 8758,
                 "node": {
-                  "type": "condition",
-                  "value": {
+                  "condition": {
                     "type": "Is",
                     "value": {
                       "type": "Active"
                     }
-                  }
+                  },
+                  "media_type": null,
+                  "precondition": null
                 },
                 "start": 8730
               }
@@ -3307,7 +3304,7 @@
             ],
             "start": 8758
           },
-          "type": "MediaRule"
+          "type": "Media"
         },
         "start": 8555
       },
@@ -16408,27 +16405,27 @@
               {
                 "end": 22361,
                 "node": {
-                  "type": "only-typed-condition",
-                  "value": [
-                    {
-                      "type": "Screen"
-                    },
-                    {
-                      "type": "Is",
-                      "value": {
-                        "type": "Legacy",
-                        "value": [
-                          {
-                            "type": "GreaterThanEqual"
-                          },
-                          {
-                            "type": "px",
-                            "value": 480.0
-                          }
-                        ]
-                      }
+                  "condition": {
+                    "type": "Is",
+                    "value": {
+                      "type": "Legacy",
+                      "value": [
+                        {
+                          "type": "GreaterThanEqual"
+                        },
+                        {
+                          "type": "px",
+                          "value": 480.0
+                        }
+                      ]
                     }
-                  ]
+                  },
+                  "media_type": {
+                    "type": "Screen"
+                  },
+                  "precondition": {
+                    "type": "only"
+                  }
                 },
                 "start": 22325
               }
@@ -18153,7 +18150,7 @@
             ],
             "start": 22361
           },
-          "type": "MediaRule"
+          "type": "Media"
         },
         "start": 22317
       },
