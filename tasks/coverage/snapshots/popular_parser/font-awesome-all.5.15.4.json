@@ -79969,501 +79969,441 @@
       },
       {
         "end": 72417,
-        "node": {
-          "block": {
-            "end": 72417,
+        "node": [
+          {
+            "end": 71994,
             "node": {
-              "declarations": [
+              "important": false,
+              "name": "font-family",
+              "type": "property",
+              "value": [
                 {
                   "end": 71993,
                   "node": {
-                    "important": false,
-                    "name": "font-family",
-                    "type": "Declaration",
-                    "value": {
-                      "end": 71993,
-                      "node": [
-                        {
-                          "end": 71993,
-                          "node": {
-                            "kind": "String",
-                            "value": [
-                              "Font Awesome 5 Brands",
-                              {
-                                "kind": "Single"
-                              }
-                            ]
-                          },
-                          "start": 71970
-                        }
-                      ],
-                      "start": 71969
-                    }
+                    "Named": [
+                      "Font Awesome 5 Brands",
+                      {
+                        "kind": "Single"
+                      }
+                    ]
                   },
-                  "start": 71954
-                },
-                {
-                  "end": 72015,
-                  "node": {
-                    "important": false,
-                    "name": "font-style",
-                    "type": "Declaration",
-                    "value": {
-                      "end": 72015,
-                      "node": [
-                        {
-                          "end": 72015,
-                          "node": {
-                            "kind": "Ident",
-                            "value": "normal"
-                          },
-                          "start": 72009
-                        }
-                      ],
-                      "start": 72008
-                    }
-                  },
-                  "start": 71994
-                },
-                {
-                  "end": 72035,
-                  "node": {
-                    "important": false,
-                    "name": "font-weight",
-                    "type": "Declaration",
-                    "value": {
-                      "end": 72035,
-                      "node": [
-                        {
-                          "end": 72035,
-                          "node": {
-                            "kind": "Number",
-                            "value": [
-                              400.0,
-                              {
-                                "bits": 0
-                              }
-                            ]
-                          },
-                          "start": 72032
-                        }
-                      ],
-                      "start": 72031
-                    }
-                  },
-                  "start": 72016
-                },
+                  "start": 71969
+                }
+              ]
+            },
+            "start": 71954
+          },
+          {
+            "end": 72016,
+            "node": {
+              "important": false,
+              "name": "font-style",
+              "type": "property",
+              "value": {
+                "type": "normal"
+              }
+            },
+            "start": 71994
+          },
+          {
+            "end": 72036,
+            "node": {
+              "important": false,
+              "name": "font-weight",
+              "type": "property",
+              "value": {
+                "type": "number",
+                "value": 400.0
+              }
+            },
+            "start": 72016
+          },
+          {
+            "end": 72059,
+            "node": {
+              "important": false,
+              "name": "font-display",
+              "type": "property",
+              "value": [
                 {
                   "end": 72058,
                   "node": {
-                    "important": false,
-                    "name": "font-display",
-                    "type": "Declaration",
-                    "value": {
-                      "end": 72058,
-                      "node": [
-                        {
-                          "end": 72058,
-                          "node": {
-                            "kind": "Ident",
-                            "value": "block"
-                          },
-                          "start": 72053
-                        }
-                      ],
-                      "start": 72052
-                    }
+                    "kind": "Ident",
+                    "value": "block"
                   },
-                  "start": 72036
-                },
+                  "start": 72053
+                }
+              ]
+            },
+            "start": 72036
+          },
+          {
+            "end": 72104,
+            "node": {
+              "important": false,
+              "name": "src",
+              "type": "property",
+              "value": [
                 {
                   "end": 72103,
                   "node": {
-                    "important": false,
-                    "name": "src",
-                    "type": "Declaration",
-                    "value": {
-                      "end": 72103,
-                      "node": [
-                        {
-                          "end": 72103,
-                          "node": {
-                            "name": "url",
-                            "type": "Function",
-                            "values": [
-                              {
-                                "end": 72102,
-                                "node": {
-                                  "kind": "String",
-                                  "value": [
-                                    "../webfonts/fa-brands-400.eot",
-                                    {
-                                      "kind": "Double"
-                                    }
-                                  ]
-                                },
-                                "start": 72071
-                              }
-                            ]
-                          },
-                          "start": 72067
-                        }
-                      ],
-                      "start": 72066
-                    }
+                    "name": "url",
+                    "type": "Function",
+                    "values": [
+                      {
+                        "end": 72102,
+                        "node": {
+                          "kind": "String",
+                          "value": [
+                            "../webfonts/fa-brands-400.eot",
+                            {
+                              "kind": "Double"
+                            }
+                          ]
+                        },
+                        "start": 72071
+                      }
+                    ]
                   },
-                  "start": 72059
+                  "start": 72067
+                }
+              ]
+            },
+            "start": 72059
+          },
+          {
+            "end": 72415,
+            "node": {
+              "important": false,
+              "name": "src",
+              "type": "property",
+              "value": [
+                {
+                  "end": 72155,
+                  "node": {
+                    "name": "url",
+                    "type": "Function",
+                    "values": [
+                      {
+                        "end": 72154,
+                        "node": {
+                          "kind": "String",
+                          "value": [
+                            "../webfonts/fa-brands-400.eot?#iefix",
+                            {
+                              "kind": "Double"
+                            }
+                          ]
+                        },
+                        "start": 72116
+                      }
+                    ]
+                  },
+                  "start": 72112
+                },
+                {
+                  "end": 72156,
+                  "node": {
+                    "kind": "Whitespace"
+                  },
+                  "start": 72155
+                },
+                {
+                  "end": 72183,
+                  "node": {
+                    "name": "format",
+                    "type": "Function",
+                    "values": [
+                      {
+                        "end": 72182,
+                        "node": {
+                          "kind": "String",
+                          "value": [
+                            "embedded-opentype",
+                            {
+                              "kind": "Double"
+                            }
+                          ]
+                        },
+                        "start": 72163
+                      }
+                    ]
+                  },
+                  "start": 72156
+                },
+                {
+                  "end": 72184,
+                  "node": {
+                    "kind": "Comma"
+                  },
+                  "start": 72183
+                },
+                {
+                  "end": 72185,
+                  "node": {
+                    "kind": "Whitespace"
+                  },
+                  "start": 72184
+                },
+                {
+                  "end": 72223,
+                  "node": {
+                    "name": "url",
+                    "type": "Function",
+                    "values": [
+                      {
+                        "end": 72222,
+                        "node": {
+                          "kind": "String",
+                          "value": [
+                            "../webfonts/fa-brands-400.woff2",
+                            {
+                              "kind": "Double"
+                            }
+                          ]
+                        },
+                        "start": 72189
+                      }
+                    ]
+                  },
+                  "start": 72185
+                },
+                {
+                  "end": 72224,
+                  "node": {
+                    "kind": "Whitespace"
+                  },
+                  "start": 72223
+                },
+                {
+                  "end": 72239,
+                  "node": {
+                    "name": "format",
+                    "type": "Function",
+                    "values": [
+                      {
+                        "end": 72238,
+                        "node": {
+                          "kind": "String",
+                          "value": [
+                            "woff2",
+                            {
+                              "kind": "Double"
+                            }
+                          ]
+                        },
+                        "start": 72231
+                      }
+                    ]
+                  },
+                  "start": 72224
+                },
+                {
+                  "end": 72240,
+                  "node": {
+                    "kind": "Comma"
+                  },
+                  "start": 72239
+                },
+                {
+                  "end": 72241,
+                  "node": {
+                    "kind": "Whitespace"
+                  },
+                  "start": 72240
+                },
+                {
+                  "end": 72278,
+                  "node": {
+                    "name": "url",
+                    "type": "Function",
+                    "values": [
+                      {
+                        "end": 72277,
+                        "node": {
+                          "kind": "String",
+                          "value": [
+                            "../webfonts/fa-brands-400.woff",
+                            {
+                              "kind": "Double"
+                            }
+                          ]
+                        },
+                        "start": 72245
+                      }
+                    ]
+                  },
+                  "start": 72241
+                },
+                {
+                  "end": 72279,
+                  "node": {
+                    "kind": "Whitespace"
+                  },
+                  "start": 72278
+                },
+                {
+                  "end": 72293,
+                  "node": {
+                    "name": "format",
+                    "type": "Function",
+                    "values": [
+                      {
+                        "end": 72292,
+                        "node": {
+                          "kind": "String",
+                          "value": [
+                            "woff",
+                            {
+                              "kind": "Double"
+                            }
+                          ]
+                        },
+                        "start": 72286
+                      }
+                    ]
+                  },
+                  "start": 72279
+                },
+                {
+                  "end": 72294,
+                  "node": {
+                    "kind": "Comma"
+                  },
+                  "start": 72293
+                },
+                {
+                  "end": 72295,
+                  "node": {
+                    "kind": "Whitespace"
+                  },
+                  "start": 72294
+                },
+                {
+                  "end": 72331,
+                  "node": {
+                    "name": "url",
+                    "type": "Function",
+                    "values": [
+                      {
+                        "end": 72330,
+                        "node": {
+                          "kind": "String",
+                          "value": [
+                            "../webfonts/fa-brands-400.ttf",
+                            {
+                              "kind": "Double"
+                            }
+                          ]
+                        },
+                        "start": 72299
+                      }
+                    ]
+                  },
+                  "start": 72295
+                },
+                {
+                  "end": 72332,
+                  "node": {
+                    "kind": "Whitespace"
+                  },
+                  "start": 72331
+                },
+                {
+                  "end": 72350,
+                  "node": {
+                    "name": "format",
+                    "type": "Function",
+                    "values": [
+                      {
+                        "end": 72349,
+                        "node": {
+                          "kind": "String",
+                          "value": [
+                            "truetype",
+                            {
+                              "kind": "Double"
+                            }
+                          ]
+                        },
+                        "start": 72339
+                      }
+                    ]
+                  },
+                  "start": 72332
+                },
+                {
+                  "end": 72351,
+                  "node": {
+                    "kind": "Comma"
+                  },
+                  "start": 72350
+                },
+                {
+                  "end": 72352,
+                  "node": {
+                    "kind": "Whitespace"
+                  },
+                  "start": 72351
+                },
+                {
+                  "end": 72400,
+                  "node": {
+                    "name": "url",
+                    "type": "Function",
+                    "values": [
+                      {
+                        "end": 72399,
+                        "node": {
+                          "kind": "String",
+                          "value": [
+                            "../webfonts/fa-brands-400.svg#fontawesome",
+                            {
+                              "kind": "Double"
+                            }
+                          ]
+                        },
+                        "start": 72356
+                      }
+                    ]
+                  },
+                  "start": 72352
+                },
+                {
+                  "end": 72401,
+                  "node": {
+                    "kind": "Whitespace"
+                  },
+                  "start": 72400
                 },
                 {
                   "end": 72414,
                   "node": {
-                    "important": false,
-                    "name": "src",
-                    "type": "Declaration",
-                    "value": {
-                      "end": 72414,
-                      "node": [
-                        {
-                          "end": 72155,
-                          "node": {
-                            "name": "url",
-                            "type": "Function",
-                            "values": [
-                              {
-                                "end": 72154,
-                                "node": {
-                                  "kind": "String",
-                                  "value": [
-                                    "../webfonts/fa-brands-400.eot?#iefix",
-                                    {
-                                      "kind": "Double"
-                                    }
-                                  ]
-                                },
-                                "start": 72116
-                              }
-                            ]
-                          },
-                          "start": 72112
+                    "name": "format",
+                    "type": "Function",
+                    "values": [
+                      {
+                        "end": 72413,
+                        "node": {
+                          "kind": "String",
+                          "value": [
+                            "svg",
+                            {
+                              "kind": "Double"
+                            }
+                          ]
                         },
-                        {
-                          "end": 72156,
-                          "node": {
-                            "kind": "Whitespace"
-                          },
-                          "start": 72155
-                        },
-                        {
-                          "end": 72183,
-                          "node": {
-                            "name": "format",
-                            "type": "Function",
-                            "values": [
-                              {
-                                "end": 72182,
-                                "node": {
-                                  "kind": "String",
-                                  "value": [
-                                    "embedded-opentype",
-                                    {
-                                      "kind": "Double"
-                                    }
-                                  ]
-                                },
-                                "start": 72163
-                              }
-                            ]
-                          },
-                          "start": 72156
-                        },
-                        {
-                          "end": 72184,
-                          "node": {
-                            "kind": "Comma"
-                          },
-                          "start": 72183
-                        },
-                        {
-                          "end": 72185,
-                          "node": {
-                            "kind": "Whitespace"
-                          },
-                          "start": 72184
-                        },
-                        {
-                          "end": 72223,
-                          "node": {
-                            "name": "url",
-                            "type": "Function",
-                            "values": [
-                              {
-                                "end": 72222,
-                                "node": {
-                                  "kind": "String",
-                                  "value": [
-                                    "../webfonts/fa-brands-400.woff2",
-                                    {
-                                      "kind": "Double"
-                                    }
-                                  ]
-                                },
-                                "start": 72189
-                              }
-                            ]
-                          },
-                          "start": 72185
-                        },
-                        {
-                          "end": 72224,
-                          "node": {
-                            "kind": "Whitespace"
-                          },
-                          "start": 72223
-                        },
-                        {
-                          "end": 72239,
-                          "node": {
-                            "name": "format",
-                            "type": "Function",
-                            "values": [
-                              {
-                                "end": 72238,
-                                "node": {
-                                  "kind": "String",
-                                  "value": [
-                                    "woff2",
-                                    {
-                                      "kind": "Double"
-                                    }
-                                  ]
-                                },
-                                "start": 72231
-                              }
-                            ]
-                          },
-                          "start": 72224
-                        },
-                        {
-                          "end": 72240,
-                          "node": {
-                            "kind": "Comma"
-                          },
-                          "start": 72239
-                        },
-                        {
-                          "end": 72241,
-                          "node": {
-                            "kind": "Whitespace"
-                          },
-                          "start": 72240
-                        },
-                        {
-                          "end": 72278,
-                          "node": {
-                            "name": "url",
-                            "type": "Function",
-                            "values": [
-                              {
-                                "end": 72277,
-                                "node": {
-                                  "kind": "String",
-                                  "value": [
-                                    "../webfonts/fa-brands-400.woff",
-                                    {
-                                      "kind": "Double"
-                                    }
-                                  ]
-                                },
-                                "start": 72245
-                              }
-                            ]
-                          },
-                          "start": 72241
-                        },
-                        {
-                          "end": 72279,
-                          "node": {
-                            "kind": "Whitespace"
-                          },
-                          "start": 72278
-                        },
-                        {
-                          "end": 72293,
-                          "node": {
-                            "name": "format",
-                            "type": "Function",
-                            "values": [
-                              {
-                                "end": 72292,
-                                "node": {
-                                  "kind": "String",
-                                  "value": [
-                                    "woff",
-                                    {
-                                      "kind": "Double"
-                                    }
-                                  ]
-                                },
-                                "start": 72286
-                              }
-                            ]
-                          },
-                          "start": 72279
-                        },
-                        {
-                          "end": 72294,
-                          "node": {
-                            "kind": "Comma"
-                          },
-                          "start": 72293
-                        },
-                        {
-                          "end": 72295,
-                          "node": {
-                            "kind": "Whitespace"
-                          },
-                          "start": 72294
-                        },
-                        {
-                          "end": 72331,
-                          "node": {
-                            "name": "url",
-                            "type": "Function",
-                            "values": [
-                              {
-                                "end": 72330,
-                                "node": {
-                                  "kind": "String",
-                                  "value": [
-                                    "../webfonts/fa-brands-400.ttf",
-                                    {
-                                      "kind": "Double"
-                                    }
-                                  ]
-                                },
-                                "start": 72299
-                              }
-                            ]
-                          },
-                          "start": 72295
-                        },
-                        {
-                          "end": 72332,
-                          "node": {
-                            "kind": "Whitespace"
-                          },
-                          "start": 72331
-                        },
-                        {
-                          "end": 72350,
-                          "node": {
-                            "name": "format",
-                            "type": "Function",
-                            "values": [
-                              {
-                                "end": 72349,
-                                "node": {
-                                  "kind": "String",
-                                  "value": [
-                                    "truetype",
-                                    {
-                                      "kind": "Double"
-                                    }
-                                  ]
-                                },
-                                "start": 72339
-                              }
-                            ]
-                          },
-                          "start": 72332
-                        },
-                        {
-                          "end": 72351,
-                          "node": {
-                            "kind": "Comma"
-                          },
-                          "start": 72350
-                        },
-                        {
-                          "end": 72352,
-                          "node": {
-                            "kind": "Whitespace"
-                          },
-                          "start": 72351
-                        },
-                        {
-                          "end": 72400,
-                          "node": {
-                            "name": "url",
-                            "type": "Function",
-                            "values": [
-                              {
-                                "end": 72399,
-                                "node": {
-                                  "kind": "String",
-                                  "value": [
-                                    "../webfonts/fa-brands-400.svg#fontawesome",
-                                    {
-                                      "kind": "Double"
-                                    }
-                                  ]
-                                },
-                                "start": 72356
-                              }
-                            ]
-                          },
-                          "start": 72352
-                        },
-                        {
-                          "end": 72401,
-                          "node": {
-                            "kind": "Whitespace"
-                          },
-                          "start": 72400
-                        },
-                        {
-                          "end": 72414,
-                          "node": {
-                            "name": "format",
-                            "type": "Function",
-                            "values": [
-                              {
-                                "end": 72413,
-                                "node": {
-                                  "kind": "String",
-                                  "value": [
-                                    "svg",
-                                    {
-                                      "kind": "Double"
-                                    }
-                                  ]
-                                },
-                                "start": 72408
-                              }
-                            ]
-                          },
-                          "start": 72401
-                        }
-                      ],
-                      "start": 72111
-                    }
+                        "start": 72408
+                      }
+                    ]
                   },
-                  "start": 72104
+                  "start": 72401
                 }
-              ],
-              "rules": [],
-              "type": "Block"
+              ]
             },
-            "start": 71952
-          },
-          "name": "font-face",
-          "prelude": {
-            "end": 0,
-            "node": [],
-            "start": 0
-          },
-          "type": "AtRule"
-        },
+            "start": 72104
+          }
+        ],
         "start": 71941
       },
       {
@@ -80535,501 +80475,441 @@
       },
       {
         "end": 72967,
-        "node": {
-          "block": {
-            "end": 72967,
+        "node": [
+          {
+            "end": 72538,
             "node": {
-              "declarations": [
+              "important": false,
+              "name": "font-family",
+              "type": "property",
+              "value": [
                 {
                   "end": 72537,
                   "node": {
-                    "important": false,
-                    "name": "font-family",
-                    "type": "Declaration",
-                    "value": {
-                      "end": 72537,
-                      "node": [
-                        {
-                          "end": 72537,
-                          "node": {
-                            "kind": "String",
-                            "value": [
-                              "Font Awesome 5 Free",
-                              {
-                                "kind": "Single"
-                              }
-                            ]
-                          },
-                          "start": 72516
-                        }
-                      ],
-                      "start": 72515
-                    }
+                    "Named": [
+                      "Font Awesome 5 Free",
+                      {
+                        "kind": "Single"
+                      }
+                    ]
                   },
-                  "start": 72500
-                },
-                {
-                  "end": 72559,
-                  "node": {
-                    "important": false,
-                    "name": "font-style",
-                    "type": "Declaration",
-                    "value": {
-                      "end": 72559,
-                      "node": [
-                        {
-                          "end": 72559,
-                          "node": {
-                            "kind": "Ident",
-                            "value": "normal"
-                          },
-                          "start": 72553
-                        }
-                      ],
-                      "start": 72552
-                    }
-                  },
-                  "start": 72538
-                },
-                {
-                  "end": 72579,
-                  "node": {
-                    "important": false,
-                    "name": "font-weight",
-                    "type": "Declaration",
-                    "value": {
-                      "end": 72579,
-                      "node": [
-                        {
-                          "end": 72579,
-                          "node": {
-                            "kind": "Number",
-                            "value": [
-                              400.0,
-                              {
-                                "bits": 0
-                              }
-                            ]
-                          },
-                          "start": 72576
-                        }
-                      ],
-                      "start": 72575
-                    }
-                  },
-                  "start": 72560
-                },
+                  "start": 72515
+                }
+              ]
+            },
+            "start": 72500
+          },
+          {
+            "end": 72560,
+            "node": {
+              "important": false,
+              "name": "font-style",
+              "type": "property",
+              "value": {
+                "type": "normal"
+              }
+            },
+            "start": 72538
+          },
+          {
+            "end": 72580,
+            "node": {
+              "important": false,
+              "name": "font-weight",
+              "type": "property",
+              "value": {
+                "type": "number",
+                "value": 400.0
+              }
+            },
+            "start": 72560
+          },
+          {
+            "end": 72603,
+            "node": {
+              "important": false,
+              "name": "font-display",
+              "type": "property",
+              "value": [
                 {
                   "end": 72602,
                   "node": {
-                    "important": false,
-                    "name": "font-display",
-                    "type": "Declaration",
-                    "value": {
-                      "end": 72602,
-                      "node": [
-                        {
-                          "end": 72602,
-                          "node": {
-                            "kind": "Ident",
-                            "value": "block"
-                          },
-                          "start": 72597
-                        }
-                      ],
-                      "start": 72596
-                    }
+                    "kind": "Ident",
+                    "value": "block"
                   },
-                  "start": 72580
-                },
+                  "start": 72597
+                }
+              ]
+            },
+            "start": 72580
+          },
+          {
+            "end": 72649,
+            "node": {
+              "important": false,
+              "name": "src",
+              "type": "property",
+              "value": [
                 {
                   "end": 72648,
                   "node": {
-                    "important": false,
-                    "name": "src",
-                    "type": "Declaration",
-                    "value": {
-                      "end": 72648,
-                      "node": [
-                        {
-                          "end": 72648,
-                          "node": {
-                            "name": "url",
-                            "type": "Function",
-                            "values": [
-                              {
-                                "end": 72647,
-                                "node": {
-                                  "kind": "String",
-                                  "value": [
-                                    "../webfonts/fa-regular-400.eot",
-                                    {
-                                      "kind": "Double"
-                                    }
-                                  ]
-                                },
-                                "start": 72615
-                              }
-                            ]
-                          },
-                          "start": 72611
-                        }
-                      ],
-                      "start": 72610
-                    }
+                    "name": "url",
+                    "type": "Function",
+                    "values": [
+                      {
+                        "end": 72647,
+                        "node": {
+                          "kind": "String",
+                          "value": [
+                            "../webfonts/fa-regular-400.eot",
+                            {
+                              "kind": "Double"
+                            }
+                          ]
+                        },
+                        "start": 72615
+                      }
+                    ]
                   },
-                  "start": 72603
+                  "start": 72611
+                }
+              ]
+            },
+            "start": 72603
+          },
+          {
+            "end": 72965,
+            "node": {
+              "important": false,
+              "name": "src",
+              "type": "property",
+              "value": [
+                {
+                  "end": 72701,
+                  "node": {
+                    "name": "url",
+                    "type": "Function",
+                    "values": [
+                      {
+                        "end": 72700,
+                        "node": {
+                          "kind": "String",
+                          "value": [
+                            "../webfonts/fa-regular-400.eot?#iefix",
+                            {
+                              "kind": "Double"
+                            }
+                          ]
+                        },
+                        "start": 72661
+                      }
+                    ]
+                  },
+                  "start": 72657
+                },
+                {
+                  "end": 72702,
+                  "node": {
+                    "kind": "Whitespace"
+                  },
+                  "start": 72701
+                },
+                {
+                  "end": 72729,
+                  "node": {
+                    "name": "format",
+                    "type": "Function",
+                    "values": [
+                      {
+                        "end": 72728,
+                        "node": {
+                          "kind": "String",
+                          "value": [
+                            "embedded-opentype",
+                            {
+                              "kind": "Double"
+                            }
+                          ]
+                        },
+                        "start": 72709
+                      }
+                    ]
+                  },
+                  "start": 72702
+                },
+                {
+                  "end": 72730,
+                  "node": {
+                    "kind": "Comma"
+                  },
+                  "start": 72729
+                },
+                {
+                  "end": 72731,
+                  "node": {
+                    "kind": "Whitespace"
+                  },
+                  "start": 72730
+                },
+                {
+                  "end": 72770,
+                  "node": {
+                    "name": "url",
+                    "type": "Function",
+                    "values": [
+                      {
+                        "end": 72769,
+                        "node": {
+                          "kind": "String",
+                          "value": [
+                            "../webfonts/fa-regular-400.woff2",
+                            {
+                              "kind": "Double"
+                            }
+                          ]
+                        },
+                        "start": 72735
+                      }
+                    ]
+                  },
+                  "start": 72731
+                },
+                {
+                  "end": 72771,
+                  "node": {
+                    "kind": "Whitespace"
+                  },
+                  "start": 72770
+                },
+                {
+                  "end": 72786,
+                  "node": {
+                    "name": "format",
+                    "type": "Function",
+                    "values": [
+                      {
+                        "end": 72785,
+                        "node": {
+                          "kind": "String",
+                          "value": [
+                            "woff2",
+                            {
+                              "kind": "Double"
+                            }
+                          ]
+                        },
+                        "start": 72778
+                      }
+                    ]
+                  },
+                  "start": 72771
+                },
+                {
+                  "end": 72787,
+                  "node": {
+                    "kind": "Comma"
+                  },
+                  "start": 72786
+                },
+                {
+                  "end": 72788,
+                  "node": {
+                    "kind": "Whitespace"
+                  },
+                  "start": 72787
+                },
+                {
+                  "end": 72826,
+                  "node": {
+                    "name": "url",
+                    "type": "Function",
+                    "values": [
+                      {
+                        "end": 72825,
+                        "node": {
+                          "kind": "String",
+                          "value": [
+                            "../webfonts/fa-regular-400.woff",
+                            {
+                              "kind": "Double"
+                            }
+                          ]
+                        },
+                        "start": 72792
+                      }
+                    ]
+                  },
+                  "start": 72788
+                },
+                {
+                  "end": 72827,
+                  "node": {
+                    "kind": "Whitespace"
+                  },
+                  "start": 72826
+                },
+                {
+                  "end": 72841,
+                  "node": {
+                    "name": "format",
+                    "type": "Function",
+                    "values": [
+                      {
+                        "end": 72840,
+                        "node": {
+                          "kind": "String",
+                          "value": [
+                            "woff",
+                            {
+                              "kind": "Double"
+                            }
+                          ]
+                        },
+                        "start": 72834
+                      }
+                    ]
+                  },
+                  "start": 72827
+                },
+                {
+                  "end": 72842,
+                  "node": {
+                    "kind": "Comma"
+                  },
+                  "start": 72841
+                },
+                {
+                  "end": 72843,
+                  "node": {
+                    "kind": "Whitespace"
+                  },
+                  "start": 72842
+                },
+                {
+                  "end": 72880,
+                  "node": {
+                    "name": "url",
+                    "type": "Function",
+                    "values": [
+                      {
+                        "end": 72879,
+                        "node": {
+                          "kind": "String",
+                          "value": [
+                            "../webfonts/fa-regular-400.ttf",
+                            {
+                              "kind": "Double"
+                            }
+                          ]
+                        },
+                        "start": 72847
+                      }
+                    ]
+                  },
+                  "start": 72843
+                },
+                {
+                  "end": 72881,
+                  "node": {
+                    "kind": "Whitespace"
+                  },
+                  "start": 72880
+                },
+                {
+                  "end": 72899,
+                  "node": {
+                    "name": "format",
+                    "type": "Function",
+                    "values": [
+                      {
+                        "end": 72898,
+                        "node": {
+                          "kind": "String",
+                          "value": [
+                            "truetype",
+                            {
+                              "kind": "Double"
+                            }
+                          ]
+                        },
+                        "start": 72888
+                      }
+                    ]
+                  },
+                  "start": 72881
+                },
+                {
+                  "end": 72900,
+                  "node": {
+                    "kind": "Comma"
+                  },
+                  "start": 72899
+                },
+                {
+                  "end": 72901,
+                  "node": {
+                    "kind": "Whitespace"
+                  },
+                  "start": 72900
+                },
+                {
+                  "end": 72950,
+                  "node": {
+                    "name": "url",
+                    "type": "Function",
+                    "values": [
+                      {
+                        "end": 72949,
+                        "node": {
+                          "kind": "String",
+                          "value": [
+                            "../webfonts/fa-regular-400.svg#fontawesome",
+                            {
+                              "kind": "Double"
+                            }
+                          ]
+                        },
+                        "start": 72905
+                      }
+                    ]
+                  },
+                  "start": 72901
+                },
+                {
+                  "end": 72951,
+                  "node": {
+                    "kind": "Whitespace"
+                  },
+                  "start": 72950
                 },
                 {
                   "end": 72964,
                   "node": {
-                    "important": false,
-                    "name": "src",
-                    "type": "Declaration",
-                    "value": {
-                      "end": 72964,
-                      "node": [
-                        {
-                          "end": 72701,
-                          "node": {
-                            "name": "url",
-                            "type": "Function",
-                            "values": [
-                              {
-                                "end": 72700,
-                                "node": {
-                                  "kind": "String",
-                                  "value": [
-                                    "../webfonts/fa-regular-400.eot?#iefix",
-                                    {
-                                      "kind": "Double"
-                                    }
-                                  ]
-                                },
-                                "start": 72661
-                              }
-                            ]
-                          },
-                          "start": 72657
+                    "name": "format",
+                    "type": "Function",
+                    "values": [
+                      {
+                        "end": 72963,
+                        "node": {
+                          "kind": "String",
+                          "value": [
+                            "svg",
+                            {
+                              "kind": "Double"
+                            }
+                          ]
                         },
-                        {
-                          "end": 72702,
-                          "node": {
-                            "kind": "Whitespace"
-                          },
-                          "start": 72701
-                        },
-                        {
-                          "end": 72729,
-                          "node": {
-                            "name": "format",
-                            "type": "Function",
-                            "values": [
-                              {
-                                "end": 72728,
-                                "node": {
-                                  "kind": "String",
-                                  "value": [
-                                    "embedded-opentype",
-                                    {
-                                      "kind": "Double"
-                                    }
-                                  ]
-                                },
-                                "start": 72709
-                              }
-                            ]
-                          },
-                          "start": 72702
-                        },
-                        {
-                          "end": 72730,
-                          "node": {
-                            "kind": "Comma"
-                          },
-                          "start": 72729
-                        },
-                        {
-                          "end": 72731,
-                          "node": {
-                            "kind": "Whitespace"
-                          },
-                          "start": 72730
-                        },
-                        {
-                          "end": 72770,
-                          "node": {
-                            "name": "url",
-                            "type": "Function",
-                            "values": [
-                              {
-                                "end": 72769,
-                                "node": {
-                                  "kind": "String",
-                                  "value": [
-                                    "../webfonts/fa-regular-400.woff2",
-                                    {
-                                      "kind": "Double"
-                                    }
-                                  ]
-                                },
-                                "start": 72735
-                              }
-                            ]
-                          },
-                          "start": 72731
-                        },
-                        {
-                          "end": 72771,
-                          "node": {
-                            "kind": "Whitespace"
-                          },
-                          "start": 72770
-                        },
-                        {
-                          "end": 72786,
-                          "node": {
-                            "name": "format",
-                            "type": "Function",
-                            "values": [
-                              {
-                                "end": 72785,
-                                "node": {
-                                  "kind": "String",
-                                  "value": [
-                                    "woff2",
-                                    {
-                                      "kind": "Double"
-                                    }
-                                  ]
-                                },
-                                "start": 72778
-                              }
-                            ]
-                          },
-                          "start": 72771
-                        },
-                        {
-                          "end": 72787,
-                          "node": {
-                            "kind": "Comma"
-                          },
-                          "start": 72786
-                        },
-                        {
-                          "end": 72788,
-                          "node": {
-                            "kind": "Whitespace"
-                          },
-                          "start": 72787
-                        },
-                        {
-                          "end": 72826,
-                          "node": {
-                            "name": "url",
-                            "type": "Function",
-                            "values": [
-                              {
-                                "end": 72825,
-                                "node": {
-                                  "kind": "String",
-                                  "value": [
-                                    "../webfonts/fa-regular-400.woff",
-                                    {
-                                      "kind": "Double"
-                                    }
-                                  ]
-                                },
-                                "start": 72792
-                              }
-                            ]
-                          },
-                          "start": 72788
-                        },
-                        {
-                          "end": 72827,
-                          "node": {
-                            "kind": "Whitespace"
-                          },
-                          "start": 72826
-                        },
-                        {
-                          "end": 72841,
-                          "node": {
-                            "name": "format",
-                            "type": "Function",
-                            "values": [
-                              {
-                                "end": 72840,
-                                "node": {
-                                  "kind": "String",
-                                  "value": [
-                                    "woff",
-                                    {
-                                      "kind": "Double"
-                                    }
-                                  ]
-                                },
-                                "start": 72834
-                              }
-                            ]
-                          },
-                          "start": 72827
-                        },
-                        {
-                          "end": 72842,
-                          "node": {
-                            "kind": "Comma"
-                          },
-                          "start": 72841
-                        },
-                        {
-                          "end": 72843,
-                          "node": {
-                            "kind": "Whitespace"
-                          },
-                          "start": 72842
-                        },
-                        {
-                          "end": 72880,
-                          "node": {
-                            "name": "url",
-                            "type": "Function",
-                            "values": [
-                              {
-                                "end": 72879,
-                                "node": {
-                                  "kind": "String",
-                                  "value": [
-                                    "../webfonts/fa-regular-400.ttf",
-                                    {
-                                      "kind": "Double"
-                                    }
-                                  ]
-                                },
-                                "start": 72847
-                              }
-                            ]
-                          },
-                          "start": 72843
-                        },
-                        {
-                          "end": 72881,
-                          "node": {
-                            "kind": "Whitespace"
-                          },
-                          "start": 72880
-                        },
-                        {
-                          "end": 72899,
-                          "node": {
-                            "name": "format",
-                            "type": "Function",
-                            "values": [
-                              {
-                                "end": 72898,
-                                "node": {
-                                  "kind": "String",
-                                  "value": [
-                                    "truetype",
-                                    {
-                                      "kind": "Double"
-                                    }
-                                  ]
-                                },
-                                "start": 72888
-                              }
-                            ]
-                          },
-                          "start": 72881
-                        },
-                        {
-                          "end": 72900,
-                          "node": {
-                            "kind": "Comma"
-                          },
-                          "start": 72899
-                        },
-                        {
-                          "end": 72901,
-                          "node": {
-                            "kind": "Whitespace"
-                          },
-                          "start": 72900
-                        },
-                        {
-                          "end": 72950,
-                          "node": {
-                            "name": "url",
-                            "type": "Function",
-                            "values": [
-                              {
-                                "end": 72949,
-                                "node": {
-                                  "kind": "String",
-                                  "value": [
-                                    "../webfonts/fa-regular-400.svg#fontawesome",
-                                    {
-                                      "kind": "Double"
-                                    }
-                                  ]
-                                },
-                                "start": 72905
-                              }
-                            ]
-                          },
-                          "start": 72901
-                        },
-                        {
-                          "end": 72951,
-                          "node": {
-                            "kind": "Whitespace"
-                          },
-                          "start": 72950
-                        },
-                        {
-                          "end": 72964,
-                          "node": {
-                            "name": "format",
-                            "type": "Function",
-                            "values": [
-                              {
-                                "end": 72963,
-                                "node": {
-                                  "kind": "String",
-                                  "value": [
-                                    "svg",
-                                    {
-                                      "kind": "Double"
-                                    }
-                                  ]
-                                },
-                                "start": 72958
-                              }
-                            ]
-                          },
-                          "start": 72951
-                        }
-                      ],
-                      "start": 72656
-                    }
+                        "start": 72958
+                      }
+                    ]
                   },
-                  "start": 72649
+                  "start": 72951
                 }
-              ],
-              "rules": [],
-              "type": "Block"
+              ]
             },
-            "start": 72498
-          },
-          "name": "font-face",
-          "prelude": {
-            "end": 0,
-            "node": [],
-            "start": 0
-          },
-          "type": "AtRule"
-        },
+            "start": 72649
+          }
+        ],
         "start": 72487
       },
       {
@@ -81101,501 +80981,441 @@
       },
       {
         "end": 73503,
-        "node": {
-          "block": {
-            "end": 73503,
+        "node": [
+          {
+            "end": 73086,
             "node": {
-              "declarations": [
+              "important": false,
+              "name": "font-family",
+              "type": "property",
+              "value": [
                 {
                   "end": 73085,
                   "node": {
-                    "important": false,
-                    "name": "font-family",
-                    "type": "Declaration",
-                    "value": {
-                      "end": 73085,
-                      "node": [
-                        {
-                          "end": 73085,
-                          "node": {
-                            "kind": "String",
-                            "value": [
-                              "Font Awesome 5 Free",
-                              {
-                                "kind": "Single"
-                              }
-                            ]
-                          },
-                          "start": 73064
-                        }
-                      ],
-                      "start": 73063
-                    }
+                    "Named": [
+                      "Font Awesome 5 Free",
+                      {
+                        "kind": "Single"
+                      }
+                    ]
                   },
-                  "start": 73048
-                },
-                {
-                  "end": 73107,
-                  "node": {
-                    "important": false,
-                    "name": "font-style",
-                    "type": "Declaration",
-                    "value": {
-                      "end": 73107,
-                      "node": [
-                        {
-                          "end": 73107,
-                          "node": {
-                            "kind": "Ident",
-                            "value": "normal"
-                          },
-                          "start": 73101
-                        }
-                      ],
-                      "start": 73100
-                    }
-                  },
-                  "start": 73086
-                },
-                {
-                  "end": 73127,
-                  "node": {
-                    "important": false,
-                    "name": "font-weight",
-                    "type": "Declaration",
-                    "value": {
-                      "end": 73127,
-                      "node": [
-                        {
-                          "end": 73127,
-                          "node": {
-                            "kind": "Number",
-                            "value": [
-                              900.0,
-                              {
-                                "bits": 0
-                              }
-                            ]
-                          },
-                          "start": 73124
-                        }
-                      ],
-                      "start": 73123
-                    }
-                  },
-                  "start": 73108
-                },
+                  "start": 73063
+                }
+              ]
+            },
+            "start": 73048
+          },
+          {
+            "end": 73108,
+            "node": {
+              "important": false,
+              "name": "font-style",
+              "type": "property",
+              "value": {
+                "type": "normal"
+              }
+            },
+            "start": 73086
+          },
+          {
+            "end": 73128,
+            "node": {
+              "important": false,
+              "name": "font-weight",
+              "type": "property",
+              "value": {
+                "type": "number",
+                "value": 900.0
+              }
+            },
+            "start": 73108
+          },
+          {
+            "end": 73151,
+            "node": {
+              "important": false,
+              "name": "font-display",
+              "type": "property",
+              "value": [
                 {
                   "end": 73150,
                   "node": {
-                    "important": false,
-                    "name": "font-display",
-                    "type": "Declaration",
-                    "value": {
-                      "end": 73150,
-                      "node": [
-                        {
-                          "end": 73150,
-                          "node": {
-                            "kind": "Ident",
-                            "value": "block"
-                          },
-                          "start": 73145
-                        }
-                      ],
-                      "start": 73144
-                    }
+                    "kind": "Ident",
+                    "value": "block"
                   },
-                  "start": 73128
-                },
+                  "start": 73145
+                }
+              ]
+            },
+            "start": 73128
+          },
+          {
+            "end": 73195,
+            "node": {
+              "important": false,
+              "name": "src",
+              "type": "property",
+              "value": [
                 {
                   "end": 73194,
                   "node": {
-                    "important": false,
-                    "name": "src",
-                    "type": "Declaration",
-                    "value": {
-                      "end": 73194,
-                      "node": [
-                        {
-                          "end": 73194,
-                          "node": {
-                            "name": "url",
-                            "type": "Function",
-                            "values": [
-                              {
-                                "end": 73193,
-                                "node": {
-                                  "kind": "String",
-                                  "value": [
-                                    "../webfonts/fa-solid-900.eot",
-                                    {
-                                      "kind": "Double"
-                                    }
-                                  ]
-                                },
-                                "start": 73163
-                              }
-                            ]
-                          },
-                          "start": 73159
-                        }
-                      ],
-                      "start": 73158
-                    }
+                    "name": "url",
+                    "type": "Function",
+                    "values": [
+                      {
+                        "end": 73193,
+                        "node": {
+                          "kind": "String",
+                          "value": [
+                            "../webfonts/fa-solid-900.eot",
+                            {
+                              "kind": "Double"
+                            }
+                          ]
+                        },
+                        "start": 73163
+                      }
+                    ]
                   },
-                  "start": 73151
+                  "start": 73159
+                }
+              ]
+            },
+            "start": 73151
+          },
+          {
+            "end": 73501,
+            "node": {
+              "important": false,
+              "name": "src",
+              "type": "property",
+              "value": [
+                {
+                  "end": 73245,
+                  "node": {
+                    "name": "url",
+                    "type": "Function",
+                    "values": [
+                      {
+                        "end": 73244,
+                        "node": {
+                          "kind": "String",
+                          "value": [
+                            "../webfonts/fa-solid-900.eot?#iefix",
+                            {
+                              "kind": "Double"
+                            }
+                          ]
+                        },
+                        "start": 73207
+                      }
+                    ]
+                  },
+                  "start": 73203
+                },
+                {
+                  "end": 73246,
+                  "node": {
+                    "kind": "Whitespace"
+                  },
+                  "start": 73245
+                },
+                {
+                  "end": 73273,
+                  "node": {
+                    "name": "format",
+                    "type": "Function",
+                    "values": [
+                      {
+                        "end": 73272,
+                        "node": {
+                          "kind": "String",
+                          "value": [
+                            "embedded-opentype",
+                            {
+                              "kind": "Double"
+                            }
+                          ]
+                        },
+                        "start": 73253
+                      }
+                    ]
+                  },
+                  "start": 73246
+                },
+                {
+                  "end": 73274,
+                  "node": {
+                    "kind": "Comma"
+                  },
+                  "start": 73273
+                },
+                {
+                  "end": 73275,
+                  "node": {
+                    "kind": "Whitespace"
+                  },
+                  "start": 73274
+                },
+                {
+                  "end": 73312,
+                  "node": {
+                    "name": "url",
+                    "type": "Function",
+                    "values": [
+                      {
+                        "end": 73311,
+                        "node": {
+                          "kind": "String",
+                          "value": [
+                            "../webfonts/fa-solid-900.woff2",
+                            {
+                              "kind": "Double"
+                            }
+                          ]
+                        },
+                        "start": 73279
+                      }
+                    ]
+                  },
+                  "start": 73275
+                },
+                {
+                  "end": 73313,
+                  "node": {
+                    "kind": "Whitespace"
+                  },
+                  "start": 73312
+                },
+                {
+                  "end": 73328,
+                  "node": {
+                    "name": "format",
+                    "type": "Function",
+                    "values": [
+                      {
+                        "end": 73327,
+                        "node": {
+                          "kind": "String",
+                          "value": [
+                            "woff2",
+                            {
+                              "kind": "Double"
+                            }
+                          ]
+                        },
+                        "start": 73320
+                      }
+                    ]
+                  },
+                  "start": 73313
+                },
+                {
+                  "end": 73329,
+                  "node": {
+                    "kind": "Comma"
+                  },
+                  "start": 73328
+                },
+                {
+                  "end": 73330,
+                  "node": {
+                    "kind": "Whitespace"
+                  },
+                  "start": 73329
+                },
+                {
+                  "end": 73366,
+                  "node": {
+                    "name": "url",
+                    "type": "Function",
+                    "values": [
+                      {
+                        "end": 73365,
+                        "node": {
+                          "kind": "String",
+                          "value": [
+                            "../webfonts/fa-solid-900.woff",
+                            {
+                              "kind": "Double"
+                            }
+                          ]
+                        },
+                        "start": 73334
+                      }
+                    ]
+                  },
+                  "start": 73330
+                },
+                {
+                  "end": 73367,
+                  "node": {
+                    "kind": "Whitespace"
+                  },
+                  "start": 73366
+                },
+                {
+                  "end": 73381,
+                  "node": {
+                    "name": "format",
+                    "type": "Function",
+                    "values": [
+                      {
+                        "end": 73380,
+                        "node": {
+                          "kind": "String",
+                          "value": [
+                            "woff",
+                            {
+                              "kind": "Double"
+                            }
+                          ]
+                        },
+                        "start": 73374
+                      }
+                    ]
+                  },
+                  "start": 73367
+                },
+                {
+                  "end": 73382,
+                  "node": {
+                    "kind": "Comma"
+                  },
+                  "start": 73381
+                },
+                {
+                  "end": 73383,
+                  "node": {
+                    "kind": "Whitespace"
+                  },
+                  "start": 73382
+                },
+                {
+                  "end": 73418,
+                  "node": {
+                    "name": "url",
+                    "type": "Function",
+                    "values": [
+                      {
+                        "end": 73417,
+                        "node": {
+                          "kind": "String",
+                          "value": [
+                            "../webfonts/fa-solid-900.ttf",
+                            {
+                              "kind": "Double"
+                            }
+                          ]
+                        },
+                        "start": 73387
+                      }
+                    ]
+                  },
+                  "start": 73383
+                },
+                {
+                  "end": 73419,
+                  "node": {
+                    "kind": "Whitespace"
+                  },
+                  "start": 73418
+                },
+                {
+                  "end": 73437,
+                  "node": {
+                    "name": "format",
+                    "type": "Function",
+                    "values": [
+                      {
+                        "end": 73436,
+                        "node": {
+                          "kind": "String",
+                          "value": [
+                            "truetype",
+                            {
+                              "kind": "Double"
+                            }
+                          ]
+                        },
+                        "start": 73426
+                      }
+                    ]
+                  },
+                  "start": 73419
+                },
+                {
+                  "end": 73438,
+                  "node": {
+                    "kind": "Comma"
+                  },
+                  "start": 73437
+                },
+                {
+                  "end": 73439,
+                  "node": {
+                    "kind": "Whitespace"
+                  },
+                  "start": 73438
+                },
+                {
+                  "end": 73486,
+                  "node": {
+                    "name": "url",
+                    "type": "Function",
+                    "values": [
+                      {
+                        "end": 73485,
+                        "node": {
+                          "kind": "String",
+                          "value": [
+                            "../webfonts/fa-solid-900.svg#fontawesome",
+                            {
+                              "kind": "Double"
+                            }
+                          ]
+                        },
+                        "start": 73443
+                      }
+                    ]
+                  },
+                  "start": 73439
+                },
+                {
+                  "end": 73487,
+                  "node": {
+                    "kind": "Whitespace"
+                  },
+                  "start": 73486
                 },
                 {
                   "end": 73500,
                   "node": {
-                    "important": false,
-                    "name": "src",
-                    "type": "Declaration",
-                    "value": {
-                      "end": 73500,
-                      "node": [
-                        {
-                          "end": 73245,
-                          "node": {
-                            "name": "url",
-                            "type": "Function",
-                            "values": [
-                              {
-                                "end": 73244,
-                                "node": {
-                                  "kind": "String",
-                                  "value": [
-                                    "../webfonts/fa-solid-900.eot?#iefix",
-                                    {
-                                      "kind": "Double"
-                                    }
-                                  ]
-                                },
-                                "start": 73207
-                              }
-                            ]
-                          },
-                          "start": 73203
+                    "name": "format",
+                    "type": "Function",
+                    "values": [
+                      {
+                        "end": 73499,
+                        "node": {
+                          "kind": "String",
+                          "value": [
+                            "svg",
+                            {
+                              "kind": "Double"
+                            }
+                          ]
                         },
-                        {
-                          "end": 73246,
-                          "node": {
-                            "kind": "Whitespace"
-                          },
-                          "start": 73245
-                        },
-                        {
-                          "end": 73273,
-                          "node": {
-                            "name": "format",
-                            "type": "Function",
-                            "values": [
-                              {
-                                "end": 73272,
-                                "node": {
-                                  "kind": "String",
-                                  "value": [
-                                    "embedded-opentype",
-                                    {
-                                      "kind": "Double"
-                                    }
-                                  ]
-                                },
-                                "start": 73253
-                              }
-                            ]
-                          },
-                          "start": 73246
-                        },
-                        {
-                          "end": 73274,
-                          "node": {
-                            "kind": "Comma"
-                          },
-                          "start": 73273
-                        },
-                        {
-                          "end": 73275,
-                          "node": {
-                            "kind": "Whitespace"
-                          },
-                          "start": 73274
-                        },
-                        {
-                          "end": 73312,
-                          "node": {
-                            "name": "url",
-                            "type": "Function",
-                            "values": [
-                              {
-                                "end": 73311,
-                                "node": {
-                                  "kind": "String",
-                                  "value": [
-                                    "../webfonts/fa-solid-900.woff2",
-                                    {
-                                      "kind": "Double"
-                                    }
-                                  ]
-                                },
-                                "start": 73279
-                              }
-                            ]
-                          },
-                          "start": 73275
-                        },
-                        {
-                          "end": 73313,
-                          "node": {
-                            "kind": "Whitespace"
-                          },
-                          "start": 73312
-                        },
-                        {
-                          "end": 73328,
-                          "node": {
-                            "name": "format",
-                            "type": "Function",
-                            "values": [
-                              {
-                                "end": 73327,
-                                "node": {
-                                  "kind": "String",
-                                  "value": [
-                                    "woff2",
-                                    {
-                                      "kind": "Double"
-                                    }
-                                  ]
-                                },
-                                "start": 73320
-                              }
-                            ]
-                          },
-                          "start": 73313
-                        },
-                        {
-                          "end": 73329,
-                          "node": {
-                            "kind": "Comma"
-                          },
-                          "start": 73328
-                        },
-                        {
-                          "end": 73330,
-                          "node": {
-                            "kind": "Whitespace"
-                          },
-                          "start": 73329
-                        },
-                        {
-                          "end": 73366,
-                          "node": {
-                            "name": "url",
-                            "type": "Function",
-                            "values": [
-                              {
-                                "end": 73365,
-                                "node": {
-                                  "kind": "String",
-                                  "value": [
-                                    "../webfonts/fa-solid-900.woff",
-                                    {
-                                      "kind": "Double"
-                                    }
-                                  ]
-                                },
-                                "start": 73334
-                              }
-                            ]
-                          },
-                          "start": 73330
-                        },
-                        {
-                          "end": 73367,
-                          "node": {
-                            "kind": "Whitespace"
-                          },
-                          "start": 73366
-                        },
-                        {
-                          "end": 73381,
-                          "node": {
-                            "name": "format",
-                            "type": "Function",
-                            "values": [
-                              {
-                                "end": 73380,
-                                "node": {
-                                  "kind": "String",
-                                  "value": [
-                                    "woff",
-                                    {
-                                      "kind": "Double"
-                                    }
-                                  ]
-                                },
-                                "start": 73374
-                              }
-                            ]
-                          },
-                          "start": 73367
-                        },
-                        {
-                          "end": 73382,
-                          "node": {
-                            "kind": "Comma"
-                          },
-                          "start": 73381
-                        },
-                        {
-                          "end": 73383,
-                          "node": {
-                            "kind": "Whitespace"
-                          },
-                          "start": 73382
-                        },
-                        {
-                          "end": 73418,
-                          "node": {
-                            "name": "url",
-                            "type": "Function",
-                            "values": [
-                              {
-                                "end": 73417,
-                                "node": {
-                                  "kind": "String",
-                                  "value": [
-                                    "../webfonts/fa-solid-900.ttf",
-                                    {
-                                      "kind": "Double"
-                                    }
-                                  ]
-                                },
-                                "start": 73387
-                              }
-                            ]
-                          },
-                          "start": 73383
-                        },
-                        {
-                          "end": 73419,
-                          "node": {
-                            "kind": "Whitespace"
-                          },
-                          "start": 73418
-                        },
-                        {
-                          "end": 73437,
-                          "node": {
-                            "name": "format",
-                            "type": "Function",
-                            "values": [
-                              {
-                                "end": 73436,
-                                "node": {
-                                  "kind": "String",
-                                  "value": [
-                                    "truetype",
-                                    {
-                                      "kind": "Double"
-                                    }
-                                  ]
-                                },
-                                "start": 73426
-                              }
-                            ]
-                          },
-                          "start": 73419
-                        },
-                        {
-                          "end": 73438,
-                          "node": {
-                            "kind": "Comma"
-                          },
-                          "start": 73437
-                        },
-                        {
-                          "end": 73439,
-                          "node": {
-                            "kind": "Whitespace"
-                          },
-                          "start": 73438
-                        },
-                        {
-                          "end": 73486,
-                          "node": {
-                            "name": "url",
-                            "type": "Function",
-                            "values": [
-                              {
-                                "end": 73485,
-                                "node": {
-                                  "kind": "String",
-                                  "value": [
-                                    "../webfonts/fa-solid-900.svg#fontawesome",
-                                    {
-                                      "kind": "Double"
-                                    }
-                                  ]
-                                },
-                                "start": 73443
-                              }
-                            ]
-                          },
-                          "start": 73439
-                        },
-                        {
-                          "end": 73487,
-                          "node": {
-                            "kind": "Whitespace"
-                          },
-                          "start": 73486
-                        },
-                        {
-                          "end": 73500,
-                          "node": {
-                            "name": "format",
-                            "type": "Function",
-                            "values": [
-                              {
-                                "end": 73499,
-                                "node": {
-                                  "kind": "String",
-                                  "value": [
-                                    "svg",
-                                    {
-                                      "kind": "Double"
-                                    }
-                                  ]
-                                },
-                                "start": 73494
-                              }
-                            ]
-                          },
-                          "start": 73487
-                        }
-                      ],
-                      "start": 73202
-                    }
+                        "start": 73494
+                      }
+                    ]
                   },
-                  "start": 73195
+                  "start": 73487
                 }
-              ],
-              "rules": [],
-              "type": "Block"
+              ]
             },
-            "start": 73046
-          },
-          "name": "font-face",
-          "prelude": {
-            "end": 0,
-            "node": [],
-            "start": 0
-          },
-          "type": "AtRule"
-        },
+            "start": 73195
+          }
+        ],
         "start": 73035
       },
       {

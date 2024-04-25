@@ -44,7 +44,7 @@ Here is a rough order of operations to get there:
     - [x] [blueprint][6]
     - [x] [bootstrap 4][7]
     - [x] [bootstrap 5][7]
-    - [ ] [font awesome][8]
+    - [x] [font awesome][8]
     - [ ] [foundation][9]
     - [x] [inuit][10]
     - [ ] [mini.css][11]

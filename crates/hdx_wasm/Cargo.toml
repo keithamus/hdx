@@ -11,9 +11,9 @@ license.workspace = true
 crate-type = ["cdylib", "rlib"]
 
 [features]
-default = ["console_error_panic_hook", "serde"]
+default = ["console_error_panic_hook", "serde", "fancy"]
 serde = ["hdx_lexer/serde", "hdx_ast/serde", "hdx_parser/serde", "bumpalo/serde"]
-fancy = ["hdx_parser/fancy", "miette/fancy-no-backtrace"]
+fancy = ["miette/fancy-no-syscall"]
 
 [dependencies]
 hdx_lexer = { workspace = true }

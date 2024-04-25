@@ -48,7 +48,7 @@ macro_rules! apply_rules {
 			ColorProfile: atom!("color-profile"),
 			Container: atom!("container"),
 			CounterStyle: atom!("counter-style"),
-			FontFace: atom!("font-face"),
+			FontFace<'a>: atom!("font-face"),
 			FontFeatureValues: atom!("font-feature-values"),
 			FontPaletteValues: atom!("font-palette-values"),
 			Import: atom!("import"),

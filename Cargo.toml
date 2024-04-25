@@ -27,10 +27,10 @@ clap = { version = "4.5.4" }
 
 closestmatch = { version = "0.1.2" }
 miette = { version = "7.2.0", default-features = false }
-thiserror = { version = "1.0.58" }
+thiserror = { version = "1.0.59" }
 serde = { version = "1.0.198" }
 serde_json = { version = "1.0.116" }
-syn = { version = "2.0.59" }
+syn = { version = "2.0.60" }
 quote = { version = "1.0.36" }
 proc-macro2 = { version = "1.0.81" }
 bitmask-enum = { version = "2.2.3" }
