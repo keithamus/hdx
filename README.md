@@ -38,7 +38,7 @@ Here is a rough order of operations to get there:
     - [x] with JSON output
     - [ ] with Visitors
     - [x] with CSS output
-  - [ ] Produces a usable AST for:
+  - [x] Produces a usable AST for:
     - [x] [960.gs][4]
     - [x] [animate][5]
     - [x] [blueprint][6]
@@ -47,12 +47,12 @@ Here is a rough order of operations to get there:
     - [x] [font awesome][8]
     - [x] [foundation][9]
     - [x] [inuit][10]
-    - [ ] [mini.css][11]
-    - [ ] [openprops][12]
+    - [x] [mini.css][11]
+    - [x] [openprops][12]
     - [x] [pure][13]
     - [x] [reset (Eric Myer's)][14]
-    - [ ] [tailwind][15]
-    - [ ] [primer css][16]
+    - [x] [tailwind][15]
+    - [x] [primer css][16]
   - [ ] Benchmarks faster than (or as fast as) comparative parsers
   - [ ] Is capable of interpreting SCSS files
     - [ ] Produces a usable AST for:
