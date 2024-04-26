@@ -167,7 +167,7 @@ impl<'a> Parse<'a> for MediaQuery {
 			}
 			_ => {}
 		}
-		dbg!(&precondition, &media_type, &condition);
+		// dbg!(&precondition, &media_type, &condition);
 		if media_type.is_some() && match_ignore_case!(parser.peek(), Token::Ident(atom!("and"))) {
 			parser.advance();
 			condition = Some(MediaCondition::parse(parser)?);
@@ -340,6 +340,7 @@ macro_rules! media_feature {
 		#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
 		pub enum MediaFeature {
 			$($name($typ),)+
+			Hack(HackMediaFeature),
 		}
 	}
 }
@@ -352,13 +353,20 @@ impl<'a> Parse<'a> for MediaFeature {
 		macro_rules! match_media {
 			( $($name: ident($typ: ident): atom!($atom: tt)$(| $alts:pat)*,)+) => {
 				expect_ignore_case!{ parser.peek(), Token::Ident(_):
-					$(atom!($atom)$(| $alts)* => Self::$name($typ::parse(parser)?),)+
+					$(atom!($atom)$(| $alts)* => $typ::try_parse(parser).map(Self::$name),)+
 				}
 			}
 		}
-		let value = apply_medias!(match_media);
-		expect!(parser.next(), Token::RightParen);
-		Ok(value)
+		let mut value = apply_medias!(match_media);
+		if value.is_err() {
+			if let Ok(hack) = HackMediaFeature::parse(parser) {
+				value = Ok(Self::Hack(hack));
+			}
+		}
+		if value.is_ok() {
+			expect!(parser.next(), Token::RightParen);
+		}
+		value
 	}
 }
 
@@ -369,6 +377,7 @@ impl<'a> WriteCss<'a> for MediaFeature {
 			( $($name: ident($typ: ident): atom!($atom: tt)$(| $alts:pat)*,)+) => {
 				match self {
 					$(Self::$name(f) => f.write_css(sink)?,)+
+					Self::Hack(f) => f.write_css(sink)?,
 				}
 			}
 		}
@@ -485,6 +494,9 @@ mod tests {
 		assert_parse!(Media, "@media (min-width: 1200px) {\n@page {\n}\n}");
 		assert_parse!(Media, "@media (max-width: 575.98px) and (prefers-reduced-motion: reduce) {\n\n}");
 		assert_parse!(Media, "@media only screen and (max-device-width: 800px), only screen and (device-width: 1024px) and (device-height: 600px), only screen and (width: 1280px) and (orientation: landscape), only screen and (device-width: 800px), only screen and (max-width: 767px) {\n\n}");
+
+		// IE media hack
+		assert_parse!(Media, "@media (min-width: 0\\0) {\n\n}");
 	}
 
 	#[test]

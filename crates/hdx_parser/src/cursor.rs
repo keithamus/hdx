@@ -41,6 +41,11 @@ impl<'a> Parser<'a> {
 		self.lexer.lookahead(n)
 	}
 
+	/// Should only be used in severe edge cases, for legacy parse modes
+	pub fn legacy_peek_next_char(&self, n: usize) -> Option<char> {
+		self.lexer.legacy_peek_next_char(n)
+	}
+
 	#[inline]
 	pub fn advance(&mut self) {
 		self.prev_pos = self.lexer.pos();

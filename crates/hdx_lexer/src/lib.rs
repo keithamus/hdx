@@ -42,6 +42,11 @@ impl<'a> Lexer<'a> {
 		self.current.chars.as_str()
 	}
 
+	/// Should only be used in severe edge cases, for legacy parse modes
+	pub fn legacy_peek_next_char(&self, n: usize) -> Option<char> {
+		self.current.chars.clone().nth(n)
+	}
+
 	/// Current position in file
 	#[inline]
 	pub fn pos(&self) -> u32 {
