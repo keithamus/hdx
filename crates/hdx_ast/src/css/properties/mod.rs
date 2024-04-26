@@ -38,7 +38,7 @@ impl<'a> WriteCss<'a> for Computed<'a> {
 
 impl<'a> Parse<'a> for Computed<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		Ok(Self(ComponentValues::parse_with_state(parser, State::StopOnSemicolon)?))
+		Ok(Self(ComponentValues::parse_with_state(parser, State::StopOnSemicolon | State::Nested)?))
 	}
 }
 
@@ -48,7 +48,7 @@ pub struct Unknown<'a>(pub ComponentValues<'a>);
 
 impl<'a> Parse<'a> for Unknown<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		Ok(Self(ComponentValues::parse_with_state(parser, State::StopOnSemicolon)?))
+		Ok(Self(ComponentValues::parse_with_state(parser, State::StopOnSemicolon | State::Nested)?))
 	}
 }
 
@@ -94,23 +94,20 @@ impl<'a> WriteCss<'a> for Property<'a> {
 
 #[inline]
 fn is_computed_token(token: &Token) -> bool {
-	match token {
-		Token::Function(atom) => matches!(
-			atom.to_ascii_lowercase(),
-			atom!("var")
-				| atom!("calc") | atom!("min")
-				| atom!("max") | atom!("clamp")
-				| atom!("round") | atom!("mod")
-				| atom!("rem") | atom!("sin")
-				| atom!("cos") | atom!("tan")
-				| atom!("asin") | atom!("atan")
-				| atom!("atan2") | atom!("pow")
-				| atom!("sqrt") | atom!("hypot")
-				| atom!("log") | atom!("exp")
-				| atom!("abs") | atom!("sign")
-		),
-		_ => false,
-	}
+	matches!(token, Token::Function(atom) if matches!(
+		atom.to_ascii_lowercase(),
+		atom!("var")
+			| atom!("calc") | atom!("min")
+			| atom!("max") | atom!("clamp")
+			| atom!("round") | atom!("mod")
+			| atom!("rem") | atom!("sin")
+			| atom!("cos") | atom!("tan")
+			| atom!("asin") | atom!("atan")
+			| atom!("atan2") | atom!("pow")
+			| atom!("sqrt") | atom!("hypot")
+			| atom!("log") | atom!("exp")
+			| atom!("abs") | atom!("sign")
+	))
 }
 
 macro_rules! style_value {
@@ -209,16 +206,19 @@ impl<'a> DeclarationValue<'a> for StyleValue<'a> {
 							let checkpoint = parser.checkpoint();
 							if let Ok(val) = values::$name::parse(parser) {
 								if peek!(parser, Token::Semicolon | Token::RightCurly | Token::Eof | Token::Delim('!')) {
-									Self::$name(val)
-								} else if is_computed_token(parser.peek()) {
-									parser.rewind(checkpoint);
+									return Ok(Self::$name(val))
+								}
+							}
+							if is_computed_token(parser.peek()) {
+								parser.rewind(checkpoint);
+								Self::Computed(Computed::parse(parser)?)
+							} else {
+								parser.rewind(checkpoint);
+								if is_computed_token(parser.peek()) {
 									Self::Computed(Computed::parse(parser)?)
 								} else {
-									parser.rewind(checkpoint);
 									Self::Unknown(Unknown::parse(parser)?)
 								}
-							} else {
-								Self::Computed(Computed::parse(parser)?)
 							}
 						},
 					)+

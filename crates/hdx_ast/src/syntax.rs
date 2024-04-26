@@ -56,7 +56,7 @@ impl<'a> Parse<'a> for ComponentValue<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		match parser.peek_with(Include::Whitespace) {
 			Token::LeftCurly | Token::LeftSquare | Token::LeftParen => {
-				Ok(Self::SimpleBlock(SimpleBlock::parse(parser)?))
+				Ok(Self::SimpleBlock(SimpleBlock::parse_with_state(parser, State::Nested)?))
 			}
 			Token::Function(_) => Ok(Self::Function(Function::parse(parser)?)),
 			_ => Ok(Self::Token(parser.next_with(Include::Whitespace).clone())),

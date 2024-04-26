@@ -21,6 +21,8 @@ pub enum MsPseudoElement {
 	FillLower,
 	#[atomizable("-ms-input-placeholder")]
 	InputPlaceholder,
+	#[atomizable("-ms-placeholder")]
+	Placeholder,
 	#[atomizable("-ms-reveal")]
 	Reveal,
 	#[atomizable("-ms-selection")]

@@ -2,10 +2,10 @@ macro_rules! parse_rect {
 	($name: ident, $prop: ident, $top: ident, $bottom: ident, $left: ident, $right: ident) => {
 		impl<'a> hdx_parser::Parse<'a> for $name {
 			fn parse(parser: &mut hdx_parser::Parser<'a>) -> hdx_parser::Result<Self> {
-				if let Ok(first) = $prop::parse(parser) {
-					if let Ok(second) = $prop::parse(parser) {
-						if let Ok(third) = $prop::parse(parser) {
-							if let Ok(fourth) = $prop::parse(parser) {
+				if let Ok(first) = $prop::try_parse(parser) {
+					if let Ok(second) = $prop::try_parse(parser) {
+						if let Ok(third) = $prop::try_parse(parser) {
+							if let Ok(fourth) = $prop::try_parse(parser) {
 								Ok($name($top(first), $bottom(third), $left(fourth), $right(second)))
 							} else {
 								Ok($name($top(first.clone()), $bottom(third), $left(second.clone()), $right(second)))

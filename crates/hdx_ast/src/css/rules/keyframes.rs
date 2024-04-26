@@ -124,7 +124,7 @@ impl<'a> Parse<'a> for Keyframe<'a> {
 			} else {
 				unexpected!(parser);
 			}
-			if discard!(parser, Token::LeftCurly) {
+			if discard!(parser, Token::LeftCurly | Token::Eof) {
 				break;
 			}
 			if !discard!(parser, Token::Comma) {
@@ -220,6 +220,14 @@ mod tests {
 			Keyframes,
 			"@keyframes spin {\n\tfrom, 0% {\n\t\trotate: 0deg;\n\t}\n\n\tto, 100% {\n\t\trotate: 360deg;\n\t}\n}"
 		);
-		assert_parse!(Keyframes, "@keyframes spin {to{transform:rotate(360deg)}}");
+		assert_parse!(
+			Keyframes,
+			"@keyframes spin {to{transform:rotate(360deg)}}",
+			"@keyframes spin {\n\tto {\n\t\ttransform: rotate(360deg);\n\t}\n}"
+		);
+		assert_parse!(
+			Keyframes,
+			"@keyframes x {\n\tto {\n\t\tanimation-timing-function: cubic-bezier(0, 0, 0.2, 1);\n\t}\n}"
+		);
 	}
 }

@@ -24,9 +24,12 @@ impl<'a> Parse<'a> for ColorScheme {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		let mut only = false;
 		let mut keywords = smallvec![];
-		while let Token::Ident(ident) = parser.next() {
+		while let Token::Ident(ident) = parser.peek() {
 			match ident.to_ascii_lowercase() {
-				atom!("normal") => return Ok(Self::Normal),
+				atom!("normal") => {
+					parser.advance();
+					return Ok(Self::Normal);
+				}
 				atom!("only") => {
 					if only {
 						unexpected_ident!(parser, ident)
@@ -37,6 +40,7 @@ impl<'a> Parse<'a> for ColorScheme {
 				atom!("dark") => keywords.push(ColorSchemeKeyword::Dark),
 				_ => keywords.push(ColorSchemeKeyword::Custom(ident.clone())),
 			}
+			parser.advance();
 		}
 		if only && keywords.is_empty() {
 			unexpected!(parser)

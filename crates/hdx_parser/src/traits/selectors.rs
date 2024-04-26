@@ -91,21 +91,24 @@ pub trait SelectorComponent<'a>: Sized {
 				}
 				'*' => {
 					parser.advance_with(Include::Whitespace);
-					match parser.next_with(Include::Whitespace) {
-						Token::Delim('|') => match parser.next_with(Include::Whitespace).clone() {
-							token @ Token::Ident(_) => {
-								let val = Self::ns_type_from_token(&Token::Delim('*'), &token).ok_or_else(|| {
-									if let Token::Ident(atom) = token {
-										diagnostics::UnexpectedTag(atom.clone(), parser.span()).into()
-									} else {
-										unreachable!()
-									}
-								});
-								parser.peek_with(Include::Whitespace);
-								val
+					match parser.peek_with(Include::Whitespace) {
+						Token::Delim('|') => {
+							parser.advance_with(Include::Whitespace);
+							match parser.next_with(Include::Whitespace).clone() {
+								token @ Token::Ident(_) => {
+									let val = Self::ns_type_from_token(&Token::Delim('*'), &token).ok_or_else(|| {
+										if let Token::Ident(atom) = token {
+											diagnostics::UnexpectedTag(atom.clone(), parser.span()).into()
+										} else {
+											unreachable!()
+										}
+									});
+									parser.peek_with(Include::Whitespace);
+									val
+								}
+								token => unexpected!(parser, token),
 							}
-							token => unexpected!(parser, token),
-						},
+						}
 						_ => Ok(Self::wildcard()),
 					}
 				}
