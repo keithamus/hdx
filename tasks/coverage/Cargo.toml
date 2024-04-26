@@ -25,6 +25,7 @@ glob = { workspace = true }
 pico-args = { workspace = true }
 project-root = { workspace = true }
 similar = { workspace = true }
+flate2 = { workspace = true }
 
 console = "0.15.7"
 encoding_rs = "0.8.32"

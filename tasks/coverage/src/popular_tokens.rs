@@ -1,7 +1,12 @@
 use std::{
-	fs::{read_to_string, write},
+	fs::{read_to_string, write, File},
+	io::{Read, Write},
 	path::{Path, PathBuf},
 };
+
+use flate2::read::GzDecoder;
+use flate2::write::GzEncoder;
+use flate2::Compression;
 
 use glob::glob;
 use hdx_lexer::Token;
@@ -43,11 +48,18 @@ pub struct PopularTokensTestCase {
 impl PopularTokensTestCase {
 	fn new(source_path: PathBuf) -> Self {
 		let name = source_path.file_stem().unwrap().to_str().unwrap().to_owned();
-		let json_path: PathBuf = (SNAPSHOTS_PATH.to_owned() + name.as_str() + ".json").into();
+		let json_path: PathBuf = (SNAPSHOTS_PATH.to_owned() + name.as_str() + ".json.gz").into();
 		let source_text = read_to_string(&source_path).unwrap();
-		let desired: Vec<Value> =
-			from_str(read_to_string(json_path.clone()).unwrap_or("[]".to_owned()).as_str())
-				.unwrap_or_else(|_| panic!("malformed {}", json_path.display()));
+		let mut s = String::new();
+		let mut str = "";
+		if let Ok(f) = File::open(json_path.clone()) {
+			let mut d = GzDecoder::new(f);
+			if d.read_to_string(&mut s).is_ok() {
+				str = s.as_str();
+			}
+		}
+
+		let desired: Vec<Value> = from_str(str).unwrap_or_else(|_| panic!("malformed {}", json_path.display()));
 		Self { name, source_path, json_path, source_text, desired }
 	}
 }
@@ -83,7 +95,9 @@ impl LexerCase for PopularTokensTestCase {
 	// Comes with fixtures, no need to update
 	fn update_desired(&self, tokens: &Vec<Value>) {
 		let str = to_string_pretty(tokens).unwrap();
-		write(self.json_path.clone(), str).unwrap();
+		let mut e = GzEncoder::new(Vec::new(), Compression::default());
+		e.write_all(str.as_bytes()).unwrap();
+		write(self.json_path.clone(), e.finish().unwrap()).unwrap();
 	}
 
 	fn convert_token(&self, start: usize, end: usize, token: &Token) -> Value {
