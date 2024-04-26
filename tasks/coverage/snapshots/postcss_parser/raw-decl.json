@@ -16,6 +16,21 @@
                   "type": "property",
                   "value": [
                     {
+                      "end": 12,
+                      "node": {
+                        "kind": "Ident",
+                        "value": "a"
+                      },
+                      "start": 11
+                    },
+                    {
+                      "end": 20,
+                      "node": {
+                        "kind": "Whitespace"
+                      },
+                      "start": 12
+                    },
+                    {
                       "end": 21,
                       "node": {
                         "kind": "Ident",

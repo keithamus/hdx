@@ -185,6 +185,14 @@
                   "type": "property",
                   "value": [
                     {
+                      "end": 212,
+                      "node": {
+                        "kind": "Ident",
+                        "value": "var"
+                      },
+                      "start": 209
+                    },
+                    {
                       "end": 226,
                       "node": {
                         "pairwise": "Paren",

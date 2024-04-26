@@ -3,6 +3,70 @@
   "node": {
     "rules": [
       {
+        "end": 37,
+        "node": {
+          "selectors": {
+            "end": 11,
+            "node": [
+              {
+                "end": 11,
+                "node": {
+                  "page_type": null,
+                  "pseudos": [
+                    {
+                      "end": 11,
+                      "node": "left",
+                      "start": 5
+                    }
+                  ],
+                  "type": "PageSelector"
+                },
+                "start": 5
+              }
+            ],
+            "start": 5
+          },
+          "style": {
+            "end": 37,
+            "node": {
+              "properties": [
+                {
+                  "end": 36,
+                  "node": {
+                    "important": false,
+                    "name": "background",
+                    "type": "property",
+                    "value": [
+                      {
+                        "end": 35,
+                        "node": {
+                          "kind": "Ident",
+                          "value": "black"
+                        },
+                        "start": 30
+                      },
+                      {
+                        "end": 36,
+                        "node": {
+                          "kind": "Whitespace"
+                        },
+                        "start": 35
+                      }
+                    ]
+                  },
+                  "start": 13
+                }
+              ],
+              "rules": [],
+              "type": "PageDeclaration"
+            },
+            "start": 11
+          },
+          "type": "Page"
+        },
+        "start": 0
+      },
+      {
         "end": 201,
         "node": {
           "block": {
@@ -14,101 +78,10 @@
             },
             "start": 0
           },
-          "name": "page",
+          "name": "media",
           "prelude": {
             "end": 201,
             "node": [
-              {
-                "end": 7,
-                "node": {
-                  "kind": "Colon"
-                },
-                "start": 6
-              },
-              {
-                "end": 11,
-                "node": {
-                  "kind": "Ident",
-                  "value": "left"
-                },
-                "start": 7
-              },
-              {
-                "end": 12,
-                "node": {
-                  "kind": "Whitespace"
-                },
-                "start": 11
-              },
-              {
-                "end": 37,
-                "node": {
-                  "pairwise": "Curly",
-                  "type": "SimpleBlock",
-                  "values": [
-                    {
-                      "end": 18,
-                      "node": {
-                        "kind": "Whitespace"
-                      },
-                      "start": 13
-                    },
-                    {
-                      "end": 28,
-                      "node": {
-                        "kind": "Ident",
-                        "value": "background"
-                      },
-                      "start": 18
-                    },
-                    {
-                      "end": 29,
-                      "node": {
-                        "kind": "Colon"
-                      },
-                      "start": 28
-                    },
-                    {
-                      "end": 30,
-                      "node": {
-                        "kind": "Whitespace"
-                      },
-                      "start": 29
-                    },
-                    {
-                      "end": 35,
-                      "node": {
-                        "kind": "Ident",
-                        "value": "black"
-                      },
-                      "start": 30
-                    },
-                    {
-                      "end": 36,
-                      "node": {
-                        "kind": "Whitespace"
-                      },
-                      "start": 35
-                    }
-                  ]
-                },
-                "start": 12
-              },
-              {
-                "end": 39,
-                "node": {
-                  "kind": "Whitespace"
-                },
-                "start": 37
-              },
-              {
-                "end": 45,
-                "node": {
-                  "kind": "AtKeyword",
-                  "value": "media"
-                },
-                "start": 39
-              },
               {
                 "end": 59,
                 "node": {
@@ -489,11 +462,11 @@
                 "start": 200
               }
             ],
-            "start": 5
+            "start": 45
           },
           "type": "AtRule"
         },
-        "start": 0
+        "start": 37
       }
     ],
     "type": "stylesheet"
