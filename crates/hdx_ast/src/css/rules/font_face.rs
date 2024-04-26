@@ -1,6 +1,6 @@
 use hdx_atom::{atom, Atom};
-use hdx_parser::{expect_ignore_case, Declaration, Parse, Parser, Result as ParserResult, RuleList, Vec, Spanned};
-use hdx_writer::{CssWriter, Result as WriterResult, WriteCss, write_css};
+use hdx_parser::{expect_ignore_case, Declaration, Parse, Parser, Result as ParserResult, RuleList, Spanned, Vec};
+use hdx_writer::{write_css, CssWriter, Result as WriterResult, WriteCss};
 
 use crate::css::properties::StyleValue;
 
@@ -12,7 +12,6 @@ pub struct FontFace<'a>(Vec<'a, Spanned<FontProperty<'a>>>);
 impl<'a> Parse<'a> for FontFace<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		expect_ignore_case!(parser.next(), Token::AtKeyword(atom!("font-face")));
-		let span = parser.span();
 		Ok(Self(Self::parse_rule_list(parser)?))
 	}
 }

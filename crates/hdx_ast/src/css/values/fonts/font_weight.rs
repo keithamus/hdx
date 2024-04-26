@@ -2,7 +2,11 @@ use crate::{css::units::CSSFloat, Parsable, Value, Writable};
 
 // https://drafts.csswg.org/css-inline/#propdef-alignment-baseline
 #[derive(Value, Parsable, Writable, Default, Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", content = "value", rename_all = "kebab-case"))]
+#[cfg_attr(
+	feature = "serde",
+	derive(serde::Serialize),
+	serde(tag = "type", content = "value", rename_all = "kebab-case")
+)]
 pub enum FontWeight {
 	#[parsable(Number, Check::Range(1.0..=1000.0), Check::Int)]
 	Number(CSSFloat),

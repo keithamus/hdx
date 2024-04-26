@@ -22,8 +22,16 @@ mod tests {
 		assert_parse!(HorizontalViewportSegmentsMediaFeature, "horizontal-viewport-segments >= 5");
 		assert_parse!(HorizontalViewportSegmentsMediaFeature, "horizontal-viewport-segments >= 8");
 		assert_parse!(HorizontalViewportSegmentsMediaFeature, "horizontal-viewport-segments = 16");
-		assert_parse!(HorizontalViewportSegmentsMediaFeature, "6 = horizontal-viewport-segments", "horizontal-viewport-segments = 6");
-		assert_parse!(HorizontalViewportSegmentsMediaFeature, "2 <= horizontal-viewport-segments", "horizontal-viewport-segments <= 2");
+		assert_parse!(
+			HorizontalViewportSegmentsMediaFeature,
+			"6 = horizontal-viewport-segments",
+			"horizontal-viewport-segments = 6"
+		);
+		assert_parse!(
+			HorizontalViewportSegmentsMediaFeature,
+			"2 <= horizontal-viewport-segments",
+			"horizontal-viewport-segments <= 2"
+		);
 		assert_parse!(HorizontalViewportSegmentsMediaFeature, "2 < horizontal-viewport-segments < 4");
 		assert_parse!(HorizontalViewportSegmentsMediaFeature, "4 > horizontal-viewport-segments < 8");
 		assert_parse!(HorizontalViewportSegmentsMediaFeature, "4 >= horizontal-viewport-segments <= 8");
@@ -32,7 +40,11 @@ mod tests {
 
 	#[test]
 	fn test_minify() {
-		assert_minify!(HorizontalViewportSegmentsMediaFeature, "horizontal-viewport-segments: 8", "horizontal-viewport-segments:8");
+		assert_minify!(
+			HorizontalViewportSegmentsMediaFeature,
+			"horizontal-viewport-segments: 8",
+			"horizontal-viewport-segments:8"
+		);
 	}
 
 	#[test]

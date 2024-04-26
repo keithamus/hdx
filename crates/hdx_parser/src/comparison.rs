@@ -1,5 +1,5 @@
-use hdx_lexer::{Token, Include};
-use crate::{State, Parse, Parser, Result, unexpected};
+use crate::{unexpected, Parse, Parser, Result};
+use hdx_lexer::{Include, Token};
 
 #[derive(Debug, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]

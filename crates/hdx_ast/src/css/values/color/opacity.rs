@@ -3,7 +3,11 @@ use crate::{Parsable, Value, Writable};
 
 // https://drafts.csswg.org/css-color/#transparency
 #[derive(Value, Parsable, Writable, Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", content = "value", rename_all = "kebab-case"))]
+#[cfg_attr(
+	feature = "serde",
+	derive(serde::Serialize),
+	serde(tag = "type", content = "value", rename_all = "kebab-case")
+)]
 pub enum Opacity {
 	#[parsable(Number, Check::Range(0.0..=1.0))]
 	Number(CSSFloat),

@@ -1,6 +1,6 @@
 use crate::{
 	css::units::CSSFloat,
-	macros::{discrete_media_feature, ranged_media_feature, bool_media_feature},
+	macros::{bool_media_feature, discrete_media_feature, ranged_media_feature},
 };
 
 // https://developer.mozilla.org/en-US/docs/Web/CSS/Mozilla_Extensions#media_features

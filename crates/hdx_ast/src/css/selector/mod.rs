@@ -297,7 +297,10 @@ mod tests {
 		assert_parse!(SelectorList, ":state(foo)&", ":state(foo)&");
 		// Non Standard
 		assert_parse!(SelectorList, "::-moz-focus-inner");
-		assert_parse!(SelectorList, "::-moz-list-bullet::-webkit-scrollbar::-ms-clear:-ms-input-placeholder::-o-scrollbar:-o-prefocus");
+		assert_parse!(
+			SelectorList,
+			"::-moz-list-bullet::-webkit-scrollbar::-ms-clear:-ms-input-placeholder::-o-scrollbar:-o-prefocus"
+		);
 		assert_parse!(SelectorList, "button:-moz-focusring");
 	}
 

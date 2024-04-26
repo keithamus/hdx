@@ -577,7 +577,9 @@ macro_rules! bool_media_feature {
 
 		impl<'a> hdx_writer::WriteCss<'a> for $feat {
 			fn write_css<W: hdx_writer::CssWriter>(&self, sink: &mut W) -> hdx_writer::Result {
-				if matches!(self, Self::Zero) && !sink.can_output(hdx_writer::OutputOption::RedundantBooleanMediaFeatures) {
+				if matches!(self, Self::Zero)
+					&& !sink.can_output(hdx_writer::OutputOption::RedundantBooleanMediaFeatures)
+				{
 					return hdx_atom::atom!($atom).write_css(sink);
 				}
 				hdx_writer::write_css!(sink, hdx_atom::atom!($atom), ':', ());
@@ -587,7 +589,6 @@ macro_rules! bool_media_feature {
 				}
 			}
 		}
-
 	};
 }
 
@@ -634,7 +635,9 @@ macro_rules! ranged_media_feature {
 				use hdx_parser::Comparison::*;
 				match self {
 					Self::Legacy((Equal, u)) => hdx_writer::write_css!(sink, atom!($atom), ':', (), u),
-					Self::Legacy((LessThanEqual, u)) => hdx_writer::write_css!(sink, atom!("min-"), atom!($atom), ':', (), u),
+					Self::Legacy((LessThanEqual, u)) => {
+						hdx_writer::write_css!(sink, atom!("min-"), atom!($atom), ':', (), u)
+					}
 					Self::Legacy((GreaterThanEqual, u)) => {
 						hdx_writer::write_css!(sink, atom!("max-"), atom!($atom), ':', (), u)
 					}
@@ -643,7 +646,9 @@ macro_rules! ranged_media_feature {
 					Self::Single((LessThan, u)) => hdx_writer::write_css!(sink, atom!($atom), (), '<', (), u),
 					Self::Single((LessThanEqual, u)) => hdx_writer::write_css!(sink, atom!($atom), (), '<', '=', (), u),
 					Self::Single((GreaterThan, u)) => hdx_writer::write_css!(sink, atom!($atom), (), '>', (), u),
-					Self::Single((GreaterThanEqual, u)) => hdx_writer::write_css!(sink, atom!($atom), (), '>', '=', (), u),
+					Self::Single((GreaterThanEqual, u)) => {
+						hdx_writer::write_css!(sink, atom!($atom), (), '>', '=', (), u)
+					}
 					Self::Double((left_cmp, left, right_cmp, right)) => {
 						hdx_writer::write_css!(sink, left, ());
 						match left_cmp {

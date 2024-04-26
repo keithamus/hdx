@@ -50,7 +50,10 @@ pub struct KeyframeName(pub Atom, pub QuoteStyle);
 
 impl KeyframeName {
 	fn valid_ident(atom: &Atom) -> bool {
-		!matches!(atom.to_ascii_lowercase(), atom!("default") | atom!("initial") | atom!("inherit") | atom!("unset") | atom!("none"))
+		!matches!(
+			atom.to_ascii_lowercase(),
+			atom!("default") | atom!("initial") | atom!("inherit") | atom!("unset") | atom!("none")
+		)
 	}
 }
 
@@ -63,7 +66,7 @@ impl<'a> Parse<'a> for KeyframeName {
 				} else {
 					unexpected_ident!(parser, atom)
 				}
-			},
+			}
 			Token::String(atom, quote_style) => Ok(Self(atom.clone(), *quote_style)),
 			token => unexpected!(parser, token),
 		}
@@ -209,7 +212,14 @@ mod tests {
 	fn test_writes() {
 		assert_parse!(Keyframes, "@keyframes foo {}");
 		assert_parse!(Keyframes, "@keyframes \"include\" {}");
-		assert_parse!(Keyframes, "@keyframes spin {\n\t0% {\n\t\trotate: 0deg;\n\t}\n\n\t100% {\n\t\trotate: 360deg;\n\t}\n}");
-		assert_parse!(Keyframes, "@keyframes spin {\n\tfrom, 0% {\n\t\trotate: 0deg;\n\t}\n\n\tto, 100% {\n\t\trotate: 360deg;\n\t}\n}");
+		assert_parse!(
+			Keyframes,
+			"@keyframes spin {\n\t0% {\n\t\trotate: 0deg;\n\t}\n\n\t100% {\n\t\trotate: 360deg;\n\t}\n}"
+		);
+		assert_parse!(
+			Keyframes,
+			"@keyframes spin {\n\tfrom, 0% {\n\t\trotate: 0deg;\n\t}\n\n\tto, 100% {\n\t\trotate: 360deg;\n\t}\n}"
+		);
+		assert_parse!(Keyframes, "@keyframes spin {to{transform:rotate(360deg)}}");
 	}
 }

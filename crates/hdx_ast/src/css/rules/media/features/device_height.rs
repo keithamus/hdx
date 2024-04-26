@@ -1,4 +1,4 @@
-use crate::{macros::ranged_media_feature, css::units::Length};
+use crate::{css::units::Length, macros::ranged_media_feature};
 
 ranged_media_feature!(DeviceHeightMediaFeature[atom!("device-height")], Length);
 
