@@ -1,11 +1,14 @@
 use crate::css::{properties::Property, selector::SelectorList};
+use hdx_derive::Visitable;
 use hdx_parser::{Block, Parse, Parser, QualifiedRule, Result as ParserResult, Spanned, Vec};
 use hdx_writer::{CssWriter, OutputOption, Result as WriterResult, WriteCss};
 
 // https://drafts.csswg.org/cssom-1/#the-cssstylerule-interface
-#[derive(PartialEq, Debug, Hash)]
+#[derive(Visitable, PartialEq, Debug, Hash)]
+#[visitable(call)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", rename = "stylerule"))]
 pub struct StyleRule<'a> {
+	#[visitable(skip)]
 	pub selectors: Spanned<SelectorList<'a>>,
 	#[cfg_attr(feature = "serde", serde(flatten))]
 	pub style: Spanned<StyleDeclaration<'a>>,
@@ -43,7 +46,7 @@ impl<'a> WriteCss<'a> for StyleRule<'a> {
 }
 
 // https://drafts.csswg.org/cssom-1/#the-cssstylerule-interface
-#[derive(PartialEq, Debug, Hash)]
+#[derive(Visitable, PartialEq, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", rename = "style-declaration"))]
 pub struct StyleDeclaration<'a> {
 	pub declarations: Vec<'a, Spanned<Property<'a>>>,

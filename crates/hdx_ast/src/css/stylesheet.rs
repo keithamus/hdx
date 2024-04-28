@@ -1,5 +1,5 @@
 use hdx_atom::atom;
-use hdx_derive::Atomizable;
+use hdx_derive::{Atomizable, Visitable};
 use hdx_lexer::Token;
 use hdx_parser::{diagnostics, Parse, Parser, Result as ParserResult, Spanned, StyleSheet as StyleSheetTrait, Vec};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
@@ -10,7 +10,8 @@ use crate::{
 };
 
 // https://drafts.csswg.org/cssom-1/#the-cssstylesheet-interface
-#[derive(Debug, PartialEq, Hash)]
+#[derive(Visitable, Debug, PartialEq, Hash)]
+#[visitable(call)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", rename = "stylesheet"))]
 pub struct StyleSheet<'a> {
 	pub rules: Vec<'a, Spanned<Rule<'a>>>,
@@ -78,14 +79,17 @@ macro_rules! rule {
         $name: ident$(<$a: lifetime>)?: $atom: pat,
     )+ ) => {
 		// https://drafts.csswg.org/cssom-1/#the-cssrule-interface
-		#[derive(PartialEq, Debug, Hash)]
+		#[derive(Visitable, PartialEq, Debug, Hash)]
 		#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(untagged))]
 		pub enum Rule<'a> {
 			$(
+				#[visitable(skip)]
 				$name(rules::$name$(<$a>)?),
 			)+
+			#[visitable(skip, call = visit_unknown_at_rule)]
 			UnknownAt(AtRule<'a>),
 			Style(StyleRule<'a>),
+			#[visitable(skip, call = visit_unknown_rule)]
 			Unknown(QualifiedRule<'a>)
 		}
 	}

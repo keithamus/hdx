@@ -19,6 +19,7 @@ bitmask-enum = { workspace = true }
 miette = { workspace = true }
 serde = { workspace = true, features = ["derive"], optional = true }
 serde_json = { workspace = true, optional = true }
+smallvec = { workspace = true }
 
 [features]
 default = []

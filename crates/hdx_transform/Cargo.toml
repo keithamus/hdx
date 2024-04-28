@@ -1,0 +1,22 @@
+[package]
+name = "hdx_transform"
+version = "0.0.0"
+authors.workspace = true
+description.workspace = true
+edition.workspace = true
+homepage.workspace = true
+keywords.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+hdx_ast = { workspace = true }
+
+[dev-dependencies]
+hdx_writer = { workspace = true }
+hdx_parser = { workspace = true }
+
+bumpalo = { workspace = true }
+
+[features]
+default = []

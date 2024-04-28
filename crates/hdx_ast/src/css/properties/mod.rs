@@ -1,7 +1,8 @@
-use std::{fmt::Debug, hash::Hash};
+use std::{default::Default, fmt::Debug, hash::Hash};
 
 use hdx_atom::{atom, Atom};
 use hdx_lexer::Token;
+use hdx_derive::Visitable;
 use hdx_parser::{peek, Declaration, DeclarationValue, Parse, Parser, Result as ParserResult, State};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 
@@ -58,12 +59,16 @@ impl<'a> WriteCss<'a> for Unknown<'a> {
 	}
 }
 
-#[derive(PartialEq, Debug, Hash)]
+#[derive(Visitable, PartialEq, Debug, Hash)]
+#[visitable(call)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", rename = "property"))]
 pub struct Property<'a> {
-	name: Atom,
-	value: StyleValue<'a>,
-	important: bool,
+	#[visitable(skip)]
+	pub name: Atom,
+	#[visitable(skip)]
+	pub value: StyleValue<'a>,
+	#[visitable(skip)]
+	pub important: bool,
 }
 
 impl<'a> Parse<'a> for Property<'a> {
@@ -137,6 +142,24 @@ macro_rules! style_value {
 }
 
 apply_properties!(style_value);
+
+impl<'a> StyleValue<'a> {
+	pub fn default_for(name: &Atom) -> Option<Self> {
+		macro_rules! default_value {
+			( $(
+				$name: ident$(<$a: lifetime>)?: $atom: pat,
+			)+ ) => {
+				match name {
+					$(
+						&$atom => Some(Self::$name(values::$name::default())),
+					)+
+					_ => None,
+				}
+			}
+		}
+		apply_properties!(default_value)
+	}
+}
 
 impl<'a> WriteCss<'a> for StyleValue<'a> {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {

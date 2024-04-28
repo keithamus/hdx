@@ -36,7 +36,7 @@ Here is a rough order of operations to get there:
   - [ ] Passes the [postcss/postcss-parser-tests][3] test suite.
   - [x] Produces an AST
     - [x] with JSON output
-    - [ ] with Visitors
+    - [x] with Visitors
     - [x] with CSS output
   - [x] Produces a usable AST for:
     - [x] [960.gs][4]
