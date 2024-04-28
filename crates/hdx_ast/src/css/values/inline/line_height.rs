@@ -1,9 +1,7 @@
-use crate::{
-	css::units::{CSSFloat, LengthPercentage},
-	Parsable, Value, Writable,
-};
+use crate::css::units::{CSSFloat, LengthPercentage};
+use hdx_derive::{Parsable, Value, Writable};
 
-#[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Hash)]
+#[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Clone, Hash)]
 #[value(Inherits)]
 #[cfg_attr(
 	feature = "serde",

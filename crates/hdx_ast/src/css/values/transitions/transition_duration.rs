@@ -1,11 +1,12 @@
+use hdx_derive::{Value, Writable};
 use hdx_lexer::Token;
 use hdx_parser::{discard, expect, unexpected, FromToken, Parse, Parser, Result as ParserResult};
-
-use crate::{css::units::Time, Value, Writable};
 use smallvec::{smallvec, SmallVec};
 
+use crate::css::units::Time;
+
 // https://drafts.csswg.org/css-transitions-1/#propdef-transition-duration
-#[derive(Value, Writable, Default, Debug, PartialEq, Hash)]
+#[derive(Value, Writable, Default, Debug, PartialEq, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct TransitionDuration(pub SmallVec<[Time; 2]>);
 

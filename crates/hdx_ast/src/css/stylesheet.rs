@@ -1,13 +1,12 @@
 use hdx_atom::atom;
 use hdx_derive::Atomizable;
 use hdx_lexer::Token;
-use hdx_parser::{diagnostics, Parse, Parser, Result as ParserResult, StyleSheet as StyleSheetTrait};
+use hdx_parser::{diagnostics, Parse, Parser, Result as ParserResult, Spanned, StyleSheet as StyleSheetTrait, Vec};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 
 use crate::{
 	css::{rules, stylerule::StyleRule},
 	syntax::{AtRule, QualifiedRule},
-	Spanned, Vec,
 };
 
 // https://drafts.csswg.org/cssom-1/#the-cssstylesheet-interface

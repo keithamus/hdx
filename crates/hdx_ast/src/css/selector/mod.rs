@@ -1,12 +1,10 @@
-use hdx_atom::Atom;
+use hdx_atom::{Atom, Atomizable};
 use hdx_lexer::Token;
 use hdx_parser::{
 	FromToken, Parse, Parser, Result as ParserResult, SelectorComponent as SelectorComponentTrait,
-	SelectorList as SelectorListTrait, Spanned,
+	SelectorList as SelectorListTrait, Spanned, Vec,
 };
 use hdx_writer::{write_css, CssWriter, Result as WriterResult, WriteCss};
-
-use crate::{Atomizable, Vec};
 
 mod attribute;
 mod combinator;

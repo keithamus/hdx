@@ -1,6 +1,8 @@
-use crate::{css::units::LengthPercentage, Parsable, Value, Writable};
+use hdx_derive::{Parsable, Value, Writable};
 
-#[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Hash)]
+use crate::css::units::LengthPercentage;
+
+#[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub enum Left {
 	#[default]

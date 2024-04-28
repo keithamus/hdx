@@ -1,21 +1,20 @@
 use hdx_atom::atom;
+use hdx_derive::Value;
 use hdx_lexer::Token;
 use hdx_parser::{discard, unexpected, unexpected_ident, FromToken, Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
-
-use crate::{css::units::Time, Value};
 use smallvec::{smallvec, SmallVec};
 
+use crate::css::units::Time;
+
 // https://drafts.csswg.org/css-animations-2/#animation-duration
-#[derive(Default, Debug, PartialEq, Hash)]
+#[derive(Value, Default, Debug, PartialEq, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub enum AnimationDuration {
 	#[default]
 	Auto,
 	Absolute(SmallVec<[Time; 2]>),
 }
-
-impl<'a> Value for AnimationDuration {}
 
 impl<'a> Parse<'a> for AnimationDuration {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {

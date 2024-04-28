@@ -1,9 +1,9 @@
 use hdx_atom::{atom, Atom};
+use hdx_derive::Writable;
 use hdx_lexer::Token;
+use hdx_parser::FromToken;
 
 use super::{AbsoluteUnit, CSSFloat};
-use crate::Writable;
-use hdx_parser::FromToken;
 
 // https://drafts.csswg.org/css-values/#resolution
 #[derive(Writable, Debug, Clone, Copy, PartialEq, Hash)]

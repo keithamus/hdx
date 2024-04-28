@@ -1,10 +1,9 @@
 use crate::css::units::Length;
+use hdx_derive::Value;
 use hdx_parser::{unexpected, FromToken, Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, OutputOption, Result as WriterResult, WriteCss};
 
-use crate::Value;
-
-#[derive(Value, Default, PartialEq, Debug, Hash)]
+#[derive(Value, Default, PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct BorderSpacing(Length, Length);
 

@@ -1,9 +1,9 @@
+use bitmask_enum::bitmask;
 use hdx_atom::atom;
+use hdx_derive::Value;
 use hdx_lexer::Token;
 use hdx_parser::{match_ignore_case, unexpected, Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
-
-use crate::{bitmask, Value};
 
 // https://drafts.csswg.org/css-fonts/#font-variant-east-asian-prop
 #[derive(Value, Default)]

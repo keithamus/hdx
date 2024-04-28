@@ -1,39 +1,41 @@
-use crate::{css::types::Color, macros::*, Parsable, Value, Writable};
+use hdx_derive::{Parsable, Value, Writable};
 
-#[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Hash)]
+use crate::{css::types::Color, macros::*};
+
+#[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct BorderTopColor(pub Color);
 
-#[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Hash)]
+#[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct BorderBottomColor(pub Color);
 
-#[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Hash)]
+#[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct BorderLeftColor(pub Color);
 
-#[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Hash)]
+#[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct BorderRightColor(pub Color);
 
-#[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Hash)]
+#[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct BorderBlockStartColor(pub Color);
 
-#[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Hash)]
+#[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct BorderBlockEndColor(pub Color);
 
-#[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Hash)]
+#[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct BorderInlineStartColor(pub Color);
 
-#[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Hash)]
+#[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct BorderInlineEndColor(pub Color);
 
 // https://drafts.csswg.org/css-backgrounds/#propdef-border-block-width
-#[derive(Value, Default, PartialEq, Debug, Hash)]
+#[derive(Value, Default, PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct BorderBlockColor(pub BorderBlockStartColor, pub BorderBlockEndColor);
 
@@ -41,7 +43,7 @@ parse_logical_sides!(BorderBlockColor, Color, BorderBlockStartColor, BorderBlock
 write_logical_sides!(BorderBlockColor);
 
 // https://drafts.csswg.org/css-backgrounds/#propdef-border-inline-width
-#[derive(Value, Default, PartialEq, Debug, Hash)]
+#[derive(Value, Default, PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct BorderInlineColor(pub BorderInlineStartColor, pub BorderInlineEndColor);
 
@@ -49,7 +51,7 @@ parse_logical_sides!(BorderInlineColor, Color, BorderInlineStartColor, BorderInl
 write_logical_sides!(BorderInlineColor);
 
 // https://drafts.csswg.org/css-backgrounds/#propdef-border-width
-#[derive(Value, Default, PartialEq, Debug, Hash)]
+#[derive(Value, Default, PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct BorderColor(
 	pub BorderBlockStartColor,

@@ -1,11 +1,12 @@
 use hdx_atom::atom;
+use hdx_derive::{Value, Writable};
 use hdx_lexer::Token;
 use hdx_parser::{unexpected, unexpected_ident, Parse, Parser, Result as ParserResult};
 
-use crate::{css::types::Image, Value, Writable};
+use crate::css::types::Image;
 
 // https://drafts.csswg.org/css-lists/#list-style-property
-#[derive(Writable, Value, Default, PartialEq, Debug, Hash)]
+#[derive(Value, Writable, Default, PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub enum ListStyleImage {
 	Image(Image),

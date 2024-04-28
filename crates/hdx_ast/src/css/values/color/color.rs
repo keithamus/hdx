@@ -1,7 +1,9 @@
-use crate::{css::types::Color as ColorType, Parsable, Value, Writable};
+use hdx_derive::{Parsable, Value, Writable};
+
+use crate::css::types::Color as ColorType;
 
 // https://drafts.csswg.org/css-color/#the-color-property
-#[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Hash)]
+#[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct Color(pub ColorType);
 

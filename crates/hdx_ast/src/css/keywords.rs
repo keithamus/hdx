@@ -1,4 +1,4 @@
-use crate::{Atomizable, Writable};
+use hdx_derive::{Atomizable, Writable};
 
 #[derive(Atomizable, Writable, Default, Debug, Clone, Copy, PartialEq, Hash)]
 #[atomizable(FromToken)]

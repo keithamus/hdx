@@ -1,12 +1,12 @@
-use crate::Value;
 use hdx_atom::{atom, Atom};
+use hdx_derive::Value;
 use hdx_lexer::Token;
 use hdx_parser::{unexpected, unexpected_ident, FromToken, Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 use smallvec::{smallvec, SmallVec};
 
 // https://drafts.csswg.org/css-color-adjust/#color-scheme-prop
-#[derive(Value, Default, Debug, PartialEq, Hash)]
+#[derive(Value, Default, Debug, PartialEq, Clone, Hash)]
 #[value(Inherits)]
 #[cfg_attr(
 	feature = "serde",
@@ -75,7 +75,7 @@ impl<'a> WriteCss<'a> for ColorScheme {
 	}
 }
 
-#[derive(Debug, PartialEq, Hash)]
+#[derive(Debug, PartialEq, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(rename_all = "kebab-case"))]
 pub enum ColorSchemeKeyword {
 	Light,

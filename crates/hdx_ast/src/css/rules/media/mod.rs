@@ -493,8 +493,16 @@ mod tests {
 		assert_parse!(Media, "@media (min-width: 1200px) {\n@page {\n}\n}");
 		assert_parse!(Media, "@media (max-width: 575.98px) and (prefers-reduced-motion: reduce) {\n\n}");
 		assert_parse!(Media, "@media only screen and (max-device-width: 800px), only screen and (device-width: 1024px) and (device-height: 600px), only screen and (width: 1280px) and (orientation: landscape), only screen and (device-width: 800px), only screen and (max-width: 767px) {\n\n}");
-		assert_parse!(Media, "@media(grid){a{padding:4px}}", "@media (grid: 0) {\n\ta {\n\t\tpadding: 4px 4px 4px 4px;\n\t}\n}");
-		assert_parse!(Media, "@media(grid){a{color-scheme:light}}", "@media (grid: 0) {\n\ta {\n\t\tcolor-scheme: light;\n\t}\n}");
+		assert_parse!(
+			Media,
+			"@media(grid){a{padding:4px}}",
+			"@media (grid: 0) {\n\ta {\n\t\tpadding: 4px 4px 4px 4px;\n\t}\n}"
+		);
+		assert_parse!(
+			Media,
+			"@media(grid){a{color-scheme:light}}",
+			"@media (grid: 0) {\n\ta {\n\t\tcolor-scheme: light;\n\t}\n}"
+		);
 
 		// IE media hack
 		assert_parse!(Media, "@media (min-width: 0\\0) {\n\n}");

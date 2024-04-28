@@ -1,11 +1,12 @@
 use hdx_atom::atom;
+use hdx_derive::{Value, Writable};
 use hdx_lexer::Token;
 use hdx_parser::{Parse, Parser, Result as ParserResult};
 
-use crate::{css::types::Color, Value, Writable};
+use crate::css::types::Color;
 
 // https://drafts.csswg.org/css-ui/#caret-color
-#[derive(Value, Writable, Default, PartialEq, Debug, Hash)]
+#[derive(Value, Writable, Default, PartialEq, Debug, Clone, Hash)]
 #[value(Inherits)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub enum CaretColor {

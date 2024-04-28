@@ -1,10 +1,6 @@
-use hdx_parser::{Block, Parse, Parser, QualifiedRule, Result as ParserResult};
+use crate::css::{properties::Property, selector::SelectorList};
+use hdx_parser::{Block, Parse, Parser, QualifiedRule, Result as ParserResult, Spanned, Vec};
 use hdx_writer::{CssWriter, OutputOption, Result as WriterResult, WriteCss};
-
-use crate::{
-	css::{properties::Property, selector::SelectorList},
-	Spanned, Vec,
-};
 
 // https://drafts.csswg.org/cssom-1/#the-cssstylerule-interface
 #[derive(PartialEq, Debug, Hash)]

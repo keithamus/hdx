@@ -1,9 +1,9 @@
 use hdx_atom::{atom, Atom};
+use hdx_derive::Writable;
 use hdx_lexer::Token;
 use hdx_parser::FromToken;
 
 use super::CSSFloat;
-use crate::Writable;
 
 const PX_CM: f32 = PX_IN / 2.54;
 const PX_MM: f32 = PX_IN / 25.4;

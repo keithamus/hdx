@@ -1,5 +1,6 @@
+use hdx_derive::Writable;
+
 use super::CSSFloat;
-use crate::Writable;
 
 #[derive(Writable, Debug, Clone, Copy, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]

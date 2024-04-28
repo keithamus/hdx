@@ -1,7 +1,9 @@
-use crate::{css::units::CSSFloat, Atomizable, Parsable, Value, Writable};
+use hdx_derive::{Atomizable, Parsable, Value, Writable};
+
+use crate::css::units::CSSFloat;
 
 // https://developer.mozilla.org/en-US/docs/Web/CSS/box-align
-#[derive(Value, Parsable, Writable, Atomizable, Default, Debug, PartialEq, Hash)]
+#[derive(Value, Parsable, Writable, Atomizable, Default, Debug, PartialEq, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", rename_all = "kebab-case"))]
 pub enum BoxAlign {
 	Start,
@@ -13,7 +15,7 @@ pub enum BoxAlign {
 }
 
 // https://developer.mozilla.org/en-US/docs/Web/CSS/box-direction
-#[derive(Value, Parsable, Writable, Atomizable, Default, Debug, PartialEq, Hash)]
+#[derive(Value, Parsable, Writable, Atomizable, Default, Debug, PartialEq, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", rename_all = "kebab-case"))]
 pub enum BoxDirection {
 	#[default]
@@ -22,7 +24,7 @@ pub enum BoxDirection {
 }
 
 // https://developer.mozilla.org/en-US/docs/Web/CSS/box-flex
-#[derive(Value, Parsable, Writable, Debug, PartialEq, Hash)]
+#[derive(Value, Parsable, Writable, Debug, PartialEq, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct BoxFlex(#[parsable(FromToken)] pub CSSFloat);
 
@@ -33,7 +35,7 @@ impl Default for BoxFlex {
 }
 
 // https://developer.mozilla.org/en-US/docs/Web/CSS/box-flex-group
-#[derive(Value, Parsable, Writable, Debug, PartialEq, Hash)]
+#[derive(Value, Parsable, Writable, Debug, PartialEq, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct BoxFlexGroup(#[parsable(FromToken)] pub CSSFloat);
 
@@ -44,7 +46,7 @@ impl Default for BoxFlexGroup {
 }
 
 // https://developer.mozilla.org/en-US/docs/Web/CSS/box-lines
-#[derive(Value, Parsable, Writable, Atomizable, Default, Debug, PartialEq, Hash)]
+#[derive(Value, Parsable, Writable, Atomizable, Default, Debug, PartialEq, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", rename_all = "kebab-case"))]
 pub enum BoxLines {
 	#[default]
@@ -53,7 +55,7 @@ pub enum BoxLines {
 }
 
 // https://developer.mozilla.org/en-US/docs/Web/CSS/box-ordinal-group
-#[derive(Value, Parsable, Writable, Debug, PartialEq, Hash)]
+#[derive(Value, Parsable, Writable, Debug, PartialEq, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct BoxOrdinalGroup(#[parsable(FromToken)] pub CSSFloat);
 
@@ -64,7 +66,7 @@ impl Default for BoxOrdinalGroup {
 }
 
 // https://developer.mozilla.org/en-US/docs/Web/CSS/box-orient
-#[derive(Value, Parsable, Writable, Atomizable, Default, Debug, PartialEq, Hash)]
+#[derive(Value, Parsable, Writable, Atomizable, Default, Debug, PartialEq, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", rename_all = "kebab-case"))]
 pub enum BoxOrient {
 	Horizontal, // atom!("horizontal")
@@ -75,7 +77,7 @@ pub enum BoxOrient {
 }
 
 // https://developer.mozilla.org/en-US/docs/Web/CSS/box-orient
-#[derive(Value, Parsable, Writable, Atomizable, Default, Debug, PartialEq, Hash)]
+#[derive(Value, Parsable, Writable, Atomizable, Default, Debug, PartialEq, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", rename_all = "kebab-case"))]
 pub enum BoxPack {
 	#[default]

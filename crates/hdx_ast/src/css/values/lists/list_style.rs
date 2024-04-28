@@ -1,13 +1,14 @@
 use hdx_atom::atom;
+use hdx_derive::Value;
 use hdx_lexer::Token;
 use hdx_parser::{unexpected, FromToken, Parse, Parser, Result as ParserResult};
 
-use crate::{macros::*, Value};
+use crate::macros::*;
 
 use super::{ListStyleImage, ListStylePosition, ListStyleType};
 
 // https://drafts.csswg.org/css-lists/#list-style-property
-#[derive(Value, Default, PartialEq, Debug, Hash)]
+#[derive(Value, Default, PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct ListStyle(pub ListStylePosition, pub ListStyleImage, pub ListStyleType);
 

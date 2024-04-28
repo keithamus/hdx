@@ -1,9 +1,9 @@
-use hdx_atom::Atom;
+use hdx_atom::{Atom, Atomizable};
+use hdx_derive::{Atomizable, Writable};
 use hdx_lexer::Token;
 use hdx_parser::{Parse, Parser, Result as ParserResult, Spanned};
 
 use super::Symbols;
-use crate::{Atomizable, Writable};
 
 #[derive(Writable, Debug, Clone, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]

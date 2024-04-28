@@ -7,7 +7,9 @@ use hdx_writer::{write_css, write_list, CssWriter, OutputOption, Result as Write
 use smallvec::{smallvec, SmallVec};
 
 use super::NoPreludeAllowed;
-use crate::{atom, css::properties::Property, Atom, Atomizable, Specificity, ToSpecificity};
+use crate::{css::properties::Property, Specificity, ToSpecificity};
+use hdx_atom::{atom, Atom, Atomizable};
+use hdx_derive::Atomizable;
 
 // https://drafts.csswg.org/cssom-1/#csspagerule
 // https://drafts.csswg.org/css-page-3/#at-page-rule

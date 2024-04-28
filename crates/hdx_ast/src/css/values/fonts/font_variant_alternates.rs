@@ -1,14 +1,13 @@
 use hdx_atom::{atom, Atom};
+use hdx_derive::{Value, Writable};
 use hdx_lexer::Token;
 use hdx_parser::{
 	discard, expect, unexpected, unexpected_function, unexpected_ident, Parse, Parser, Result as ParserResult,
 };
 use smallvec::{smallvec, SmallVec};
 
-use crate::{Value, Writable};
-
 // https://drafts.csswg.org/css-fonts/#font-variant-alternates-prop
-#[derive(Value, Writable, Debug, Default, PartialEq, Hash)]
+#[derive(Value, Writable, Debug, Default, PartialEq, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", rename_all = "kebab-case"))]
 pub enum FontVariantAlternates {
 	#[default]

@@ -1,8 +1,8 @@
+use bitmask_enum::bitmask;
 use hdx_atom::atom;
+use hdx_derive::{Atomizable, Value};
 use hdx_parser::{expect_ignore_case, unexpected, Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
-
-use crate::{bitmask, Atomizable, Value};
 
 // https://drafts.csswg.org/css-box-4/#propdef-margin-trim
 #[derive(Value, Atomizable, Default)]

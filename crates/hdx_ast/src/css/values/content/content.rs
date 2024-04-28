@@ -1,12 +1,10 @@
 use hdx_atom::{atom, Atom};
+use hdx_derive::Value;
 use hdx_lexer::{QuoteStyle, Token};
 use hdx_parser::{unexpected, unexpected_ident, Parse, Parser, Result as ParserResult};
-
 use hdx_writer::WriteCss;
 
-use crate::Value;
-
-#[derive(Value, Default, PartialEq, Debug, Hash)]
+#[derive(Value, Default, PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub enum Content {
 	#[default]

@@ -1,7 +1,9 @@
-use crate::{css::units::Percent, Parsable, Writable};
+use hdx_derive::{Parsable, Value, Writable};
+
+use crate::css::units::Percent;
 
 // https://drafts.csswg.org/css-size-adjust-1/#propdef-text-size-adjust
-#[derive(Parsable, Writable, Default, Debug, PartialEq, Hash)]
+#[derive(Value, Parsable, Writable, Default, Debug, PartialEq, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub enum TextSizeAdjust {
 	None,

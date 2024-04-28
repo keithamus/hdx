@@ -1,3 +1,4 @@
+use hdx_derive::Value;
 use hdx_parser::{todo, Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 /// Values
@@ -118,7 +119,7 @@ pub use will_change::*;
 pub use writing_modes::*;
 
 // TODO!
-#[derive(Default, Debug, PartialEq, Hash)]
+#[derive(Value, Default, Debug, PartialEq, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(untagged))]
 pub enum Todo {
 	#[default]

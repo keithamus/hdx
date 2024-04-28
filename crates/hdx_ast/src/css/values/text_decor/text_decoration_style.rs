@@ -1,7 +1,7 @@
-use crate::{Atomizable, Parsable, Writable};
+use hdx_derive::{Atomizable, Parsable, Value, Writable};
 
 // https://drafts.csswg.org/css-text/#text-align-property
-#[derive(Parsable, Writable, Atomizable, Default, Debug, PartialEq, Hash)]
+#[derive(Value, Parsable, Writable, Atomizable, Default, Debug, PartialEq, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", rename_all = "kebab-case"))]
 pub enum TextDecorationStyle {
 	#[default]

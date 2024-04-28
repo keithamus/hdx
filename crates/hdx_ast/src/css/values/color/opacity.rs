@@ -1,8 +1,9 @@
+use hdx_derive::{Parsable, Value, Writable};
+
 use crate::css::units::{CSSFloat, Percent};
-use crate::{Parsable, Value, Writable};
 
 // https://drafts.csswg.org/css-color/#transparency
-#[derive(Value, Parsable, Writable, Debug, PartialEq, Hash)]
+#[derive(Value, Parsable, Writable, Debug, PartialEq, Clone, Hash)]
 #[cfg_attr(
 	feature = "serde",
 	derive(serde::Serialize),

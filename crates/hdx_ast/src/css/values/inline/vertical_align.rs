@@ -1,12 +1,11 @@
+use hdx_derive::Value;
 use hdx_parser::{FromToken, Parse, Parser, Result as ParserResult, Span, Spanned};
 use hdx_writer::{CssWriter, OutputOption, Result as WriterResult, WriteCss};
-
-use crate::Value;
 
 use super::{AlignmentBaseline, BaselineShift, BaselineSource};
 
 // https://drafts.csswg.org/css-box-4/#padding-physical
-#[derive(Value, Default, PartialEq, Debug, Hash)]
+#[derive(Value, Default, PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct VerticalAlign(pub Spanned<BaselineSource>, pub Spanned<AlignmentBaseline>, pub Spanned<BaselineShift>);
 

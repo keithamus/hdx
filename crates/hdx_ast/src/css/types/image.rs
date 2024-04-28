@@ -1,4 +1,6 @@
 use bitmask_enum::bitmask;
+use hdx_atom::{atom, Atom, Atomizable};
+use hdx_derive::{Atomizable, Writable};
 use hdx_lexer::{QuoteStyle, Token};
 use hdx_parser::{
 	discard, expect, expect_ignore_case, peek, unexpected, unexpected_ident, FromToken, Parse, Parser,
@@ -7,13 +9,9 @@ use hdx_parser::{
 use hdx_writer::{CssWriter, OutputOption, Result as WriterResult, WriteCss};
 use smallvec::{smallvec, SmallVec};
 
-use crate::{
-	atom,
-	css::{
-		types::Position,
-		units::{Angle, Length, LengthPercentage},
-	},
-	Atom, Atomizable, Writable,
+use crate::css::{
+	types::Position,
+	units::{Angle, Length, LengthPercentage},
 };
 
 use super::Color;

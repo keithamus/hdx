@@ -1,9 +1,9 @@
+use bitmask_enum::bitmask;
 use hdx_atom::{atom, Atom};
+use hdx_derive::Value;
 use hdx_lexer::Token;
 use hdx_parser::{diagnostics, unexpected_ident, Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
-
-use crate::{bitmask, Value};
 
 // https://drafts.csswg.org/css-display-4/#propdef-display
 #[derive(Value, Default)]

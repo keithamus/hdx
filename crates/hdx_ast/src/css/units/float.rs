@@ -1,12 +1,11 @@
+use hdx_derive::Writable;
+use hdx_lexer::Token;
+use hdx_parser::FromToken;
 use std::{
 	fmt::{Display, Result as DisplayResult},
 	hash::{Hash, Hasher},
 	ops::{Add, Div, Mul, Sub},
 };
-
-use hdx_derive::Writable;
-use hdx_lexer::Token;
-use hdx_parser::FromToken;
 
 // CSS floats are different to f32s in that they do not represent NaN
 #[derive(Writable, Debug, Clone, Copy, PartialEq)]

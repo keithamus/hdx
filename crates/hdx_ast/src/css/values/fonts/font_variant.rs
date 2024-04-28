@@ -1,9 +1,8 @@
 use hdx_atom::atom;
+use hdx_derive::Value;
 use hdx_lexer::Token;
 use hdx_parser::{unexpected, Parse, Parser, Result as ParserResult, Spanned};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
-
-use crate::Value;
 
 use super::{
 	FontVariantAlternates, FontVariantCaps, FontVariantEastAsian, FontVariantEmoji, FontVariantLigatures,
@@ -11,7 +10,7 @@ use super::{
 };
 
 // https://drafts.csswg.org/css-fonts/#font-variant-prop
-#[derive(Value, Default, PartialEq, Debug, Hash)]
+#[derive(Value, Default, PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct FontVariant(
 	pub Spanned<FontVariantLigatures>,

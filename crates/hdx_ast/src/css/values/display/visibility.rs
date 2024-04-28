@@ -1,6 +1,6 @@
-use crate::{Parsable, Value, Writable};
+use hdx_derive::{Parsable, Value, Writable};
 
-#[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Hash)]
+#[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Clone, Hash)]
 #[value(Inherits)]
 #[cfg_attr(
 	feature = "serde",

@@ -1,9 +1,11 @@
-use crate::{macros::*, Value};
+use hdx_derive::Value;
+
+use crate::macros::*;
 
 use super::{TextDecorationColor, TextDecorationLine, TextDecorationStyle};
 
 // https://drafts.csswg.org/css-text-decor/#text-decoration-property
-#[derive(Value, Default, PartialEq, Debug, Hash)]
+#[derive(Value, Default, PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct TextDecoration(
 	pub Option<TextDecorationLine>,

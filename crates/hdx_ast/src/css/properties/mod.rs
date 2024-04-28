@@ -10,7 +10,7 @@ use crate::{css::values, syntax::ComponentValues};
 mod property_list;
 use property_list::apply_properties;
 
-#[derive(PartialEq, Debug, Hash)]
+#[derive(PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct Custom<'a>(pub ComponentValues<'a>);
 
@@ -26,7 +26,7 @@ impl<'a> Parse<'a> for Custom<'a> {
 	}
 }
 
-#[derive(PartialEq, Debug, Hash)]
+#[derive(PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct Computed<'a>(pub ComponentValues<'a>);
 
@@ -42,7 +42,7 @@ impl<'a> Parse<'a> for Computed<'a> {
 	}
 }
 
-#[derive(PartialEq, Debug, Hash)]
+#[derive(PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct Unknown<'a>(pub ComponentValues<'a>);
 
@@ -114,7 +114,7 @@ macro_rules! style_value {
     ( $(
         $name: ident$(<$a: lifetime>)?: $atom: pat,
     )+ ) => {
-		#[derive(PartialEq, Debug, Hash)]
+		#[derive(PartialEq, Debug, Clone, Hash)]
 		#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", rename_all = "kebab-case"))]
 		pub enum StyleValue<'a> {
 			Initial,

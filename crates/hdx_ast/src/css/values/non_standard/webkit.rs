@@ -1,3 +1,5 @@
+use hdx_derive::{Atomizable, Parsable, Value, Writable};
+
 use crate::css::types::Color;
 use crate::css::values::{
 	AlignContent, AlignItems, AlignSelf, Animation, AnimationDelay, AnimationDuration, AnimationFillMode,
@@ -6,7 +8,6 @@ use crate::css::values::{
 	FlexBasis, FlexDirection, FlexFlow, FlexGrow, FlexWrap, JustifyContent, TextDecoration, TextDecorationColor,
 	TextDecorationSkipInk, TextSizeAdjust, Todo, TransitionDuration,
 };
-use crate::{Atomizable, Parsable, Value, Writable};
 
 pub type WebkitAlignContent = AlignContent;
 pub type WebkitAlignItems = AlignItems;
@@ -45,7 +46,7 @@ pub type WebkitFlexGrow = FlexGrow;
 pub type WebkitFlexWrap = FlexWrap;
 
 // https://developer.mozilla.org/en-US/docs/Web/CSS/font-smooth
-#[derive(Value, Parsable, Writable, Atomizable, Default, Debug, PartialEq, Hash)]
+#[derive(Value, Parsable, Writable, Atomizable, Default, Debug, PartialEq, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", rename_all = "kebab-case"))]
 pub enum WebkitFontSmoothing {
 	#[default]
@@ -73,7 +74,7 @@ pub type WebkitOverflowScrolling = Todo;
 pub type WebkitPrintColorAdjust = Todo;
 pub type WebkitSlideThumb = Todo;
 
-#[derive(Value, Parsable, Writable, Default, Debug, PartialEq, Hash)]
+#[derive(Value, Parsable, Writable, Default, Debug, PartialEq, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct WebkitTapHighlightColor(pub Color);
 

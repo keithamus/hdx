@@ -1,17 +1,17 @@
 use hdx_atom::{atom, Atom};
+use hdx_derive::{Value, Writable};
 use hdx_lexer::{QuoteStyle, Token};
 use hdx_parser::{discard, expect, unexpected, Parse, Parser, Result as ParserResult, Spanned};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 
-use crate::{Value, Writable};
 use smallvec::{smallvec, SmallVec};
 
 // https://drafts.csswg.org/css-animations-2/#animation-duration
-#[derive(Value, Default, Debug, PartialEq, Hash)]
+#[derive(Value, Default, Debug, PartialEq, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct FontFamily(pub SmallVec<[Spanned<SingleFontFamily>; 1]>);
 
-#[derive(Writable, Default, Debug, PartialEq, Hash)]
+#[derive(Writable, Default, Debug, PartialEq, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub enum SingleFontFamily {
 	#[writable(String)]

@@ -1,6 +1,8 @@
-use crate::{css::units::CSSFloat, Parsable, Writable};
+use hdx_derive::{Parsable, Value, Writable};
 
-#[derive(Parsable, Writable, Default, Debug, PartialEq, Hash)]
+use crate::css::units::CSSFloat;
+
+#[derive(Value, Parsable, Writable, Default, Debug, PartialEq, Clone, Hash)]
 #[cfg_attr(
 	feature = "serde",
 	derive(serde::Serialize),

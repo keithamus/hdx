@@ -1,39 +1,41 @@
-use crate::{css::units::LineWidth, macros::*, Parsable, Value, Writable};
+use hdx_derive::{Parsable, Value, Writable};
 
-#[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Hash)]
+use crate::{css::units::LineWidth, macros::*};
+
+#[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct BorderTopWidth(#[parsable(FromToken)] LineWidth);
 
-#[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Hash)]
+#[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct BorderBottomWidth(#[parsable(FromToken)] LineWidth);
 
-#[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Hash)]
+#[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct BorderLeftWidth(#[parsable(FromToken)] LineWidth);
 
-#[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Hash)]
+#[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct BorderRightWidth(#[parsable(FromToken)] LineWidth);
 
-#[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Hash)]
+#[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct BorderBlockStartWidth(#[parsable(FromToken)] LineWidth);
 
-#[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Hash)]
+#[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct BorderBlockEndWidth(#[parsable(FromToken)] LineWidth);
 
-#[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Hash)]
+#[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct BorderInlineStartWidth(#[parsable(FromToken)] LineWidth);
 
-#[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Hash)]
+#[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct BorderInlineEndWidth(#[parsable(FromToken)] LineWidth);
 
 // https://drafts.csswg.org/css-backgrounds/#propdef-border-block-width
-#[derive(Value, Default, PartialEq, Debug, Hash)]
+#[derive(Value, Default, PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct BorderBlockWidth(pub BorderBlockStartWidth, pub BorderBlockEndWidth);
 
@@ -41,7 +43,7 @@ parse_logical_sides!(BorderBlockWidth, LineWidth, BorderBlockStartWidth, BorderB
 write_logical_sides!(BorderBlockWidth);
 
 // https://drafts.csswg.org/css-backgrounds/#propdef-border-inline-width
-#[derive(Value, Default, PartialEq, Debug, Hash)]
+#[derive(Value, Default, PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct BorderInlineWidth(pub BorderInlineStartWidth, pub BorderInlineEndWidth);
 
@@ -49,7 +51,7 @@ parse_logical_sides!(BorderInlineWidth, LineWidth, BorderInlineStartWidth, Borde
 write_logical_sides!(BorderInlineWidth);
 
 // https://drafts.csswg.org/css-backgrounds/#propdef-border-width
-#[derive(Value, Default, PartialEq, Debug, Hash)]
+#[derive(Value, Default, PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct BorderWidth(
 	pub BorderBlockStartWidth,

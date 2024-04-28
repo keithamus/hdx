@@ -1,12 +1,13 @@
+use hdx_derive::Value;
 use hdx_lexer::Token;
 use hdx_parser::{discard, expect, unexpected, FromToken, Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 
-use crate::{css::units::Time, Value};
+use crate::css::units::Time;
 use smallvec::{smallvec, SmallVec};
 
 // https://drafts.csswg.org/css-transitions-1/#propdef-transition-delay
-#[derive(Value, Default, Debug, PartialEq, Hash)]
+#[derive(Value, Default, Debug, PartialEq, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct TransitionDelay(pub SmallVec<[Time; 2]>);
 

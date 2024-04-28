@@ -7,7 +7,7 @@ use hdx_parser::{
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 
 // https://drafts.csswg.org/css-syntax-3/#consume-list-of-components
-#[derive(PartialEq, Debug, Hash)]
+#[derive(PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct ComponentValues<'a>(pub Vec<'a, Spanned<ComponentValue<'a>>>);
 
@@ -43,7 +43,7 @@ impl<'a> WriteCss<'a> for ComponentValues<'a> {
 }
 
 // https://drafts.csswg.org/css-syntax-3/#consume-component-value
-#[derive(PartialEq, Debug, Hash)]
+#[derive(PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(untagged))]
 pub enum ComponentValue<'a> {
 	SimpleBlock(SimpleBlock<'a>),
@@ -123,7 +123,7 @@ impl<'a> WriteCss<'a> for ComponentValue<'a> {
 	}
 }
 
-#[derive(PartialEq, Debug, Hash)]
+#[derive(PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
 pub struct SimpleBlock<'a> {
 	pub pairwise: PairWise,
@@ -355,7 +355,7 @@ impl<'a> WriteCss<'a> for QualifiedRule<'a> {
 	}
 }
 
-#[derive(PartialEq, Debug, Hash)]
+#[derive(PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
 pub struct Function<'a> {
 	pub name: Atom,

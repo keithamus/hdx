@@ -1,11 +1,12 @@
+use hdx_derive::Value;
+
 use crate::{
 	css::{keywords::LineStyle, types::Color, units::LineWidth},
 	macros::*,
-	Value,
 };
 
 // https://drafts.csswg.org/css-backgrounds/#propdef-border
-#[derive(Value, Default, PartialEq, Debug, Hash)]
+#[derive(Value, Default, PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct Border(pub Option<LineWidth>, pub Option<LineStyle>, pub Option<Color>);
 

@@ -1,8 +1,9 @@
+use hdx_derive::Value;
 use hdx_parser::{Parse, Parser, Result as ParserResult, Span, Spanned};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 
 // https://drafts.csswg.org/css-cascade-5/#propdef-all
-#[derive(Default, Debug, PartialEq, Hash)]
+#[derive(Value, Default, Debug, PartialEq, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct All();
 

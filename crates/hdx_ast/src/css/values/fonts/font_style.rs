@@ -1,14 +1,13 @@
 use hdx_atom::atom;
+use hdx_derive::Value;
 use hdx_lexer::Token;
 use hdx_parser::{diagnostics, expect_ignore_case, Parse, Parser, Result as ParserResult};
 use hdx_writer::{write_css, CssWriter, Result as WriterResult, WriteCss};
 
-use crate::Value;
-
 use crate::css::units::Angle;
 
 // https://drafts.csswg.org/css-fonts/#font-style-prop
-#[derive(Value, Default, Debug, PartialEq, Hash)]
+#[derive(Value, Default, Debug, PartialEq, Clone, Hash)]
 #[value(Inherits)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", rename_all = "kebab-case"))]
 pub enum FontStyle {

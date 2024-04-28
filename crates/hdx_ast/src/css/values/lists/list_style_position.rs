@@ -1,7 +1,7 @@
-use crate::{Atomizable, Value, Writable};
+use hdx_derive::{Atomizable, Value, Writable};
 
 // https://drafts.csswg.org/css-inline/#propdef-baseline-source
-#[derive(Value, Writable, Atomizable, Default, Debug, PartialEq, Hash)]
+#[derive(Value, Writable, Atomizable, Default, Debug, PartialEq, Clone, Hash)]
 #[value(Inherits)]
 #[atomizable(FromToken)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", rename_all = "kebab-case"))]

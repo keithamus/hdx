@@ -1,12 +1,13 @@
 use hdx_lexer::Token;
 use hdx_parser::{discard, unexpected, FromToken, Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
-
-use crate::{css::units::Time, Value};
+use hdx_derive::Value;
 use smallvec::{smallvec, SmallVec};
 
+use crate::{css::units::Time};
+
 // https://drafts.csswg.org/css-animations-2/#animation-duration
-#[derive(Value, Default, Debug, PartialEq, Hash)]
+#[derive(Value, Default, Debug, PartialEq, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct AnimationDelay(pub SmallVec<[Time; 2]>);
 

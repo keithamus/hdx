@@ -6,7 +6,7 @@ use smallvec::{smallvec, SmallVec};
 
 use crate::css::types::Image;
 
-#[derive(Writable, Value, Default, Debug, PartialEq, Hash)]
+#[derive(Value, Writable, Default, Debug, PartialEq, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct BackgroundImage(pub SmallVec<[Spanned<SingleBackgroundImage>; 1]>);
 
@@ -24,7 +24,7 @@ impl<'a> Parse<'a> for BackgroundImage {
 	}
 }
 
-#[derive(Writable, Default, Debug, PartialEq, Hash)]
+#[derive(Writable, Default, Debug, PartialEq, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub enum SingleBackgroundImage {
 	#[default]

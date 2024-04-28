@@ -1,8 +1,9 @@
-const DPPX_IN: f32 = 96.0;
-const DPPX_CM: f32 = DPPX_IN / 2.54;
+use hdx_derive::{Parsable, Writable};
 
 use super::{AbsoluteUnit, CSSFloat};
-use crate::{Parsable, Writable};
+
+const DPPX_IN: f32 = 96.0;
+const DPPX_CM: f32 = DPPX_IN / 2.54;
 
 // https://drafts.csswg.org/css-values/#resolution
 #[derive(Parsable, Writable, Debug, Clone, Copy, PartialEq, Hash)]

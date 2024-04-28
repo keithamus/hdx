@@ -1,4 +1,4 @@
-use crate::Atomizable;
+use hdx_derive::Atomizable;
 
 #[derive(Atomizable, Clone, Copy, Debug, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", rename_all = "kebab-case"))]

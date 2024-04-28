@@ -1,10 +1,9 @@
 use hdx_atom::{atom, Atom};
+use hdx_derive::Value;
 use hdx_lexer::{QuoteStyle, Token};
 use hdx_parser::{unexpected, unexpected_ident, Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 use smallvec::{smallvec, SmallVec};
-
-use crate::Value;
 
 #[derive(Value, Default, Debug, Clone, PartialEq, Hash)]
 #[value(Inherits)]

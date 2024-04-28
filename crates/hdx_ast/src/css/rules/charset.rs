@@ -1,5 +1,5 @@
-use crate::Atomizable;
-use hdx_atom::atom;
+use hdx_atom::{atom, Atomizable};
+use hdx_derive::Atomizable;
 use hdx_lexer::{Include, QuoteStyle, Token};
 use hdx_parser::{
 	diagnostics::{self},

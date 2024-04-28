@@ -1,11 +1,9 @@
 use hdx_atom::{atom, Atom};
-use hdx_derive::Writable;
+use hdx_derive::{Atomizable, Writable};
 use hdx_lexer::Token;
 use hdx_parser::{discard, expect, unexpected, unexpected_function, FromToken, Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 use smallvec::{smallvec, SmallVec};
-
-use crate::Atomizable;
 
 use super::{ForgivingSelector, Nth, RelativeSelector, SelectorList};
 

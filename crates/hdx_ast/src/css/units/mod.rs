@@ -1,6 +1,7 @@
 mod angles;
 mod custom;
 mod float;
+mod int;
 mod frequency;
 mod length;
 mod percent;
@@ -10,6 +11,7 @@ mod time;
 pub use angles::*;
 pub use custom::*;
 pub use float::*;
+pub use int::*;
 pub use frequency::*;
 pub use length::*;
 pub use percent::*;

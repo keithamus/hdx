@@ -1,13 +1,13 @@
-const DEG_GRAD: f32 = 0.9;
-const DEG_RAD: f32 = 57.295_78;
-const DEG_TURN: f32 = 360.0;
-
 use hdx_atom::atom;
 use hdx_lexer::Token;
 use hdx_parser::FromToken;
+use hdx_derive::Writable;
 
 use super::{AbsoluteUnit, CSSFloat};
-use crate::Writable;
+
+const DEG_GRAD: f32 = 0.9;
+const DEG_RAD: f32 = 57.295_78;
+const DEG_TURN: f32 = 360.0;
 
 // https://drafts.csswg.org/css-values/#angles
 #[derive(Writable, Debug, Clone, Copy, PartialEq, Hash)]

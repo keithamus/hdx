@@ -167,7 +167,7 @@ impl Token {
 	}
 }
 
-#[derive(Debug, Eq, PartialEq, Hash)]
+#[derive(Debug, Eq, PartialEq, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize))]
 pub enum PairWise {
 	Paren,

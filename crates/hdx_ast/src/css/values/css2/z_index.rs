@@ -1,12 +1,14 @@
-use crate::{css::units::CSSFloat, Parsable, Value, Writable};
+use hdx_derive::{Parsable, Value, Writable};
 
-#[derive(Value, Parsable, Writable, Default, Debug, PartialEq, Hash)]
+use crate::css::units::CSSInt;
+
+#[derive(Value, Parsable, Writable, Default, Debug, PartialEq, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", content = "value"))]
 pub enum ZIndex {
 	#[default]
 	Auto,
-	#[parsable(Number, Check::Int)]
-	Integer(CSSFloat),
+	#[parsable(Number)]
+	Integer(CSSInt),
 }
 
 #[cfg(test)]

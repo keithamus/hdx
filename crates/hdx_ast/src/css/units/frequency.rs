@@ -1,8 +1,8 @@
 use hdx_atom::atom;
+use hdx_derive::Parsable;
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 
 use super::{AbsoluteUnit, CSSFloat};
-use crate::Parsable;
 
 // https://drafts.csswg.org/css-values/#resolution
 #[derive(Parsable, Debug, Clone, Copy, PartialEq, Hash)]

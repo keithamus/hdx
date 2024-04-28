@@ -1,10 +1,11 @@
-use hdx_atom::{atom, Atom};
+use hdx_atom::{atom, Atom, Atomizable};
+use hdx_derive::{Atomizable, Writable};
 use hdx_lexer::{QuoteStyle, Token};
 use hdx_parser::{expect_ignore_case, unexpected, Parse, Parser, Result as ParserResult};
 use hdx_writer::{OutputOption, Result as WriterResult, WriteCss};
 use smallvec::{smallvec, SmallVec};
 
-use crate::{css::types::Image, Atomizable, Writable};
+use crate::css::types::Image;
 
 // https://drafts.csswg.org/css-counter-styles-3/#funcdef-symbols
 #[derive(Debug, Clone, PartialEq, Hash)]

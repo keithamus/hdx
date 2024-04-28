@@ -1,12 +1,13 @@
-use hdx_atom::atom;
+use hdx_atom::{atom, Atomizable};
+use hdx_derive::{Atomizable, Value};
 use hdx_lexer::Token;
 use hdx_parser::{diagnostics, expect, unexpected, unexpected_ident, FromToken, Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 
-use crate::{css::units::Length, Atomizable, Value};
+use crate::css::units::Length;
 
 // https://drafts.csswg.org/css-page-floats-3/#float-property
-#[derive(Value, Debug, PartialEq, Default, Hash)]
+#[derive(Value, Debug, PartialEq, Default, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(rename_all = "kebab-case"))]
 pub enum Float {
 	#[default]
@@ -135,7 +136,7 @@ impl<'a> WriteCss<'a> for Float {
 	}
 }
 
-#[derive(Atomizable, Debug, PartialEq, Hash)]
+#[derive(Atomizable, Debug, PartialEq, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub enum SnapBlockDirection {
 	Start, // atom!("start")
@@ -143,7 +144,7 @@ pub enum SnapBlockDirection {
 	Near,  // atom!("near")
 }
 
-#[derive(Atomizable, Debug, PartialEq, Hash)]
+#[derive(Atomizable, Debug, PartialEq, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub enum SnapInlineDirection {
 	Left,  // atom!("left")

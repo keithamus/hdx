@@ -1,7 +1,9 @@
-use crate::{css::units::CSSFloat, Parsable, Value, Writable};
+use hdx_derive::{Parsable, Value, Writable};
+
+use crate::css::units::CSSFloat;
 
 // https://drafts.csswg.org/css-inline/#propdef-alignment-baseline
-#[derive(Value, Parsable, Writable, Default, Debug, PartialEq, Hash)]
+#[derive(Value, Parsable, Writable, Default, Debug, PartialEq, Clone, Hash)]
 #[cfg_attr(
 	feature = "serde",
 	derive(serde::Serialize),

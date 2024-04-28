@@ -1,6 +1,5 @@
+use bitmask_enum::bitmask;
 use hdx_atom::{atom, Atom};
-
-use crate::bitmask;
 
 #[derive(Default, Clone, Copy, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]

@@ -1,11 +1,12 @@
 use hdx_atom::{atom, Atom};
+use hdx_derive::{Value, Writable};
 use hdx_lexer::{QuoteStyle, Token};
 use hdx_parser::{Parse, Parser, Result as ParserResult, Spanned};
 
-use crate::{css::types::CounterStyle, Value, Writable};
+use crate::css::types::CounterStyle;
 
 // https://drafts.csswg.org/css-lists/#list-style-property
-#[derive(Writable, Value, PartialEq, Debug, Hash)]
+#[derive(Writable, Value, PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub enum ListStyleType {
 	CounterStyle(Spanned<CounterStyle>),

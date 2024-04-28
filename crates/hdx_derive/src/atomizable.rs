@@ -54,6 +54,7 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 			#[automatically_derived]
 			impl hdx_parser::FromToken for #ident {
 				fn from_token(token: &hdx_lexer::Token) -> Option<Self> {
+					use hdx_atom::Atomizable;
 					match token {
 						hdx_lexer::Token::Ident(atom) => Self::from_atom(atom),
 						_ => None,

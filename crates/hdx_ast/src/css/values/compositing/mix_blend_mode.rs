@@ -1,7 +1,7 @@
-use crate::{Atomizable, Parsable, Writable};
+use hdx_derive::{Atomizable, Parsable, Value, Writable};
 
 // https://drafts.fxtf.org/compositing/#propdef-mix-blend-mode
-#[derive(Parsable, Writable, Atomizable, Debug, Default, PartialEq, Hash)]
+#[derive(Value, Parsable, Writable, Atomizable, Debug, Default, PartialEq, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", rename_all = "kebab-case"))]
 pub enum MixBlendMode {
 	#[default]

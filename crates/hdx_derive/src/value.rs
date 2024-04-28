@@ -11,7 +11,13 @@ impl Parse for ValueArg {
 	fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
 		match input.parse::<Ident>()? {
 			i if i == "Inherits" => Ok(Self::Inherits),
-			ident => Err(Error::new(ident.span(), format!("Unrecognized Value arg {:?}", ident)))?,
+			ident => {
+				if ident.to_string().to_ascii_lowercase().starts_with("inherit") {
+					Err(Error::new(ident.span(), format!("You wrote {:?} but you probably want 'Inherits'", ident.to_string())))?
+				} else {
+					Err(Error::new(ident.span(), format!("Unrecognized Value arg {:?}", ident)))?
+				}
+			}
 		}
 	}
 }
