@@ -30,8 +30,14 @@ bitmask-enum = { workspace = true }
 glob = { workspace = true }
 serde = { workspace = true, features = ["derive"] }
 serde_json = { workspace = true }
+criterion = { workspace = true, features = ["html_reports"] }
+pprof = { workspace = true, features = ["flamegraph", "criterion"] }
 
 [features]
 default = []
 serde = ["dep:serde", "dep:serde_json", "hdx_atom/serde", "hdx_parser/serde", "hdx_lexer/serde", "smallvec/serde"]
 fancy = ["miette/fancy-no-backtrace"]
+
+[[bench]]
+name = "parse_popular"
+harness = false
