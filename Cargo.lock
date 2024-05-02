@@ -571,6 +571,7 @@ version = "0.0.0"
 dependencies = [
  "bitmask-enum",
  "bumpalo",
+ "criterion",
  "glob",
  "hdx_atom",
  "hdx_derive",
@@ -579,6 +580,7 @@ dependencies = [
  "hdx_syntax",
  "hdx_writer",
  "miette",
+ "pprof",
  "serde",
  "serde_json",
  "smallvec",
@@ -597,29 +599,6 @@ dependencies = [
  "serde_json",
  "string_cache",
  "string_cache_codegen",
-]
-
-[[package]]
-name = "hdx_benchmark"
-version = "0.0.0"
-dependencies = [
- "bumpalo",
- "console",
- "criterion",
- "encoding_rs",
- "encoding_rs_io",
- "glob",
- "hdx_ast",
- "hdx_lexer",
- "hdx_parser",
- "hdx_writer",
- "miette",
- "pico-args",
- "project-root",
- "serde",
- "serde_json",
- "serde_yaml",
- "similar",
 ]
 
 [[package]]
@@ -699,9 +678,14 @@ name = "hdx_transform"
 version = "0.0.0"
 dependencies = [
  "bumpalo",
+ "criterion",
+ "glob",
  "hdx_ast",
  "hdx_parser",
  "hdx_writer",
+ "pprof",
+ "serde",
+ "serde_json",
 ]
 
 [[package]]
