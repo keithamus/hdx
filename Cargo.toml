@@ -42,6 +42,7 @@ pico-args = { version = "0.5.0" }
 project-root = { version = "0.2.2" }
 similar = { version = "2.5.0" }
 criterion = { version = "0.5.1" }
+pprof = { version = "0.13.0" }
 flate2 = { version = "1.0.29" }
 
 string_cache = { version = "0.8.7" }
