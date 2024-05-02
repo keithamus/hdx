@@ -15,8 +15,17 @@ hdx_ast = { workspace = true }
 [dev-dependencies]
 hdx_writer = { workspace = true }
 hdx_parser = { workspace = true }
+glob = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
+criterion = { workspace = true, features = ["html_reports"] }
+pprof = { workspace = true, features = ["flamegraph", "criterion"] }
 
 bumpalo = { workspace = true }
 
 [features]
 default = []
+
+[[bench]]
+name = "minify_popular"
+harness = false
