@@ -26,6 +26,9 @@ bumpalo = { workspace = true }
 [features]
 default = []
 
+[lib]
+bench = false
+
 [[bench]]
 name = "minify_popular"
 harness = false

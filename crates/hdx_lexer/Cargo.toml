@@ -35,6 +35,9 @@ console = { workspace = true }
 default = []
 serde = ["dep:serde", "dep:serde_json", "bumpalo/serde"]
 
+[lib]
+bench = false
+
 [[bench]]
 name = "lex_popular"
 harness = false
