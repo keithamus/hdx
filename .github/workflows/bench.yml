@@ -5,17 +5,17 @@ on:
   pull_request:
 jobs:
   build:
-    name: Benchmark on ${{ matrix.code-target }}
+    name: Benchmark on linux
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
         with:
           submodules: 'true'
-      - run: rustup target add ${{ matrix.target }}
+      - run: rustup target add x86_64-unknown-linux-gnu
       - name: Cache
         uses: Swatinem/rust-cache@v2
         with:
-          shared-key: release-${{ matrix.target }}
+          shared-key: release-x86_64-unknown-linux-gnu
       - id: cache-target
         name: Cache CI Benchmarks
         uses: actions/cache@v3
@@ -31,7 +31,7 @@ jobs:
         id: pages
         uses: actions/configure-pages@v3
       - name: Process html
-        uses: joshua-auchincloss/criterion-pages@93bd12c
+        uses: joshua-auchincloss/criterion-pages@93bd12c75eebab61903f29bbdd778296e5cc739d
         with:
             path: './.bench'
       - name: Setup Pages

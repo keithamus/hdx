@@ -27,7 +27,7 @@ fn get_files() -> Vec<TestFile> {
 }
 
 fn popular(c: &mut Criterion) {
-	let mut group = c.benchmark_group("popular");
+	let mut group = c.benchmark_group("minify_popular");
 	for file in get_files() {
 		group.throughput(Throughput::Bytes(file.source_text.len() as u64));
 		group.bench_with_input(BenchmarkId::from_parameter(&file.name), &file.source_text, |b, source_text| {
@@ -35,13 +35,15 @@ fn popular(c: &mut Criterion) {
 				let allocator = Bump::default();
 				{
 					let mut result =
-						Parser::new(&allocator, source_text.as_str(), Features::default()).parse_with::<StyleSheet>();
+						Parser::new(&allocator, source_text.as_str(), Features::default()).parse_entirely_with::<StyleSheet>();
 					let mut string = String::new();
 					let mut writer = BaseCssWriter::new(&mut string, OutputOption::none());
 					if let Some(stylesheet) = result.output.as_mut() {
 						let mut transformer = ReduceInitial::default();
 						stylesheet.accept_mut(&mut transformer);
-						stylesheet.write_css(&mut writer).unwrap();
+						if let Err(e) = stylesheet.write_css(&mut writer) {
+							println!("Failed to write CSS: {:?}", e);
+						}
 					}
 				}
 				allocator

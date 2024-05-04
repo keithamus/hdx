@@ -24,7 +24,7 @@ fn get_files() -> Vec<TestFile> {
 }
 
 fn popular(c: &mut Criterion) {
-	let mut group = c.benchmark_group("popular");
+	let mut group = c.benchmark_group("lex_popular");
 	for file in get_files() {
 		group.throughput(Throughput::Bytes(file.source_text.len() as u64));
 		group.bench_with_input(BenchmarkId::from_parameter(&file.name), &file.source_text, |b, source_text| {
