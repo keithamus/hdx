@@ -9,6 +9,10 @@ keywords.workspace = true
 license.workspace = true
 repository.workspace = true
 
+[lib]
+bench = false
+doctest = false
+
 [dependencies]
 hdx_lexer = { workspace = true }
 hdx_syntax = { workspace = true }
@@ -26,9 +30,6 @@ serde_json = { workspace = true, optional = true }
 
 [dev-dependencies]
 glob = { workspace = true }
-
-[lib]
-doctest = false
 
 [features]
 default = []

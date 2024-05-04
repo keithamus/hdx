@@ -9,6 +9,9 @@ keywords.workspace = true
 license.workspace = true
 repository.workspace = true
 
+[lib]
+bench = false
+
 [dependencies]
 hdx_ast = { workspace = true }
 
@@ -25,9 +28,6 @@ bumpalo = { workspace = true }
 
 [features]
 default = []
-
-[lib]
-bench = false
 
 [[bench]]
 name = "minify_popular"

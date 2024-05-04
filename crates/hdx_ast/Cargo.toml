@@ -9,6 +9,9 @@ keywords.workspace = true
 license.workspace = true
 repository.workspace = true
 
+[lib]
+bench = false
+
 [dependencies]
 hdx_lexer = { workspace = true }
 hdx_syntax = { workspace = true }
@@ -40,9 +43,6 @@ console = { workspace = true }
 default = []
 serde = ["dep:serde", "dep:serde_json", "hdx_atom/serde", "hdx_parser/serde", "hdx_lexer/serde", "smallvec/serde"]
 fancy = ["miette/fancy-no-backtrace"]
-
-[lib]
-bench = false
 
 [[bench]]
 name = "parse_popular"

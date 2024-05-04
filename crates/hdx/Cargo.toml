@@ -30,3 +30,8 @@ serde_json = { workspace = true, optional = true }
 default = ["fancy"]
 serde = ["dep:serde", "dep:serde_json", "hdx_lexer/serde"] 
 fancy = ["hdx_ast/fancy", "hdx_parser/fancy", "miette/fancy"]
+
+[[bin]]
+name = "hdx"
+path = "src/main.rs"
+bench = false
