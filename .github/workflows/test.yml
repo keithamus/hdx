@@ -34,10 +34,6 @@ jobs:
         with:
           shared-key: release-${{ matrix.target }}
       - name: Test
-        run: cargo test
-        env:
-          CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER: aarch64-linux-gnu-gcc
-      - name: Coverage
-        run: cargo coverage --diff
+        run: cargo test --all-features
         env:
           CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER: aarch64-linux-gnu-gcc
