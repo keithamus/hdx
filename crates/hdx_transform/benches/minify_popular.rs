@@ -42,7 +42,7 @@ fn popular(c: &mut Criterion) {
 						let mut transformer = ReduceInitial::default();
 						stylesheet.accept_mut(&mut transformer);
 						if let Err(e) = stylesheet.write_css(&mut writer) {
-							println!("{:?}", e);
+							println!("Failed to write CSS: {:?}", e);
 						}
 					}
 				}

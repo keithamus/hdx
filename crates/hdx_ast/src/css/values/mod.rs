@@ -134,7 +134,7 @@ impl<'a> Parse<'a> for Todo {
 
 impl<'a> WriteCss<'a> for Todo {
 	fn write_css<W: CssWriter>(&self, _sink: &mut W) -> WriterResult {
-		std::todo!("Cannot write out Todo values")
+		Err(std::fmt::Error)
 	}
 }
 
