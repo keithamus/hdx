@@ -31,7 +31,7 @@ jobs:
         id: pages
         uses: actions/configure-pages@v3
       - name: Process html
-        uses: joshua-auchincloss/criterion-pages@93bd12c
+        uses: joshua-auchincloss/criterion-pages@93bd12c75eebab61903f29bbdd778296e5cc739d
         with:
             path: './.bench'
       - name: Setup Pages
