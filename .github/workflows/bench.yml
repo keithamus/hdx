@@ -23,21 +23,7 @@ jobs:
             key: ${{ runner.os }}-${{ github.ref }}
             path: |
                 ./target/criterion
-      - name: Bench
-        run: cargo bench
-        env:
-          CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER: aarch64-linux-gnu-gcc
-      - name: Setup Pages
-        id: pages
-        uses: actions/configure-pages@v3
-      - name: Process html
-        uses: joshua-auchincloss/criterion-pages@93bd12c75eebab61903f29bbdd778296e5cc739d
+      - name: Criterion Compare PRs
+        uses: boa-dev/criterion-compare-action@adfd3a94634fe2041ce5613eb7df09d247555b87
         with:
-            path: './.bench'
-      - name: Setup Pages
-        uses: actions/configure-pages@v3
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v2
-        with:
-            path: './.bench'
-
+          branchName: ${{ github.base_ref }}

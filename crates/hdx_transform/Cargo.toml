@@ -9,6 +9,9 @@ keywords.workspace = true
 license.workspace = true
 repository.workspace = true
 
+[lib]
+bench = false
+
 [dependencies]
 hdx_ast = { workspace = true }
 

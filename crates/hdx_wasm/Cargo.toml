@@ -8,6 +8,7 @@ keywords.workspace = true
 license.workspace = true
 
 [lib]
+bench = false
 crate-type = ["cdylib", "rlib"]
 
 [features]
