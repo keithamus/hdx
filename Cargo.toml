@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["crates/*", "tasks/*"]
+members = ["crates/*"]
 
 [workspace.package]
 authors = ["Keith Cirkel <hdx@keithcirkel.co.uk>"]
@@ -42,7 +42,10 @@ pico-args = { version = "0.5.0" }
 project-root = { version = "0.2.2" }
 similar = { version = "2.5.0" }
 criterion = { version = "0.5.1" }
+pprof = { version = "0.13.0" }
 flate2 = { version = "1.0.29" }
+insta = { version = "1.38.0" }
+console = { version = "0.15.8" }
 
 string_cache = { version = "0.8.7" }
 string_cache_codegen = { version = "0.5.2" }
@@ -74,3 +77,8 @@ panic = "abort"   # Let it crash and force ourselves to write safe Rust.
 inherits = "release"
 strip = false
 debug = true
+
+[profile.dev.package]
+criterion.opt-level = 3
+insta.opt-level = 3
+similar.opt-level = 3

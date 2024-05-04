@@ -21,6 +21,20 @@ serde = { workspace = true, features = ["derive"], optional = true }
 serde_json = { workspace = true, optional = true }
 smallvec = { workspace = true }
 
+[dev-dependencies]
+glob = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
+criterion = { workspace = true, features = ["html_reports"] }
+pprof = { workspace = true, features = ["flamegraph", "criterion"] }
+insta = { workspace = true, features = ["json"] }
+similar = { workspace = true }
+console = { workspace = true }
+
 [features]
 default = []
 serde = ["dep:serde", "dep:serde_json", "bumpalo/serde"]
+
+[[bench]]
+name = "lex_popular"
+harness = false

@@ -1,0 +1,12 @@
+---
+source: crates/hdx_ast/tests/postcss_snapshots.rs
+expression: result.output.unwrap()
+---
+{
+  "node": {
+    "type": "stylesheet",
+    "rules": []
+  },
+  "start": 0,
+  "end": 0
+}

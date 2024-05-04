@@ -1,0 +1,59 @@
+---
+source: crates/hdx_lexer/tests/postcss_snapshots.rs
+expression: "get_tokens(\"../../tasks/coverage/postcss-parser-tests/cases/atrule-params.css\".into())"
+---
+[
+  {
+    "kind": "AtKeyword",
+    "value": "-moz-document"
+  },
+  {
+    "kind": "Comment",
+    "value": " near "
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "Comment",
+    "value": " filter "
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "Function",
+    "value": "url"
+  },
+  {
+    "kind": "String",
+    "value": [
+      "example.com/{",
+      {
+        "kind": "Double"
+      }
+    ]
+  },
+  {
+    "kind": "RightParen"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "Comment",
+    "value": " a "
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "LeftCurly"
+  },
+  {
+    "kind": "RightCurly"
+  },
+  {
+    "kind": "Whitespace"
+  }
+]

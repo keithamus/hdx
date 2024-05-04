@@ -1,0 +1,43 @@
+name: bench
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+jobs:
+  build:
+    name: Benchmark on ${{ matrix.code-target }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: 'true'
+      - run: rustup target add ${{ matrix.target }}
+      - name: Cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: release-${{ matrix.target }}
+      - id: cache-target
+        name: Cache CI Benchmarks
+        uses: actions/cache@v3
+        with:
+            key: ${{ runner.os }}-${{ github.ref }}
+            path: |
+                ./target/criterion
+      - name: Bench
+        run: cargo bench
+        env:
+          CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER: aarch64-linux-gnu-gcc
+      - name: Setup Pages
+        id: pages
+        uses: actions/configure-pages@v3
+      - name: Process html
+        uses: joshua-auchincloss/criterion-pages@93bd12c
+        with:
+            path: './.bench'
+      - name: Setup Pages
+        uses: actions/configure-pages@v3
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v2
+        with:
+            path: './.bench'
+

@@ -1,0 +1,236 @@
+---
+source: crates/hdx_ast/tests/postcss_snapshots.rs
+expression: result.output.unwrap()
+---
+{
+  "node": {
+    "type": "stylesheet",
+    "rules": [
+      {
+        "node": {
+          "type": "stylerule",
+          "selectors": {
+            "node": [
+              {
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "A"
+                    }
+                  }
+                ],
+                "start": 0,
+                "end": 2
+              }
+            ],
+            "start": 0,
+            "end": 2
+          },
+          "node": {
+            "type": "style-declaration",
+            "declarations": [
+              {
+                "node": {
+                  "type": "property",
+                  "name": "filter",
+                  "value": [
+                    {
+                      "node": {
+                        "kind": "Ident",
+                        "value": "progid"
+                      },
+                      "start": 16,
+                      "end": 22
+                    },
+                    {
+                      "node": {
+                        "kind": "Colon"
+                      },
+                      "start": 22,
+                      "end": 23
+                    },
+                    {
+                      "node": {
+                        "kind": "Ident",
+                        "value": "DXImageTransform"
+                      },
+                      "start": 23,
+                      "end": 39
+                    },
+                    {
+                      "node": {
+                        "kind": "Delim",
+                        "value": "."
+                      },
+                      "start": 39,
+                      "end": 40
+                    },
+                    {
+                      "node": {
+                        "kind": "Ident",
+                        "value": "Microsoft"
+                      },
+                      "start": 40,
+                      "end": 49
+                    },
+                    {
+                      "node": {
+                        "kind": "Delim",
+                        "value": "."
+                      },
+                      "start": 49,
+                      "end": 50
+                    },
+                    {
+                      "node": {
+                        "type": "Function",
+                        "name": "Blur",
+                        "values": [
+                          {
+                            "node": {
+                              "kind": "Ident",
+                              "value": "pixelradius"
+                            },
+                            "start": 55,
+                            "end": 66
+                          },
+                          {
+                            "node": {
+                              "kind": "Delim",
+                              "value": "="
+                            },
+                            "start": 66,
+                            "end": 67
+                          },
+                          {
+                            "node": {
+                              "kind": "Number",
+                              "value": [
+                                2.0,
+                                {
+                                  "bits": 0
+                                }
+                              ]
+                            },
+                            "start": 67,
+                            "end": 68
+                          }
+                        ]
+                      },
+                      "start": 50,
+                      "end": 69
+                    },
+                    {
+                      "node": {
+                        "kind": "Whitespace"
+                      },
+                      "start": 69,
+                      "end": 70
+                    },
+                    {
+                      "node": {
+                        "kind": "Ident",
+                        "value": "progid"
+                      },
+                      "start": 70,
+                      "end": 76
+                    },
+                    {
+                      "node": {
+                        "kind": "Colon"
+                      },
+                      "start": 76,
+                      "end": 77
+                    },
+                    {
+                      "node": {
+                        "kind": "Ident",
+                        "value": "DXImageTransform"
+                      },
+                      "start": 77,
+                      "end": 93
+                    },
+                    {
+                      "node": {
+                        "kind": "Delim",
+                        "value": "."
+                      },
+                      "start": 93,
+                      "end": 94
+                    },
+                    {
+                      "node": {
+                        "kind": "Ident",
+                        "value": "Microsoft"
+                      },
+                      "start": 94,
+                      "end": 103
+                    },
+                    {
+                      "node": {
+                        "kind": "Delim",
+                        "value": "."
+                      },
+                      "start": 103,
+                      "end": 104
+                    },
+                    {
+                      "node": {
+                        "type": "Function",
+                        "name": "Wheel",
+                        "values": [
+                          {
+                            "node": {
+                              "kind": "Ident",
+                              "value": "duration"
+                            },
+                            "start": 110,
+                            "end": 118
+                          },
+                          {
+                            "node": {
+                              "kind": "Delim",
+                              "value": "="
+                            },
+                            "start": 118,
+                            "end": 119
+                          },
+                          {
+                            "node": {
+                              "kind": "Number",
+                              "value": [
+                                3.0,
+                                {
+                                  "bits": 0
+                                }
+                              ]
+                            },
+                            "start": 119,
+                            "end": 120
+                          }
+                        ]
+                      },
+                      "start": 104,
+                      "end": 121
+                    }
+                  ],
+                  "important": false
+                },
+                "start": 3,
+                "end": 122
+              }
+            ],
+            "rules": []
+          },
+          "start": 2,
+          "end": 124
+        },
+        "start": 0,
+        "end": 124
+      }
+    ]
+  },
+  "start": 0,
+  "end": 124
+}

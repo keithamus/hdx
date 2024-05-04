@@ -1,0 +1,277 @@
+---
+source: crates/hdx_ast/tests/postcss_snapshots.rs
+expression: result.output.unwrap()
+---
+{
+  "node": {
+    "type": "stylesheet",
+    "rules": [
+      {
+        "node": {
+          "type": "stylerule",
+          "selectors": {
+            "node": [
+              {
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Div"
+                    }
+                  }
+                ],
+                "start": 36,
+                "end": 40
+              }
+            ],
+            "start": 0,
+            "end": 40
+          },
+          "node": {
+            "type": "style-declaration",
+            "declarations": [
+              {
+                "node": {
+                  "type": "property",
+                  "name": "color",
+                  "value": {
+                    "Named": {
+                      "type": "black"
+                    }
+                  },
+                  "important": false
+                },
+                "start": 41,
+                "end": 76
+              },
+              {
+                "node": {
+                  "type": "property",
+                  "name": "border-radius",
+                  "value": [
+                    {
+                      "node": {
+                        "kind": "Dimension",
+                        "value": [
+                          3.0,
+                          "px",
+                          {
+                            "bits": 0
+                          }
+                        ]
+                      },
+                      "start": 114,
+                      "end": 117
+                    },
+                    {
+                      "node": {
+                        "kind": "Whitespace"
+                      },
+                      "start": 117,
+                      "end": 118
+                    },
+                    {
+                      "node": {
+                        "kind": "Delim",
+                        "value": "/"
+                      },
+                      "start": 118,
+                      "end": 119
+                    },
+                    {
+                      "node": {
+                        "kind": "Whitespace"
+                      },
+                      "start": 119,
+                      "end": 120
+                    },
+                    {
+                      "node": {
+                        "kind": "Dimension",
+                        "value": [
+                          7.0,
+                          "px",
+                          {
+                            "bits": 0
+                          }
+                        ]
+                      },
+                      "start": 120,
+                      "end": 123
+                    },
+                    {
+                      "node": {
+                        "kind": "Whitespace"
+                      },
+                      "start": 123,
+                      "end": 128
+                    },
+                    {
+                      "node": {
+                        "kind": "Whitespace"
+                      },
+                      "start": 128,
+                      "end": 138
+                    }
+                  ],
+                  "important": false
+                },
+                "start": 76,
+                "end": 138
+              }
+            ],
+            "rules": []
+          },
+          "start": 40,
+          "end": 139
+        },
+        "start": 0,
+        "end": 139
+      },
+      {
+        "node": {
+          "type": "stylerule",
+          "selectors": {
+            "node": [
+              {
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "A"
+                    }
+                  }
+                ],
+                "start": 149,
+                "end": 151
+              }
+            ],
+            "start": 139,
+            "end": 151
+          },
+          "node": {
+            "type": "style-declaration",
+            "declarations": [
+              {
+                "node": {
+                  "type": "property",
+                  "name": "color",
+                  "value": {
+                    "Named": {
+                      "type": "black"
+                    }
+                  },
+                  "important": false
+                },
+                "start": 152,
+                "end": 170
+              }
+            ],
+            "rules": []
+          },
+          "start": 151,
+          "end": 184
+        },
+        "start": 139,
+        "end": 184
+      },
+      {
+        "node": {
+          "type": "stylerule",
+          "selectors": {
+            "node": [
+              {
+                "node": [
+                  {
+                    "type": "class",
+                    "value": "in"
+                  },
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Unknown": "side"
+                    }
+                  }
+                ],
+                "start": 186,
+                "end": 198
+              }
+            ],
+            "start": 184,
+            "end": 198
+          },
+          "node": {
+            "type": "style-declaration",
+            "declarations": [
+              {
+                "node": {
+                  "type": "property",
+                  "name": "color",
+                  "value": [
+                    {
+                      "node": {
+                        "kind": "Ident",
+                        "value": "var"
+                      },
+                      "start": 209,
+                      "end": 212
+                    },
+                    {
+                      "node": {
+                        "type": "SimpleBlock",
+                        "pairwise": "Paren",
+                        "values": [
+                          {
+                            "node": {
+                              "kind": "Ident",
+                              "value": "--broken"
+                            },
+                            "start": 217,
+                            "end": 225
+                          }
+                        ]
+                      },
+                      "start": 212,
+                      "end": 226
+                    }
+                  ],
+                  "important": false
+                },
+                "start": 199,
+                "end": 227
+              },
+              {
+                "node": {
+                  "type": "property",
+                  "name": "font-family",
+                  "value": [
+                    {
+                      "node": "SansSerif",
+                      "start": 242,
+                      "end": 253
+                    },
+                    {
+                      "node": "Serif",
+                      "start": 254,
+                      "end": 263
+                    }
+                  ],
+                  "important": false
+                },
+                "start": 227,
+                "end": 264
+              }
+            ],
+            "rules": []
+          },
+          "start": 198,
+          "end": 266
+        },
+        "start": 184,
+        "end": 266
+      }
+    ]
+  },
+  "start": 0,
+  "end": 266
+}

@@ -1,0 +1,138 @@
+---
+source: crates/hdx_lexer/tests/postcss_snapshots.rs
+expression: "get_tokens(\"../../tasks/coverage/postcss-parser-tests/cases/ie-progid.css\".into())"
+---
+[
+  {
+    "kind": "Ident",
+    "value": "a"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "LeftCurly"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "Ident",
+    "value": "filter"
+  },
+  {
+    "kind": "Colon"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "Ident",
+    "value": "progid"
+  },
+  {
+    "kind": "Colon"
+  },
+  {
+    "kind": "Ident",
+    "value": "DXImageTransform"
+  },
+  {
+    "kind": "Delim",
+    "value": "."
+  },
+  {
+    "kind": "Ident",
+    "value": "Microsoft"
+  },
+  {
+    "kind": "Delim",
+    "value": "."
+  },
+  {
+    "kind": "Function",
+    "value": "Blur"
+  },
+  {
+    "kind": "Ident",
+    "value": "pixelradius"
+  },
+  {
+    "kind": "Delim",
+    "value": "="
+  },
+  {
+    "kind": "Number",
+    "value": [
+      2.0,
+      {
+        "bits": 0
+      }
+    ]
+  },
+  {
+    "kind": "RightParen"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "Ident",
+    "value": "progid"
+  },
+  {
+    "kind": "Colon"
+  },
+  {
+    "kind": "Ident",
+    "value": "DXImageTransform"
+  },
+  {
+    "kind": "Delim",
+    "value": "."
+  },
+  {
+    "kind": "Ident",
+    "value": "Microsoft"
+  },
+  {
+    "kind": "Delim",
+    "value": "."
+  },
+  {
+    "kind": "Function",
+    "value": "Wheel"
+  },
+  {
+    "kind": "Ident",
+    "value": "duration"
+  },
+  {
+    "kind": "Delim",
+    "value": "="
+  },
+  {
+    "kind": "Number",
+    "value": [
+      3.0,
+      {
+        "bits": 0
+      }
+    ]
+  },
+  {
+    "kind": "RightParen"
+  },
+  {
+    "kind": "Semicolon"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "RightCurly"
+  },
+  {
+    "kind": "Whitespace"
+  }
+]

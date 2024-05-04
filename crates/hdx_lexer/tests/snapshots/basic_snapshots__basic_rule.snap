@@ -1,0 +1,51 @@
+---
+source: crates/hdx_lexer/tests/basic_snapshots.rs
+expression: "get_tokens(\"../../tasks/coverage/basic/rule.css\".into())"
+---
+[
+  {
+    "kind": "Ident",
+    "value": "body"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "LeftCurly"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "Ident",
+    "value": "min-width"
+  },
+  {
+    "kind": "Colon"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "Dimension",
+    "value": [
+      960.0,
+      "px",
+      {
+        "bits": 0
+      }
+    ]
+  },
+  {
+    "kind": "Semicolon"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "RightCurly"
+  },
+  {
+    "kind": "Whitespace"
+  }
+]

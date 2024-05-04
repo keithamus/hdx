@@ -1,0 +1,1029 @@
+---
+source: crates/hdx_ast/tests/postcss_snapshots.rs
+expression: result.output.unwrap()
+---
+{
+  "node": {
+    "type": "stylesheet",
+    "rules": [
+      {
+        "node": {
+          "type": "stylerule",
+          "selectors": {
+            "node": [
+              {
+                "node": [
+                  {
+                    "type": "pseudo-class",
+                    "value": "root"
+                  }
+                ],
+                "start": 0,
+                "end": 5
+              }
+            ],
+            "start": 0,
+            "end": 5
+          },
+          "node": {
+            "type": "style-declaration",
+            "declarations": [
+              {
+                "node": {
+                  "type": "property",
+                  "name": "--number",
+                  "value": [
+                    {
+                      "node": {
+                        "kind": "Number",
+                        "value": [
+                          1.0,
+                          {
+                            "bits": 0
+                          }
+                        ]
+                      },
+                      "start": 20,
+                      "end": 21
+                    }
+                  ],
+                  "important": false
+                },
+                "start": 7,
+                "end": 22
+              },
+              {
+                "node": {
+                  "type": "property",
+                  "name": "--unit",
+                  "value": [
+                    {
+                      "node": {
+                        "kind": "Dimension",
+                        "value": [
+                          100.0,
+                          "vw",
+                          {
+                            "bits": 0
+                          }
+                        ]
+                      },
+                      "start": 33,
+                      "end": 38
+                    }
+                  ],
+                  "important": false
+                },
+                "start": 22,
+                "end": 39
+              },
+              {
+                "node": {
+                  "type": "property",
+                  "name": "--color",
+                  "value": [
+                    {
+                      "node": {
+                        "kind": "Hash",
+                        "value": "06c"
+                      },
+                      "start": 51,
+                      "end": 55
+                    }
+                  ],
+                  "important": false
+                },
+                "start": 39,
+                "end": 56
+              },
+              {
+                "node": {
+                  "type": "property",
+                  "name": "--function",
+                  "value": [
+                    {
+                      "node": {
+                        "type": "Function",
+                        "name": "calc",
+                        "values": [
+                          {
+                            "node": {
+                              "kind": "Number",
+                              "value": [
+                                1.0,
+                                {
+                                  "bits": 0
+                                }
+                              ]
+                            },
+                            "start": 77,
+                            "end": 78
+                          },
+                          {
+                            "node": {
+                              "kind": "Whitespace"
+                            },
+                            "start": 78,
+                            "end": 79
+                          },
+                          {
+                            "node": {
+                              "kind": "Delim",
+                              "value": "+"
+                            },
+                            "start": 79,
+                            "end": 80
+                          },
+                          {
+                            "node": {
+                              "kind": "Whitespace"
+                            },
+                            "start": 80,
+                            "end": 81
+                          },
+                          {
+                            "node": {
+                              "kind": "Number",
+                              "value": [
+                                1.0,
+                                {
+                                  "bits": 0
+                                }
+                              ]
+                            },
+                            "start": 81,
+                            "end": 82
+                          }
+                        ]
+                      },
+                      "start": 72,
+                      "end": 83
+                    }
+                  ],
+                  "important": false
+                },
+                "start": 56,
+                "end": 84
+              },
+              {
+                "node": {
+                  "type": "property",
+                  "name": "--variable",
+                  "value": [
+                    {
+                      "node": {
+                        "type": "Function",
+                        "name": "var",
+                        "values": [
+                          {
+                            "node": {
+                              "kind": "Ident",
+                              "value": "--unit"
+                            },
+                            "start": 103,
+                            "end": 109
+                          }
+                        ]
+                      },
+                      "start": 99,
+                      "end": 110
+                    }
+                  ],
+                  "important": false
+                },
+                "start": 84,
+                "end": 111
+              },
+              {
+                "node": {
+                  "type": "property",
+                  "name": "--string",
+                  "value": [
+                    {
+                      "node": {
+                        "kind": "String",
+                        "value": [
+                          "single quoted string",
+                          {
+                            "kind": "Single"
+                          }
+                        ]
+                      },
+                      "start": 125,
+                      "end": 147
+                    }
+                  ],
+                  "important": false
+                },
+                "start": 111,
+                "end": 148
+              },
+              {
+                "node": {
+                  "type": "property",
+                  "name": "--string",
+                  "value": [
+                    {
+                      "node": {
+                        "kind": "String",
+                        "value": [
+                          "double quoted string",
+                          {
+                            "kind": "Double"
+                          }
+                        ]
+                      },
+                      "start": 161,
+                      "end": 183
+                    }
+                  ],
+                  "important": false
+                },
+                "start": 148,
+                "end": 184
+              },
+              {
+                "node": {
+                  "type": "property",
+                  "name": "--square-block",
+                  "value": [
+                    {
+                      "node": {
+                        "type": "SimpleBlock",
+                        "pairwise": "Square",
+                        "values": [
+                          {
+                            "node": {
+                              "kind": "Number",
+                              "value": [
+                                1.0,
+                                {
+                                  "bits": 0
+                                }
+                              ]
+                            },
+                            "start": 205,
+                            "end": 206
+                          },
+                          {
+                            "node": {
+                              "kind": "Comma"
+                            },
+                            "start": 206,
+                            "end": 207
+                          },
+                          {
+                            "node": {
+                              "kind": "Whitespace"
+                            },
+                            "start": 207,
+                            "end": 208
+                          },
+                          {
+                            "node": {
+                              "kind": "Number",
+                              "value": [
+                                2.0,
+                                {
+                                  "bits": 0
+                                }
+                              ]
+                            },
+                            "start": 208,
+                            "end": 209
+                          },
+                          {
+                            "node": {
+                              "kind": "Comma"
+                            },
+                            "start": 209,
+                            "end": 210
+                          },
+                          {
+                            "node": {
+                              "kind": "Whitespace"
+                            },
+                            "start": 210,
+                            "end": 211
+                          },
+                          {
+                            "node": {
+                              "kind": "Number",
+                              "value": [
+                                3.0,
+                                {
+                                  "bits": 0
+                                }
+                              ]
+                            },
+                            "start": 211,
+                            "end": 212
+                          }
+                        ]
+                      },
+                      "start": 204,
+                      "end": 213
+                    }
+                  ],
+                  "important": false
+                },
+                "start": 184,
+                "end": 214
+              },
+              {
+                "node": {
+                  "type": "property",
+                  "name": "--round-block",
+                  "value": [
+                    {
+                      "node": {
+                        "type": "SimpleBlock",
+                        "pairwise": "Paren",
+                        "values": [
+                          {
+                            "node": {
+                              "kind": "Number",
+                              "value": [
+                                1.0,
+                                {
+                                  "bits": 0
+                                }
+                              ]
+                            },
+                            "start": 233,
+                            "end": 234
+                          },
+                          {
+                            "node": {
+                              "kind": "Comma"
+                            },
+                            "start": 234,
+                            "end": 235
+                          },
+                          {
+                            "node": {
+                              "kind": "Whitespace"
+                            },
+                            "start": 235,
+                            "end": 236
+                          },
+                          {
+                            "node": {
+                              "kind": "Number",
+                              "value": [
+                                2.0,
+                                {
+                                  "bits": 0
+                                }
+                              ]
+                            },
+                            "start": 236,
+                            "end": 237
+                          },
+                          {
+                            "node": {
+                              "kind": "Comma"
+                            },
+                            "start": 237,
+                            "end": 238
+                          },
+                          {
+                            "node": {
+                              "kind": "Whitespace"
+                            },
+                            "start": 238,
+                            "end": 239
+                          },
+                          {
+                            "node": {
+                              "kind": "Number",
+                              "value": [
+                                3.0,
+                                {
+                                  "bits": 0
+                                }
+                              ]
+                            },
+                            "start": 239,
+                            "end": 240
+                          }
+                        ]
+                      },
+                      "start": 232,
+                      "end": 241
+                    }
+                  ],
+                  "important": false
+                },
+                "start": 214,
+                "end": 242
+              },
+              {
+                "node": {
+                  "type": "property",
+                  "name": "--empty1",
+                  "value": [],
+                  "important": false
+                },
+                "start": 242,
+                "end": 257
+              },
+              {
+                "node": {
+                  "type": "property",
+                  "name": "--empty2",
+                  "value": [],
+                  "important": false
+                },
+                "start": 257,
+                "end": 275
+              },
+              {
+                "node": {
+                  "type": "property",
+                  "name": "--empty3",
+                  "value": [
+                    {
+                      "node": {
+                        "kind": "Delim",
+                        "value": "!"
+                      },
+                      "start": 288,
+                      "end": 289
+                    },
+                    {
+                      "node": {
+                        "kind": "Ident",
+                        "value": "important"
+                      },
+                      "start": 289,
+                      "end": 298
+                    }
+                  ],
+                  "important": false
+                },
+                "start": 275,
+                "end": 299
+              },
+              {
+                "node": {
+                  "type": "property",
+                  "name": "--empty4",
+                  "value": [
+                    {
+                      "node": {
+                        "kind": "Delim",
+                        "value": "!"
+                      },
+                      "start": 316,
+                      "end": 317
+                    },
+                    {
+                      "node": {
+                        "kind": "Ident",
+                        "value": "important"
+                      },
+                      "start": 317,
+                      "end": 326
+                    }
+                  ],
+                  "important": false
+                },
+                "start": 299,
+                "end": 327
+              },
+              {
+                "node": {
+                  "type": "property",
+                  "name": "--empty5",
+                  "value": [],
+                  "important": false
+                },
+                "start": 327,
+                "end": 345
+              },
+              {
+                "node": {
+                  "type": "property",
+                  "name": "--bracket-block",
+                  "value": [
+                    {
+                      "node": {
+                        "type": "SimpleBlock",
+                        "pairwise": "Curly",
+                        "values": [
+                          {
+                            "node": {
+                              "kind": "Number",
+                              "value": [
+                                1.0,
+                                {
+                                  "bits": 0
+                                }
+                              ]
+                            },
+                            "start": 367,
+                            "end": 368
+                          },
+                          {
+                            "node": {
+                              "kind": "Comma"
+                            },
+                            "start": 368,
+                            "end": 369
+                          },
+                          {
+                            "node": {
+                              "kind": "Whitespace"
+                            },
+                            "start": 369,
+                            "end": 370
+                          },
+                          {
+                            "node": {
+                              "kind": "Number",
+                              "value": [
+                                2.0,
+                                {
+                                  "bits": 0
+                                }
+                              ]
+                            },
+                            "start": 370,
+                            "end": 371
+                          },
+                          {
+                            "node": {
+                              "kind": "Comma"
+                            },
+                            "start": 371,
+                            "end": 372
+                          },
+                          {
+                            "node": {
+                              "kind": "Whitespace"
+                            },
+                            "start": 372,
+                            "end": 373
+                          },
+                          {
+                            "node": {
+                              "kind": "Number",
+                              "value": [
+                                3.0,
+                                {
+                                  "bits": 0
+                                }
+                              ]
+                            },
+                            "start": 373,
+                            "end": 374
+                          }
+                        ]
+                      },
+                      "start": 366,
+                      "end": 375
+                    }
+                  ],
+                  "important": false
+                },
+                "start": 345,
+                "end": 376
+              },
+              {
+                "node": {
+                  "type": "property",
+                  "name": "--json",
+                  "value": [
+                    {
+                      "node": {
+                        "type": "SimpleBlock",
+                        "pairwise": "Square",
+                        "values": [
+                          {
+                            "node": {
+                              "kind": "Number",
+                              "value": [
+                                1.0,
+                                {
+                                  "bits": 0
+                                }
+                              ]
+                            },
+                            "start": 388,
+                            "end": 389
+                          },
+                          {
+                            "node": {
+                              "kind": "Comma"
+                            },
+                            "start": 389,
+                            "end": 390
+                          },
+                          {
+                            "node": {
+                              "kind": "Whitespace"
+                            },
+                            "start": 390,
+                            "end": 391
+                          },
+                          {
+                            "node": {
+                              "kind": "String",
+                              "value": [
+                                "2",
+                                {
+                                  "kind": "Double"
+                                }
+                              ]
+                            },
+                            "start": 391,
+                            "end": 394
+                          },
+                          {
+                            "node": {
+                              "kind": "Comma"
+                            },
+                            "start": 394,
+                            "end": 395
+                          },
+                          {
+                            "node": {
+                              "kind": "Whitespace"
+                            },
+                            "start": 395,
+                            "end": 396
+                          },
+                          {
+                            "node": {
+                              "type": "SimpleBlock",
+                              "pairwise": "Curly",
+                              "values": [
+                                {
+                                  "node": {
+                                    "kind": "String",
+                                    "value": [
+                                      "three",
+                                      {
+                                        "kind": "Double"
+                                      }
+                                    ]
+                                  },
+                                  "start": 397,
+                                  "end": 404
+                                },
+                                {
+                                  "node": {
+                                    "kind": "Colon"
+                                  },
+                                  "start": 404,
+                                  "end": 405
+                                },
+                                {
+                                  "node": {
+                                    "kind": "Whitespace"
+                                  },
+                                  "start": 405,
+                                  "end": 406
+                                },
+                                {
+                                  "node": {
+                                    "type": "SimpleBlock",
+                                    "pairwise": "Curly",
+                                    "values": [
+                                      {
+                                        "node": {
+                                          "kind": "String",
+                                          "value": [
+                                            "a",
+                                            {
+                                              "kind": "Double"
+                                            }
+                                          ]
+                                        },
+                                        "start": 407,
+                                        "end": 410
+                                      },
+                                      {
+                                        "node": {
+                                          "kind": "Colon"
+                                        },
+                                        "start": 410,
+                                        "end": 411
+                                      },
+                                      {
+                                        "node": {
+                                          "kind": "Number",
+                                          "value": [
+                                            1.0,
+                                            {
+                                              "bits": 0
+                                            }
+                                          ]
+                                        },
+                                        "start": 411,
+                                        "end": 412
+                                      }
+                                    ]
+                                  },
+                                  "start": 406,
+                                  "end": 413
+                                }
+                              ]
+                            },
+                            "start": 396,
+                            "end": 414
+                          },
+                          {
+                            "node": {
+                              "kind": "Comma"
+                            },
+                            "start": 414,
+                            "end": 415
+                          },
+                          {
+                            "node": {
+                              "kind": "Whitespace"
+                            },
+                            "start": 415,
+                            "end": 416
+                          },
+                          {
+                            "node": {
+                              "type": "SimpleBlock",
+                              "pairwise": "Square",
+                              "values": [
+                                {
+                                  "node": {
+                                    "kind": "Number",
+                                    "value": [
+                                      4.0,
+                                      {
+                                        "bits": 0
+                                      }
+                                    ]
+                                  },
+                                  "start": 417,
+                                  "end": 418
+                                }
+                              ]
+                            },
+                            "start": 416,
+                            "end": 419
+                          }
+                        ]
+                      },
+                      "start": 387,
+                      "end": 420
+                    }
+                  ],
+                  "important": false
+                },
+                "start": 376,
+                "end": 421
+              },
+              {
+                "node": {
+                  "type": "property",
+                  "name": "--javascript",
+                  "value": [
+                    {
+                      "node": {
+                        "type": "Function",
+                        "name": "function",
+                        "values": [
+                          {
+                            "node": {
+                              "kind": "Ident",
+                              "value": "rule"
+                            },
+                            "start": 447,
+                            "end": 451
+                          }
+                        ]
+                      },
+                      "start": 438,
+                      "end": 452
+                    },
+                    {
+                      "node": {
+                        "kind": "Whitespace"
+                      },
+                      "start": 452,
+                      "end": 453
+                    },
+                    {
+                      "node": {
+                        "type": "SimpleBlock",
+                        "pairwise": "Curly",
+                        "values": [
+                          {
+                            "node": {
+                              "kind": "Whitespace"
+                            },
+                            "start": 454,
+                            "end": 455
+                          },
+                          {
+                            "node": {
+                              "kind": "Ident",
+                              "value": "console"
+                            },
+                            "start": 455,
+                            "end": 462
+                          },
+                          {
+                            "node": {
+                              "kind": "Delim",
+                              "value": "."
+                            },
+                            "start": 462,
+                            "end": 463
+                          },
+                          {
+                            "node": {
+                              "type": "Function",
+                              "name": "log",
+                              "values": [
+                                {
+                                  "node": {
+                                    "kind": "Ident",
+                                    "value": "rule"
+                                  },
+                                  "start": 467,
+                                  "end": 471
+                                }
+                              ]
+                            },
+                            "start": 463,
+                            "end": 472
+                          },
+                          {
+                            "node": {
+                              "kind": "Whitespace"
+                            },
+                            "start": 472,
+                            "end": 473
+                          }
+                        ]
+                      },
+                      "start": 453,
+                      "end": 474
+                    }
+                  ],
+                  "important": false
+                },
+                "start": 421,
+                "end": 475
+              }
+            ],
+            "rules": []
+          },
+          "start": 5,
+          "end": 477
+        },
+        "start": 0,
+        "end": 477
+      },
+      {
+        "node": {
+          "type": "stylerule",
+          "selectors": {
+            "node": [
+              {
+                "node": [
+                  {
+                    "type": "pseudo-class",
+                    "value": "root"
+                  }
+                ],
+                "start": 479,
+                "end": 484
+              }
+            ],
+            "start": 477,
+            "end": 484
+          },
+          "node": {
+            "type": "style-declaration",
+            "declarations": [
+              {
+                "node": {
+                  "type": "property",
+                  "name": "--a",
+                  "value": [
+                    {
+                      "node": {
+                        "kind": "Number",
+                        "value": [
+                          1.0,
+                          {
+                            "bits": 0
+                          }
+                        ]
+                      },
+                      "start": 489,
+                      "end": 490
+                    }
+                  ],
+                  "important": false
+                },
+                "start": 485,
+                "end": 490
+              }
+            ],
+            "rules": []
+          },
+          "start": 484,
+          "end": 491
+        },
+        "start": 477,
+        "end": 491
+      },
+      {
+        "node": {
+          "type": "stylerule",
+          "selectors": {
+            "node": [
+              {
+                "node": [
+                  {
+                    "type": "class",
+                    "value": "semicolon-less"
+                  }
+                ],
+                "start": 493,
+                "end": 508
+              }
+            ],
+            "start": 491,
+            "end": 508
+          },
+          "node": {
+            "type": "style-declaration",
+            "declarations": [
+              {
+                "node": {
+                  "type": "property",
+                  "name": "--empty-end",
+                  "value": [],
+                  "important": false
+                },
+                "start": 510,
+                "end": 527
+              }
+            ],
+            "rules": []
+          },
+          "start": 508,
+          "end": 528
+        },
+        "start": 491,
+        "end": 528
+      },
+      {
+        "node": {
+          "type": "stylerule",
+          "selectors": {
+            "node": [
+              {
+                "node": [
+                  {
+                    "type": "class",
+                    "value": "empty"
+                  }
+                ],
+                "start": 530,
+                "end": 536
+              }
+            ],
+            "start": 528,
+            "end": 536
+          },
+          "node": {
+            "type": "style-declaration",
+            "declarations": [
+              {
+                "node": {
+                  "type": "property",
+                  "name": "--a",
+                  "value": [],
+                  "important": false
+                },
+                "start": 537,
+                "end": 542
+              }
+            ],
+            "rules": []
+          },
+          "start": 536,
+          "end": 543
+        },
+        "start": 528,
+        "end": 543
+      }
+    ]
+  },
+  "start": 0,
+  "end": 543
+}
