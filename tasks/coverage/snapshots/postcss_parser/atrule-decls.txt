@@ -1,7 +1,0 @@
-hdx_parser::Unexpected
-
-  × Unexpected `Eof`
-    ╭─[tasks/coverage/postcss-parser-tests/cases/atrule-decls.css:20:1]
- 19 │ }
-    ╰────
-  help: This is not correct CSS syntax.
