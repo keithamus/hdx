@@ -1,0 +1,43 @@
+---
+source: crates/hdx_ast/tests/postcss_snapshots.rs
+expression: result.output.unwrap()
+---
+{
+  "node": {
+    "type": "stylesheet",
+    "rules": [
+      {
+        "node": {
+          "type": "stylerule",
+          "selectors": {
+            "node": [
+              {
+                "node": [
+                  {
+                    "type": "pseudo-class",
+                    "value": "fullscreen"
+                  }
+                ],
+                "start": 0,
+                "end": 11
+              }
+            ],
+            "start": 0,
+            "end": 11
+          },
+          "node": {
+            "type": "style-declaration",
+            "declarations": [],
+            "rules": []
+          },
+          "start": 11,
+          "end": 14
+        },
+        "start": 0,
+        "end": 14
+      }
+    ]
+  },
+  "start": 0,
+  "end": 14
+}

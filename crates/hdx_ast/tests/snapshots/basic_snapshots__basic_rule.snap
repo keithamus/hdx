@@ -1,0 +1,60 @@
+---
+source: crates/hdx_ast/tests/basic_snapshots.rs
+expression: result.output.unwrap()
+---
+{
+  "node": {
+    "type": "stylesheet",
+    "rules": [
+      {
+        "node": {
+          "type": "stylerule",
+          "selectors": {
+            "node": [
+              {
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Body"
+                    }
+                  }
+                ],
+                "start": 0,
+                "end": 5
+              }
+            ],
+            "start": 0,
+            "end": 5
+          },
+          "node": {
+            "type": "style-declaration",
+            "declarations": [
+              {
+                "node": {
+                  "type": "property",
+                  "name": "min-width",
+                  "value": {
+                    "type": "length-percentage",
+                    "type": "px",
+                    "value": 960.0
+                  },
+                  "important": false
+                },
+                "start": 6,
+                "end": 26
+              }
+            ],
+            "rules": []
+          },
+          "start": 5,
+          "end": 28
+        },
+        "start": 0,
+        "end": 28
+      }
+    ]
+  },
+  "start": 0,
+  "end": 28
+}

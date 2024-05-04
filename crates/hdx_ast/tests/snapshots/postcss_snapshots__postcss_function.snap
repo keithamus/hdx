@@ -1,0 +1,121 @@
+---
+source: crates/hdx_ast/tests/postcss_snapshots.rs
+expression: result.output.unwrap()
+---
+{
+  "node": {
+    "type": "stylesheet",
+    "rules": [
+      {
+        "node": {
+          "type": "stylerule",
+          "selectors": {
+            "node": [
+              {
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "A"
+                    }
+                  }
+                ],
+                "start": 0,
+                "end": 2
+              }
+            ],
+            "start": 0,
+            "end": 2
+          },
+          "node": {
+            "type": "style-declaration",
+            "declarations": [
+              {
+                "node": {
+                  "type": "property",
+                  "name": "background-image",
+                  "value": [
+                    {
+                      "node": {
+                        "Image": {
+                          "Url": [
+                            "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7",
+                            {
+                              "kind": "None"
+                            }
+                          ]
+                        }
+                      },
+                      "start": 25,
+                      "end": 109
+                    }
+                  ],
+                  "important": false
+                },
+                "start": 3,
+                "end": 110
+              },
+              {
+                "node": {
+                  "type": "property",
+                  "name": "background-image",
+                  "value": [
+                    {
+                      "node": {
+                        "Image": {
+                          "Url": [
+                            "./image (1).jpg",
+                            {
+                              "kind": "Double"
+                            }
+                          ]
+                        }
+                      },
+                      "start": 132,
+                      "end": 155
+                    }
+                  ],
+                  "important": false
+                },
+                "start": 110,
+                "end": 156
+              },
+              {
+                "node": {
+                  "type": "property",
+                  "name": "background-image",
+                  "value": [
+                    {
+                      "node": {
+                        "Image": {
+                          "Url": [
+                            "./image (1).jpg",
+                            {
+                              "kind": "Single"
+                            }
+                          ]
+                        }
+                      },
+                      "start": 178,
+                      "end": 203
+                    }
+                  ],
+                  "important": false
+                },
+                "start": 156,
+                "end": 204
+              }
+            ],
+            "rules": []
+          },
+          "start": 2,
+          "end": 206
+        },
+        "start": 0,
+        "end": 206
+      }
+    ]
+  },
+  "start": 0,
+  "end": 206
+}

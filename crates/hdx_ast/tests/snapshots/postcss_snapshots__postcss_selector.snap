@@ -1,0 +1,93 @@
+---
+source: crates/hdx_ast/tests/postcss_snapshots.rs
+expression: result.output.unwrap()
+---
+{
+  "node": {
+    "type": "stylesheet",
+    "rules": [
+      {
+        "node": {
+          "type": "stylerule",
+          "selectors": {
+            "node": [
+              {
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "A"
+                    }
+                  },
+                  {
+                    "type": "combinator",
+                    "value": "descendant"
+                  },
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "B"
+                    }
+                  }
+                ],
+                "start": 1,
+                "end": 14
+              }
+            ],
+            "start": 0,
+            "end": 14
+          },
+          "node": {
+            "type": "style-declaration",
+            "declarations": [],
+            "rules": []
+          },
+          "start": 14,
+          "end": 16
+        },
+        "start": 0,
+        "end": 16
+      },
+      {
+        "node": {
+          "type": "stylerule",
+          "selectors": {
+            "node": [
+              {
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "A"
+                    }
+                  },
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "B"
+                    }
+                  }
+                ],
+                "start": 18,
+                "end": 31
+              }
+            ],
+            "start": 16,
+            "end": 31
+          },
+          "node": {
+            "type": "style-declaration",
+            "declarations": [],
+            "rules": []
+          },
+          "start": 31,
+          "end": 33
+        },
+        "start": 16,
+        "end": 33
+      }
+    ]
+  },
+  "start": 0,
+  "end": 33
+}

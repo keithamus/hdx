@@ -1,0 +1,90 @@
+---
+source: crates/hdx_ast/tests/basic_snapshots.rs
+expression: result.output.unwrap()
+---
+{
+  "node": {
+    "type": "stylesheet",
+    "rules": [
+      {
+        "node": {
+          "type": "Media",
+          "query": {
+            "node": [
+              {
+                "node": {
+                  "precondition": null,
+                  "media_type": {
+                    "type": "Screen"
+                  },
+                  "condition": null
+                },
+                "start": 6,
+                "end": 13
+              }
+            ],
+            "start": 6,
+            "end": 13
+          },
+          "rules": {
+            "node": [
+              {
+                "node": {
+                  "type": "stylerule",
+                  "selectors": {
+                    "node": [
+                      {
+                        "node": [
+                          {
+                            "type": "tag",
+                            "value": {
+                              "Html": "Body"
+                            }
+                          }
+                        ],
+                        "start": 17,
+                        "end": 22
+                      }
+                    ],
+                    "start": 15,
+                    "end": 22
+                  },
+                  "node": {
+                    "type": "style-declaration",
+                    "declarations": [
+                      {
+                        "node": {
+                          "type": "property",
+                          "name": "color",
+                          "value": {
+                            "Named": {
+                              "type": "black"
+                            }
+                          },
+                          "important": false
+                        },
+                        "start": 23,
+                        "end": 38
+                      }
+                    ],
+                    "rules": []
+                  },
+                  "start": 22,
+                  "end": 41
+                },
+                "start": 15,
+                "end": 41
+              }
+            ],
+            "start": 13,
+            "end": 43
+          }
+        },
+        "start": 0,
+        "end": 43
+      }
+    ]
+  },
+  "start": 0,
+  "end": 43
+}

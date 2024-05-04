@@ -1,0 +1,84 @@
+---
+source: crates/hdx_ast/tests/postcss_snapshots.rs
+expression: result.output.unwrap()
+---
+{
+  "node": {
+    "type": "stylesheet",
+    "rules": [
+      {
+        "node": {
+          "type": "stylerule",
+          "selectors": {
+            "node": [
+              {
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "A"
+                    }
+                  },
+                  {
+                    "type": "pseudo-element",
+                    "value": "before"
+                  }
+                ],
+                "start": 0,
+                "end": 9
+              }
+            ],
+            "start": 0,
+            "end": 9
+          },
+          "node": {
+            "type": "style-declaration",
+            "declarations": [
+              {
+                "node": {
+                  "type": "property",
+                  "name": "content",
+                  "value": {
+                    "String": [
+                      ";'@ /**/\"",
+                      {
+                        "kind": "Double"
+                      }
+                    ]
+                  },
+                  "important": false
+                },
+                "start": 11,
+                "end": 38
+              },
+              {
+                "node": {
+                  "type": "property",
+                  "name": "content",
+                  "value": {
+                    "String": [
+                      "'\"\\",
+                      {
+                        "kind": "Single"
+                      }
+                    ]
+                  },
+                  "important": false
+                },
+                "start": 38,
+                "end": 60
+              }
+            ],
+            "rules": []
+          },
+          "start": 9,
+          "end": 62
+        },
+        "start": 0,
+        "end": 62
+      }
+    ]
+  },
+  "start": 0,
+  "end": 62
+}

@@ -1,0 +1,240 @@
+---
+source: crates/hdx_ast/tests/basic_snapshots.rs
+expression: result.output.unwrap()
+---
+{
+  "node": {
+    "type": "stylesheet",
+    "rules": [
+      {
+        "node": {
+          "type": "stylerule",
+          "selectors": {
+            "node": [
+              {
+                "node": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": "Hr"
+                    }
+                  }
+                ],
+                "start": 0,
+                "end": 3
+              }
+            ],
+            "start": 0,
+            "end": 3
+          },
+          "node": {
+            "type": "style-declaration",
+            "declarations": [
+              {
+                "node": {
+                  "type": "property",
+                  "name": "background",
+                  "value": [
+                    {
+                      "node": {
+                        "type": "Function",
+                        "name": "linear-gradient",
+                        "values": [
+                          {
+                            "node": {
+                              "kind": "Ident",
+                              "value": "to"
+                            },
+                            "start": 35,
+                            "end": 37
+                          },
+                          {
+                            "node": {
+                              "kind": "Whitespace"
+                            },
+                            "start": 37,
+                            "end": 38
+                          },
+                          {
+                            "node": {
+                              "kind": "Ident",
+                              "value": "right"
+                            },
+                            "start": 38,
+                            "end": 43
+                          },
+                          {
+                            "node": {
+                              "kind": "Comma"
+                            },
+                            "start": 43,
+                            "end": 44
+                          },
+                          {
+                            "node": {
+                              "kind": "Whitespace"
+                            },
+                            "start": 44,
+                            "end": 45
+                          },
+                          {
+                            "node": {
+                              "kind": "Ident",
+                              "value": "transparent"
+                            },
+                            "start": 45,
+                            "end": 56
+                          },
+                          {
+                            "node": {
+                              "kind": "Comma"
+                            },
+                            "start": 56,
+                            "end": 57
+                          },
+                          {
+                            "node": {
+                              "kind": "Whitespace"
+                            },
+                            "start": 57,
+                            "end": 58
+                          },
+                          {
+                            "node": {
+                              "type": "Function",
+                              "name": "var",
+                              "values": [
+                                {
+                                  "node": {
+                                    "kind": "Ident",
+                                    "value": "--border-color"
+                                  },
+                                  "start": 62,
+                                  "end": 76
+                                }
+                              ]
+                            },
+                            "start": 58,
+                            "end": 77
+                          },
+                          {
+                            "node": {
+                              "kind": "Whitespace"
+                            },
+                            "start": 77,
+                            "end": 78
+                          },
+                          {
+                            "node": {
+                              "kind": "Dimension",
+                              "value": [
+                                20.0,
+                                "%",
+                                {
+                                  "bits": 0
+                                }
+                              ]
+                            },
+                            "start": 78,
+                            "end": 81
+                          },
+                          {
+                            "node": {
+                              "kind": "Comma"
+                            },
+                            "start": 81,
+                            "end": 82
+                          },
+                          {
+                            "node": {
+                              "kind": "Whitespace"
+                            },
+                            "start": 82,
+                            "end": 83
+                          },
+                          {
+                            "node": {
+                              "type": "Function",
+                              "name": "var",
+                              "values": [
+                                {
+                                  "node": {
+                                    "kind": "Ident",
+                                    "value": "--border-color"
+                                  },
+                                  "start": 87,
+                                  "end": 101
+                                }
+                              ]
+                            },
+                            "start": 83,
+                            "end": 102
+                          },
+                          {
+                            "node": {
+                              "kind": "Whitespace"
+                            },
+                            "start": 102,
+                            "end": 103
+                          },
+                          {
+                            "node": {
+                              "kind": "Dimension",
+                              "value": [
+                                80.0,
+                                "%",
+                                {
+                                  "bits": 0
+                                }
+                              ]
+                            },
+                            "start": 103,
+                            "end": 106
+                          },
+                          {
+                            "node": {
+                              "kind": "Comma"
+                            },
+                            "start": 106,
+                            "end": 107
+                          },
+                          {
+                            "node": {
+                              "kind": "Whitespace"
+                            },
+                            "start": 107,
+                            "end": 108
+                          },
+                          {
+                            "node": {
+                              "kind": "Ident",
+                              "value": "transparent"
+                            },
+                            "start": 108,
+                            "end": 119
+                          }
+                        ]
+                      },
+                      "start": 19,
+                      "end": 120
+                    }
+                  ],
+                  "important": false
+                },
+                "start": 4,
+                "end": 121
+              }
+            ],
+            "rules": []
+          },
+          "start": 3,
+          "end": 123
+        },
+        "start": 0,
+        "end": 123
+      }
+    ]
+  },
+  "start": 0,
+  "end": 123
+}
