@@ -1,0 +1,136 @@
+---
+source: crates/hdx_lexer/tests/postcss_snapshots.rs
+expression: "get_tokens(\"../../tasks/coverage/postcss-parser-tests/cases/prop.css\".into())"
+---
+[
+  {
+    "kind": "Ident",
+    "value": "a"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "LeftCurly"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "Delim",
+    "value": "*"
+  },
+  {
+    "kind": "Ident",
+    "value": "color"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "Colon"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "Ident",
+    "value": "black"
+  },
+  {
+    "kind": "Semicolon"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "Ident",
+    "value": "_background"
+  },
+  {
+    "kind": "Colon"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "Ident",
+    "value": "white"
+  },
+  {
+    "kind": "Semicolon"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "Ident",
+    "value": "font-size"
+  },
+  {
+    "kind": "Comment",
+    "value": ""
+  },
+  {
+    "kind": "Colon"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "Ident",
+    "value": "big"
+  },
+  {
+    "kind": "Semicolon"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "Delim",
+    "value": "$"
+  },
+  {
+    "kind": "LeftParen"
+  },
+  {
+    "kind": "Ident",
+    "value": "var"
+  },
+  {
+    "kind": "RightParen"
+  },
+  {
+    "kind": "Ident",
+    "value": "-size"
+  },
+  {
+    "kind": "Colon"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "Dimension",
+    "value": [
+      100.0,
+      "%",
+      {
+        "bits": 0
+      }
+    ]
+  },
+  {
+    "kind": "Semicolon"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "RightCurly"
+  },
+  {
+    "kind": "Whitespace"
+  }
+]

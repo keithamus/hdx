@@ -1,0 +1,139 @@
+---
+source: crates/hdx_lexer/tests/basic_snapshots.rs
+expression: "get_tokens(\"../../tasks/coverage/basic/vars.css\".into())"
+---
+[
+  {
+    "kind": "Ident",
+    "value": "hr"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "LeftCurly"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "Ident",
+    "value": "background"
+  },
+  {
+    "kind": "Colon"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "Function",
+    "value": "linear-gradient"
+  },
+  {
+    "kind": "Ident",
+    "value": "to"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "Ident",
+    "value": "right"
+  },
+  {
+    "kind": "Comma"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "Ident",
+    "value": "transparent"
+  },
+  {
+    "kind": "Comma"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "Function",
+    "value": "var"
+  },
+  {
+    "kind": "Ident",
+    "value": "--border-color"
+  },
+  {
+    "kind": "RightParen"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "Dimension",
+    "value": [
+      20.0,
+      "%",
+      {
+        "bits": 0
+      }
+    ]
+  },
+  {
+    "kind": "Comma"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "Function",
+    "value": "var"
+  },
+  {
+    "kind": "Ident",
+    "value": "--border-color"
+  },
+  {
+    "kind": "RightParen"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "Dimension",
+    "value": [
+      80.0,
+      "%",
+      {
+        "bits": 0
+      }
+    ]
+  },
+  {
+    "kind": "Comma"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "Ident",
+    "value": "transparent"
+  },
+  {
+    "kind": "RightParen"
+  },
+  {
+    "kind": "Semicolon"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "RightCurly"
+  },
+  {
+    "kind": "Whitespace"
+  }
+]

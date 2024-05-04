@@ -1,0 +1,120 @@
+---
+source: crates/hdx_lexer/tests/postcss_snapshots.rs
+expression: "get_tokens(\"../../tasks/coverage/postcss-parser-tests/cases/function.css\".into())"
+---
+[
+  {
+    "kind": "Ident",
+    "value": "a"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "LeftCurly"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "Ident",
+    "value": "background-image"
+  },
+  {
+    "kind": "Colon"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "Url",
+    "value": [
+      "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7",
+      {
+        "kind": "None"
+      }
+    ]
+  },
+  {
+    "kind": "Semicolon"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "Ident",
+    "value": "background-image"
+  },
+  {
+    "kind": "Colon"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "Function",
+    "value": "url"
+  },
+  {
+    "kind": "String",
+    "value": [
+      "./image (1).jpg",
+      {
+        "kind": "Double"
+      }
+    ]
+  },
+  {
+    "kind": "RightParen"
+  },
+  {
+    "kind": "Semicolon"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "Ident",
+    "value": "background-image"
+  },
+  {
+    "kind": "Colon"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "Function",
+    "value": "url"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "String",
+    "value": [
+      "./image (1).jpg",
+      {
+        "kind": "Single"
+      }
+    ]
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "RightParen"
+  },
+  {
+    "kind": "Semicolon"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "RightCurly"
+  },
+  {
+    "kind": "Whitespace"
+  }
+]

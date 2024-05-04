@@ -1,0 +1,41 @@
+---
+source: crates/hdx_lexer/tests/basic_snapshots.rs
+expression: "get_tokens(\"../../tasks/coverage/basic/nth.css\".into())"
+---
+[
+  {
+    "kind": "Colon"
+  },
+  {
+    "kind": "Function",
+    "value": "nth-child"
+  },
+  {
+    "kind": "Ident",
+    "value": "n"
+  },
+  {
+    "kind": "Number",
+    "value": [
+      1.0,
+      {
+        "bits": 16
+      }
+    ]
+  },
+  {
+    "kind": "RightParen"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "LeftCurly"
+  },
+  {
+    "kind": "RightCurly"
+  },
+  {
+    "kind": "Whitespace"
+  }
+]

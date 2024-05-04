@@ -23,8 +23,13 @@ smallvec = { workspace = true }
 
 [dev-dependencies]
 glob = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
 criterion = { workspace = true, features = ["html_reports"] }
 pprof = { workspace = true, features = ["flamegraph", "criterion"] }
+insta = { workspace = true, features = ["json"] }
+similar = { workspace = true }
+console = { workspace = true }
 
 [features]
 default = []

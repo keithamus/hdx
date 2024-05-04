@@ -1,0 +1,802 @@
+---
+source: crates/hdx_lexer/tests/postcss_snapshots.rs
+expression: "get_tokens(\"../../tasks/coverage/postcss-parser-tests/cases/at-rule-brackets.css\".into())"
+---
+[
+  {
+    "kind": "AtKeyword",
+    "value": "supports"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "LeftParen"
+  },
+  {
+    "kind": "Function",
+    "value": "--element"
+  },
+  {
+    "kind": "String",
+    "value": [
+      ".minwidth",
+      {
+        "kind": "Double"
+      }
+    ]
+  },
+  {
+    "kind": "Comma"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "LeftCurly"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "String",
+    "value": [
+      "minWidth",
+      {
+        "kind": "Double"
+      }
+    ]
+  },
+  {
+    "kind": "Colon"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "Number",
+    "value": [
+      300.0,
+      {
+        "bits": 0
+      }
+    ]
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "RightCurly"
+  },
+  {
+    "kind": "RightParen"
+  },
+  {
+    "kind": "RightParen"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "LeftCurly"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "LeftSquare"
+  },
+  {
+    "kind": "Ident",
+    "value": "--self"
+  },
+  {
+    "kind": "RightSquare"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "LeftCurly"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "Ident",
+    "value": "background"
+  },
+  {
+    "kind": "Colon"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "Ident",
+    "value": "greenyellow"
+  },
+  {
+    "kind": "Semicolon"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "RightCurly"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "RightCurly"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "AtKeyword",
+    "value": "supports"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "LeftParen"
+  },
+  {
+    "kind": "LeftCurly"
+  },
+  {
+    "kind": "String",
+    "value": [
+      "example",
+      {
+        "kind": "Double"
+      }
+    ]
+  },
+  {
+    "kind": "Colon"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "Number",
+    "value": [
+      1.0,
+      {
+        "bits": 0
+      }
+    ]
+  },
+  {
+    "kind": "RightCurly"
+  },
+  {
+    "kind": "RightParen"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "LeftCurly"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "Delim",
+    "value": "*"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "LeftCurly"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "Ident",
+    "value": "background"
+  },
+  {
+    "kind": "Colon"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "Ident",
+    "value": "red"
+  },
+  {
+    "kind": "Semicolon"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "RightCurly"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "RightCurly"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "AtKeyword",
+    "value": "supports"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "LeftParen"
+  },
+  {
+    "kind": "LeftParen"
+  },
+  {
+    "kind": "String",
+    "value": [
+      "example",
+      {
+        "kind": "Double"
+      }
+    ]
+  },
+  {
+    "kind": "Colon"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "Number",
+    "value": [
+      1.0,
+      {
+        "bits": 0
+      }
+    ]
+  },
+  {
+    "kind": "RightParen"
+  },
+  {
+    "kind": "RightParen"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "LeftCurly"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "Delim",
+    "value": "*"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "LeftCurly"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "Ident",
+    "value": "background"
+  },
+  {
+    "kind": "Colon"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "Ident",
+    "value": "red"
+  },
+  {
+    "kind": "Semicolon"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "RightCurly"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "RightCurly"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "AtKeyword",
+    "value": "supports"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "LeftParen"
+  },
+  {
+    "kind": "Function",
+    "value": "func"
+  },
+  {
+    "kind": "String",
+    "value": [
+      "example",
+      {
+        "kind": "Double"
+      }
+    ]
+  },
+  {
+    "kind": "Colon"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "Number",
+    "value": [
+      1.0,
+      {
+        "bits": 0
+      }
+    ]
+  },
+  {
+    "kind": "RightParen"
+  },
+  {
+    "kind": "RightParen"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "LeftCurly"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "Delim",
+    "value": "*"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "LeftCurly"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "Ident",
+    "value": "background"
+  },
+  {
+    "kind": "Colon"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "Ident",
+    "value": "red"
+  },
+  {
+    "kind": "Semicolon"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "RightCurly"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "RightCurly"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "AtKeyword",
+    "value": "supports"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "LeftParen"
+  },
+  {
+    "kind": "Ident",
+    "value": "--var"
+  },
+  {
+    "kind": "RightParen"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "LeftCurly"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "Delim",
+    "value": "*"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "LeftCurly"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "Ident",
+    "value": "background"
+  },
+  {
+    "kind": "Colon"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "Ident",
+    "value": "red"
+  },
+  {
+    "kind": "Semicolon"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "RightCurly"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "RightCurly"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "AtKeyword",
+    "value": "supports"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "LeftParen"
+  },
+  {
+    "kind": "LeftSquare"
+  },
+  {
+    "kind": "RightSquare"
+  },
+  {
+    "kind": "RightParen"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "LeftCurly"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "Delim",
+    "value": "*"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "LeftCurly"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "Ident",
+    "value": "background"
+  },
+  {
+    "kind": "Colon"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "Ident",
+    "value": "red"
+  },
+  {
+    "kind": "Semicolon"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "RightCurly"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "RightCurly"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "AtKeyword",
+    "value": "supports"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "LeftParen"
+  },
+  {
+    "kind": "LeftSquare"
+  },
+  {
+    "kind": "Ident",
+    "value": "color"
+  },
+  {
+    "kind": "Colon"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "Ident",
+    "value": "red"
+  },
+  {
+    "kind": "RightSquare"
+  },
+  {
+    "kind": "RightParen"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "LeftCurly"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "Delim",
+    "value": "*"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "LeftCurly"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "Ident",
+    "value": "background"
+  },
+  {
+    "kind": "Colon"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "Ident",
+    "value": "red"
+  },
+  {
+    "kind": "Semicolon"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "RightCurly"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "RightCurly"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "AtKeyword",
+    "value": "supports"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "LeftParen"
+  },
+  {
+    "kind": "LeftSquare"
+  },
+  {
+    "kind": "LeftSquare"
+  },
+  {
+    "kind": "LeftSquare"
+  },
+  {
+    "kind": "LeftSquare"
+  },
+  {
+    "kind": "LeftSquare"
+  },
+  {
+    "kind": "LeftCurly"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "Function",
+    "value": "--func"
+  },
+  {
+    "kind": "Ident",
+    "value": "color"
+  },
+  {
+    "kind": "Colon"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "LeftCurly"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "Ident",
+    "value": "red"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "RightCurly"
+  },
+  {
+    "kind": "RightParen"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "RightCurly"
+  },
+  {
+    "kind": "RightSquare"
+  },
+  {
+    "kind": "RightSquare"
+  },
+  {
+    "kind": "RightSquare"
+  },
+  {
+    "kind": "RightSquare"
+  },
+  {
+    "kind": "RightSquare"
+  },
+  {
+    "kind": "RightParen"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "LeftCurly"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "Delim",
+    "value": "*"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "LeftCurly"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "Ident",
+    "value": "background"
+  },
+  {
+    "kind": "Colon"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "Ident",
+    "value": "red"
+  },
+  {
+    "kind": "Semicolon"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "RightCurly"
+  },
+  {
+    "kind": "Whitespace"
+  },
+  {
+    "kind": "RightCurly"
+  },
+  {
+    "kind": "Whitespace"
+  }
+]
