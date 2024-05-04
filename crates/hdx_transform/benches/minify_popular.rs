@@ -41,7 +41,9 @@ fn popular(c: &mut Criterion) {
 					if let Some(stylesheet) = result.output.as_mut() {
 						let mut transformer = ReduceInitial::default();
 						stylesheet.accept_mut(&mut transformer);
-						stylesheet.write_css(&mut writer)
+						if let Err(e) = stylesheet.write_css(&mut writer) {
+							println!("{:?}", e);
+						}
 					}
 				}
 				allocator
