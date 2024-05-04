@@ -25,13 +25,14 @@ fn get_files() -> Vec<TestFile> {
 }
 
 fn popular(c: &mut Criterion) {
-	let mut group = c.benchmark_group("popular");
+	let mut group = c.benchmark_group("parse_popular");
 	for file in get_files() {
 		group.throughput(Throughput::Bytes(file.source_text.len() as u64));
 		group.bench_with_input(BenchmarkId::from_parameter(&file.name), &file.source_text, |b, source_text| {
 			b.iter_with_large_drop(|| {
 				let allocator = Bump::default();
-				let _ = Parser::new(&allocator, source_text, Features::default()).parse_with::<StyleSheet>();
+				let _ = Parser::new(&allocator, source_text, Features::default()).parse_entirely_with::<StyleSheet>();
+
 				allocator
 			});
 		});
