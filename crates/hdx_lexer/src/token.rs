@@ -124,10 +124,6 @@ impl Kind {
 #[derive(Debug, Clone, PartialEq, Default)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "kind", content = "value"))]
 pub enum Token {
-	#[default]
-	// A token yet to be built
-	Undetermined,
-
 	// <eof-token> - the end of a file (https://drafts.csswg.org/css-syntax/#typedef-eof-token)
 	Eof,
 
@@ -170,6 +166,7 @@ pub enum Token {
 	// <dimension-token> (https://drafts.csswg.org/css-syntax/#dimension-token-diagram)
 	Dimension(f32, Atom, NumType),
 
+	#[default]
 	// <whitespace-token> (https://drafts.csswg.org/css-syntax/#whitespace-token-diagram)
 	Whitespace,
 
@@ -226,7 +223,6 @@ impl Token {
 	#[inline]
 	pub fn kind(&self) -> Kind {
         match self {
-            Self::Undetermined => Kind::Whitespace,
             Self::Eof => Kind::Eof,
             Self::Comment(_) => Kind::Comment,
             Self::Ident(_) => Kind::Ident,
@@ -363,7 +359,6 @@ impl std::fmt::Display for Token {
 impl Hash for Token {
 	fn hash<H: Hasher>(&self, state: &mut H) {
 		match self {
-			Token::Undetermined => {}
 			Token::Eof => 0.hash(state),
 			Token::Comment(a) => {
 				1.hash(state);
