@@ -40,7 +40,7 @@ impl<'a> Lexer<'a> {
 		let size = c as usize;
 		if size < 128 {
 			let token = &SINGLE_CHAR_TOKENS[size];
-			if token != &Token::Undetermined {
+			if token != &Token::Eof {
 				self.current.chars.next();
 				return token.clone();
 			}
