@@ -1,7 +1,7 @@
 use bitmask_enum::bitmask;
 use hdx_atom::{atom, Atom, Atomizable};
 use hdx_derive::{Atomizable, Parsable, Writable};
-use hdx_lexer::{QuoteStyle, Token};
+use hdx_lexer::{Kind, QuoteStyle, Token};
 use hdx_parser::{
 	discard, expect, expect_ignore_case, peek, unexpected, unexpected_ident, Parse, Parser, Result as ParserResult,
 };
@@ -35,7 +35,7 @@ impl<'a> Parse<'a> for Image {
 					parser.advance();
 					match parser.next().clone() {
 						Token::String(atom, style) => {
-							expect!(parser.next(), Token::RightParen);
+							expect!(parser.next(), Kind::RightParen);
 							Self::Url(atom, style)
 						}
 						token => unexpected!(parser, token),
@@ -80,7 +80,7 @@ impl<'a> Gradient {
 			if let Some(hint) = LengthPercentage::try_parse(parser).ok() {
 				if allow_hint {
 					stops.push(ColorStopOrHint::Hint(hint));
-					expect!(parser.next(), Token::Comma);
+					expect!(parser.next(), Kind::Comma);
 				} else {
 					unexpected!(parser);
 				}
@@ -102,7 +102,7 @@ impl<'a> Parse<'a> for Gradient {
 		let gradient = expect_ignore_case! { parser.next(), Token::Function(_):
 			atom @ atom!("linear-gradient") | atom @ atom!("repeating-linear-gradient") => {
 				let dir = if let Ok(dir) = LinearDirection::try_parse(parser) {
-					expect!(parser.next(), Token::Comma);
+					expect!(parser.next(), Kind::Comma);
 					dir
 				} else {
 					LinearDirection::default()
@@ -129,7 +129,7 @@ impl<'a> Parse<'a> for Gradient {
 					None
 				};
 				if size.is_some() || shape.is_some() {
-					expect!(parser.next(), Token::Comma);
+					expect!(parser.next(), Kind::Comma);
 				}
 				match atom {
 					atom!("radial-gradient") => Self::Radial(
@@ -148,7 +148,7 @@ impl<'a> Parse<'a> for Gradient {
 				}
 			},
 		};
-		expect!(parser.next(), Token::RightParen);
+		expect!(parser.next(), Kind::RightParen);
 		Ok(gradient)
 	}
 }

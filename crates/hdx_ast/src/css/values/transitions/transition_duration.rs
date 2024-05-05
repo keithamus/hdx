@@ -1,5 +1,5 @@
 use hdx_derive::{Value, Writable};
-use hdx_lexer::Token;
+use hdx_lexer::{Kind, Token};
 use hdx_parser::{discard, expect, Parse, Parser, Result as ParserResult};
 use smallvec::{smallvec, SmallVec};
 
@@ -12,7 +12,7 @@ pub struct TransitionDuration(pub SmallVec<[Time; 2]>);
 
 impl<'a> Parse<'a> for TransitionDuration {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		expect!(parser.peek(), Token::Dimension(_, _, _));
+		expect!(parser.peek(), Kind::Dimension);
 		let mut values = smallvec![];
 		loop {
 			values.push(Time::parse(parser)?);

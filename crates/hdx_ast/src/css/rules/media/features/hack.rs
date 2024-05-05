@@ -1,5 +1,5 @@
 use hdx_atom::atom;
-use hdx_lexer::Token;
+use hdx_lexer::{Token, Kind};
 use hdx_parser::{expect, expect_ignore_case, peek, unexpected, Parse, Parser, Result as ParserResult};
 use hdx_writer::{write_css, CssWriter, Result as WriterResult, WriteCss};
 
@@ -13,7 +13,7 @@ impl<'a> Parse<'a> for HackMediaFeature {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		expect_ignore_case! { parser.next(), Token::Ident(_):
 			atom!("min-width") => {
-				expect!(parser.next(), Token::Colon);
+				expect!(parser.next(), Kind::Colon);
 				let (a, b, c, d, e) = (
 					parser.legacy_peek_next_char(0),
 					parser.legacy_peek_next_char(1),

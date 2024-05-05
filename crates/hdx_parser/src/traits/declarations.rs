@@ -1,5 +1,5 @@
 use hdx_atom::{atom, Atom};
-use hdx_lexer::{Include, Token};
+use hdx_lexer::{Include, Kind, Token};
 
 use crate::{discard, expect, expect_ignore_case, match_ignore_case, parser::Parser, unexpected, Result};
 
@@ -11,7 +11,7 @@ pub trait Declaration<'a>: Sized + Parse<'a> {
 	fn parse_name(parser: &mut Parser<'a>) -> Result<Atom> {
 		match parser.next().clone() {
 			Token::Ident(atom) => {
-				expect!(parser.next(), Token::Colon);
+				expect!(parser.next(), Kind::Colon);
 				Ok(atom.to_ascii_lowercase())
 			}
 			token => unexpected!(parser, token),

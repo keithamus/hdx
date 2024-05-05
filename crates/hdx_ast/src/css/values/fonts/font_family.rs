@@ -1,6 +1,6 @@
 use hdx_atom::{atom, Atom};
 use hdx_derive::{Value, Writable};
-use hdx_lexer::{QuoteStyle, Token};
+use hdx_lexer::{Kind, QuoteStyle, Token};
 use hdx_parser::{discard, expect, unexpected, Parse, Parser, Result as ParserResult, Spanned};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 
@@ -67,7 +67,7 @@ impl<'a> Parse<'a> for SingleFontFamily {
 			},
 			Token::Function(atom!("generic")) => match parser.next().clone() {
 				Token::Ident(ident) => {
-					expect!(parser.next(), Token::RightParen);
+					expect!(parser.next(), Kind::RightParen);
 					Self::Generic(ident)
 				}
 				token => unexpected!(parser, token),

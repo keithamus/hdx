@@ -1,7 +1,7 @@
 use hdx_atom::{Atom, Atomizable};
 use hdx_lexer::Token;
 use hdx_parser::{
-	expect, unexpected, Parse, Parser, Result as ParserResult, SelectorComponent as SelectorComponentTrait,
+	expect_delim, unexpected, Parse, Parser, Result as ParserResult, SelectorComponent as SelectorComponentTrait,
 	SelectorList as SelectorListTrait, Spanned, Vec,
 };
 use hdx_writer::{write_css, CssWriter, Result as WriterResult, WriteCss};
@@ -148,7 +148,7 @@ impl<'a> SelectorComponentTrait<'a> for SelectorComponent<'a> {
 	fn ns_type_from_token(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		let prefix = NSPrefix::parse(parser)?;
 		if !matches!(prefix, NSPrefix::None) {
-			expect!(parser.next(), Token::Delim('|'));
+			expect_delim!(parser.next(), '|');
 		}
 		match parser.next() {
 			Token::Ident(atom) => Ok(Self::NSPrefixedTag((prefix, atom.clone()))),
