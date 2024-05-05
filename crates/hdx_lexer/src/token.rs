@@ -47,6 +47,80 @@ impl NumType {
 	}
 }
 
+#[derive(Default)]
+#[bitmask(u8)] // Actually more like a "u5" as the 3 LMB are unused
+pub enum Kind {
+	// Trivias (mask as 0b0_00XX)
+	Eof = 0b0000, // https://drafts.csswg.org/css-syntax/#typedef-eof-token
+	#[default]
+	Whitespace = 0b0001, // https://drafts.csswg.org/css-syntax/#whitespace-token-diagram
+	Comment = 0b0010, // https://drafts.csswg.org/css-syntax/#comment-diagram
+	// Stand in for both the CDC and CDO tokens
+	CdcOrCdo = 0b0011, // https://drafts.csswg.org/css-syntax/#CDO-token-diagram, https://drafts.csswg.org/css-syntax/#CDC-token-diagram
+
+	// Numerics (mask as 0b0_010X)
+	Number = 0b0100,    // https://drafts.csswg.org/css-syntax/#number-token-diagram
+	Dimension = 0b0101, // https://drafts.csswg.org/css-syntax/#dimension-token-diagram
+
+	// Errors (mask as 0b0_011X)
+	BadString = 0b0110, // https://drafts.csswg.org/css-syntax/#typedef-bad-string-token
+	BadUrl = 0b0111,    // https://drafts.csswg.org/css-syntax/#typedef-bad-url-token
+
+	// Variable length Atom containing Tokens (mask: 0b0_1XXXX)
+	Ident = 0b1000,     // https://drafts.csswg.org/css-syntax/#ident-token-diagram
+	Function = 0b1001,  // https://drafts.csswg.org/css-syntax/#function-token-diagram
+	AtKeyword = 0b1010, // https://drafts.csswg.org/css-syntax/#at-keyword-token-diagram
+	Hash = 0b1011,      // https://drafts.csswg.org/css-syntax/#hash-token-diagram
+	HashId = 0b1100,    // https://drafts.csswg.org/css-syntax/#hash-token-diagram
+	String = 0b1101,    // https://drafts.csswg.org/css-syntax/#string-token-diagram
+	Url = 0b1110,       // https://drafts.csswg.org/css-syntax/#url-token-diagram
+
+	// Single character Tokens (mask 0b1_XXXX)
+	Delim = 0b1_0000,       // https://drafts.csswg.org/css-syntax/#typedef-delim-token
+	Colon = 0b1_0001,       // https://drafts.csswg.org/css-syntax/#typedef-colon-token
+	Semicolon = 0b1_0010,   // https://drafts.csswg.org/css-syntax/#typedef-semicolon-token
+	Comma = 0b1_0011,       // https://drafts.csswg.org/css-syntax/#typedef-comma-token
+	LeftSquare = 0b1_0100,  // https://drafts.csswg.org/css-syntax/#tokendef-open-square
+	RightSquare = 0b1_0101, // https://drafts.csswg.org/css-syntax/#tokendef-close-square
+	LeftParen = 0b1_0110,   // https://drafts.csswg.org/css-syntax/#tokendef-open-paren
+	RightParen = 0b1_0111,  // https://drafts.csswg.org/css-syntax/#tokendef-close-paren
+	LeftCurly = 0b1_1000,   // https://drafts.csswg.org/css-syntax/#tokendef-open-curly
+	RightCurly = 0b1_1001,  // https://drafts.csswg.org/css-syntax/#tokendef-close-curly
+}
+
+impl Kind {
+	pub fn as_str(&self) -> &str {
+		match *self {
+			Kind::Eof => "EOF",
+			Kind::Whitespace => "Whitespace",
+			Kind::Comment => "Comment",
+			Kind::CdcOrCdo => "CdcOrCdo",
+			Kind::Number => "Number",
+			Kind::Dimension => "Dimension",
+			Kind::BadString => "BadString",
+			Kind::BadUrl => "BadUrl",
+			Kind::Ident => "Ident",
+			Kind::Function => "Function",
+			Kind::AtKeyword => "AtKeyword",
+			Kind::Hash => "Hash",
+			Kind::HashId => "HashId",
+			Kind::String => "String",
+			Kind::Url => "Url",
+			Kind::Delim => "Delim",
+			Kind::Colon => "Colon",
+			Kind::Semicolon => "Semicolon",
+			Kind::Comma => "Comma",
+			Kind::LeftSquare => "LeftSquare",
+			Kind::RightSquare => "RightSquare",
+			Kind::LeftParen => "LeftParen",
+			Kind::RightParen => "RightParen",
+			Kind::LeftCurly => "LeftCurly",
+			Kind::RightCurly => "RightCurly",
+			_ => unreachable!(),
+		}
+	}
+}
+
 #[derive(Debug, Clone, PartialEq, Default)]
 #[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "kind", content = "value"))]
 pub enum Token {
@@ -144,14 +218,57 @@ pub enum QuoteStyle {
 }
 
 impl Token {
-	#[inline]
-	pub fn is_trivia(&self) -> bool {
-		matches!(self, Token::Whitespace | Token::Comment(_))
+	#[inline(always)]
+	pub(crate) fn kind_bits(&self) -> u8 {
+		self.kind().bits
 	}
 
 	#[inline]
-	pub fn is_bad(&self) -> bool {
-		matches!(self, Token::BadString | Token::BadUrl)
+	pub fn kind(&self) -> Kind {
+        match self {
+            Self::Undetermined => Kind::Whitespace,
+            Self::Eof => Kind::Eof,
+            Self::Comment(_) => Kind::Comment,
+            Self::Ident(_) => Kind::Ident,
+            Self::Function(_) => Kind::Function,
+            Self::AtKeyword(_) => Kind::AtKeyword,
+            Self::Hash(_) => Kind::Hash,
+            Self::HashId(_) => Kind::HashId,
+            Self::String(_, _) => Kind::String,
+            Self::BadString => Kind::BadString,
+            Self::Url(_, _) => Kind::Url,
+            Self::BadUrl => Kind::BadUrl,
+            Self::Delim(_) => Kind::Delim,
+            Self::Number(_, _) => Kind::Number,
+            Self::Dimension(_, _, _) => Kind::Dimension,
+            Self::Whitespace => Kind::Whitespace,
+            Self::Cdo => Kind::CdcOrCdo,
+            Self::Cdc => Kind::CdcOrCdo,
+            Self::Colon => Kind::Colon,
+            Self::Semicolon => Kind::Semicolon,
+            Self::Comma => Kind::Comma,
+            Self::LeftSquare => Kind::LeftSquare,
+            Self::RightSquare => Kind::RightSquare,
+            Self::LeftParen => Kind::LeftParen,
+            Self::RightParen => Kind::RightParen,
+            Self::LeftCurly => Kind::LeftCurly,
+            Self::RightCurly => Kind::RightCurly,
+        }
+	}
+
+	#[inline(always)]
+	fn is_ident_like(&self) -> bool {
+		self.kind_bits() & 0b11000 == 0b01000 && self.kind_bits() != Kind::String.bits
+	}
+
+	#[inline]
+	pub fn has_atom(&self) -> bool {
+		self.kind_bits() | 0b0_0111 == 0b0_1111
+	}
+
+	#[inline]
+	pub fn is_character_token(&self) -> bool {
+		self.kind_bits() | 0b0_1111 == 0b1_1111
 	}
 
 	pub fn is_dashed_ident(&self) -> bool {
@@ -160,6 +277,38 @@ impl Token {
 			_ => false,
 		}
 	}
+
+	pub fn char(&self) -> Option<char> {
+		match self {
+            Self::Delim(c) => Some(*c),
+            Self::Colon => Some(':'),
+            Self::Semicolon => Some(';'),
+            Self::Comma => Some(','),
+            Self::LeftSquare => Some('['),
+            Self::RightSquare => Some(']'),
+            Self::LeftParen => Some('('),
+            Self::RightParen => Some(')'),
+            Self::LeftCurly => Some('{'),
+            Self::RightCurly => Some('}'),
+            _ => None
+		}
+	}
+
+	#[inline]
+	pub fn is_trivia(&self) -> bool {
+		self.kind_bits() & 0b000011 == self.kind_bits()
+	}
+
+	#[inline]
+	pub fn is_bad(&self) -> bool {
+		(self.kind_bits() | 0b00001) & 0b11001 == 1
+	}
+
+	#[inline]
+	pub fn is_numeric(&self) -> bool {
+		self.kind_bits() | 0b0_0001 == 0b0_0101
+	}
+
 
 	#[inline]
 	pub fn to_pairwise(&self) -> Option<PairWise> {
