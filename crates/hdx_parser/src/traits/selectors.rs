@@ -1,5 +1,5 @@
 use hdx_atom::Atom;
-use hdx_lexer::{Include, Token};
+use hdx_lexer::{Include, Kind, Token};
 
 use crate::{diagnostics, discard, parser::Parser, peek, span::Spanned, unexpected, Result, Vec};
 
@@ -21,7 +21,7 @@ pub trait SelectorList<'a>: Sized + Parse<'a> {
 	fn parse_selector_list(parser: &mut Parser<'a>) -> Result<Vec<'a, Spanned<Vec<'a, Self::SelectorComponent>>>> {
 		let mut selectors = parser.new_vec();
 		loop {
-			while discard!(parser, Include::Whitespace, Token::Whitespace) {}
+			while discard!(parser, Include::Whitespace, Kind::Whitespace) {}
 			let span = parser.span();
 			let mut selector = parser.new_vec();
 			while !peek!(parser, Kind::Comma | Kind::LeftCurly | Kind::RightParen | Kind::Eof) {
@@ -34,7 +34,7 @@ pub trait SelectorList<'a>: Sized + Parse<'a> {
 				}
 			}
 			selectors.push(Spanned { node: selector, span: span.end(parser.pos()) });
-			if !discard!(parser, Token::Comma) {
+			if !discard!(parser, Kind::Comma) {
 				break;
 			}
 		}
