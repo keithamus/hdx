@@ -70,7 +70,7 @@ impl<'a> Parse<'a> for FontVariantAlternates {
 					let mut idents = smallvec![];
 					while let Token::Ident(atom) = parser.next() {
 						idents.push(atom.clone());
-						if !discard!(parser, Token::Comma) {
+						if !discard!(parser, Kind::Comma) {
 							break;
 						}
 					}
@@ -81,7 +81,7 @@ impl<'a> Parse<'a> for FontVariantAlternates {
 					let mut idents = smallvec![];
 					while let Token::Ident(atom) = parser.next() {
 						idents.push(atom.clone());
-						if !discard!(parser, Token::Comma) {
+						if !discard!(parser, Kind::Comma) {
 							break;
 						}
 					}

@@ -1,5 +1,5 @@
 use hdx_atom::{atom, Atom};
-use hdx_lexer::{QuoteStyle, Kind, Token};
+use hdx_lexer::{Kind, QuoteStyle, Token};
 use hdx_parser::{
 	diagnostics, discard, expect, expect_ignore_case, unexpected, unexpected_ident, AtRule, Parse, Parser,
 	Result as ParserResult, Spanned, Vec,
@@ -88,7 +88,7 @@ impl<'a> Parse<'a> for KeyframeList<'a> {
 		expect!(parser.next(), Kind::LeftCurly);
 		let mut rules = parser.new_vec();
 		loop {
-			if discard!(parser, Token::RightCurly) {
+			if discard!(parser, Kind::RightCurly) {
 				return Ok(Self(rules));
 			}
 			rules.push(Keyframe::parse_spanned(parser)?);
@@ -120,17 +120,17 @@ impl<'a> Parse<'a> for Keyframe<'a> {
 		let mut selector = smallvec![];
 		loop {
 			selector.push(KeyframeSelector::parse(parser)?);
-			if discard!(parser, Token::LeftCurly | Token::Eof) {
+			if discard!(parser, Kind::LeftCurly | Kind::Eof) {
 				break;
 			}
-			if !discard!(parser, Token::Comma) {
+			if !discard!(parser, Kind::Comma) {
 				unexpected!(parser, parser.peek());
 			}
 		}
 		let mut properties = parser.new_vec();
 		loop {
-			discard!(parser, Token::Semicolon);
-			if discard!(parser, Token::RightCurly | Token::Eof) {
+			discard!(parser, Kind::Semicolon);
+			if discard!(parser, Kind::RightCurly | Kind::Eof) {
 				break;
 			}
 			properties.push(Property::parse_spanned(parser)?);

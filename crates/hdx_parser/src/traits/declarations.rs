@@ -34,7 +34,7 @@ pub trait Declaration<'a>: Sized + Parse<'a> {
 		let name = Self::parse_name(parser)?;
 		let value = Self::DeclarationValue::parse_declaration_value(&name, parser)?;
 		let important = Self::parse_important(parser)?;
-		discard!(parser, Token::Semicolon);
+		discard!(parser, Kind::Semicolon);
 		Ok((name, value, important))
 	}
 }

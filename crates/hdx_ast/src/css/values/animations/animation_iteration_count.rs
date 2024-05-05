@@ -1,6 +1,6 @@
 use hdx_atom::atom;
 use hdx_derive::{Value, Writable};
-use hdx_lexer::Token;
+use hdx_lexer::{Kind, Token};
 use hdx_parser::{discard, unexpected, unexpected_ident, Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 use smallvec::{smallvec, SmallVec};
@@ -39,7 +39,7 @@ impl<'a> Parse<'a> for AnimationIterationCount {
 				}
 				token => unexpected!(parser, token),
 			}
-			if !discard!(parser, Token::Comma) {
+			if !discard!(parser, Kind::Comma) {
 				break;
 			}
 		}
