@@ -1,7 +1,7 @@
 use hdx_atom::Atom;
 use hdx_lexer::{Include, Token};
 
-use crate::{diagnostics, discard, expect, parser::Parser, peek, span::Spanned, unexpected, Result, Vec};
+use crate::{diagnostics, discard, parser::Parser, peek, span::Spanned, unexpected, Result, Vec};
 
 use super::Parse;
 

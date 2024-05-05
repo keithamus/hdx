@@ -385,7 +385,7 @@ pub fn derive(input: DeriveInput) -> TokenStream {
                                 quote! {
                                     hdx_atom::atom!(#str) => {
                                         let val = #field::parse(parser)?;
-                                        hdx_parser::expect!(parser.next(), hdx_lexer::Token::RightParen);
+                                        hdx_parser::expect!(parser.next(), hdx_lexer::Kind::RightParen);
                                         Ok(Self::#var_ident(val))
                                     }
                                 }

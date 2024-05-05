@@ -2,7 +2,7 @@ use hdx_derive::{Atomizable, Parsable};
 use smallvec::{smallvec, SmallVec};
 
 use hdx_atom::{atom, Atom, Atomizable};
-use hdx_lexer::Token;
+use hdx_lexer::{Kind, Token};
 use hdx_parser::{
 	diagnostics, discard, expect, expect_ignore_case, match_ignore_case, peek, todo, unexpected_ident, AtRule, Parse,
 	Parser, Result as ParserResult, RuleList, Spanned, Vec,
@@ -347,7 +347,7 @@ apply_medias!(media_feature);
 
 impl<'a> Parse<'a> for MediaFeature {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		expect!(parser.next(), Token::LeftParen);
+		expect!(parser.next(), Kind::LeftParen);
 		macro_rules! match_media {
 			( $($name: ident($typ: ident): atom!($atom: tt)$(| $alts:pat)*,)+) => {
 				expect_ignore_case!{ parser.peek(), Token::Ident(_):
@@ -362,7 +362,7 @@ impl<'a> Parse<'a> for MediaFeature {
 			}
 		}
 		if value.is_ok() {
-			expect!(parser.next(), Token::RightParen);
+			expect!(parser.next(), Kind::RightParen);
 		}
 		value
 	}

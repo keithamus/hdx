@@ -1,6 +1,6 @@
 use hdx_atom::{atom, Atom};
-use hdx_lexer::{Include, QuoteStyle, Token};
-use hdx_parser::{expect, peek, unexpected, unexpected_ident, Parse, Parser, Result as ParserResult};
+use hdx_lexer::{Include, QuoteStyle, Token, Kind};
+use hdx_parser::{expect, expect_delim, peek, unexpected, unexpected_ident, Parse, Parser, Result as ParserResult};
 use hdx_writer::{write_css, CssWriter, Result as WriterResult, WriteCss};
 
 use super::NSPrefix;
@@ -18,7 +18,7 @@ pub struct Attribute {
 
 impl<'a> Parse<'a> for Attribute {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		expect!(parser.next(), Token::LeftSquare);
+		expect!(parser.next(), Kind::LeftSquare);
 		let mut attr = Self::default();
 		match parser.next().clone() {
 			Token::Delim('|') => match parser.next_with(Include::Whitespace) {
@@ -39,7 +39,7 @@ impl<'a> Parse<'a> for Attribute {
 			},
 			Token::Ident(ns) => match parser.peek_with(Include::Whitespace).clone() {
 				Token::Delim('|') if peek!(parser, 2, Token::Ident(_)) => {
-					expect!(parser.next_with(Include::Whitespace), Token::Delim('|'));
+					expect_delim!(parser.next_with(Include::Whitespace), '|');
 					match parser.next_with(Include::Whitespace) {
 						Token::Ident(name) => {
 							attr.ns_prefix = NSPrefix::Named(ns);
@@ -57,23 +57,23 @@ impl<'a> Parse<'a> for Attribute {
 		match parser.next() {
 			Token::Delim('=') => attr.matcher = AttributeMatch::Exact,
 			Token::Delim('~') => {
-				expect!(parser.next_with(Include::all()), Token::Delim('='));
+				expect_delim!(parser.next_with(Include::all()), '=');
 				attr.matcher = AttributeMatch::SpaceList
 			}
 			Token::Delim('|') => {
-				expect!(parser.next_with(Include::all()), Token::Delim('='));
+				expect_delim!(parser.next_with(Include::all()), '=');
 				attr.matcher = AttributeMatch::LangPrefix
 			}
 			Token::Delim('^') => {
-				expect!(parser.next_with(Include::all()), Token::Delim('='));
+				expect_delim!(parser.next_with(Include::all()), '=');
 				attr.matcher = AttributeMatch::Prefix
 			}
 			Token::Delim('$') => {
-				expect!(parser.next_with(Include::all()), Token::Delim('='));
+				expect_delim!(parser.next_with(Include::all()), '=');
 				attr.matcher = AttributeMatch::Suffix
 			}
 			Token::Delim('*') => {
-				expect!(parser.next_with(Include::all()), Token::Delim('='));
+				expect_delim!(parser.next_with(Include::all()), '=');
 				attr.matcher = AttributeMatch::Contains
 			}
 			Token::RightSquare => {
@@ -96,7 +96,7 @@ impl<'a> Parse<'a> for Attribute {
 					atom!("s") => AttributeModifier::Sensitive,
 					atom => unexpected_ident!(parser, atom),
 				};
-				expect!(parser.next(), Token::RightSquare);
+				expect!(parser.next(), Kind::RightSquare);
 				Ok(attr)
 			}
 			Token::RightSquare => Ok(attr),
