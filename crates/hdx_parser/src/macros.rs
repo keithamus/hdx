@@ -75,25 +75,23 @@ macro_rules! unexpected_function {
 /// Returns whether the peeked token in the parser matches any of the given patterns.
 ///
 /// Like in a `match` expression, the pattern can be optionally followed by `if`
-/// and a guard expression that has access to names bound by the pattern.
+/// and a guard expression.
 ///
 /// # Examples
 ///
 /// ```
-/// assert!(peek!(parser, Token::Comma));
-///
-/// assert!(peek!(parser, Token::Ident(atom) if atom.to_ascii_lowercase() == atom!("foo")));
+/// assert!(peek!(parser, Kind::Comma));
 /// ```
 #[macro_export]
 macro_rules! peek {
     ($parser: ident, 2, $pattern:pat $(if $guard:expr)? $(,)?) => {
-        match $parser.peek_n(2) {
+        match $parser.peek_n(2).kind() {
             $pattern $(if $guard)? => true,
             _ => false
         }
     };
     ($parser: ident, $pattern:pat $(if $guard:expr)? $(,)?) => {
-        match $parser.peek() {
+        match $parser.peek().kind() {
             $pattern $(if $guard)? => true,
             _ => false
         }

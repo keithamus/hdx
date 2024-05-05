@@ -99,7 +99,7 @@ impl<'a> Parse<'a> for SupportsCondition<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		match parser.peek() {
 			Token::LeftParen => {
-				let wrapped = peek!(parser, 2, Token::LeftParen);
+				let wrapped = peek!(parser, 2, Kind::LeftParen);
 				if wrapped {
 					parser.next();
 				}

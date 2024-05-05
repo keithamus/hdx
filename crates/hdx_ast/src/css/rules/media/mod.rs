@@ -140,7 +140,7 @@ impl<'a> Parse<'a> for MediaQuery {
 		let mut precondition = None;
 		let mut media_type = None;
 		let mut condition = None;
-		if peek!(parser, Token::LeftParen) {
+		if peek!(parser, Kind::LeftParen) {
 			condition = Some(MediaCondition::parse(parser)?);
 			return Ok(Self { precondition, media_type, condition });
 		}
@@ -252,7 +252,7 @@ pub enum MediaCondition {
 impl<'a> Parse<'a> for MediaCondition {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		let feature = if matches!(parser.peek(), Token::LeftParen) {
-			if peek!(parser, 2, Token::LeftParen) {
+			if peek!(parser, 2, Kind::LeftParen) {
 				todo!(parser)
 			} else {
 				Some(MediaFeature::parse(parser)?)
@@ -262,7 +262,7 @@ impl<'a> Parse<'a> for MediaCondition {
 		};
 		let mut features = smallvec![];
 		if let Some(feature) = feature {
-			if !peek!(parser, Token::Ident(_)) {
+			if !peek!(parser, Kind::Ident) {
 				return Ok(Self::Is(feature));
 			}
 			features.push(feature);
