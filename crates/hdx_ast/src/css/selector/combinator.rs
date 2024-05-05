@@ -1,5 +1,5 @@
-use hdx_lexer::{Include, Token};
-use hdx_parser::{discard, expect_delim, peek, unexpected, Parse, Parser, Result as ParserResult};
+use hdx_lexer::{Include, Kind, Token};
+use hdx_parser::{discard, expect_delim, unexpected, Parse, Parser, Result as ParserResult};
 use hdx_writer::{write_css, CssWriter, Result as WriterResult, WriteCss};
 
 #[derive(Debug, PartialEq, Hash)]
@@ -17,10 +17,11 @@ pub enum Combinator {
 impl<'a> Parse<'a> for Combinator {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		let could_be_descendant_combinator = discard!(parser, Include::Whitespace, Token::Whitespace);
-		if !peek!(parser, Token::Delim('>' | '+' | '~' | '|')) && could_be_descendant_combinator {
+		let peeked = parser.peek();
+		if could_be_descendant_combinator && !matches!(peeked.char(), Some('>' | '+' | '~' | '|')) {
 			return Ok(Self::Descendant);
 		}
-		let val = match parser.peek() {
+		let val = match peeked {
 			Token::Delim(c) => match c {
 				'>' => Self::Child,
 				'+' => Self::NextSibling,

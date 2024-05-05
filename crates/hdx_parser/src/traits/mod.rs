@@ -160,7 +160,7 @@ pub trait RangedMediaFeature<'a>: Sized {
 				let mut legacy = false;
 				let legacy_cmp = match atom.to_ascii_lowercase() {
 					atom if atom == name => {
-						legacy = peek!(parser, Token::Colon);
+						legacy = peek!(parser, Kind::Colon);
 						Comparison::Equal
 					}
 					atom if atom.strip_prefix("max-").unwrap_or("") == name.as_ref() => {
@@ -187,7 +187,7 @@ pub trait RangedMediaFeature<'a>: Sized {
 		};
 		let left_cmp = Comparison::parse(parser)?;
 		expect_ignore_case!(parser.next(), Token::Ident(name));
-		if !peek!(parser, Token::Delim(_)) {
+		if !peek!(parser, Kind::Delim) {
 			return Ok(Self::new((left_cmp, left), None, false));
 		}
 		let right_cmp = Comparison::parse(parser)?;
