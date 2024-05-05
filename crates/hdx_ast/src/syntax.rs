@@ -134,15 +134,15 @@ impl<'a> Parse<'a> for SimpleBlock<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		if let Some(pairwise) = parser.next().to_pairwise() {
 			let mut values = parser.new_vec();
-			let ending_token = pairwise.end();
+			let end_kind = pairwise.end();
 			loop {
 				match parser.peek_with(Include::Whitespace) {
 					Token::Eof => break,
-					t if t == ending_token => break,
+					t if t.kind() == end_kind => break,
 					_ => values.push(ComponentValue::parse_spanned(parser)?),
 				}
 			}
-			if parser.next() != pairwise.end() {
+			if parser.next().kind() != pairwise.end() {
 				unexpected!(parser)
 			}
 			Ok(Self { values, pairwise })
