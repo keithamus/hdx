@@ -3,10 +3,10 @@ mod syntax;
 
 use crate::css::units::{Angle, CSSFloat, Percent};
 use hdx_atom::{atom, Atomizable};
-use hdx_lexer::Token;
+use hdx_lexer::{Kind, Token};
 use hdx_parser::{
-	discard, expect, match_ignore_case, todo, unexpected, unexpected_function, unexpected_ident, Parse, Parser,
-	Result as ParserResult,
+	discard, expect, expect_delim, match_ignore_case, todo, unexpected, unexpected_function, unexpected_ident, Parse,
+	Parser, Result as ParserResult,
 };
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 use std::str::Chars;
@@ -110,15 +110,15 @@ impl<'a> Parse<'a> for AbsoluteColorFunction {
 			return Ok(Self(syntax | ColorFunctionSyntax::OmitAlpha, first, second, third, Channel::None));
 		}
 		if syntax.contains(ColorFunctionSyntax::Legacy) {
-			expect!(parser.next(), Token::Comma);
+			expect!(parser.next(), Kind::Comma);
 		} else {
-			expect!(parser.next(), Token::Delim('/'));
+			expect_delim!(parser.next(), '/');
 		}
 		let fourth = Channel::parse(parser)?;
 		if matches!(fourth, Channel::None) {
 			unexpected!(parser)
 		}
-		expect!(parser.next(), Token::RightParen);
+		expect!(parser.next(), Kind::RightParen);
 		Ok(Self(syntax, first, second, third, fourth))
 	}
 }

@@ -1,5 +1,5 @@
 use hdx_atom::{atom, Atom};
-use hdx_lexer::{Include, PairWise, Token};
+use hdx_lexer::{Include, Kind, PairWise, Token};
 use hdx_parser::{
 	expect, unexpected, AtRule as AtRuleTrait, Block as BlockTrait, Parse, Parser, QualifiedRule as QualifiedRuleTrait,
 	Result as ParserResult, Span, Spanned, State, Vec,
@@ -228,7 +228,7 @@ impl<'a> Parse<'a> for Declaration<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		match parser.next().clone() {
 			Token::Ident(name) => {
-				expect!(parser.next(), Token::Colon);
+				expect!(parser.next(), Kind::Colon);
 				let mut value =
 					ComponentValues::parse_spanned_with_state(parser, State::StopOnSemicolon | State::Nested)?;
 				let mut iter = value.node.0.iter_mut();
@@ -374,7 +374,7 @@ impl<'a> Parse<'a> for Function<'a> {
 						_ => values.push(ComponentValue::parse_spanned(parser)?),
 					}
 				}
-				expect!(parser.next(), Token::RightParen);
+				expect!(parser.next(), Kind::RightParen);
 				Ok(Self { name: name.clone(), values })
 			}
 			token => unexpected!(parser, token),

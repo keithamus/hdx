@@ -1,9 +1,9 @@
 use hdx_atom::{atom, Atomizable};
 use hdx_derive::Atomizable;
-use hdx_lexer::{Include, QuoteStyle, Token};
+use hdx_lexer::{Include, Kind, QuoteStyle, Token};
 use hdx_parser::{
 	diagnostics::{self},
-	expect, unexpected, Parse, Parser, Result as ParserResult,
+	expect, expect_ignore_case, unexpected, Parse, Parser, Result as ParserResult,
 };
 use hdx_writer::{write_css, CssWriter, OutputOption, Result as WriterResult, WriteCss};
 
@@ -65,12 +65,12 @@ pub enum Charset {
 
 impl<'a> Parse<'a> for Charset {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		expect!(parser.next(), Token::AtKeyword(atom!("charset")));
-		expect!(parser.next_with(Include::Whitespace), Token::Whitespace);
+		expect_ignore_case!(parser.next(), Token::AtKeyword(atom!("charset")));
+		expect!(parser.next_with(Include::Whitespace), Kind::Whitespace);
 		match parser.next_with(Include::Whitespace) {
 			Token::String(atom, QuoteStyle::Double) => {
 				if let Some(rule) = Self::from_atom(atom) {
-					expect!(parser.next_with(Include::Whitespace), Token::Semicolon);
+					expect!(parser.next_with(Include::Whitespace), Kind::Semicolon);
 					Ok(rule)
 				} else {
 					Err(diagnostics::UnexpectedCharset(atom.clone(), parser.span()))?

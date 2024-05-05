@@ -1,6 +1,6 @@
 use hdx_atom::{atom, Atomizable};
 use hdx_derive::{Atomizable, Value};
-use hdx_lexer::Token;
+use hdx_lexer::{Kind, Token};
 use hdx_parser::{diagnostics, expect, unexpected, unexpected_ident, Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 
@@ -50,7 +50,7 @@ impl<'a> Parse<'a> for Float {
 						Token::Comma => match parser.next() {
 							Token::Ident(atom) => {
 								if let Some(dir) = SnapBlockDirection::from_atom(&atom.to_ascii_lowercase()) {
-									expect!(parser.next(), Token::RightParen);
+									expect!(parser.next(), Kind::RightParen);
 									Self::SnapBlockFunction(length, Some(dir))
 								} else {
 									unexpected_ident!(parser, atom)
@@ -68,7 +68,7 @@ impl<'a> Parse<'a> for Float {
 						Token::Comma => match parser.next() {
 							Token::Ident(atom) => {
 								if let Some(dir) = SnapInlineDirection::from_atom(&atom.to_ascii_lowercase()) {
-									expect!(parser.next(), Token::RightParen);
+									expect!(parser.next(), Kind::RightParen);
 									Self::SnapInlineFunction(length, Some(dir))
 								} else {
 									unexpected_ident!(parser, atom)

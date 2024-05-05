@@ -1,5 +1,5 @@
 use hdx_atom::Atom;
-use hdx_lexer::Token;
+use hdx_lexer::{Token, Kind};
 
 mod declarations;
 mod rules;
@@ -81,7 +81,7 @@ pub trait Block<'a>: Sized + Parse<'a> {
 	fn parse_block(
 		parser: &mut Parser<'a>,
 	) -> Result<(Vec<'a, Spanned<Self::Declaration>>, Vec<'a, Spanned<Self::Rule>>)> {
-		expect!(parser.next(), Token::LeftCurly);
+		expect!(parser.next(), Kind::LeftCurly);
 		let mut declarations = parser.new_vec();
 		let mut rules = parser.new_vec();
 		loop {
@@ -174,7 +174,7 @@ pub trait RangedMediaFeature<'a>: Sized {
 					_ => unexpected_ident!(parser, atom),
 				};
 				if legacy {
-					expect!(parser.next(), Token::Colon);
+					expect!(parser.next(), Kind::Colon);
 					return Ok(Self::new((legacy_cmp, Self::Type::parse(parser)?), None, true));
 				} else {
 					let cmp = Comparison::parse(parser)?;
