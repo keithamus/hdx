@@ -115,7 +115,7 @@ macro_rules! peek {
 #[macro_export]
 macro_rules! discard {
 	($parser: ident, Include::$inc:ident, $pattern:pat $(if $guard:expr)? $(,)?) => {
-		match $parser.peek_with(Include::$inc) {
+		match $parser.peek_with(Include::$inc).kind() {
 			$pattern $(if $guard)? => {
 				$parser.advance_with(Include::$inc);
 				true
@@ -124,7 +124,7 @@ macro_rules! discard {
 		}
 	};
 	($parser: ident, $pattern:pat $(if $guard:expr)? $(,)?) => {
-		match $parser.peek() {
+		match $parser.peek().kind() {
 			$pattern $(if $guard)? => {
 				$parser.advance();
 				true

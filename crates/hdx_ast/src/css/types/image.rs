@@ -89,7 +89,7 @@ impl<'a> Gradient {
 			let hint = LengthPercentage::try_parse(parser).ok();
 			stops.push(ColorStopOrHint::Stop(color, hint));
 			allow_hint = hint.is_some();
-			if !discard!(parser, Token::Comma) {
+			if !discard!(parser, Kind::Comma) {
 				break;
 			}
 		}

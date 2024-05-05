@@ -1,6 +1,6 @@
 use hdx_atom::atom;
 use hdx_derive::{Value, Writable};
-use hdx_lexer::Token;
+use hdx_lexer::{Kind, Token};
 use hdx_parser::{discard, Parse, Parser, Result as ParserResult, Spanned};
 use smallvec::{smallvec, SmallVec};
 
@@ -16,7 +16,7 @@ impl<'a> Parse<'a> for BackgroundImage {
 		loop {
 			let value = SingleBackgroundImage::parse_spanned(parser)?;
 			values.push(value);
-			if !discard!(parser, Token::Comma) {
+			if !discard!(parser, Kind::Comma) {
 				break;
 			}
 		}

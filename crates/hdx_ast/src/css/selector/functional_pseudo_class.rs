@@ -47,7 +47,7 @@ impl<'a> Parse<'a> for FunctionalPseudoClass<'a> {
 							Token::Ident(atom) | Token::String(atom, _) => langs.push(atom.clone()),
 							token => unexpected!(parser, token),
 						}
-						if !discard!(parser, Token::Comma) {
+						if !discard!(parser, Kind::Comma) {
 							break;
 						}
 					}

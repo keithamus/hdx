@@ -88,7 +88,7 @@ impl<'a> Parse<'a> for AbsoluteColorFunction {
 		if matches!(first, Channel::Hue(_)) != syntax.first_is_hue() {
 			unexpected!(parser);
 		}
-		if discard!(parser, Token::Comma) {
+		if discard!(parser, Kind::Comma) {
 			syntax |= ColorFunctionSyntax::Legacy;
 		}
 		let second = Channel::parse(parser)?;
@@ -96,7 +96,7 @@ impl<'a> Parse<'a> for AbsoluteColorFunction {
 		{
 			unexpected!(parser)
 		}
-		if syntax.contains(ColorFunctionSyntax::Legacy) != discard!(parser, Token::Comma) {
+		if syntax.contains(ColorFunctionSyntax::Legacy) != discard!(parser, Kind::Comma) {
 			unexpected!(parser)
 		}
 		let third = Channel::parse(parser)?;
@@ -106,7 +106,7 @@ impl<'a> Parse<'a> for AbsoluteColorFunction {
 		if matches!(third, Channel::Hue(_)) != syntax.third_is_hue() {
 			unexpected!(parser);
 		}
-		if discard!(parser, Token::RightParen) {
+		if discard!(parser, Kind::RightParen) {
 			return Ok(Self(syntax | ColorFunctionSyntax::OmitAlpha, first, second, third, Channel::None));
 		}
 		if syntax.contains(ColorFunctionSyntax::Legacy) {
