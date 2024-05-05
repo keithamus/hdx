@@ -1,5 +1,5 @@
 use hdx_atom::atom;
-use hdx_lexer::{Token, Kind};
+use hdx_lexer::Kind;
 use hdx_parser::{expect, expect_ignore_case, peek, unexpected, Parse, Parser, Result as ParserResult};
 use hdx_writer::{write_css, CssWriter, Result as WriterResult, WriteCss};
 

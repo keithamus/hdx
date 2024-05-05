@@ -95,8 +95,8 @@ pub trait RuleList<'a>: Sized + Parse<'a> {
 		expect!(parser.next(), Kind::LeftCurly);
 		let mut rules = parser.new_vec();
 		loop {
-			discard!(parser, Token::Semicolon);
-			if discard!(parser, Token::RightCurly) {
+			discard!(parser, Kind::Semicolon);
+			if discard!(parser, Kind::RightCurly) {
 				return Ok(rules);
 			}
 			rules.push(Self::Rule::parse_spanned(parser)?);
