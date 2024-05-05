@@ -109,7 +109,6 @@ impl<'a> WriteCss<'a> for ComponentValue<'a> {
 					Token::RightParen => sink.write_char(')')?,
 					Token::LeftCurly => sink.write_char('{')?,
 					Token::RightCurly => sink.write_char('}')?,
-					Token::Undetermined => {}
 					Token::Comment(content) => sink.write_comment(content)?,
 					Token::Function(name) => {
 						sink.write_str(name)?;
