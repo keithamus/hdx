@@ -16,7 +16,7 @@ pub enum Combinator {
 
 impl<'a> Parse<'a> for Combinator {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let could_be_descendant_combinator = discard!(parser, Include::Whitespace, Token::Whitespace);
+		let could_be_descendant_combinator = discard!(parser, Include::Whitespace, Kind::Whitespace);
 		let peeked = parser.peek();
 		if could_be_descendant_combinator && !matches!(peeked.char(), Some('>' | '+' | '~' | '|')) {
 			return Ok(Self::Descendant);
@@ -38,7 +38,7 @@ impl<'a> Parse<'a> for Combinator {
 		};
 		parser.advance();
 		if val != Self::Nesting {
-			discard!(parser, Include::Whitespace, Token::Whitespace);
+			discard!(parser, Include::Whitespace, Kind::Whitespace);
 		}
 		Ok(val)
 	}
