@@ -274,7 +274,7 @@ impl<'a> Parse<'a> for LinearDirection {
 			atom!("right") => NamedDirection::Right,
 			atom!("bottom") => NamedDirection::Bottom,
 		};
-		if peek!(parser, Token::Ident(_)) {
+		if peek!(parser, Kind::Ident) {
 			dir |= expect_ignore_case! { parser.next(), Token::Ident(_):
 				atom @ atom!("top") => {
 					if dir.contains(NamedDirection::Top) || dir.contains(NamedDirection::Bottom) {
