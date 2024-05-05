@@ -322,30 +322,30 @@ pub enum PairWise {
 
 impl PairWise {
 	pub fn from_token(token: &Token) -> Option<Self> {
-		match token {
-			Token::LeftParen | Token::Function(_) => Some(Self::Paren),
-			Token::LeftCurly => Some(Self::Curly),
-			Token::LeftSquare => Some(Self::Square),
-			Token::RightParen => Some(Self::Paren),
-			Token::RightCurly => Some(Self::Curly),
-			Token::RightSquare => Some(Self::Square),
+		match token.kind() {
+			Kind::LeftParen | Kind::Function => Some(Self::Paren),
+			Kind::LeftCurly => Some(Self::Curly),
+			Kind::LeftSquare => Some(Self::Square),
+			Kind::RightParen => Some(Self::Paren),
+			Kind::RightCurly => Some(Self::Curly),
+			Kind::RightSquare => Some(Self::Square),
 			_ => None,
 		}
 	}
 
-	pub fn start(&self) -> &Token {
+	pub fn start(&self) -> Kind {
 		match self {
-			Self::Paren => &Token::LeftParen,
-			Self::Curly => &Token::LeftCurly,
-			Self::Square => &Token::LeftSquare,
+			Self::Paren => Kind::LeftParen,
+			Self::Curly => Kind::LeftCurly,
+			Self::Square => Kind::LeftSquare,
 		}
 	}
 
-	pub fn end(&self) -> &Token {
+	pub fn end(&self) -> Kind {
 		match self {
-			Self::Paren => &Token::RightParen,
-			Self::Curly => &Token::RightCurly,
-			Self::Square => &Token::RightSquare,
+			Self::Paren => Kind::RightParen,
+			Self::Curly => Kind::RightCurly,
+			Self::Square => Kind::RightSquare,
 		}
 	}
 }
