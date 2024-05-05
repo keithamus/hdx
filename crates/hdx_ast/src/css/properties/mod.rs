@@ -1,9 +1,9 @@
 use std::{default::Default, fmt::Debug, hash::Hash};
 
 use hdx_atom::{atom, Atom};
-use hdx_lexer::Token;
 use hdx_derive::Visitable;
-use hdx_parser::{peek, Declaration, DeclarationValue, Parse, Parser, Result as ParserResult, State};
+use hdx_lexer::{Kind, Token};
+use hdx_parser::{Declaration, DeclarationValue, Parse, Parser, Result as ParserResult, State};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 
 use crate::{css::values, syntax::ComponentValues};
@@ -228,7 +228,8 @@ impl<'a> DeclarationValue<'a> for StyleValue<'a> {
 						&$atom => {
 							let checkpoint = parser.checkpoint();
 							if let Ok(val) = values::$name::parse(parser) {
-								if peek!(parser, Token::Semicolon | Token::RightCurly | Token::Eof | Token::Delim('!')) {
+								let peeked = parser.peek();
+								if peeked.kind() == Kind::Eof || matches!(peeked.char(), Some(';' | '}' | '!')) {
 									return Ok(Self::$name(val))
 								}
 							}

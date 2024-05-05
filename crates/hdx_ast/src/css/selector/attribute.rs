@@ -38,7 +38,7 @@ impl<'a> Parse<'a> for Attribute {
 				token => unexpected!(parser, token),
 			},
 			Token::Ident(ns) => match parser.peek_with(Include::Whitespace).clone() {
-				Token::Delim('|') if peek!(parser, 2, Token::Ident(_)) => {
+				Token::Delim('|') if peek!(parser, 2, Kind::Ident) => {
 					expect_delim!(parser.next_with(Include::Whitespace), '|');
 					match parser.next_with(Include::Whitespace) {
 						Token::Ident(name) => {

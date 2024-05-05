@@ -21,7 +21,7 @@ impl<'a> Parse<'a> for HackMediaFeature {
 					parser.legacy_peek_next_char(3),
 					parser.legacy_peek_next_char(4)
 				);
-				if peek!(parser, Token::Dimension(_, _, _)) &&
+				if peek!(parser, Kind::Dimension) &&
 				(matches!((a, b, c, d), (Some('0'), Some('\\'), Some('0'), Some(' ') | Some(')') | None))) ||
 				(matches!((a, b, c, d, e), (Some(' '), Some('0'), Some('\\'), Some('0'), Some(' ') | Some(')') | None)))
 				{

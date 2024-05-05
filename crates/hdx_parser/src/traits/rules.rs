@@ -69,7 +69,7 @@ pub trait QualifiedRule<'a>: Sized + Parse<'a> {
 		match parser.peek().clone() {
 			token @ Token::Eof => unexpected!(parser, token),
 			token @ Token::RightCurly if !parser.is(State::Nested) => unexpected!(parser, token),
-			Token::Ident(atom) if peek!(parser, 2, Token::RightCurly) && atom.starts_with("--") => {
+			Token::Ident(atom) if peek!(parser, 2, Kind::RightCurly) && atom.starts_with("--") => {
 				unexpected!(parser);
 			}
 			_ => {}
@@ -78,7 +78,7 @@ pub trait QualifiedRule<'a>: Sized + Parse<'a> {
 		match parser.peek().clone() {
 			token @ Token::Eof => unexpected!(parser, token),
 			token @ Token::RightCurly if !parser.is(State::Nested) => unexpected!(parser, token),
-			Token::Ident(atom) if peek!(parser, 2, Token::RightCurly) && atom.starts_with("--") => {
+			Token::Ident(atom) if peek!(parser, 2, Kind::RightCurly) && atom.starts_with("--") => {
 				unexpected!(parser);
 			}
 			_ => {}

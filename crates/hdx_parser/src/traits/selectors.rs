@@ -24,9 +24,9 @@ pub trait SelectorList<'a>: Sized + Parse<'a> {
 			while discard!(parser, Include::Whitespace, Token::Whitespace) {}
 			let span = parser.span();
 			let mut selector = parser.new_vec();
-			while !peek!(parser, Token::Comma | Token::LeftCurly | Token::RightParen | Token::Eof) {
-				if peek!(parser, Token::Whitespace)
-					&& peek!(parser, 2, Token::Comma | Token::LeftCurly | Token::RightParen | Token::Eof)
+			while !peek!(parser, Kind::Comma | Kind::LeftCurly | Kind::RightParen | Kind::Eof) {
+				if peek!(parser, Kind::Whitespace)
+					&& peek!(parser, 2, Kind::Comma | Kind::LeftCurly | Kind::RightParen | Kind::Eof)
 				{
 					parser.advance_with(Include::Whitespace);
 				} else {
