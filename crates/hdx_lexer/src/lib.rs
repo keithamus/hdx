@@ -7,7 +7,7 @@ use std::{collections::VecDeque, str::Chars};
 
 use bitmask_enum::bitmask;
 use bumpalo::Bump;
-pub use token::{NumType, PairWise, QuoteStyle, Token};
+pub use token::{NumType, PairWise, QuoteStyle, Token, Kind};
 
 #[derive(Debug, Clone)]
 pub struct LexerCheckpoint<'a> {

@@ -1,4 +1,4 @@
-use hdx_lexer::{Include, Token};
+use hdx_lexer::{Include, Kind, Token};
 use hdx_parser::{
 	diagnostics, expect, expect_ignore_case, unexpected, AtRule, DeclarationRuleList, Parse, Parser,
 	Result as ParserResult, Spanned, Vec,
@@ -144,7 +144,7 @@ pub enum PagePseudoClass {
 
 impl<'a> Parse<'a> for PagePseudoClass {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		expect!(parser.next(), Token::Colon);
+		expect!(parser.next(), Kind::Colon);
 		match parser.next_with(Include::Whitespace) {
 			Token::Ident(name) => match Self::from_atom(name) {
 				Some(v) => Ok(v),
