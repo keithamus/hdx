@@ -146,18 +146,21 @@ macro_rules! discard {
 /// # Examples
 ///
 /// ```
-/// expect!(parser.next(), Token::RightCurly);
+/// expect!(parser.next(), Kind::RightCurly);
 ///
-/// expect!(parser.next_with(Include::Whitespace), Token::Colon);
+/// expect!(parser.next_with(Include::Whitespace), Kind::Colon);
 ///
-/// expect!(parser.next(), Token::Comma | Token::SemiColon);
+/// expect!(parser.next(), Kind::Comma | Kind::SemiColon);
 /// ```
 #[macro_export]
 macro_rules! expect {
 	($parser: ident.$method: ident($($args:tt)*), $pattern:pat $(if $guard:expr)? $(,)?) => {
-		match $parser.$method($($args)*).clone() {
-			$pattern $(if $guard)? => {},
-			token => $crate::unexpected!($parser, token.clone()),
+		{
+			let token = $parser.$method($($args)*);
+			match token.kind() {
+				$pattern $(if $guard)? => token,
+				_ => $crate::unexpected!($parser, token),
+			}
 		}
 	};
 }
@@ -209,6 +212,22 @@ macro_rules! expect_ignore_case {
 			},
 			token => $crate::unexpected!($parser, token.clone()),
 		}
+	};
+}
+
+/// Matches a Token's delimeter, expecting it to be the given value.
+///
+/// # Examples
+///
+/// ```
+/// expect_delim!(parser.next(), '/');
+///
+/// expect_delim!(parser.next_with(Include::Whitespace), ':');
+/// ```
+#[macro_export]
+macro_rules! expect_delim {
+	($parser: ident.$method: ident($($args:tt)*), $val:literal $(if $guard:expr)? $(,)?) => {
+		matches!($parser.$method($($args)*).char(), Some($val) $(if $guard)?)
 	};
 }
 

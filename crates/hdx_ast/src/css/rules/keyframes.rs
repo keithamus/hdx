@@ -1,5 +1,5 @@
 use hdx_atom::{atom, Atom};
-use hdx_lexer::{QuoteStyle, Token};
+use hdx_lexer::{QuoteStyle, Kind, Token};
 use hdx_parser::{
 	diagnostics, discard, expect, expect_ignore_case, unexpected, unexpected_ident, AtRule, Parse, Parser,
 	Result as ParserResult, Spanned, Vec,
@@ -85,7 +85,7 @@ pub struct KeyframeList<'a>(Vec<'a, Spanned<Keyframe<'a>>>);
 
 impl<'a> Parse<'a> for KeyframeList<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		expect!(parser.next(), Token::LeftCurly);
+		expect!(parser.next(), Kind::LeftCurly);
 		let mut rules = parser.new_vec();
 		loop {
 			if discard!(parser, Token::RightCurly) {

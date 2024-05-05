@@ -1,6 +1,6 @@
 use crate::{css::stylesheet::Rule, syntax::SimpleBlock};
 use hdx_atom::atom;
-use hdx_lexer::Token;
+use hdx_lexer::{Kind, Token};
 use hdx_parser::{
 	diagnostics, expect, expect_ignore_case, match_ignore_case, peek, unexpected, unexpected_ident, AtRule, Parse,
 	Parser, Result as ParserResult, RuleList, Spanned, Vec,
@@ -114,7 +114,7 @@ impl<'a> Parse<'a> for SupportsCondition<'a> {
 								features.push(SupportsFeature::parse(parser)?);
 								if !match_ignore_case!(parser.peek(), Token::Ident(atom!("and"))) {
 									if wrapped {
-										expect!(parser.next(), Token::RightParen);
+										expect!(parser.next(), Kind::RightParen);
 									}
 									return Ok(Self::And(features));
 								}
@@ -128,7 +128,7 @@ impl<'a> Parse<'a> for SupportsCondition<'a> {
 								features.push(SupportsFeature::parse(parser)?);
 								if !match_ignore_case!(parser.peek(), Token::Ident(atom!("or"))) {
 									if wrapped {
-										expect!(parser.next(), Token::RightParen);
+										expect!(parser.next(), Kind::RightParen);
 									}
 									return Ok(Self::Or(features));
 								}
@@ -136,14 +136,14 @@ impl<'a> Parse<'a> for SupportsCondition<'a> {
 						}
 						_ => {
 							if wrapped {
-								expect!(parser.next(), Token::RightParen);
+								expect!(parser.next(), Kind::RightParen);
 							}
 							Ok(Self::Is(feature))
 						}
 					},
 					_ => {
 						if wrapped {
-							expect!(parser.next(), Token::RightParen);
+							expect!(parser.next(), Kind::RightParen);
 						}
 						Ok(Self::Is(feature))
 					}
@@ -234,7 +234,7 @@ pub struct SupportsFeature<'a>(pub SimpleBlock<'a>);
 
 impl<'a> Parse<'a> for SupportsFeature<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		expect!(parser.peek(), Token::LeftParen);
+		expect!(parser.peek(), Kind::LeftParen);
 		Ok(Self(SimpleBlock::parse(parser)?))
 	}
 }

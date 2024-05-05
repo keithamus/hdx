@@ -1,5 +1,5 @@
 use hdx_lexer::{Include, Token};
-use hdx_parser::{discard, expect, peek, unexpected, Parse, Parser, Result as ParserResult};
+use hdx_parser::{discard, expect_delim, peek, unexpected, Parse, Parser, Result as ParserResult};
 use hdx_writer::{write_css, CssWriter, Result as WriterResult, WriteCss};
 
 #[derive(Debug, PartialEq, Hash)]
@@ -27,7 +27,7 @@ impl<'a> Parse<'a> for Combinator {
 				'~' => Self::SubsequentSibling,
 				'&' => Self::Nesting,
 				'|' => {
-					expect!(parser.next_with(Include::Whitespace), Token::Delim('|'));
+					expect_delim!(parser.next_with(Include::Whitespace), '|');
 					Self::Column
 				}
 				_ if could_be_descendant_combinator => return Ok(Self::Descendant),

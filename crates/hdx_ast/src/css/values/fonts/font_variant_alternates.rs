@@ -1,6 +1,6 @@
 use hdx_atom::{atom, Atom};
 use hdx_derive::{Value, Writable};
-use hdx_lexer::Token;
+use hdx_lexer::{Kind, Token};
 use hdx_parser::{
 	discard, expect, unexpected, unexpected_function, unexpected_ident, Parse, Parser, Result as ParserResult,
 };
@@ -40,28 +40,28 @@ impl<'a> Parse<'a> for FontVariantAlternates {
 			Token::Function(atom) => match atom.to_ascii_lowercase() {
 				atom!("stylistic") => match parser.next().clone() {
 					Token::Ident(atom) => {
-						expect!(parser.next(), Token::RightParen);
+						expect!(parser.next(), Kind::RightParen);
 						Self::Stylistic(atom.clone())
 					}
 					token => unexpected!(parser, token),
 				},
 				atom!("swash") => match parser.next().clone() {
 					Token::Ident(atom) => {
-						expect!(parser.next(), Token::RightParen);
+						expect!(parser.next(), Kind::RightParen);
 						Self::Swash(atom.clone())
 					}
 					token => unexpected!(parser, token),
 				},
 				atom!("ornaments") => match parser.next().clone() {
 					Token::Ident(atom) => {
-						expect!(parser.next(), Token::RightParen);
+						expect!(parser.next(), Kind::RightParen);
 						Self::Ornaments(atom.clone())
 					}
 					token => unexpected!(parser, token),
 				},
 				atom!("annotation") => match parser.next().clone() {
 					Token::Ident(atom) => {
-						expect!(parser.next(), Token::RightParen);
+						expect!(parser.next(), Kind::RightParen);
 						Self::Annotation(atom.clone())
 					}
 					token => unexpected!(parser, token),
@@ -74,7 +74,7 @@ impl<'a> Parse<'a> for FontVariantAlternates {
 							break;
 						}
 					}
-					expect!(parser.next(), Token::RightParen);
+					expect!(parser.next(), Kind::RightParen);
 					Self::Styleset(idents)
 				}
 				atom!("character-variant") => {
@@ -85,7 +85,7 @@ impl<'a> Parse<'a> for FontVariantAlternates {
 							break;
 						}
 					}
-					expect!(parser.next(), Token::RightParen);
+					expect!(parser.next(), Kind::RightParen);
 					Self::CharacterVariant(idents)
 				}
 				_ => unexpected_function!(parser, atom),

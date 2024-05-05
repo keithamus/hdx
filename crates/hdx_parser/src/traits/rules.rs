@@ -1,4 +1,4 @@
-use hdx_lexer::Token;
+use hdx_lexer::{Kind, Token};
 
 use crate::{discard, expect, parser::Parser, peek, span::Spanned, unexpected, Result, State, Vec};
 
@@ -39,7 +39,7 @@ pub trait AtRule<'a>: Sized + Parse<'a> {
 	fn parse_at_rule(
 		parser: &mut Parser<'a>,
 	) -> Result<(Option<Spanned<Self::Prelude>>, Option<Spanned<Self::Block>>)> {
-		expect!(parser.cur(), Token::AtKeyword(_));
+		expect!(parser.cur(), Kind::AtKeyword);
 		let prelude = Self::parse_prelude(parser)?;
 		let block = Self::parse_block(parser)?;
 		Ok((prelude, block))
@@ -92,7 +92,7 @@ pub trait RuleList<'a>: Sized + Parse<'a> {
 	type Rule: Parse<'a>;
 
 	fn parse_rule_list(parser: &mut Parser<'a>) -> Result<Vec<'a, Spanned<Self::Rule>>> {
-		expect!(parser.next(), Token::LeftCurly);
+		expect!(parser.next(), Kind::LeftCurly);
 		let mut rules = parser.new_vec();
 		loop {
 			discard!(parser, Token::Semicolon);
@@ -112,7 +112,7 @@ pub trait DeclarationRuleList<'a>: Sized + Parse<'a> {
 	fn parse_declaration_rule_list(
 		parser: &mut Parser<'a>,
 	) -> Result<(Vec<'a, Spanned<Self::Declaration>>, Vec<'a, Spanned<Self::AtRule>>)> {
-		expect!(parser.next(), Token::LeftCurly);
+		expect!(parser.next(), Kind::LeftCurly);
 		let mut declarations = parser.new_vec();
 		let mut rules = parser.new_vec();
 		loop {
