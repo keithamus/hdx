@@ -13,7 +13,7 @@ pub enum LineHeight {
 	Normal, // atom!("normal")
 	#[parsable(Number, Check::Range(0.0..))]
 	Number(CSSFloat),
-	#[parsable(Dimension, FromToken, Check::Range(0.0..))]
+	#[parsable(Dimension, Check::Range(0.0..), parse_inner)]
 	LengthPercentage(LengthPercentage),
 }
 

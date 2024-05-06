@@ -31,18 +31,18 @@ expression: result.output.unwrap()
                   }
                 ],
                 "start": 1,
-                "end": 14
+                "end": 13
               }
             ],
             "start": 0,
-            "end": 14
+            "end": 13
           },
           "node": {
             "type": "style-declaration",
             "declarations": [],
             "rules": []
           },
-          "start": 14,
+          "start": 13,
           "end": 16
         },
         "start": 0,
@@ -69,18 +69,18 @@ expression: result.output.unwrap()
                   }
                 ],
                 "start": 18,
-                "end": 31
+                "end": 30
               }
             ],
             "start": 16,
-            "end": 31
+            "end": 30
           },
           "node": {
             "type": "style-declaration",
             "declarations": [],
             "rules": []
           },
-          "start": 31,
+          "start": 30,
           "end": 33
         },
         "start": 16,

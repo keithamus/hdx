@@ -1,6 +1,6 @@
 use hdx_atom::atom;
 use hdx_lexer::Token;
-use hdx_parser::{match_ignore_case, unexpected, unexpected_ident, FromToken, Parse, Parser, Result as ParserResult};
+use hdx_parser::{match_ignore_case, unexpected, unexpected_ident, Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 
 use crate::css::units::LengthPercentage;
@@ -69,18 +69,12 @@ impl<'a> Parse<'a> for HorizontalRatio {
 				}
 				atom!("left") => {
 					parser.advance();
-					let len = LengthPercentage::from_token(parser.peek());
-					if len.is_some() {
-						parser.advance();
-					}
+					let len = LengthPercentage::try_parse(parser).ok();
 					Self::Left(len)
 				}
 				atom!("right") => {
 					parser.advance();
-					let len = LengthPercentage::from_token(parser.peek());
-					if len.is_some() {
-						parser.advance();
-					}
+					let len = LengthPercentage::try_parse(parser).ok();
 					Self::Right(len)
 				}
 				_ => unexpected_ident!(parser, atom),
@@ -139,18 +133,12 @@ impl<'a> Parse<'a> for VerticalRatio {
 				}
 				atom!("top") => {
 					parser.advance();
-					let len = LengthPercentage::from_token(parser.peek());
-					if len.is_some() {
-						parser.advance();
-					}
+					let len = LengthPercentage::try_parse(parser).ok();
 					Self::Top(len)
 				}
 				atom!("bottom") => {
 					parser.advance();
-					let len = LengthPercentage::from_token(parser.peek());
-					if len.is_some() {
-						parser.advance();
-					}
+					let len = LengthPercentage::try_parse(parser).ok();
 					Self::Bottom(len)
 				}
 				_ => unexpected_ident!(parser, atom),

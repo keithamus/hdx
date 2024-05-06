@@ -1,7 +1,7 @@
 use hdx_atom::atom;
 use hdx_derive::Value;
 use hdx_lexer::Token;
-use hdx_parser::{discard, unexpected, unexpected_ident, FromToken, Parse, Parser, Result as ParserResult};
+use hdx_parser::{discard, unexpected, unexpected_ident, Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 use smallvec::{smallvec, SmallVec};
 
@@ -29,11 +29,7 @@ impl<'a> Parse<'a> for AnimationDuration {
 			Token::Dimension(_, _, _) => {
 				let mut values = smallvec![];
 				loop {
-					if let Some(time) = Time::from_token(&parser.next()) {
-						values.push(time);
-					} else {
-						unexpected!(parser);
-					}
+					values.push(Time::parse(parser)?);
 					if !discard!(parser, Token::Comma) {
 						break;
 					}

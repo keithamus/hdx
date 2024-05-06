@@ -1,6 +1,6 @@
-use crate::macros::ranged_media_feature;
+use crate::{css::units::CSSInt, macros::ranged_media_feature};
 
-ranged_media_feature!(VerticalViewportSegmentsMediaFeature[atom!("vertical-viewport-segments")], i32);
+ranged_media_feature!(VerticalViewportSegmentsMediaFeature[atom!("vertical-viewport-segments")], CSSInt);
 
 #[cfg(test)]
 mod tests {

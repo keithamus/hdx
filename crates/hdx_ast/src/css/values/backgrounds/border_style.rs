@@ -4,35 +4,35 @@ use crate::{css::keywords::LineStyle, macros::*};
 
 #[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-pub struct BorderTopStyle(#[parsable(FromToken)] pub LineStyle);
+pub struct BorderTopStyle(pub LineStyle);
 
 #[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-pub struct BorderBottomStyle(#[parsable(FromToken)] pub LineStyle);
+pub struct BorderBottomStyle(pub LineStyle);
 
 #[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-pub struct BorderLeftStyle(#[parsable(FromToken)] pub LineStyle);
+pub struct BorderLeftStyle(pub LineStyle);
 
 #[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-pub struct BorderRightStyle(#[parsable(FromToken)] pub LineStyle);
+pub struct BorderRightStyle(pub LineStyle);
 
 #[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-pub struct BorderBlockStartStyle(#[parsable(FromToken)] pub LineStyle);
+pub struct BorderBlockStartStyle(pub LineStyle);
 
 #[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-pub struct BorderBlockEndStyle(#[parsable(FromToken)] pub LineStyle);
+pub struct BorderBlockEndStyle(pub LineStyle);
 
 #[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-pub struct BorderInlineStartStyle(#[parsable(FromToken)] pub LineStyle);
+pub struct BorderInlineStartStyle(pub LineStyle);
 
 #[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-pub struct BorderInlineEndStyle(#[parsable(FromToken)] pub LineStyle);
+pub struct BorderInlineEndStyle(pub LineStyle);
 
 // https://drafts.csswg.org/css-backgrounds/#propdef-border-block-width
 #[derive(Value, Default, PartialEq, Debug, Clone, Hash)]

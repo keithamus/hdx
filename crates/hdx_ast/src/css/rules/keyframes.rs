@@ -1,7 +1,7 @@
 use hdx_atom::{atom, Atom};
 use hdx_lexer::{QuoteStyle, Token};
 use hdx_parser::{
-	diagnostics, discard, expect, expect_ignore_case, unexpected, unexpected_ident, AtRule, FromToken, Parse, Parser,
+	diagnostics, discard, expect, expect_ignore_case, unexpected, unexpected_ident, AtRule, Parse, Parser,
 	Result as ParserResult, Spanned, Vec,
 };
 use hdx_writer::{write_css, CssWriter, Result as WriterResult, WriteCss};
@@ -119,11 +119,7 @@ impl<'a> Parse<'a> for Keyframe<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		let mut selector = smallvec![];
 		loop {
-			if let Some(unit) = KeyframeSelector::from_token(parser.next()) {
-				selector.push(unit);
-			} else {
-				unexpected!(parser);
-			}
+			selector.push(KeyframeSelector::parse(parser)?);
 			if discard!(parser, Token::LeftCurly | Token::Eof) {
 				break;
 			}
@@ -174,16 +170,16 @@ pub enum KeyframeSelector {
 	Percent(Percent),
 }
 
-impl FromToken for KeyframeSelector {
-	fn from_token(token: &Token) -> Option<Self> {
-		match token {
+impl<'a> Parse<'a> for KeyframeSelector {
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
+		match parser.next() {
 			Token::Ident(atom) => match atom.to_ascii_lowercase() {
-				atom!("from") => Some(KeyframeSelector::From),
-				atom!("to") => Some(KeyframeSelector::To),
-				_ => None,
+				atom!("from") => Ok(KeyframeSelector::From),
+				atom!("to") => Ok(KeyframeSelector::To),
+				_ => unexpected_ident!(parser, atom),
 			},
-			Token::Dimension(n, atom!("%"), _) if *n >= 0.0 && *n <= 100.0 => Some(Self::Percent(n.into())),
-			_ => None,
+			Token::Dimension(n, atom!("%"), _) if *n >= 0.0 && *n <= 100.0 => Ok(Self::Percent(n.into())),
+			token => unexpected!(parser, token),
 		}
 	}
 }

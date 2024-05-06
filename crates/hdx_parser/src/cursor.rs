@@ -41,6 +41,11 @@ impl<'a> Parser<'a> {
 		self.lexer.lookahead(n)
 	}
 
+	#[inline]
+	pub fn peek_n_with(&mut self, n: u8, inc: Include) -> &Token {
+		self.lexer.lookahead_with(n, inc)
+	}
+
 	/// Should only be used in severe edge cases, for legacy parse modes
 	pub fn legacy_peek_next_char(&self, n: usize) -> Option<char> {
 		self.lexer.legacy_peek_next_char(n)

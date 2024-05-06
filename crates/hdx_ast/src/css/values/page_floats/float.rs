@@ -1,7 +1,7 @@
 use hdx_atom::{atom, Atomizable};
 use hdx_derive::{Atomizable, Value};
 use hdx_lexer::Token;
-use hdx_parser::{diagnostics, expect, unexpected, unexpected_ident, FromToken, Parse, Parser, Result as ParserResult};
+use hdx_parser::{diagnostics, expect, unexpected, unexpected_ident, Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 
 use crate::css::units::Length;
@@ -45,11 +45,7 @@ impl<'a> Parse<'a> for Float {
 			},
 			Token::Function(atom) => match atom.to_ascii_lowercase() {
 				atom!("snap-block") => {
-					let length = if let Some(length) = Length::from_token(&parser.next()) {
-						length
-					} else {
-						unexpected!(parser)
-					};
+					let length = Length::parse(parser)?;
 					match parser.next() {
 						Token::Comma => match parser.next() {
 							Token::Ident(atom) => {
@@ -67,11 +63,7 @@ impl<'a> Parse<'a> for Float {
 					}
 				}
 				atom!("snap-inline") => {
-					let length = if let Some(length) = Length::from_token(&parser.next()) {
-						length
-					} else {
-						unexpected!(parser)
-					};
+					let length = Length::parse(parser)?;
 					match parser.next() {
 						Token::Comma => match parser.next() {
 							Token::Ident(atom) => {

@@ -1,7 +1,7 @@
 use hdx_atom::{Atom, Atomizable};
 use hdx_lexer::Token;
 use hdx_parser::{
-	FromToken, Parse, Parser, Result as ParserResult, SelectorComponent as SelectorComponentTrait,
+	expect, unexpected, Parse, Parser, Result as ParserResult, SelectorComponent as SelectorComponentTrait,
 	SelectorList as SelectorListTrait, Spanned, Vec,
 };
 use hdx_writer::{write_css, CssWriter, Result as WriterResult, WriteCss};
@@ -145,15 +145,15 @@ impl<'a> SelectorComponentTrait<'a> for SelectorComponent<'a> {
 			.or_else(|| OPseudoElement::from_atom(atom).map(Self::OPseudoElement))
 	}
 
-	fn ns_type_from_token(ns_token: &Token, type_token: &Token) -> Option<Self> {
-		if let Some(prefix) = NSPrefix::from_token(ns_token) {
-			match type_token {
-				Token::Ident(atom) => Some(Self::NSPrefixedTag((prefix, atom.clone()))),
-				Token::Delim('*') => Some(Self::NSPrefixedWildcard(prefix)),
-				_ => None,
-			}
-		} else {
-			None
+	fn ns_type_from_token(parser: &mut Parser<'a>) -> ParserResult<Self> {
+		let prefix = NSPrefix::parse(parser)?;
+		if !matches!(prefix, NSPrefix::None) {
+			expect!(parser.next(), Token::Delim('|'));
+		}
+		match parser.next() {
+			Token::Ident(atom) => Ok(Self::NSPrefixedTag((prefix, atom.clone()))),
+			Token::Delim('*') => Ok(Self::NSPrefixedWildcard(prefix)),
+			token => unexpected!(parser, token),
 		}
 	}
 
@@ -223,13 +223,13 @@ pub enum NSPrefix {
 	Named(Atom),
 }
 
-impl FromToken for NSPrefix {
-	fn from_token(token: &Token) -> Option<Self> {
-		match token {
-			Token::Delim('*') => Some(Self::Wildcard),
-			Token::Ident(atom) => Some(Self::Named(atom.clone())),
-			Token::Delim('|') => Some(Self::None),
-			_ => None,
+impl<'a> Parse<'a> for NSPrefix {
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
+		match parser.next() {
+			Token::Delim('*') => Ok(Self::Wildcard),
+			Token::Ident(atom) => Ok(Self::Named(atom.clone())),
+			Token::Delim('|') => Ok(Self::None),
+			token => unexpected!(parser, token),
 		}
 	}
 }
@@ -268,6 +268,7 @@ mod tests {
 		assert_parse!(SelectorList, "*");
 		assert_parse!(SelectorList, "[attr|='foo']");
 		assert_parse!(SelectorList, "*|x");
+		assert_parse!(SelectorList, "* x");
 		assert_parse!(SelectorList, "a b");
 		assert_parse!(SelectorList, "  a b", "a b");
 		assert_parse!(SelectorList, "body [attr|='foo']");

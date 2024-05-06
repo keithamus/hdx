@@ -1,5 +1,5 @@
 use hdx_derive::Value;
-use hdx_parser::{FromToken, Parse, Parser, Result as ParserResult, Span, Spanned};
+use hdx_parser::{Parse, Parser, Result as ParserResult, Span, Spanned};
 use hdx_writer::{CssWriter, OutputOption, Result as WriterResult, WriteCss};
 
 use super::{AlignmentBaseline, BaselineShift, BaselineSource};
@@ -12,12 +12,13 @@ pub struct VerticalAlign(pub Spanned<BaselineSource>, pub Spanned<AlignmentBasel
 impl<'a> Parse<'a> for VerticalAlign {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		let span = parser.span();
-		let baseline_source = if let Some(baseline_source) = BaselineSource::from_token(parser.peek()) {
+		let checkpoint = parser.checkpoint();
+		let baseline_source = if let Ok(baseline_source) = BaselineSource::try_parse(parser) {
 			// "auto" keyword is not allowed in VerticalAlign shorthand
 			if baseline_source != BaselineSource::default() {
-				parser.advance();
 				Spanned { node: baseline_source, span }
 			} else {
+				parser.rewind(checkpoint);
 				Spanned { node: BaselineSource::default(), span: Span::dummy() }
 			}
 		} else {

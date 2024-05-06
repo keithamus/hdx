@@ -5,8 +5,8 @@ use crate::css::units::{Angle, CSSFloat, Percent};
 use hdx_atom::{atom, Atomizable};
 use hdx_lexer::Token;
 use hdx_parser::{
-	discard, expect, match_ignore_case, todo, unexpected, unexpected_function, unexpected_ident, FromToken, Parse,
-	Parser, Result as ParserResult,
+	discard, expect, match_ignore_case, todo, unexpected, unexpected_function, unexpected_ident, Parse, Parser,
+	Result as ParserResult,
 };
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 use std::str::Chars;
@@ -23,14 +23,23 @@ pub enum Channel {
 	Hue(Angle),
 }
 
-impl FromToken for Channel {
-	fn from_token(token: &Token) -> Option<Self> {
-		match &token {
-			Token::Ident(atom) if atom.to_ascii_lowercase() == atom!("none") => Some(Self::None),
-			Token::Number(n, _) => Some(Self::Float((*n).into())),
-			Token::Dimension(n, unit, _) if unit.to_ascii_lowercase() == atom!("%") => Some(Self::Percent((*n).into())),
-			Token::Dimension(_, _, _) => Angle::from_token(token).map(Self::Hue),
-			_ => None,
+impl<'a> Parse<'a> for Channel {
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
+		match parser.peek().clone() {
+			Token::Ident(atom) if atom.to_ascii_lowercase() == atom!("none") => {
+				parser.advance();
+				Ok(Self::None)
+			}
+			Token::Number(n, _) => {
+				parser.advance();
+				Ok(Self::Float(n.into()))
+			}
+			Token::Dimension(n, unit, _) if unit.to_ascii_lowercase() == atom!("%") => {
+				parser.advance();
+				Ok(Self::Percent(n.into()))
+			}
+			Token::Dimension(_, _, _) => Ok(Self::Hue(Angle::parse(parser)?)),
+			token => unexpected!(parser, token),
 		}
 	}
 }
@@ -74,41 +83,29 @@ impl<'a> Parse<'a> for AbsoluteColorFunction {
 			},
 			token => unexpected!(parser, token),
 		};
-		let mut percent = false;
-		let first = if let Some(f) = Channel::from_token(&parser.next()) {
-			percent = matches!(f, Channel::Percent(_));
-			if matches!(f, Channel::Hue(_)) != syntax.first_is_hue() {
-				unexpected!(parser);
-			}
-			f
-		} else {
-			unexpected!(parser)
-		};
+		let first = Channel::parse(parser)?;
+		let percent = matches!(first, Channel::Percent(_));
+		if matches!(first, Channel::Hue(_)) != syntax.first_is_hue() {
+			unexpected!(parser);
+		}
 		if discard!(parser, Token::Comma) {
 			syntax |= ColorFunctionSyntax::Legacy;
 		}
-		let second = if let Some(f) = Channel::from_token(&parser.next()) {
-			if (syntax.is_legacy() && matches!(f, Channel::Percent(_)) != percent) || matches!(f, Channel::Hue(_)) {
-				unexpected!(parser)
-			}
-			f
-		} else {
+		let second = Channel::parse(parser)?;
+		if (syntax.is_legacy() && matches!(second, Channel::Percent(_)) != percent) || matches!(second, Channel::Hue(_))
+		{
 			unexpected!(parser)
-		};
+		}
 		if syntax.contains(ColorFunctionSyntax::Legacy) != discard!(parser, Token::Comma) {
 			unexpected!(parser)
 		}
-		let third = if let Some(f) = Channel::from_token(&parser.next()) {
-			if syntax.is_legacy() && matches!(f, Channel::Percent(_)) != percent {
-				unexpected!(parser)
-			}
-			if matches!(f, Channel::Hue(_)) != syntax.third_is_hue() {
-				unexpected!(parser);
-			}
-			f
-		} else {
+		let third = Channel::parse(parser)?;
+		if syntax.is_legacy() && matches!(third, Channel::Percent(_)) != percent {
 			unexpected!(parser)
-		};
+		}
+		if matches!(third, Channel::Hue(_)) != syntax.third_is_hue() {
+			unexpected!(parser);
+		}
 		if discard!(parser, Token::RightParen) {
 			return Ok(Self(syntax | ColorFunctionSyntax::OmitAlpha, first, second, third, Channel::None));
 		}
@@ -117,14 +114,10 @@ impl<'a> Parse<'a> for AbsoluteColorFunction {
 		} else {
 			expect!(parser.next(), Token::Delim('/'));
 		}
-		let fourth = if let Some(f) = Channel::from_token(&parser.next()) {
-			if matches!(f, Channel::None) {
-				unexpected!(parser)
-			}
-			f
-		} else {
+		let fourth = Channel::parse(parser)?;
+		if matches!(fourth, Channel::None) {
 			unexpected!(parser)
-		};
+		}
 		expect!(parser.next(), Token::RightParen);
 		Ok(Self(syntax, first, second, third, fourth))
 	}

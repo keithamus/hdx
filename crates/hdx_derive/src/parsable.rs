@@ -33,10 +33,10 @@ enum Check {
 
 #[derive(Clone, Debug)]
 enum ParsableArg {
-	FromToken,
 	Kind(Kind),
 	Atom(String),
 	Check(Check),
+	ParseInner,
 }
 
 impl Parse for ParsableArg {
@@ -49,7 +49,6 @@ impl Parse for ParsableArg {
 			i if i == "DimensionOrZero" => Ok(Self::Kind(Kind::DimensionOrZero)),
 			i if i == "DimensionOrNumber" => Ok(Self::Kind(Kind::DimensionOrNumber)),
 			i if i == "AtKeyword" => Ok(Self::Kind(Kind::AtKeyword)),
-			i if i == "FromToken" => Ok(Self::FromToken),
 			i if i == "atom" => {
 				input.parse::<Token![=]>()?;
 				Ok(Self::Atom(input.parse::<LitStr>()?.value()))
@@ -72,6 +71,7 @@ impl Parse for ParsableArg {
 					ident => Err(Error::new(ident.span(), format!("Unrecognized Parsable value Check::{:?}", ident)))?,
 				}
 			}
+			i if i == "parse_inner" => Ok(Self::ParseInner),
 			ident => Err(Error::new(ident.span(), format!("Unrecognized Parsable arg {:?}", ident)))?,
 		}
 	}
@@ -80,14 +80,13 @@ impl Parse for ParsableArg {
 pub struct ParsableArgs {
 	kind: Kind,
 	parse_inner: bool,
-	from_token: bool,
 	atom: Option<String>,
 	checks: Vec<Check>,
 }
 
 impl ParsableArgs {
 	fn parse(attrs: &[Attribute]) -> Self {
-		let mut ret = Self { kind: Kind::Ident, parse_inner: false, from_token: false, atom: None, checks: vec![] };
+		let mut ret = Self { kind: Kind::Ident, parse_inner: false, atom: None, checks: vec![] };
 		if let Some(Attribute { meta: Meta::List(meta), .. }) = &attrs.iter().find(|a| a.path().is_ident("parsable")) {
 			let args = meta.parse_args_with(Punctuated::<ParsableArg, Token![,]>::parse_terminated).unwrap();
 			for arg in args {
@@ -95,7 +94,7 @@ impl ParsableArgs {
 					ParsableArg::Kind(k) => ret.kind = k,
 					ParsableArg::Check(c) => ret.checks.push(c),
 					ParsableArg::Atom(s) => ret.atom = Some(s),
-					ParsableArg::FromToken => ret.from_token = true,
+					ParsableArg::ParseInner => ret.parse_inner = true,
 				}
 			}
 		}
@@ -113,24 +112,14 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 				let field = fields.unnamed.first().unwrap();
 				let field_ty = &field.ty;
 				let args = ParsableArgs::parse(&field.attrs);
-				let value = if args.from_token {
-					quote! {
-						if let Some(value) = #field_ty::from_token(&parser.next()) {
-							Self(value)
-						} else {
-							hdx_parser::unexpected!(parser)
-						}
-					}
-				} else {
-					quote! {
-						Self(#field_ty::parse(parser)?)
-					}
-				};
+				let value = quote! {
+                    Self(#field_ty::parse(parser)?)
+                };
 				quote! {
 					#[automatically_derived]
 					impl<'a> hdx_parser::Parse<'a> for #ident {
 						fn parse(parser: &mut hdx_parser::Parser<'a>) -> hdx_parser::Result<Self> {
-							use hdx_parser::{Parse, FromToken};
+							use hdx_parser::{Parse};
 							Ok(#value)
 						}
 					}
@@ -249,63 +238,21 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 								if args.parse_inner {
 									dimension_matcher = Some(quote! {
 										hdx_lexer::Token::Dimension(val, _, ty) => {
-											parser.advance();
 											#(#checks)*
-											let parsed = #field::parse_spanned(parser);
-											Ok(Self::#var_ident(parsed))
+											Ok(Self::#var_ident(#field::parse(parser)?))
 										},
 									});
 									number_matcher = match args.kind {
 										Kind::DimensionOrZero => Some(quote! {
 											hdx_lexer::Token::Number(val, ty) if val == 0.0 => {
-												parser.advance();
 												#(#checks)*
-												let parsed = #field::parse(parser);
-												Ok(Self::#var_ident(parsed))
-											}
-										}),
-										Kind::DimensionOrNumber => Some(quote! {
-											hdx_lexer::Token::Number(val, ty) {
-												parser.advance();
-												#(#checks)*
-												let parsed = #field::parse(parser);
-												Ok(Self::#var_ident(parsed))
-											}
-										}),
-										_ => number_matcher,
-									};
-								} else if args.from_token {
-									dimension_matcher = Some(quote! {
-										hdx_lexer::Token::Dimension(val, _, ty) => {
-											parser.advance();
-											#(#checks)*
-											if let Some(val) = #field::from_token(parser.cur()) {
-												Ok(Self::#var_ident(val.into()))
-											} else {
-												hdx_parser::unexpected!(parser)
-											}
-										},
-									});
-									number_matcher = match args.kind {
-										Kind::DimensionOrZero => Some(quote! {
-											hdx_lexer::Token::Number(val, ty) if val == 0.0 => {
-												parser.advance();
-												#(#checks)*
-												if let Some(val) = #field::from_token(parser.cur()) {
-													Ok(Self::#var_ident(val.into()))
-												} else {
-													hdx_parser::unexpected!(parser)
-												}
+												Ok(Self::#var_ident(#field::parse(parser)?))
 											}
 										}),
 										Kind::DimensionOrNumber => Some(quote! {
 											hdx_lexer::Token::Number(val, ty) {
 												#(#checks)*
-												if let Some(val) = #field::from_token(&parser.next()) {
-													Ok(Self::#var_ident(val.into()))
-												} else {
-													hdx_parser::unexpected!(parser)
-												}
+												Ok(Self::#var_ident(#field::parse(parser)?))
 											}
 										}),
 										_ => number_matcher,
@@ -374,22 +321,8 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 								if args.parse_inner {
 									quote! {
 										hdx_lexer::Token::Number(val, ty) => {
-											parser.advance();
 											#(#checks)*
-											let parsed = #field::parse_spanned(parser);
-											Ok(Self::#var_ident(parsed))
-										},
-									}
-								} else if args.from_token {
-									quote! {
-										hdx_lexer::Token::Number(val, ty) => {
-											parser.advance();
-											#(#checks)*
-											if let Some(parsed) = #field::from_token(parser.cur()) {
-												Ok(Self::#var_ident(parsed))
-											} else {
-												hdx_parser::unexpected!(parser, token)
-											}
+											Ok(Self::#var_ident(#field::parse(parser)?))
 										},
 									}
 								} else {
@@ -420,8 +353,7 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 								if args.parse_inner {
 									quote! {
 										hdx_lexer::Token::String(_) => {
-											let parsed = #field::parse_spanned(parser);
-											Ok(Self::#var_ident(parsed))
+											Ok(Self::#var_ident(#field::parse(parser)?))
 										},
 									}
 								} else {
@@ -450,26 +382,13 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 								)
 							} else {
 								let field = unnamed[0].clone().ty;
-								if args.from_token {
-									quote! {
-										hdx_atom::atom!(#str) => {
-											if let Some(val) = #field::from_token(&parser.next()) {
-												hdx_parser::expect!(parser.next(), hdx_lexer::Token::RightParen);
-												Ok(Self::#var_ident(val))
-											} else {
-												hdx_parser::unexpected!(parser)
-											}
-										}
-									}
-								} else {
-									quote! {
-										hdx_atom::atom!(#str) => {
-											let val = #field::parse(parser)?;
-											hdx_parser::expect!(parser.next(), hdx_lexer::Token::RightParen);
-											Ok(Self::#var_ident(val))
-										}
-									}
-								}
+                                quote! {
+                                    hdx_atom::atom!(#str) => {
+                                        let val = #field::parse(parser)?;
+                                        hdx_parser::expect!(parser.next(), hdx_lexer::Token::RightParen);
+                                        Ok(Self::#var_ident(val))
+                                    }
+                                }
 							});
 						}
 						// AtKeywords can be assigned to a single unnamed field:
@@ -558,7 +477,7 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 				#[automatically_derived]
 				impl<'a> hdx_parser::Parse<'a> for #ident {
 					fn parse(parser: &mut hdx_parser::Parser<'a>) -> hdx_parser::Result<Self> {
-						use hdx_parser::{Parse, FromToken};
+						use hdx_parser::Parse;
 						match parser.peek().clone() {
 							#ident_match_arm
 							#string_matcher

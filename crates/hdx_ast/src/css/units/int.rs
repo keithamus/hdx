@@ -1,6 +1,6 @@
 use hdx_derive::Writable;
 use hdx_lexer::Token;
-use hdx_parser::FromToken;
+use hdx_parser::{unexpected, Parse, Parser, Result as ParserResult};
 use std::{
 	fmt::{Display, Result as DisplayResult},
 	ops::{Add, Div, Mul, Sub},
@@ -28,7 +28,6 @@ impl From<&f32> for CSSInt {
 		Self(*f as i32)
 	}
 }
-
 
 impl From<i32> for CSSInt {
 	fn from(f: i32) -> Self {
@@ -102,11 +101,11 @@ impl PartialOrd<i32> for CSSInt {
 	}
 }
 
-impl FromToken for CSSInt {
-	fn from_token(token: &Token) -> Option<Self> {
-		match token {
-			Token::Number(f, ty) if !ty.is_float() => Some(f.into()),
-			_ => None,
+impl<'a> Parse<'a> for CSSInt {
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
+		match parser.next() {
+			Token::Number(f, ty) if !ty.is_float() => Ok(f.into()),
+			token => unexpected!(parser, token),
 		}
 	}
 }

@@ -279,11 +279,11 @@ expression: result.output.unwrap()
                           }
                         ],
                         "start": 138,
-                        "end": 140
+                        "end": 139
                       }
                     ],
                     "start": 135,
-                    "end": 140
+                    "end": 139
                   },
                   "node": {
                     "type": "style-declaration",
@@ -310,7 +310,7 @@ expression: result.output.unwrap()
                     ],
                     "rules": []
                   },
-                  "start": 140,
+                  "start": 139,
                   "end": 160
                 },
                 "start": 135,
@@ -394,11 +394,11 @@ expression: result.output.unwrap()
                           }
                         ],
                         "start": 195,
-                        "end": 197
+                        "end": 196
                       }
                     ],
                     "start": 192,
-                    "end": 197
+                    "end": 196
                   },
                   "node": {
                     "type": "style-declaration",
@@ -425,7 +425,7 @@ expression: result.output.unwrap()
                     ],
                     "rules": []
                   },
-                  "start": 197,
+                  "start": 196,
                   "end": 217
                 },
                 "start": 192,
@@ -519,11 +519,11 @@ expression: result.output.unwrap()
                           }
                         ],
                         "start": 256,
-                        "end": 258
+                        "end": 257
                       }
                     ],
                     "start": 253,
-                    "end": 258
+                    "end": 257
                   },
                   "node": {
                     "type": "style-declaration",
@@ -550,7 +550,7 @@ expression: result.output.unwrap()
                     ],
                     "rules": []
                   },
-                  "start": 258,
+                  "start": 257,
                   "end": 278
                 },
                 "start": 253,
@@ -602,11 +602,11 @@ expression: result.output.unwrap()
                           }
                         ],
                         "start": 304,
-                        "end": 306
+                        "end": 305
                       }
                     ],
                     "start": 301,
-                    "end": 306
+                    "end": 305
                   },
                   "node": {
                     "type": "style-declaration",
@@ -633,7 +633,7 @@ expression: result.output.unwrap()
                     ],
                     "rules": []
                   },
-                  "start": 306,
+                  "start": 305,
                   "end": 326
                 },
                 "start": 301,
@@ -686,11 +686,11 @@ expression: result.output.unwrap()
                           }
                         ],
                         "start": 349,
-                        "end": 351
+                        "end": 350
                       }
                     ],
                     "start": 346,
-                    "end": 351
+                    "end": 350
                   },
                   "node": {
                     "type": "style-declaration",
@@ -717,7 +717,7 @@ expression: result.output.unwrap()
                     ],
                     "rules": []
                   },
-                  "start": 351,
+                  "start": 350,
                   "end": 371
                 },
                 "start": 346,
@@ -801,11 +801,11 @@ expression: result.output.unwrap()
                           }
                         ],
                         "start": 404,
-                        "end": 406
+                        "end": 405
                       }
                     ],
                     "start": 401,
-                    "end": 406
+                    "end": 405
                   },
                   "node": {
                     "type": "style-declaration",
@@ -832,7 +832,7 @@ expression: result.output.unwrap()
                     ],
                     "rules": []
                   },
-                  "start": 406,
+                  "start": 405,
                   "end": 426
                 },
                 "start": 401,
@@ -1014,11 +1014,11 @@ expression: result.output.unwrap()
                           }
                         ],
                         "start": 483,
-                        "end": 485
+                        "end": 484
                       }
                     ],
                     "start": 480,
-                    "end": 485
+                    "end": 484
                   },
                   "node": {
                     "type": "style-declaration",
@@ -1045,7 +1045,7 @@ expression: result.output.unwrap()
                     ],
                     "rules": []
                   },
-                  "start": 485,
+                  "start": 484,
                   "end": 505
                 },
                 "start": 480,

@@ -6,7 +6,7 @@ use crate::css::units::LengthPercentage;
 #[derive(Value, Parsable, Writable, Debug, PartialEq, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", rename_all = "kebab-case"))]
 pub enum BaselineShift {
-	#[parsable(DimensionOrZero, FromToken)]
+	#[parsable(DimensionOrZero, parse_inner)]
 	LengthPercentage(LengthPercentage),
 	Sub,    // atom!("sub")
 	Super,  // atom!("super")

@@ -1,13 +1,13 @@
 use hdx_derive::{Parsable, Value, Writable};
 
-use crate::{css::units::LengthPercentage};
+use crate::css::units::LengthPercentage;
 
 #[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub enum Top {
 	#[default]
 	Auto, // atom!("auto"),
-	#[parsable(DimensionOrZero, FromToken)]
+	#[parsable(DimensionOrZero, parse_inner)]
 	LengthPercentage(LengthPercentage),
 }
 

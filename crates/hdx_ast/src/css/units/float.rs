@@ -1,6 +1,6 @@
 use hdx_derive::Writable;
 use hdx_lexer::Token;
-use hdx_parser::FromToken;
+use hdx_parser::{unexpected, Parse, Parser, Result as ParserResult};
 use std::{
 	fmt::{Display, Result as DisplayResult},
 	hash::{Hash, Hasher},
@@ -109,11 +109,11 @@ impl PartialOrd<f32> for CSSFloat {
 	}
 }
 
-impl FromToken for CSSFloat {
-	fn from_token(token: &Token) -> Option<Self> {
-		match token {
-			Token::Number(f, _) => Some(f.into()),
-			_ => None,
+impl<'a> Parse<'a> for CSSFloat {
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
+		match parser.next() {
+			Token::Number(f, _) => Ok(f.into()),
+			token => unexpected!(parser, token),
 		}
 	}
 }

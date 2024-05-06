@@ -1,7 +1,7 @@
 use hdx_atom::{atom, Atom};
-use hdx_derive::{Atomizable, Writable};
+use hdx_derive::{Atomizable, Parsable, Writable};
 use hdx_lexer::Token;
-use hdx_parser::{discard, expect, unexpected, unexpected_function, FromToken, Parse, Parser, Result as ParserResult};
+use hdx_parser::{discard, expect, unexpected, unexpected_function, Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 use smallvec::{smallvec, SmallVec};
 
@@ -35,13 +35,7 @@ impl<'a> Parse<'a> for FunctionalPseudoClass<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		let val = match parser.next() {
 			Token::Function(ident) => match ident.to_ascii_lowercase() {
-				atom!("dir") => {
-					if let Some(dir) = DirValue::from_token(parser.next()) {
-						Self::Dir(dir)
-					} else {
-						unexpected!(parser)
-					}
-				}
+				atom!("dir") => Self::Dir(DirValue::parse(parser)?),
 				atom!("has") => Self::Has(RelativeSelector::parse(parser)?),
 				atom!("host") => Self::Host(SelectorList::parse(parser)?),
 				atom!("host-context") => Self::HostContext(SelectorList::parse(parser)?),
@@ -166,8 +160,7 @@ impl<'a> WriteCss<'a> for FunctionalPseudoClass<'a> {
 	}
 }
 
-#[derive(Writable, Atomizable, Debug, PartialEq, Hash)]
-#[atomizable(FromToken)]
+#[derive(Writable, Parsable, Atomizable, Debug, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", rename_all = "kebab-case"))]
 pub enum DirValue {
 	Rtl, // atom!("rtl")

@@ -4,35 +4,35 @@ use crate::{css::units::LineWidth, macros::*};
 
 #[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-pub struct BorderTopWidth(#[parsable(FromToken)] LineWidth);
+pub struct BorderTopWidth(LineWidth);
 
 #[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-pub struct BorderBottomWidth(#[parsable(FromToken)] LineWidth);
+pub struct BorderBottomWidth(LineWidth);
 
 #[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-pub struct BorderLeftWidth(#[parsable(FromToken)] LineWidth);
+pub struct BorderLeftWidth(LineWidth);
 
 #[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-pub struct BorderRightWidth(#[parsable(FromToken)] LineWidth);
+pub struct BorderRightWidth(LineWidth);
 
 #[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-pub struct BorderBlockStartWidth(#[parsable(FromToken)] LineWidth);
+pub struct BorderBlockStartWidth(LineWidth);
 
 #[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-pub struct BorderBlockEndWidth(#[parsable(FromToken)] LineWidth);
+pub struct BorderBlockEndWidth(LineWidth);
 
 #[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-pub struct BorderInlineStartWidth(#[parsable(FromToken)] LineWidth);
+pub struct BorderInlineStartWidth(LineWidth);
 
 #[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-pub struct BorderInlineEndWidth(#[parsable(FromToken)] LineWidth);
+pub struct BorderInlineEndWidth(LineWidth);
 
 // https://drafts.csswg.org/css-backgrounds/#propdef-border-block-width
 #[derive(Value, Default, PartialEq, Debug, Clone, Hash)]

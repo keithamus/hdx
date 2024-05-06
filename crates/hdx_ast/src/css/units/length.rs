@@ -1,7 +1,7 @@
 use hdx_atom::{atom, Atom};
 use hdx_derive::Writable;
 use hdx_lexer::Token;
-use hdx_parser::FromToken;
+use hdx_parser::{unexpected, unexpected_ident, Parse, Parser, Result as ParserResult};
 
 use super::CSSFloat;
 
@@ -48,12 +48,18 @@ macro_rules! length {
 			}
 		}
 
-		impl FromToken for Length {
-			fn from_token(token: &Token) -> Option<Self> {
-				match token {
-					Token::Number(n, _) if *n == 0.0 => Some(Self::Zero),
-					Token::Dimension(n, unit, _) => Self::new(n.into(), unit.clone()),
-					_ => None,
+		impl<'a> Parse<'a> for Length {
+			fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
+				match parser.next() {
+					Token::Number(n, _) if *n == 0.0 => Ok(Self::Zero),
+					token @ Token::Dimension(n, unit, _) => {
+						if let Some(d) = Self::new(n.into(), unit.clone()) {
+							Ok(d)
+						} else {
+							unexpected!(parser, token)
+						}
+					}
+					token => unexpected!(parser, token),
 				}
 			}
 		}
@@ -93,12 +99,18 @@ macro_rules! length {
 			}
 		}
 
-		impl FromToken for LengthPercentage {
-			fn from_token(token: &Token) -> Option<Self> {
-				match token {
-					Token::Number(n, _) if *n == 0.0 => Some(Self::Zero),
-					Token::Dimension(n, unit, _) => Self::new(n.into(), unit.clone()),
-					_ => None,
+		impl<'a> Parse<'a> for LengthPercentage {
+			fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
+				match parser.next() {
+					Token::Number(n, _) if *n == 0.0 => Ok(Self::Zero),
+					token @ Token::Dimension(n, unit, _) => {
+						if let Some(d) = Self::new(n.into(), unit.clone()) {
+							Ok(d)
+						} else {
+							unexpected!(parser, token)
+						}
+					}
+					token => unexpected!(parser, token),
 				}
 			}
 		}
@@ -172,22 +184,22 @@ pub enum LengthPercentageOrAuto {
 	LengthPercentage(LengthPercentage),
 }
 
-impl FromToken for LengthPercentageOrAuto {
-	fn from_token(token: &Token) -> Option<Self> {
-		match token {
+impl<'a> Parse<'a> for LengthPercentageOrAuto {
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
+		match parser.next() {
 			Token::Ident(atom) => match atom.to_ascii_lowercase() {
-				atom!("auto") => Some(Self::Auto),
-				_ => None,
+				atom!("auto") => Ok(Self::Auto),
+				_ => unexpected_ident!(parser, atom),
 			},
-			Token::Dimension(val, unit, _) => {
+			token @ Token::Dimension(val, unit, _) => {
 				if let Some(l) = LengthPercentage::new(val.into(), unit.clone()) {
-					Some(Self::LengthPercentage(l))
+					Ok(Self::LengthPercentage(l))
 				} else {
-					None
+					unexpected!(parser, token)
 				}
 			}
-			Token::Number(val, _) if *val == 0.0 => Some(Self::LengthPercentage(LengthPercentage::Zero)),
-			_ => None,
+			Token::Number(val, _) if *val == 0.0 => Ok(Self::LengthPercentage(LengthPercentage::Zero)),
+			token => unexpected!(parser, token),
 		}
 	}
 }
@@ -202,18 +214,24 @@ pub enum LineWidth {
 	Length(Length),
 }
 
-impl FromToken for LineWidth {
-	fn from_token(token: &Token) -> Option<Self> {
-		match token {
+impl<'a> Parse<'a> for LineWidth {
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
+		match parser.next() {
 			Token::Ident(atom) => match atom.to_ascii_lowercase() {
-				atom!("thin") => Some(Self::Thin),
-				atom!("medium") => Some(Self::Medium),
-				atom!("thick") => Some(Self::Thick),
-				_ => None,
+				atom!("thin") => Ok(Self::Thin),
+				atom!("medium") => Ok(Self::Medium),
+				atom!("thick") => Ok(Self::Thick),
+				_ => unexpected_ident!(parser, atom),
 			},
-			Token::Dimension(val, unit, _) => Length::new(val.into(), unit.clone()).map(Self::Length),
-			Token::Number(val, _) if *val == 0.0 => Some(Self::Length(Length::Zero)),
-			_ => None,
+			token @ Token::Dimension(val, unit, _) => {
+				if let Some(l) = Length::new(val.into(), unit.clone()).map(Self::Length) {
+					Ok(l)
+				} else {
+					unexpected!(parser, token)
+				}
+			}
+			Token::Number(val, _) if *val == 0.0 => Ok(Self::Length(Length::Zero)),
+			token => unexpected!(parser, token),
 		}
 	}
 }
