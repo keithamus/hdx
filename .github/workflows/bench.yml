@@ -16,7 +16,7 @@ jobs:
           shared-key: release-x86_64-unknown-linux-gnu
       - id: cache-target
         name: Cache CI Benchmarks
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
             key: ${{ runner.os }}-${{ github.ref }}
             path: |
