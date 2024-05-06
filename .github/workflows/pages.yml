@@ -23,7 +23,7 @@ jobs:
         with:
           save-cache: ${{ github.ref_name == 'main' }}
           shared-key: "wasm"
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: 18.x
           cache-dependency-path: ./website/package.json
