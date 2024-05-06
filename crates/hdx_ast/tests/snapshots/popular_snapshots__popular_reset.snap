@@ -981,11 +981,11 @@ expression: result.output.unwrap()
                   }
                 ],
                 "start": 589,
-                "end": 595
+                "end": 594
               }
             ],
             "start": 0,
-            "end": 595
+            "end": 594
           },
           "node": {
             "type": "style-declaration",
@@ -1134,7 +1134,7 @@ expression: result.output.unwrap()
             ],
             "rules": []
           },
-          "start": 595,
+          "start": 594,
           "end": 696
         },
         "start": 0,
@@ -1275,11 +1275,11 @@ expression: result.output.unwrap()
                   }
                 ],
                 "start": 828,
-                "end": 836
+                "end": 835
               }
             ],
             "start": 696,
-            "end": 836
+            "end": 835
           },
           "node": {
             "type": "style-declaration",
@@ -1299,7 +1299,7 @@ expression: result.output.unwrap()
             ],
             "rules": []
           },
-          "start": 836,
+          "start": 835,
           "end": 856
         },
         "start": 696,
@@ -1320,11 +1320,11 @@ expression: result.output.unwrap()
                   }
                 ],
                 "start": 857,
-                "end": 862
+                "end": 861
               }
             ],
             "start": 856,
-            "end": 862
+            "end": 861
           },
           "node": {
             "type": "style-declaration",
@@ -1345,7 +1345,7 @@ expression: result.output.unwrap()
             ],
             "rules": []
           },
-          "start": 862,
+          "start": 861,
           "end": 882
         },
         "start": 856,
@@ -1378,11 +1378,11 @@ expression: result.output.unwrap()
                   }
                 ],
                 "start": 887,
-                "end": 890
+                "end": 889
               }
             ],
             "start": 882,
-            "end": 890
+            "end": 889
           },
           "node": {
             "type": "style-declaration",
@@ -1406,7 +1406,7 @@ expression: result.output.unwrap()
             ],
             "rules": []
           },
-          "start": 890,
+          "start": 889,
           "end": 912
         },
         "start": 882,
@@ -1439,11 +1439,11 @@ expression: result.output.unwrap()
                   }
                 ],
                 "start": 925,
-                "end": 927
+                "end": 926
               }
             ],
             "start": 912,
-            "end": 927
+            "end": 926
           },
           "node": {
             "type": "style-declaration",
@@ -1461,7 +1461,7 @@ expression: result.output.unwrap()
             ],
             "rules": []
           },
-          "start": 927,
+          "start": 926,
           "end": 945
         },
         "start": 912,
@@ -1594,11 +1594,11 @@ expression: result.output.unwrap()
                   }
                 ],
                 "start": 1035,
-                "end": 1041
+                "end": 1040
               }
             ],
             "start": 1034,
-            "end": 1041
+            "end": 1040
           },
           "node": {
             "type": "style-declaration",
@@ -1635,7 +1635,7 @@ expression: result.output.unwrap()
             ],
             "rules": []
           },
-          "start": 1041,
+          "start": 1040,
           "end": 1092
         },
         "start": 1034,
