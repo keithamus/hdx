@@ -33,7 +33,7 @@
 		"@11ty/eleventy-plugin-rss": "^1.2.0",
 		"@11ty/eleventy-plugin-syntaxhighlight": "^5.0.0",
 		"@manustays/eleventy-plugin-generate-social-images": "^4.1.0",
-		"cssnano": "^6.0.1",
+		"cssnano": "^7.0.0",
 		"eleventy-postcss-extension": "^1.0.0",
 		"esbuild": "^0.18.17",
 		"esbuild-plugin-wasm": "^1.1.0",
