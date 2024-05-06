@@ -1,6 +1,6 @@
 use hdx_derive::Value;
 use hdx_lexer::Token;
-use hdx_parser::{discard, expect, unexpected, FromToken, Parse, Parser, Result as ParserResult};
+use hdx_parser::{discard, expect, Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 
 use crate::css::units::Time;
@@ -16,11 +16,7 @@ impl<'a> Parse<'a> for TransitionDelay {
 		expect!(parser.peek(), Token::Dimension(_, _, _));
 		let mut values = smallvec![];
 		loop {
-			if let Some(time) = Time::from_token(&parser.next()) {
-				values.push(time);
-			} else {
-				unexpected!(parser);
-			}
+			values.push(Time::parse(parser)?);
 			if !discard!(parser, Token::Comma) {
 				return Ok(TransitionDelay(values));
 			}

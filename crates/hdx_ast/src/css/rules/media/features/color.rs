@@ -1,6 +1,6 @@
-use crate::macros::ranged_media_feature;
+use crate::{css::units::CSSInt, macros::ranged_media_feature};
 
-ranged_media_feature!(ColorMediaFeature[atom!("color")], i32);
+ranged_media_feature!(ColorMediaFeature[atom!("color")], CSSInt);
 
 #[cfg(test)]
 mod tests {

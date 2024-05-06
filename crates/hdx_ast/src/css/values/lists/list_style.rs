@@ -1,7 +1,7 @@
 use hdx_atom::atom;
 use hdx_derive::Value;
 use hdx_lexer::Token;
-use hdx_parser::{unexpected, FromToken, Parse, Parser, Result as ParserResult};
+use hdx_parser::{unexpected, Parse, Parser, Result as ParserResult};
 
 use crate::macros::*;
 
@@ -31,9 +31,8 @@ impl<'a> Parse<'a> for ListStyle {
 				continue;
 			}
 			if first.is_none() {
-				if let Some(val) = ListStylePosition::from_token(parser.peek()) {
-					parser.advance();
-					first = Some(val);
+				first = ListStylePosition::try_parse(parser).ok();
+				if first.is_some() {
 					continue;
 				}
 			}

@@ -52,7 +52,7 @@ pub trait SelectorComponent<'a>: Sized {
 	fn legacy_pseudo_element_from_token(atom: &Atom) -> Option<Self>;
 	fn pseudo_element_from_atom(atom: &Atom) -> Option<Self>;
 
-	fn ns_type_from_token(ns_token: &Token, type_token: &Token) -> Option<Self>;
+	fn ns_type_from_token(parser: &mut Parser<'a>) -> Result<Self>;
 
 	fn parse_combinator(parser: &mut Parser<'a>) -> Result<Self>;
 	fn parse_attribute(parser: &mut Parser<'a>) -> Result<Self>;
@@ -61,20 +61,17 @@ pub trait SelectorComponent<'a>: Sized {
 
 	fn parse_selector_component(parser: &mut Parser<'a>) -> Result<Self> {
 		match parser.peek_with(Include::Whitespace).clone() {
-			Token::Ident(ref atom) => {
-				parser.advance();
-				match parser.peek_with(Include::Whitespace) {
-					Token::Delim('|') => {
-						let ns_token = parser.cur().clone();
-						parser.advance_with(Include::Whitespace);
-						expect!(parser.next(), Token::Delim('*') | Token::Ident(_));
-						Self::ns_type_from_token(&ns_token, parser.cur())
-							.ok_or_else(|| diagnostics::UnexpectedIdent(atom.clone(), parser.span()).into())
-					}
-					_ => Self::type_from_atom(atom)
-						.ok_or_else(|| diagnostics::UnexpectedTag(atom.clone(), parser.span()).into()),
+			Token::Ident(ref atom) => match parser.peek_n_with(2, Include::Whitespace) {
+				Token::Delim('|') => {
+					parser.advance_with(Include::Whitespace);
+					Self::ns_type_from_token(parser)
 				}
-			}
+				_ => {
+					parser.advance();
+					Self::type_from_atom(atom)
+						.ok_or_else(|| diagnostics::UnexpectedTag(atom.clone(), parser.span()).into())
+				}
+			},
 			Token::HashId(ref atom) => {
 				parser.advance();
 				Self::type_from_atom(atom).ok_or_else(|| diagnostics::UnexpectedId(atom.clone(), parser.span()).into())
@@ -89,29 +86,13 @@ pub trait SelectorComponent<'a>: Sized {
 						token => unexpected!(parser, token),
 					}
 				}
-				'*' => {
-					parser.advance_with(Include::Whitespace);
-					match parser.peek_with(Include::Whitespace) {
-						Token::Delim('|') => {
-							parser.advance_with(Include::Whitespace);
-							match parser.next_with(Include::Whitespace).clone() {
-								token @ Token::Ident(_) => {
-									let val = Self::ns_type_from_token(&Token::Delim('*'), &token).ok_or_else(|| {
-										if let Token::Ident(atom) = token {
-											diagnostics::UnexpectedTag(atom.clone(), parser.span()).into()
-										} else {
-											unreachable!()
-										}
-									});
-									parser.peek_with(Include::Whitespace);
-									val
-								}
-								token => unexpected!(parser, token),
-							}
-						}
-						_ => Ok(Self::wildcard()),
+				'*' => match parser.peek_n_with(2, Include::Whitespace) {
+					Token::Delim('|') => Self::ns_type_from_token(parser),
+					_ => {
+						parser.advance();
+						Ok(Self::wildcard())
 					}
-				}
+				},
 				_ => Self::parse_combinator(parser),
 			},
 			Token::Colon => {

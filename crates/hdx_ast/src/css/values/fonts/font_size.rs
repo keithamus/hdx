@@ -20,7 +20,7 @@ pub enum FontSize {
 	XxLarge, // atom!("xx-large")
 	Larger,  // atom!("larger")
 	Smaller, // atom!("smaller")
-	#[parsable(DimensionOrZero, FromToken, Check::Range(0.0..))]
+	#[parsable(DimensionOrZero, Check::Range(0.0..), parse_inner)]
 	LengthPercentage(LengthPercentage),
 }
 

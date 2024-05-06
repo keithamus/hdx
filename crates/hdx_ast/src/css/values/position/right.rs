@@ -7,7 +7,7 @@ use crate::css::units::LengthPercentage;
 pub enum Right {
 	#[default]
 	Auto, // atom!("auto"),
-	#[parsable(DimensionOrZero, FromToken)]
+	#[parsable(DimensionOrZero, parse_inner)]
 	LengthPercentage(LengthPercentage),
 }
 

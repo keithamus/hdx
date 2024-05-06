@@ -1,9 +1,8 @@
-use hdx_derive::{Atomizable, Value, Writable};
+use hdx_derive::{Atomizable, Parsable, Value, Writable};
 
 // https://drafts.csswg.org/css-inline/#propdef-baseline-source
-#[derive(Value, Writable, Atomizable, Default, Debug, PartialEq, Clone, Hash)]
+#[derive(Value, Parsable, Writable, Atomizable, Default, Debug, PartialEq, Clone, Hash)]
 #[value(Inherits)]
-#[atomizable(FromToken)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", rename_all = "kebab-case"))]
 pub enum WhiteSpace {
 	#[default]

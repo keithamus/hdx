@@ -1,10 +1,9 @@
 use bitmask_enum::bitmask;
 use hdx_atom::{atom, Atom, Atomizable};
-use hdx_derive::{Atomizable, Writable};
+use hdx_derive::{Atomizable, Parsable, Writable};
 use hdx_lexer::{QuoteStyle, Token};
 use hdx_parser::{
-	discard, expect, expect_ignore_case, peek, unexpected, unexpected_ident, FromToken, Parse, Parser,
-	Result as ParserResult,
+	discard, expect, expect_ignore_case, peek, unexpected, unexpected_ident, Parse, Parser, Result as ParserResult,
 };
 use hdx_writer::{CssWriter, OutputOption, Result as WriterResult, WriteCss};
 use smallvec::{smallvec, SmallVec};
@@ -78,9 +77,8 @@ impl<'a> Gradient {
 		let mut stops = smallvec![];
 		let mut allow_hint = false;
 		loop {
-			if let Some(hint) = LengthPercentage::from_token(parser.peek()) {
+			if let Some(hint) = LengthPercentage::try_parse(parser).ok() {
 				if allow_hint {
-					parser.advance();
 					stops.push(ColorStopOrHint::Hint(hint));
 					expect!(parser.next(), Token::Comma);
 				} else {
@@ -88,10 +86,7 @@ impl<'a> Gradient {
 				}
 			}
 			let color = Color::parse(parser)?;
-			let hint = LengthPercentage::from_token(parser.peek());
-			if hint.is_some() {
-				parser.advance();
-			}
+			let hint = LengthPercentage::try_parse(parser).ok();
 			stops.push(ColorStopOrHint::Stop(color, hint));
 			allow_hint = hint.is_some();
 			if !discard!(parser, Token::Comma) {
@@ -357,41 +352,42 @@ pub enum RadialSize {
 
 impl<'a> Parse<'a> for RadialSize {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		Ok(match parser.next().clone() {
-			Token::Ident(atom) => match atom.to_ascii_lowercase() {
-				atom!("closest-corner") => RadialSize::ClosestCorner,
-				atom!("closest-side") => RadialSize::ClosestSide,
-				atom!("farthest-corner") => RadialSize::FarthestCorner,
-				atom!("farthest-side") => RadialSize::FarthestSide,
-				_ => unexpected_ident!(parser, atom),
-			},
-			first @ Token::Number(_, _) | first @ Token::Dimension(_, atom!("%"), _) => match parser.peek().clone() {
-				second @ Token::Number(_, _) | second @ Token::Dimension(_, atom!("%"), _) => {
-					if matches!(first, Token::Number(_, _)) != matches!(second, Token::Number(_, _)) {
-						unexpected!(parser);
-					}
-					parser.advance();
-					Self::Elliptical(
-						LengthPercentage::from_token(&first).unwrap(),
-						LengthPercentage::from_token(&second).unwrap(),
-					)
+		Ok(match parser.peek().clone() {
+			Token::Ident(atom) => {
+				parser.next();
+				match atom.to_ascii_lowercase() {
+					atom!("closest-corner") => RadialSize::ClosestCorner,
+					atom!("closest-side") => RadialSize::ClosestSide,
+					atom!("farthest-corner") => RadialSize::FarthestCorner,
+					atom!("farthest-side") => RadialSize::FarthestSide,
+					_ => unexpected_ident!(parser, atom),
 				}
-				_ => {
-					if matches!(first, Token::Dimension(_, _, _)) {
-						let token = first.clone();
-						unexpected!(parser, token);
+			}
+			first @ Token::Number(_, _) | first @ Token::Dimension(_, atom!("%"), _) => {
+				match parser.peek_n(2).clone() {
+					second @ Token::Number(_, _) | second @ Token::Dimension(_, atom!("%"), _) => {
+						if matches!(first, Token::Number(_, _)) != matches!(second, Token::Number(_, _)) {
+							unexpected!(parser);
+						}
+						let first_len = LengthPercentage::parse(parser)?;
+						let second_len = LengthPercentage::parse(parser)?;
+						Self::Elliptical(first_len, second_len)
 					}
-					Self::Circular(Length::from_token(&first).unwrap())
+					_ => {
+						if matches!(first, Token::Dimension(_, _, _)) {
+							unexpected!(parser, first);
+						}
+						Self::Circular(Length::parse(parser)?)
+					}
 				}
-			},
+			}
 			token => unexpected!(parser, token),
 		})
 	}
 }
 
 // https://drafts.csswg.org/css-images-3/#typedef-rg-ending-shape
-#[derive(Atomizable, Default, Debug, Clone, PartialEq, Hash)]
-#[atomizable(FromToken)]
+#[derive(Atomizable, Parsable, Default, Debug, Clone, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", rename_all = "kebab-case"))]
 pub enum RadialShape {
 	#[default]

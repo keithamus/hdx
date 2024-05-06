@@ -26,7 +26,7 @@ pub enum BoxDirection {
 // https://developer.mozilla.org/en-US/docs/Web/CSS/box-flex
 #[derive(Value, Parsable, Writable, Debug, PartialEq, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-pub struct BoxFlex(#[parsable(FromToken)] pub CSSFloat);
+pub struct BoxFlex(pub CSSFloat);
 
 impl Default for BoxFlex {
 	fn default() -> Self {
@@ -37,7 +37,7 @@ impl Default for BoxFlex {
 // https://developer.mozilla.org/en-US/docs/Web/CSS/box-flex-group
 #[derive(Value, Parsable, Writable, Debug, PartialEq, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-pub struct BoxFlexGroup(#[parsable(FromToken)] pub CSSFloat);
+pub struct BoxFlexGroup(pub CSSFloat);
 
 impl Default for BoxFlexGroup {
 	fn default() -> Self {
@@ -57,7 +57,7 @@ pub enum BoxLines {
 // https://developer.mozilla.org/en-US/docs/Web/CSS/box-ordinal-group
 #[derive(Value, Parsable, Writable, Debug, PartialEq, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-pub struct BoxOrdinalGroup(#[parsable(FromToken)] pub CSSFloat);
+pub struct BoxOrdinalGroup(pub CSSFloat);
 
 impl Default for BoxOrdinalGroup {
 	fn default() -> Self {

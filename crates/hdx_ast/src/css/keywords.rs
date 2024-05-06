@@ -1,7 +1,6 @@
-use hdx_derive::{Atomizable, Writable};
+use hdx_derive::{Atomizable, Parsable, Writable};
 
-#[derive(Atomizable, Writable, Default, Debug, Clone, Copy, PartialEq, Hash)]
-#[atomizable(FromToken)]
+#[derive(Atomizable, Parsable, Writable, Default, Debug, Clone, Copy, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(rename_all = "kebab-case"))]
 pub enum LineStyle {
 	#[default]

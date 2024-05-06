@@ -1,6 +1,6 @@
 use crate::css::units::Length;
 use hdx_derive::Value;
-use hdx_parser::{unexpected, FromToken, Parse, Parser, Result as ParserResult};
+use hdx_parser::{Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, OutputOption, Result as WriterResult, WriteCss};
 
 #[derive(Value, Default, PartialEq, Debug, Clone, Hash)]
@@ -9,14 +9,11 @@ pub struct BorderSpacing(Length, Length);
 
 impl<'a> Parse<'a> for BorderSpacing {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		if let Some(horiz) = Length::from_token(&parser.next()) {
-			if let Some(vert) = Length::from_token(&parser.next()) {
-				Ok(Self(horiz, vert))
-			} else {
-				Ok(Self(horiz, horiz))
-			}
+		let horiz = Length::parse(parser)?;
+		if let Ok(vert) = Length::try_parse(parser) {
+			Ok(Self(horiz, vert))
 		} else {
-			unexpected!(parser)
+			Ok(Self(horiz, horiz))
 		}
 	}
 }

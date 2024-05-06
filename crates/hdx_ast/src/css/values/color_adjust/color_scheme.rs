@@ -1,7 +1,7 @@
 use hdx_atom::{atom, Atom};
 use hdx_derive::Value;
 use hdx_lexer::Token;
-use hdx_parser::{unexpected, unexpected_ident, FromToken, Parse, Parser, Result as ParserResult};
+use hdx_parser::{unexpected, unexpected_ident, Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 use smallvec::{smallvec, SmallVec};
 
@@ -83,15 +83,15 @@ pub enum ColorSchemeKeyword {
 	Custom(Atom),
 }
 
-impl FromToken for ColorSchemeKeyword {
-	fn from_token(token: &Token) -> Option<Self> {
-		match token {
+impl<'a> Parse<'a> for ColorSchemeKeyword {
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
+		match parser.next() {
 			Token::Ident(ident) => match ident.to_ascii_lowercase() {
-				atom!("light") => Some(Self::Light),
-				atom!("dark") => Some(Self::Dark),
-				_ => Some(Self::Custom(ident.clone())),
+				atom!("light") => Ok(Self::Light),
+				atom!("dark") => Ok(Self::Dark),
+				_ => Ok(Self::Custom(ident.clone())),
 			},
-			_ => None,
+			token => unexpected!(parser, token),
 		}
 	}
 }

@@ -1,8 +1,7 @@
-use hdx_derive::{Atomizable, Value, Writable};
+use hdx_derive::{Atomizable, Parsable, Value, Writable};
 
 // https://drafts.csswg.org/css-inline/#propdef-baseline-source
-#[derive(Value, Writable, Atomizable, Default, Debug, PartialEq, Clone, Hash)]
-#[atomizable(FromToken)]
+#[derive(Value, Parsable, Writable, Atomizable, Default, Debug, PartialEq, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", rename_all = "kebab-case"))]
 pub enum BaselineSource {
 	#[default]

@@ -1,4 +1,4 @@
-use hdx_derive::Atomizable;
+use hdx_derive::{Atomizable, Parsable};
 use smallvec::{smallvec, SmallVec};
 
 use hdx_atom::{atom, Atom, Atomizable};
@@ -116,8 +116,7 @@ impl<'a> WriteCss<'a> for MediaQueryList {
 	}
 }
 
-#[derive(Atomizable, Debug, PartialEq, Hash)]
-#[atomizable(FromToken)]
+#[derive(Parsable, Atomizable, Debug, PartialEq, Hash)]
 #[cfg_attr(
 	feature = "serde",
 	derive(serde::Serialize),

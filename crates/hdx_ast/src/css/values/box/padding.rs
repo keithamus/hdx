@@ -28,35 +28,35 @@ write_logical_sides!(PaddingBlock);
 
 #[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-pub struct PaddingBlockStart(#[parsable(FromToken)] pub LengthPercentageOrAuto);
+pub struct PaddingBlockStart(pub LengthPercentageOrAuto);
 
 #[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-pub struct PaddingBlockEnd(#[parsable(FromToken)] pub LengthPercentageOrAuto);
+pub struct PaddingBlockEnd(pub LengthPercentageOrAuto);
 
 #[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-pub struct PaddingInlineStart(#[parsable(FromToken)] pub LengthPercentageOrAuto);
+pub struct PaddingInlineStart(pub LengthPercentageOrAuto);
 
 #[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-pub struct PaddingInlineEnd(#[parsable(FromToken)] pub LengthPercentageOrAuto);
+pub struct PaddingInlineEnd(pub LengthPercentageOrAuto);
 
 #[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-pub struct PaddingTop(#[parsable(FromToken)] LengthPercentageOrAuto);
+pub struct PaddingTop(LengthPercentageOrAuto);
 
 #[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-pub struct PaddingBottom(#[parsable(FromToken)] LengthPercentageOrAuto);
+pub struct PaddingBottom(LengthPercentageOrAuto);
 
 #[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-pub struct PaddingLeft(#[parsable(FromToken)] LengthPercentageOrAuto);
+pub struct PaddingLeft(LengthPercentageOrAuto);
 
 #[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-pub struct PaddingRight(#[parsable(FromToken)] LengthPercentageOrAuto);
+pub struct PaddingRight(LengthPercentageOrAuto);
 
 #[cfg(test)]
 mod tests {

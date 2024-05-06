@@ -14,31 +14,6 @@ use crate::{
 	State, Vec,
 };
 
-// The FromToken trait produces a result of Self from an individual parser Token, guaranteeing that the parser will not
-// roll forward. Instead, the caller should advance the parser.
-pub trait FromToken: Sized {
-	fn from_token(token: &Token) -> Option<Self>;
-}
-
-impl FromToken for i32 {
-	fn from_token(token: &Token) -> Option<i32> {
-		match token {
-			Token::Number(f, ty) if !ty.is_float() => Some(*f as i32),
-			_ => None,
-		}
-	}
-}
-
-impl<'a, T: FromToken> Parse<'a> for T {
-	fn parse(parser: &mut Parser<'a>) -> Result<Self> {
-		if let Some(result) = Self::from_token(parser.next()) {
-			Ok(result)
-		} else {
-			unexpected!(parser)
-		}
-	}
-}
-
 impl<'a, T: Parse<'a>> Parse<'a> for Vec<'a, T> {
 	fn parse(parser: &mut Parser<'a>) -> Result<Vec<'a, T>> {
 		loop {
@@ -174,13 +149,14 @@ pub trait DiscreteMediaFeature<'a>: Sized + Default {
 }
 
 pub trait RangedMediaFeature<'a>: Sized {
-	type Type: FromToken;
+	type Type: Parse<'a>;
 
 	fn new(left: (Comparison, Self::Type), right: Option<(Comparison, Self::Type)>, legacy: bool) -> Self;
 
 	fn parse_ranged_media_feature(name: Atom, parser: &mut Parser<'a>) -> Result<Self> {
-		let left = match parser.next() {
+		let left = match parser.peek().clone() {
 			Token::Ident(atom) => {
+				parser.next();
 				let mut legacy = false;
 				let legacy_cmp = match atom.to_ascii_lowercase() {
 					atom if atom == name => {
@@ -199,26 +175,14 @@ pub trait RangedMediaFeature<'a>: Sized {
 				};
 				if legacy {
 					expect!(parser.next(), Token::Colon);
-					if let Some(val) = Self::Type::from_token(parser.next()) {
-						return Ok(Self::new((legacy_cmp, val), None, true));
-					} else {
-						unexpected!(parser)
-					}
+					return Ok(Self::new((legacy_cmp, Self::Type::parse(parser)?), None, true));
 				} else {
 					let cmp = Comparison::parse(parser)?;
-					if let Some(val) = Self::Type::from_token(parser.next()) {
-						return Ok(Self::new((cmp, val), None, false));
-					} else {
-						unexpected!(parser)
-					}
+					return Ok(Self::new((cmp, Self::Type::parse(parser)?), None, false));
 				}
 			}
-			token => {
-				if let Some(left) = Self::Type::from_token(token) {
-					left
-				} else {
-					unexpected!(parser, token)
-				}
+			_ => {
+				Self::Type::parse(parser)?
 			}
 		};
 		let left_cmp = Comparison::parse(parser)?;
@@ -230,10 +194,6 @@ pub trait RangedMediaFeature<'a>: Sized {
 		if left_cmp == Comparison::Equal && right_cmp == Comparison::Equal {
 			unexpected!(parser)
 		}
-		if let Some(right) = Self::Type::from_token(parser.next()) {
-			Ok(Self::new((left_cmp, left), Some((right_cmp, right)), false))
-		} else {
-			unexpected!(parser)
-		}
+		Ok(Self::new((left_cmp, left), Some((right_cmp, Self::Type::parse(parser)?)), false))
 	}
 }

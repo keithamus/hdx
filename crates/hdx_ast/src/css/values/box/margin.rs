@@ -28,35 +28,35 @@ write_logical_sides!(MarginBlock);
 
 #[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-pub struct MarginBlockStart(#[parsable(FromToken)] pub LengthPercentageOrAuto);
+pub struct MarginBlockStart(pub LengthPercentageOrAuto);
 
 #[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-pub struct MarginBlockEnd(#[parsable(FromToken)] pub LengthPercentageOrAuto);
+pub struct MarginBlockEnd(pub LengthPercentageOrAuto);
 
 #[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-pub struct MarginInlineStart(#[parsable(FromToken)] pub LengthPercentageOrAuto);
+pub struct MarginInlineStart(pub LengthPercentageOrAuto);
 
 #[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-pub struct MarginInlineEnd(#[parsable(FromToken)] pub LengthPercentageOrAuto);
+pub struct MarginInlineEnd(pub LengthPercentageOrAuto);
 
 #[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-pub struct MarginTop(#[parsable(FromToken)] LengthPercentageOrAuto);
+pub struct MarginTop(LengthPercentageOrAuto);
 
 #[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-pub struct MarginBottom(#[parsable(FromToken)] LengthPercentageOrAuto);
+pub struct MarginBottom(LengthPercentageOrAuto);
 
 #[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-pub struct MarginLeft(#[parsable(FromToken)] LengthPercentageOrAuto);
+pub struct MarginLeft(LengthPercentageOrAuto);
 
 #[derive(Value, Parsable, Writable, Default, PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-pub struct MarginRight(#[parsable(FromToken)] LengthPercentageOrAuto);
+pub struct MarginRight(LengthPercentageOrAuto);
 
 #[cfg(test)]
 mod tests {

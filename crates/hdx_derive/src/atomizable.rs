@@ -9,14 +9,12 @@ use crate::{err, kebab};
 
 #[derive(Clone, Debug)]
 enum AtomizableArg {
-	FromToken,
 	Atom(String),
 }
 
 impl Parse for AtomizableArg {
 	fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
 		match input.parse::<Ident>() {
-			Ok(i) if i == "FromToken" => Ok(Self::FromToken),
 			Ok(ident) => Err(Error::new(ident.span(), format!("Unrecognized Parsable arg {:?}", ident)))?,
 			Err(_) => Ok(Self::Atom(input.parse::<LitStr>()?.value())),
 		}
@@ -25,20 +23,18 @@ impl Parse for AtomizableArg {
 
 #[derive(Debug)]
 pub struct AtomizableArgs {
-	from_token: bool,
 	atom: Option<String>,
 }
 
 impl AtomizableArgs {
 	fn parse(attrs: &[Attribute]) -> Self {
-		let mut ret = Self { from_token: false, atom: None };
+		let mut ret = Self { atom: None };
 		if let Some(Attribute { meta: Meta::List(meta), .. }) = &attrs.iter().find(|a| a.path().is_ident("atomizable"))
 		{
 			let args = meta.parse_args_with(Punctuated::<AtomizableArg, Token![,]>::parse_terminated).unwrap();
 			for arg in args {
 				match arg {
 					AtomizableArg::Atom(s) => ret.atom = Some(s),
-					AtomizableArg::FromToken => ret.from_token = true,
 				}
 			}
 		}
@@ -49,22 +45,6 @@ impl AtomizableArgs {
 pub fn derive(input: DeriveInput) -> TokenStream {
 	let ident = input.ident;
 	let input_args = AtomizableArgs::parse(&input.attrs);
-	let from_token = if input_args.from_token {
-		Some(quote! {
-			#[automatically_derived]
-			impl hdx_parser::FromToken for #ident {
-				fn from_token(token: &hdx_lexer::Token) -> Option<Self> {
-					use hdx_atom::Atomizable;
-					match token {
-						hdx_lexer::Token::Ident(atom) => Self::from_atom(atom),
-						_ => None,
-					}
-				}
-			}
-		})
-	} else {
-		None
-	};
 	match input.data {
 		Data::Enum(DataEnum { variants, .. }) => {
 			let mut match_atom_to_enum_variant = Vec::new();
@@ -104,7 +84,6 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 						#to_atom_match
 					}
 				}
-				#from_token
 			}
 		}
 		Data::Struct(DataStruct { fields: Fields::Unnamed(fields), .. }) => {
@@ -126,7 +105,6 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 						hdx_atom::atom!(#str)
 					}
 				}
-				#from_token
 			}
 		}
 		Data::Struct(_) => err(ident.span(), "Cannot derive Atomizable on a struct with named or no fields"),

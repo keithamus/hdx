@@ -21,11 +21,11 @@ expression: result.output.unwrap()
                   }
                 ],
                 "start": 0,
-                "end": 3
+                "end": 2
               }
             ],
             "start": 0,
-            "end": 3
+            "end": 2
           },
           "node": {
             "type": "style-declaration",
@@ -227,7 +227,7 @@ expression: result.output.unwrap()
             ],
             "rules": []
           },
-          "start": 3,
+          "start": 2,
           "end": 123
         },
         "start": 0,

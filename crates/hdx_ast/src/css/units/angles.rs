@@ -1,7 +1,7 @@
 use hdx_atom::atom;
-use hdx_lexer::Token;
-use hdx_parser::FromToken;
 use hdx_derive::Writable;
+use hdx_lexer::Token;
+use hdx_parser::{unexpected, unexpected_ident, Parse, Parser, Result as ParserResult};
 
 use super::{AbsoluteUnit, CSSFloat};
 
@@ -23,18 +23,17 @@ pub enum Angle {
 	Deg(CSSFloat),
 }
 
-impl FromToken for Angle {
-	fn from_token(token: &Token) -> Option<Self> {
-		if let Token::Dimension(n, unit, _) = token {
-			match unit.to_ascii_lowercase() {
-				atom!("grad") => Some(Angle::Grad(n.into())),
-				atom!("rad") => Some(Angle::Rad(n.into())),
-				atom!("turn") => Some(Angle::Turn(n.into())),
-				atom!("deg") => Some(Angle::Deg(n.into())),
-				_ => None,
-			}
-		} else {
-			None
+impl<'a> Parse<'a> for Angle {
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
+		match parser.next() {
+			token @ Token::Dimension(n, unit, _) => match unit.to_ascii_lowercase() {
+				atom!("grad") => Ok(Angle::Grad(n.into())),
+				atom!("rad") => Ok(Angle::Rad(n.into())),
+				atom!("turn") => Ok(Angle::Turn(n.into())),
+				atom!("deg") => Ok(Angle::Deg(n.into())),
+				_ => unexpected_ident!(parser, unit),
+			},
+			token => unexpected!(parser, token),
 		}
 	}
 }

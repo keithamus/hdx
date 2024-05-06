@@ -15,9 +15,9 @@ pub enum MinWidth {
 	FitContent, // atom!("fit-content")
 	Contain,    // atom!("contain")
 
-	#[parsable(DimensionOrZero, FromToken, Check::Range(0.0..))]
+	#[parsable(DimensionOrZero, Check::Range(0.0..), parse_inner)]
 	LengthPercentage(LengthPercentage),
-	#[parsable(Function, FromToken, Check::Range(0.0..), atom = "fit-content")]
+	#[parsable(Function, Check::Range(0.0..), atom = "fit-content", parse_inner)]
 	#[writable(as_function = "fit-content")]
 	FitContentFunction(LengthPercentage),
 }

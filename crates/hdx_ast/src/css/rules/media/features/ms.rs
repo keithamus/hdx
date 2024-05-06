@@ -1,5 +1,5 @@
 use crate::{
-	css::units::CSSFloat,
+	css::units::{CSSFloat, CSSInt},
 	macros::{discrete_media_feature, ranged_media_feature},
 };
 
@@ -20,4 +20,4 @@ discrete_media_feature!(MsImeAlignMediaFeature[atom!("-ms-ime-align")] {
 
 ranged_media_feature!(MsDevicePixelRatioMediaFeature[atom!("-ms-device-pixel-ratio")], CSSFloat);
 
-ranged_media_feature!(MsColumnCountMediaFeature[atom!("-ms-column-count")], i32);
+ranged_media_feature!(MsColumnCountMediaFeature[atom!("-ms-column-count")], CSSInt);
