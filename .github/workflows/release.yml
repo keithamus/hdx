@@ -44,7 +44,7 @@ jobs:
     name: Package ${{ matrix.code-target }}
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: rustup target add ${{ matrix.target }}
       - name: Install arm64 toolchain
         if: matrix.code-target == 'linux-arm64'
@@ -96,7 +96,7 @@ jobs:
       - build
     steps:
       - run: echo "TAG_NAME=$TAG_NAME"; echo "DIST_TAG=$DIST_TAG"
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           registry-url: https://registry.npmjs.org/
