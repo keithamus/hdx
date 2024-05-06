@@ -1,8 +1,10 @@
 name: bench
 on:
   pull_request:
+    types: [ opened, synchronize, reopened, labeled ]
 jobs:
   build:
+    if: contains(github.event.pull_request.labels.*.name, 'bench')
     name: Benchmark on linux
     runs-on: ubuntu-latest
     steps:
