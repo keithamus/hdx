@@ -24,6 +24,6 @@ jobs:
             path: |
                 ./target/criterion
       - name: Criterion Compare PRs
-        uses: boa-dev/criterion-compare-action@adfd3a94634fe2041ce5613eb7df09d247555b87
+        uses: boa-dev/criterion-compare-action@59f4d964c5f19d7f13d36f5c0944b18ce6652cb0
         with:
           branchName: ${{ github.base_ref }}
