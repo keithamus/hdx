@@ -41,7 +41,7 @@
 		"html-minifier": "^4.0.0",
 		"open-props": "^1.5.10",
 		"postcss-combine-duplicated-selectors": "^10.0.3",
-		"postcss-import": "^15.1.0",
+		"postcss-import": "^16.0.0",
 		"postcss-jit-props": "^1.0.13",
 		"postcss-preset-env": "^9.1.0",
 		"sharp": "^0.32.4",
