@@ -136,9 +136,9 @@ pub trait DiscreteMediaFeature<'a>: Sized + Default {
 	fn parse_media_feature_value(parser: &mut Parser<'a>) -> Result<Self>;
 
 	fn parse_descrete_media_feature(name: Atom, parser: &mut Parser<'a>) -> Result<Self> {
-		expect_ignore_case!(parser.next(), Token::Ident(name));
-		let value = match parser.peek() {
-			Token::Colon => {
+		expect_ignore_case!(parser.next(), Kind::Ident, name);
+		let value = match parser.peek().kind() {
+			Kind::Colon => {
 				parser.advance();
 				Self::parse_media_feature_value(parser)?
 			}
@@ -154,11 +154,10 @@ pub trait RangedMediaFeature<'a>: Sized {
 	fn new(left: (Comparison, Self::Type), right: Option<(Comparison, Self::Type)>, legacy: bool) -> Self;
 
 	fn parse_ranged_media_feature(name: Atom, parser: &mut Parser<'a>) -> Result<Self> {
-		let left = match parser.peek().clone() {
-			Token::Ident(atom) => {
-				parser.next();
+		let left = match parser.next() {
+			token if token.kind() == Kind::Ident => {
 				let mut legacy = false;
-				let legacy_cmp = match atom.to_ascii_lowercase() {
+				let legacy_cmp = match parser.parse_atom_lower(token) {
 					atom if atom == name => {
 						legacy = peek!(parser, Kind::Colon);
 						Comparison::Equal
@@ -171,7 +170,7 @@ pub trait RangedMediaFeature<'a>: Sized {
 						legacy = true;
 						Comparison::LessThanEqual
 					}
-					_ => unexpected_ident!(parser, atom),
+					_ => unexpected_ident!(parser, parser.parse_atom(token)),
 				};
 				if legacy {
 					expect!(parser.next(), Kind::Colon);
@@ -181,7 +180,8 @@ pub trait RangedMediaFeature<'a>: Sized {
 					return Ok(Self::new((cmp, Self::Type::parse(parser)?), None, false));
 				}
 			}
-			_ => {
+			token => {
+				parser.rewind(token);
 				Self::Type::parse(parser)?
 			}
 		};
