@@ -1,7 +1,7 @@
 use bumpalo::Bump;
 use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion, Throughput};
 use glob::glob;
-use hdx_lexer::Lexer;
+use hdx_lexer::{Include, Kind, Lexer};
 use pprof::criterion::{Output, PProfProfiler};
 use std::fs::read_to_string;
 
@@ -30,9 +30,9 @@ fn popular(c: &mut Criterion) {
 		group.bench_with_input(BenchmarkId::from_parameter(&file.name), &file.source_text, |b, source_text| {
 			b.iter_with_large_drop(|| {
 				let allocator = Bump::default();
-				let mut lexer = Lexer::new(&allocator, source_text);
+				let mut lexer = Lexer::new(&allocator, source_text, Include::none());
 				loop {
-					if matches!(lexer.advance(),  hdx_lexer::Token::Eof) {
+					if matches!(lexer.advance().kind(), Kind::Eof) {
 						break;
 					}
 				}
