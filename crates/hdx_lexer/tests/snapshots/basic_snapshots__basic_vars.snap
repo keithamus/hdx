@@ -1,139 +1,126 @@
 ---
 source: crates/hdx_lexer/tests/basic_snapshots.rs
-expression: "get_tokens(\"../../tasks/coverage/basic/vars.css\".into())"
+expression: tokens
 ---
 [
   {
     "kind": "Ident",
-    "value": "hr"
+    "offset": 0,
+    "len": 2
   },
   {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "LeftCurly"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "LeftCurly",
+    "offset": 3,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "background"
+    "offset": 7,
+    "len": 10
   },
   {
-    "kind": "Colon"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Colon",
+    "offset": 17,
+    "len": 1
   },
   {
     "kind": "Function",
-    "value": "linear-gradient"
+    "offset": 19,
+    "len": 16
   },
   {
     "kind": "Ident",
-    "value": "to"
-  },
-  {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "Ident",
-    "value": "right"
-  },
-  {
-    "kind": "Comma"
-  },
-  {
-    "kind": "Whitespace"
+    "offset": 35,
+    "len": 2
   },
   {
     "kind": "Ident",
-    "value": "transparent"
+    "offset": 38,
+    "len": 5
   },
   {
-    "kind": "Comma"
+    "kind": "Comma",
+    "offset": 43,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
+    "kind": "Ident",
+    "offset": 45,
+    "len": 11
+  },
+  {
+    "kind": "Comma",
+    "offset": 56,
+    "len": 1
   },
   {
     "kind": "Function",
-    "value": "var"
+    "offset": 58,
+    "len": 4
   },
   {
     "kind": "Ident",
-    "value": "--border-color"
+    "offset": 62,
+    "len": 14
   },
   {
-    "kind": "RightParen"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "RightParen",
+    "offset": 76,
+    "len": 1
   },
   {
     "kind": "Dimension",
-    "value": [
-      20.0,
-      "%",
-      {
-        "bits": 0
-      }
-    ]
+    "offset": 78,
+    "len": 4
   },
   {
-    "kind": "Comma"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Comma",
+    "offset": 81,
+    "len": 1
   },
   {
     "kind": "Function",
-    "value": "var"
+    "offset": 83,
+    "len": 4
   },
   {
     "kind": "Ident",
-    "value": "--border-color"
+    "offset": 87,
+    "len": 14
   },
   {
-    "kind": "RightParen"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "RightParen",
+    "offset": 101,
+    "len": 1
   },
   {
     "kind": "Dimension",
-    "value": [
-      80.0,
-      "%",
-      {
-        "bits": 0
-      }
-    ]
+    "offset": 103,
+    "len": 4
   },
   {
-    "kind": "Comma"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Comma",
+    "offset": 106,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "transparent"
+    "offset": 108,
+    "len": 11
   },
   {
-    "kind": "RightParen"
+    "kind": "RightParen",
+    "offset": 119,
+    "len": 1
   },
   {
-    "kind": "Semicolon"
+    "kind": "Semicolon",
+    "offset": 120,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "RightCurly"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "RightCurly",
+    "offset": 122,
+    "len": 1
   }
 ]
