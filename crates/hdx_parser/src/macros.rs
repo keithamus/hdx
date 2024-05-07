@@ -187,28 +187,28 @@ macro_rules! expect {
 /// ```
 #[macro_export]
 macro_rules! expect_ignore_case {
-	($parser: ident.$method: ident($($args: tt)*), Token::$tokenty: ident($ident: ident)) => {
-		$crate::expect_ignore_case!{ $parser.$method($($args)*), Token::$tokenty(_):
+	($parser: ident.$method: ident($($args: tt)*), Kind::$tokenty: ident, $ident: ident) => {
+		$crate::expect_ignore_case!{ $parser.$method($($args)*), Kind::$tokenty:
 			atom if atom == $ident => {}
 		}
 	};
-	($parser: ident.$method: ident($($args: tt)*), Token::$tokenty: ident($pat: pat)) => {
-		$crate::expect_ignore_case!{ $parser.$method($($args)*), Token::$tokenty(_):
+	($parser: ident.$method: ident($($args: tt)*), Kind::$tokenty: ident, $pat: pat) => {
+		$crate::expect_ignore_case!{ $parser.$method($($args)*), Kind::$tokenty:
 			$pat => {}
 		}
 	};
-    ( $parser: ident.$method: ident($($args: tt)*), Token::$tokenty: ident(_):
+    ( $parser: ident.$method: ident($($args: tt)*), Kind::$tokenty: ident:
         $(
            $pattern:pat $(if $guard:expr)?  => $then: expr
         ),+
         $(,)?
     ) => {
 		match $parser.$method($($args)*) {
-			hdx_lexer::Token::$tokenty(ident) => match ident.to_ascii_lowercase() {
+			token if token.kind() == hdx_lexer::Kind::$tokenty => match $parser.parse_atom_lower(token) {
 				$($pattern $( if $guard )? => $then,)+
-				_ => $crate::unexpected_ident!($parser, ident.clone()),
+				_ => $crate::unexpected_ident!($parser, $parser.parse_atom(token)),
 			},
-			token => $crate::unexpected!($parser, token.clone()),
+			token => $crate::unexpected!($parser, token),
 		}
 	};
 }
