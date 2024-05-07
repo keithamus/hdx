@@ -15,17 +15,17 @@ impl<'a> Parse<'a> for ComponentValues<'a> {
 	// https://drafts.csswg.org/css-syntax-3/#consume-list-of-components
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		let mut values = parser.new_vec();
-		if matches!(parser.peek_with(Include::Whitespace), Token::Whitespace) {
+		if matches!(parser.peek_with(Include::Whitespace).kind(), Kind::Whitespace) {
 			parser.advance_with(Include::Whitespace);
 		}
 		loop {
-			match parser.peek_with(Include::Whitespace).clone() {
-				Token::Eof => break,
-				Token::RightCurly if parser.is(State::Nested) => break,
+			match parser.peek_with(Include::Whitespace).kind() {
+				Kind::Eof => break,
+				Kind::RightCurly if parser.is(State::Nested) => break,
 				// ComponentValues can be passed a "stop token" which could be any token.
 				// In reality it is only ever called with a comma-token or semicolon-token.
-				Token::Semicolon if parser.is(State::StopOnSemicolon) => break,
-				Token::Comma if parser.is(State::StopOnComma) => break,
+				Kind::Semicolon if parser.is(State::StopOnSemicolon) => break,
+				Kind::Comma if parser.is(State::StopOnComma) => break,
 				_ => values.push(ComponentValue::parse_spanned(parser)?),
 			}
 		}
@@ -54,11 +54,11 @@ pub enum ComponentValue<'a> {
 // https://drafts.csswg.org/css-syntax-3/#consume-component-value
 impl<'a> Parse<'a> for ComponentValue<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		match parser.peek_with(Include::Whitespace) {
-			Token::LeftCurly | Token::LeftSquare | Token::LeftParen => {
+		match parser.peek_with(Include::Whitespace).kind() {
+			Kind::LeftCurly | Kind::LeftSquare | Kind::LeftParen => {
 				Ok(Self::SimpleBlock(SimpleBlock::parse_with_state(parser, State::Nested)?))
 			}
-			Token::Function(_) => Ok(Self::Function(Function::parse(parser)?)),
+			Kind::Function => Ok(Self::Function(Function::parse(parser)?)),
 			_ => Ok(Self::Token(parser.next_with(Include::Whitespace).clone())),
 		}
 	}
