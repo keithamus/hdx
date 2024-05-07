@@ -64,10 +64,10 @@ impl<'a> Parser<'a> {
 	}
 
 	#[inline]
-	pub fn next(&mut self) -> &Token {
+	pub fn next(&mut self) -> Token {
 		self.prev_pos = self.lexer.pos();
 		self.token = self.lexer.advance();
-		&self.token
+		self.token
 	}
 
 	#[inline]
