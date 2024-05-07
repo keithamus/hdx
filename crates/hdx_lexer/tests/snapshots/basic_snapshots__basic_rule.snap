@@ -1,51 +1,41 @@
 ---
 source: crates/hdx_lexer/tests/basic_snapshots.rs
-expression: "get_tokens(\"../../tasks/coverage/basic/rule.css\".into())"
+expression: tokens
 ---
 [
   {
     "kind": "Ident",
-    "value": "body"
+    "offset": 0,
+    "len": 4
   },
   {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "LeftCurly"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "LeftCurly",
+    "offset": 5,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "min-width"
+    "offset": 9,
+    "len": 9
   },
   {
-    "kind": "Colon"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Colon",
+    "offset": 18,
+    "len": 1
   },
   {
     "kind": "Dimension",
-    "value": [
-      960.0,
-      "px",
-      {
-        "bits": 0
-      }
-    ]
+    "offset": 20,
+    "len": 5
   },
   {
-    "kind": "Semicolon"
+    "kind": "Semicolon",
+    "offset": 25,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "RightCurly"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "RightCurly",
+    "offset": 27,
+    "len": 1
   }
 ]
