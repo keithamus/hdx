@@ -30,7 +30,7 @@
 	},
 	"devDependencies": {
 		"@11ty/eleventy": "^2.0.1",
-		"@11ty/eleventy-plugin-rss": "^1.2.0",
+		"@11ty/eleventy-plugin-rss": "^2.0.0",
 		"@11ty/eleventy-plugin-syntaxhighlight": "^5.0.0",
 		"@manustays/eleventy-plugin-generate-social-images": "^4.1.0",
 		"cssnano": "^7.0.0",
