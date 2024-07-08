@@ -35,7 +35,7 @@
 		"@manustays/eleventy-plugin-generate-social-images": "^4.1.0",
 		"cssnano": "^7.0.0",
 		"eleventy-postcss-extension": "^1.0.0",
-		"esbuild": "^0.22.0",
+		"esbuild": "^0.23.0",
 		"esbuild-plugin-wasm": "^1.1.0",
 		"glob": "^10.3.3",
 		"html-minifier": "^4.0.0",
@@ -45,6 +45,6 @@
 		"postcss-jit-props": "^1.0.13",
 		"postcss-preset-env": "^9.1.0",
 		"sharp": "^0.33.0",
-		"wasm-pack": "^0.12.1"
+		"wasm-pack": "^0.13.0"
 	}
 }
