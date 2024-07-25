@@ -23,7 +23,7 @@ pub trait Declaration<'a>: Sized + Parse<'a> {
 			&& match_ignore_case!(parser.peek_n(2), Token::Ident(atom!("important")))
 		{
 			parser.advance();
-			expect_ignore_case!(parser.next_with(Include::all()), Token::Ident(atom!("important")));
+			expect_ignore_case!(parser.next_with(Include::all()), Kind::Ident, atom!("important"));
 			Ok(true)
 		} else {
 			Ok(false)

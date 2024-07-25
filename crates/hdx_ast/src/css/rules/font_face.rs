@@ -11,7 +11,7 @@ pub struct FontFace<'a>(Vec<'a, Spanned<FontProperty<'a>>>);
 
 impl<'a> Parse<'a> for FontFace<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		expect_ignore_case!(parser.next(), Token::AtKeyword(atom!("font-face")));
+		expect_ignore_case!(parser.next(), Kind::AtKeyword, atom!("font-face"));
 		Ok(Self(Self::parse_rule_list(parser)?))
 	}
 }
