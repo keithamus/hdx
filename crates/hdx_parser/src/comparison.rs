@@ -18,18 +18,16 @@ impl<'a> Parse<'a> for Comparison {
 		Ok(if match_token_kind_and_char!(next, Kind::Delim, '=') {
 			Comparison::Equal
 		} else if match_token_kind_and_char!(next, Kind::Delim, '>') {
-			if let (Kind::Delim, Some('=')) =
-				(parser.peek_with(Include::Whitespace).kind(), parser.peek_with(Include::Whitespace).char())
-			{
+			let peek = parser.peek_with(Include::Whitespace);
+			if match_token_kind_and_char!(peek, Kind::Delim, '=') {
 				parser.advance_with(Include::Whitespace);
 				Comparison::GreaterThanEqual
 			} else {
 				Comparison::GreaterThan
 			}
 		} else if match_token_kind_and_char!(next, Kind::Delim, '<') {
-			if let (Kind::Delim, Some('=')) =
-				(parser.peek_with(Include::Whitespace).kind(), parser.peek_with(Include::Whitespace).char())
-			{
+			let peek = parser.peek_with(Include::Whitespace);
+			if match_token_kind_and_char!(peek, Kind::Delim, '=') {
 				parser.advance_with(Include::Whitespace);
 				Comparison::LessThanEqual
 			} else {
