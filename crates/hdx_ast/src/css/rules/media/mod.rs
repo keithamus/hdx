@@ -25,7 +25,7 @@ pub struct Media<'a> {
 // https://drafts.csswg.org/css-conditional-3/#at-ruledef-media
 impl<'a> Parse<'a> for Media<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		expect_ignore_case!(parser.next(), Token::AtKeyword(atom!("media")));
+		expect_ignore_case!(parser.next(), Kind::AtKeyword, atom!("media"));
 		let span = parser.span();
 		match Self::parse_at_rule(parser)? {
 			(Some(query), Some(rules)) => Ok(Self { query, rules }),

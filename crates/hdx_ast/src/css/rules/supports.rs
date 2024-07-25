@@ -18,7 +18,7 @@ pub struct Supports<'a> {
 // https://drafts.csswg.org/css-conditional-3/#at-ruledef-supports
 impl<'a> Parse<'a> for Supports<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		expect_ignore_case!(parser.next(), Token::AtKeyword(atom!("supports")));
+		expect_ignore_case!(parser.next(), Kind::AtKeyword, atom!("supports"));
 		let span = parser.span();
 		match Self::parse_at_rule(parser)? {
 			(Some(condition), Some(rules)) => Ok(Self { condition, rules }),
@@ -110,7 +110,7 @@ impl<'a> Parse<'a> for SupportsCondition<'a> {
 							let mut features = parser.new_vec();
 							features.push(feature);
 							loop {
-								expect_ignore_case!(parser.next(), Token::Ident(atom!("and")));
+								expect_ignore_case!(parser.next(), Kind::Ident, atom!("and"));
 								features.push(SupportsFeature::parse(parser)?);
 								if !match_ignore_case!(parser.peek(), Token::Ident(atom!("and"))) {
 									if wrapped {
@@ -124,7 +124,7 @@ impl<'a> Parse<'a> for SupportsCondition<'a> {
 							let mut features = parser.new_vec();
 							features.push(feature);
 							loop {
-								expect_ignore_case!(parser.next(), Token::Ident(atom!("or")));
+								expect_ignore_case!(parser.next(), Kind::Ident, atom!("or"));
 								features.push(SupportsFeature::parse(parser)?);
 								if !match_ignore_case!(parser.peek(), Token::Ident(atom!("or"))) {
 									if wrapped {
@@ -153,7 +153,7 @@ impl<'a> Parse<'a> for SupportsCondition<'a> {
 				atom!("and") => {
 					let mut features = parser.new_vec();
 					loop {
-						expect_ignore_case!(parser.next(), Token::Ident(atom!("and")));
+						expect_ignore_case!(parser.next(), Kind::Ident, atom!("and"));
 						features.push(SupportsFeature::parse(parser)?);
 						if !match_ignore_case!(parser.peek(), Token::Ident(atom!("and"))) {
 							return Ok(Self::And(features));
@@ -163,7 +163,7 @@ impl<'a> Parse<'a> for SupportsCondition<'a> {
 				atom!("or") => {
 					let mut features = parser.new_vec();
 					loop {
-						expect_ignore_case!(parser.next(), Token::Ident(atom!("or")));
+						expect_ignore_case!(parser.next(), Kind::Ident, atom!("or"));
 						features.push(SupportsFeature::parse(parser)?);
 						if !match_ignore_case!(parser.peek(), Token::Ident(atom!("or"))) {
 							return Ok(Self::And(features));
