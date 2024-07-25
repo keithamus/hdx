@@ -154,6 +154,7 @@ pub trait RangedMediaFeature<'a>: Sized {
 	fn new(left: (Comparison, Self::Type), right: Option<(Comparison, Self::Type)>, legacy: bool) -> Self;
 
 	fn parse_ranged_media_feature(name: Atom, parser: &mut Parser<'a>) -> Result<Self> {
+		let checkpoint = parser.checkpoint();
 		let left = match parser.next() {
 			token if token.kind() == Kind::Ident => {
 				let mut legacy = false;
@@ -181,7 +182,7 @@ pub trait RangedMediaFeature<'a>: Sized {
 				}
 			}
 			token => {
-				parser.rewind(token);
+				parser.rewind(checkpoint);
 				Self::Type::parse(parser)?
 			}
 		};
