@@ -14,7 +14,7 @@ pub struct WebkitKeyframes<'a> {
 
 impl<'a> Parse<'a> for WebkitKeyframes<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		expect_ignore_case!(parser.next(), Token::AtKeyword(atom!("-webkit-keyframes")));
+		expect_ignore_case!(parser.next(), Kind::AtKeyword, atom!("-webkit-keyframes"));
 		let span = parser.span();
 		match Self::parse_at_rule(parser)? {
 			(Some(name), Some(rules)) => Ok(Self { name, rules }),

@@ -23,7 +23,7 @@ pub struct Page<'a> {
 // https://drafts.csswg.org/css-page-3/#syntax-page-selector
 impl<'a> Parse<'a> for Page<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		expect_ignore_case!(parser.next(), Token::AtKeyword(atom!("page")));
+		expect_ignore_case!(parser.next(), Kind::AtKeyword, atom!("page"));
 		let span = parser.span();
 		let (selectors, style) = Self::parse_at_rule(parser)?;
 		if let Some(style) = style {
