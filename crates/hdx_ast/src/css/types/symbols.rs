@@ -14,7 +14,7 @@ pub struct Symbols(pub SymbolsType, SmallVec<[Symbol; 0]>);
 
 impl<'a> Parse<'a> for Symbols {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		expect_ignore_case!(parser.next(), Token::Function(atom!("symbols")));
+		expect_ignore_case!(parser.next(), Kind::Function, atom!("symbols"));
 		let mut symbol_type = SymbolsType::default();
 		let mut symbols = smallvec![];
 		match parser.peek() {

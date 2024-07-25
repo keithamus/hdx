@@ -266,7 +266,7 @@ impl<'a> Parse<'a> for LinearDirection {
 			Token::Ident(_) => {}
 			token => unexpected!(parser, token.clone()),
 		};
-		expect_ignore_case!(parser.next(), Token::Ident(atom!("to")));
+		expect_ignore_case!(parser.next(), Kind::Ident, atom!("to"));
 		let mut dir = NamedDirection::none();
 		dir |= expect_ignore_case! { parser.next(), Token::Ident(_):
 			atom!("top") => NamedDirection::Top,

@@ -65,7 +65,7 @@ pub enum Charset {
 
 impl<'a> Parse<'a> for Charset {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		expect_ignore_case!(parser.next(), Token::AtKeyword(atom!("charset")));
+		expect_ignore_case!(parser.next(), Kind::AtKeyword, atom!("charset"));
 		expect!(parser.next_with(Include::Whitespace), Kind::Whitespace);
 		match parser.next_with(Include::Whitespace) {
 			Token::String(atom, QuoteStyle::Double) => {
