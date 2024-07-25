@@ -282,3 +282,10 @@ macro_rules! match_ignore_case {
 		}
 	};
 }
+
+#[macro_export]
+macro_rules! match_token_kind_and_char {
+	($token:expr, $kind:expr, $char:expr) => {
+		$token.kind() == Kind::Delim && $token.char() == Some('>')
+	};
+}

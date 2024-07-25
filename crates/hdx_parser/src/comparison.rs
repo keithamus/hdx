@@ -1,3 +1,4 @@
+use crate::match_token_kind_and_char;
 use crate::{unexpected, Parse, Parser, Result};
 use hdx_lexer::{Include, Kind};
 
@@ -13,29 +14,29 @@ pub enum Comparison {
 
 impl<'a> Parse<'a> for Comparison {
 	fn parse(parser: &mut Parser<'a>) -> Result<Comparison> {
-		Ok(match (parser.next().kind(), parser.next().char()) {
-			(Kind::Delim, Some('=')) => Comparison::Equal,
-			(Kind::Delim, Some('>')) => {
-				if let (Kind::Delim, Some('=')) =
-					(parser.peek_with(Include::Whitespace).kind(), parser.peek_with(Include::Whitespace).char())
-				{
-					parser.advance_with(Include::Whitespace);
-					Comparison::GreaterThanEqual
-				} else {
-					Comparison::GreaterThan
-				}
+		let next = parser.next();
+		Ok(if match_token_kind_and_char!(next, Kind::Delim, '=') {
+			Comparison::Equal
+		} else if match_token_kind_and_char!(next, Kind::Delim, '>') {
+			if let (Kind::Delim, Some('=')) =
+				(parser.peek_with(Include::Whitespace).kind(), parser.peek_with(Include::Whitespace).char())
+			{
+				parser.advance_with(Include::Whitespace);
+				Comparison::GreaterThanEqual
+			} else {
+				Comparison::GreaterThan
 			}
-			(Kind::Delim, Some('<')) => {
-				if let (Kind::Delim, Some('=')) =
-					(parser.peek_with(Include::Whitespace).kind(), parser.peek_with(Include::Whitespace).char())
-				{
-					parser.advance_with(Include::Whitespace);
-					Comparison::LessThanEqual
-				} else {
-					Comparison::LessThan
-				}
+		} else if match_token_kind_and_char!(next, Kind::Delim, '<') {
+			if let (Kind::Delim, Some('=')) =
+				(parser.peek_with(Include::Whitespace).kind(), parser.peek_with(Include::Whitespace).char())
+			{
+				parser.advance_with(Include::Whitespace);
+				Comparison::LessThanEqual
+			} else {
+				Comparison::LessThan
 			}
-			(token, _) => unexpected!(parser, token),
+		} else {
+			unexpected!(parser, next)
 		})
 	}
 }
