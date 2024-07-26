@@ -282,3 +282,17 @@ macro_rules! match_ignore_case {
 		}
 	};
 }
+
+#[macro_export]
+macro_rules! match_delim {
+       ( $parser: ident.$method: ident($($args: tt)*):
+           $(
+              $pattern:pat $(if $guard:expr)?  => $then: expr
+           ),+
+           $(,)?
+       ) => {
+		match $parser.$method($($args)*).char() {
+		    $(Some($pattern) $( if $guard )? => $then,)+
+		}
+	};
+}
