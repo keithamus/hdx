@@ -14,7 +14,6 @@ pub enum Comparison {
 
 impl<'a> Parse<'a> for Comparison {
 	fn parse(parser: &mut Parser<'a>) -> Result<Comparison> {
-		let next = parser.next();
 		Ok(match_delim! {parser.next() :
 		  '=' => Comparison::Equal,
 		  '>' => {
@@ -35,7 +34,7 @@ impl<'a> Parse<'a> for Comparison {
 					_ => Comparison::LessThan
 				}
 			},
-			_ =>  unexpected!(parser, next)
+			token =>  unexpected!(parser, token)
 		})
 	}
 }
