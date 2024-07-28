@@ -33,7 +33,7 @@ impl<'a> Parse<'a> for TextTransform {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		let mut value = Self::none();
 		loop {
-			if value.is_all() {
+			if value.is_all_bits() {
 				break;
 			}
 			match parser.peek() {
