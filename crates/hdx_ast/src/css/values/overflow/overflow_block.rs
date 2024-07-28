@@ -1,4 +1,4 @@
-use hdx_derive::{Value, Atomizable, Parsable, Writable};
+use hdx_derive::{Atomizable, Parsable, Value, Writable};
 
 // https://drafts.csswg.org/css-overflow-3/#propdef-overflow-block
 #[derive(Value, Parsable, Writable, Atomizable, Default, Debug, PartialEq, Clone, Hash)]

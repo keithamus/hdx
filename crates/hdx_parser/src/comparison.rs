@@ -1,6 +1,5 @@
-use crate::match_delim;
-use crate::{unexpected, Parse, Parser, Result};
-use hdx_lexer::Include;
+use crate::{unexpected, expect, Parse, Parser, Result};
+use hdx_lexer::{Include, Kind};
 
 #[derive(Debug, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
@@ -14,27 +13,19 @@ pub enum Comparison {
 
 impl<'a> Parse<'a> for Comparison {
 	fn parse(parser: &mut Parser<'a>) -> Result<Comparison> {
-		Ok(match_delim! {parser.next() :
-		  '=' => Comparison::Equal,
-		  '>' => {
-				match_delim!{ parser.peek_with(Include::Whitespace) :
-					'=' => {
-					   parser.advance_with(Include::Whitespace);
-					   Comparison::GreaterThanEqual
-					},
-					_ =>  Comparison::GreaterThan
-				}
+		Ok(match expect!(parser.next(), Kind::Delim).char().unwrap() {
+			'=' => Comparison::Equal,
+			'>' if matches!(parser.peek_with(Include::Whitespace).char(), Some('=')) => {
+				parser.advance_with(Include::Whitespace);
+				Comparison::GreaterThanEqual
 			},
-			'<' => {
-				match_delim!{ parser.peek_with(Include::Whitespace) :
-					'=' => {
-								parser.advance_with(Include::Whitespace);
-								Comparison::LessThanEqual
-					},
-					_ => Comparison::LessThan
-				}
+			'>' =>  Comparison::GreaterThan,
+			'<' if matches!(parser.peek_with(Include::Whitespace).char(), Some('=')) => {
+				parser.advance_with(Include::Whitespace);
+				Comparison::LessThanEqual
 			},
-			token =>  unexpected!(parser, token)
+			'<' => Comparison::LessThan,
+			_ => unexpected!(parser),
 		})
 	}
 }

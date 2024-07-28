@@ -12,7 +12,7 @@ pub struct ParserCheckpoint<'a> {
 
 impl<'a> Parser<'a> {
 	#[inline]
-	pub fn cur(&self) -> &Token {
+	pub fn cur(&self) -> Token {
 		&self.token
 	}
 
@@ -27,22 +27,22 @@ impl<'a> Parser<'a> {
 	}
 
 	#[inline]
-	pub fn peek(&mut self) -> &Token {
+	pub fn peek(&mut self) -> Token {
 		self.lexer.lookahead(1)
 	}
 
 	#[inline]
-	pub fn peek_with(&mut self, inc: Include) -> &Token {
+	pub fn peek_with(&mut self, inc: Include) -> Token {
 		self.lexer.lookahead_with(1, inc)
 	}
 
 	#[inline]
-	pub fn peek_n(&mut self, n: u8) -> &Token {
+	pub fn peek_n(&mut self, n: u8) -> Token {
 		self.lexer.lookahead(n)
 	}
 
 	#[inline]
-	pub fn peek_n_with(&mut self, n: u8, inc: Include) -> &Token {
+	pub fn peek_n_with(&mut self, n: u8, inc: Include) -> Token {
 		self.lexer.lookahead_with(n, inc)
 	}
 
@@ -71,7 +71,7 @@ impl<'a> Parser<'a> {
 	}
 
 	#[inline]
-	pub fn next_with(&mut self, inc: Include) -> &Token {
+	pub fn next_with(&mut self, inc: Include) -> Token {
 		self.prev_pos = self.lexer.pos();
 		self.token = self.lexer.advance_with(inc);
 		&self.token

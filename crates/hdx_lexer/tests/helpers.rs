@@ -2,7 +2,7 @@
 macro_rules! assert_snap_tokens {
 	($source_path: literal) => {
 		use bumpalo::Bump;
-		use hdx_lexer::{Include, Lexer, Kind};
+		use hdx_lexer::{Include, Kind, Lexer};
 		use std::fs::read_to_string;
 
 		let allocator = Bump::default();

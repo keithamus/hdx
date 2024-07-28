@@ -1,6 +1,6 @@
 use bitmask_enum::bitmask;
 use bumpalo::Bump;
-use hdx_lexer::{Kind, Lexer, Token};
+use hdx_lexer::{Include, Kind, Lexer, Token};
 use miette::Error;
 
 use crate::{diagnostics, span::Spanned, traits::Parse};
@@ -53,7 +53,7 @@ impl<'a> Parser<'a> {
 	/// Create a new parser
 	pub fn new(allocator: &'a Bump, source_text: &'a str, features: Features) -> Self {
 		Self {
-			lexer: Lexer::new(allocator, source_text),
+			lexer: Lexer::new(allocator, source_text, Include::none()),
 			features,
 			warnings: std::vec::Vec::new(),
 			errors: std::vec::Vec::new(),

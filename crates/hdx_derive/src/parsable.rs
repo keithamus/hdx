@@ -113,8 +113,8 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 				let field_ty = &field.ty;
 				let args = ParsableArgs::parse(&field.attrs);
 				let value = quote! {
-                    Self(#field_ty::parse(parser)?)
-                };
+					Self(#field_ty::parse(parser)?)
+				};
 				quote! {
 					#[automatically_derived]
 					impl<'a> hdx_parser::Parse<'a> for #ident {
@@ -382,13 +382,13 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 								)
 							} else {
 								let field = unnamed[0].clone().ty;
-                                quote! {
-                                    hdx_atom::atom!(#str) => {
-                                        let val = #field::parse(parser)?;
-                                        hdx_parser::expect!(parser.next(), hdx_lexer::Kind::RightParen);
-                                        Ok(Self::#var_ident(val))
-                                    }
-                                }
+								quote! {
+									hdx_atom::atom!(#str) => {
+										let val = #field::parse(parser)?;
+										hdx_parser::expect!(parser.next(), hdx_lexer::Kind::RightParen);
+										Ok(Self::#var_ident(val))
+									}
+								}
 							});
 						}
 						// AtKeywords can be assigned to a single unnamed field:
