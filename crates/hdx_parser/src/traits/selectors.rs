@@ -70,8 +70,7 @@ pub trait SelectorComponent<'a>: Sized {
 				_ => {
 					parser.next();
 					let atom = parser.parse_atom(peek);
-					Self::type_from_atom(&atom)
-						.ok_or_else(|| diagnostics::UnexpectedTag(atom, parser.span()).into())
+					Self::type_from_atom(&atom).ok_or_else(|| diagnostics::UnexpectedTag(atom, parser.span()).into())
 				}
 			},
 			Kind::Hash if peek.hash_is_id_like() => {
@@ -88,7 +87,7 @@ pub trait SelectorComponent<'a>: Sized {
 							let atom = parser.parse_atom(t);
 							Self::class_from_atom(&atom)
 								.ok_or_else(|| diagnostics::UnexpectedIdent(atom, parser.span()).into())
-						},
+						}
 						token => unexpected!(parser, token),
 					}
 				}
@@ -114,7 +113,7 @@ pub trait SelectorComponent<'a>: Sized {
 								Self::pseudo_element_from_atom(&atom).ok_or_else(|| {
 									diagnostics::UnexpectedPseudoElement(atom.clone(), parser.span()).into()
 								})
-							},
+							}
 							Kind::Function => Self::parse_functional_pseudo_element(parser),
 							_ => unexpected!(parser, next),
 						}
