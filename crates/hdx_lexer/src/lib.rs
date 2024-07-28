@@ -25,7 +25,7 @@ pub struct Lexer<'a> {
 	source: &'a str,
 	chars: Chars<'a>,
 	lookahead: VecDeque<Token>,
-	include: Include,
+	pub include: Include,
 }
 
 impl<'a> Clone for Lexer<'a> {

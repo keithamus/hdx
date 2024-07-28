@@ -201,7 +201,7 @@ impl<'a> Parse<'a> for Display {
 			_ => None,
 		};
 		if let Some(value) = single_value {
-			parser.advance();
+			parser.next();
 			return Ok(value);
 		}
 

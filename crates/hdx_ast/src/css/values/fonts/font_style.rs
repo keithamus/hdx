@@ -25,7 +25,7 @@ impl<'a> Parse<'a> for FontStyle {
 			atom!("italic") => Ok(Self::Italic),
 			atom!("oblique") => match parser.peek().clone() {
 				Token::Dimension(val, unit, _) => {
-					parser.advance();
+					parser.next();
 					if !matches!(unit.to_ascii_lowercase(), atom!("deg")) {
 						Err(diagnostics::UnexpectedDimension(unit, parser.span()))?
 					}

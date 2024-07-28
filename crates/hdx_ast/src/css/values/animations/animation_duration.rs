@@ -21,7 +21,7 @@ impl<'a> Parse<'a> for AnimationDuration {
 		Ok(match parser.peek() {
 			Token::Ident(atom) => match atom.to_ascii_lowercase() {
 				atom!("auto") => {
-					parser.advance();
+					parser.next();
 					AnimationDuration::Auto
 				}
 				atom => unexpected_ident!(parser, atom),

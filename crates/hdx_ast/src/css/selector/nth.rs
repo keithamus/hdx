@@ -12,29 +12,29 @@ impl<'a> Parse<'a> for Nth {
 		let mut b_sign = 0;
 		let a = match parser.peek().clone() {
 			Token::Number(b, t) if !t.is_float() => {
-				parser.advance();
+				parser.next();
 				return Ok(Self(0, b as i32));
 			}
 			Token::Dimension(a, _, t) if !t.is_float() => a as i32,
 			Token::Ident(atom) => match atom.to_ascii_lowercase() {
 				atom!("even") => {
-					parser.advance();
+					parser.next();
 					return Ok(Self(2, 0));
 				}
 				atom!("odd") => {
-					parser.advance();
+					parser.next();
 					return Ok(Self(2, 1));
 				}
 				atom!("-n") => {
-					parser.advance();
+					parser.next();
 					-1
 				}
 				atom!("n") => {
-					parser.advance();
+					parser.next();
 					1
 				}
 				atom!("n-") => {
-					parser.advance();
+					parser.next();
 					b_sign = -1;
 					1
 				}
@@ -47,7 +47,7 @@ impl<'a> Parse<'a> for Nth {
 				}
 			},
 			Token::Delim('+') => {
-				parser.advance();
+				parser.next();
 				match parser.peek_with(Include::Whitespace) {
 					Token::Ident(anb) => {
 						if !anb.starts_with('n') && !anb.starts_with('N') {
@@ -65,11 +65,11 @@ impl<'a> Parse<'a> for Nth {
 			| Token::Ident(atom!("N"))
 			| Token::Dimension(_, atom!("n"), _)
 			| Token::Dimension(_, atom!("N"), _) => {
-				parser.advance();
+				parser.next();
 				None
 			}
 			Token::Ident(atom) | Token::Dimension(_, atom, _) => {
-				parser.advance();
+				parser.next();
 				let mut chars = atom.chars();
 				if atom.starts_with('-') {
 					if a == -1 {
@@ -93,7 +93,7 @@ impl<'a> Parse<'a> for Nth {
 		};
 		match parser.peek().clone() {
 			Token::Number(i, t) if b.is_none() && !t.is_float() => {
-				parser.advance();
+				parser.next();
 				if t.is_signed() && b_sign != 0 {
 					unexpected!(parser)
 				}
@@ -103,7 +103,7 @@ impl<'a> Parse<'a> for Nth {
 				Ok(Self(a, (i as i32) * b_sign))
 			}
 			token @ Token::Delim('+') | token @ Token::Delim('-') if b.is_none() => {
-				parser.advance();
+				parser.next();
 				if matches!(token, Token::Delim('-')) {
 					b_sign = -1;
 				} else {

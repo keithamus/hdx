@@ -47,7 +47,7 @@ impl<'a> Parse<'a> for FontVariantEastAsian {
 		while let Token::Ident(atom) = parser.peek() {
 			match atom.to_ascii_lowercase() {
 				atom!("normal") if value == Self::Normal => {
-					parser.advance();
+					parser.next();
 					return Ok(value);
 				}
 				atom!("jis78") if !value.has_variant_values() => value |= Self::Jis78,
@@ -60,10 +60,10 @@ impl<'a> Parse<'a> for FontVariantEastAsian {
 				atom!("proportional-width") if !value.has_width_values() => value |= Self::ProportionalWidth,
 				_ => break,
 			}
-			parser.advance();
+			parser.next();
 		}
 		if match_ignore_case!(parser.peek(), Token::Ident(atom!("ruby"))) {
-			parser.advance();
+			parser.next();
 			return Ok(value | Self::Ruby);
 		}
 		if value == Self::Normal {

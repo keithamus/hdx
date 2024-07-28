@@ -56,11 +56,11 @@ impl<'a> Parse<'a> for FontVariantLigatures {
 		match parser.peek() {
 			Token::Ident(atom) => match atom.to_ascii_lowercase() {
 				atom!("none") => {
-					parser.advance();
+					parser.next();
 					return Ok(Self::None);
 				}
 				atom!("normal") => {
-					parser.advance();
+					parser.next();
 					return Ok(Self::Normal);
 				}
 				_ => {}
@@ -84,7 +84,7 @@ impl<'a> Parse<'a> for FontVariantLigatures {
 				atom!("no-contextual") if !value.has_contextual() => value |= Self::NoContextual,
 				_ => break,
 			}
-			parser.advance();
+			parser.next();
 		}
 		if value == Self::Normal {
 			unexpected!(parser)

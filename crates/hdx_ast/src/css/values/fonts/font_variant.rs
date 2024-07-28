@@ -28,7 +28,7 @@ impl<'a> Parse<'a> for FontVariant {
 		match parser.peek() {
 			Token::Ident(atom) => match atom.to_ascii_lowercase() {
 				atom!("normal") => {
-					parser.advance();
+					parser.next();
 					return Ok(Self { ..Default::default() });
 				}
 				atom!("none") => {

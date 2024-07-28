@@ -29,7 +29,7 @@ impl<'a> Parse<'a> for Quotes {
 				let mut quotes = smallvec![(atom.clone(), *style)];
 				loop {
 					if let Token::String(atom, style) = parser.peek().clone() {
-						parser.advance();
+						parser.next();
 						quotes.push((atom, style));
 					} else {
 						break;

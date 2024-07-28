@@ -53,7 +53,7 @@ impl<'a> Parse<'a> for FontVariantNumeric {
 			match parser.peek() {
 				Token::Ident(atom) => match atom.to_ascii_lowercase() {
 					atom!("normal") => {
-						parser.advance();
+						parser.next();
 						return Ok(Self::Normal);
 					}
 					atom!("lining-nums") if !value.has_figure_values() => value |= Self::LiningNums,
@@ -68,7 +68,7 @@ impl<'a> Parse<'a> for FontVariantNumeric {
 				},
 				_ => break,
 			}
-			parser.advance();
+			parser.next();
 		}
 		Ok(value)
 	}
