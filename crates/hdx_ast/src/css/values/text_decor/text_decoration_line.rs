@@ -29,7 +29,7 @@ impl<'a> Parse<'a> for TextDecorationLine {
 			match parser.peek() {
 				Token::Ident(atom) => match atom.to_ascii_lowercase() {
 					atom!("none") if value.is_none() => {
-						parser.advance();
+						parser.next();
 						return Ok(Self::None);
 					}
 					atom!("underline") if !value.contains(Self::Underline) => value |= Self::Underline,
@@ -42,7 +42,7 @@ impl<'a> Parse<'a> for TextDecorationLine {
 					break;
 				}
 			}
-			parser.advance();
+			parser.next();
 		}
 		// Explicit "none" is handled above, so if there are no other collected values this is a parse error
 		if value == Self::none() {

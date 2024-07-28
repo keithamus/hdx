@@ -27,15 +27,15 @@ impl<'a> Parse<'a> for Channel {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		match parser.peek().clone() {
 			Token::Ident(atom) if atom.to_ascii_lowercase() == atom!("none") => {
-				parser.advance();
+				parser.next();
 				Ok(Self::None)
 			}
 			Token::Number(n, _) => {
-				parser.advance();
+				parser.next();
 				Ok(Self::Float(n.into()))
 			}
 			Token::Dimension(n, unit, _) if unit.to_ascii_lowercase() == atom!("%") => {
-				parser.advance();
+				parser.next();
 				Ok(Self::Percent(n.into()))
 			}
 			Token::Dimension(_, _, _) => Ok(Self::Hue(Angle::parse(parser)?)),

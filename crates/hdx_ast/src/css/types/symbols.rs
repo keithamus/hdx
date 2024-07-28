@@ -20,12 +20,12 @@ impl<'a> Parse<'a> for Symbols {
 		match parser.peek() {
 			Token::Ident(atom) => {
 				if let Some(st) = SymbolsType::from_atom(atom) {
-					parser.advance();
+					parser.next();
 					symbol_type = st;
 				}
 			}
 			Token::RightParen => {
-				parser.advance();
+				parser.next();
 				return Ok(Self(symbol_type, symbols));
 			}
 			_ => {}
@@ -33,14 +33,14 @@ impl<'a> Parse<'a> for Symbols {
 		loop {
 			match parser.peek().clone() {
 				Token::String(atom, style) => {
-					parser.advance();
+					parser.next();
 					symbols.push(Symbol::String(atom, style));
 				}
 				Token::Function(_) => {
 					symbols.push(Symbol::Image(Image::parse(parser)?));
 				}
 				Token::RightParen => {
-					parser.advance();
+					parser.next();
 					return Ok(Self(symbol_type, symbols));
 				}
 				token => unexpected!(parser, token),

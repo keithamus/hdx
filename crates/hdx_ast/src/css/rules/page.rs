@@ -67,7 +67,7 @@ impl<'a> Parse<'a> for PageSelectorList {
 			let selector = PageSelector::parse_spanned(parser)?;
 			selectors.push(selector);
 			if matches!(parser.cur(), Token::Comma) {
-				parser.advance();
+				parser.next();
 			} else {
 				return Ok(Self(selectors));
 			}
@@ -95,7 +95,7 @@ impl<'a> Parse<'a> for PageSelector {
 		let mut pseudos = smallvec![];
 		if let Token::Ident(atom) = parser.peek() {
 			page_type = Some(atom.clone());
-			parser.advance();
+			parser.next();
 		}
 		while let Token::Colon = parser.peek() {
 			pseudos.push(PagePseudoClass::parse_spanned(parser)?);

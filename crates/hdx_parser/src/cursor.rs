@@ -1,11 +1,9 @@
-use hdx_lexer::{Include, LexerCheckpoint, Token};
+use hdx_lexer::{Include, Token};
 
 use crate::{span::Span, Parser};
 
-pub struct ParserCheckpoint<'a> {
-	lexer: LexerCheckpoint<'a>,
+pub struct ParserCheckpoint {
 	token: Token,
-	prev_pos: u32,
 	warnings_pos: usize,
 	errors_pos: usize,
 }
@@ -13,7 +11,7 @@ pub struct ParserCheckpoint<'a> {
 impl<'a> Parser<'a> {
 	#[inline]
 	pub fn cur(&self) -> Token {
-		&self.token
+		self.token
 	}
 
 	#[inline]
@@ -28,22 +26,30 @@ impl<'a> Parser<'a> {
 
 	#[inline]
 	pub fn peek(&mut self) -> Token {
-		self.lexer.lookahead(1)
+		self.peek_with(self.lexer.include)
 	}
 
 	#[inline]
 	pub fn peek_with(&mut self, inc: Include) -> Token {
-		self.lexer.lookahead_with(1, inc)
+		self.lexer.clone_with(inc).advance()
 	}
 
 	#[inline]
 	pub fn peek_n(&mut self, n: u8) -> Token {
-		self.lexer.lookahead(n)
+		self.peek_n_with(n, self.lexer.include)
 	}
 
 	#[inline]
 	pub fn peek_n_with(&mut self, n: u8, inc: Include) -> Token {
-		self.lexer.lookahead_with(n, inc)
+		let mut lex = self.lexer.clone_with(inc);
+		let mut remaining = n;
+		loop {
+			let token = lex.advance();
+			remaining -= 1;
+			if remaining == 0 {
+				return token;
+			}
+		}
 	}
 
 	/// Should only be used in severe edge cases, for legacy parse modes
@@ -52,45 +58,29 @@ impl<'a> Parser<'a> {
 	}
 
 	#[inline]
-	pub fn advance(&mut self) {
-		self.prev_pos = self.lexer.pos();
-		self.token = self.lexer.advance()
-	}
-
-	#[inline]
-	pub fn advance_with(&mut self, inc: Include) {
-		self.prev_pos = self.lexer.pos();
-		self.token = self.lexer.advance_with(inc);
-	}
-
-	#[inline]
 	pub fn next(&mut self) -> Token {
-		self.prev_pos = self.lexer.pos();
 		self.token = self.lexer.advance();
 		self.token
 	}
 
 	#[inline]
 	pub fn next_with(&mut self, inc: Include) -> Token {
-		self.prev_pos = self.lexer.pos();
-		self.token = self.lexer.advance_with(inc);
-		&self.token
+		self.token = self.lexer.clone_with(inc).advance();
+		self.lexer.rewind(self.token);
+		self.token
 	}
 
-	pub fn rewind(&mut self, checkpoint: ParserCheckpoint<'a>) {
-		let ParserCheckpoint { lexer, prev_pos, token, warnings_pos, errors_pos } = checkpoint;
-		self.lexer.rewind(lexer);
+	pub fn rewind(&mut self, checkpoint: ParserCheckpoint) {
+		let ParserCheckpoint { token, warnings_pos, errors_pos } = checkpoint;
+		self.lexer.rewind(token);
 		self.token = token;
-		self.prev_pos = prev_pos;
 		self.warnings.truncate(warnings_pos);
 		self.errors.truncate(errors_pos);
 	}
 
-	pub fn checkpoint(&self) -> ParserCheckpoint<'a> {
+	pub fn checkpoint(&self) -> ParserCheckpoint {
 		ParserCheckpoint {
-			lexer: self.lexer.checkpoint(),
-			prev_pos: self.prev_pos,
-			token: self.token.clone(),
+			token: self.token,
 			warnings_pos: self.warnings.len(),
 			errors_pos: self.errors.len(),
 		}

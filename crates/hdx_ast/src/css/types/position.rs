@@ -64,16 +64,16 @@ impl<'a> Parse<'a> for HorizontalPosition {
 		Ok(match parser.peek() {
 			Token::Ident(atom) => match atom.to_ascii_lowercase() {
 				atom!("center") => {
-					parser.advance();
+					parser.next();
 					Self::Center
 				}
 				atom!("left") => {
-					parser.advance();
+					parser.next();
 					let len = LengthPercentage::try_parse(parser).ok();
 					Self::Left(len)
 				}
 				atom!("right") => {
-					parser.advance();
+					parser.next();
 					let len = LengthPercentage::try_parse(parser).ok();
 					Self::Right(len)
 				}
@@ -128,16 +128,16 @@ impl<'a> Parse<'a> for VerticalPosition {
 		Ok(match parser.peek() {
 			Token::Ident(atom) => match atom.to_ascii_lowercase() {
 				atom!("center") => {
-					parser.advance();
+					parser.next();
 					Self::Center
 				}
 				atom!("top") => {
-					parser.advance();
+					parser.next();
 					let len = LengthPercentage::try_parse(parser).ok();
 					Self::Top(len)
 				}
 				atom!("bottom") => {
-					parser.advance();
+					parser.next();
 					let len = LengthPercentage::try_parse(parser).ok();
 					Self::Bottom(len)
 				}

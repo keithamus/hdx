@@ -35,7 +35,7 @@ impl<'a> Parse<'a> for SingleBackgroundImage {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		Ok(match parser.peek().clone() {
 			Token::Ident(ident) if ident.to_ascii_lowercase() == atom!("none") => {
-				parser.advance();
+				parser.next();
 				Self::None
 			}
 			_ => Self::Image(Image::parse(parser)?),
