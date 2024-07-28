@@ -1,4 +1,4 @@
-use crate::{unexpected, expect, Parse, Parser, Result};
+use crate::{expect, unexpected, Parse, Parser, Result};
 use hdx_lexer::{Include, Kind};
 
 #[derive(Debug, PartialEq, Hash)]
@@ -18,12 +18,12 @@ impl<'a> Parse<'a> for Comparison {
 			'>' if matches!(parser.peek_with(Include::Whitespace).char(), Some('=')) => {
 				parser.next_with(Include::Whitespace);
 				Comparison::GreaterThanEqual
-			},
-			'>' =>  Comparison::GreaterThan,
+			}
+			'>' => Comparison::GreaterThan,
 			'<' if matches!(parser.peek_with(Include::Whitespace).char(), Some('=')) => {
 				parser.next_with(Include::Whitespace);
 				Comparison::LessThanEqual
-			},
+			}
 			'<' => Comparison::LessThan,
 			_ => unexpected!(parser),
 		})
