@@ -79,10 +79,6 @@ impl<'a> Parser<'a> {
 	}
 
 	pub fn checkpoint(&self) -> ParserCheckpoint {
-		ParserCheckpoint {
-			token: self.token,
-			warnings_pos: self.warnings.len(),
-			errors_pos: self.errors.len(),
-		}
+		ParserCheckpoint { token: self.token, warnings_pos: self.warnings.len(), errors_pos: self.errors.len() }
 	}
 }

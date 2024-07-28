@@ -64,10 +64,10 @@ macro_rules! discard {
 #[macro_export]
 macro_rules! unexpected {
 	($parser: ident, $($token: tt)+) => {
-		Err($crate::diagnostics::Unexpected($($token)+.clone(), $parser.span()))?
+		Err($crate::diagnostics::Unexpected($($token)+, $parser.span()))?
 	};
 	($parser: ident) => {
-		Err($crate::diagnostics::Unexpected($parser.cur().clone(), $parser.span()))?
+		Err($crate::diagnostics::Unexpected($parser.cur(), $parser.span()))?
 	};
 }
 

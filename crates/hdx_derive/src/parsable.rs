@@ -237,20 +237,20 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 								let field = unnamed[0].clone().ty;
 								if args.parse_inner {
 									dimension_matcher = Some(quote! {
-										hdx_lexer::Token::Dimension(val, _, ty) => {
+										hdx_lexer::Kind::Dimension => {
 											#(#checks)*
 											Ok(Self::#var_ident(#field::parse(parser)?))
 										},
 									});
 									number_matcher = match args.kind {
 										Kind::DimensionOrZero => Some(quote! {
-											hdx_lexer::Token::Number(val, ty) if val == 0.0 => {
+											hdx_lexer::Token::Number if parser.parse_number(peek) == 0.0 => {
 												#(#checks)*
 												Ok(Self::#var_ident(#field::parse(parser)?))
 											}
 										}),
 										Kind::DimensionOrNumber => Some(quote! {
-											hdx_lexer::Token::Number(val, ty) {
+											hdx_lexer::Token::Number {
 												#(#checks)*
 												Ok(Self::#var_ident(#field::parse(parser)?))
 											}
@@ -429,8 +429,9 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 				quote! {}
 			} else {
 				quote! {
-					hdx_lexer::Token::Ident(atom) => {
+					hdx_lexer::Token::Ident => {
 						parser.next();
+						let atom = parser.parse_atom(peek);
 						match atom.to_ascii_lowercase() {
 							#(#ident_matchers)*
 							_ => Err(hdx_parser::diagnostics::UnexpectedIdent(atom, parser.span()))?
@@ -442,8 +443,9 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 				quote! {}
 			} else {
 				quote! {
-					hdx_lexer::Token::Function(atom) => {
+					hdx_lexer::Token::Function => {
 						parser.next();
+						let atom = parser.parse_atom(peek);
 						match atom.to_ascii_lowercase() {
 							#(#function_matchers)*
 							_ => Err(hdx_parser::diagnostics::UnexpectedFunction(atom, parser.span()))?
@@ -478,14 +480,15 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 				impl<'a> hdx_parser::Parse<'a> for #ident {
 					fn parse(parser: &mut hdx_parser::Parser<'a>) -> hdx_parser::Result<Self> {
 						use hdx_parser::Parse;
-						match parser.peek().clone() {
+						let peek = parser.peek();
+						match peek.kind() {
 							#ident_match_arm
 							#string_matcher
 							#number_matcher
 							#dimension_match_arm
 							#at_match_arm
 							#function_match_arm
-							token => hdx_parser::unexpected!(parser, token)
+							_ => hdx_parser::unexpected!(parser, peek)
 						}
 					}
 				}

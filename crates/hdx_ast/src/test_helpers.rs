@@ -40,7 +40,7 @@ macro_rules! assert_parse {
 			&allocator,
 			$str,
 			$str2,
-			hdx_writer::OutputOption::all(),
+			hdx_writer::OutputOption::all_bits(),
 			file!(),
 			line!(),
 		);
@@ -51,7 +51,7 @@ macro_rules! assert_parse {
 			&allocator,
 			$str,
 			$str,
-			hdx_writer::OutputOption::all(),
+			hdx_writer::OutputOption::all_bits(),
 			file!(),
 			line!(),
 		);
@@ -83,7 +83,7 @@ pub fn test_error<'a, T: Parse<'a> + WriteCss<'a>>(allocator: &'a Bump, source_t
 	let result = parser.parse_entirely_with::<T>();
 	if result.errors.is_empty() {
 		let mut string = String::new();
-		let mut writer = BaseCssWriter::new(&mut string, OutputOption::all());
+		let mut writer = BaseCssWriter::new(&mut string, OutputOption::all_bits());
 		result.output.unwrap().write_css(&mut writer).unwrap();
 		panic!("\n\nParse on {}:{} passed. Expected errors but it passed without error.\n\n   parser input: {:?}\n  parser output: {:?}\n       expected: (Error)", file, line, source_text, string);
 	}
