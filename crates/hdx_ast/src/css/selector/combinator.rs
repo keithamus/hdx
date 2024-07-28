@@ -36,7 +36,7 @@ impl<'a> Parse<'a> for Combinator {
 			},
 			token => unexpected!(parser, token),
 		};
-		parser.advance();
+		parser.next();
 		if val != Self::Nesting {
 			discard!(parser, Include::Whitespace, Kind::Whitespace);
 		}

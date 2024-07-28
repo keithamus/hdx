@@ -25,7 +25,7 @@ impl<'a> Parse<'a> for HackMediaFeature {
 				(matches!((a, b, c, d), (Some('0'), Some('\\'), Some('0'), Some(' ') | Some(')') | None))) ||
 				(matches!((a, b, c, d, e), (Some(' '), Some('0'), Some('\\'), Some('0'), Some(' ') | Some(')') | None)))
 				{
-					parser.advance();
+					parser.next();
 					return Ok(Self::IEBackslashZero);
 				}
 				unexpected!(parser, parser.peek())

@@ -23,7 +23,7 @@ impl<'a> Parse<'a> for ListStyle {
 				break;
 			}
 			if matches!(parser.peek(), Token::Ident(atom) if atom.to_ascii_lowercase() == atom!("none")) {
-				parser.advance();
+				parser.next();
 				nones += 1;
 				if nones > 2 {
 					unexpected!(parser);

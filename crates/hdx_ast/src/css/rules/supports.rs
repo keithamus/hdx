@@ -171,7 +171,7 @@ impl<'a> Parse<'a> for SupportsCondition<'a> {
 					}
 				}
 				atom!("not") => {
-					parser.advance();
+					parser.next();
 					Ok(Self::Not(SupportsFeature::parse(parser)?))
 				}
 				_ => unexpected_ident!(parser, ident),

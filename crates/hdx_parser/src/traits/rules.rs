@@ -28,7 +28,7 @@ pub trait AtRule<'a>: Sized + Parse<'a> {
 		let token = parser.peek();
 		match token.kind() {
 			Kind::Semicolon | Kind::Eof => {
-				parser.advance();
+				parser.next();
 				Ok(None)
 			}
 			Kind::LeftCurly => Ok(Some(Self::Block::parse_spanned(parser)?)),
@@ -128,7 +128,7 @@ pub trait DeclarationRuleList<'a>: Sized + Parse<'a> {
 					declarations.push(Self::Declaration::parse_spanned(parser)?);
 				}
 				Kind::RightCurly => {
-					parser.advance();
+					parser.next();
 					return Ok((declarations, rules));
 				}
 				_ => unexpected!(parser, token),

@@ -27,12 +27,12 @@ impl<'a> Parse<'a> for Image {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		Ok(match parser.peek().clone() {
 			Token::Url(atom, style) => {
-				parser.advance();
+				parser.next();
 				Self::Url(atom.clone(), style)
 			}
 			Token::Function(atom) => match atom.to_ascii_lowercase() {
 				atom!("url") => {
-					parser.advance();
+					parser.next();
 					match parser.next().clone() {
 						Token::String(atom, style) => {
 							expect!(parser.next(), Kind::RightParen);
@@ -123,7 +123,7 @@ impl<'a> Parse<'a> for Gradient {
 				}
 				let position = if matches!(parser.cur(), Token::Ident(atom) if atom.to_ascii_lowercase() == atom!("at"))
 				{
-					parser.advance();
+					parser.next();
 					Some(Position::parse(parser)?)
 				} else {
 					None

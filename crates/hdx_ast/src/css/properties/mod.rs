@@ -194,23 +194,23 @@ impl<'a> DeclarationValue<'a> for StyleValue<'a> {
 		if let Token::Ident(atom) = parser.peek() {
 			match atom.to_ascii_lowercase() {
 				atom!("initial") => {
-					parser.advance();
+					parser.next();
 					return Ok(Self::Initial);
 				}
 				atom!("inherit") => {
-					parser.advance();
+					parser.next();
 					return Ok(Self::Inherit);
 				}
 				atom!("unset") => {
-					parser.advance();
+					parser.next();
 					return Ok(Self::Unset);
 				}
 				atom!("revert") => {
-					parser.advance();
+					parser.next();
 					return Ok(Self::Revert);
 				}
 				atom!("revert-layer") => {
-					parser.advance();
+					parser.next();
 					return Ok(Self::RevertLayer);
 				}
 				_ => {}

@@ -19,7 +19,7 @@ impl<'a> Parse<'a> for ListStyleImage {
 		Ok(match parser.peek() {
 			Token::Ident(atom) => match atom.to_ascii_lowercase() {
 				atom!("none") => {
-					parser.advance();
+					parser.next();
 					Self::None
 				}
 				_ => unexpected_ident!(parser, atom),

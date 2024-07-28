@@ -260,7 +260,7 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 								} else {
 									dimension_matchers.push(quote! {
 										hdx_atom::atom!(#str) => {
-											parser.advance();
+											parser.next();
 											#(#checks)*
 											Ok(Self::#var_ident(val.into()))
 										},
@@ -328,7 +328,7 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 								} else {
 									quote! {
 										hdx_lexer::Token::Number(val, ty) => {
-											parser.advance();
+											parser.next();
 											#(#checks)*
 											Ok(Self::#var_ident(val.into()))
 										},
@@ -430,7 +430,7 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 			} else {
 				quote! {
 					hdx_lexer::Token::Ident(atom) => {
-						parser.advance();
+						parser.next();
 						match atom.to_ascii_lowercase() {
 							#(#ident_matchers)*
 							_ => Err(hdx_parser::diagnostics::UnexpectedIdent(atom, parser.span()))?
@@ -443,7 +443,7 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 			} else {
 				quote! {
 					hdx_lexer::Token::Function(atom) => {
-						parser.advance();
+						parser.next();
 						match atom.to_ascii_lowercase() {
 							#(#function_matchers)*
 							_ => Err(hdx_parser::diagnostics::UnexpectedFunction(atom, parser.span()))?

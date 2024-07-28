@@ -20,13 +20,13 @@ impl<'a> Parse<'a> for ListStyleType {
 		Ok(match parser.peek().clone() {
 			Token::Ident(atom) => match atom.to_ascii_lowercase() {
 				atom!("none") => {
-					parser.advance();
+					parser.next();
 					Self::None
 				}
 				_ => Self::CounterStyle(CounterStyle::parse_spanned(parser)?),
 			},
 			Token::String(atom, style) => {
-				parser.advance();
+				parser.next();
 				Self::String(atom, style)
 			}
 			_ => Self::CounterStyle(CounterStyle::parse_spanned(parser)?),

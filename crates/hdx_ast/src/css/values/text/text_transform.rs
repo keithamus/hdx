@@ -39,7 +39,7 @@ impl<'a> Parse<'a> for TextTransform {
 			match parser.peek() {
 				Token::Ident(atom) => match atom.to_ascii_lowercase() {
 					atom!("none") if value.is_none() => {
-						parser.advance();
+						parser.next();
 						return Ok(Self::None);
 					}
 					atom!("capitalize") if !value.has_case_transform() => value |= Self::Capitalize,
@@ -53,7 +53,7 @@ impl<'a> Parse<'a> for TextTransform {
 					break;
 				}
 			}
-			parser.advance();
+			parser.next();
 		}
 		// Explicit "none" is handled above, so if there are no other collected values this is a parse error
 		if value == Self::none() {

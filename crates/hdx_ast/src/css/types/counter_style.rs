@@ -23,7 +23,7 @@ impl<'a> Parse<'a> for CounterStyle {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		match parser.peek().clone() {
 			Token::Ident(atom) => {
-				parser.advance();
+				parser.next();
 				if let Some(style) = PredefinedCounterStyle::from_atom(&atom) {
 					Ok(Self::Predefined(style))
 				} else {

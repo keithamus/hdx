@@ -87,10 +87,10 @@ pub trait Block<'a>: Sized + Parse<'a> {
 		loop {
 			match parser.peek().kind() {
 				Kind::Semicolon => {
-					parser.advance();
+					parser.next();
 				}
 				Kind::Eof | Kind::RightCurly => {
-					parser.advance();
+					parser.next();
 					break;
 				}
 				Kind::AtKeyword => {
@@ -122,7 +122,7 @@ pub trait StyleSheet<'a>: Sized + Parse<'a> {
 					return Ok(rules);
 				}
 				Kind::CdcOrCdo => {
-					parser.advance();
+					parser.next();
 				}
 				_ => {
 					rules.push(Self::Rule::parse_spanned(parser)?);
@@ -139,7 +139,7 @@ pub trait DiscreteMediaFeature<'a>: Sized + Default {
 		expect_ignore_case!(parser.next(), Kind::Ident, name);
 		let value = match parser.peek().kind() {
 			Kind::Colon => {
-				parser.advance();
+				parser.next();
 				Self::parse_media_feature_value(parser)?
 			}
 			_ => Self::default(),

@@ -31,7 +31,7 @@ macro_rules! discard {
 	($parser: ident, Include::$inc:ident, $pattern:pat $(if $guard:expr)? $(,)?) => {
 		match $parser.peek_with(Include::$inc).kind() {
 			$pattern $(if $guard)? => {
-				$parser.advance_with(Include::$inc);
+				$parser.next_with(Include::$inc);
 				true
 			},
 			_ => false,
@@ -40,7 +40,7 @@ macro_rules! discard {
 	($parser: ident, $pattern:pat $(if $guard:expr)? $(,)?) => {
 		match $parser.peek().kind() {
 			$pattern $(if $guard)? => {
-				$parser.advance();
+				$parser.next();
 				true
 			},
 			_ => false,
@@ -317,7 +317,7 @@ macro_rules! expect_delim {
 /// let thing = match_ignore_case!{ parser.peek(), Kind::Function:
 ///     atom!("foo") => true
 ///     atom!("bar") => {
-///         parser.advance();
+///         parser.next();
 ///         false
 ///     },
 /// }
@@ -371,7 +371,7 @@ macro_rules! match_ignore_case {
 /// let thing = match_delim!{ parser.peek(), Token::Function(_):
 ///     atom!("foo") => true
 ///     atom!("bar") => {
-///         parser.advance();
+///         parser.next();
 ///         false
 ///     },
 /// }

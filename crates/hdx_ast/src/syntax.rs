@@ -16,7 +16,7 @@ impl<'a> Parse<'a> for ComponentValues<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		let mut values = parser.new_vec();
 		if matches!(parser.peek_with(Include::Whitespace).kind(), Kind::Whitespace) {
-			parser.advance_with(Include::Whitespace);
+			parser.next_with(Include::Whitespace);
 		}
 		loop {
 			match parser.peek_with(Include::Whitespace).kind() {

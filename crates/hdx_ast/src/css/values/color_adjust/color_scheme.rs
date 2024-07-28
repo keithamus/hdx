@@ -27,7 +27,7 @@ impl<'a> Parse<'a> for ColorScheme {
 		while let Token::Ident(ident) = parser.peek() {
 			match ident.to_ascii_lowercase() {
 				atom!("normal") => {
-					parser.advance();
+					parser.next();
 					return Ok(Self::Normal);
 				}
 				atom!("only") => {
@@ -40,7 +40,7 @@ impl<'a> Parse<'a> for ColorScheme {
 				atom!("dark") => keywords.push(ColorSchemeKeyword::Dark),
 				_ => keywords.push(ColorSchemeKeyword::Custom(ident.clone())),
 			}
-			parser.advance();
+			parser.next();
 		}
 		if only && keywords.is_empty() {
 			unexpected!(parser)

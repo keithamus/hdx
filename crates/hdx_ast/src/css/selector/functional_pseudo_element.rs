@@ -24,7 +24,7 @@ impl<'a> Parse<'a> for FunctionalPseudoElement<'a> {
 				atom!("highlight") => match parser.next().clone() {
 					Token::Ident(name) => {
 						expect!(parser.next(), Kind::RightParen);
-						parser.advance_with(Include::Whitespace);
+						parser.next_with(Include::Whitespace);
 						Ok(Self::Highlight(name))
 					}
 					token => unexpected!(parser, token),
@@ -37,7 +37,7 @@ impl<'a> Parse<'a> for FunctionalPseudoElement<'a> {
 								parts.push(name.clone());
 							}
 							Token::RightParen => {
-								parser.advance_with(Include::Whitespace);
+								parser.next_with(Include::Whitespace);
 								break;
 							}
 							token => unexpected!(parser, token),
@@ -46,7 +46,7 @@ impl<'a> Parse<'a> for FunctionalPseudoElement<'a> {
 					Ok(Self::Part(parts))
 				}
 				atom!("slotted") => {
-					parser.advance();
+					parser.next();
 					let selector = parser.new_vec();
 					loop {
 						if matches!(parser.cur(), Token::RightParen) {

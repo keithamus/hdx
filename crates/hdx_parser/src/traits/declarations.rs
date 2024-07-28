@@ -21,7 +21,7 @@ pub trait Declaration<'a>: Sized + Parse<'a> {
 
 	fn parse_important(parser: &mut Parser<'a>) -> Result<bool> {
 		if peek_delim!(parser, '!') && peek_ignore_case!(parser, Kind::Ident, atom!("important")) {
-			parser.advance();
+			parser.next();
 			expect_ignore_case!(parser.next_with(Include::all()), Kind::Ident, atom!("important"));
 			Ok(true)
 		} else {

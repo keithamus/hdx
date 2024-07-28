@@ -28,7 +28,7 @@ pub trait SelectorList<'a>: Sized + Parse<'a> {
 				if peek!(parser, Kind::Whitespace)
 					&& peek!(parser, 2, Kind::Comma | Kind::LeftCurly | Kind::RightParen | Kind::Eof)
 				{
-					parser.advance_with(Include::Whitespace);
+					parser.next_with(Include::Whitespace);
 				} else {
 					selector.push(Self::SelectorComponent::parse(parser)?);
 				}
@@ -64,25 +64,25 @@ pub trait SelectorComponent<'a>: Sized {
 		match peek.kind() {
 			Kind::Ident => match parser.peek_n_with(2, Include::Whitespace) {
 				t if t.kind() == Kind::Delim && matches!(t.char(), Some('|')) => {
-					parser.advance_with(Include::Whitespace);
+					parser.next_with(Include::Whitespace);
 					Self::ns_type_from_token(parser)
 				}
 				_ => {
-					parser.advance();
+					parser.next();
 					let atom = parser.parse_atom(peek);
 					Self::type_from_atom(&atom)
 						.ok_or_else(|| diagnostics::UnexpectedTag(atom, parser.span()).into())
 				}
 			},
 			Kind::Hash if peek.hash_is_id_like() => {
-				parser.advance();
+				parser.next();
 				let atom = parser.parse_atom(peek);
 				Self::type_from_atom(&atom).ok_or_else(|| diagnostics::UnexpectedId(atom.clone(), parser.span()).into())
 			}
 			Kind::LeftSquare => Ok(Self::parse_attribute(parser)?),
 			Kind::Delim => match peek.char().unwrap() {
 				'.' => {
-					parser.advance();
+					parser.next();
 					match parser.next_with(Include::Whitespace) {
 						t if t.kind() == Kind::Ident => {
 							let atom = parser.parse_atom(t);
@@ -95,18 +95,18 @@ pub trait SelectorComponent<'a>: Sized {
 				'*' => match parser.peek_n_with(2, Include::Whitespace) {
 					t if t.kind() == Kind::Delim && matches!(t.char(), Some('|')) => Self::ns_type_from_token(parser),
 					_ => {
-						parser.advance();
+						parser.next();
 						Ok(Self::wildcard())
 					}
 				},
 				_ => Self::parse_combinator(parser),
 			},
 			Kind::Colon => {
-				parser.advance();
+				parser.next();
 				let peek = parser.peek_with(Include::Whitespace);
 				match peek.kind() {
 					Kind::Colon => {
-						parser.advance_with(Include::Whitespace);
+						parser.next_with(Include::Whitespace);
 						let next = parser.next_with(Include::Whitespace);
 						match next.kind() {
 							Kind::Ident => {
@@ -121,7 +121,7 @@ pub trait SelectorComponent<'a>: Sized {
 					}
 					Kind::Ident => {
 						let atom = parser.parse_atom(peek);
-						parser.advance_with(Include::Whitespace);
+						parser.next_with(Include::Whitespace);
 						Self::legacy_pseudo_element_from_token(&atom)
 							.or_else(|| Self::pseudo_class_from_atom(&atom))
 							.ok_or_else(|| diagnostics::UnexpectedPseudoClass(atom.clone(), parser.span()).into())

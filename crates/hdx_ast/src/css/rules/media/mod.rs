@@ -159,7 +159,7 @@ impl<'a> Parse<'a> for MediaQuery {
 			Token::Ident(ident) if precondition.is_some() => {
 				media_type = MediaType::from_atom(ident);
 				if media_type.is_some() {
-					parser.advance();
+					parser.next();
 				} else {
 					unexpected_ident!(parser, ident)
 				}
@@ -167,7 +167,7 @@ impl<'a> Parse<'a> for MediaQuery {
 			_ => {}
 		}
 		if media_type.is_some() && match_ignore_case!(parser.peek(), Token::Ident(atom!("and"))) {
-			parser.advance();
+			parser.next();
 			condition = Some(MediaCondition::parse(parser)?);
 		} else if media_type.is_none() {
 			condition = Some(MediaCondition::parse(parser)?);
@@ -287,7 +287,7 @@ impl<'a> Parse<'a> for MediaCondition {
 				}
 			},
 			atom!("not") => {
-				parser.advance();
+				parser.next();
 				Ok(Self::Not(MediaFeature::parse(parser)?))
 			},
 		}

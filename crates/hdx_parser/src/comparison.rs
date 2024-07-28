@@ -16,12 +16,12 @@ impl<'a> Parse<'a> for Comparison {
 		Ok(match expect!(parser.next(), Kind::Delim).char().unwrap() {
 			'=' => Comparison::Equal,
 			'>' if matches!(parser.peek_with(Include::Whitespace).char(), Some('=')) => {
-				parser.advance_with(Include::Whitespace);
+				parser.next_with(Include::Whitespace);
 				Comparison::GreaterThanEqual
 			},
 			'>' =>  Comparison::GreaterThan,
 			'<' if matches!(parser.peek_with(Include::Whitespace).char(), Some('=')) => {
-				parser.advance_with(Include::Whitespace);
+				parser.next_with(Include::Whitespace);
 				Comparison::LessThanEqual
 			},
 			'<' => Comparison::LessThan,
