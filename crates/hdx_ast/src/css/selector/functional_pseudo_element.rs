@@ -1,5 +1,5 @@
 use hdx_atom::{atom, Atom};
-use hdx_lexer::{Include, Token, Kind};
+use hdx_lexer::{Include, Kind, Token};
 use hdx_parser::{expect, todo, unexpected, unexpected_function, Parse, Parser, Result as ParserResult, Vec};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 use smallvec::{smallvec, SmallVec};
