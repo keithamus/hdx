@@ -34,8 +34,8 @@ fn popular(c: &mut Criterion) {
 			b.iter_with_large_drop(|| {
 				let allocator = Bump::default();
 				{
-					let mut result =
-						Parser::new(&allocator, source_text.as_str(), Features::default()).parse_entirely_with::<StyleSheet>();
+					let mut result = Parser::new(&allocator, source_text.as_str(), Features::default())
+						.parse_entirely_with::<StyleSheet>();
 					let mut string = String::new();
 					let mut writer = BaseCssWriter::new(&mut string, OutputOption::none());
 					if let Some(stylesheet) = result.output.as_mut() {

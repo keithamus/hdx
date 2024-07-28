@@ -181,7 +181,7 @@ pub trait RangedMediaFeature<'a>: Sized {
 					return Ok(Self::new((cmp, Self::Type::parse(parser)?), None, false));
 				}
 			}
-			token => {
+			_ => {
 				parser.rewind(checkpoint);
 				Self::Type::parse(parser)?
 			}

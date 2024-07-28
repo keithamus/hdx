@@ -13,7 +13,10 @@ impl Parse for ValueArg {
 			i if i == "Inherits" => Ok(Self::Inherits),
 			ident => {
 				if ident.to_string().to_ascii_lowercase().starts_with("inherit") {
-					Err(Error::new(ident.span(), format!("You wrote {:?} but you probably want 'Inherits'", ident.to_string())))?
+					Err(Error::new(
+						ident.span(),
+						format!("You wrote {:?} but you probably want 'Inherits'", ident.to_string()),
+					))?
 				} else {
 					Err(Error::new(ident.span(), format!("Unrecognized Value arg {:?}", ident)))?
 				}

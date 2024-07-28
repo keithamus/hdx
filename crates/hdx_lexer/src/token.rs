@@ -282,7 +282,14 @@ impl Token {
 			self.char().unwrap().len_utf8() as u32
 		// Delim-like flag is set
 		} else if self.kind_bits() & 0b10000 == 0b10000 {
-			debug_assert!(matches!(self.kind(), Kind::Colon | Kind::Semicolon | Kind::Comma | Kind::LeftSquare | Kind::RightSquare | Kind::LeftParen | Kind::RightParen | Kind::LeftCurly | Kind::RightCurly));
+			debug_assert!(matches!(
+				self.kind(),
+				Kind::Colon
+					| Kind::Semicolon | Kind::Comma
+					| Kind::LeftSquare | Kind::RightSquare
+					| Kind::LeftParen | Kind::RightParen
+					| Kind::LeftCurly | Kind::RightCurly
+			));
 			1
 		// CdcOrCdo
 		} else if self.kind_bits() == Kind::CdcOrCdo.bits {
@@ -395,6 +402,10 @@ impl Token {
 		(self.kind_bits() == Kind::Whitespace.bits || self.kind_bits() == Kind::Comment.bits) && self.third_bit_is_set()
 	}
 
+	#[inline]
+	pub fn hash_is_id_like(&self) -> bool {
+		(self.kind_bits() == Kind::Hash.bits) && self.second_bit_is_set()
+	}
 
 	#[inline]
 	pub fn is_bad(&self) -> bool {

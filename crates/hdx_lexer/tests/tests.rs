@@ -214,7 +214,8 @@ fn returns_correct_str_inner_value() {
 #[test]
 fn returns_correct_str_escaped_value() {
 	let allocator = Bump::default();
-	let mut lex = Lexer::new(&allocator, "@f\\6fo #f\\6fo f\\6fo( url( f\\6fo) u\\72l( f\\6fo) 'f\\6fo'", Include::none());
+	let mut lex =
+		Lexer::new(&allocator, "@f\\6fo #f\\6fo f\\6fo( url( f\\6fo) u\\72l( f\\6fo) 'f\\6fo'", Include::none());
 	{
 		let tok = lex.advance();
 		assert_eq!(tok.kind(), Kind::AtKeyword);

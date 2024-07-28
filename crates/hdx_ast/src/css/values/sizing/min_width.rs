@@ -21,4 +21,3 @@ pub enum MinWidth {
 	#[writable(as_function = "fit-content")]
 	FitContentFunction(LengthPercentage),
 }
-
