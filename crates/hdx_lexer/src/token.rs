@@ -8,48 +8,6 @@ use serde::{
 use crate::Include;
 
 #[derive(Default)]
-#[bitmask(u8)]
-#[bitmask_config(vec_debug)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde())]
-pub enum NumType {
-	#[default]
-	Float = 0x01,
-	Signed = 0x10,
-}
-
-impl NumType {
-	#[inline]
-	pub fn is_int(&self) -> bool {
-		self.and(NumType::Float) != NumType::Float
-	}
-
-	#[inline]
-	pub fn is_float(&self) -> bool {
-		self.contains(NumType::Float)
-	}
-
-	#[inline]
-	pub fn is_signed(&self) -> bool {
-		self.contains(NumType::Signed)
-	}
-
-	#[inline]
-	pub fn is_signed_int(&self) -> bool {
-		self.contains(NumType::Signed) && !self.contains(NumType::Float)
-	}
-
-	#[inline]
-	pub fn signed(&self) -> NumType {
-		self.or(NumType::Signed)
-	}
-
-	#[inline]
-	pub fn float(&self) -> NumType {
-		self.or(NumType::Float)
-	}
-}
-
-#[derive(Default)]
 #[bitmask(u8)] // Actually more like a "u5" as the 3 LMB are unused
 pub enum Kind {
 	// Trivias (mask as 0b0_00XX)

@@ -97,22 +97,24 @@ pub enum SupportsCondition<'a> {
 
 impl<'a> Parse<'a> for SupportsCondition<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		match parser.peek() {
-			Token::LeftParen => {
+		let token = parser.peek();
+		match token.kind() {
+			Kind::LeftParen => {
 				let wrapped = peek!(parser, 2, Kind::LeftParen);
 				if wrapped {
 					parser.next();
 				}
 				let feature = SupportsFeature::parse(parser)?;
-				match parser.peek() {
-					Token::Ident(ident) => match ident.to_ascii_lowercase() {
+				let token = parser.peek();
+				match token.kind() {
+					Token::Ident => match parser.parse_atom_lower(token) {
 						atom!("and") => {
 							let mut features = parser.new_vec();
 							features.push(feature);
 							loop {
 								expect_ignore_case!(parser.next(), Kind::Ident, atom!("and"));
 								features.push(SupportsFeature::parse(parser)?);
-								if !match_ignore_case!(parser.peek(), Token::Ident(atom!("and"))) {
+								if !match_ignore_case!(parser.peek(), Kind::Ident, atom!("and")) {
 									if wrapped {
 										expect!(parser.next(), Kind::RightParen);
 									}
@@ -126,7 +128,7 @@ impl<'a> Parse<'a> for SupportsCondition<'a> {
 							loop {
 								expect_ignore_case!(parser.next(), Kind::Ident, atom!("or"));
 								features.push(SupportsFeature::parse(parser)?);
-								if !match_ignore_case!(parser.peek(), Token::Ident(atom!("or"))) {
+								if !match_ignore_case!(parser.peek(), Kind::Ident, atom!("or")) {
 									if wrapped {
 										expect!(parser.next(), Kind::RightParen);
 									}
@@ -149,13 +151,13 @@ impl<'a> Parse<'a> for SupportsCondition<'a> {
 					}
 				}
 			}
-			Token::Ident(ident) => match ident.to_ascii_lowercase() {
+			Kind::Ident => match parser.parse_atom_lower(token) {
 				atom!("and") => {
 					let mut features = parser.new_vec();
 					loop {
 						expect_ignore_case!(parser.next(), Kind::Ident, atom!("and"));
 						features.push(SupportsFeature::parse(parser)?);
-						if !match_ignore_case!(parser.peek(), Token::Ident(atom!("and"))) {
+						if !match_ignore_case!(parser.peek(), Kind::Ident, atom!("and")) {
 							return Ok(Self::And(features));
 						}
 					}
@@ -165,7 +167,7 @@ impl<'a> Parse<'a> for SupportsCondition<'a> {
 					loop {
 						expect_ignore_case!(parser.next(), Kind::Ident, atom!("or"));
 						features.push(SupportsFeature::parse(parser)?);
-						if !match_ignore_case!(parser.peek(), Token::Ident(atom!("or"))) {
+						if !match_ignore_case!(parser.peek(), Kind::Ident, atom!("or")) {
 							return Ok(Self::And(features));
 						}
 					}
@@ -176,7 +178,7 @@ impl<'a> Parse<'a> for SupportsCondition<'a> {
 				}
 				_ => unexpected_ident!(parser, ident),
 			},
-			token => unexpected!(parser, token),
+			_ => unexpected!(parser, token),
 		}
 	}
 }

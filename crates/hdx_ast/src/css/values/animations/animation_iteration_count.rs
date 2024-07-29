@@ -1,6 +1,6 @@
 use hdx_atom::atom;
 use hdx_derive::{Value, Writable};
-use hdx_lexer::{Kind, Token};
+use hdx_lexer::Kind;
 use hdx_parser::{discard, unexpected, unexpected_ident, Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 use smallvec::{smallvec, SmallVec};
@@ -29,15 +29,16 @@ impl<'a> Parse<'a> for AnimationIterationCount {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		let mut values = smallvec![];
 		loop {
-			match parser.next() {
-				Token::Ident(ident) => match ident.to_ascii_lowercase() {
+			let token = parser.next();
+			match token.kind() {
+				Kind::Ident => match parser.parse_atom_lower(token) {
 					atom!("infinite") => values.push(SingleAnimationIterationCount::Infinite),
 					atom => unexpected_ident!(parser, atom),
 				},
-				Token::Number(val, ty) if ty.is_int() && !ty.is_signed() => {
-					values.push(SingleAnimationIterationCount::Number(val.into()))
+				Kind::Number if token.is_int() && !token.has_sign() => {
+					values.push(SingleAnimationIterationCount::Number(parser.parse_number(token).into()))
 				}
-				token => unexpected!(parser, token),
+				_ => unexpected!(parser, token),
 			}
 			if !discard!(parser, Kind::Comma) {
 				break;

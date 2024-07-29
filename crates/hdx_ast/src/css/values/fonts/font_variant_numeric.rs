@@ -1,7 +1,7 @@
 use bitmask_enum::bitmask;
 use hdx_atom::atom;
 use hdx_derive::Value;
-use hdx_lexer::Token;
+use hdx_lexer::Kind;
 use hdx_parser::{unexpected_ident, Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 
@@ -50,8 +50,9 @@ impl<'a> Parse<'a> for FontVariantNumeric {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		let mut value = Self::Normal;
 		loop {
-			match parser.peek() {
-				Token::Ident(atom) => match atom.to_ascii_lowercase() {
+			let token = parser.peek();
+			match token.kind() {
+				Kind::Ident => match parser.parse_atom_lower(token) {
 					atom!("normal") => {
 						parser.next();
 						return Ok(Self::Normal);
