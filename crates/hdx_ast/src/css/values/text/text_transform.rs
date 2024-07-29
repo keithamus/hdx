@@ -2,7 +2,7 @@
 use bitmask_enum::bitmask;
 use hdx_atom::atom;
 use hdx_derive::Value;
-use hdx_lexer::Token;
+use hdx_lexer::Kind;
 use hdx_parser::{unexpected, Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 
@@ -36,8 +36,9 @@ impl<'a> Parse<'a> for TextTransform {
 			if value.is_all_bits() {
 				break;
 			}
-			match parser.peek() {
-				Token::Ident(atom) => match atom.to_ascii_lowercase() {
+			let token = parser.peek();
+			match token.kind() {
+				Kind::Ident => match parser.parse_atom_lower(token) {
 					atom!("none") if value.is_none() => {
 						parser.next();
 						return Ok(Self::None);

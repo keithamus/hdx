@@ -26,8 +26,9 @@ impl<'a> Parse<'a> for TextDecorationLine {
 			if value.is_all_bits() {
 				break;
 			}
-			match parser.peek() {
-				Token::Ident(atom) => match atom.to_ascii_lowercase() {
+			let peek = parser.peek();
+			match peek.kind() {
+				Kind::Ident => match parser.parse_atom_lower(peek) {
 					atom!("none") if value.is_none() => {
 						parser.next();
 						return Ok(Self::None);
