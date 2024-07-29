@@ -1,6 +1,6 @@
 use hdx_atom::{atom, Atom};
 use hdx_derive::Writable;
-use hdx_lexer::Token;
+use hdx_lexer::Kind;
 use hdx_parser::{unexpected, Parse, Parser, Result as ParserResult};
 
 use super::{AbsoluteUnit, CSSFloat};
@@ -44,15 +44,16 @@ impl AbsoluteUnit for Time {
 
 impl<'a> Parse<'a> for Time {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		match parser.next() {
-			token @ Token::Dimension(n, unit, _) => {
-				if let Some(t) = Self::new(n.into(), unit.clone()) {
+		let token = parser.next();
+		match token.kind() {
+			Kind::Dimension => {
+				if let Some(t) = Self::new(parser.parse_number(token).into(), parser.parse_atom_lower(token)) {
 					Ok(t)
 				} else {
 					unexpected!(parser, token)
 				}
 			}
-			token => unexpected!(parser, token),
+			_ => unexpected!(parser, token),
 		}
 	}
 }

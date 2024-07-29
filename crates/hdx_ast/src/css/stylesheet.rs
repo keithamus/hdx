@@ -1,6 +1,6 @@
 use hdx_atom::atom;
 use hdx_derive::{Atomizable, Visitable};
-use hdx_lexer::Token;
+use hdx_lexer::Kind;
 use hdx_parser::{diagnostics, Parse, Parser, Result as ParserResult, Spanned, StyleSheet as StyleSheetTrait, Vec};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 
@@ -99,8 +99,10 @@ apply_rules!(rule);
 
 impl<'a> Parse<'a> for Rule<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		Ok(match parser.peek() {
-			Token::AtKeyword(atom) => {
+		let token = parser.peek();
+		Ok(match token.kind() {
+			Kind::AtKeyword => {
+				let atom = parser.parse_atom(token);
 				macro_rules! parse_rule {
 					( $(
 						$name: ident$(<$a: lifetime>)?: $atom: pat,
