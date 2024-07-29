@@ -3,7 +3,7 @@ mod syntax;
 
 use crate::css::units::{Angle, CSSFloat, Percent};
 use hdx_atom::{atom, Atomizable};
-use hdx_lexer::{Kind, Token};
+use hdx_lexer::{Kind};
 use hdx_parser::{
 	discard, expect, expect_delim, match_ignore_case, todo, unexpected, unexpected_function, unexpected_ident, Parse,
 	Parser, Result as ParserResult,
@@ -25,21 +25,22 @@ pub enum Channel {
 
 impl<'a> Parse<'a> for Channel {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		match parser.peek().clone() {
-			Token::Ident(atom) if atom.to_ascii_lowercase() == atom!("none") => {
+		let token = parser.peek();
+		match token.kind() {
+			Kind::Ident if parser.parse_atom_lower(token) == atom!("none") => {
 				parser.next();
 				Ok(Self::None)
 			}
-			Token::Number(n, _) => {
+			Kind::Number => {
 				parser.next();
-				Ok(Self::Float(n.into()))
+				Ok(Self::Float(parser.parse_number(token).into()))
 			}
-			Token::Dimension(n, unit, _) if unit.to_ascii_lowercase() == atom!("%") => {
+			Kind::Dimension if parser.parse_atom(token) == atom!("%") => {
 				parser.next();
-				Ok(Self::Percent(n.into()))
+				Ok(Self::Percent(parser.parse_number(token).into()))
 			}
-			Token::Dimension(_, _, _) => Ok(Self::Hue(Angle::parse(parser)?)),
-			token => unexpected!(parser, token),
+			Kind::Dimension => Ok(Self::Hue(Angle::parse(parser)?)),
+			_ => unexpected!(parser, token),
 		}
 	}
 }
@@ -195,7 +196,7 @@ impl<'a> HexableChars for Chars<'a> {
 
 impl<'a> Parse<'a> for Color {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		match_ignore_case! { parser.peek(), Token::Function(_):
+		match_ignore_case! { parser.peek(), Kind::Function:
 			atom!("color") => todo!(parser),
 			atom!("color-mix") => todo!(parser),
 			_ => return Ok(Color::Absolute(AbsoluteColorFunction::parse(parser)?))

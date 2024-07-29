@@ -1,6 +1,6 @@
 use hdx_atom::atom;
 use hdx_derive::Value;
-use hdx_lexer::Token;
+use hdx_lexer::Kind;
 use hdx_parser::{unexpected, Parse, Parser, Result as ParserResult, Spanned};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 
@@ -25,8 +25,9 @@ pub struct FontVariant(
 impl<'a> Parse<'a> for FontVariant {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		let mut value = Self { ..Default::default() };
-		match parser.peek() {
-			Token::Ident(atom) => match atom.to_ascii_lowercase() {
+		let token = parser.peek();
+		match token.kind() {
+			Kind::Ident => match parser.parse_atom_lower(token) {
 				atom!("normal") => {
 					parser.next();
 					return Ok(Self { ..Default::default() });
@@ -36,10 +37,10 @@ impl<'a> Parse<'a> for FontVariant {
 				}
 				_ => {}
 			},
-			token => unexpected!(parser, token),
+			_ => unexpected!(parser, token),
 		}
 		loop {
-			if matches!(parser.peek(), Token::Eof | Token::Semicolon) {
+			if matches!(parser.peek().kind(), Kind::Eof | Kind::Semicolon) {
 				break;
 			}
 			if value.0.node == FontVariantLigatures::default() {
