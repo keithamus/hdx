@@ -1,5 +1,5 @@
 use hdx_atom::{Atom, Atomizable};
-use hdx_lexer::Token;
+use hdx_lexer::Kind;
 use hdx_parser::{
 	expect_delim, unexpected, Parse, Parser, Result as ParserResult, SelectorComponent as SelectorComponentTrait,
 	SelectorList as SelectorListTrait, Spanned, Vec,
@@ -150,10 +150,11 @@ impl<'a> SelectorComponentTrait<'a> for SelectorComponent<'a> {
 		if !matches!(prefix, NSPrefix::None) {
 			expect_delim!(parser.next(), '|');
 		}
-		match parser.next() {
-			Token::Ident(atom) => Ok(Self::NSPrefixedTag((prefix, atom.clone()))),
-			Token::Delim('*') => Ok(Self::NSPrefixedWildcard(prefix)),
-			token => unexpected!(parser, token),
+		let token = parser.next();
+		match token.kind() {
+			Kind::Ident => Ok(Self::NSPrefixedTag((prefix, parser.parse_atom(token)))),
+			Kind::Delim if matches!(token.char(), Some('*')) => Ok(Self::NSPrefixedWildcard(prefix)),
+			_ => unexpected!(parser, token),
 		}
 	}
 
@@ -225,11 +226,12 @@ pub enum NSPrefix {
 
 impl<'a> Parse<'a> for NSPrefix {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		match parser.next() {
-			Token::Delim('*') => Ok(Self::Wildcard),
-			Token::Ident(atom) => Ok(Self::Named(atom.clone())),
-			Token::Delim('|') => Ok(Self::None),
-			token => unexpected!(parser, token),
+		let token = parser.next();
+		match token.kind() {
+			Kind::Delim if matches!(token.char(), Some('*')) => Ok(Self::Wildcard),
+			Kind::Ident  => Ok(Self::Named(parser.parse_atom(token))),
+			Kind::Delim if matches!(token.char(), Some('|')) => Ok(Self::None),
+			_ => unexpected!(parser, token),
 		}
 	}
 }

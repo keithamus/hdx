@@ -1,5 +1,5 @@
 use hdx_atom::{atom, Atom};
-use hdx_lexer::{Kind, QuoteStyle, Token};
+use hdx_lexer::{Kind, QuoteStyle};
 use hdx_parser::{
 	diagnostics, discard, expect, expect_ignore_case, unexpected, unexpected_ident, AtRule, Parse, Parser,
 	Result as ParserResult, Spanned, Vec,
@@ -60,14 +60,14 @@ impl KeyframeName {
 impl<'a> Parse<'a> for KeyframeName {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		match parser.next() {
-			Token::Ident(atom) => {
+			Kind::Ident(atom) => {
 				if Self::valid_ident(atom) {
 					Ok(Self(atom.clone(), QuoteStyle::None))
 				} else {
 					unexpected_ident!(parser, atom)
 				}
 			}
-			Token::String(atom, quote_style) => Ok(Self(atom.clone(), *quote_style)),
+			Kind::String(atom, quote_style) => Ok(Self(atom.clone(), *quote_style)),
 			token => unexpected!(parser, token),
 		}
 	}
@@ -172,14 +172,22 @@ pub enum KeyframeSelector {
 
 impl<'a> Parse<'a> for KeyframeSelector {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		match parser.next() {
-			Token::Ident(atom) => match atom.to_ascii_lowercase() {
+		let token = parser.next();
+		match token.kind() {
+			Kind::Ident => match parser.parse_atom_lower(token) {
 				atom!("from") => Ok(KeyframeSelector::From),
 				atom!("to") => Ok(KeyframeSelector::To),
-				_ => unexpected_ident!(parser, atom),
+				atom => unexpected_ident!(parser, atom),
 			},
-			Token::Dimension(n, atom!("%"), _) if *n >= 0.0 && *n <= 100.0 => Ok(Self::Percent(n.into())),
-			token => unexpected!(parser, token),
+			Kind::Dimension => {
+				let n = parser.parse_number(token);
+				if matches!(parser.parse_atom(token), atom!("%")) && n >= 0.0 && n <= 100.0 {
+					Ok(Self::Percent(n.into()))
+				} else {
+					unexpected!(parser, token)
+				}
+			},
+			_ => unexpected!(parser, token),
 		}
 	}
 }

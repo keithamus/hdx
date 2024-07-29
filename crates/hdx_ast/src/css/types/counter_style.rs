@@ -1,6 +1,6 @@
 use hdx_atom::{Atom, Atomizable};
 use hdx_derive::{Atomizable, Writable};
-use hdx_lexer::Token;
+use hdx_lexer::Kind;
 use hdx_parser::{Parse, Parser, Result as ParserResult, Spanned};
 
 use super::Symbols;
@@ -21,8 +21,10 @@ impl Default for CounterStyle {
 
 impl<'a> Parse<'a> for CounterStyle {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		match parser.peek().clone() {
-			Token::Ident(atom) => {
+		let token = parser.peek();
+		match token.kind() {
+			Kind::Ident => {
+				let atom = parser.parse_atom(token);
 				parser.next();
 				if let Some(style) = PredefinedCounterStyle::from_atom(&atom) {
 					Ok(Self::Predefined(style))

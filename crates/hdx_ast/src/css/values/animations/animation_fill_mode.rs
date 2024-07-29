@@ -1,6 +1,6 @@
 use hdx_atom::Atomizable;
 use hdx_derive::{Atomizable, Value, Writable};
-use hdx_lexer::{Kind, Token};
+use hdx_lexer::Kind;
 use hdx_parser::{discard, unexpected, unexpected_ident, Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 use smallvec::{smallvec, SmallVec};
@@ -24,15 +24,17 @@ impl<'a> Parse<'a> for AnimationFillMode {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		let mut values = smallvec![];
 		loop {
-			match parser.next() {
-				Token::Ident(atom) => {
+			let token = parser.next();
+			match token.kind() {
+				Kind::Ident => {
+					let atom = parser.parse_atom(token);
 					if let Some(fill) = SingleAnimationFillMode::from_atom(&atom) {
 						values.push(fill);
 					} else {
 						unexpected_ident!(parser, atom);
 					}
 				}
-				token => unexpected!(parser, token),
+				_ => unexpected!(parser, token),
 			}
 			if !discard!(parser, Kind::Comma) {
 				break;

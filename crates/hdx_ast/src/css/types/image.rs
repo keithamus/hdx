@@ -1,7 +1,7 @@
 use bitmask_enum::bitmask;
 use hdx_atom::{atom, Atom, Atomizable};
 use hdx_derive::{Atomizable, Parsable, Writable};
-use hdx_lexer::{Kind, QuoteStyle, Token};
+use hdx_lexer::{Kind, QuoteStyle};
 use hdx_parser::{
 	discard, expect, expect_ignore_case, peek, unexpected, unexpected_ident, Parse, Parser, Result as ParserResult,
 };
@@ -25,25 +25,27 @@ pub enum Image {
 
 impl<'a> Parse<'a> for Image {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		Ok(match parser.peek().clone() {
-			Token::Url(atom, style) => {
+		let token = parser.peek();
+		Ok(match token.kind() {
+			Kind::Url => {
 				parser.next();
-				Self::Url(atom.clone(), style)
+				Self::Url(parser.parse_atom(token), token.quote_style())
 			}
-			Token::Function(atom) => match atom.to_ascii_lowercase() {
+			Kind::Function => match parser.parse_atom_lower(token) {
 				atom!("url") => {
 					parser.next();
-					match parser.next().clone() {
-						Token::String(atom, style) => {
+					let token = parser.next();
+					match token.kind() {
+						Kind::String => {
 							expect!(parser.next(), Kind::RightParen);
-							Self::Url(atom, style)
+							Self::Url(parser.parse_atom(token), token.quote_style())
 						}
-						token => unexpected!(parser, token),
+						_ => unexpected!(parser, token),
 					}
 				}
 				_ => Self::Gradient(Gradient::parse(parser)?),
 			},
-			token => unexpected!(parser, token),
+			_ => unexpected!(parser, token),
 		})
 	}
 }

@@ -1,5 +1,5 @@
 use hdx_atom::{atom, Atom};
-use hdx_lexer::{Include, Kind, QuoteStyle, Token};
+use hdx_lexer::{Include, Kind, QuoteStyle};
 use hdx_parser::{expect, expect_delim, peek, unexpected, unexpected_ident, Parse, Parser, Result as ParserResult};
 use hdx_writer::{write_css, CssWriter, Result as WriterResult, WriteCss};
 
@@ -25,7 +25,7 @@ impl<'a> Parse<'a> for Attribute {
 			Kind::Delim if matches!(token.char(), Some('|')) => {
 				let token = parser.next_with(Include::Whitespace);
 				match token.kind() {
-					Token::Ident => {
+					Kind::Ident => {
 						attr.name = parser.parse_atom(token);
 					}
 					_ => unexpected!(parser, token),
@@ -34,10 +34,10 @@ impl<'a> Parse<'a> for Attribute {
 			Kind::Delim if matches!(token.char(), Some('*')) => {
 				let token = parser.next_with(Include::Whitespace);
 				match token.kind() {
-					Token::Delim if matches!(token.char(), Some('|')) => {
+					Kind::Delim if matches!(token.char(), Some('|')) => {
 						let token = parser.next_with(Include::Whitespace);
 						match token.kind() {
-							Token::Ident => {
+							Kind::Ident => {
 								attr.ns_prefix = NSPrefix::Wildcard;
 								attr.name = parser.parse_atom(token);
 							}

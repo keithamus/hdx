@@ -13,8 +13,8 @@ pub struct AnimationDelay(pub SmallVec<[Time; 2]>);
 
 impl<'a> Parse<'a> for AnimationDelay {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		Ok(match parser.peek() {
-			Token::Dimension(_, _, _) => {
+		Ok(match parser.peek().kind() {
+			Kind::Dimension => {
 				let mut values = smallvec![];
 				loop {
 					values.push(Time::parse(parser)?);
@@ -24,7 +24,7 @@ impl<'a> Parse<'a> for AnimationDelay {
 				}
 				AnimationDelay(values)
 			}
-			token => unexpected!(parser, token),
+			_ => unexpected!(parser),
 		})
 	}
 }
