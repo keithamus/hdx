@@ -11,7 +11,7 @@ pub struct Position(pub HorizontalPosition, pub VerticalPosition);
 
 impl<'a> Parse<'a> for Position {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let maybe_horizontal = if match_ignore_case!(parser.peek(), Kidn::Ident, atom!("top") | atom!("bottom")) {
+		let maybe_horizontal = if match_ignore_case!(parser.peek(), Kind::Ident, atom!("top") | atom!("bottom")) {
 			None
 		} else {
 			HorizontalPosition::parse(parser).ok()
@@ -128,7 +128,7 @@ impl<'a> Parse<'a> for VerticalPosition {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		let token = parser.peek();
 		Ok(match token.kind() {
-			Kind::Ident => match parser.parse_number(token) {
+			Kind::Ident => match parser.parse_atom_lower(token) {
 				atom!("center") => {
 					parser.next();
 					Self::Center

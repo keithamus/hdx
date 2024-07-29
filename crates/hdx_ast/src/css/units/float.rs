@@ -112,9 +112,9 @@ impl PartialOrd<f32> for CSSFloat {
 impl<'a> Parse<'a> for CSSFloat {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		let token = parser.next();
-		match token {
-			Kind::Number => Ok(parser.parse_number(token)),
-			token => unexpected!(parser, token),
+		match token.kind() {
+			Kind::Number => Ok(parser.parse_number(token).into()),
+			_ => unexpected!(parser, token),
 		}
 	}
 }
