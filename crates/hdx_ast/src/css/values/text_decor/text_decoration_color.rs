@@ -1,6 +1,6 @@
 use hdx_atom::atom;
 use hdx_derive::{Value, Writable};
-use hdx_lexer::Token;
+use hdx_lexer::Kind;
 use hdx_parser::{Parse, Parser, Result as ParserResult};
 
 use crate::css::types::Color;
@@ -17,8 +17,8 @@ pub enum TextDecorationColor {
 
 impl<'a> Parse<'a> for TextDecorationColor {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		Ok(match parser.cur() {
-			Token::Ident(atom) if atom.to_ascii_lowercase() == atom!("auto") => Self::Auto,
+		Ok(match parser.cur().kind() {
+			Kind::Ident if parser.parse_atom_lower(parser.cur()) == atom!("auto") => Self::Auto,
 			_ => Self::Color(Color::parse(parser)?),
 		})
 	}
