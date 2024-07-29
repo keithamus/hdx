@@ -1,6 +1,6 @@
 use hdx_atom::{atom, Atom};
 use hdx_derive::Value;
-use hdx_lexer::{QuoteStyle, Token};
+use hdx_lexer::{QuoteStyle, Kind};
 use hdx_parser::{unexpected, unexpected_ident, Parse, Parser, Result as ParserResult};
 use hdx_writer::WriteCss;
 
@@ -20,14 +20,15 @@ pub enum Content {
 
 impl<'a> Parse<'a> for Content {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		Ok(match parser.next() {
-			Token::Ident(atom) => match atom.to_ascii_lowercase() {
+		let token = parser.next();
+		Ok(match token.kind() {
+			Kind::Ident => match parser.parse_atom_lower(token) {
 				atom!("normal") => Self::Normal,
 				atom!("none") => Self::None,
 				atom => unexpected_ident!(parser, atom),
 			},
-			Token::String(atom, quote) => Self::String(atom.clone(), *quote),
-			token => unexpected!(parser, token),
+			Kind::String => Self::String(parser.parse_atom_lower(token), token.quote_style()),
+			_ => unexpected!(parser, token),
 		})
 	}
 }

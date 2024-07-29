@@ -11,7 +11,7 @@ use bitmask_enum::bitmask;
 use bumpalo::Bump;
 use constants::SURROGATE_RANGE;
 use hdx_syntax::{identifier::is_ident, is_escape_sequence, is_whitespace, EOF, REPLACEMENT};
-pub use token::{Kind, NumType, PairWise, QuoteStyle, Token};
+pub use token::{Kind, PairWise, QuoteStyle, Token};
 
 #[bitmask(u8)]
 #[bitmask_config(vec_debug)]

@@ -166,7 +166,7 @@ impl<'a> Parse<'a> for MediaQuery {
 			}
 			_ => {}
 		}
-		if media_type.is_some() && match_ignore_case!(parser.peek(), Token::Ident(atom!("and"))) {
+		if media_type.is_some() && match_ignore_case!(parser.peek(), Kind::Ident, atom!("and")) {
 			parser.next();
 			condition = Some(MediaCondition::parse(parser)?);
 		} else if media_type.is_none() {
@@ -272,7 +272,7 @@ impl<'a> Parse<'a> for MediaCondition {
 				loop {
 					expect_ignore_case!(parser.next(), Token::Ident(atom!("and")));
 					features.push(MediaFeature::parse(parser)?);
-					if !match_ignore_case!(parser.peek(), Token::Ident(atom!("and"))) {
+					if !match_ignore_case!(parser.peek(), Kind::Ident, atom!("and")) {
 						return Ok(Self::And(features));
 					}
 				}
@@ -281,7 +281,7 @@ impl<'a> Parse<'a> for MediaCondition {
 				loop {
 					expect_ignore_case!(parser.next(), Token::Ident(atom!("or")));
 					features.push(MediaFeature::parse(parser)?);
-					if !match_ignore_case!(parser.peek(), Token::Ident(atom!("or"))) {
+					if !match_ignore_case!(parser.peek(), Kind::Ident, atom!("or")) {
 						return Ok(Self::Or(features));
 					}
 				}

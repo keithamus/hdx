@@ -1,7 +1,7 @@
 use bitmask_enum::bitmask;
 use hdx_atom::atom;
 use hdx_derive::Value;
-use hdx_lexer::Token;
+use hdx_lexer::Kind;
 use hdx_parser::{match_ignore_case, unexpected, Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 
@@ -44,8 +44,12 @@ impl FontVariantEastAsian {
 impl<'a> Parse<'a> for FontVariantEastAsian {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		let mut value = Self::Normal;
-		while let Token::Ident(atom) = parser.peek() {
-			match atom.to_ascii_lowercase() {
+		loop {
+			let token = parser.peek();
+			if token.kind() != Kind::Ident {
+				break;
+			}
+			match parser.parse_atom_lower(token) {
 				atom!("normal") if value == Self::Normal => {
 					parser.next();
 					return Ok(value);
@@ -62,7 +66,7 @@ impl<'a> Parse<'a> for FontVariantEastAsian {
 			}
 			parser.next();
 		}
-		if match_ignore_case!(parser.peek(), Token::Ident(atom!("ruby"))) {
+		if match_ignore_case!(parser.peek(), Kind::Ident, atom!("ruby")) {
 			parser.next();
 			return Ok(value | Self::Ruby);
 		}
