@@ -1,6 +1,6 @@
 use hdx_atom::{atom, Atomizable};
 use hdx_derive::{Atomizable, Value};
-use hdx_lexer::{Kind, Token};
+use hdx_lexer::{Kind};
 use hdx_parser::{diagnostics, expect, unexpected, unexpected_ident, Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 
@@ -28,8 +28,9 @@ pub enum Float {
 
 impl<'a> Parse<'a> for Float {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let value = match parser.next() {
-			Token::Ident(atom) => match atom.to_ascii_lowercase() {
+		let token = parser.next();
+		let value = match token.kind() {
+			Kind::Ident => match parser.parse_atom_lower(token) {
 				atom!("none") => Self::None,
 				atom!("left") => Self::Left,
 				atom!("right") => Self::Right,
@@ -43,46 +44,56 @@ impl<'a> Parse<'a> for Float {
 				atom!("snap-inline") => Self::SnapInline,
 				atom => unexpected_ident!(parser, atom),
 			},
-			Token::Function(atom) => match atom.to_ascii_lowercase() {
+			Kind::Function => match parser.parse_atom_lower(token) {
 				atom!("snap-block") => {
 					let length = Length::parse(parser)?;
-					match parser.next() {
-						Token::Comma => match parser.next() {
-							Token::Ident(atom) => {
-								if let Some(dir) = SnapBlockDirection::from_atom(&atom.to_ascii_lowercase()) {
-									expect!(parser.next(), Kind::RightParen);
-									Self::SnapBlockFunction(length, Some(dir))
-								} else {
-									unexpected_ident!(parser, atom)
+					let token = parser.next();
+					match token.kind() {
+						Kind::Comma => {
+							let token = parser.next();
+							match token.kind() {
+								Kind::Ident => {
+									let atom = parser.parse_atom_lower(token);
+									if let Some(dir) = SnapBlockDirection::from_atom(&atom.to_ascii_lowercase()) {
+										expect!(parser.next(), Kind::RightParen);
+										Self::SnapBlockFunction(length, Some(dir))
+									} else {
+										unexpected_ident!(parser, atom)
+									}
 								}
+								_ => unexpected!(parser, token),
 							}
-							token => unexpected!(parser, token),
 						},
-						Token::RightParen => Self::SnapBlockFunction(length, None),
-						token => unexpected!(parser, token),
+						Kind::RightParen => Self::SnapBlockFunction(length, None),
+						_ => unexpected!(parser, token),
 					}
 				}
 				atom!("snap-inline") => {
 					let length = Length::parse(parser)?;
-					match parser.next() {
-						Token::Comma => match parser.next() {
-							Token::Ident(atom) => {
-								if let Some(dir) = SnapInlineDirection::from_atom(&atom.to_ascii_lowercase()) {
-									expect!(parser.next(), Kind::RightParen);
-									Self::SnapInlineFunction(length, Some(dir))
-								} else {
-									unexpected_ident!(parser, atom)
+					let token = parser.next();
+					match token.kind() {
+						Kind::Comma => {
+							let token = parser.next();
+							match token.kind() {
+								Kind::Ident => {
+									let atom = parser.parse_atom_lower(token);
+									if let Some(dir) = SnapInlineDirection::from_atom(&atom.to_ascii_lowercase()) {
+										expect!(parser.next(), Kind::RightParen);
+										Self::SnapInlineFunction(length, Some(dir))
+									} else {
+										unexpected_ident!(parser, atom)
+									}
 								}
+								_ => unexpected!(parser, token),
 							}
-							token => unexpected!(parser, token),
 						},
-						Token::RightParen => Self::SnapInlineFunction(length, None),
-						token => unexpected!(parser, token),
+						Kind::RightParen => Self::SnapInlineFunction(length, None),
+						_ => unexpected!(parser, token),
 					}
 				}
 				atom => Err(diagnostics::UnexpectedFunction(atom, parser.span()))?,
 			},
-			token => unexpected!(parser, token),
+			_ => unexpected!(parser, token),
 		};
 		Ok(value)
 	}
