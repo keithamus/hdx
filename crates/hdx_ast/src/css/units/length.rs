@@ -225,7 +225,7 @@ impl<'a> Parse<'a> for LineWidth {
 				atom!("thin") => Ok(Self::Thin),
 				atom!("medium") => Ok(Self::Medium),
 				atom!("thick") => Ok(Self::Thick),
-				_ => unexpected_ident!(parser, atom),
+				atom => unexpected_ident!(parser, atom),
 			},
 			Kind::Dimension => {
 				if let Some(l) = Length::new(parser.parse_number(token).into(), parser.parse_atom_lower(token)).map(Self::Length) {
