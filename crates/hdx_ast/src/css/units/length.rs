@@ -195,7 +195,9 @@ impl<'a> Parse<'a> for LengthPercentageOrAuto {
 				atom => unexpected_ident!(parser, atom),
 			},
 			Kind::Dimension => {
-				if let Some(l) = LengthPercentage::new(parser.parse_number(token).into(), parser.parse_atom_lower(token)) {
+				if let Some(l) =
+					LengthPercentage::new(parser.parse_number(token).into(), parser.parse_atom_lower(token))
+				{
 					Ok(Self::LengthPercentage(l))
 				} else {
 					unexpected!(parser, token)
@@ -228,7 +230,9 @@ impl<'a> Parse<'a> for LineWidth {
 				atom => unexpected_ident!(parser, atom),
 			},
 			Kind::Dimension => {
-				if let Some(l) = Length::new(parser.parse_number(token).into(), parser.parse_atom_lower(token)).map(Self::Length) {
+				if let Some(l) =
+					Length::new(parser.parse_number(token).into(), parser.parse_atom_lower(token)).map(Self::Length)
+				{
 					Ok(l)
 				} else {
 					unexpected!(parser, token)

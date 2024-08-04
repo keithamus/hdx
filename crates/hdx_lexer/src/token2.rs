@@ -1,11 +1,22 @@
 use bitmask_enum::bitmask;
+use miette::{SourceOffset, SourceSpan};
 #[cfg(feature = "serde")]
 use serde::{
-	ser::{SerializeStruct, Serializer},
+	ser::{Serialize as SerializeTrait, SerializeStruct, Serializer},
 	Serialize,
 };
 
-use crate::{Include, Span};
+use crate::Include;
+
+#[derive(Default, Debug, Clone, Copy, PartialEq, Hash)]
+#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "kind", content = "value"))]
+pub enum QuoteStyle {
+	// Some tokens/ast nodesthat would otherwise be strings (e.g. url(), named fonts) can have no quotes.
+	None,
+	Single,
+	#[default]
+	Double,
+}
 
 #[derive(Default)]
 #[bitmask(u8)] // Actually more like a "u5" as the 3 LMB are unused
@@ -31,8 +42,9 @@ pub enum Kind {
 	Function = 0b1001,  // https://drafts.csswg.org/css-syntax/#function-token-diagram
 	AtKeyword = 0b1010, // https://drafts.csswg.org/css-syntax/#at-keyword-token-diagram
 	Hash = 0b1011,      // https://drafts.csswg.org/css-syntax/#hash-token-diagram
-	String = 0b1100,    // https://drafts.csswg.org/css-syntax/#string-token-diagram
-	Url = 0b1101,       // https://drafts.csswg.org/css-syntax/#url-token-diagram
+	HashId = 0b1100,    // https://drafts.csswg.org/css-syntax/#hash-token-diagram
+	String = 0b1101,    // https://drafts.csswg.org/css-syntax/#string-token-diagram
+	Url = 0b1110,       // https://drafts.csswg.org/css-syntax/#url-token-diagram
 
 	// Single character Tokens (mask 0b1_XXXX)
 	Delim = 0b1_0000,       // https://drafts.csswg.org/css-syntax/#typedef-delim-token
@@ -48,6 +60,31 @@ pub enum Kind {
 }
 
 impl Kind {
+	#[inline]
+	pub fn is_trivia(&self) -> bool {
+		self.bits | 0b0_0011 == 0b0_0011
+	}
+
+	#[inline]
+	pub fn is_numeric(&self) -> bool {
+		self.bits | 0b0_0001 == 0b0_0101
+	}
+
+	#[inline]
+	pub fn is_bad(&self) -> bool {
+		self.bits | 0b0_0001 == 0b0_0111
+	}
+
+	#[inline]
+	pub fn has_atom(&self) -> bool {
+		self.bits | 0b0_0111 == 0b0_1111
+	}
+
+	#[inline]
+	pub fn is_character_token(&self) -> bool {
+		self.bits | 0b0_1111 == 0b1_1111
+	}
+
 	pub fn as_str(&self) -> &str {
 		match *self {
 			Kind::Eof => "EOF",
@@ -62,6 +99,7 @@ impl Kind {
 			Kind::Function => "Function",
 			Kind::AtKeyword => "AtKeyword",
 			Kind::Hash => "Hash",
+			Kind::HashId => "HashId",
 			Kind::String => "String",
 			Kind::Url => "Url",
 			Kind::Delim => "Delim",
@@ -79,6 +117,11 @@ impl Kind {
 	}
 }
 
+static TF_MASK: u32 = !((1 << 29) - 1);
+static K_MASK: u32 = !((1 << 24) - 1);
+static L_MASK: u32 = (1 << 24) - 1;
+static NL_R_MASK: u32 = (1 << 16) - 1;
+
 #[bitmask(u32)]
 pub enum TokenFlags {
 	// Anatomy of TokenFlags
@@ -93,21 +136,13 @@ pub enum TokenFlags {
 	//                          001 = Floating Point
 	//                          010 = Has Sign Digit
 	//                          100 = (Reserved)
-	//                        If K is String:
-	//                          001 = Uses Double Quotes (0 would be Single)
-	//                          010 = Has a closing quote
+	//                        If K is String or Url this is `QuoteFlags`
+	//                          001 = Uses Single Quote
+	//                          010 = Uses Double Quotes
 	//                          100 = Includes escape characters
-	//                        If K is Ident, Function, AtKeyword:
+	//                        If K is Ident, Function, AtKeyword, Hash:
 	//                          001 = Contains non-lower-ASCII (e.g. uppercase or unicode)
 	//                          010 = Is a "Custom Ident" - starts with two dashes
-	//                          100 = Includes escape characters
-	//                        If K is Hash:
-	//                          001 = Contains non-lower-ASCII (e.g. uppercase or unicode)
-	//                          010 = First character is ascii, aka it's a "HashId"
-	//                          100 = Includes escape characters
-	//                        If K is Url:
-	//                          001 = Ended with a `)`
-	//                          010 = Contains whitespace after the `(`
 	//                          100 = Includes escape characters
 	//                        If K is Whitespace/Comment:
 	//                          001 = Contains at least 1 tab character.
@@ -116,13 +151,15 @@ pub enum TokenFlags {
 	//                        If K is CdcOrCdo
 	//                          000 = Is Cdo
 	//                          001 = Is Cdc
+	//                         If K is
 	//   K   = Kind Flags.    Maps to `Kind` enum
 	//   L   = Lengthdata.    If K is Delim then this is `char` (see C below)
 	//                        If K is Number/Dimension then this is split further (see NL below)
 	//                        If K is Whitespace, Comment, String, Url, Ident, Function, AtKeyword,
-	//                        If K is a non-delim single char, i.e. Colon->RightCurly then this is
-	//                        `char` (see C below).
-	//                        Max token length is 16777216 aka 16MB. This sounds very long
+	//                        If K is a non-delim single char, i.e. Colon->RightCurly then these
+	//                        will all be 0s.
+	//                        Hash, HashId, then this number is 1 less than the token length,
+	//                        meaning max token length is 16777216 aka 16MB. This sounds very long
 	//                        but also CSS can host very large image data URLs. 16MB seems like a
 	//                        good limitation for this parser though; while browsers need
 	//                        to accomodate much larger data URLs
@@ -132,7 +169,7 @@ pub enum TokenFlags {
 	//                        their CSS they probably should split it out.
 	//
 	//   C   = Char.          This is `char` type. All available `chars` in unicode can be
-	//                        represented in 24bits as the upper bits are for surrogates.
+	//                        represented in 24bits.
 	//   NL  = Number Length. If thie Kind is a Numbers or Dimensions then the 8LMB become the
 	//                        number of code points required to produce the numeric length, while
 	//                        the remaining 17bits are used to determine the Dimensions identifier
@@ -158,21 +195,6 @@ pub struct Token {
 	pub offset: u32,
 }
 
-#[derive(Debug, Copy, Clone, PartialEq, Default, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(tag = "kind", content = "value"))]
-pub enum QuoteStyle {
-	// Some tokens/ast nodesthat would otherwise be strings (e.g. url(), named fonts) can have no quotes.
-	None,
-	Single,
-	#[default]
-	Double,
-}
-
-static TF_MASK: u32 = !((1 << 29) - 1);
-static K_MASK: u32 = !((1 << 24) - 1);
-static L_MASK: u32 = (1 << 24) - 1;
-static NL_R_MASK: u32 = (1 << 16) - 1;
-
 impl Token {
 	pub fn new(kind: Kind, type_flags: u8, offset: u32, len: u32) -> Self {
 		let len_masked = if kind == Kind::Number { (len << 16) & L_MASK } else { len & L_MASK };
@@ -186,13 +208,9 @@ impl Token {
 		let flags = TokenFlags {
 			bits: (((type_flags as u32) << 29) & TF_MASK)
 				| (((Kind::Dimension.bits as u32) << 24) & K_MASK)
-				| (((num_len << 16) | (unit_len & NL_R_MASK)) & L_MASK),
+				| (((num_len << 16) | (unit_len & NL_R_MASK)) | L_MASK),
 		};
 		Self { flags, offset }
-	}
-
-	pub fn span(&self) -> Span {
-		Span::new(self.offset, self.offset + self.len())
 	}
 
 	#[inline(always)]
@@ -222,7 +240,7 @@ impl Token {
 	}
 
 	#[inline(always)]
-	pub fn is_ident_like(&self) -> bool {
+	fn is_ident_like(&self) -> bool {
 		self.kind_bits() & 0b11000 == 0b01000 && self.kind_bits() != Kind::String.bits
 	}
 
@@ -238,31 +256,16 @@ impl Token {
 	pub fn len(&self) -> u32 {
 		// EOF
 		if self.kind_bits() & 0b11111 == 0 {
-			debug_assert!(self.kind() == Kind::Eof);
 			0
-		} else if self.kind_bits() == Kind::Delim.bits {
-			self.char().unwrap().len_utf8() as u32
-		// Delim-like flag is set
+		// Delim flag is set
 		} else if self.kind_bits() & 0b10000 == 0b10000 {
-			debug_assert!(matches!(
-				self.kind(),
-				Kind::Colon
-					| Kind::Semicolon | Kind::Comma
-					| Kind::LeftSquare | Kind::RightSquare
-					| Kind::LeftParen | Kind::RightParen
-					| Kind::LeftCurly | Kind::RightCurly
-			));
 			1
 		// CdcOrCdo
-		} else if self.kind_bits() == Kind::CdcOrCdo.bits {
-			debug_assert!(self.kind() == Kind::CdcOrCdo);
+		} else if self.kind_bits() & 0b00011 == 0b00011 {
 			4 - (self.third_bit_is_set() as u32)
-		// Number
-		} else if self.kind_bits() == Kind::Number.bits {
+		// Number / Delim
+		} else if self.kind_bits() & 0b11100 == 0b00100 {
 			(self.flags.bits & L_MASK) >> 16
-		// Delim
-		} else if self.kind_bits() == Kind::Dimension.bits {
-			((self.flags.bits & L_MASK) >> 16) + (self.flags.bits & NL_R_MASK)
 		} else {
 			self.flags.bits & L_MASK
 		}
@@ -293,11 +296,10 @@ impl Token {
 	}
 
 	#[inline]
-	pub fn numeric_len(&self) -> u32 {
-		(self.flags.bits & L_MASK) >> 16
+	pub fn double_sign(&self) -> bool {
+		self.kind_bits() & 0b11100 == 0b00100 && self.second_bit_is_set()
 	}
 
-	// String style checks
 	#[inline]
 	pub fn quote_style(&self) -> QuoteStyle {
 		if self.kind_bits() == Kind::String.bits {
@@ -311,19 +313,19 @@ impl Token {
 	}
 
 	#[inline]
-	pub fn string_has_closing_quote(&self) -> bool {
-		self.kind_bits() == Kind::String.bits && self.second_bit_is_set()
-	}
-
-	// Escape style checks
-	#[inline]
-	pub fn can_escape(&self) -> bool {
-		self.kind_bits() == Kind::String.bits || self.is_ident_like()
-	}
-
-	#[inline]
 	pub fn contains_escape_chars(&self) -> bool {
-		self.can_escape() && self.first_bit_is_set()
+		(self.kind_bits() == Kind::String.bits || self.is_ident_like()) && self.first_bit_is_set()
+	}
+
+	#[inline]
+	pub fn contains_newline(&self) -> bool {
+		(self.kind_bits() == Kind::Whitespace.bits || self.kind_bits() == Kind::Comment.bits)
+			&& self.second_bit_is_set()
+	}
+
+	#[inline]
+	pub fn contains_tab(&self) -> bool {
+		(self.kind_bits() == Kind::Whitespace.bits || self.kind_bits() == Kind::Comment.bits) && self.third_bit_is_set()
 	}
 
 	#[inline]
@@ -339,34 +341,6 @@ impl Token {
 	#[inline]
 	pub fn is_trivia(&self) -> bool {
 		self.kind_bits() & 0b000011 == self.kind_bits()
-	}
-
-	// Url style checks
-	#[inline]
-	pub fn url_has_leading_space(&self) -> bool {
-		self.kind_bits() == Kind::Url.bits && self.second_bit_is_set()
-	}
-
-	#[inline]
-	pub fn url_has_closing_paren(&self) -> bool {
-		self.kind_bits() == Kind::Url.bits && self.third_bit_is_set()
-	}
-
-	// Whitespace/Comment Style checks
-	#[inline]
-	pub fn contains_newline(&self) -> bool {
-		(self.kind_bits() == Kind::Whitespace.bits || self.kind_bits() == Kind::Comment.bits)
-			&& self.second_bit_is_set()
-	}
-
-	#[inline]
-	pub fn contains_tab(&self) -> bool {
-		(self.kind_bits() == Kind::Whitespace.bits || self.kind_bits() == Kind::Comment.bits) && self.third_bit_is_set()
-	}
-
-	#[inline]
-	pub fn hash_is_id_like(&self) -> bool {
-		(self.kind_bits() == Kind::Hash.bits) && self.second_bit_is_set()
 	}
 
 	#[inline]
@@ -431,8 +405,20 @@ impl std::fmt::Display for Token {
 	}
 }
 
+impl From<Token> for SourceOffset {
+	fn from(tok: Token) -> Self {
+		Self::from(tok.offset as usize)
+	}
+}
+
+impl From<Token> for SourceSpan {
+	fn from(tok: Token) -> Self {
+		Self::new(tok.into(), tok.len() as usize)
+	}
+}
+
 #[cfg(feature = "serde")]
-impl serde::ser::Serialize for Token {
+impl SerializeTrait for Token {
 	fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
 	where
 		S: Serializer,
@@ -466,19 +452,19 @@ impl PairWise {
 		}
 	}
 
-	pub fn start(&self) -> Kind {
+	pub fn start(&self) -> &Kind {
 		match self {
-			Self::Paren => Kind::LeftParen,
-			Self::Curly => Kind::LeftCurly,
-			Self::Square => Kind::LeftSquare,
+			Self::Paren => &Kind::LeftParen,
+			Self::Curly => &Kind::LeftCurly,
+			Self::Square => &Kind::LeftSquare,
 		}
 	}
 
-	pub fn end(&self) -> Kind {
+	pub fn end(&self) -> &Kind {
 		match self {
-			Self::Paren => Kind::RightParen,
-			Self::Curly => Kind::RightCurly,
-			Self::Square => Kind::RightSquare,
+			Self::Paren => &Kind::RightParen,
+			Self::Curly => &Kind::RightCurly,
+			Self::Square => &Kind::RightSquare,
 		}
 	}
 }

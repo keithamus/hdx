@@ -78,7 +78,7 @@ impl<'a> Parse<'a> for HorizontalRatio {
 					let len = LengthPercentage::try_parse(parser).ok();
 					Self::Right(len)
 				}
-				_ => unexpected_ident!(parser, atom),
+				atom => unexpected_ident!(parser, atom),
 			},
 			_ => Self::LengthPercentage(LengthPercentage::parse(parser)?),
 		})
@@ -126,7 +126,7 @@ pub enum VerticalRatio {
 
 impl<'a> Parse<'a> for VerticalRatio {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-	  let token = parser.peek();
+		let token = parser.peek();
 		Ok(match token.kind() {
 			Kind::Ident => match parser.parse_atom_lower(token) {
 				atom!("center") => {
@@ -143,7 +143,7 @@ impl<'a> Parse<'a> for VerticalRatio {
 					let len = LengthPercentage::try_parse(parser).ok();
 					Self::Bottom(len)
 				}
-				_ => unexpected_ident!(parser, atom),
+				atom => unexpected_ident!(parser, atom),
 			},
 			_ => Self::LengthPercentage(LengthPercentage::parse(parser)?),
 		})

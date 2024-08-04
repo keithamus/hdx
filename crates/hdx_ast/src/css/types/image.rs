@@ -3,7 +3,8 @@ use hdx_atom::{atom, Atom, Atomizable};
 use hdx_derive::{Atomizable, Parsable, Writable};
 use hdx_lexer::{Kind, QuoteStyle};
 use hdx_parser::{
-	discard, expect, expect_ignore_case, peek, unexpected, unexpected_ident, Parse, Parser, Result as ParserResult,
+	discard, expect, expect_ignore_case, match_ignore_case, peek, unexpected, unexpected_ident, Parse, Parser,
+	Result as ParserResult,
 };
 use hdx_writer::{CssWriter, OutputOption, Result as WriterResult, WriteCss};
 use smallvec::{smallvec, SmallVec};
@@ -101,7 +102,7 @@ impl<'a> Gradient {
 
 impl<'a> Parse<'a> for Gradient {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let gradient = expect_ignore_case! { parser.next(), Token::Function(_):
+		let gradient = expect_ignore_case! { parser.next(), Kind::Function:
 			atom @ atom!("linear-gradient") | atom @ atom!("repeating-linear-gradient") => {
 				let dir = if let Ok(dir) = LinearDirection::try_parse(parser) {
 					expect!(parser.next(), Kind::Comma);
@@ -123,8 +124,7 @@ impl<'a> Parse<'a> for Gradient {
 				if size.is_none() && shape.is_some() {
 					size = RadialSize::parse(parser).ok();
 				}
-				let position = if matches!(parser.cur(), Token::Ident(atom) if atom.to_ascii_lowercase() == atom!("at"))
-				{
+				let position = if match_ignore_case!(parser.cur(), Kind::Ident, atom!("at")) {
 					parser.next();
 					Some(Position::parse(parser)?)
 				} else {
@@ -263,21 +263,22 @@ pub enum NamedDirection {
 
 impl<'a> Parse<'a> for LinearDirection {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		match parser.peek() {
-			Token::Dimension(_, _, _) => return Ok(Self::Angle(Angle::parse(parser)?)),
-			Token::Ident(_) => {}
-			token => unexpected!(parser, token.clone()),
+		let token = parser.peek();
+		match token.kind() {
+			Kind::Dimension => return Ok(Self::Angle(Angle::parse(parser)?)),
+			Kind::Ident => {}
+			_ => unexpected!(parser, token.clone()),
 		};
 		expect_ignore_case!(parser.next(), Kind::Ident, atom!("to"));
 		let mut dir = NamedDirection::none();
-		dir |= expect_ignore_case! { parser.next(), Token::Ident(_):
+		dir |= expect_ignore_case! { parser.next(), Kind::Ident:
 			atom!("top") => NamedDirection::Top,
 			atom!("left") => NamedDirection::Left,
 			atom!("right") => NamedDirection::Right,
 			atom!("bottom") => NamedDirection::Bottom,
 		};
 		if peek!(parser, Kind::Ident) {
-			dir |= expect_ignore_case! { parser.next(), Token::Ident(_):
+			dir |= expect_ignore_case! { parser.next(), Kind::Ident:
 				atom @ atom!("top") => {
 					if dir.contains(NamedDirection::Top) || dir.contains(NamedDirection::Bottom) {
 						unexpected_ident!(parser, atom)
@@ -354,36 +355,38 @@ pub enum RadialSize {
 
 impl<'a> Parse<'a> for RadialSize {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		Ok(match parser.peek().clone() {
-			Token::Ident(atom) => {
+		let first = parser.peek();
+		Ok(match first.kind() {
+			Kind::Ident => {
 				parser.next();
-				match atom.to_ascii_lowercase() {
+				match parser.parse_atom_lower(first) {
 					atom!("closest-corner") => RadialSize::ClosestCorner,
 					atom!("closest-side") => RadialSize::ClosestSide,
 					atom!("farthest-corner") => RadialSize::FarthestCorner,
 					atom!("farthest-side") => RadialSize::FarthestSide,
-					_ => unexpected_ident!(parser, atom),
+					atom => unexpected_ident!(parser, atom),
 				}
 			}
-			first @ Token::Number(_, _) | first @ Token::Dimension(_, atom!("%"), _) => {
-				match parser.peek_n(2).clone() {
-					second @ Token::Number(_, _) | second @ Token::Dimension(_, atom!("%"), _) => {
-						if matches!(first, Token::Number(_, _)) != matches!(second, Token::Number(_, _)) {
-							unexpected!(parser);
+			Kind::Number | Kind::Dimension if matches!(parser.parse_atom(first), atom!("%")) => {
+				let second = parser.peek_n(2);
+				match second.kind() {
+					Kind::Number | Kind::Dimension if matches!(parser.parse_atom(first), atom!("%")) => {
+						if first.kind() != second.kind() {
+							unexpected!(parser, second);
 						}
 						let first_len = LengthPercentage::parse(parser)?;
 						let second_len = LengthPercentage::parse(parser)?;
 						Self::Elliptical(first_len, second_len)
 					}
 					_ => {
-						if matches!(first, Token::Dimension(_, _, _)) {
+						if first.kind() == Kind::Dimension {
 							unexpected!(parser, first);
 						}
 						Self::Circular(Length::parse(parser)?)
 					}
 				}
 			}
-			token => unexpected!(parser, token),
+			_ => unexpected!(parser, first),
 		})
 	}
 }

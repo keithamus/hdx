@@ -1,11 +1,11 @@
-use hdx_lexer::{Include, Token};
+use hdx_lexer::{Include, Kind, Span, Token};
 
-use crate::{span::Span, Parser};
+use crate::{unexpected, Parser, Result};
 
 pub struct ParserCheckpoint {
 	token: Token,
-	warnings_pos: usize,
-	errors_pos: usize,
+	warnings_pos: u8,
+	errors_pos: u8,
 }
 
 impl<'a> Parser<'a> {
@@ -25,8 +25,18 @@ impl<'a> Parser<'a> {
 	}
 
 	#[inline]
-	pub fn peek(&mut self) -> Token {
+	pub fn peek_next(&mut self) -> Token {
 		self.peek_with(self.lexer.include)
+	}
+
+	#[inline]
+	pub fn peek_kind(&mut self, kind: Kind) -> Option<Token> {
+		let token = self.peek_with(self.lexer.include);
+		if token.kind() == kind {
+			Some(token)
+		} else {
+			None
+		}
 	}
 
 	#[inline]
@@ -58,6 +68,16 @@ impl<'a> Parser<'a> {
 	}
 
 	#[inline]
+	pub fn next_kind(&mut self, kind: Kind) -> Result<Token> {
+		self.token = self.lexer.advance();
+		if self.token.kind() == kind {
+			Ok(self.token)
+		} else {
+			unexpected!(self, self.token)
+		}
+	}
+
+	#[inline]
 	pub fn next(&mut self) -> Token {
 		self.token = self.lexer.advance();
 		self.token
@@ -74,11 +94,15 @@ impl<'a> Parser<'a> {
 		let ParserCheckpoint { token, warnings_pos, errors_pos } = checkpoint;
 		self.lexer.rewind(token);
 		self.token = token;
-		self.warnings.truncate(warnings_pos);
-		self.errors.truncate(errors_pos);
+		self.warnings.truncate(warnings_pos as usize);
+		self.errors.truncate(errors_pos as usize);
 	}
 
 	pub fn checkpoint(&self) -> ParserCheckpoint {
-		ParserCheckpoint { token: self.token, warnings_pos: self.warnings.len(), errors_pos: self.errors.len() }
+		ParserCheckpoint {
+			token: self.token,
+			warnings_pos: self.warnings.len() as u8,
+			errors_pos: self.errors.len() as u8,
+		}
 	}
 }

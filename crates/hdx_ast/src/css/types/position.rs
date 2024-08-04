@@ -78,7 +78,7 @@ impl<'a> Parse<'a> for HorizontalPosition {
 					let len = LengthPercentage::try_parse(parser).ok();
 					Self::Right(len)
 				}
-				_ => unexpected_ident!(parser, atom),
+				atom => unexpected_ident!(parser, atom),
 			},
 			_ => Self::LengthPercentage(LengthPercentage::parse(parser)?),
 		})
@@ -143,7 +143,7 @@ impl<'a> Parse<'a> for VerticalPosition {
 					let len = LengthPercentage::try_parse(parser).ok();
 					Self::Bottom(len)
 				}
-				_ => unexpected_ident!(parser, atom),
+				atom => unexpected_ident!(parser, atom),
 			},
 			_ => Self::LengthPercentage(LengthPercentage::parse(parser)?),
 		})

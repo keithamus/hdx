@@ -1,5 +1,5 @@
 use hdx_atom::Atom;
-use hdx_lexer::Kind;
+use hdx_lexer::{Kind, Spanned, Token};
 
 mod declarations;
 mod rules;
@@ -9,10 +9,7 @@ pub use declarations::*;
 pub use rules::*;
 pub use selectors::*;
 
-use crate::{
-	expect, expect_ignore_case, parser::Parser, peek, span::Spanned, unexpected, unexpected_ident, Comparison, Result,
-	State, Vec,
-};
+use crate::{expect, expect_ignore_case, parser::Parser, unexpected, unexpected_ident, Comparison, Result, State, Vec};
 
 impl<'a, T: Parse<'a>> Parse<'a> for Vec<'a, T> {
 	fn parse(parser: &mut Parser<'a>) -> Result<Vec<'a, T>> {
@@ -73,6 +70,10 @@ pub trait Parse<'a>: Sized {
 	}
 }
 
+pub trait Peek<'a>: Sized {
+	fn peek(parser: &mut Parser<'a>) -> Option<Token>;
+}
+
 pub trait Block<'a>: Sized + Parse<'a> {
 	type Declaration: Parse<'a>;
 	type Rule: Parse<'a>;
@@ -85,7 +86,7 @@ pub trait Block<'a>: Sized + Parse<'a> {
 		let mut declarations = parser.new_vec();
 		let mut rules = parser.new_vec();
 		loop {
-			match parser.peek().kind() {
+			match parser.peek_next().kind() {
 				Kind::Semicolon => {
 					parser.next();
 				}
@@ -117,7 +118,7 @@ pub trait StyleSheet<'a>: Sized + Parse<'a> {
 	fn parse_stylesheet(parser: &mut Parser<'a>) -> Result<Vec<'a, Spanned<Self::Rule>>> {
 		let mut rules: Vec<'a, Spanned<Self::Rule>> = parser.new_vec();
 		loop {
-			match parser.peek().kind() {
+			match parser.peek_next().kind() {
 				Kind::Eof => {
 					return Ok(rules);
 				}
@@ -137,7 +138,7 @@ pub trait DiscreteMediaFeature<'a>: Sized + Default {
 
 	fn parse_descrete_media_feature(name: Atom, parser: &mut Parser<'a>) -> Result<Self> {
 		expect_ignore_case!(parser.next(), Kind::Ident, name);
-		let value = match parser.peek().kind() {
+		let value = match parser.peek_next().kind() {
 			Kind::Colon => {
 				parser.next();
 				Self::parse_media_feature_value(parser)?
@@ -160,7 +161,7 @@ pub trait RangedMediaFeature<'a>: Sized {
 				let mut legacy = false;
 				let legacy_cmp = match parser.parse_atom_lower(token) {
 					atom if atom == name => {
-						legacy = peek!(parser, Kind::Colon);
+						legacy = parser.peek_kind(Kind::Colon).is_some();
 						Comparison::Equal
 					}
 					atom if atom.strip_prefix("max-").unwrap_or("") == name.as_ref() => {
@@ -188,7 +189,7 @@ pub trait RangedMediaFeature<'a>: Sized {
 		};
 		let left_cmp = Comparison::parse(parser)?;
 		expect_ignore_case!(parser.next(), Kind::Ident, name);
-		if !peek!(parser, Kind::Delim) {
+		if parser.peek_kind(Kind::Delim).is_none() {
 			return Ok(Self::new((left_cmp, left), None, false));
 		}
 		let right_cmp = Comparison::parse(parser)?;

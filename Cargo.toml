@@ -15,6 +15,7 @@ repository = "https://github.com/keithamus/hdx"
 hdx = { version = "0.0.1", path = "crates/hdx" }
 hdx_atom = { version = "0.0.0", path = "crates/hdx_atom" }
 hdx_derive = { version = "0.0.0", path = "crates/hdx_derive" }
+hdx_proc_macro = { version = "0.0.0", path = "crates/hdx_proc_macro" }
 hdx_parser = { version = "0.0.1", path = "crates/hdx_parser" }
 hdx_lexer = { version = "0.0.1", path = "crates/hdx_lexer" }
 hdx_syntax = { version = "0.0.0", path = "crates/hdx_syntax" }
@@ -46,6 +47,7 @@ pprof = { version = "0.13.0" }
 flate2 = { version = "1.0.29" }
 insta = { version = "1.38.0" }
 console = { version = "0.15.8" }
+prettyplease = { version = "0.2.20" }
 
 string_cache = { version = "0.8.7" }
 string_cache_codegen = { version = "0.5.2" }

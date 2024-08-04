@@ -1,31 +1,24 @@
 use hdx_atom::atom;
-use hdx_derive::{Value, Writable};
-use hdx_lexer::Token;
-use hdx_parser::{peek_ignore_case, Parse, Parser, Result as ParserResult};
-
-use crate::css::types::Color;
+use hdx_derive::{from_syntax, Value};
+use hdx_lexer::{Kind, Token};
+use hdx_parser::{Parse, Parser, Result as ParserResult};
 
 // https://drafts.csswg.org/css-ui/#caret-color
-// auto | <color>
-#[derive(Value, Writable, Default, PartialEq, Debug, Clone, Hash)]
+#[from_syntax(auto | <color>)]
+#[derive(Value)]
 #[value(Inherits)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-pub enum CaretColor {
-	#[default]
-	Auto, // atom!("auto")
-	Color(Color),
-}
+pub enum CaretColor {}
 
-impl<'a> Parse<'a> for CaretColor {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		Ok(if peek_ignore_case!(parser, Kind::Ident, atom!("auto")) {
-			Self::Auto
-		} else {
-			Self::Color(Color::parse(parser)?)
-		})
-	}
-}
-
+// impl<'a> Parse<'a> for CaretColor {
+// 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
+// 		Ok(match parser.cur().kind() {
+// 			Kind::Ident if parser.parse_atom_lower(parser.cur()) == atom!("auto") => Self::Auto,
+// 			_ => Self::Color(Color::parse(parser)?),
+// 		})
+// 	}
+// }
+//
 #[cfg(test)]
 mod tests {
 	use super::*;

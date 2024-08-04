@@ -3,7 +3,7 @@ mod syntax;
 
 use crate::css::units::{Angle, CSSFloat, Percent};
 use hdx_atom::{atom, Atomizable};
-use hdx_lexer::{Kind};
+use hdx_lexer::Kind;
 use hdx_parser::{
 	discard, expect, expect_delim, match_ignore_case, todo, unexpected, unexpected_function, unexpected_ident, Parse,
 	Parser, Result as ParserResult,
@@ -62,27 +62,32 @@ pub struct AbsoluteColorFunction(pub ColorFunctionSyntax, pub Channel, pub Chann
 
 impl<'a> Parse<'a> for AbsoluteColorFunction {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let mut syntax = match parser.next() {
-			Token::Function(atom) => match atom.to_ascii_lowercase() {
-				atom!("color") => match parser.next() {
-					Token::Ident(atom) => {
-						if let Some(space) = ColorFunctionSyntax::from_color_space(atom.clone()) {
-							space
-						} else {
-							unexpected_ident!(parser, atom)
+		let token = parser.next();
+		let mut syntax = match token.kind() {
+			Kind::Function => match parser.parse_atom_lower(token) {
+				atom!("color") => {
+					let token = parser.next();
+					let atom = parser.parse_atom(token);
+					match token.kind() {
+						Kind::Ident => {
+							if let Some(space) = ColorFunctionSyntax::from_color_space(atom) {
+								space
+							} else {
+								unexpected_ident!(parser, atom)
+							}
 						}
+						_ => unexpected!(parser, token),
 					}
-					token => unexpected!(parser, token),
-				},
+				}
 				named => {
 					if let Some(func) = ColorFunctionSyntax::from_named_function(named) {
 						func
 					} else {
-						unexpected_function!(parser, atom)
+						unexpected_function!(parser, named)
 					}
 				}
 			},
-			token => unexpected!(parser, token),
+			_ => unexpected!(parser, token),
 		};
 		let first = Channel::parse(parser)?;
 		let percent = matches!(first, Channel::Percent(_));
@@ -201,21 +206,23 @@ impl<'a> Parse<'a> for Color {
 			atom!("color-mix") => todo!(parser),
 			_ => return Ok(Color::Absolute(AbsoluteColorFunction::parse(parser)?))
 		};
-		Ok(match parser.next() {
-			Token::Ident(atom) => match atom.to_ascii_lowercase() {
+		let token = parser.next();
+		Ok(match token.kind() {
+			Kind::Ident => match parser.parse_atom_lower(token) {
 				atom!("currentcolor") => Color::CurrentColor,
 				atom!("transparent") => Color::Transparent,
 				name => {
 					if let Some(named) = NamedColor::from_atom(&name) {
 						Color::Named(named)
 					} else {
-						unexpected_ident!(parser, atom)
+						unexpected_ident!(parser, name)
 					}
 				}
 			},
-			Token::Hash(atom) | Token::HashId(atom) => {
-				let mut chars = atom.chars();
-				let (r, g, b, a) = match atom.len() {
+			Kind::Hash => {
+				let str = parser.parse_str(token);
+				let mut chars = str.chars();
+				let (r, g, b, a) = match str.len() {
 					// <r><g><b> implied alpha
 					3 => (
 						chars.next_as_hex().unwrap() * 17,
@@ -244,11 +251,11 @@ impl<'a> Parse<'a> for Color {
 						chars.next_as_hex().unwrap() << 4 | chars.next_as_hex().unwrap(),
 						chars.next_as_hex().unwrap() << 4 | chars.next_as_hex().unwrap(),
 					),
-					_ => unexpected!(parser),
+					_ => unexpected!(parser, token),
 				};
 				Color::Hex(r << 24 | g << 16 | b << 8 | a)
 			}
-			token => unexpected!(parser, token),
+			_ => unexpected!(parser, token),
 		})
 	}
 }

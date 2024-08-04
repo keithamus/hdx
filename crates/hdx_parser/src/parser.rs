@@ -1,9 +1,13 @@
 use bitmask_enum::bitmask;
 use bumpalo::Bump;
-use hdx_lexer::{Include, Kind, Lexer, Token};
+use hdx_lexer::{Include, Kind, Lexer, Spanned, Token};
 use miette::Error;
 
-use crate::{diagnostics, span::Spanned, traits::Parse};
+use crate::{
+	diagnostics,
+	traits::{Parse, Peek},
+	Result,
+};
 
 pub struct Parser<'a> {
 	pub(crate) lexer: Lexer<'a>,
@@ -53,7 +57,7 @@ impl<'a> Parser<'a> {
 	/// Create a new parser
 	pub fn new(allocator: &'a Bump, source_text: &'a str, features: Features) -> Self {
 		Self {
-			lexer: Lexer::new(allocator, source_text, Include::none()),
+			lexer: Lexer::new(source_text, Include::none()),
 			features,
 			warnings: std::vec::Vec::new(),
 			errors: std::vec::Vec::new(),
@@ -99,15 +103,30 @@ impl<'a> Parser<'a> {
 		ParserReturn { output, warnings: self.warnings, errors: self.errors, panicked }
 	}
 
-	pub fn parse_with<T: Parse<'a>>(mut self) -> ParserReturn<Spanned<T>> {
-		let (output, panicked) = match T::parse_spanned(&mut self) {
-			Ok(output) => (Some(output), false),
-			Err(error) => {
-				self.errors.push(error);
-				(None, true)
-			}
-		};
-		ParserReturn { output, warnings: self.warnings, errors: self.errors, panicked }
+	pub fn parse<T: Parse<'a>>(mut self) -> Result<T> {
+		T::parse(&mut self)
+	}
+
+	pub fn parse_spanned<T: Parse<'a>>(mut self) -> Result<Spanned<T>> {
+		T::parse_spanned(&mut self)
+	}
+
+	pub fn peek<T: Peek<'a>>(mut self) -> Option<Token> {
+		T::peek(&mut self)
+	}
+
+	pub fn try_parse<T: Parse<'a>>(mut self) -> Result<T> {
+		T::try_parse(&mut self)
+	}
+
+	pub fn try_parse_spanned<T: Parse<'a>>(mut self) -> Option<Spanned<T>> {
+		let checkpoint = self.checkpoint();
+		if let Ok(res) = T::parse_spanned(&mut self) {
+			Some(res)
+		} else {
+			self.rewind(checkpoint);
+			None
+		}
 	}
 
 	#[inline]
@@ -117,12 +136,12 @@ impl<'a> Parser<'a> {
 
 	#[inline]
 	pub fn parse_atom(&mut self, tok: Token) -> hdx_atom::Atom {
-		self.lexer.parse_atom(tok)
+		self.lexer.parse_atom(tok, &self.allocator)
 	}
 
 	#[inline]
 	pub fn parse_atom_lower(&mut self, tok: Token) -> hdx_atom::Atom {
-		self.lexer.parse_atom_lower(tok)
+		self.lexer.parse_atom_lower(tok, &self.allocator)
 	}
 
 	#[inline]
@@ -137,6 +156,6 @@ impl<'a> Parser<'a> {
 
 	#[inline]
 	pub fn parse_str(&mut self, tok: Token) -> &'a str {
-		self.lexer.parse_str(tok)
+		self.lexer.parse_str(tok, self.allocator)
 	}
 }

@@ -1,6 +1,6 @@
 use hdx_atom::{atom, Atom, Atomizable};
 use hdx_derive::{Atomizable, Writable};
-use hdx_lexer::{QuoteStyle, Kind};
+use hdx_lexer::{Kind, QuoteStyle};
 use hdx_parser::{expect_ignore_case, unexpected, Parse, Parser, Result as ParserResult};
 use hdx_writer::{OutputOption, Result as WriterResult, WriteCss};
 use smallvec::{smallvec, SmallVec};

@@ -1,0 +1,7 @@
+---
+source: crates/hdx_proc_macro/src/test.rs
+expression: pretty
+---
+::core::compile_error! {
+    "wrong structure for this syntax, please redefine as an Enum"
+}

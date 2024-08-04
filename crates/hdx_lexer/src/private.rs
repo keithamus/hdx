@@ -1,3 +1,4 @@
+use bumpalo::Bump;
 use hdx_syntax::{
 	identifier::{is_ident, is_ident_ascii_lower, is_ident_ascii_start, is_ident_start, is_ident_start_sequence},
 	is_escape_sequence, is_newline, is_quote, is_sign, is_whitespace,
@@ -305,7 +306,9 @@ impl<'a> Lexer<'a> {
 		if self.nth_char(0) == '(' {
 			self.chars.next();
 			let token = Token::new(Kind::Function, flags, pos, self.pos() - pos);
-			if is_url_ident(self.parse_str(token)) {
+			// TODO: avoid allocations here... it shouldn't be necessary
+			let allocator = Bump::new();
+			if is_url_ident(self.parse_str(token, &allocator)) {
 				let mut chars = self.chars.clone();
 				let mut char = chars.next().unwrap_or(EOF);
 				for _i in 0..=3 {
@@ -317,6 +320,7 @@ impl<'a> Lexer<'a> {
 					return self.consume_url_sequence(pos, flags);
 				}
 			}
+			drop(allocator);
 			return token;
 		}
 		Token::new(Kind::Ident, flags, pos, self.pos() - pos)

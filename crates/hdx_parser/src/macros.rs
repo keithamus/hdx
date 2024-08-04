@@ -38,7 +38,7 @@ macro_rules! discard {
 		}
 	};
 	($parser: ident, $pattern:pat $(if $guard:expr)? $(,)?) => {
-		match $parser.peek().kind() {
+		match $parser.peek_next().kind() {
 			$pattern $(if $guard)? => {
 				$parser.next();
 				true
@@ -134,7 +134,7 @@ macro_rules! peek {
         }
     };
     ($parser: ident, $pattern:pat $(if $guard:expr)? $(,)?) => {
-        match $parser.peek().kind() {
+        match $parser.peek_next().kind() {
             $pattern $(if $guard)? => true,
             _ => false
         }
@@ -164,7 +164,7 @@ macro_rules! peek_ignore_case {
         }
     };
     ($parser: ident, Kind::$kind:ident, $atom:pat $(if $guard:expr)? $(,)?) => {
-        match $parser.peek() {
+        match $parser.peek_next() {
             t if t.kind() == hdx_lexer::Kind::$kind && matches!($parser.parse_atom_lower(t), $atom) $(&& $guard)? => true,
             _ => false
         }
@@ -191,7 +191,7 @@ macro_rules! peek_delim {
         }
     };
     ($parser: ident, $char:literal $(if $guard:expr)? $(,)?) => {
-        match $parser.peek() {
+        match $parser.peek_next() {
             t if t.kind() == hdx_lexer::Kind::Delim && matches!(t.char(), Some($char)) $(&& $guard)? => true,
             _ => false
         }
@@ -244,7 +244,7 @@ macro_rules! expect {
 /// ```
 /// expect_ignore_case!(parser.next(), Token::Ident, atom!("foo"));
 ///
-/// let thing = expect_ignore_case!{ parser.peek(), Kind::Function:
+/// let thing = expect_ignore_case!{ parser.peek_next(), Kind::Function:
 ///     atom!("foo") => Thing::Foo,
 ///     atom!("bar") => Thing::Bar,
 /// }
@@ -290,7 +290,7 @@ macro_rules! expect_ignore_case {
 macro_rules! expect_delim {
 	($parser: ident.$method: ident($($args:tt)*), $val:literal $(if $guard:expr)? $(,)?) => {
 		if !matches!($parser.$method($($args)*).char(), Some($val) $(if $guard)?) {
-			$crate::unexpected!($parser),
+			$crate::unexpected!($parser)
 		}
 	};
 }
@@ -314,7 +314,7 @@ macro_rules! expect_delim {
 ///     // ...
 /// }
 ///
-/// let thing = match_ignore_case!{ parser.peek(), Kind::Function:
+/// let thing = match_ignore_case!{ parser.peek_next(), Kind::Function:
 ///     atom!("foo") => true
 ///     atom!("bar") => {
 ///         parser.next();
@@ -368,7 +368,7 @@ macro_rules! match_ignore_case {
 ///     // ...
 /// }
 ///
-/// let thing = match_delim!{ parser.peek(), Token::Function(_):
+/// let thing = match_delim!{ parser.peek_next(), Token::Function(_):
 ///     atom!("foo") => true
 ///     atom!("bar") => {
 ///         parser.next();
