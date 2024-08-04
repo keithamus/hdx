@@ -31,12 +31,12 @@ impl<'a> Parse<'a> for AnimationFillMode {
 					if let Some(fill) = SingleAnimationFillMode::from_atom(&atom) {
 						values.push(fill);
 					} else {
-						unexpected_ident!(parser, atom);
+						unexpected_ident!(parser, token, atom);
 					}
 				}
 				_ => unexpected!(parser, token),
 			}
-			if !discard!(parser, Kind::Comma) {
+			if !discard!(parser, Comma) {
 				break;
 			}
 		}

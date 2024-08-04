@@ -1,6 +1,5 @@
 use hdx_derive::Writable;
-use hdx_lexer::Kind;
-use hdx_parser::{unexpected, Parse, Parser, Result as ParserResult};
+use hdx_parser::{diagnostics, Parse, Parser, Result as ParserResult, Token};
 use std::{
 	fmt::{Display, Result as DisplayResult},
 	ops::{Add, Div, Mul, Sub},
@@ -103,10 +102,11 @@ impl PartialOrd<i32> for CSSInt {
 
 impl<'a> Parse<'a> for CSSInt {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let token = parser.next();
-		match token.kind() {
-			Kind::Number if !token.is_float() => Ok(parser.parse_number(token).into()),
-			_ => unexpected!(parser, token),
+		let token = *parser.parse::<Token![Number]>()?;
+		let number = parser.parse_number(token);
+		if token.is_float() {
+			Err(diagnostics::ExpectedInt(number, token.span()))?;
 		}
+		Ok(number.into())
 	}
 }

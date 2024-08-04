@@ -33,15 +33,17 @@ pub fn is_ident_ascii_start(c: char) -> bool {
 }
 
 #[inline]
-pub fn is_ident_start(c: char) -> bool {
-	if c.is_ascii() {
-		return is_ident_ascii_start(c);
-	}
-	if c as usize > 0x10000 {
+pub fn is_ident_ascii(c: char) -> bool {
+	ASCII_CONTINUE.0[c as usize]
+}
+
+#[inline]
+pub fn is_non_ascii(c: char) -> bool {
+	if c as usize >= 0x10000 {
 		return true;
 	}
 	matches!(c,
-		'\u{200c}' | '\u{200d}' | '\u{203f}' | '\u{2040}' |
+		'\u{00b7}' | '\u{200c}' | '\u{200d}' | '\u{203f}' | '\u{2040}' |
 		'\u{00c0}'..='\u{00d6}' | '\u{00d8}'..='\u{00f6}' |
 		'\u{00f8}'..='\u{037d}' | '\u{037f}'..='\u{1fff}' |
 		'\u{2070}'..='\u{218f}' | '\u{2c00}'..='\u{2fef}' |
@@ -51,13 +53,11 @@ pub fn is_ident_start(c: char) -> bool {
 }
 
 #[inline]
-pub fn is_ident_ascii(c: char) -> bool {
-	ASCII_CONTINUE.0[c as usize]
-}
-
-#[inline]
-pub fn is_ident_ascii_lower(c: char) -> bool {
-	c.is_ascii() && ASCII_LOWER.0[c as usize]
+pub fn is_ident_start(c: char) -> bool {
+	if c.is_ascii() {
+		return is_ident_ascii_start(c);
+	}
+	is_non_ascii(c)
 }
 
 #[inline]
@@ -65,7 +65,12 @@ pub fn is_ident(c: char) -> bool {
 	if c.is_ascii() {
 		return is_ident_ascii(c);
 	}
-	is_ident_start(c)
+	is_non_ascii(c)
+}
+
+#[inline]
+pub fn is_ident_ascii_lower(c: char) -> bool {
+	c.is_ascii() && ASCII_LOWER.0[c as usize]
 }
 
 #[inline]

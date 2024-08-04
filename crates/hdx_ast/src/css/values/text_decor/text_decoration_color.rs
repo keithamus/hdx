@@ -6,23 +6,14 @@ use hdx_parser::{Parse, Parser, Result as ParserResult};
 use crate::css::types::Color;
 
 // https://drafts.csswg.org/css-text-decor/#text-decoration-color-property
-#[derive(Value, Writable, Default, PartialEq, Debug, Clone, Hash)]
-#[value(Inherits)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-pub enum TextDecorationColor {
-	#[default]
-	Auto, // atom!("auto")
-	Color(Color),
-}
-
-impl<'a> Parse<'a> for TextDecorationColor {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		Ok(match parser.cur().kind() {
-			Kind::Ident if parser.parse_atom_lower(parser.cur()) == atom!("auto") => Self::Auto,
-			_ => Self::Color(Color::parse(parser)?),
-		})
-	}
-}
+#[value(" <color> ")]
+#[initial("currentcolor")]
+#[applies_to("all elements")]
+#[inherited("no")]
+#[computed_value("computed color")]
+#[canonical_order("per grammar")]
+#[animation_type("by computed value type")]
+pub struct TextDecorationColor;
 
 #[cfg(test)]
 mod tests {

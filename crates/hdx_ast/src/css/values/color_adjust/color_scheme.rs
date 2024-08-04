@@ -36,7 +36,7 @@ impl<'a> Parse<'a> for ColorScheme {
 				}
 				atom!("only") => {
 					if only {
-						unexpected_ident!(parser, ident)
+						unexpected_ident!(parser, token, ident)
 					}
 					only = true;
 				}

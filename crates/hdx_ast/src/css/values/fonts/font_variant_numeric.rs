@@ -65,7 +65,7 @@ impl<'a> Parse<'a> for FontVariantNumeric {
 					atom!("stacked-fractions") if !value.has_fraction_values() => value |= Self::StackedFractions,
 					atom!("ordinal") if !value.contains(Self::Ordinal) => value |= Self::Ordinal,
 					atom!("slashed-zero") if !value.contains(Self::SlashedZero) => value |= Self::SlashedZero,
-					_ => unexpected_ident!(parser, atom),
+					_ => unexpected_ident!(parser, token, atom),
 				},
 				_ => break,
 			}

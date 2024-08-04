@@ -23,7 +23,7 @@ impl<'a> Parse<'a> for ListStyleImage {
 					parser.next();
 					Self::None
 				}
-				atom => unexpected_ident!(parser, atom),
+				atom => unexpected_ident!(parser, token, atom),
 			},
 			Kind::Function | Kind::Url => Self::Image(Image::parse(parser)?),
 			_ => unexpected!(parser, token),

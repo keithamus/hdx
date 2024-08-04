@@ -8,30 +8,30 @@ macro_rules! assert_transform {
 			use hdx_writer::{BaseCssWriter, OutputOption, WriteCss};
 
 			let allocator = Bump::default();
-			let parser = Parser::new(&allocator, $str, Features::default());
-			let result = parser.parse_entirely_with::<StyleSheet>();
+			let mut parser = Parser::new(&allocator, $str, Features::default());
+			let result = parser.parse_entirely::<StyleSheet>();
 			if !result.errors.is_empty() {
 				panic!("\n\nParse on {}:{} failed. ({:?}) saw error {:?}", file!(), line!(), $str, result.errors[0]);
 			}
 			let mut node = result.output.unwrap();
 
-			let eparser = Parser::new(&allocator, $expected, Features::default());
-			let eresult = eparser.parse_entirely_with::<StyleSheet>();
+			let mut eparser = Parser::new(&allocator, $expected, Features::default());
+			let eresult = eparser.parse_entirely::<StyleSheet>();
 			if !eresult.errors.is_empty() {
 				panic!("\n\nParse expected on {}:{} failed. ({:?}) saw error {:?}", file!(), line!(), $expected, result.errors[0]);
 			}
 			let mut enode = eresult.output.unwrap();
 
 			let mut string = String::new();
-			let mut writer = BaseCssWriter::new(&mut string, OutputOption::all());
+			let mut writer = BaseCssWriter::new(&mut string, OutputOption::all_bits());
 			node.write_css(&mut writer).unwrap();
 
 			let mut expected = String::new();
-			let mut ewriter = BaseCssWriter::new(&mut expected, OutputOption::all());
+			let mut ewriter = BaseCssWriter::new(&mut expected, OutputOption::all_bits());
 			enode.write_css(&mut ewriter).unwrap();
 
 			let mut transformed_string = String::new();
-			let mut transformed_writer = BaseCssWriter::new(&mut transformed_string, OutputOption::all());
+			let mut transformed_writer = BaseCssWriter::new(&mut transformed_string, OutputOption::all_bits());
 			let mut t = $transform::default();
 			node.accept_mut(&mut t);
 			node.write_css(&mut transformed_writer).unwrap();
@@ -41,7 +41,7 @@ macro_rules! assert_transform {
 			}
 
 			let mut etransformed_string = String::new();
-			let mut etransformed_writer = BaseCssWriter::new(&mut etransformed_string, OutputOption::all());
+			let mut etransformed_writer = BaseCssWriter::new(&mut etransformed_string, OutputOption::all_bits());
 			let mut t = $transform::default();
 			enode.accept_mut(&mut t);
 			enode.write_css(&mut etransformed_writer).unwrap();

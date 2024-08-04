@@ -1,9 +1,7 @@
 use hdx_atom::Atom;
-use hdx_lexer::Token;
+use hdx_lexer::{Span, Token};
 use miette::{self, Diagnostic};
 use thiserror::{self, Error};
-
-use crate::span::Span;
 
 #[derive(Debug, Error, Diagnostic)]
 #[error("The token at {0} cannot yet be parsed by the parser :(")]
@@ -295,6 +293,11 @@ pub struct NumberNotNegative(pub f32, #[label("This value")] pub Span);
 #[error("This number is too small.")]
 #[diagnostic(help("This needs to be larger than {0}"), code(hdx_parser::NumberTooSmall))]
 pub struct NumberTooSmall(pub f32, #[label("This value")] pub Span);
+
+#[derive(Debug, Error, Diagnostic)]
+#[error("This number is too large.")]
+#[diagnostic(help("This needs to be smaller than {0}"), code(hdx_parser::NumberTooLarge))]
+pub struct NumberTooLarge(pub f32, #[label("This value")] pub Span);
 
 #[derive(Debug, Error, Diagnostic)]
 #[error("This value isn't allowed to have a fraction, it must be a whole number (integer).")]

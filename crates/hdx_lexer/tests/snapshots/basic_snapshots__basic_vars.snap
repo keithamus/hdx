@@ -71,7 +71,7 @@ expression: tokens
   {
     "kind": "Dimension",
     "offset": 78,
-    "len": 4
+    "len": 3
   },
   {
     "kind": "Comma",
@@ -96,7 +96,7 @@ expression: tokens
   {
     "kind": "Dimension",
     "offset": 103,
-    "len": 4
+    "len": 3
   },
   {
     "kind": "Comma",

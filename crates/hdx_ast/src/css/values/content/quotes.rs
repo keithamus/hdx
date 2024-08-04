@@ -24,7 +24,7 @@ impl<'a> Parse<'a> for Quotes {
 				atom!("none") => Quotes::None,
 				atom!("auto") => Quotes::Auto,
 				atom!("match-parent") => Quotes::MatchParent,
-				atom => unexpected_ident!(parser, atom),
+				atom => unexpected_ident!(parser, token, atom),
 			},
 			Kind::String => {
 				let mut quotes = smallvec![(parser.parse_atom_lower(token), token.quote_style())];

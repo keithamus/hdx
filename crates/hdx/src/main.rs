@@ -30,11 +30,11 @@ fn main() {
 	let source_text = std::fs::read_to_string(file_name).unwrap();
 	let allocator = Bump::default();
 	let result = hdx_parser::Parser::new(&allocator, source_text.as_str(), hdx_parser::Features::default())
-		.parse_with::<StyleSheet>();
+		.parse_entirely::<StyleSheet>();
 	{
 		let start = std::time::Instant::now();
 		let mut str = String::new();
-		let opts = if args.minify { OutputOption::none() } else { OutputOption::all() };
+		let opts = if args.minify { OutputOption::none() } else { OutputOption::all_bits() };
 		let mut writer = BaseCssWriter::new(&mut str, opts);
 		if let Some(stylesheet) = &result.output {
 			stylesheet.write_css(&mut writer).unwrap();

@@ -227,11 +227,11 @@ impl<'a> Parse<'a> for Display {
 				atom!("table") if !value.has_inside() => value |= Self::Table,
 				// <display-listitem>
 				atom!("list-item") if !value.has_list_item() => value |= Self::ListItem,
-				atom => unexpected_ident!(parser, atom),
+				atom => unexpected_ident!(parser, token, atom),
 			}
 		}
 		if value.has_list_item() && !value.valid_list_item() {
-			Err(diagnostics::DisplayHasInvalidListItemCombo(value.inside_to_atom().unwrap(), span.end(parser.pos())))?;
+			Err(diagnostics::DisplayHasInvalidListItemCombo(value.inside_to_atom().unwrap(), span.end(parser.offset())))?;
 		}
 		Ok(value)
 	}
