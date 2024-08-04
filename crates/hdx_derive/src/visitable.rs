@@ -2,7 +2,7 @@ use proc_macro2::TokenStream;
 use quote::quote;
 use syn::{
 	parse::Parse, punctuated::Punctuated, Attribute, Data, DataEnum, DataStruct, DeriveInput, Error, Fields, Ident,
-	Index, LitStr, Meta, Token,
+	Index, Meta, Token,
 };
 
 use crate::{err, snake};
@@ -85,18 +85,6 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 			for field in variants {
 				let field_ident = field.ident;
 				let args = VisitableArgs::parse(&field.attrs);
-				let call = match args.call {
-					AutoOrNamed::None => None,
-					AutoOrNamed::Named(s) => {
-						accepts = true;
-						Some(quote! { Self::#field_ident(f) => v.#s(f), })
-					}
-					AutoOrNamed::Auto => {
-						accepts = true;
-						let s = Ident::new(&snake(format!("visit{}", ident)), ident.span());
-						Some(quote! { Self::#field_ident(f) => v.#s(f), })
-					}
-				};
 				field_accepts.push(if args.skip {
 					quote! { Self::#field_ident(f) => {}, }
 				} else {

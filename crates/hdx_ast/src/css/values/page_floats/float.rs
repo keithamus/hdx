@@ -42,7 +42,7 @@ impl<'a> Parse<'a> for Float {
 				atom!("inline-end") => Self::InlineEnd,
 				atom!("snap-block") => Self::SnapBlock,
 				atom!("snap-inline") => Self::SnapInline,
-				atom => unexpected_ident!(parser, atom),
+				atom => unexpected_ident!(parser, token, atom),
 			},
 			Kind::Function => match parser.parse_atom_lower(token) {
 				atom!("snap-block") => {

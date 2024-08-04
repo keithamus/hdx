@@ -25,13 +25,13 @@ impl<'a> Parse<'a> for AnimationDuration {
 					parser.next();
 					AnimationDuration::Auto
 				}
-				atom => unexpected_ident!(parser, atom),
+				atom => unexpected_ident!(parser, token, atom),
 			},
 			Kind::Dimension => {
 				let mut values = smallvec![];
 				loop {
 					values.push(Time::parse(parser)?);
-					if !discard!(parser, Kind::Comma) {
+					if !discard!(parser, Comma) {
 						break;
 					}
 				}

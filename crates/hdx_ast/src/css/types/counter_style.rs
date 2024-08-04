@@ -1,7 +1,6 @@
 use hdx_atom::{Atom, Atomizable};
 use hdx_derive::{Atomizable, Writable};
-use hdx_lexer::Kind;
-use hdx_parser::{Parse, Parser, Result as ParserResult, Spanned};
+use hdx_parser::{Parse, Parser, Result as ParserResult, Spanned, Token};
 
 use super::Symbols;
 
@@ -21,18 +20,16 @@ impl Default for CounterStyle {
 
 impl<'a> Parse<'a> for CounterStyle {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let token = parser.peek();
-		match token.kind() {
-			Kind::Ident => {
-				let atom = parser.parse_atom(token);
-				parser.next();
-				if let Some(style) = PredefinedCounterStyle::from_atom(&atom) {
-					Ok(Self::Predefined(style))
-				} else {
-					Ok(Self::Named(atom))
-				}
+		if let Some(token) = parser.peek::<Token![Ident]>() {
+			let atom = parser.parse_atom(token);
+			parser.hop(token);
+			if let Some(style) = PredefinedCounterStyle::from_atom(&atom) {
+				Ok(Self::Predefined(style))
+			} else {
+				Ok(Self::Named(atom))
 			}
-			_ => Ok(Self::Symbols(Symbols::parse_spanned(parser)?)),
+		} else {
+			Ok(Self::Symbols(Symbols::parse_spanned(parser)?))
 		}
 	}
 }
@@ -78,7 +75,7 @@ pub enum PredefinedCounterStyle {
 	Katakana,           // atom!("katakana"),
 	KatakanaIroha,      // atom!("katakana-iroha"),
 	#[default]
-	Disc,     // atom!("disc"),
+	Disc,   // atom!("disc"),
 	Square,             // atom!("square"),
 	DisclousureOpen,    // atom!("disclousure-open"),
 	DisclousureClosed,  // atom!("disclousure-closed"),

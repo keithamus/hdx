@@ -1,7 +1,6 @@
 use hdx_atom::{atom, Atom};
 use hdx_derive::Writable;
-use hdx_lexer::Kind;
-use hdx_parser::{unexpected, unexpected_ident, Parse, Parser, Result as ParserResult};
+use hdx_parser::{token, unexpected, unexpected_ident, Parse, Parser, Peek, Result as ParserResult, Token};
 
 use super::CSSFloat;
 
@@ -48,19 +47,27 @@ macro_rules! length {
 			}
 		}
 
+		impl<'a> Peek<'a> for Length {
+			fn peek(parser: &Parser<'a>) -> Option<hdx_lexer::Token> {
+				parser.peek::<token::Number>().or_else(|| parser.peek::<token::Dimension>())
+			}
+		}
+
 		impl<'a> Parse<'a> for Length {
 			fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-				let token = parser.next();
-				match token.kind() {
-					Kind::Number if parser.parse_number(token) == 0.0 => Ok(Self::Zero),
-					Kind::Dimension => {
-						if let Some(d) = Self::new(parser.parse_number(token).into(), parser.parse_atom_lower(token)) {
-							Ok(d)
-						} else {
-							unexpected!(parser, token)
-						}
+				if let Some(token) = parser.peek::<Token![Number]>() {
+					parser.hop(token);
+					if parser.parse_number(token) == 0.0 {
+						return Ok(Self::Zero);
+					} else {
+						unexpected!(parser, token);
 					}
-					_ => unexpected!(parser, token),
+				}
+				let token = parser.parse::<Token![Dimension]>()?;
+				if let Some(d) = Self::new(parser.parse_number(*token).into(), parser.parse_atom_lower(*token)) {
+					Ok(d)
+				} else {
+					unexpected!(parser, *token)
 				}
 			}
 		}
@@ -100,19 +107,27 @@ macro_rules! length {
 			}
 		}
 
+		impl<'a> Peek<'a> for LengthPercentage {
+			fn peek(parser: &Parser<'a>) -> Option<hdx_lexer::Token> {
+				parser.peek::<Token![Number]>().or_else(|| parser.peek::<Token![Dimension]>())
+			}
+		}
+
 		impl<'a> Parse<'a> for LengthPercentage {
 			fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-				let token = parser.next();
-				match token.kind() {
-					Kind::Number if parser.parse_number(token) == 0.0 => Ok(Self::Zero),
-					Kind::Dimension => {
-						if let Some(d) = Self::new(parser.parse_number(token).into(), parser.parse_atom_lower(token)) {
-							Ok(d)
-						} else {
-							unexpected!(parser, token)
-						}
+				if let Some(token) = parser.peek::<Token![Number]>() {
+					parser.hop(token);
+					if parser.parse_number(token) == 0.0 {
+						return Ok(Self::Zero);
+					} else {
+						unexpected!(parser, token);
 					}
-					_ => unexpected!(parser, token),
+				}
+				let token = parser.parse::<Token![Dimension]>()?;
+				if let Some(d) = Self::new(parser.parse_number(*token).into(), parser.parse_atom_lower(*token)) {
+					Ok(d)
+				} else {
+					unexpected!(parser, *token)
 				}
 			}
 		}
@@ -188,22 +203,15 @@ pub enum LengthPercentageOrAuto {
 
 impl<'a> Parse<'a> for LengthPercentageOrAuto {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let token = parser.next();
-		match token.kind() {
-			Kind::Ident => match parser.parse_atom_lower(token) {
+		if let Some(token) = parser.peek::<Token![Ident]>() {
+			parser.hop(token);
+			return match parser.parse_atom_lower(token) {
 				atom!("auto") => Ok(Self::Auto),
-				atom => unexpected_ident!(parser, atom),
-			},
-			Kind::Dimension => {
-				if let Some(l) = LengthPercentage::new(parser.parse_number(token).into(), parser.parse_atom_lower(token)) {
-					Ok(Self::LengthPercentage(l))
-				} else {
-					unexpected!(parser, token)
-				}
-			}
-			Kind::Number if parser.parse_number(token) == 0.0 => Ok(Self::LengthPercentage(LengthPercentage::Zero)),
-			_ => unexpected!(parser, token),
+				atom => unexpected_ident!(parser, token, atom),
+			};
 		}
+		let l = parser.parse::<LengthPercentage>()?;
+		Ok(Self::LengthPercentage(l))
 	}
 }
 
@@ -217,25 +225,41 @@ pub enum LineWidth {
 	Length(Length),
 }
 
+impl<'a> Peek<'a> for LineWidth {
+	fn peek(parser: &Parser<'a>) -> Option<hdx_lexer::Token> {
+		if let Some(token) = parser.peek::<Token![Ident]>() {
+			return match parser.parse_atom_lower(token) {
+				atom!("thin") | atom!("medium") | atom!("thick") => Some(token),
+				_ => None,
+			};
+		}
+		parser.peek::<Length>()
+	}
+}
+
 impl<'a> Parse<'a> for LineWidth {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let token = parser.next();
-		match token.kind() {
-			Kind::Ident => match parser.parse_atom_lower(token) {
+		if let Some(token) = parser.peek::<Token![Ident]>() {
+			parser.hop(token);
+			return match parser.parse_atom_lower(token) {
 				atom!("thin") => Ok(Self::Thin),
 				atom!("medium") => Ok(Self::Medium),
 				atom!("thick") => Ok(Self::Thick),
-				atom => unexpected_ident!(parser, atom),
-			},
-			Kind::Dimension => {
-				if let Some(l) = Length::new(parser.parse_number(token).into(), parser.parse_atom_lower(token)).map(Self::Length) {
-					Ok(l)
-				} else {
-					unexpected!(parser, token)
-				}
-			}
-			Kind::Number if parser.parse_number(token) == 0.0 => Ok(Self::Length(Length::Zero)),
-			_ => unexpected!(parser, token),
+				atom => unexpected_ident!(parser, token, atom),
+			};
+		}
+		let l = parser.parse::<Length>()?;
+		Ok(Self::Length(l))
+	}
+}
+
+impl From<LineWidth> for Length {
+	fn from(value: LineWidth) -> Self {
+		match value {
+			LineWidth::Thin => Length::Px(1.0.into()),
+			LineWidth::Medium => Length::Px(3.0.into()),
+			LineWidth::Thick => Length::Px(3.0.into()),
+			LineWidth::Length(length) => length,
 		}
 	}
 }

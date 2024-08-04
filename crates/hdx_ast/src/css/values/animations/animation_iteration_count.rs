@@ -33,14 +33,14 @@ impl<'a> Parse<'a> for AnimationIterationCount {
 			match token.kind() {
 				Kind::Ident => match parser.parse_atom_lower(token) {
 					atom!("infinite") => values.push(SingleAnimationIterationCount::Infinite),
-					atom => unexpected_ident!(parser, atom),
+					atom => unexpected_ident!(parser, token, atom),
 				},
 				Kind::Number if token.is_int() && !token.has_sign() => {
 					values.push(SingleAnimationIterationCount::Number(parser.parse_number(token).into()))
 				}
 				_ => unexpected!(parser, token),
 			}
-			if !discard!(parser, Kind::Comma) {
+			if !discard!(parser, Comma) {
 				break;
 			}
 		}

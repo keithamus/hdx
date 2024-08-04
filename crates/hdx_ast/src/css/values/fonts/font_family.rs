@@ -87,7 +87,7 @@ impl<'a> Parse<'a> for FontFamily {
 		let mut values = smallvec![];
 		loop {
 			values.push(SingleFontFamily::parse_spanned(parser)?);
-			if !discard!(parser, Kind::Comma) {
+			if !discard!(parser, Comma) {
 				break;
 			}
 		}

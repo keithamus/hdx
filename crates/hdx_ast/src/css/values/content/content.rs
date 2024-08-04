@@ -25,7 +25,7 @@ impl<'a> Parse<'a> for Content {
 			Kind::Ident => match parser.parse_atom_lower(token) {
 				atom!("normal") => Self::Normal,
 				atom!("none") => Self::None,
-				atom => unexpected_ident!(parser, atom),
+				atom => unexpected_ident!(parser, token, atom),
 			},
 			Kind::String => Self::String(parser.parse_atom_lower(token), token.quote_style()),
 			_ => unexpected!(parser, token),

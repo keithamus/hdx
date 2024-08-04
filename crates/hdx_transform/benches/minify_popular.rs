@@ -35,7 +35,7 @@ fn popular(c: &mut Criterion) {
 				let allocator = Bump::default();
 				{
 					let mut result = Parser::new(&allocator, source_text.as_str(), Features::default())
-						.parse_entirely_with::<StyleSheet>();
+						.parse_entirely::<StyleSheet>();
 					let mut string = String::new();
 					let mut writer = BaseCssWriter::new(&mut string, OutputOption::none());
 					if let Some(stylesheet) = result.output.as_mut() {

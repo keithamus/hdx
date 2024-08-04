@@ -1,6 +1,5 @@
 use hdx_atom::atom;
-use hdx_lexer::Kind;
-use hdx_parser::{match_ignore_case, unexpected, unexpected_ident, Parse, Parser, Result as ParserResult};
+use hdx_parser::{unexpected, unexpected_ident, Parse, Parser, Result as ParserResult, Token};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 
 use crate::css::units::LengthPercentage;
@@ -11,12 +10,15 @@ pub struct Position(pub HorizontalPosition, pub VerticalPosition);
 
 impl<'a> Parse<'a> for Position {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let maybe_horizontal = if match_ignore_case!(parser.peek(), Kind::Ident, atom!("top") | atom!("bottom")) {
-			None
+		let maybe_horizontal = if let Some(token) = parser.peek::<Token![Ident]>() {
+			match parser.parse_atom_lower(token) {
+				atom!("top") | atom!("bottom") => parser.parse::<HorizontalPosition>().ok(),
+				_ => None,
+			}
 		} else {
-			HorizontalPosition::parse(parser).ok()
+			None
 		};
-		let vertical = VerticalPosition::parse(parser).unwrap_or_else(|_| {
+		let vertical = parser.parse::<VerticalPosition>().unwrap_or_else(|_| {
 			if matches!(maybe_horizontal, Some(HorizontalPosition::LengthPercentage(_))) {
 				VerticalPosition::LengthPercentage(LengthPercentage::Percent(50.0.into()))
 			} else {
@@ -61,27 +63,22 @@ pub enum HorizontalPosition {
 
 impl<'a> Parse<'a> for HorizontalPosition {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let token = parser.peek();
-		Ok(match token.kind() {
-			Kind::Ident => match parser.parse_atom_lower(token) {
-				atom!("center") => {
-					parser.next();
-					Self::Center
-				}
+		if let Some(token) = parser.peek::<Token![Ident]>() {
+			parser.hop(token);
+			return Ok(match parser.parse_atom_lower(token) {
+				atom!("center") => Self::Center,
 				atom!("left") => {
-					parser.next();
 					let len = LengthPercentage::try_parse(parser).ok();
 					Self::Left(len)
 				}
 				atom!("right") => {
-					parser.next();
 					let len = LengthPercentage::try_parse(parser).ok();
 					Self::Right(len)
 				}
-				_ => unexpected_ident!(parser, atom),
-			},
-			_ => Self::LengthPercentage(LengthPercentage::parse(parser)?),
-		})
+				atom => unexpected_ident!(parser, token, atom),
+			});
+		}
+		parser.parse::<LengthPercentage>().map(Self::LengthPercentage)
 	}
 }
 
@@ -126,27 +123,16 @@ pub enum VerticalPosition {
 
 impl<'a> Parse<'a> for VerticalPosition {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let token = parser.peek();
-		Ok(match token.kind() {
-			Kind::Ident => match parser.parse_atom_lower(token) {
-				atom!("center") => {
-					parser.next();
-					Self::Center
-				}
-				atom!("top") => {
-					parser.next();
-					let len = LengthPercentage::try_parse(parser).ok();
-					Self::Top(len)
-				}
-				atom!("bottom") => {
-					parser.next();
-					let len = LengthPercentage::try_parse(parser).ok();
-					Self::Bottom(len)
-				}
-				_ => unexpected_ident!(parser, atom),
-			},
-			_ => Self::LengthPercentage(LengthPercentage::parse(parser)?),
-		})
+		if let Some(token) = parser.peek::<Token![Ident]>() {
+			parser.hop(token);
+			return match parser.parse_atom_lower(token) {
+				atom!("center") => Ok(Self::Center),
+				atom!("top") => Ok(Self::Top(parser.try_parse::<LengthPercentage>().ok())),
+				atom!("bottom") => Ok(Self::Bottom(parser.try_parse::<LengthPercentage>().ok())),
+				atom => unexpected_ident!(parser, token, atom),
+			};
+		}
+		parser.parse::<LengthPercentage>().map(Self::LengthPercentage)
 	}
 }
 

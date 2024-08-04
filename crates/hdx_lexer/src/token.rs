@@ -5,10 +5,9 @@ use serde::{
 	Serialize,
 };
 
-use crate::Include;
+use crate::{Include, Span};
 
-#[derive(Default)]
-#[bitmask(u8)] // Actually more like a "u5" as the 3 LMB are unused
+#[derive(Default, Copy, Clone, Eq, PartialEq, Ord, PartialOrd)]
 pub enum Kind {
 	// Trivias (mask as 0b0_00XX)
 	Eof = 0b0000, // https://drafts.csswg.org/css-syntax/#typedef-eof-token
@@ -48,9 +47,38 @@ pub enum Kind {
 }
 
 impl Kind {
+	pub fn from_bits(bits: u8) -> Self {
+		match bits {
+			0b0001 => Self::Whitespace,
+			0b0010 => Self::Comment,
+			0b0011 => Self::CdcOrCdo,
+			0b0100 => Self::Number,
+			0b0101 => Self::Dimension,
+			0b0110 => Self::BadString,
+			0b0111 => Self::BadUrl,
+			0b1000 => Self::Ident,
+			0b1001 => Self::Function,
+			0b1010 => Self::AtKeyword,
+			0b1011 => Self::Hash,
+			0b1100 => Self::String,
+			0b1101 => Self::Url,
+			0b1_0000 => Self::Delim,
+			0b1_0001 => Self::Colon,
+			0b1_0010 => Self::Semicolon,
+			0b1_0011 => Self::Comma,
+			0b1_0100 => Self::LeftSquare,
+			0b1_0101 => Self::RightSquare,
+			0b1_0110 => Self::LeftParen,
+			0b1_0111 => Self::RightParen,
+			0b1_1000 => Self::LeftCurly,
+			0b1_1001 => Self::RightCurly,
+			_ => Self::Eof,
+		}
+	}
+
 	pub fn as_str(&self) -> &str {
 		match *self {
-			Kind::Eof => "EOF",
+			Kind::Eof => "Eof",
 			Kind::Whitespace => "Whitespace",
 			Kind::Comment => "Comment",
 			Kind::CdcOrCdo => "CdcOrCdo",
@@ -74,8 +102,13 @@ impl Kind {
 			Kind::RightParen => "RightParen",
 			Kind::LeftCurly => "LeftCurly",
 			Kind::RightCurly => "RightCurly",
-			_ => unreachable!(),
 		}
+	}
+}
+
+impl core::fmt::Debug for Kind {
+	fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+		write!(f, "Kind::{}", self.as_str())
 	}
 }
 
@@ -148,7 +181,7 @@ pub enum TokenFlags {
 
 impl Default for TokenFlags {
 	fn default() -> Self {
-		Self { bits: (Kind::Whitespace.bits as u32) << 24 }
+		Self { bits: (Kind::Whitespace as u32) << 24 }
 	}
 }
 
@@ -168,27 +201,31 @@ pub enum QuoteStyle {
 	Double,
 }
 
-static TF_MASK: u32 = !((1 << 29) - 1);
-static K_MASK: u32 = !((1 << 24) - 1);
-static L_MASK: u32 = (1 << 24) - 1;
-static NL_R_MASK: u32 = (1 << 16) - 1;
+static TYPEFLAG_MASK: u32 = !((1 << 29) - 1);
+static KIND_MASK: u32 = !((1 << 24) - 1);
+static LENGTH_MASK: u32 = (1 << 24) - 1;
+static DIMENSION_UNIT_LENGTH_MASK: u32 = (1 << 16) - 1;
 
 impl Token {
 	pub fn new(kind: Kind, type_flags: u8, offset: u32, len: u32) -> Self {
-		let len_masked = if kind == Kind::Number { (len << 16) & L_MASK } else { len & L_MASK };
+		let len_masked = if kind == Kind::Number { (len << 16) & LENGTH_MASK } else { len & LENGTH_MASK };
 		let flags = TokenFlags {
-			bits: (((type_flags as u32) << 29) & TF_MASK) | (((kind.bits as u32) << 24) & K_MASK) | len_masked,
+			bits: (((type_flags as u32) << 29) & TYPEFLAG_MASK) | (((kind as u32) << 24) & KIND_MASK) | len_masked,
 		};
 		Self { flags, offset }
 	}
 
 	pub fn new_dimension(type_flags: u8, offset: u32, num_len: u32, unit_len: u32) -> Self {
 		let flags = TokenFlags {
-			bits: (((type_flags as u32) << 29) & TF_MASK)
-				| (((Kind::Dimension.bits as u32) << 24) & K_MASK)
-				| (((num_len << 16) | (unit_len & NL_R_MASK)) & L_MASK),
+			bits: (((type_flags as u32) << 29) & TYPEFLAG_MASK)
+				| (((Kind::Dimension as u8 as u32) << 24) & KIND_MASK)
+				| (((num_len << 16) | (unit_len & DIMENSION_UNIT_LENGTH_MASK)) & LENGTH_MASK),
 		};
 		Self { flags, offset }
+	}
+
+	pub fn span(&self) -> Span {
+		Span::new(self.offset, self.offset + self.len())
 	}
 
 	#[inline(always)]
@@ -218,13 +255,13 @@ impl Token {
 	}
 
 	#[inline(always)]
-	pub(crate) fn is_ident_like(&self) -> bool {
-		self.kind_bits() & 0b11000 == 0b01000 && self.kind_bits() != Kind::String.bits
+	pub fn is_ident_like(&self) -> bool {
+		self.kind_bits() & 0b11000 == 0b01000 && self.kind_bits() != Kind::String as u8
 	}
 
 	#[inline]
 	pub fn kind(&self) -> Kind {
-		Kind { bits: self.kind_bits() }
+		Kind::from_bits(self.kind_bits())
 	}
 
 	pub fn is_empty(&self) -> bool {
@@ -236,38 +273,41 @@ impl Token {
 		if self.kind_bits() & 0b11111 == 0 {
 			debug_assert!(self.kind() == Kind::Eof);
 			0
-		} else if self.kind_bits() == Kind::Delim.bits {
+		} else if self.kind_bits() == Kind::Delim as u8 {
 			self.char().unwrap().len_utf8() as u32
 		// Delim-like flag is set
 		} else if self.kind_bits() & 0b10000 == 0b10000 {
 			debug_assert!(matches!(
 				self.kind(),
 				Kind::Colon
-					| Kind::Semicolon | Kind::Comma
-					| Kind::LeftSquare | Kind::RightSquare
-					| Kind::LeftParen | Kind::RightParen
-					| Kind::LeftCurly | Kind::RightCurly
+					| Kind::Semicolon
+					| Kind::Comma | Kind::LeftSquare
+					| Kind::RightSquare
+					| Kind::LeftParen
+					| Kind::RightParen
+					| Kind::LeftCurly
+					| Kind::RightCurly
 			));
 			1
 		// CdcOrCdo
-		} else if self.kind_bits() == Kind::CdcOrCdo.bits {
+		} else if self.kind_bits() == Kind::CdcOrCdo as u8 {
 			debug_assert!(self.kind() == Kind::CdcOrCdo);
 			4 - (self.third_bit_is_set() as u32)
 		// Number
-		} else if self.kind_bits() == Kind::Number.bits {
-			(self.flags.bits & L_MASK) >> 16
+		} else if self.kind_bits() == Kind::Number as u8 {
+			(self.flags.bits & LENGTH_MASK) >> 16
 		// Delim
-		} else if self.kind_bits() == Kind::Dimension.bits {
-			((self.flags.bits & L_MASK) >> 16) + (self.flags.bits & NL_R_MASK)
+		} else if self.kind_bits() == Kind::Dimension as u8 {
+			((self.flags.bits & LENGTH_MASK) >> 16) + (self.flags.bits & DIMENSION_UNIT_LENGTH_MASK)
 		} else {
-			self.flags.bits & L_MASK
+			self.flags.bits & LENGTH_MASK
 		}
 	}
 
 	pub fn char(&self) -> Option<char> {
 		// Delim flag is set
 		if self.kind_bits() & 0b10000 == 0b10000 {
-			return char::from_u32(self.flags.bits & L_MASK);
+			return char::from_u32(self.flags.bits & LENGTH_MASK);
 		}
 		None
 	}
@@ -290,17 +330,17 @@ impl Token {
 
 	#[inline]
 	pub fn numeric_len(&self) -> u32 {
-		(self.flags.bits & L_MASK) >> 16
+		(self.flags.bits & LENGTH_MASK) >> 16
 	}
 
 	// String style checks
 	#[inline]
 	pub fn quote_style(&self) -> QuoteStyle {
-		if self.kind_bits() == Kind::String.bits {
+		if self.kind_bits() == Kind::String as u8 {
 			if self.third_bit_is_set() {
-				return QuoteStyle::Single;
-			} else if self.second_bit_is_set() {
 				return QuoteStyle::Double;
+			} else if self.second_bit_is_set() {
+				return QuoteStyle::Single;
 			}
 		}
 		QuoteStyle::None
@@ -308,13 +348,13 @@ impl Token {
 
 	#[inline]
 	pub fn string_has_closing_quote(&self) -> bool {
-		self.kind_bits() == Kind::String.bits && self.second_bit_is_set()
+		self.kind_bits() == Kind::String as u8 && self.second_bit_is_set()
 	}
 
 	// Escape style checks
 	#[inline]
 	pub fn can_escape(&self) -> bool {
-		self.kind_bits() == Kind::String.bits || self.is_ident_like()
+		self.kind_bits() == Kind::String as u8 || self.is_ident_like()
 	}
 
 	#[inline]
@@ -340,29 +380,30 @@ impl Token {
 	// Url style checks
 	#[inline]
 	pub fn url_has_leading_space(&self) -> bool {
-		self.kind_bits() == Kind::Url.bits && self.second_bit_is_set()
+		self.kind_bits() == Kind::Url as u8 && self.second_bit_is_set()
 	}
 
 	#[inline]
 	pub fn url_has_closing_paren(&self) -> bool {
-		self.kind_bits() == Kind::Url.bits && self.third_bit_is_set()
+		self.kind_bits() == Kind::Url as u8 && self.third_bit_is_set()
 	}
 
 	// Whitespace/Comment Style checks
 	#[inline]
 	pub fn contains_newline(&self) -> bool {
-		(self.kind_bits() == Kind::Whitespace.bits || self.kind_bits() == Kind::Comment.bits)
+		(self.kind_bits() == Kind::Whitespace as u8 || self.kind_bits() == Kind::Comment as u8)
 			&& self.second_bit_is_set()
 	}
 
 	#[inline]
 	pub fn contains_tab(&self) -> bool {
-		(self.kind_bits() == Kind::Whitespace.bits || self.kind_bits() == Kind::Comment.bits) && self.third_bit_is_set()
+		(self.kind_bits() == Kind::Whitespace as u8 || self.kind_bits() == Kind::Comment as u8)
+			&& self.third_bit_is_set()
 	}
 
 	#[inline]
 	pub fn hash_is_id_like(&self) -> bool {
-		(self.kind_bits() == Kind::Hash.bits) && self.second_bit_is_set()
+		(self.kind_bits() == Kind::Hash as u8) && self.second_bit_is_set()
 	}
 
 	#[inline]
@@ -388,13 +429,18 @@ impl core::fmt::Debug for Token {
 				"{:03b}_{:05b}_{:08b}_{:016b}",
 				&self.flags.bits >> 29,
 				self.kind_bits(),
-				(self.flags.bits & L_MASK) >> 16,
-				self.flags.bits & NL_R_MASK,
+				(self.flags.bits & LENGTH_MASK) >> 16,
+				self.flags.bits & DIMENSION_UNIT_LENGTH_MASK,
 			),
-			_ => format!("{:03b}_{:05b}_{:024b}", &self.flags.bits >> 29, self.kind_bits(), self.flags.bits & L_MASK),
+			_ => format!(
+				"{:03b}_{:05b}_{:024b}",
+				&self.flags.bits >> 29,
+				self.kind_bits(),
+				self.flags.bits & LENGTH_MASK
+			),
 		};
 		match self.kind() {
-			Kind::Eof => write!(f, "Token::Eof {{ bits: {} }}", bits),
+			Kind::Eof => write!(f, "Token::Eof {{ bits: {}, offset: {} }}", bits, &self.offset),
 			Kind::Delim => {
 				write!(
 					f,
@@ -410,11 +456,34 @@ impl core::fmt::Debug for Token {
 					"Token::{} {{ bits: {}, offset: {}, len: {} }}",
 					&self.kind().as_str(),
 					bits,
-					&self.len(),
-					&self.offset
+					&self.offset,
+					&self.len()
 				)
 			}
 		}
+	}
+}
+
+impl std::fmt::Display for Token {
+	fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+		match self.kind() {
+			Kind::Delim => write!(f, "Delim({})", self.char().unwrap()),
+			k => write!(f, "{}", k.as_str()),
+		}
+	}
+}
+
+#[cfg(feature = "serde")]
+impl serde::ser::Serialize for Token {
+	fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+	where
+		S: Serializer,
+	{
+		let mut state = serializer.serialize_struct("Token", 3)?;
+		state.serialize_field("kind", self.kind().as_str())?;
+		state.serialize_field("offset", &self.offset)?;
+		state.serialize_field("len", &self.len())?;
+		state.end()
 	}
 }
 
@@ -453,28 +522,5 @@ impl PairWise {
 			Self::Curly => Kind::RightCurly,
 			Self::Square => Kind::RightSquare,
 		}
-	}
-}
-
-impl std::fmt::Display for Token {
-	fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-		match self.kind() {
-			Kind::Delim => write!(f, "Delim({})", self.char().unwrap()),
-			k => write!(f, "{}", k.as_str()),
-		}
-	}
-}
-
-#[cfg(feature = "serde")]
-impl serde::ser::Serialize for Token {
-	fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-	where
-		S: Serializer,
-	{
-		let mut state = serializer.serialize_struct("Token", 3)?;
-		state.serialize_field("kind", self.kind().as_str())?;
-		state.serialize_field("offset", &self.offset)?;
-		state.serialize_field("len", &self.len())?;
-		state.end()
 	}
 }

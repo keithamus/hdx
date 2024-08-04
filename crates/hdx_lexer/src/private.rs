@@ -1,5 +1,6 @@
+use bumpalo::Bump;
 use hdx_syntax::{
-	identifier::{is_ident, is_ident_ascii_lower, is_ident_ascii_start, is_ident_start, is_ident_start_sequence},
+	identifier::{is_ident, is_ident_ascii, is_ident_ascii_lower, is_ident_ascii_start, is_ident_start, is_ident_start_sequence},
 	is_escape_sequence, is_newline, is_quote, is_sign, is_whitespace,
 	url::{is_non_printable, is_url_ident},
 	EOF,
@@ -13,11 +14,11 @@ impl<'a> Lexer<'a> {
 		self.chars.clone().nth(n).unwrap_or(EOF)
 	}
 
-	pub(crate) fn read_next_token(&mut self) -> Token {
-		let pos = self.pos();
-		let remaining = self.chars.as_str();
-		if remaining.is_empty() {
-			return Token::new(Kind::Eof, 0, pos, 0);
+	#[must_use]
+	pub(crate) fn read_next_token(&mut self) -> (Token, u32) {
+		let offset = self.offset();
+		if self.source.len() as u32 == offset {
+			return (Token::new(Kind::Eof, 0, offset, 0), 0);
 		}
 		let c = self.nth_char(0);
 		// fast path for single character tokens
@@ -27,7 +28,7 @@ impl<'a> Lexer<'a> {
 			let kind = SINGLE_CHAR_TOKENS[size];
 			if kind != Kind::Eof {
 				self.chars.next();
-				return Token::new(kind, 0, pos, c as u32);
+				return (Token::new(kind, 0, offset, c as u32), 1);
 			}
 			// fast path for identifiers
 			if is_ident_ascii_start(c) {
@@ -35,10 +36,11 @@ impl<'a> Lexer<'a> {
 			}
 		}
 		match c {
+			'\0' => (Token::new(Kind::Eof, 0, offset, 0), 0),
 			// Whitespace Range
 			c if is_whitespace(c) => {
-				self.consume_whitespace();
-				Token::new(Kind::Whitespace, 0, pos, self.pos() - pos)
+				let len = self.consume_whitespace();
+				(Token::new(Kind::Whitespace, 0, offset, len), len)
 			}
 			// Quote Range
 			c if is_quote(c) => self.consume_string_token(),
@@ -50,7 +52,7 @@ impl<'a> Lexer<'a> {
 					self.chars.next();
 					self.chars.next();
 					self.chars.next();
-					return Token::new(Kind::CdcOrCdo, 1, pos, 3);
+					return (Token::new(Kind::CdcOrCdo, 1, offset, 3), 3);
 				}
 				if is_ident_start_sequence(c, self.nth_char(1), self.nth_char(2)) {
 					return self.consume_ident_like_token();
@@ -58,71 +60,85 @@ impl<'a> Lexer<'a> {
 				if self.is_number_start() {
 					return self.consume_numeric_token();
 				}
-				Token::new(Kind::Delim, 0, pos, self.chars.next().unwrap() as u32)
+				self.chars.next();
+				(Token::new(Kind::Delim, 0, offset, '-' as u32), 1)
 			}
 			// Dot or Plus
 			'.' | '+' => {
 				if self.is_number_start() {
 					return self.consume_numeric_token();
 				}
-				Token::new(Kind::Delim, 0, pos, self.chars.next().unwrap() as u32)
+				self.chars.next();
+				(Token::new(Kind::Delim, 0, offset, c as u32), 1)
 			}
 			// Less Than
 			'<' => {
-				if self.nth_char(1) == '!' && self.nth_char(2) == '-' && self.nth_char(3) == '-' {
+				self.chars.next();
+				if self.nth_char(0) == '!' && self.nth_char(0) == '-' && self.nth_char(0) == '-' {
 					self.chars.next();
 					self.chars.next();
 					self.chars.next();
-					self.chars.next();
-					return Token::new(Kind::CdcOrCdo, 0, pos, 4);
+					return (Token::new(Kind::CdcOrCdo, 0, offset, 4), 4);
 				}
-				Token::new(Kind::Delim, 0, pos, self.chars.next().unwrap() as u32)
+				(Token::new(Kind::Delim, 0, offset, '<' as u32), 1)
 			}
 			// Hash / Pound Sign
 			'#' => {
 				if is_ident(self.nth_char(1)) || is_escape_sequence(self.nth_char(1), self.nth_char(2)) {
 					self.consume_hash_token()
 				} else {
-					Token::new(Kind::Delim, 0, pos, self.chars.next().unwrap() as u32)
+					self.chars.next();
+					(Token::new(Kind::Delim, 0, offset, '#' as u32), 1)
 				}
 			}
 			// Commercial At
 			'@' => {
-				if is_ident_start_sequence(self.nth_char(1), self.nth_char(2), self.nth_char(3)) {
-					self.chars.next();
-					let flags = self.consume_ident_sequence();
-					return Token::new(Kind::AtKeyword, flags, pos, self.pos() - pos);
+				self.chars.next();
+				if is_ident_start_sequence(self.nth_char(0), self.nth_char(1), self.nth_char(2)) {
+					let (flags, len) = self.consume_ident_sequence();
+					return (Token::new(Kind::AtKeyword, flags, offset, len + 1), len + 1);
 				}
-				Token::new(Kind::Delim, 0, pos, self.chars.next().unwrap() as u32)
+				(Token::new(Kind::Delim, 0, offset, '@' as u32), 1)
 			}
 			// Reverse Solidus
 			'\\' => {
 				if is_escape_sequence(c, self.nth_char(1)) {
 					return self.consume_ident_like_token();
 				}
-				Token::new(Kind::Delim, 0, pos, self.chars.next().unwrap() as u32)
+				self.chars.next();
+				(Token::new(Kind::Delim, 0, offset, '\\' as u32), 1)
 			}
 			// Solidus
 			'/' => match self.nth_char(1) {
 				'*' => {
 					self.chars.next();
 					self.chars.next();
+					let mut len = 2;
 					while let Some(c) = self.chars.next() {
+						len += 1;
 						if c == '*' && self.nth_char(0) == '/' {
 							self.chars.next();
+							len += 1;
 							break;
 						}
 					}
-					Token::new(Kind::Comment, 0, pos, self.pos() - pos)
+					(Token::new(Kind::Comment, 0, offset, len), len)
 				}
-				_ => Token::new(Kind::Delim, 0, pos, self.chars.next().unwrap() as u32),
+				_ => {
+					self.chars.next();
+					(Token::new(Kind::Delim, 0, offset, '/' as u32), 1)
+				}
 			},
 			c if is_ident_start(c) => self.consume_ident_like_token(),
-			_ => Token::new(Kind::Delim, 0, pos, self.chars.next().unwrap() as u32),
+			c => {
+				self.chars.next();
+				(Token::new(Kind::Delim, 0, offset, c as u32), 1)
+			}
 		}
 	}
 
-	fn consume_whitespace(&mut self) -> usize {
+	#[must_use]
+	fn consume_whitespace(&mut self) -> u32 {
 		let mut i = 0;
 		while is_whitespace(self.nth_char(0)) {
 			self.chars.next();
@@ -131,33 +147,41 @@ impl<'a> Lexer<'a> {
 		i
 	}
 
-	fn consume_ident_sequence(&mut self) -> u8 {
+	#[must_use]
+	fn consume_ident_sequence(&mut self) -> (u8, u32) {
 		let mut flags = 0b000;
+		let mut len = 0;
 		loop {
 			let c = self.nth_char(0);
 			if is_ident_ascii_lower(c) {
 				self.chars.next();
+				len += 1;
 			} else if is_ident(c) {
 				self.chars.next();
+				len += c.len_utf8() as u32;
 				flags |= 0b001;
 			} else if is_escape_sequence(c, self.nth_char(1)) {
 				self.chars.next();
+				len += 1;
 				flags |= 0b100;
-				self.consume_escape_sequence();
+				len += self.consume_escape_sequence();
 			} else {
 				break;
 			}
 		}
-		flags
+		(flags, len)
 	}
 
-	fn consume_escape_sequence(&mut self) {
+	#[must_use]
+	fn consume_escape_sequence(&mut self) -> u32 {
+		let mut len = 1;
 		if self.chars.next().unwrap_or(EOF).is_ascii_hexdigit() {
 			let mut i = 0;
 			let mut chars = self.chars.clone().peekable();
 			while chars.peek().unwrap_or(&EOF).is_ascii_hexdigit() {
 				chars.next();
 				self.chars.next();
+				len += 1;
 				i += 1;
 				if i > 4 {
 					break;
@@ -165,27 +189,34 @@ impl<'a> Lexer<'a> {
 			}
 			if is_whitespace(*chars.peek().unwrap_or(&EOF)) {
 				self.chars.next();
+				len += 1;
 			}
 		}
+		len
 	}
 
-	fn consume_url_sequence(&mut self, pos: u32, ident_flags: u8) -> Token {
+	#[must_use]
+	fn consume_url_sequence(&mut self, offset: u32, mut len: u32, ident_flags: u8) -> (Token, u32) {
 		let mut flags = ident_flags & 0b100;
-		if self.consume_whitespace() > 0 {
+		let whitespace_count = self.consume_whitespace();
+		if whitespace_count > 0 {
+			len += whitespace_count;
 			flags |= 0b010;
 		}
 		loop {
 			let c = self.chars.next().unwrap_or(EOF);
+			len += 1;
 			match c {
 				')' => {
 					flags |= 0b001;
 					break;
 				}
 				EOF => {
+					len -= 1;
 					break;
 				}
 				_ if is_whitespace(c) => {
-					self.consume_whitespace();
+					len += self.consume_whitespace() + 1;
 					// Consider trailing whitespace as escape to allow the string
 					// parser to consume characters one-by-one
 					flags |= 0b100;
@@ -198,33 +229,36 @@ impl<'a> Lexer<'a> {
 							break;
 						}
 						_ => {
-							return self.consume_remnants_of_bad_url(pos);
+							return self.consume_remnants_of_bad_url(offset, len);
 						}
 					};
 				}
 				'\'' | '"' | '(' => {
-					return self.consume_remnants_of_bad_url(pos);
+					return self.consume_remnants_of_bad_url(offset, len);
 				}
 				_ if is_non_printable(c) => {
-					return self.consume_remnants_of_bad_url(pos);
+					return self.consume_remnants_of_bad_url(offset, len);
 				}
 				'\\' => {
 					if is_escape_sequence(c, self.nth_char(0)) {
-						self.consume_escape_sequence();
+						len += self.consume_escape_sequence();
 						flags |= 0b100;
 					} else {
 						self.chars.next();
-						return self.consume_remnants_of_bad_url(pos);
+						len += 1;
+						return self.consume_remnants_of_bad_url(offset, len);
 					}
 				}
 				_ => {}
 			}
 		}
-		Token::new(Kind::Url, flags, pos, self.pos() - pos)
+		(Token::new(Kind::Url, flags, offset, len), len)
 	}
 
-	fn consume_remnants_of_bad_url(&mut self, pos: u32) -> Token {
+	#[must_use]
+	fn consume_remnants_of_bad_url(&mut self, offset: u32, mut len: u32) -> (Token, u32) {
 		loop {
+			len += 1;
 			match self.chars.next().unwrap_or(EOF) {
 				')' => {
 					break;
@@ -235,18 +269,20 @@ impl<'a> Lexer<'a> {
 				c @ '\\' => {
 					if is_escape_sequence(c, self.nth_char(0)) {
 						self.chars.next();
-						self.consume_escape_sequence();
+						len += self.consume_escape_sequence() + 1;
 					}
 				}
 				_ => {}
 			}
 		}
-		Token::new(Kind::BadUrl, 0, pos, self.pos() - pos)
+		(Token::new(Kind::BadUrl, 0, offset, len), len)
 	}
 
-	fn consume_numeric_token(&mut self) -> Token {
-		let pos = self.pos();
+	#[must_use]
+	fn consume_numeric_token(&mut self) -> (Token, u32) {
+		let offset = self.offset();
 		let c = self.chars.next().unwrap();
+		let mut len = 1;
 		let mut flags = 0b000;
 		if is_sign(c) {
 			flags |= 0b010;
@@ -254,10 +290,11 @@ impl<'a> Lexer<'a> {
 		if c == '.' {
 			flags |= 0b001;
 		}
-		self.consume_decimal_digits();
+		len += self.consume_decimal_digits();
 		if flags & 0b001 == 0 && self.nth_char(0) == '.' && self.nth_char(1).is_ascii_digit() {
 			self.chars.next();
-			self.consume_decimal_digits();
+			len += 1;
+			len += self.consume_decimal_digits();
 			flags |= 0b001;
 		}
 		if matches!(self.nth_char(0), 'e' | 'E')
@@ -265,47 +302,57 @@ impl<'a> Lexer<'a> {
 				|| (matches!(self.nth_char(1), '-' | '+') && self.nth_char(2).is_ascii_digit()))
 		{
 			self.chars.next();
+			len += 1;
 			if matches!(self.nth_char(0), '-' | '+') {
 				self.chars.next();
+				len += 1;
 			}
-			self.consume_decimal_digits();
+			len += self.consume_decimal_digits();
 			flags |= 0b001;
 		}
 		match self.nth_char(0) {
 			'%' => {
 				self.chars.next();
-				Token::new_dimension(flags, pos, self.pos() - pos, 1)
+				(Token::new_dimension(flags, offset, len, 1), len + 1)
 			}
 			c if is_ident_start_sequence(c, self.nth_char(1), self.nth_char(2)) => {
-				let num_pos = self.pos();
-				self.consume_ident_sequence();
-				Token::new_dimension(flags, pos, num_pos - pos, self.pos() - num_pos)
+				let (_, unit_len) = self.consume_ident_sequence();
+				(Token::new_dimension(flags, offset, len, unit_len), len + unit_len)
 			}
-			_ => Token::new(Kind::Number, flags, pos, self.pos() - pos),
+			_ => (Token::new(Kind::Number, flags, offset, len), len),
 		}
 	}
 
-	fn consume_hash_token(&mut self) -> Token {
-		let pos = self.pos();
+	#[must_use]
+	fn consume_hash_token(&mut self) -> (Token, u32) {
+		let offset = self.offset();
 		self.chars.next();
 		let hash_flags = if is_ident(self.nth_char(0)) { 0b010 } else { 0b000 };
-		let flags = (self.consume_ident_sequence() & 0b101) | hash_flags;
-		Token::new(Kind::Hash, flags, pos, self.pos() - pos)
+		let (flags, len) = self.consume_ident_sequence();
+		(Token::new(Kind::Hash, (flags & 0b101) | hash_flags, offset, len + 1), len + 1)
 	}
 
-	fn consume_decimal_digits(&mut self) {
+	#[must_use]
+	fn consume_decimal_digits(&mut self) -> u32 {
+		let mut len = 0;
 		while self.nth_char(0).is_ascii_digit() {
 			self.chars.next();
+			len += 1;
 		}
+		len
 	}
 
-	fn consume_ident_like_token(&mut self) -> Token {
-		let pos = self.pos();
-		let flags = self.consume_ident_sequence();
+	#[must_use]
+	fn consume_ident_like_token(&mut self) -> (Token, u32) {
+		let offset = self.offset();
+		let (flags, mut len) = self.consume_ident_sequence();
 		if self.nth_char(0) == '(' {
 			self.chars.next();
-			let token = Token::new(Kind::Function, flags, pos, self.pos() - pos);
-			if is_url_ident(self.parse_str(token)) {
+			len += 1;
+			let token = Token::new(Kind::Function, flags, offset, len);
+			// TODO: avoid allocations here... it shouldn't be necessary
+			let allocator = Bump::new();
+			if is_url_ident(self.parse_str(token, &allocator)) {
 				let mut chars = self.chars.clone();
 				let mut char = chars.next().unwrap_or(EOF);
 				for _i in 0..=3 {
@@ -314,53 +361,60 @@ impl<'a> Lexer<'a> {
 					}
 				}
 				if !is_quote(char) {
-					return self.consume_url_sequence(pos, flags);
+					return self.consume_url_sequence(offset, len, flags);
 				}
 			}
-			return token;
+			drop(allocator);
+			return (token, len);
 		}
-		Token::new(Kind::Ident, flags, pos, self.pos() - pos)
+		(Token::new(Kind::Ident, flags, offset, len), len)
 	}
 
-	fn consume_string_token(&mut self) -> Token {
-		let pos = self.pos();
+	#[must_use]
+	fn consume_string_token(&mut self) -> (Token, u32) {
+		let offset = self.offset();
 		let delimiter = self.chars.next().unwrap();
+		let mut len = 1;
 		let mut flags = (delimiter == '"') as u8;
 		loop {
 			match self.nth_char(0) {
 				c if is_newline(c) => {
-					return Token::new(Kind::BadString, flags, pos, self.pos() - pos);
+					return (Token::new(Kind::BadString, flags, offset, len), len);
 				}
 				EOF => {
-					return Token::new(Kind::String, flags, pos, self.pos() - pos);
+					return (Token::new(Kind::String, flags, offset, len), len);
 				}
 				c @ ('"' | '\'') => {
 					self.chars.next();
+					len += 1;
 					if c == delimiter {
 						flags |= 0b010;
-						return Token::new(Kind::String, flags, pos, self.pos() - pos);
+						return (Token::new(Kind::String, flags, offset, len), len);
 					}
 				}
 				c @ '\\' => {
 					self.chars.next();
+					len += 1;
 					match self.nth_char(0) {
 						EOF => {
-							return Token::new(Kind::String, flags, pos, self.pos() - pos);
+							return (Token::new(Kind::String, flags, offset, len), len);
 						}
 						p if is_newline(p) => {
 							self.chars.next();
+							len += 1;
 						}
 						p if is_escape_sequence(c, p) => {
-							self.consume_escape_sequence();
+							len += self.consume_escape_sequence();
 							flags |= 0b100;
 						}
 						_ => {
-							return Token::new(Kind::BadString, flags, pos, self.pos() - pos);
+							return (Token::new(Kind::BadString, flags, offset, len), len);
 						}
 					}
 				}
-				_ => {
+				c => {
 					self.chars.next();
+					len += c.len_utf8() as u32;
 				}
 			}
 		}

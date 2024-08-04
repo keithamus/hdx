@@ -1,6 +1,6 @@
 use bumpalo::Bump;
 use hdx_ast::css::StyleSheet;
-use hdx_lexer::{Lexer, Token};
+use hdx_lexer::{Include, Kind, Lexer};
 use hdx_parser::{Features, Parser};
 use hdx_writer::{BaseCssWriter, OutputOption, WriteCss};
 #[cfg(not(feature = "fancy"))]
@@ -19,14 +19,13 @@ pub fn main() {
 
 #[wasm_bindgen]
 pub fn lex(source_text: String) -> Result<JsValue, serde_wasm_bindgen::Error> {
-	let allocator = Bump::default();
-	let mut lex = Lexer::new(&allocator, source_text.as_str());
+	let mut lex = Lexer::new(source_text.as_str(), Include::all_bits());
 	let serializer = serde_wasm_bindgen::Serializer::json_compatible();
 	let mut tokens = vec![];
 	loop {
 		let token = lex.advance();
-		tokens.push(token.clone());
-		if matches!(token, Token::Eof) {
+		tokens.push(token);
+		if token.kind() == Kind::Eof {
 			break;
 		}
 	}
@@ -36,12 +35,11 @@ pub fn lex(source_text: String) -> Result<JsValue, serde_wasm_bindgen::Error> {
 #[wasm_bindgen]
 pub fn parse(source_text: String) -> Result<SerializableParserResult, serde_wasm_bindgen::Error> {
 	let allocator = Bump::default();
-	let result = Parser::new(&allocator, source_text.as_str(), Features::default()).parse_with::<StyleSheet>();
+	let result = Parser::new(&allocator, source_text.as_str(), Features::default()).parse_entirely::<StyleSheet>();
 	let serializer = serde_wasm_bindgen::Serializer::json_compatible();
 	let diagnostics = result
 		.errors
 		.iter()
-		.chain(result.warnings.iter())
 		.flat_map(|error| {
 			let Some(labels) = error.labels() else { return vec![] };
 			labels
@@ -65,7 +63,7 @@ pub fn parse(source_text: String) -> Result<SerializableParserResult, serde_wasm
 #[wasm_bindgen]
 pub fn minify(source_text: String) -> Result<String, serde_wasm_bindgen::Error> {
 	let allocator = Bump::default();
-	let result = Parser::new(&allocator, source_text.as_str(), Features::default()).parse_with::<StyleSheet>();
+	let result = Parser::new(&allocator, source_text.as_str(), Features::default()).parse_entirely::<StyleSheet>();
 	if !result.errors.is_empty() {
 		return Err(serde_wasm_bindgen::Error::new("Parse error"));
 	}
@@ -78,7 +76,7 @@ pub fn minify(source_text: String) -> Result<String, serde_wasm_bindgen::Error> 
 #[wasm_bindgen]
 pub fn parse_error_report(source_text: String) -> String {
 	let allocator = Bump::default();
-	let result = Parser::new(&allocator, source_text.as_str(), Features::default()).parse_with::<StyleSheet>();
+	let result = Parser::new(&allocator, source_text.as_str(), Features::default()).parse_entirely::<StyleSheet>();
 	#[cfg(feature = "fancy")]
 	let handler = GraphicalReportHandler::new_themed(GraphicalTheme::unicode_nocolor());
 	#[cfg(not(feature = "fancy"))]
@@ -87,11 +85,6 @@ pub fn parse_error_report(source_text: String) -> String {
 	for err in result.errors {
 		let err = err.with_source_code(NamedSource::new("", source_text.to_string()));
 		handler.render_report(&mut report, err.as_ref()).unwrap();
-		report += "\n";
-	}
-	for warn in result.warnings {
-		let warn = warn.with_source_code(NamedSource::new("", source_text.to_string()));
-		handler.render_report(&mut report, warn.as_ref()).unwrap();
 		report += "\n";
 	}
 	report.to_string()

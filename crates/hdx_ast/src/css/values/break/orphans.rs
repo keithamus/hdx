@@ -1,17 +1,9 @@
-use hdx_derive::{Parsable, Value, Writable};
-
-use crate::css::units::CSSInt;
+use hdx_derive::{Value, from_syntax};
 
 // https://drafts.csswg.org/css-break/#widows-orphans
-#[derive(Value, Parsable, Writable, Debug, PartialEq, Clone, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-pub struct Orphans(pub CSSInt);
-
-impl Default for Orphans {
-	fn default() -> Self {
-		Self(2.into())
-	}
-}
+#[from_syntax(<integer [1,]>)]
+#[initial(2)]
+pub struct Orphans;
 
 #[cfg(test)]
 mod tests {
@@ -33,5 +25,6 @@ mod tests {
 	fn test_errors() {
 		assert_parse_error!(Orphans, "8.2");
 		assert_parse_error!(Orphans, "10%");
+		assert_parse_error!(Orphans, "0");
 	}
 }

@@ -36,7 +36,7 @@ impl<'a> Parse<'a> for FontVariantAlternates {
 			Kind::Ident => match parser.parse_atom_lower(token) {
 				atom!("normal") => Self::Normal,
 				atom!("historical-forms") => Self::HistoricalForms,
-				atom => unexpected_ident!(parser, atom),
+				atom => unexpected_ident!(parser, token, atom),
 			},
 			Kind::Function => match parser.parse_atom_lower(token) {
 				atom!("stylistic") => {
@@ -87,7 +87,7 @@ impl<'a> Parse<'a> for FontVariantAlternates {
 							break;
 						}
 						idents.push(parser.parse_atom(token));
-						if !discard!(parser, Kind::Comma) {
+						if !discard!(parser, Comma) {
 							break;
 						}
 					}
@@ -102,7 +102,7 @@ impl<'a> Parse<'a> for FontVariantAlternates {
 							break;
 						}
 						idents.push(parser.parse_atom(token));
-						if !discard!(parser, Kind::Comma) {
+						if !discard!(parser, Comma) {
 							break;
 						}
 					}
