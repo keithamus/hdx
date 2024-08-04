@@ -1,6 +1,5 @@
 use hdx_derive::Writable;
-use hdx_lexer::Kind;
-use hdx_parser::{unexpected, Parse, Parser, Result as ParserResult};
+use hdx_parser::{diagnostics, Parse, Parser, Peek, Result as ParserResult, Token};
 use std::{
 	fmt::{Display, Result as DisplayResult},
 	hash::{Hash, Hasher},
@@ -19,6 +18,27 @@ impl CSSFloat {
 		} else {
 			Self(self.0)
 		}
+	}
+}
+
+impl CSSFloat {
+	#[allow(non_upper_case_globals)]
+	pub const Zero: CSSFloat = CSSFloat(0.0);
+
+	pub fn to_f32(&self) -> f32 {
+		self.0
+	}
+}
+
+impl From<CSSFloat> for i32 {
+	fn from(value: CSSFloat) -> Self {
+		value.into()
+	}
+}
+
+impl From<CSSFloat> for f32 {
+	fn from(value: CSSFloat) -> Self {
+		value.to_f32()
 	}
 }
 
@@ -109,12 +129,19 @@ impl PartialOrd<f32> for CSSFloat {
 	}
 }
 
+impl<'a> Peek<'a> for CSSFloat {
+	fn peek(parser: &Parser<'a>) -> Option<hdx_lexer::Token> {
+		parser.peek::<Token![Number]>().filter(|t| t.is_float())
+	}
+}
+
 impl<'a> Parse<'a> for CSSFloat {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let token = parser.next();
-		match token.kind() {
-			Kind::Number => Ok(parser.parse_number(token).into()),
-			_ => unexpected!(parser, token),
+		let token = *parser.parse::<Token![Number]>()?;
+		let number = parser.parse_number(token);
+		if !token.is_float() {
+			Err(diagnostics::ExpectedFloat(number, token.span()))?;
 		}
+		Ok(number.into())
 	}
 }

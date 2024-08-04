@@ -31,7 +31,7 @@ fn popular(c: &mut Criterion) {
 		group.bench_with_input(BenchmarkId::from_parameter(&file.name), &file.source_text, |b, source_text| {
 			b.iter_with_large_drop(|| {
 				let allocator = Bump::default();
-				let _ = Parser::new(&allocator, source_text, Features::default()).parse_entirely_with::<StyleSheet>();
+				let _ = Parser::new(&allocator, source_text, Features::default()).parse_entirely::<StyleSheet>();
 
 				allocator
 			});

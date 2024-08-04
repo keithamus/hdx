@@ -44,7 +44,6 @@ impl AtomizableArgs {
 
 pub fn derive(input: DeriveInput) -> TokenStream {
 	let ident = input.ident;
-	let input_args = AtomizableArgs::parse(&input.attrs);
 	match input.data {
 		Data::Enum(DataEnum { variants, .. }) => {
 			let mut match_atom_to_enum_variant = Vec::new();

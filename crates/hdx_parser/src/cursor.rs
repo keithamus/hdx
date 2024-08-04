@@ -1,46 +1,50 @@
-use hdx_lexer::{Include, Token};
+use hdx_lexer::{Include, Kind, LexerCheckpoint, Token};
 
-use crate::{span::Span, Parser};
+use crate::Parser;
 
 pub struct ParserCheckpoint {
-	token: Token,
-	warnings_pos: usize,
-	errors_pos: usize,
+	checkpoint: LexerCheckpoint,
+	errors_pos: u8,
 }
 
 impl<'a> Parser<'a> {
 	#[inline]
-	pub fn cur(&self) -> Token {
-		self.token
+	pub fn offset(&self) -> u32 {
+		self.lexer.offset()
 	}
 
 	#[inline]
-	pub fn pos(&self) -> u32 {
-		self.lexer.pos()
+	pub fn at_end(&self) -> bool {
+		self.lexer.at_end() || self.peek_next().kind() == Kind::Eof
 	}
 
 	#[inline]
-	pub fn span(&self) -> Span {
-		Span::new(self.pos(), self.pos())
+	pub fn hop(&mut self, token: Token) {
+		self.lexer.hop(token);
+	}
+
+	pub fn rewind(&mut self, checkpoint: ParserCheckpoint) {
+		let ParserCheckpoint { checkpoint, errors_pos } = checkpoint;
+		self.lexer.rewind(checkpoint);
+		self.errors.truncate(errors_pos as usize);
+	}
+
+	pub fn checkpoint(&self) -> ParserCheckpoint {
+		ParserCheckpoint { checkpoint: self.lexer.checkpoint(), errors_pos: self.errors.len() as u8 }
 	}
 
 	#[inline]
-	pub fn peek(&mut self) -> Token {
-		self.peek_with(self.lexer.include)
+	pub(crate) fn peek_next(&self) -> Token {
+		self.lexer.clone().advance()
 	}
 
 	#[inline]
-	pub fn peek_with(&mut self, inc: Include) -> Token {
-		self.lexer.clone_with(inc).advance()
-	}
-
-	#[inline]
-	pub fn peek_n(&mut self, n: u8) -> Token {
+	pub(crate) fn peek_n(&self, n: u8) -> Token {
 		self.peek_n_with(n, self.lexer.include)
 	}
 
 	#[inline]
-	pub fn peek_n_with(&mut self, n: u8, inc: Include) -> Token {
+	pub(crate) fn peek_n_with(&self, n: u8, inc: Include) -> Token {
 		let mut lex = self.lexer.clone_with(inc);
 		let mut remaining = n;
 		loop {
@@ -52,33 +56,40 @@ impl<'a> Parser<'a> {
 		}
 	}
 
-	/// Should only be used in severe edge cases, for legacy parse modes
-	pub fn legacy_peek_next_char(&self, n: usize) -> Option<char> {
-		self.lexer.legacy_peek_next_char(n)
+	#[inline]
+	pub(crate) fn next(&mut self) -> Token {
+		let token = self.lexer.advance();
+
+		#[cfg(debug_assertions)]
+		if let Some(last_token) = self.last_token {
+			debug_assert!(last_token != token, "Detected a next loop, {:?} was fetched twice", token);
+		}
+		#[cfg(debug_assertions)]
+		if token.kind() == hdx_lexer::Kind::Eof {
+			self.last_token = None;
+		} else {
+			self.last_token = Some(token);
+		}
+
+		token
 	}
 
 	#[inline]
-	pub fn next(&mut self) -> Token {
-		self.token = self.lexer.advance();
-		self.token
-	}
+	pub(crate) fn next_with(&mut self, inc: Include) -> Token {
+		let token = self.lexer.clone_with(inc).advance();
 
-	#[inline]
-	pub fn next_with(&mut self, inc: Include) -> Token {
-		self.token = self.lexer.clone_with(inc).advance();
-		self.lexer.rewind(self.token);
-		self.token
-	}
+		#[cfg(debug_assertions)]
+		if let Some(last_token) = self.last_token {
+			debug_assert!(last_token != token, "Detected a next loop {:?} was fetched twice", token);
+		}
+		#[cfg(debug_assertions)]
+		if token.kind() == hdx_lexer::Kind::Eof {
+			self.last_token = None;
+		} else {
+			self.last_token = Some(token);
+		}
 
-	pub fn rewind(&mut self, checkpoint: ParserCheckpoint) {
-		let ParserCheckpoint { token, warnings_pos, errors_pos } = checkpoint;
-		self.lexer.rewind(token);
-		self.token = token;
-		self.warnings.truncate(warnings_pos);
-		self.errors.truncate(errors_pos);
-	}
-
-	pub fn checkpoint(&self) -> ParserCheckpoint {
-		ParserCheckpoint { token: self.token, warnings_pos: self.warnings.len(), errors_pos: self.errors.len() }
+		self.lexer.hop(token);
+		token
 	}
 }

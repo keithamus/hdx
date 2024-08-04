@@ -1,6 +1,7 @@
-use hdx_lexer::Kind;
+use hdx_atom::Atom;
+use hdx_lexer::{Kind, Spanned};
 
-use crate::{discard, expect, parser::Parser, peek, span::Spanned, unexpected, Result, State, Vec};
+use crate::{diagnostics, discard, parser::Parser, Delim, Result, State, Token, Vec};
 
 use super::Parse;
 
@@ -15,32 +16,41 @@ pub trait AtRule<'a>: Sized + Parse<'a> {
 	// parse_prelude returns an Option, and rules that either require can check
 	// in parse() or override parse_prelude() to err.
 	fn parse_prelude(parser: &mut Parser<'a>) -> Result<Option<Spanned<Self::Prelude>>> {
-		match parser.peek().kind() {
-			Kind::LeftCurly | Kind::Semicolon | Kind::Eof => Ok(None),
-			_ => Ok(Some(Self::Prelude::parse_spanned(parser)?)),
+		let next_token_kind = parser.peek::<Token![Any]>().map(|t| t.kind()).unwrap_or(Kind::Eof);
+		if parser.at_end() || matches!(next_token_kind, Kind::LeftCurly | Kind::Semicolon) {
+			return Ok(None);
 		}
+		Ok(Some(Self::Prelude::parse_spanned(parser)?))
 	}
 
 	// AtRules can have an optional block (e.g. @charset, @import must not have
 	// one). The default parse_prelude returns an Option, and rules that either
 	// require can check in parse() or override parse_prelude() to err.
 	fn parse_block(parser: &mut Parser<'a>) -> Result<Option<Spanned<Self::Block>>> {
-		let token = parser.peek();
+		let token = parser.peek_next();
 		match token.kind() {
 			Kind::Semicolon | Kind::Eof => {
 				parser.next();
 				Ok(None)
 			}
 			Kind::LeftCurly => Ok(Some(Self::Block::parse_spanned(parser)?)),
-			_ => unexpected!(parser, token),
+			_ => Err(diagnostics::Unexpected(token, token.span()))?,
 		}
 	}
 
 	// https://drafts.csswg.org/css-syntax-3/#consume-an-at-rule
 	fn parse_at_rule(
 		parser: &mut Parser<'a>,
+		name: Option<Atom>,
 	) -> Result<(Option<Spanned<Self::Prelude>>, Option<Spanned<Self::Block>>)> {
-		expect!(parser.cur(), Kind::AtKeyword);
+		let token = *parser.parse::<Token![AtKeyword]>()?;
+		let span = token.span();
+		if let Some(name) = name {
+			let atom = parser.parse_atom_lower(token);
+			if atom != name {
+				Err(diagnostics::UnexpectedAtRule(atom, span))?;
+			}
+		}
 		let prelude = Self::parse_prelude(parser)?;
 		let block = Self::parse_block(parser)?;
 		Ok((prelude, block))
@@ -67,26 +77,65 @@ pub trait QualifiedRule<'a>: Sized + Parse<'a> {
 
 	// https://drafts.csswg.org/css-syntax-3/#consume-a-qualified-rule
 	fn parse_qualified_rule(parser: &mut Parser<'a>) -> Result<(Spanned<Self::Prelude>, Spanned<Self::Block>)> {
-		let token = parser.peek().clone();
-		match token.kind() {
-			Kind::Eof => unexpected!(parser, token),
-			Kind::RightCurly if !parser.is(State::Nested) => unexpected!(parser, token),
-			Kind::Ident if peek!(parser, 2, Kind::RightCurly) && token.is_dashed_ident() => {
-				unexpected!(parser);
+		// Let rule be a new qualified rule with its prelude, declarations, and child rules all initially set to empty lists.
+		let mut prelude = None;
+
+		// Process input:
+		loop {
+			// <EOF-token>
+			// stop token (if passed)
+			//   This is a parse error. Return nothing.
+			if parser.at_end() {
+				Err(diagnostics::UnexpectedEnd())?
 			}
-			_ => {}
-		}
-		let prelude = Self::parse_prelude(parser)?;
-		let token = parser.peek().clone();
-		match token.kind() {
-			Kind::Eof => unexpected!(parser, token),
-			Kind::RightCurly if !parser.is(State::Nested) => unexpected!(parser, token),
-			Kind::Ident if peek!(parser, 2, Kind::RightCurly) && token.is_dashed_ident() => {
-				unexpected!(parser);
+			// <}-token>
+			//   This is a parse error. If nested is true, return nothing. Otherwise, consume a token and append the result to rule’s prelude.
+			if parser.is(State::Nested) {
+				if let Some(token) = parser.peek::<Token![RightCurly]>() {
+					Err(diagnostics::UnexpectedCloseCurly(token.span()))?;
+				}
 			}
-			_ => {}
+
+			// <{-token>
+			//	If the first two non-<whitespace-token> values of rule’s prelude are an <ident-token> whose value starts with "--" followed by a <colon-token>, then:
+			if let Some(token) = parser.peek::<Token![Ident]>() {
+				if prelude.is_none() && token.is_dashed_ident() {
+					let checkpoint = parser.checkpoint();
+					parser.hop(token);
+					if let Some(colon_token) = parser.peek::<Delim![:]>() {
+						parser.hop(colon_token);
+						if parser.peek::<Token![LeftCurly]>().is_some() {
+							if parser.is(State::Nested) {
+								// If nested is true, consume the remnants of a bad declaration from input, with nested set to true, and return nothing.
+								parser.rewind(checkpoint);
+								todo!();
+							} else {
+								// If nested is false, consume a block from input, and return nothing.
+								parser.rewind(checkpoint);
+								todo!();
+							}
+						} else {
+							prelude = Some(Self::parse_prelude(parser)?);
+						}
+					} else {
+						// Otherwise, consume a block from input, and let child rules be the result. If the first item of child rules is a list of declarations, remove it from child rules and assign it to rule’s declarations. If any remaining items of child rules are lists of declarations, replace them with nested declarations rules containing the list as its sole child. Assign child rules to rule’s child rules.
+						todo!();
+					}
+				} else if prelude.is_some() {
+					break;
+				} else {
+					prelude = Some(Self::parse_prelude(parser)?);
+				}
+			} else {
+				break;
+			}
 		}
-		Ok((prelude, Self::parse_block(parser)?))
+		if let Some(prelude) = prelude {
+			Ok((prelude, Self::parse_block(parser)?))
+		} else {
+			let token = parser.peek::<Token![Any]>().unwrap();
+			Err(diagnostics::Unexpected(token, token.span()))?
+		}
 	}
 }
 
@@ -95,11 +144,11 @@ pub trait RuleList<'a>: Sized + Parse<'a> {
 	type Rule: Parse<'a>;
 
 	fn parse_rule_list(parser: &mut Parser<'a>) -> Result<Vec<'a, Spanned<Self::Rule>>> {
-		expect!(parser.next(), Kind::LeftCurly);
+		parser.parse::<Token![LeftCurly]>()?;
 		let mut rules = parser.new_vec();
 		loop {
-			discard!(parser, Kind::Semicolon);
-			if discard!(parser, Kind::RightCurly) {
+			discard!(parser, Semicolon);
+			if discard!(parser, RightCurly) {
 				return Ok(rules);
 			}
 			rules.push(Self::Rule::parse_spanned(parser)?);
@@ -115,23 +164,20 @@ pub trait DeclarationRuleList<'a>: Sized + Parse<'a> {
 	fn parse_declaration_rule_list(
 		parser: &mut Parser<'a>,
 	) -> Result<(Vec<'a, Spanned<Self::Declaration>>, Vec<'a, Spanned<Self::AtRule>>)> {
-		expect!(parser.next(), Kind::LeftCurly);
+		parser.parse::<Token![LeftCurly]>()?;
 		let mut declarations = parser.new_vec();
 		let mut rules = parser.new_vec();
 		loop {
-			let token = parser.peek();
-			match token.kind() {
-				Kind::AtKeyword => {
-					rules.push(Self::AtRule::parse_spanned(parser)?);
-				}
-				Kind::Ident => {
-					declarations.push(Self::Declaration::parse_spanned(parser)?);
-				}
-				Kind::RightCurly => {
-					parser.next();
-					return Ok((declarations, rules));
-				}
-				_ => unexpected!(parser, token),
+			if parser.at_end() || discard!(parser, RightCurly) {
+				return Ok((declarations, rules));
+			}
+			if parser.peek::<Token![AtKeyword]>().is_some() {
+				rules.push(Self::AtRule::parse_spanned(parser)?);
+			} else if parser.peek::<Token![Ident]>().is_some() {
+				declarations.push(Self::Declaration::parse_spanned(parser)?);
+			} else {
+				let token = parser.peek::<Token![Any]>().unwrap();
+				Err(diagnostics::Unexpected(token, token.span()))?;
 			}
 		}
 	}

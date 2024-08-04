@@ -1,0 +1,33 @@
+---
+source: crates/hdx_proc_macro/src/test.rs
+expression: pretty
+---
+#[derive(Debug, PartialEq, Clone, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+struct Foo<'a>(pub types::CSSString<'a>);
+#[automatically_derived]
+impl<'a> ::hdx_parser::Peek<'a> for Foo<'a> {
+    fn peek(parser: &::hdx_parser::Parser<'a>) -> Option<::hdx_lexer::Token> {
+        use ::hdx_parser::Peek;
+        parser.peek::<types::CSSString<'a>>()
+    }
+}
+#[automatically_derived]
+impl<'a> ::hdx_parser::Parse<'a> for Foo<'a> {
+    fn parse(parser: &mut ::hdx_parser::Parser<'a>) -> ::hdx_parser::Result<Self> {
+        use ::hdx_parser::Parse;
+        let val = parser.parse::<types::CSSString<'a>>()?;
+        Ok(Self(val))
+    }
+}
+#[automatically_derived]
+impl<'a> ::hdx_writer::WriteCss<'a> for Foo<'a> {
+    fn write_css<W: ::hdx_writer::CssWriter>(
+        &self,
+        sink: &mut W,
+    ) -> ::hdx_writer::Result {
+        use ::hdx_writer::WriteCss;
+        self.0.write_css(sink)?;
+        Ok(())
+    }
+}

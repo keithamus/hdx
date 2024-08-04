@@ -1,8 +1,59 @@
-mod copy_into;
-mod footnote_display;
-mod footnote_policy;
-mod running;
-pub use copy_into::*;
-pub use footnote_display::*;
-pub use footnote_policy::*;
-pub use running::*;
+mod impls;
+pub mod types;
+
+use impls::*;
+
+/*
+ * https://drafts.csswg.org/css-gcpm-4/
+ * CSS Generated Content for Paged Media Module Level 4
+ */
+
+// // https://drafts.csswg.org/css-gcpm-4/#string-set
+// #[value(" [ <custom-ident> <content-list> ]# | none ")]
+// #[initial("none")]
+// #[applies_to("all elements, but not pseudo-elements")]
+// #[inherited("no")]
+// #[percentages("n/a")]
+// #[canonical_order("per grammar")]
+// #[animation_type("discrete")]
+// pub enum StringSet {}
+
+// // https://drafts.csswg.org/css-gcpm-4/#running
+// #[value(" <custom-ident> ")]
+// #[initial("none")]
+// #[applies_to("elements")]
+// #[inherited("no")]
+// #[percentages("n/a")]
+// #[canonical_order("per grammar")]
+// #[animation_type("discrete")]
+// pub struct Running;
+
+// https://drafts.csswg.org/css-gcpm-4/#footnote-display
+#[value(" block | inline | compact ")]
+#[initial("block")]
+#[applies_to("elements")]
+#[inherited("no")]
+#[percentages("n/a")]
+#[canonical_order("per grammar")]
+#[animation_type("discrete")]
+pub enum FootnoteDisplay {}
+
+// https://drafts.csswg.org/css-gcpm-4/#footnote-policy
+#[value(" auto | line | block ")]
+#[initial("auto")]
+#[applies_to("elements")]
+#[inherited("no")]
+#[percentages("n/a")]
+#[canonical_order("per grammar")]
+#[animation_type("discrete")]
+pub enum FootnotePolicy {}
+
+// // https://drafts.csswg.org/css-gcpm-4/#copy-into
+// #[value(" none | [ [ <custom-ident> <content-level>] [, <custom-ident> <content-level>]* ]? ")]
+// #[initial("none")]
+// #[applies_to("all elements and pseudo-elements, but not ::first-line or ::first-letter.")]
+// #[inherited("no")]
+// #[percentages("n/a")]
+// #[canonical_order("per grammar")]
+// #[animation_type("discrete")]
+// pub enum CopyInto {}

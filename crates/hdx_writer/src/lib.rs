@@ -268,3 +268,9 @@ impl<'a> WriteCss<'a> for () {
 		sink.write_whitespace()
 	}
 }
+
+impl<'a> WriteCss<'a> for &'a str {
+	fn write_css<W: CssWriter>(&self, sink: &mut W) -> Result {
+		sink.write_str(self)
+	}
+}

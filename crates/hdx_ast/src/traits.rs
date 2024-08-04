@@ -1,4 +1,4 @@
-pub trait Value: PartialEq + Default + Sized + Clone {
+pub trait StyleValue: PartialEq + Default + Sized + Clone {
 	fn initial() -> Self {
 		Self::default()
 	}

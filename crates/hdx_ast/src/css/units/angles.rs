@@ -1,7 +1,6 @@
 use hdx_atom::atom;
 use hdx_derive::Writable;
-use hdx_lexer::Kind;
-use hdx_parser::{unexpected, unexpected_ident, Parse, Parser, Result as ParserResult};
+use hdx_parser::{diagnostics, Parse, Parser, Peek, Result as ParserResult, Token};
 
 use super::{AbsoluteUnit, CSSFloat};
 
@@ -23,26 +22,29 @@ pub enum Angle {
 	Deg(CSSFloat),
 }
 
+impl<'a> Peek<'a> for Angle {
+	fn peek(parser: &Parser<'a>) -> Option<hdx_lexer::Token> {
+		parser.peek::<Token![Dimension]>()
+	}
+}
+
 impl<'a> Parse<'a> for Angle {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let token = parser.next();
-		match token.kind() {
-			Kind::Dimension => match parser.parse_atom_lower(token) {
-				atom!("grad") => Ok(Angle::Grad(parser.parse_number(token).into())),
-				atom!("rad") => Ok(Angle::Rad(parser.parse_number(token).into())),
-				atom!("turn") => Ok(Angle::Turn(parser.parse_number(token).into())),
-				atom!("deg") => Ok(Angle::Deg(parser.parse_number(token).into())),
-				atom => unexpected_ident!(parser, atom),
-			},
-			_ => unexpected!(parser, token),
+		let token = parser.parse::<Token![Dimension]>()?;
+		match parser.parse_atom_lower(*token) {
+			atom!("grad") => Ok(Angle::Grad(parser.parse_number(*token).into())),
+			atom!("rad") => Ok(Angle::Rad(parser.parse_number(*token).into())),
+			atom!("turn") => Ok(Angle::Turn(parser.parse_number(*token).into())),
+			atom!("deg") => Ok(Angle::Deg(parser.parse_number(*token).into())),
+			atom => Err(diagnostics::UnexpectedDimension(atom, token.span()))?,
 		}
 	}
 }
 
-impl Into<CSSFloat> for Angle {
-	fn into(self) -> CSSFloat {
-		match self {
-			Self::Grad(f) | Self::Rad(f) | Self::Turn(f) | Self::Deg(f) => f,
+impl From<Angle> for CSSFloat {
+	fn from(val: Angle) -> Self {
+		match val {
+			Angle::Grad(f) | Angle::Rad(f) | Angle::Turn(f) | Angle::Deg(f) => f,
 		}
 	}
 }

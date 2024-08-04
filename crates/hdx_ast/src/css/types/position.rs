@@ -1,7 +1,5 @@
-use hdx_atom::atom;
-use hdx_lexer::Kind;
-use hdx_parser::{match_ignore_case, unexpected, unexpected_ident, Parse, Parser, Result as ParserResult};
-use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
+use hdx_parser::{diagnostics, Parse, Parser, Peek, Result as ParserResult, Token};
+use hdx_writer::{write_css, CssWriter, Result as WriterResult, WriteCss};
 
 use crate::css::units::LengthPercentage;
 
@@ -9,14 +7,20 @@ use crate::css::units::LengthPercentage;
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct Position(pub HorizontalPosition, pub VerticalPosition);
 
+mod kw {
+	use hdx_parser::custom_keyword;
+	custom_keyword!(Top, atom!("top"));
+	custom_keyword!(Right, atom!("right"));
+	custom_keyword!(Bottom, atom!("bottom"));
+	custom_keyword!(Left, atom!("left"));
+	custom_keyword!(Center, atom!("center"));
+}
+
 impl<'a> Parse<'a> for Position {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let maybe_horizontal = if match_ignore_case!(parser.peek(), Kind::Ident, atom!("top") | atom!("bottom")) {
-			None
-		} else {
-			HorizontalPosition::parse(parser).ok()
-		};
-		let vertical = VerticalPosition::parse(parser).unwrap_or_else(|_| {
+		let token = parser.peek::<Token![Any]>().unwrap();
+		let maybe_horizontal = parser.parse_if_peek::<HorizontalPosition>().ok().flatten();
+		let vertical = parser.parse::<VerticalPosition>().unwrap_or_else(|_| {
 			if matches!(maybe_horizontal, Some(HorizontalPosition::LengthPercentage(_))) {
 				VerticalPosition::LengthPercentage(LengthPercentage::Percent(50.0.into()))
 			} else {
@@ -31,7 +35,7 @@ impl<'a> Parse<'a> for Position {
 			|| (matches!(vertical, VerticalPosition::Top(Some(_)) | VerticalPosition::Bottom(Some(_)))
 				&& matches!(horizontal, HorizontalPosition::Left(None) | HorizontalPosition::Right(None)))
 		{
-			unexpected!(parser);
+			Err(diagnostics::Unexpected(token, token.span()))?
 		}
 		Ok(Self(horizontal, vertical))
 	}
@@ -59,54 +63,54 @@ pub enum HorizontalPosition {
 	LengthPercentage(LengthPercentage),
 }
 
+impl<'a> Peek<'a> for HorizontalPosition {
+	fn peek(parser: &Parser<'a>) -> Option<hdx_lexer::Token> {
+		parser
+			.peek::<kw::Left>()
+			.or_else(|| parser.peek::<kw::Right>())
+			.or_else(|| parser.peek::<kw::Top>())
+			.or_else(|| parser.peek::<LengthPercentage>())
+	}
+}
+
 impl<'a> Parse<'a> for HorizontalPosition {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let token = parser.peek();
-		Ok(match token.kind() {
-			Kind::Ident => match parser.parse_atom_lower(token) {
-				atom!("center") => {
-					parser.next();
-					Self::Center
-				}
-				atom!("left") => {
-					parser.next();
-					let len = LengthPercentage::try_parse(parser).ok();
-					Self::Left(len)
-				}
-				atom!("right") => {
-					parser.next();
-					let len = LengthPercentage::try_parse(parser).ok();
-					Self::Right(len)
-				}
-				_ => unexpected_ident!(parser, atom),
-			},
-			_ => Self::LengthPercentage(LengthPercentage::parse(parser)?),
-		})
+		if let Some(token) = parser.peek::<kw::Center>() {
+			parser.hop(token);
+			Ok(Self::Center)
+		} else if let Some(token) = parser.peek::<kw::Left>() {
+			parser.hop(token);
+			let len = parser.parse_if_peek::<LengthPercentage>().ok().flatten();
+			Ok(Self::Left(len))
+		} else if let Some(token) = parser.peek::<kw::Right>() {
+			parser.hop(token);
+			let len = parser.parse_if_peek::<LengthPercentage>().ok().flatten();
+			Ok(Self::Right(len))
+		} else {
+			parser.parse::<LengthPercentage>().map(Self::LengthPercentage)
+		}
 	}
 }
 
 impl<'a> WriteCss<'a> for HorizontalPosition {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
 		match self {
-			Self::Center => atom!("center").write_css(sink),
+			Self::Center => write_css!(sink, kw::Center::atom()),
 			Self::Left(pos) => {
-				atom!("left").write_css(sink)?;
+				write_css!(sink, kw::Left::atom());
 				if let Some(pos) = pos {
-					sink.write_char(' ')?;
-					pos.write_css(sink)?;
+					write_css!(sink, ' ', pos);
 				}
-				Ok(())
 			}
 			Self::Right(pos) => {
-				atom!("right").write_css(sink)?;
+				write_css!(sink, kw::Right::atom());
 				if let Some(pos) = pos {
-					sink.write_char(' ')?;
-					pos.write_css(sink)?;
+					write_css!(sink, ' ', pos);
 				}
-				Ok(())
 			}
-			Self::LengthPercentage(l) => l.write_css(sink),
+			Self::LengthPercentage(l) => write_css!(sink, l),
 		}
+		Ok(())
 	}
 }
 
@@ -124,54 +128,54 @@ pub enum VerticalPosition {
 	LengthPercentage(LengthPercentage),
 }
 
+impl<'a> Peek<'a> for VerticalPosition {
+	fn peek(parser: &Parser<'a>) -> Option<hdx_lexer::Token> {
+		parser
+			.peek::<kw::Left>()
+			.or_else(|| parser.peek::<kw::Right>())
+			.or_else(|| parser.peek::<kw::Top>())
+			.or_else(|| parser.peek::<LengthPercentage>())
+	}
+}
+
 impl<'a> Parse<'a> for VerticalPosition {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let token = parser.peek();
-		Ok(match token.kind() {
-			Kind::Ident => match parser.parse_atom_lower(token) {
-				atom!("center") => {
-					parser.next();
-					Self::Center
-				}
-				atom!("top") => {
-					parser.next();
-					let len = LengthPercentage::try_parse(parser).ok();
-					Self::Top(len)
-				}
-				atom!("bottom") => {
-					parser.next();
-					let len = LengthPercentage::try_parse(parser).ok();
-					Self::Bottom(len)
-				}
-				_ => unexpected_ident!(parser, atom),
-			},
-			_ => Self::LengthPercentage(LengthPercentage::parse(parser)?),
-		})
+		if let Some(token) = parser.peek::<kw::Center>() {
+			parser.hop(token);
+			Ok(Self::Center)
+		} else if let Some(token) = parser.peek::<kw::Top>() {
+			parser.hop(token);
+			let len = parser.parse_if_peek::<LengthPercentage>().ok().flatten();
+			Ok(Self::Top(len))
+		} else if let Some(token) = parser.peek::<kw::Bottom>() {
+			parser.hop(token);
+			let len = parser.parse_if_peek::<LengthPercentage>().ok().flatten();
+			Ok(Self::Bottom(len))
+		} else {
+			parser.parse::<LengthPercentage>().map(Self::LengthPercentage)
+		}
 	}
 }
 
 impl<'a> WriteCss<'a> for VerticalPosition {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
 		match self {
-			Self::Center => atom!("center").write_css(sink),
+			Self::Center => write_css!(sink, kw::Center::atom()),
 			Self::Top(pos) => {
-				atom!("top").write_css(sink)?;
+				write_css!(sink, kw::Top::atom());
 				if let Some(pos) = pos {
-					sink.write_char(' ')?;
-					pos.write_css(sink)?;
+					write_css!(sink, ' ', pos);
 				}
-				Ok(())
 			}
 			Self::Bottom(pos) => {
-				atom!("bottom").write_css(sink)?;
+				write_css!(sink, kw::Bottom::atom());
 				if let Some(pos) = pos {
-					sink.write_char(' ')?;
-					pos.write_css(sink)?;
+					write_css!(sink, ' ', pos);
 				}
-				Ok(())
 			}
-			Self::LengthPercentage(l) => l.write_css(sink),
+			Self::LengthPercentage(l) => write_css!(sink, l),
 		}
+		Ok(())
 	}
 }
 

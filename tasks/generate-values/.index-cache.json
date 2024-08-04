@@ -1,0 +1,294 @@
+{
+  "": [
+    2007,
+    2010,
+    2015,
+    2017,
+    2018,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    null,
+    null,
+    null,
+    null
+  ],
+  "align": [
+    3
+  ],
+  "anchor-position": [
+    1
+  ],
+  "animations": [
+    1,
+    2
+  ],
+  "backgrounds": [
+    3,
+    4
+  ],
+  "block": [
+    3
+  ],
+  "borders": [
+    4
+  ],
+  "box": [
+    3,
+    4
+  ],
+  "break": [
+    3,
+    4
+  ],
+  "cascade": [
+    3,
+    4,
+    5,
+    6
+  ],
+  "color": [
+    3,
+    4,
+    5,
+    6
+  ],
+  "color-adjust": [
+    1
+  ],
+  "color-hdr": [
+    1
+  ],
+  "conditional": [
+    3,
+    4,
+    5
+  ],
+  "conditional-values": [
+    1
+  ],
+  "contain": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "content": [
+    3
+  ],
+  "counter-styles": [
+    3
+  ],
+  "display": [
+    3,
+    4
+  ],
+  "easing": [
+    1,
+    2
+  ],
+  "egg": [
+    1
+  ],
+  "env": [
+    1
+  ],
+  "exclusions": [
+    1
+  ],
+  "extensions": [
+    1
+  ],
+  "flexbox": [
+    1
+  ],
+  "floats": [
+    3
+  ],
+  "font-loading": [
+    3
+  ],
+  "fonts": [
+    3,
+    4,
+    5
+  ],
+  "forms": [
+    1
+  ],
+  "gcpm": [
+    3,
+    4
+  ],
+  "grid": [
+    1,
+    2,
+    3
+  ],
+  "highlight-api": [
+    1
+  ],
+  "images": [
+    3,
+    4,
+    5
+  ],
+  "inline": [
+    3
+  ],
+  "line-grid": [
+    1
+  ],
+  "link-params": [
+    1
+  ],
+  "lists": [
+    3
+  ],
+  "logical": [
+    1
+  ],
+  "mixins": [
+    1
+  ],
+  "multicol": [
+    1,
+    2
+  ],
+  "namespaces": [
+    3
+  ],
+  "nav": [
+    1
+  ],
+  "nesting": [
+    1
+  ],
+  "overflow": [
+    3,
+    4,
+    5
+  ],
+  "overscroll": [
+    1
+  ],
+  "page": [
+    3,
+    4
+  ],
+  "page-floats": [
+    3
+  ],
+  "page-template": [
+    1
+  ],
+  "position": [
+    3,
+    4
+  ],
+  "preslev": [
+    1
+  ],
+  "pseudo": [
+    4
+  ],
+  "regions": [
+    1
+  ],
+  "rhythm": [
+    1
+  ],
+  "round-display": [
+    1
+  ],
+  "ruby": [
+    1
+  ],
+  "scoping": [
+    1
+  ],
+  "scroll-anchoring": [
+    1
+  ],
+  "scroll-snap": [
+    1,
+    2
+  ],
+  "scrollbars": [
+    1
+  ],
+  "shadow-parts": [
+    1
+  ],
+  "shapes": [
+    1,
+    2
+  ],
+  "size-adjust": [
+    1
+  ],
+  "sizing": [
+    3,
+    4
+  ],
+  "speech": [
+    1
+  ],
+  "style-attr": [
+    1
+  ],
+  "syntax": [
+    3
+  ],
+  "tables": [
+    3
+  ],
+  "template": [
+    1
+  ],
+  "text": [
+    3,
+    4
+  ],
+  "text-decor": [
+    3,
+    4
+  ],
+  "transforms": [
+    1,
+    2
+  ],
+  "transitions": [
+    1,
+    2
+  ],
+  "ui": [
+    3,
+    4
+  ],
+  "values": [
+    3,
+    4,
+    5
+  ],
+  "variables": [
+    1,
+    2
+  ],
+  "view-transitions": [
+    1,
+    2
+  ],
+  "viewport": [
+    1
+  ],
+  "will-change": [
+    1
+  ],
+  "writing-modes": [
+    3,
+    4
+  ]
+}

@@ -1,0 +1,71 @@
+---
+source: crates/hdx_proc_macro/src/test.rs
+expression: pretty
+---
+#[derive(Debug, PartialEq, Clone, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+enum Foo {
+    None,
+    LengthPercentage(types::LengthPercentage),
+}
+#[automatically_derived]
+impl<'a> ::hdx_parser::Peek<'a> for Foo {
+    fn peek(parser: &::hdx_parser::Parser<'a>) -> Option<::hdx_lexer::Token> {
+        use ::hdx_parser::Peek;
+        parser
+            .peek::<::hdx_parser::token::Ident>()
+            .or_else(|| parser.peek::<types::LengthPercentage>())
+    }
+}
+#[automatically_derived]
+impl<'a> ::hdx_parser::Parse<'a> for Foo {
+    fn parse(parser: &mut ::hdx_parser::Parser<'a>) -> ::hdx_parser::Result<Self> {
+        use ::hdx_parser::Parse;
+        if let Some(token) = parser.peek::<::hdx_parser::token::Ident>() {
+            parser.hop(token);
+            return Ok(
+                match parser.parse_atom_lower(token) {
+                    ::hdx_atom::atom!("none") => Self::None,
+                    atom => {
+                        Err(
+                            ::hdx_parser::diagnostics::UnexpectedIdent(
+                                atom,
+                                token.span(),
+                            ),
+                        )?
+                    }
+                },
+            );
+        }
+        let start = parser.offset();
+        let val = parser.parse::<types::LengthPercentage>()?;
+        let valf32: f32 = val.into();
+        if 0f32 > valf32 {
+            return Err(
+                ::hdx_parser::diagnostics::NumberTooSmall(
+                    0f32,
+                    ::hdx_lexer::Span::new(start, parser.offset()),
+                ),
+            )?;
+        }
+        Ok(Self::LengthPercentage(val))
+    }
+}
+#[automatically_derived]
+impl<'a> ::hdx_writer::WriteCss<'a> for Foo {
+    fn write_css<W: ::hdx_writer::CssWriter>(
+        &self,
+        sink: &mut W,
+    ) -> ::hdx_writer::Result {
+        use ::hdx_writer::WriteCss;
+        match self {
+            Self::None => {
+                ::hdx_atom::atom!("none").write_css(sink)?;
+            }
+            Self::LengthPercentage(inner) => {
+                inner.write_css(sink)?;
+            }
+        }
+        Ok(())
+    }
+}

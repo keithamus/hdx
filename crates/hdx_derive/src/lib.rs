@@ -4,6 +4,7 @@ mod string_transform;
 
 mod atomizable;
 mod parsable;
+mod peekable;
 mod value;
 mod visitable;
 mod writable;
@@ -28,6 +29,12 @@ pub fn derive_atomizable(stream: TokenStream) -> TokenStream {
 pub fn derive_parsable(stream: TokenStream) -> TokenStream {
 	let input = syn::parse(stream).unwrap();
 	parsable::derive(input).into()
+}
+
+#[proc_macro_derive(Peekable, attributes(peekable))]
+pub fn derive_peekable(stream: TokenStream) -> TokenStream {
+	let input = syn::parse(stream).unwrap();
+	peekable::derive(input).into()
 }
 
 #[proc_macro_derive(Writable, attributes(writable))]

@@ -1,0 +1,82 @@
+---
+source: crates/hdx_proc_macro/src/test.rs
+expression: pretty
+---
+#[derive(Debug, PartialEq, Clone, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+struct Foo(
+    pub Option<types::CaretColor>,
+    pub Option<types::CaretAnimation>,
+    pub Option<types::CaretShape>,
+);
+#[automatically_derived]
+impl<'a> ::hdx_parser::Peek<'a> for Foo {
+    fn peek(parser: &::hdx_parser::Parser<'a>) -> Option<::hdx_lexer::Token> {
+        use ::hdx_parser::Peek;
+        parser
+            .peek::<types::CaretColor>()
+            .or_else(|| parser.peek::<types::CaretAnimation>())
+            .or_else(|| parser.peek::<types::CaretShape>())
+    }
+}
+#[automatically_derived]
+impl<'a> ::hdx_parser::Parse<'a> for Foo {
+    fn parse(parser: &mut ::hdx_parser::Parser<'a>) -> ::hdx_parser::Result<Self> {
+        use ::hdx_parser::Parse;
+        let mut val0 = None;
+        let mut val1 = None;
+        let mut val2 = None;
+        loop {
+            if val0.is_none() && parser.peek::<types::CaretColor>().is_some() {
+                val0 = Some(parser.parse::<types::CaretColor>()?);
+                continue;
+            }
+            if val1.is_none() && parser.peek::<types::CaretAnimation>().is_some() {
+                val1 = Some(parser.parse::<types::CaretAnimation>()?);
+                continue;
+            }
+            if val2.is_none() && parser.peek::<types::CaretShape>().is_some() {
+                val2 = Some(parser.parse::<types::CaretShape>()?);
+                continue;
+            }
+            if val0.is_none() && val1.is_none() && val2.is_none() {
+                let token = parser.peek::<::hdx_parser::token::Any>().unwrap();
+                Err(::hdx_parser::diagnostics::Unexpected(token, token.span()))?
+            } else {
+                return Ok(Self(val0, val1, val2));
+            }
+        }
+    }
+}
+#[automatically_derived]
+impl<'a> ::hdx_writer::WriteCss<'a> for Foo {
+    fn write_css<W: ::hdx_writer::CssWriter>(
+        &self,
+        sink: &mut W,
+    ) -> ::hdx_writer::Result {
+        use ::hdx_writer::WriteCss;
+        let mut written = false;
+        if let Some(inner) = &self.0 {
+            if written {
+                sink.write_char(' ');
+            }
+            written = true;
+            inner.write_css(sink);
+        }
+        if let Some(inner) = &self.1 {
+            if written {
+                sink.write_char(' ');
+            }
+            written = true;
+            inner.write_css(sink);
+        }
+        if let Some(inner) = &self.2 {
+            if written {
+                sink.write_char(' ');
+            }
+            written = true;
+            inner.write_css(sink);
+        }
+        Ok(())
+    }
+}

@@ -1,6 +1,5 @@
 use hdx_atom::{atom, Atom};
-use hdx_lexer::{Include, Kind, Token};
-use hdx_parser::{expect, todo, unexpected, unexpected_function, Parse, Parser, Result as ParserResult, Vec};
+use hdx_parser::{diagnostics, discard, todo, Parse, Parser, Result as ParserResult, Token, Vec};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 use smallvec::{smallvec, SmallVec};
 
@@ -19,65 +18,57 @@ pub enum FunctionalPseudoElement<'a> {
 
 impl<'a> Parse<'a> for FunctionalPseudoElement<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		match parser.next().clone() {
-			Token::Function(ident) => match ident.to_ascii_lowercase() {
-				atom!("highlight") => match parser.next().clone() {
-					Token::Ident(name) => {
-						expect!(parser.next(), Kind::RightParen);
-						parser.next_with(Include::Whitespace);
-						Ok(Self::Highlight(name))
+		let token = *parser.parse::<Token![Function]>()?;
+		match parser.parse_atom_lower(token) {
+			atom!("highlight") => {
+				let name_token = *parser.parse::<Token![Ident]>()?;
+				let name = parser.parse_atom(name_token);
+				parser.parse::<Token![RightParen]>()?;
+				Ok(Self::Highlight(name))
+			}
+			atom!("part") => {
+				let mut parts = smallvec![];
+				loop {
+					if discard!(parser, RightParen) {
+						break;
 					}
-					token => unexpected!(parser, token),
-				},
-				atom!("part") => {
-					let mut parts = smallvec![];
-					loop {
-						match parser.next() {
-							Token::Ident(name) => {
-								parts.push(name.clone());
-							}
-							Token::RightParen => {
-								parser.next_with(Include::Whitespace);
-								break;
-							}
-							token => unexpected!(parser, token),
-						}
-					}
-					Ok(Self::Part(parts))
+					let name_token = *parser.parse::<Token![Ident]>()?;
+					let name = parser.parse_atom(name_token);
+					parts.push(name);
 				}
-				atom!("slotted") => {
-					parser.next();
-					let selector = parser.new_vec();
-					loop {
-						if matches!(parser.cur(), Token::RightParen) {
-							break;
+				Ok(Self::Part(parts))
+			}
+			atom!("slotted") => {
+				let selector = parser.new_vec();
+				loop {
+					if discard!(parser, RightParen) {
+						break;
+					}
+					let checkpoint = parser.checkpoint();
+					let component = parser.parse::<SelectorComponent>()?;
+					match component {
+						SelectorComponent::Tag(_)
+						| SelectorComponent::NSPrefixedTag(_)
+						| SelectorComponent::NSPrefixedWildcard(_)
+						| SelectorComponent::Wildcard
+							if selector.is_empty() =>
+						{
+							todo!(parser);
 						}
-						let checkpoint = parser.checkpoint();
-						let component = SelectorComponent::parse(parser)?;
-						match component {
-							SelectorComponent::Tag(_)
-							| SelectorComponent::NSPrefixedTag(_)
-							| SelectorComponent::NSPrefixedWildcard(_)
-							| SelectorComponent::Wildcard
-								if selector.is_empty() =>
-							{
-								todo!(parser);
-							}
-							SelectorComponent::Id(_)
-							| SelectorComponent::Class(_)
-							| SelectorComponent::Attribute(_)
-							| SelectorComponent::PseudoClass(_) => {}
-							_ => {
-								parser.rewind(checkpoint);
-								unexpected!(parser);
-							}
+						SelectorComponent::Id(_)
+						| SelectorComponent::Class(_)
+						| SelectorComponent::Attribute(_)
+						| SelectorComponent::PseudoClass(_) => {}
+						_ => {
+							parser.rewind(checkpoint);
+							let token = parser.peek::<Token![Any]>().unwrap();
+							Err(diagnostics::Unexpected(token, token.span()))?
 						}
 					}
-					Ok(Self::Slotted(selector))
 				}
-				_ => unexpected_function!(parser, ident),
-			},
-			token => unexpected!(parser, token),
+				Ok(Self::Slotted(selector))
+			}
+			ident => Err(diagnostics::UnexpectedFunction(ident, token.span()))?,
 		}
 	}
 }

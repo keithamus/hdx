@@ -1,7 +1,11 @@
 use hdx_atom::atom;
-use hdx_lexer::Kind;
-use hdx_parser::{expect, expect_ignore_case, peek, unexpected, Parse, Parser, Result as ParserResult};
+use hdx_parser::{diagnostics, Parse, Parser, Result as ParserResult, Token};
 use hdx_writer::{write_css, CssWriter, Result as WriterResult, WriteCss};
+
+mod kw {
+	use hdx_parser::custom_keyword;
+	custom_keyword!(MinWidth, atom!("min-width"));
+}
 
 #[derive(PartialEq, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", content = "value"))]
@@ -11,26 +15,17 @@ pub enum HackMediaFeature {
 
 impl<'a> Parse<'a> for HackMediaFeature {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		expect_ignore_case! { parser.next(), Token::Ident(_):
-			atom!("min-width") => {
-				expect!(parser.next(), Kind::Colon);
-				let (a, b, c, d, e) = (
-					parser.legacy_peek_next_char(0),
-					parser.legacy_peek_next_char(1),
-					parser.legacy_peek_next_char(2),
-					parser.legacy_peek_next_char(3),
-					parser.legacy_peek_next_char(4)
-				);
-				if peek!(parser, Kind::Dimension) &&
-				(matches!((a, b, c, d), (Some('0'), Some('\\'), Some('0'), Some(' ') | Some(')') | None))) ||
-				(matches!((a, b, c, d, e), (Some(' '), Some('0'), Some('\\'), Some('0'), Some(' ') | Some(')') | None)))
-				{
-					parser.next();
-					return Ok(Self::IEBackslashZero);
-				}
-				unexpected!(parser, parser.peek())
+		parser.parse::<kw::MinWidth>()?;
+		parser.parse::<Token![:]>()?;
+		if let Some(token) = parser.peek::<Token![Dimension]>() {
+			let str = parser.parse_raw_str(token);
+			if str == "0\\0" {
+				parser.hop(token);
+				return Ok(Self::IEBackslashZero);
 			}
 		}
+		let token = parser.peek::<Token![Any]>().unwrap();
+		Err(diagnostics::Unexpected(token, token.span()))?
 	}
 }
 

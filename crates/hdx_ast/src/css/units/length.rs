@@ -1,33 +1,36 @@
 use hdx_atom::{atom, Atom};
-use hdx_derive::Writable;
-use hdx_lexer::Kind;
-use hdx_parser::{unexpected, unexpected_ident, Parse, Parser, Result as ParserResult};
+use hdx_parser::{diagnostics, token, Parse, Parser, Peek, Result as ParserResult, Token};
+use hdx_writer::{write_css, CssWriter, Result as WriterResult, WriteCss};
 
-use super::CSSFloat;
+use super::{CSSFloat, Flex};
 
-const PX_CM: f32 = PX_IN / 2.54;
-const PX_MM: f32 = PX_IN / 25.4;
-const PX_Q: f32 = PX_MM / 4.0;
-const PX_IN: f32 = 96.0;
-const PX_PC: f32 = PX_IN / 6.0;
-const PX_PT: f32 = PX_IN / 72.0;
+// const PX_CM: f32 = PX_IN / 2.54;
+// const PX_MM: f32 = PX_IN / 25.4;
+// const PX_Q: f32 = PX_MM / 4.0;
+// const PX_IN: f32 = 96.0;
+// const PX_PC: f32 = PX_IN / 6.0;
+// const PX_PT: f32 = PX_IN / 72.0;
+
+mod kw {
+	use hdx_parser::custom_keyword;
+	custom_keyword!(Auto, atom!("auto"));
+	custom_keyword!(Thin, atom!("thin"));
+	custom_keyword!(Medium, atom!("medium"));
+	custom_keyword!(Thick, atom!("thick"));
+}
 
 macro_rules! length {
     ( $(
         $name: ident: $atom: tt,
     )+ ) => {
 
-		#[derive(Writable, Default, Debug, Clone, Copy, PartialEq, Hash)]
+		#[derive(Default, Debug, Clone, Copy, PartialEq, Hash)]
 		#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", content = "value", rename_all = "kebab-case"))]
 		pub enum Length {
-			#[writable(rename = "0")]
 			#[default]
 			#[cfg_attr(feature = "serde", serde())]
 			Zero,
-			$(
-			#[writable(suffix = $atom)]
-			$name(CSSFloat),
-			)+
+			$($name(CSSFloat),)+
 		}
 
 		impl Length {
@@ -48,34 +51,56 @@ macro_rules! length {
 			}
 		}
 
-		impl<'a> Parse<'a> for Length {
-			fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-				let token = parser.next();
-				match token.kind() {
-					Kind::Number if parser.parse_number(token) == 0.0 => Ok(Self::Zero),
-					Kind::Dimension => {
-						if let Some(d) = Self::new(parser.parse_number(token).into(), parser.parse_atom_lower(token)) {
-							Ok(d)
-						} else {
-							unexpected!(parser, token)
-						}
-					}
-					_ => unexpected!(parser, token),
+		impl Into<f32> for Length {
+			fn into(self) -> f32 {
+				match self {
+					$(Self::$name(f) => f.into(),)+
+					Self::Zero => 0.0,
 				}
 			}
 		}
 
-		#[derive(Writable, Default, Debug, Clone, Copy, PartialEq, Hash)]
+		impl<'a> Peek<'a> for Length {
+			fn peek(parser: &Parser<'a>) -> Option<hdx_lexer::Token> {
+				parser.peek::<token::Number>().or_else(|| parser.peek::<token::Dimension>())
+			}
+		}
+
+		impl<'a> Parse<'a> for Length {
+			fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
+				if let Some(token) = parser.peek::<Token![Number]>() {
+					parser.hop(token);
+					if parser.parse_number(token) == 0.0 {
+						return Ok(Self::Zero);
+					} else {
+						Err(diagnostics::Unexpected(token, token.span()))?
+					}
+				}
+				let token = *parser.parse::<Token![Dimension]>()?;
+				if let Some(d) = Self::new(parser.parse_number(token).into(), parser.parse_atom_lower(token)) {
+					Ok(d)
+				} else {
+					Err(diagnostics::Unexpected(token, token.span()))?
+				}
+			}
+		}
+
+		impl<'a> WriteCss<'a> for Length {
+			fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
+				match self {
+					Self::Zero => write_css!(sink, '0'),
+					$(Self::$name(f) => write_css!(sink, f, $atom)),+
+				}
+				Ok(())
+			}
+		}
+
+		#[derive(Default, Debug, Clone, Copy, PartialEq, Hash)]
 		#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", content = "value", rename_all = "kebab-case"))]
 		pub enum LengthPercentage {
 			#[default]
-			#[writable(rename = "0")]
 			Zero,
-			$(
-			#[writable(suffix = $atom)]
-			$name(CSSFloat),
-			)+
-			#[writable(suffix = "%")]
+			$($name(CSSFloat),)+
 			#[cfg_attr(feature = "serde", serde(rename = "%"))]
 			Percent(CSSFloat),
 		}
@@ -100,22 +125,52 @@ macro_rules! length {
 			}
 		}
 
-		impl<'a> Parse<'a> for LengthPercentage {
-			fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-				let token = parser.next();
-				match token.kind() {
-					Kind::Number if parser.parse_number(token) == 0.0 => Ok(Self::Zero),
-					Kind::Dimension => {
-						if let Some(d) = Self::new(parser.parse_number(token).into(), parser.parse_atom_lower(token)) {
-							Ok(d)
-						} else {
-							unexpected!(parser, token)
-						}
-					}
-					_ => unexpected!(parser, token),
+		impl Into<f32> for LengthPercentage {
+			fn into(self) -> f32 {
+				match self {
+					$(Self::$name(f) => f.into(),)+
+					Self::Percent(f) => f.into(),
+					Self::Zero => 0.0,
 				}
 			}
 		}
+
+		impl<'a> Peek<'a> for LengthPercentage {
+			fn peek(parser: &Parser<'a>) -> Option<hdx_lexer::Token> {
+				parser.peek::<Token![Number]>().or_else(|| parser.peek::<Token![Dimension]>())
+			}
+		}
+
+		impl<'a> Parse<'a> for LengthPercentage {
+			fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
+				if let Some(token) = parser.peek::<Token![Number]>() {
+					parser.hop(token);
+					if parser.parse_number(token) == 0.0 {
+						return Ok(Self::Zero);
+					} else {
+						Err(diagnostics::Unexpected(token, token.span()))?
+					}
+				}
+				let token = *parser.parse::<Token![Dimension]>()?;
+				if let Some(d) = Self::new(parser.parse_number(token).into(), parser.parse_atom_lower(token)) {
+					Ok(d)
+				} else {
+					Err(diagnostics::Unexpected(token, token.span()))?
+				}
+			}
+		}
+
+		impl<'a> WriteCss<'a> for LengthPercentage {
+			fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
+				match self {
+					Self::Zero => write_css!(sink, '0'),
+					Self::Percent(f) => write_css!(sink, f, '%'),
+					$(Self::$name(f) => write_css!(sink, f, $atom)),+
+				}
+				Ok(())
+			}
+		}
+
 	}
 }
 
@@ -178,7 +233,7 @@ length! {
 	Cqmax: "cqmax", // atom!("cqmax")
 }
 
-#[derive(Writable, Default, Debug, Clone, Copy, PartialEq, Hash)]
+#[derive(Default, Debug, Clone, Copy, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(rename_all = "kebab-case"))]
 pub enum LengthPercentageOrAuto {
 	#[default]
@@ -186,28 +241,65 @@ pub enum LengthPercentageOrAuto {
 	LengthPercentage(LengthPercentage),
 }
 
+impl<'a> Peek<'a> for LengthPercentageOrAuto {
+	fn peek(parser: &Parser<'a>) -> Option<hdx_lexer::Token> {
+		parser.peek::<kw::Auto>().or_else(|| parser.peek::<LengthPercentage>())
+	}
+}
+
 impl<'a> Parse<'a> for LengthPercentageOrAuto {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let token = parser.next();
-		match token.kind() {
-			Kind::Ident => match parser.parse_atom_lower(token) {
-				atom!("auto") => Ok(Self::Auto),
-				atom => unexpected_ident!(parser, atom),
-			},
-			Kind::Dimension => {
-				if let Some(l) = LengthPercentage::new(parser.parse_number(token).into(), parser.parse_atom_lower(token)) {
-					Ok(Self::LengthPercentage(l))
-				} else {
-					unexpected!(parser, token)
-				}
-			}
-			Kind::Number if parser.parse_number(token) == 0.0 => Ok(Self::LengthPercentage(LengthPercentage::Zero)),
-			_ => unexpected!(parser, token),
+		if let Some(token) = parser.peek::<kw::Auto>() {
+			parser.hop(token);
+			Ok(Self::Auto)
+		} else {
+			Ok(Self::LengthPercentage(parser.parse::<LengthPercentage>()?))
 		}
 	}
 }
 
-#[derive(Writable, Default, Debug, Clone, Copy, PartialEq, Hash)]
+impl<'a> WriteCss<'a> for LengthPercentageOrAuto {
+	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
+		match self {
+			Self::Auto => kw::Auto::atom().write_css(sink),
+			Self::LengthPercentage(l) => l.write_css(sink),
+		}
+	}
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(rename_all = "kebab-case"))]
+pub enum LengthPercentageOrFlex {
+	Flex(Flex),
+	LengthPercentage(LengthPercentage),
+}
+
+impl<'a> Peek<'a> for LengthPercentageOrFlex {
+	fn peek(parser: &Parser<'a>) -> Option<hdx_lexer::Token> {
+		parser.peek::<Flex>().or_else(|| parser.peek::<LengthPercentage>())
+	}
+}
+
+impl<'a> Parse<'a> for LengthPercentageOrFlex {
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
+		if let Some(flex) = parser.parse_if_peek::<Flex>()? {
+			Ok(Self::Flex(flex))
+		} else {
+			Ok(Self::LengthPercentage(parser.parse::<LengthPercentage>()?))
+		}
+	}
+}
+
+impl<'a> WriteCss<'a> for LengthPercentageOrFlex {
+	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
+		match self {
+			Self::Flex(f) => f.write_css(sink),
+			Self::LengthPercentage(l) => l.write_css(sink),
+		}
+	}
+}
+
+#[derive(Default, Debug, Clone, Copy, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(rename_all = "kebab-case"))]
 pub enum LineWidth {
 	Thin,
@@ -217,25 +309,51 @@ pub enum LineWidth {
 	Length(Length),
 }
 
+impl<'a> Peek<'a> for LineWidth {
+	fn peek(parser: &Parser<'a>) -> Option<hdx_lexer::Token> {
+		parser
+			.peek::<kw::Thin>()
+			.or_else(|| parser.peek::<kw::Medium>())
+			.or_else(|| parser.peek::<kw::Thick>())
+			.or_else(|| parser.peek::<Length>())
+	}
+}
+
 impl<'a> Parse<'a> for LineWidth {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let token = parser.next();
-		match token.kind() {
-			Kind::Ident => match parser.parse_atom_lower(token) {
-				atom!("thin") => Ok(Self::Thin),
-				atom!("medium") => Ok(Self::Medium),
-				atom!("thick") => Ok(Self::Thick),
-				atom => unexpected_ident!(parser, atom),
-			},
-			Kind::Dimension => {
-				if let Some(l) = Length::new(parser.parse_number(token).into(), parser.parse_atom_lower(token)).map(Self::Length) {
-					Ok(l)
-				} else {
-					unexpected!(parser, token)
-				}
-			}
-			Kind::Number if parser.parse_number(token) == 0.0 => Ok(Self::Length(Length::Zero)),
-			_ => unexpected!(parser, token),
+		if let Some(token) = parser.peek::<kw::Thin>() {
+			parser.hop(token);
+			Ok(Self::Thin)
+		} else if let Some(token) = parser.peek::<kw::Medium>() {
+			parser.hop(token);
+			Ok(Self::Medium)
+		} else if let Some(token) = parser.peek::<kw::Thick>() {
+			parser.hop(token);
+			Ok(Self::Thick)
+		} else {
+			Ok(Self::Length(parser.parse::<Length>()?))
+		}
+	}
+}
+
+impl<'a> WriteCss<'a> for LineWidth {
+	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
+		match self {
+			Self::Thin => kw::Thin::atom().write_css(sink),
+			Self::Medium => kw::Medium::atom().write_css(sink),
+			Self::Thick => kw::Thick::atom().write_css(sink),
+			Self::Length(l) => l.write_css(sink),
+		}
+	}
+}
+
+impl From<LineWidth> for Length {
+	fn from(value: LineWidth) -> Self {
+		match value {
+			LineWidth::Thin => Length::Px(1.0.into()),
+			LineWidth::Medium => Length::Px(3.0.into()),
+			LineWidth::Thick => Length::Px(3.0.into()),
+			LineWidth::Length(length) => length,
 		}
 	}
 }

@@ -1,17 +1,15 @@
 use hdx_atom::{atom, Atom};
-use hdx_derive::Writable;
-use hdx_lexer::Kind;
-use hdx_parser::{unexpected, Parse, Parser, Result as ParserResult};
+use hdx_parser::{Dimension, Parse, Parser, Peek, Result as ParserResult, Token};
+use hdx_writer::{write_css, CssWriter, Result as WriterResult, WriteCss};
 
 use super::{AbsoluteUnit, CSSFloat};
 
 // https://drafts.csswg.org/css-values/#resolution
-#[derive(Writable, Debug, Clone, Copy, PartialEq, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub enum Time {
-	#[writable(suffix = "ms")]
+	Zero,
 	Ms(CSSFloat),
-	#[writable(suffix = "s")]
 	S(CSSFloat),
 }
 
@@ -25,9 +23,20 @@ impl Time {
 	}
 }
 
+impl Into<f32> for Time {
+	fn into(self) -> f32 {
+		match self {
+			Self::Zero => 0.0,
+			Self::Ms(f) => f.into(),
+			Self::S(f) => f.into(),
+		}
+	}
+}
+
 impl Into<CSSFloat> for Time {
 	fn into(self) -> CSSFloat {
 		match self {
+			Self::Zero => 0.0.into(),
 			Self::Ms(f) | Self::S(f) => f,
 		}
 	}
@@ -36,25 +45,43 @@ impl Into<CSSFloat> for Time {
 impl AbsoluteUnit for Time {
 	fn to_base(&self) -> Self {
 		Self::S(match self {
+			Self::Zero => 0.0.into(),
 			Self::Ms(f) => *f / 1000.0,
 			Self::S(f) => *f,
 		})
 	}
 }
 
+impl<'a> Peek<'a> for Time {
+	fn peek(parser: &Parser<'a>) -> Option<hdx_lexer::Token> {
+		parser
+			.peek::<Token![Number]>()
+			.filter(|token| token.stored_small_number() == Some(0.0))
+			.or_else(|| parser.peek::<Dimension![Ms]>())
+			.or_else(|| parser.peek::<Dimension![S]>())
+	}
+}
+
 impl<'a> Parse<'a> for Time {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let token = parser.next();
-		match token.kind() {
-			Kind::Dimension => {
-				if let Some(t) = Self::new(parser.parse_number(token).into(), parser.parse_atom_lower(token)) {
-					Ok(t)
-				} else {
-					unexpected!(parser, token)
-				}
-			}
-			_ => unexpected!(parser, token),
+		if let Some(token) = parser.peek::<Dimension![Ms]>() {
+			parser.hop(token);
+			Ok(Self::Ms(parser.parse_number(token).into()))
+		} else {
+			let token = *parser.parse::<Dimension![S]>()?;
+			Ok(Self::Ms(parser.parse_number(token).into()))
 		}
+	}
+}
+
+impl<'a> WriteCss<'a> for Time {
+	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
+		match self {
+			Self::Zero => write_css!(sink, '0'),
+			Self::Ms(f) => write_css!(sink, f, <Dimension![Ms]>::atom()),
+			Self::S(f) => write_css!(sink, f, <Dimension![S]>::atom()),
+		};
+		Ok(())
 	}
 }
 

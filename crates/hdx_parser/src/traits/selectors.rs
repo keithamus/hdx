@@ -1,7 +1,7 @@
 use hdx_atom::Atom;
-use hdx_lexer::{Include, Kind};
+use hdx_lexer::{Include, Kind, Span, Spanned};
 
-use crate::{diagnostics, discard, parser::Parser, peek, span::Spanned, unexpected, Result, Vec};
+use crate::{diagnostics, discard, parser::Parser, Result, Token, Vec};
 
 use super::Parse;
 
@@ -18,23 +18,40 @@ pub trait SelectorList<'a>: Sized + Parse<'a> {
 	// https://drafts.csswg.org/selectors-4/#typedef-pseudo-element-selector
 	type SelectorComponent: Parse<'a>;
 
+	fn parse_compound_selector(parser: &mut Parser<'a>) -> Result<Spanned<Vec<'a, Self::SelectorComponent>>> {
+		let start = parser.offset();
+		let mut selector = parser.new_vec();
+		loop {
+			let peeked_kind = parser.peek_n_with(1, Include::Whitespace).kind();
+			// If a stop token has been reached, break the loop
+			if parser.at_end() || matches!(peeked_kind, Kind::LeftCurly | Kind::RightParen | Kind::Comma) {
+				break;
+			}
+			// Handle whitespace carefully; it could be a descendant combinator or just whitespace next to a stop token
+			if peeked_kind == Kind::Whitespace
+				&& matches!(parser.peek_n(1).kind(), Kind::LeftCurly | Kind::RightParen | Kind::Comma)
+			{
+				break;
+			}
+			selector.push(Self::SelectorComponent::parse(parser)?);
+		}
+		Ok(Spanned { node: selector, span: Span::new(start, parser.offset()) })
+	}
+
 	fn parse_selector_list(parser: &mut Parser<'a>) -> Result<Vec<'a, Spanned<Vec<'a, Self::SelectorComponent>>>> {
 		let mut selectors = parser.new_vec();
 		loop {
-			while discard!(parser, Include::Whitespace, Kind::Whitespace) {}
-			let span = parser.span();
-			let mut selector = parser.new_vec();
-			while !peek!(parser, Kind::Comma | Kind::LeftCurly | Kind::RightParen | Kind::Eof) {
-				if peek!(parser, Kind::Whitespace)
-					&& peek!(parser, 2, Kind::Comma | Kind::LeftCurly | Kind::RightParen | Kind::Eof)
-				{
-					parser.next_with(Include::Whitespace);
-				} else {
-					selector.push(Self::SelectorComponent::parse(parser)?);
-				}
+			if parser.at_end() {
+				break;
 			}
-			selectors.push(Spanned { node: selector, span: span.end(parser.pos()) });
-			if !discard!(parser, Kind::Comma) {
+			// Discard all leading whitespace
+			while discard!(parser, Include::Whitespace, Whitespace) {}
+			let next_token_kind = parser.peek::<Token![Any]>().map(|t| t.kind()).unwrap_or(Kind::Eof);
+			if matches!(next_token_kind, Kind::LeftCurly | Kind::RightParen) {
+				break;
+			}
+			selectors.push(Self::parse_compound_selector(parser)?);
+			if !discard!(parser, Comma) {
 				break;
 			}
 		}
@@ -60,8 +77,8 @@ pub trait SelectorComponent<'a>: Sized {
 	fn parse_functional_pseudo_element(parser: &mut Parser<'a>) -> Result<Self>;
 
 	fn parse_selector_component(parser: &mut Parser<'a>) -> Result<Self> {
-		let peek = parser.peek_with(Include::Whitespace);
-		match peek.kind() {
+		let token = parser.peek_n_with(1, Include::Whitespace);
+		match token.kind() {
 			Kind::Ident => match parser.peek_n_with(2, Include::Whitespace) {
 				t if t.kind() == Kind::Delim && matches!(t.char(), Some('|')) => {
 					parser.next_with(Include::Whitespace);
@@ -69,26 +86,26 @@ pub trait SelectorComponent<'a>: Sized {
 				}
 				_ => {
 					parser.next();
-					let atom = parser.parse_atom(peek);
-					Self::type_from_atom(&atom).ok_or_else(|| diagnostics::UnexpectedTag(atom, parser.span()).into())
+					let atom = parser.parse_atom(token);
+					Self::type_from_atom(&atom).ok_or_else(|| diagnostics::UnexpectedTag(atom, token.span()).into())
 				}
 			},
-			Kind::Hash if peek.hash_is_id_like() => {
+			Kind::Hash if token.hash_is_id_like() => {
 				parser.next();
-				let atom = parser.parse_atom(peek);
-				Self::type_from_atom(&atom).ok_or_else(|| diagnostics::UnexpectedId(atom.clone(), parser.span()).into())
+				let atom = parser.parse_atom(token);
+				Self::type_from_atom(&atom).ok_or_else(|| diagnostics::UnexpectedId(atom.clone(), token.span()).into())
 			}
 			Kind::LeftSquare => Ok(Self::parse_attribute(parser)?),
-			Kind::Delim => match peek.char().unwrap() {
+			Kind::Delim => match token.char().unwrap() {
 				'.' => {
 					parser.next();
 					match parser.next_with(Include::Whitespace) {
 						t if t.kind() == Kind::Ident => {
 							let atom = parser.parse_atom(t);
 							Self::class_from_atom(&atom)
-								.ok_or_else(|| diagnostics::UnexpectedIdent(atom, parser.span()).into())
+								.ok_or_else(|| diagnostics::UnexpectedIdent(atom, token.span()).into())
 						}
-						token => unexpected!(parser, token),
+						token => Err(diagnostics::ExpectedIdent(token, token.span()))?,
 					}
 				}
 				'*' => match parser.peek_n_with(2, Include::Whitespace) {
@@ -102,8 +119,8 @@ pub trait SelectorComponent<'a>: Sized {
 			},
 			Kind::Colon => {
 				parser.next();
-				let peek = parser.peek_with(Include::Whitespace);
-				match peek.kind() {
+				let token = parser.peek_with::<Token![Any]>(Include::Whitespace).unwrap();
+				match token.kind() {
 					Kind::Colon => {
 						parser.next_with(Include::Whitespace);
 						let next = parser.next_with(Include::Whitespace);
@@ -111,22 +128,22 @@ pub trait SelectorComponent<'a>: Sized {
 							Kind::Ident => {
 								let atom = parser.parse_atom(next);
 								Self::pseudo_element_from_atom(&atom).ok_or_else(|| {
-									diagnostics::UnexpectedPseudoElement(atom.clone(), parser.span()).into()
+									diagnostics::UnexpectedPseudoElement(atom.clone(), token.span()).into()
 								})
 							}
 							Kind::Function => Self::parse_functional_pseudo_element(parser),
-							_ => unexpected!(parser, next),
+							_ => Err(diagnostics::Unexpected(next, next.span()))?,
 						}
 					}
 					Kind::Ident => {
-						let atom = parser.parse_atom(peek);
+						let atom = parser.parse_atom(token);
 						parser.next_with(Include::Whitespace);
 						Self::legacy_pseudo_element_from_token(&atom)
 							.or_else(|| Self::pseudo_class_from_atom(&atom))
-							.ok_or_else(|| diagnostics::UnexpectedPseudoClass(atom.clone(), parser.span()).into())
+							.ok_or_else(|| diagnostics::UnexpectedPseudoClass(atom.clone(), token.span()).into())
 					}
 					Kind::Function => Self::parse_functional_pseudo_class(parser),
-					_ => unexpected!(parser, peek),
+					_ => Err(diagnostics::Unexpected(token, token.span()))?,
 				}
 			}
 			_ => Self::parse_combinator(parser),

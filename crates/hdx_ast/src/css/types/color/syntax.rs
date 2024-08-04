@@ -89,7 +89,7 @@ pub enum ColorFunctionSyntax {
 
 impl ColorFunctionSyntax {
 	#[inline]
-	pub fn from_color_space(atom: Atom) -> Option<Self> {
+	pub fn from_color_space(atom: &Atom) -> Option<Self> {
 		match atom.to_ascii_lowercase() {
 			atom!("srgb") => Some(Self::Srgb),
 			atom!("srgb-linear") => Some(Self::SrgbLinear),
@@ -105,7 +105,7 @@ impl ColorFunctionSyntax {
 	}
 
 	#[inline]
-	pub fn from_named_function(atom: Atom) -> Option<Self> {
+	pub fn from_named_function(atom: &Atom) -> Option<Self> {
 		match atom.to_ascii_lowercase() {
 			atom!("rgb") | atom!("rgba") => Some(Self::RgbNamed),
 			atom!("hsl") | atom!("hsla") => Some(Self::HslNamed),

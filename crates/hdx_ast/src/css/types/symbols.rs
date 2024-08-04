@@ -1,57 +1,57 @@
-use hdx_atom::{atom, Atom, Atomizable};
+use hdx_atom::{atom, Atomizable};
 use hdx_derive::{Atomizable, Writable};
-use hdx_lexer::{QuoteStyle, Kind};
-use hdx_parser::{expect_ignore_case, unexpected, Parse, Parser, Result as ParserResult};
+use hdx_lexer::QuoteStyle;
+use hdx_parser::{discard, Parse, Parser, Peek, Result as ParserResult, Token};
 use hdx_writer::{OutputOption, Result as WriterResult, WriteCss};
 use smallvec::{smallvec, SmallVec};
 
 use crate::css::types::Image;
 
+mod func {
+	use hdx_parser::custom_function;
+	custom_function!(Symbols, atom!("symbols"));
+}
+
 // https://drafts.csswg.org/css-counter-styles-3/#funcdef-symbols
 #[derive(Debug, Clone, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-pub struct Symbols(pub SymbolsType, SmallVec<[Symbol; 0]>);
+pub struct Symbols<'a>(pub SymbolsType, SmallVec<[Symbol<'a>; 0]>);
 
-impl<'a> Parse<'a> for Symbols {
+impl<'a> Peek<'a> for Symbols<'a> {
+	fn peek(parser: &Parser<'a>) -> Option<hdx_lexer::Token> {
+		parser.peek::<Token![Function]>()
+	}
+}
+
+impl<'a> Parse<'a> for Symbols<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		expect_ignore_case!(parser.next(), Kind::Function, atom!("symbols"));
+		parser.parse::<func::Symbols>()?;
 		let mut symbol_type = SymbolsType::default();
 		let mut symbols = smallvec![];
-		let token = parser.peek();
-		match token.kind() {
-			Kind::Ident => {
-				if let Some(st) = SymbolsType::from_atom(&parser.parse_atom(token)) {
-					parser.next();
-					symbol_type = st;
-				}
+		if discard!(parser, RightParen) {
+			return Ok(Self(symbol_type, symbols));
+		}
+		if let Some(token) = parser.peek::<Token![Ident]>() {
+			if let Some(st) = SymbolsType::from_atom(&parser.parse_atom(token)) {
+				parser.hop(token);
+				symbol_type = st;
 			}
-			Kind::RightParen => {
-				parser.next();
-				return Ok(Self(symbol_type, symbols));
-			}
-			_ => {}
 		}
 		loop {
-			let token = parser.peek();
-			match token.kind() {
-				Kind::String => {
-					parser.next();
-					symbols.push(Symbol::String(parser.parse_atom(token), token.quote_style()));
-				}
-				Kind::Function => {
-					symbols.push(Symbol::Image(Image::parse(parser)?));
-				}
-				Kind::RightParen => {
-					parser.next();
-					return Ok(Self(symbol_type, symbols));
-				}
-				_ => unexpected!(parser, token),
+			if discard!(parser, RightParen) {
+				return Ok(Self(symbol_type, symbols));
+			}
+			if let Some(token) = parser.peek::<Token![String]>() {
+				parser.hop(token);
+				symbols.push(Symbol::String(parser.parse_str(token), token.quote_style()));
+			} else {
+				symbols.push(Symbol::Image(Image::parse(parser)?));
 			}
 		}
 	}
 }
 
-impl<'a> WriteCss<'a> for Symbols {
+impl<'a> WriteCss<'a> for Symbols<'a> {
 	fn write_css<W: hdx_writer::CssWriter>(&self, sink: &mut W) -> WriterResult {
 		atom!("symbols").write_css(sink)?;
 		sink.write_char('(')?;
@@ -73,10 +73,10 @@ impl<'a> WriteCss<'a> for Symbols {
 // https://drafts.csswg.org/css-counter-styles-3/#funcdef-symbols
 #[derive(Writable, Debug, Clone, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-pub enum Symbol {
+pub enum Symbol<'a> {
 	#[writable(String)]
-	String(Atom, QuoteStyle),
-	Image(Image),
+	String(&'a str, QuoteStyle),
+	Image(Image<'a>),
 }
 
 // https://drafts.csswg.org/css-counter-styles-3/#typedef-symbols-type

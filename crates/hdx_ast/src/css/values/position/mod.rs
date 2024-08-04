@@ -1,24 +1,139 @@
-mod bottom;
-mod inset;
-mod inset_block;
-mod inset_block_end;
-mod inset_block_start;
-mod inset_inline;
-mod inset_inline_end;
-mod inset_inline_start;
-mod left;
-mod position;
-mod right;
-mod top;
-pub use bottom::*;
-pub use inset::*;
-pub use inset_block::*;
-pub use inset_block_end::*;
-pub use inset_block_start::*;
-pub use inset_inline::*;
-pub use inset_inline_end::*;
-pub use inset_inline_start::*;
-pub use left::*;
-pub use position::*;
-pub use right::*;
-pub use top::*;
+mod impls;
+pub mod types;
+
+use impls::*;
+
+/*
+ * https://drafts.csswg.org/css-position-4/
+ * CSS Positioned Layout Module Level 4
+ */
+
+// https://drafts.csswg.org/css-position-4/#position
+#[value(" static | relative | absolute | sticky | fixed ")]
+#[initial("static")]
+#[applies_to("all elements except table-column-group and table-column")]
+#[inherited("no")]
+#[percentages("n/a")]
+#[canonical_order("per grammar")]
+#[animation_type("discrete")]
+pub enum Position {}
+
+// https://drafts.csswg.org/css-position-4/#top
+#[value(" auto | <length-percentage> ")]
+#[initial("auto")]
+#[applies_to("positioned elements")]
+#[inherited("no")]
+#[percentages("refer to size of containing block; see prose")]
+#[canonical_order("per grammar")]
+#[animation_type("by computed value type")]
+pub enum Top {}
+
+// https://drafts.csswg.org/css-position-4/#right
+#[value(" auto | <length-percentage> ")]
+#[initial("auto")]
+#[applies_to("positioned elements")]
+#[inherited("no")]
+#[percentages("refer to size of containing block; see prose")]
+#[canonical_order("per grammar")]
+#[animation_type("by computed value type")]
+pub enum Right {}
+
+// https://drafts.csswg.org/css-position-4/#bottom
+#[value(" auto | <length-percentage> ")]
+#[initial("auto")]
+#[applies_to("positioned elements")]
+#[inherited("no")]
+#[percentages("refer to size of containing block; see prose")]
+#[canonical_order("per grammar")]
+#[animation_type("by computed value type")]
+pub enum Bottom {}
+
+// https://drafts.csswg.org/css-position-4/#left
+#[value(" auto | <length-percentage> ")]
+#[initial("auto")]
+#[applies_to("positioned elements")]
+#[inherited("no")]
+#[percentages("refer to size of containing block; see prose")]
+#[canonical_order("per grammar")]
+#[animation_type("by computed value type")]
+pub enum Left {}
+
+// https://drafts.csswg.org/css-position-4/#inset-block-start
+#[value(" auto | <length-percentage> ")]
+#[initial("auto")]
+#[applies_to("positioned elements")]
+#[inherited("no")]
+#[percentages("refer to size of containing block; see prose")]
+#[canonical_order("per grammar")]
+#[animation_type("by computed value type")]
+pub enum InsetBlockStart {}
+
+// https://drafts.csswg.org/css-position-4/#inset-inline-start
+#[value(" auto | <length-percentage> ")]
+#[initial("auto")]
+#[applies_to("positioned elements")]
+#[inherited("no")]
+#[percentages("refer to size of containing block; see prose")]
+#[canonical_order("per grammar")]
+#[animation_type("by computed value type")]
+pub enum InsetInlineStart {}
+
+// https://drafts.csswg.org/css-position-4/#inset-block-end
+#[value(" auto | <length-percentage> ")]
+#[initial("auto")]
+#[applies_to("positioned elements")]
+#[inherited("no")]
+#[percentages("refer to size of containing block; see prose")]
+#[canonical_order("per grammar")]
+#[animation_type("by computed value type")]
+pub enum InsetBlockEnd {}
+
+// https://drafts.csswg.org/css-position-4/#inset-inline-end
+#[value(" auto | <length-percentage> ")]
+#[initial("auto")]
+#[applies_to("positioned elements")]
+#[inherited("no")]
+#[percentages("refer to size of containing block; see prose")]
+#[canonical_order("per grammar")]
+#[animation_type("by computed value type")]
+pub enum InsetInlineEnd {}
+
+// https://drafts.csswg.org/css-position-4/#inset-block
+#[value(" <'top'>{1,2} ")]
+#[initial("auto")]
+#[applies_to("positioned elements")]
+#[inherited("no")]
+#[percentages("see individual properties")]
+#[canonical_order("per grammar")]
+#[animation_type("by computed value type")]
+pub struct InsetBlock;
+
+// https://drafts.csswg.org/css-position-4/#inset-inline
+#[value(" <'top'>{1,2} ")]
+#[initial("auto")]
+#[applies_to("positioned elements")]
+#[inherited("no")]
+#[percentages("see individual properties")]
+#[canonical_order("per grammar")]
+#[animation_type("by computed value type")]
+pub struct InsetInline;
+
+// https://drafts.csswg.org/css-position-4/#inset
+#[value(" <'top'>{1,4} ")]
+#[initial("auto")]
+#[applies_to("positioned elements")]
+#[inherited("no")]
+#[percentages("see individual properties")]
+#[canonical_order("per grammar")]
+#[animation_type("by computed value type")]
+pub struct Inset;
+
+// https://drafts.csswg.org/css-position-4/#overlay
+#[value(" none | auto ")]
+#[initial("none")]
+#[applies_to("all elements")]
+#[inherited("no")]
+#[percentages("n/a")]
+#[canonical_order("per grammar")]
+#[animation_type("(see prose)")]
+pub enum Overlay {}

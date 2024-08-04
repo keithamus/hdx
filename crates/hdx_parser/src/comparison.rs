@@ -1,5 +1,5 @@
-use crate::{expect, unexpected, Parse, Parser, Result};
-use hdx_lexer::{Include, Kind};
+use crate::{diagnostics, Parse, Parser, Result, Token};
+use hdx_lexer::Include;
 
 #[derive(Debug, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
@@ -13,19 +13,28 @@ pub enum Comparison {
 
 impl<'a> Parse<'a> for Comparison {
 	fn parse(parser: &mut Parser<'a>) -> Result<Comparison> {
-		Ok(match expect!(parser.next(), Kind::Delim).char().unwrap() {
-			'=' => Comparison::Equal,
-			'>' if matches!(parser.peek_with(Include::Whitespace).char(), Some('=')) => {
-				parser.next_with(Include::Whitespace);
-				Comparison::GreaterThanEqual
+		let token = *parser.parse::<Token![Delim]>()?;
+		match token.char().unwrap() {
+			'=' => Ok(Comparison::Equal),
+			'>' => {
+				if let Some(token) = parser.peek_with::<Token![Delim]>(Include::Whitespace) {
+					if let Some('=') = token.char() {
+						parser.hop(token);
+						return Ok(Comparison::GreaterThanEqual);
+					}
+				}
+				Ok(Comparison::GreaterThan)
 			}
-			'>' => Comparison::GreaterThan,
-			'<' if matches!(parser.peek_with(Include::Whitespace).char(), Some('=')) => {
-				parser.next_with(Include::Whitespace);
-				Comparison::LessThanEqual
+			'<' => {
+				if let Some(token) = parser.peek_with::<Token![Delim]>(Include::Whitespace) {
+					if let Some('=') = token.char() {
+						parser.hop(token);
+						return Ok(Comparison::LessThanEqual);
+					}
+				}
+				Ok(Comparison::LessThan)
 			}
-			'<' => Comparison::LessThan,
-			_ => unexpected!(parser),
-		})
+			char => Err(diagnostics::UnexpectedDelim(char, token.span()))?,
+		}
 	}
 }

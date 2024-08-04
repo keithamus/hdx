@@ -1,13 +1,11 @@
 #[macro_export]
 macro_rules! assert_snap_tokens {
 	($source_path: literal) => {
-		use bumpalo::Bump;
 		use hdx_lexer::{Include, Kind, Lexer};
 		use std::fs::read_to_string;
 
-		let allocator = Bump::default();
 		let source_text = read_to_string($source_path).unwrap();
-		let mut lexer = Lexer::new(&allocator, &source_text, Include::none());
+		let mut lexer = Lexer::new(&source_text, Include::none());
 		let mut tokens = vec![];
 		loop {
 			let token = lexer.advance();

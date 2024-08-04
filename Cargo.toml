@@ -15,6 +15,7 @@ repository = "https://github.com/keithamus/hdx"
 hdx = { version = "0.0.1", path = "crates/hdx" }
 hdx_atom = { version = "0.0.0", path = "crates/hdx_atom" }
 hdx_derive = { version = "0.0.0", path = "crates/hdx_derive" }
+hdx_proc_macro = { version = "0.0.0", path = "crates/hdx_proc_macro" }
 hdx_parser = { version = "0.0.1", path = "crates/hdx_parser" }
 hdx_lexer = { version = "0.0.1", path = "crates/hdx_lexer" }
 hdx_syntax = { version = "0.0.0", path = "crates/hdx_syntax" }
@@ -24,37 +25,39 @@ hdx_transform = { version = "0.0.0", path = "crates/hdx_transform" }
 
 bumpalo = { version = "3.16.0" }
 
-clap = { version = "4.5.4" }
+clap = { version = "4.5.20" }
 
 closestmatch = { version = "0.1.2" }
 miette = { version = "7.2.0", default-features = false }
-thiserror = { version = "1.0.59" }
-serde = { version = "1.0.198" }
-serde_json = { version = "1.0.116" }
-syn = { version = "2.0.60" }
-quote = { version = "1.0.36" }
-proc-macro2 = { version = "1.0.81" }
-bitmask-enum = { version = "2.2.3" }
+thiserror = { version = "1.0.65" }
+serde = { version = "1.0.213" }
+serde_json = { version = "1.0.132" }
+syn = { version = "2.0.83" }
+quote = { version = "1.0.37" }
+proc-macro2 = { version = "1.0.89" }
+bitmask-enum = { version = "2.2.5" }
 smallvec = { version = "1.13.2" }
+itertools = { version = "0.13.0" }
 
 glob = { version = "0.3.1" }
 pico-args = { version = "0.5.0" }
 project-root = { version = "0.2.2" }
-similar = { version = "2.5.0" }
+similar = { version = "2.6.0" }
 criterion = { version = "0.5.1" }
 pprof = { version = "0.13.0" }
-flate2 = { version = "1.0.29" }
-insta = { version = "1.38.0" }
+flate2 = { version = "1.0.34" }
+insta = { version = "1.40.0" }
 console = { version = "0.15.8" }
+prettyplease = { version = "0.2.24" }
 
 string_cache = { version = "0.8.7" }
 string_cache_codegen = { version = "0.5.2" }
 
-grep-regex = { version = "0.1.12" }
+grep-regex = { version = "0.1.13" }
 grep-matcher = { version = "0.1.7" }
-grep-searcher = { version = "0.1.13" }
+grep-searcher = { version = "0.1.14" }
 
-wasm-bindgen = { version = "0.2.92" }
+wasm-bindgen = { version = "0.2.95" }
 serde-wasm-bindgen = { version = "0.6.5" }
 console_error_panic_hook = { version = "0.1.7" }
 

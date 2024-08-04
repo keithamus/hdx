@@ -1,4 +1,6 @@
-use hdx_derive::{Parsable, Writable};
+use hdx_atom::atom;
+use hdx_derive::Writable;
+use hdx_parser::{diagnostics, Parse, Parser, Peek, Result as ParserResult, Token};
 
 use super::{AbsoluteUnit, CSSFloat};
 
@@ -6,18 +8,38 @@ const DPPX_IN: f32 = 96.0;
 const DPPX_CM: f32 = DPPX_IN / 2.54;
 
 // https://drafts.csswg.org/css-values/#resolution
-#[derive(Parsable, Writable, Debug, Clone, Copy, PartialEq, Hash)]
+#[derive(Writable, Debug, Clone, Copy, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub enum Resolution {
 	#[writable(suffix = "dpi")]
-	#[parsable(Dimension)]
 	Dpi(CSSFloat),
 	#[writable(suffix = "dpcm")]
-	#[parsable(Dimension)]
 	Dpcm(CSSFloat),
 	#[writable(suffix = "dppx")]
-	#[parsable(Dimension)]
 	Dppx(CSSFloat),
+}
+
+impl<'a> Peek<'a> for Resolution {
+	fn peek(parser: &Parser<'a>) -> Option<hdx_lexer::Token> {
+		if let Some(token) = parser.peek::<Token![Dimension]>() {
+			if matches!(parser.parse_atom_lower(token), atom!("dpi") | atom!("dpcm") | atom!("dppx")) {
+				return Some(token);
+			}
+		}
+		None
+	}
+}
+
+impl<'a> Parse<'a> for Resolution {
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
+		let token = *parser.parse::<Token![Dimension]>()?;
+		return match parser.parse_atom_lower(token) {
+			atom!("dpi") => Ok(Self::Dpi(parser.parse_number(token).into())),
+			atom!("dpcm") => Ok(Self::Dpcm(parser.parse_number(token).into())),
+			atom!("dppx") => Ok(Self::Dppx(parser.parse_number(token).into())),
+			atom => Err(diagnostics::UnexpectedDimension(atom, token.span()))?,
+		};
+	}
 }
 
 impl Into<CSSFloat> for Resolution {

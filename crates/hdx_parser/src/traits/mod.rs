@@ -1,5 +1,5 @@
 use hdx_atom::Atom;
-use hdx_lexer::Kind;
+use hdx_lexer::{Span, Spanned, Token as LexerToken};
 
 mod declarations;
 mod rules;
@@ -9,10 +9,7 @@ pub use declarations::*;
 pub use rules::*;
 pub use selectors::*;
 
-use crate::{
-	expect, expect_ignore_case, parser::Parser, peek, span::Spanned, unexpected, unexpected_ident, Comparison, Result,
-	State, Vec,
-};
+use crate::{diagnostics, discard, parser::Parser, Comparison, Delim, Result, State, Token, Vec};
 
 impl<'a, T: Parse<'a>> Parse<'a> for Vec<'a, T> {
 	fn parse(parser: &mut Parser<'a>) -> Result<Vec<'a, T>> {
@@ -38,39 +35,24 @@ pub trait Parse<'a>: Sized {
 
 	fn try_parse(parser: &mut Parser<'a>) -> Result<Self> {
 		let checkpoint = parser.checkpoint();
-		Self::parse(parser).map_err(|e| {
-			parser.rewind(checkpoint);
-			e
-		})
-	}
-
-	fn parse_with_state(parser: &mut Parser<'a>, state: State) -> Result<Self> {
-		let old = parser.state;
-		parser.state = old | state;
-		let value = Self::parse(parser);
-		parser.state = old;
-		value
+		Self::parse(parser).inspect_err(|_| parser.rewind(checkpoint))
 	}
 
 	fn parse_spanned(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
-		let span = parser.span();
+		let start = parser.offset();
 		let node = Self::parse(parser)?;
-		Ok(Spanned { node, span: span.end(parser.pos()) })
+		Ok(Spanned { node, span: Span::new(start, parser.offset()) })
 	}
 
 	fn try_parse_spanned(parser: &mut Parser<'a>) -> Result<Spanned<Self>> {
-		let span = parser.span();
+		let start = parser.offset();
 		let node = Self::try_parse(parser)?;
-		Ok(Spanned { node, span: span.end(parser.prev_pos) })
+		Ok(Spanned { node, span: Span::new(start, parser.offset()) })
 	}
+}
 
-	fn parse_spanned_with_state(parser: &mut Parser<'a>, state: State) -> Result<Spanned<Self>> {
-		let old = parser.state;
-		parser.state = old | state;
-		let value = Self::parse_spanned(parser);
-		parser.state = old;
-		value
-	}
+pub trait Peek<'a>: Sized {
+	fn peek(parser: &Parser<'a>) -> Option<LexerToken>;
 }
 
 pub trait Block<'a>: Sized + Parse<'a> {
@@ -81,31 +63,33 @@ pub trait Block<'a>: Sized + Parse<'a> {
 	fn parse_block(
 		parser: &mut Parser<'a>,
 	) -> Result<(Vec<'a, Spanned<Self::Declaration>>, Vec<'a, Spanned<Self::Rule>>)> {
-		expect!(parser.next(), Kind::LeftCurly);
+		parser.parse::<Token![LeftCurly]>()?;
 		let mut declarations = parser.new_vec();
 		let mut rules = parser.new_vec();
 		loop {
-			match parser.peek().kind() {
-				Kind::Semicolon => {
-					parser.next();
-				}
-				Kind::Eof | Kind::RightCurly => {
-					parser.next();
-					break;
-				}
-				Kind::AtKeyword => {
-					rules.push(Self::Rule::parse_spanned_with_state(parser, State::Nested)?);
-				}
-				_ => {
-					let checkpoint = parser.checkpoint();
-					if let Ok(decl) = Self::Declaration::parse_spanned_with_state(parser, State::Nested) {
-						declarations.push(decl);
-					} else {
-						parser.rewind(checkpoint);
-						rules.push(Self::Rule::parse_spanned(parser)?);
-					}
+			if parser.at_end() {
+				break;
+			}
+			discard!(parser, Semicolon);
+			if discard!(parser, RightCurly) {
+				break;
+			}
+			let old_state = parser.set_state(State::Nested);
+			if parser.peek::<Token![AtKeyword]>().is_some() {
+				rules.push(parser.parse_spanned::<Self::Rule>().inspect_err(|_| {
+					parser.set_state(old_state);
+				})?);
+			} else {
+				let checkpoint = parser.checkpoint();
+
+				if let Ok(decl) = parser.parse_spanned::<Self::Declaration>() {
+					declarations.push(decl);
+				} else {
+					parser.rewind(checkpoint);
+					rules.push(parser.parse_spanned::<Self::Rule>()?);
 				}
 			}
+			parser.set_state(old_state);
 		}
 		Ok((declarations, rules))
 	}
@@ -117,17 +101,11 @@ pub trait StyleSheet<'a>: Sized + Parse<'a> {
 	fn parse_stylesheet(parser: &mut Parser<'a>) -> Result<Vec<'a, Spanned<Self::Rule>>> {
 		let mut rules: Vec<'a, Spanned<Self::Rule>> = parser.new_vec();
 		loop {
-			match parser.peek().kind() {
-				Kind::Eof => {
-					return Ok(rules);
-				}
-				Kind::CdcOrCdo => {
-					parser.next();
-				}
-				_ => {
-					rules.push(Self::Rule::parse_spanned(parser)?);
-				}
+			if parser.at_end() {
+				return Ok(rules);
 			}
+			discard!(parser, CdcOrCdo);
+			rules.push(Self::Rule::parse_spanned(parser)?);
 		}
 	}
 }
@@ -136,15 +114,17 @@ pub trait DiscreteMediaFeature<'a>: Sized + Default {
 	fn parse_media_feature_value(parser: &mut Parser<'a>) -> Result<Self>;
 
 	fn parse_descrete_media_feature(name: Atom, parser: &mut Parser<'a>) -> Result<Self> {
-		expect_ignore_case!(parser.next(), Kind::Ident, name);
-		let value = match parser.peek().kind() {
-			Kind::Colon => {
-				parser.next();
-				Self::parse_media_feature_value(parser)?
-			}
-			_ => Self::default(),
-		};
-		Ok(value)
+		let token = *parser.parse::<Token![Ident]>()?;
+		let atom = parser.parse_atom_lower(token);
+		if atom != name {
+			Err(diagnostics::ExpectedIdentOf(name, atom, token.span()))?
+		}
+		if let Some(token) = parser.peek::<Delim![:]>() {
+			parser.hop(token);
+			Ok(Self::parse_media_feature_value(parser)?)
+		} else {
+			Ok(Self::default())
+		}
 	}
 }
 
@@ -154,46 +134,47 @@ pub trait RangedMediaFeature<'a>: Sized {
 	fn new(left: (Comparison, Self::Type), right: Option<(Comparison, Self::Type)>, legacy: bool) -> Self;
 
 	fn parse_ranged_media_feature(name: Atom, parser: &mut Parser<'a>) -> Result<Self> {
-		let checkpoint = parser.checkpoint();
-		let left = match parser.next() {
-			token if token.kind() == Kind::Ident => {
-				let mut legacy = false;
-				let legacy_cmp = match parser.parse_atom_lower(token) {
-					atom if atom == name => {
-						legacy = peek!(parser, Kind::Colon);
-						Comparison::Equal
-					}
-					atom if atom.strip_prefix("max-").unwrap_or("") == name.as_ref() => {
-						legacy = true;
-						Comparison::GreaterThanEqual
-					}
-					atom if atom.strip_prefix("min-").unwrap_or("") == name.as_ref() => {
-						legacy = true;
-						Comparison::LessThanEqual
-					}
-					_ => unexpected_ident!(parser, parser.parse_atom(token)),
-				};
-				if legacy {
-					expect!(parser.next(), Kind::Colon);
-					return Ok(Self::new((legacy_cmp, Self::Type::parse(parser)?), None, true));
-				} else {
-					let cmp = Comparison::parse(parser)?;
-					return Ok(Self::new((cmp, Self::Type::parse(parser)?), None, false));
+		let left = if let Some(token) = parser.peek::<Token![Ident]>() {
+			parser.hop(token);
+			let mut legacy = false;
+			let legacy_cmp = match parser.parse_atom_lower(token) {
+				atom if atom == name => {
+					legacy = parser.peek::<Delim![:]>().is_some();
+					Comparison::Equal
 				}
+				atom if atom.strip_prefix("max-").unwrap_or("") == name.as_ref() => {
+					legacy = true;
+					Comparison::GreaterThanEqual
+				}
+				atom if atom.strip_prefix("min-").unwrap_or("") == name.as_ref() => {
+					legacy = true;
+					Comparison::LessThanEqual
+				}
+				atom => Err(diagnostics::ExpectedIdentOf(name, atom, token.span()))?,
+			};
+			if legacy {
+				parser.parse::<Delim![:]>()?;
+				return Ok(Self::new((legacy_cmp, Self::Type::parse(parser)?), None, true));
+			} else {
+				let cmp = parser.parse::<Comparison>()?;
+				return Ok(Self::new((cmp, Self::Type::parse(parser)?), None, false));
 			}
-			_ => {
-				parser.rewind(checkpoint);
-				Self::Type::parse(parser)?
-			}
+		} else {
+			Self::Type::parse(parser)?
 		};
-		let left_cmp = Comparison::parse(parser)?;
-		expect_ignore_case!(parser.next(), Kind::Ident, name);
-		if !peek!(parser, Kind::Delim) {
+		let offset = parser.offset();
+		let left_cmp = parser.parse::<Comparison>()?;
+		let token = *parser.parse::<Token![Ident]>()?;
+		let atom = parser.parse_atom_lower(token);
+		if atom != name {
+			Err(diagnostics::ExpectedIdentOf(name, atom, token.span()))?
+		}
+		if parser.peek::<Token![Delim]>().is_none() {
 			return Ok(Self::new((left_cmp, left), None, false));
 		}
 		let right_cmp = Comparison::parse(parser)?;
 		if left_cmp == Comparison::Equal && right_cmp == Comparison::Equal {
-			unexpected!(parser)
+			Err(diagnostics::UnexpectedMediaRangeComparisonEqualsTwice(Span::new(offset, parser.offset())))?
 		}
 		Ok(Self::new((left_cmp, left), Some((right_cmp, Self::Type::parse(parser)?)), false))
 	}

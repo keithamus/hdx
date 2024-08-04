@@ -1,5 +1,5 @@
-use hdx_lexer::{Include, Kind, Token};
-use hdx_parser::{discard, expect_delim, unexpected, Parse, Parser, Result as ParserResult};
+use hdx_lexer::Include;
+use hdx_parser::{diagnostics, discard, Delim, Parse, Parser, Result as ParserResult, Token};
 use hdx_writer::{write_css, CssWriter, Result as WriterResult, WriteCss};
 
 #[derive(Debug, PartialEq, Hash)]
@@ -16,31 +16,41 @@ pub enum Combinator {
 
 impl<'a> Parse<'a> for Combinator {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let could_be_descendant_combinator = discard!(parser, Include::Whitespace, Kind::Whitespace);
-		let peeked = parser.peek();
-		if could_be_descendant_combinator && !matches!(peeked.char(), Some('>' | '+' | '~' | '|')) {
-			return Ok(Self::Descendant);
-		}
-		let val = match peeked {
-			Token::Delim(c) => match c {
-				'>' => Self::Child,
-				'+' => Self::NextSibling,
-				'~' => Self::SubsequentSibling,
-				'&' => Self::Nesting,
-				'|' => {
-					expect_delim!(parser.next_with(Include::Whitespace), '|');
-					Self::Column
+		let could_be_descendant_combinator = discard!(parser, Include::Whitespace, Whitespace);
+		if let Some(token) = parser.peek::<Token![Delim]>() {
+			let char = token.char();
+			if could_be_descendant_combinator && !matches!(char, Some('>' | '+' | '~' | '|')) {
+				return Ok(Self::Descendant);
+			}
+			let val = match char {
+				Some('>') => Self::Child,
+				Some('+') => Self::NextSibling,
+				Some('~') => Self::SubsequentSibling,
+				Some('&') => Self::Nesting,
+				Some('|') => {
+					parser.hop(token);
+					parser.parse_with::<Delim![|]>(Include::Whitespace)?;
+					return Ok(Self::Column);
 				}
 				_ if could_be_descendant_combinator => return Ok(Self::Descendant),
-				_ => unexpected!(parser),
-			},
-			token => unexpected!(parser, token),
-		};
-		parser.next();
-		if val != Self::Nesting {
-			discard!(parser, Include::Whitespace, Kind::Whitespace);
+				_ => Err(diagnostics::Unexpected(token, token.span()))?,
+			};
+			parser.hop(token);
+			if val != Self::Nesting {
+				discard!(parser, Include::Whitespace, Whitespace);
+			}
+			Ok(val)
+		} else if could_be_descendant_combinator {
+			loop {
+				if !discard!(parser, Include::Whitespace, Whitespace) {
+					break;
+				}
+			}
+			Ok(Self::Descendant)
+		} else {
+			let token = parser.peek::<Token![Any]>().unwrap();
+			Err(diagnostics::Unexpected(token, token.span()))?
 		}
-		Ok(val)
 	}
 }
 

@@ -1,9 +1,7 @@
 use hdx_atom::Atom;
-use hdx_lexer::Token;
+use hdx_lexer::{Span, Token};
 use miette::{self, Diagnostic};
 use thiserror::{self, Error};
-
-use crate::span::Span;
 
 #[derive(Debug, Error, Diagnostic)]
 #[error("The token at {0} cannot yet be parsed by the parser :(")]
@@ -165,6 +163,16 @@ pub struct UnknownColor(pub Atom, #[label("This isn't a known color")] pub Span)
 pub struct ExpectedEnd(#[label("All of this extra content was ignored.")] pub Span);
 
 #[derive(Debug, Error, Diagnostic)]
+#[error("Expected more content but reached the end of the file.")]
+#[diagnostic(help("Perhaps this file isn't finished yet?"), code(hdx_parser::UnexpectedEnd))]
+pub struct UnexpectedEnd();
+
+#[derive(Debug, Error, Diagnostic)]
+#[error("Expected more content before this curly brace.")]
+#[diagnostic(help("This needed more content here"), code(hdx_parser::UnexpectedCloseCurly))]
+pub struct UnexpectedCloseCurly(pub Span);
+
+#[derive(Debug, Error, Diagnostic)]
 #[error("Expected `{0}` but found `{1}` {2}")]
 #[diagnostic(help("This is not correct CSS syntax."), code(hdx_parser::ExpectedToken))]
 pub struct ExpectedToken(pub Token, pub Token, #[label("`{0}` expected")] pub Span);
@@ -267,6 +275,11 @@ pub struct DisallowedValueWithoutDimension(pub Atom, #[label("This value")] pub 
 pub struct DisallowedMathFunction(pub Atom, #[label("This value")] pub Span);
 
 #[derive(Debug, Error, Diagnostic)]
+#[error("Expected an opening curly brace but saw `{0}`")]
+#[diagnostic(help("This is not correct CSS syntax."), code(hdx_parser::ExpectedOpenCurly))]
+pub struct ExpectedOpenCurly(pub Token, #[label("This value")] pub Span);
+
+#[derive(Debug, Error, Diagnostic)]
 #[error("Expected a number but saw `{0}`")]
 #[diagnostic(help("This is not correct CSS syntax."), code(hdx_parser::ExpectedNumber))]
 pub struct ExpectedNumber(pub Token, #[label("This value")] pub Span);
@@ -297,6 +310,11 @@ pub struct NumberNotNegative(pub f32, #[label("This value")] pub Span);
 pub struct NumberTooSmall(pub f32, #[label("This value")] pub Span);
 
 #[derive(Debug, Error, Diagnostic)]
+#[error("This number is too large.")]
+#[diagnostic(help("This needs to be smaller than {0}"), code(hdx_parser::NumberTooLarge))]
+pub struct NumberTooLarge(pub f32, #[label("This value")] pub Span);
+
+#[derive(Debug, Error, Diagnostic)]
 #[error("This value isn't allowed to have a fraction, it must be a whole number (integer).")]
 #[diagnostic(help("Try using {0} instead"), code(hdx_parser::ExpectedInt))]
 pub struct ExpectedInt(pub f32, #[label("This value")] pub Span);
@@ -312,9 +330,44 @@ pub struct ExpectedFloat(pub f32, #[label("This value")] pub Span);
 pub struct ExpectedZero(pub f32, #[label("This value")] pub Span);
 
 #[derive(Debug, Error, Diagnostic)]
+#[error("This media query tries to compare itself equal to two different numbers.")]
+#[diagnostic(help("Try deleting one."), code(hdx_parser::UnexpectedMediaRangeComparisonEqualsTwice))]
+pub struct UnexpectedMediaRangeComparisonEqualsTwice(#[label("This comparison")] pub Span);
+
+#[derive(Debug, Error, Diagnostic)]
 #[error("Display 'list-item' can only be combined with 'flow' or 'flow-root'")]
 #[diagnostic(
-	help("{0} is not valid in combination with list-item, try changing it to flow or flow-root"),
+	help("{0} is not valid in combination with list-item, try changing it to 'flow' or 'flow-root'"),
 	code(hdx_parser::DisplayHasInvalidListItemCombo)
 )]
 pub struct DisplayHasInvalidListItemCombo(pub Atom, pub Span);
+
+#[derive(Debug, Error, Diagnostic)]
+#[error("hwb and hsl colors must have a hue as their first argument.")]
+#[diagnostic(help("Try adding a % to the first color component."), code(hdx_parser::ColorMustStartWithHue))]
+pub struct ColorMustStartWithHue(#[label("This component")] pub Span);
+
+#[derive(Debug, Error, Diagnostic)]
+#[error("Only hwb and hsl colors have a hue as their first argument.")]
+#[diagnostic(help("Try removing the %"), code(hdx_parser::ColorMustNotStartWithHue))]
+pub struct ColorMustNotStartWithHue(#[label("This component")] pub Span);
+
+#[derive(Debug, Error, Diagnostic)]
+#[error("Colors should not use a hue as the middle color component")]
+#[diagnostic(help("Try removing the %"), code(hdx_parser::ColorMustNotStartWithHue))]
+pub struct ColorMustNotHaveHueInMiddle(#[label("This component")] pub Span);
+
+#[derive(Debug, Error, Diagnostic)]
+#[error("Colors using the legacy syntax must have commas between the components")]
+#[diagnostic(help("Try using the non-legacy syntax, without commas"), code(hdx_parser::ColorLegacyMustIncludeComma))]
+pub struct ColorLegacyMustIncludeComma(#[label("Put a commma here")] pub Span);
+
+#[derive(Debug, Error, Diagnostic)]
+#[error("Colors using the legacy syntax must not use percentages, but absolute numbers")]
+#[diagnostic(help("Try removing the %, or use the non-legacy syntax"), code(hdx_parser::ColorLegacyMustNotUsePercent))]
+pub struct ColorLegacyMustNotUsePercent(#[label("This should not be a percentage")] pub Span);
+
+#[derive(Debug, Error, Diagnostic)]
+#[error("Hex colors can be 3, 4, 6, or 8 characters in length. This one is {0}")]
+#[diagnostic(help("Try rewriting this to be 3, 4, 6 or 8 characters"), code(hdx_parser::ColorLegacyMustNotUsePercent))]
+pub struct ColorHexWrongLength(pub usize, #[label("This is not the right number of characters")] pub Span);

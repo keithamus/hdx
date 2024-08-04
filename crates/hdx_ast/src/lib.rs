@@ -10,7 +10,7 @@ pub mod test_helpers;
 
 extern crate self as hdx_ast;
 use hdx_parser::Spanned;
-pub use traits::Value;
+pub use traits::StyleValue;
 
 pub trait ToSpecificity: Sized {
 	fn specificity(&self) -> Specificity;

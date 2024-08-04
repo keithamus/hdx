@@ -1,11 +1,15 @@
 use crate::{css::stylesheet::Rule, syntax::SimpleBlock};
 use hdx_atom::atom;
-use hdx_lexer::{Kind, Token};
-use hdx_parser::{
-	diagnostics, expect, expect_ignore_case, match_ignore_case, peek, unexpected, unexpected_ident, AtRule, Parse,
-	Parser, Result as ParserResult, RuleList, Spanned, Vec,
-};
+use hdx_lexer::Span;
+use hdx_parser::{diagnostics, AtRule, Parse, Parser, Result as ParserResult, RuleList, Spanned, Token, Vec};
 use hdx_writer::{CssWriter, OutputOption, Result as WriterResult, WriteCss};
+
+mod kw {
+	use hdx_parser::custom_keyword;
+	custom_keyword!(And, atom!("and"));
+	custom_keyword!(Or, atom!("or"));
+	custom_keyword!(Not, atom!("not"));
+}
 
 // https://drafts.csswg.org/css-conditional-3/#at-supports
 #[derive(Debug, PartialEq, Hash)]
@@ -18,13 +22,12 @@ pub struct Supports<'a> {
 // https://drafts.csswg.org/css-conditional-3/#at-ruledef-supports
 impl<'a> Parse<'a> for Supports<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		expect_ignore_case!(parser.next(), Kind::AtKeyword, atom!("supports"));
-		let span = parser.span();
-		match Self::parse_at_rule(parser)? {
+		let start = parser.offset();
+		match Self::parse_at_rule(parser, Some(atom!("supports")))? {
 			(Some(condition), Some(rules)) => Ok(Self { condition, rules }),
-			(Some(_), None) => Err(diagnostics::MissingAtRuleBlock(span.end(parser.pos())))?,
-			(None, Some(_)) => Err(diagnostics::MissingAtRulePrelude(span.end(parser.pos())))?,
-			(None, None) => Err(diagnostics::MissingAtRulePrelude(span.end(parser.pos())))?,
+			(Some(_), None) => Err(diagnostics::MissingAtRuleBlock(Span::new(start, parser.offset())))?,
+			(None, Some(_)) => Err(diagnostics::MissingAtRulePrelude(Span::new(start, parser.offset())))?,
+			(None, None) => Err(diagnostics::MissingAtRulePrelude(Span::new(start, parser.offset())))?,
 		}
 	}
 }
@@ -97,89 +100,74 @@ pub enum SupportsCondition<'a> {
 
 impl<'a> Parse<'a> for SupportsCondition<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let token = parser.peek();
-		match token.kind() {
-			Kind::LeftParen => {
-				let wrapped = peek!(parser, 2, Kind::LeftParen);
-				if wrapped {
-					parser.next();
-				}
-				let feature = SupportsFeature::parse(parser)?;
-				let token = parser.peek();
-				match token.kind() {
-					Token::Ident => match parser.parse_atom_lower(token) {
-						atom!("and") => {
-							let mut features = parser.new_vec();
-							features.push(feature);
-							loop {
-								expect_ignore_case!(parser.next(), Kind::Ident, atom!("and"));
-								features.push(SupportsFeature::parse(parser)?);
-								if !match_ignore_case!(parser.peek(), Kind::Ident, atom!("and")) {
-									if wrapped {
-										expect!(parser.next(), Kind::RightParen);
-									}
-									return Ok(Self::And(features));
-								}
-							}
-						}
-						atom!("or") => {
-							let mut features = parser.new_vec();
-							features.push(feature);
-							loop {
-								expect_ignore_case!(parser.next(), Kind::Ident, atom!("or"));
-								features.push(SupportsFeature::parse(parser)?);
-								if !match_ignore_case!(parser.peek(), Kind::Ident, atom!("or")) {
-									if wrapped {
-										expect!(parser.next(), Kind::RightParen);
-									}
-									return Ok(Self::Or(features));
-								}
-							}
-						}
-						_ => {
-							if wrapped {
-								expect!(parser.next(), Kind::RightParen);
-							}
-							Ok(Self::Is(feature))
-						}
-					},
-					_ => {
-						if wrapped {
-							expect!(parser.next(), Kind::RightParen);
-						}
-						Ok(Self::Is(feature))
-					}
+		if parser.peek::<kw::And>().is_some() {
+			let mut features = parser.new_vec();
+			loop {
+				parser.parse::<kw::And>()?;
+				features.push(parser.parse::<SupportsFeature>()?);
+				if parser.peek::<kw::And>().is_some() {
+					continue;
+				} else {
+					return Ok(Self::And(features));
 				}
 			}
-			Kind::Ident => match parser.parse_atom_lower(token) {
-				atom!("and") => {
-					let mut features = parser.new_vec();
-					loop {
-						expect_ignore_case!(parser.next(), Kind::Ident, atom!("and"));
-						features.push(SupportsFeature::parse(parser)?);
-						if !match_ignore_case!(parser.peek(), Kind::Ident, atom!("and")) {
-							return Ok(Self::And(features));
-						}
-					}
+		} else if parser.peek::<kw::Or>().is_some() {
+			let mut features = parser.new_vec();
+			loop {
+				parser.parse::<kw::Or>()?;
+				features.push(parser.parse::<SupportsFeature>()?);
+				if parser.peek::<kw::Or>().is_some() {
+					continue;
+				} else {
+					return Ok(Self::And(features));
 				}
-				atom!("or") => {
-					let mut features = parser.new_vec();
-					loop {
-						expect_ignore_case!(parser.next(), Kind::Ident, atom!("or"));
-						features.push(SupportsFeature::parse(parser)?);
-						if !match_ignore_case!(parser.peek(), Kind::Ident, atom!("or")) {
-							return Ok(Self::And(features));
-						}
-					}
-				}
-				atom!("not") => {
-					parser.next();
-					Ok(Self::Not(SupportsFeature::parse(parser)?))
-				}
-				_ => unexpected_ident!(parser, ident),
-			},
-			_ => unexpected!(parser, token),
+			}
+		} else if let Some(token) = parser.peek::<kw::Not>() {
+			parser.hop(token);
+			return parser.parse::<SupportsFeature>().map(Self::Not);
 		}
+
+		// handle double parens
+		let mut wrapped = true;
+		let checkpoint = parser.checkpoint();
+		parser.parse::<Token![LeftParen]>()?;
+		if parser.peek::<Token![LeftParen]>().is_none() {
+			wrapped = false;
+			parser.rewind(checkpoint);
+		}
+		let feature = parser.parse::<SupportsFeature>()?;
+		if parser.peek::<kw::And>().is_some() {
+			let mut features = parser.new_vec();
+			features.push(feature);
+			loop {
+				parser.parse::<kw::And>()?;
+				features.push(parser.parse::<SupportsFeature>()?);
+				if parser.peek::<kw::And>().is_none() {
+					if wrapped {
+						parser.parse::<Token![RightParen]>()?;
+					}
+					return Ok(Self::And(features));
+				}
+			}
+		} else if parser.peek::<kw::Or>().is_some() {
+			let mut features = parser.new_vec();
+			features.push(feature);
+			loop {
+				parser.parse::<kw::Or>()?;
+				features.push(parser.parse::<SupportsFeature>()?);
+				if parser.peek::<kw::Or>().is_none() {
+					if wrapped {
+						parser.parse::<Token![RightParen]>()?;
+					}
+					return Ok(Self::Or(features));
+				}
+			}
+		}
+		if wrapped {
+			parser.parse::<Token![RightParen]>()?;
+		}
+		parser.parse::<Token![RightParen]>()?;
+		Ok(Self::Is(feature))
 	}
 }
 
@@ -194,7 +182,7 @@ impl<'a> WriteCss<'a> for SupportsCondition<'a> {
 			}
 			Self::And(features) => {
 				let mut first = true;
-				let mut iter = features.iter().peekable();
+				let mut iter = features.into_iter().peekable();
 				while let Some(feature) = iter.next() {
 					if first {
 						first = false;
@@ -211,7 +199,7 @@ impl<'a> WriteCss<'a> for SupportsCondition<'a> {
 			}
 			Self::Or(features) => {
 				let mut first = true;
-				let mut iter = features.iter().peekable();
+				let mut iter = features.into_iter().peekable();
 				while let Some(feature) = iter.next() {
 					if first {
 						first = false;
@@ -236,7 +224,10 @@ pub struct SupportsFeature<'a>(pub SimpleBlock<'a>);
 
 impl<'a> Parse<'a> for SupportsFeature<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		expect!(parser.peek(), Kind::LeftParen);
+		if parser.peek::<Token![LeftParen]>().is_none() {
+			let token = parser.peek::<Token![Any]>().unwrap();
+			Err(diagnostics::ExpectedOpenCurly(token, token.span()))?
+		}
 		Ok(Self(SimpleBlock::parse(parser)?))
 	}
 }
@@ -268,7 +259,7 @@ mod tests {
 		assert_parse!(Supports, "@supports (width: 1--foo) and (width: 1foo) {\n\n}");
 		assert_parse!(Supports, "@supports (width: 100vw) {\n\tbody {\n\t\twidth: 100vw;\n\t}\n}");
 		assert_parse!(Supports, "@supports not ((text-align-last: justify) or (-moz-text-align-last: justify)) {\n\n}");
-		// assert_parse!(Supports, "@supports ((position: -webkit-sticky) or (position: sticky)) {}");
+		assert_parse!(Supports, "@supports ((position: -webkit-sticky) or (position: sticky)) {}");
 	}
 
 	#[test]

@@ -1,70 +1,269 @@
-mod scroll_margin;
-mod scroll_margin_block;
-mod scroll_margin_block_end;
-mod scroll_margin_block_start;
-mod scroll_margin_bottom;
-mod scroll_margin_inline;
-mod scroll_margin_inline_end;
-mod scroll_margin_inline_start;
-mod scroll_margin_left;
-mod scroll_margin_right;
-mod scroll_margin_top;
-mod scroll_padding;
-mod scroll_padding_block;
-mod scroll_padding_block_end;
-mod scroll_padding_block_start;
-mod scroll_padding_bottom;
-mod scroll_padding_inline;
-mod scroll_padding_inline_end;
-mod scroll_padding_inline_start;
-mod scroll_padding_left;
-mod scroll_padding_right;
-mod scroll_padding_top;
-mod scroll_snap_align;
-mod scroll_snap_stop;
-mod scroll_snap_type;
-mod scroll_start;
-mod scroll_start_block;
-mod scroll_start_inline;
-mod scroll_start_target;
-mod scroll_start_target_block;
-mod scroll_start_target_inline;
-mod scroll_start_target_x;
-mod scroll_start_target_y;
-mod scroll_start_x;
-mod scroll_start_y;
-pub use scroll_margin::*;
-pub use scroll_margin_block::*;
-pub use scroll_margin_block_end::*;
-pub use scroll_margin_block_start::*;
-pub use scroll_margin_bottom::*;
-pub use scroll_margin_inline::*;
-pub use scroll_margin_inline_end::*;
-pub use scroll_margin_inline_start::*;
-pub use scroll_margin_left::*;
-pub use scroll_margin_right::*;
-pub use scroll_margin_top::*;
-pub use scroll_padding::*;
-pub use scroll_padding_block::*;
-pub use scroll_padding_block_end::*;
-pub use scroll_padding_block_start::*;
-pub use scroll_padding_bottom::*;
-pub use scroll_padding_inline::*;
-pub use scroll_padding_inline_end::*;
-pub use scroll_padding_inline_start::*;
-pub use scroll_padding_left::*;
-pub use scroll_padding_right::*;
-pub use scroll_padding_top::*;
-pub use scroll_snap_align::*;
-pub use scroll_snap_stop::*;
-pub use scroll_snap_type::*;
-pub use scroll_start::*;
-pub use scroll_start_block::*;
-pub use scroll_start_inline::*;
-pub use scroll_start_target::*;
-pub use scroll_start_target_block::*;
-pub use scroll_start_target_inline::*;
-pub use scroll_start_target_x::*;
-pub use scroll_start_target_y::*;
-pub use scroll_start_x::*;
-pub use scroll_start_y::*;
+mod impls;
+pub mod types;
+
+use impls::*;
+
+/*
+ * https://drafts.csswg.org/css-scroll-snap-2/
+ * CSS Scroll Snap Module Level 2
+ */
+
+// // https://drafts.csswg.org/css-scroll-snap-2/#scroll-snap-type
+// #[value(" none | [ x | y | block | inline | both ] [ mandatory | proximity ]? ")]
+// #[initial("none")]
+// #[applies_to("all elements")]
+// #[inherited("no")]
+// #[percentages("n/a")]
+// #[canonical_order("per grammar")]
+// #[animation_type("discrete")]
+// pub enum ScrollSnapType {}
+
+// // https://drafts.csswg.org/css-scroll-snap-2/#scroll-padding
+// #[value(" [ auto | <length-percentage [0,∞]> ]{1,4} ")]
+// #[initial("auto")]
+// #[applies_to("scroll containers")]
+// #[inherited("no")]
+// #[percentages("relative to the corresponding dimension of the scroll container’s scrollport")]
+// #[canonical_order("per grammar")]
+// #[animation_type("by computed value type")]
+// pub enum ScrollPadding {}
+
+// // https://drafts.csswg.org/css-scroll-snap-2/#scroll-margin
+// #[value(" <length>{1,4} ")]
+// #[initial("0")]
+// #[applies_to("all elements")]
+// #[inherited("no")]
+// #[percentages("n/a")]
+// #[canonical_order("per grammar")]
+// #[animation_type("by computed value type")]
+// pub struct ScrollMargin;
+
+// // https://drafts.csswg.org/css-scroll-snap-2/#scroll-snap-align
+// #[value(" [ none | start | end | center ]{1,2} ")]
+// #[initial("none")]
+// #[applies_to("all elements")]
+// #[inherited("no")]
+// #[percentages("n/a")]
+// #[canonical_order("per grammar")]
+// #[animation_type("discrete")]
+// pub enum ScrollSnapAlign {}
+
+// https://drafts.csswg.org/css-scroll-snap-2/#scroll-snap-stop
+#[value(" normal | always ")]
+#[initial("normal")]
+#[applies_to("all elements")]
+#[inherited("no")]
+#[percentages("n/a")]
+#[canonical_order("per grammar")]
+#[animation_type("discrete")]
+pub enum ScrollSnapStop {}
+
+// https://drafts.csswg.org/css-scroll-snap-2/#scroll-padding-top
+#[value(" auto | <length-percentage [0,∞]> ")]
+#[initial("auto")]
+#[applies_to("scroll containers")]
+#[inherited("no")]
+#[percentages("relative to the scroll container’s scrollport")]
+#[canonical_order("per grammar")]
+#[animation_type("by computed value type")]
+pub enum ScrollPaddingTop {}
+
+// https://drafts.csswg.org/css-scroll-snap-2/#scroll-padding-right
+#[value(" auto | <length-percentage [0,∞]> ")]
+#[initial("auto")]
+#[applies_to("scroll containers")]
+#[inherited("no")]
+#[percentages("relative to the scroll container’s scrollport")]
+#[canonical_order("per grammar")]
+#[animation_type("by computed value type")]
+pub enum ScrollPaddingRight {}
+
+// https://drafts.csswg.org/css-scroll-snap-2/#scroll-padding-bottom
+#[value(" auto | <length-percentage [0,∞]> ")]
+#[initial("auto")]
+#[applies_to("scroll containers")]
+#[inherited("no")]
+#[percentages("relative to the scroll container’s scrollport")]
+#[canonical_order("per grammar")]
+#[animation_type("by computed value type")]
+pub enum ScrollPaddingBottom {}
+
+// https://drafts.csswg.org/css-scroll-snap-2/#scroll-padding-left
+#[value(" auto | <length-percentage [0,∞]> ")]
+#[initial("auto")]
+#[applies_to("scroll containers")]
+#[inherited("no")]
+#[percentages("relative to the scroll container’s scrollport")]
+#[canonical_order("per grammar")]
+#[animation_type("by computed value type")]
+pub enum ScrollPaddingLeft {}
+
+// https://drafts.csswg.org/css-scroll-snap-2/#scroll-padding-inline-start
+#[value(" auto | <length-percentage [0,∞]> ")]
+#[initial("auto")]
+#[applies_to("scroll containers")]
+#[inherited("no")]
+#[percentages("relative to the scroll container’s scrollport")]
+#[canonical_order("per grammar")]
+#[animation_type("by computed value type")]
+pub enum ScrollPaddingInlineStart {}
+
+// https://drafts.csswg.org/css-scroll-snap-2/#scroll-padding-block-start
+#[value(" auto | <length-percentage [0,∞]> ")]
+#[initial("auto")]
+#[applies_to("scroll containers")]
+#[inherited("no")]
+#[percentages("relative to the scroll container’s scrollport")]
+#[canonical_order("per grammar")]
+#[animation_type("by computed value type")]
+pub enum ScrollPaddingBlockStart {}
+
+// https://drafts.csswg.org/css-scroll-snap-2/#scroll-padding-inline-end
+#[value(" auto | <length-percentage [0,∞]> ")]
+#[initial("auto")]
+#[applies_to("scroll containers")]
+#[inherited("no")]
+#[percentages("relative to the scroll container’s scrollport")]
+#[canonical_order("per grammar")]
+#[animation_type("by computed value type")]
+pub enum ScrollPaddingInlineEnd {}
+
+// https://drafts.csswg.org/css-scroll-snap-2/#scroll-padding-block-end
+#[value(" auto | <length-percentage [0,∞]> ")]
+#[initial("auto")]
+#[applies_to("scroll containers")]
+#[inherited("no")]
+#[percentages("relative to the scroll container’s scrollport")]
+#[canonical_order("per grammar")]
+#[animation_type("by computed value type")]
+pub enum ScrollPaddingBlockEnd {}
+
+// // https://drafts.csswg.org/css-scroll-snap-2/#scroll-padding-block
+// #[value(" [ auto | <length-percentage [0,∞]> ]{1,2} ")]
+// #[initial("auto")]
+// #[applies_to("scroll containers")]
+// #[inherited("no")]
+// #[percentages("relative to the scroll container’s scrollport")]
+// #[canonical_order("per grammar")]
+// #[animation_type("by computed value")]
+// pub enum ScrollPaddingBlock {}
+
+// // https://drafts.csswg.org/css-scroll-snap-2/#scroll-padding-inline
+// #[value(" [ auto | <length-percentage [0,∞]> ]{1,2} ")]
+// #[initial("auto")]
+// #[applies_to("scroll containers")]
+// #[inherited("no")]
+// #[percentages("relative to the scroll container’s scrollport")]
+// #[canonical_order("per grammar")]
+// #[animation_type("by computed value")]
+// pub enum ScrollPaddingInline {}
+
+// https://drafts.csswg.org/css-scroll-snap-2/#scroll-margin-top
+#[value(" <length> ")]
+#[initial("0")]
+#[applies_to("all elements")]
+#[inherited("no")]
+#[percentages("n/a")]
+#[canonical_order("per grammar")]
+#[animation_type("by computed value type")]
+pub struct ScrollMarginTop;
+
+// https://drafts.csswg.org/css-scroll-snap-2/#scroll-margin-right
+#[value(" <length> ")]
+#[initial("0")]
+#[applies_to("all elements")]
+#[inherited("no")]
+#[percentages("n/a")]
+#[canonical_order("per grammar")]
+#[animation_type("by computed value type")]
+pub struct ScrollMarginRight;
+
+// https://drafts.csswg.org/css-scroll-snap-2/#scroll-margin-bottom
+#[value(" <length> ")]
+#[initial("0")]
+#[applies_to("all elements")]
+#[inherited("no")]
+#[percentages("n/a")]
+#[canonical_order("per grammar")]
+#[animation_type("by computed value type")]
+pub struct ScrollMarginBottom;
+
+// https://drafts.csswg.org/css-scroll-snap-2/#scroll-margin-left
+#[value(" <length> ")]
+#[initial("0")]
+#[applies_to("all elements")]
+#[inherited("no")]
+#[percentages("n/a")]
+#[canonical_order("per grammar")]
+#[animation_type("by computed value type")]
+pub struct ScrollMarginLeft;
+
+// https://drafts.csswg.org/css-scroll-snap-2/#scroll-margin-block-start
+#[value(" <length> ")]
+#[initial("0")]
+#[applies_to("all elements")]
+#[inherited("no")]
+#[percentages("n/a")]
+#[canonical_order("per grammar")]
+#[animation_type("by computed value type")]
+pub struct ScrollMarginBlockStart;
+
+// https://drafts.csswg.org/css-scroll-snap-2/#scroll-margin-inline-start
+#[value(" <length> ")]
+#[initial("0")]
+#[applies_to("all elements")]
+#[inherited("no")]
+#[percentages("n/a")]
+#[canonical_order("per grammar")]
+#[animation_type("by computed value type")]
+pub struct ScrollMarginInlineStart;
+
+// https://drafts.csswg.org/css-scroll-snap-2/#scroll-margin-block-end
+#[value(" <length> ")]
+#[initial("0")]
+#[applies_to("all elements")]
+#[inherited("no")]
+#[percentages("n/a")]
+#[canonical_order("per grammar")]
+#[animation_type("by computed value type")]
+pub struct ScrollMarginBlockEnd;
+
+// https://drafts.csswg.org/css-scroll-snap-2/#scroll-margin-inline-end
+#[value(" <length> ")]
+#[initial("0")]
+#[applies_to("all elements")]
+#[inherited("no")]
+#[percentages("n/a")]
+#[canonical_order("per grammar")]
+#[animation_type("by computed value type")]
+pub struct ScrollMarginInlineEnd;
+
+// // https://drafts.csswg.org/css-scroll-snap-2/#scroll-margin-block
+// #[value(" <length>{1,2} ")]
+// #[initial("0")]
+// #[applies_to("all elements")]
+// #[inherited("no")]
+// #[percentages("n/a")]
+// #[canonical_order("per grammar")]
+// #[animation_type("by computed value type")]
+// pub struct ScrollMarginBlock;
+
+// // https://drafts.csswg.org/css-scroll-snap-2/#scroll-margin-inline
+// #[value(" <length>{1,2} ")]
+// #[initial("0")]
+// #[applies_to("all elements")]
+// #[inherited("no")]
+// #[percentages("n/a")]
+// #[canonical_order("per grammar")]
+// #[animation_type("by computed value type")]
+// pub struct ScrollMarginInline;
+
+// https://drafts.csswg.org/css-scroll-snap-2/#scroll-start-target
+#[value(" none | auto ")]
+#[initial("none")]
+#[applies_to("all elements")]
+#[inherited("no")]
+#[percentages("n/a")]
+#[canonical_order("per grammar")]
+#[animation_type("none")]
+pub enum ScrollStartTarget {}

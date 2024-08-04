@@ -1,10 +1,59 @@
-mod overscroll_behavior;
-mod overscroll_behavior_block;
-mod overscroll_behavior_inline;
-mod overscroll_behavior_x;
-mod overscroll_behavior_y;
-pub use overscroll_behavior::*;
-pub use overscroll_behavior_block::*;
-pub use overscroll_behavior_inline::*;
-pub use overscroll_behavior_x::*;
-pub use overscroll_behavior_y::*;
+mod impls;
+pub mod types;
+
+use impls::*;
+
+/*
+ * https://drafts.csswg.org/css-overscroll-1/
+ * CSS Overscroll Behavior Module Level 1
+ */
+
+// // https://drafts.csswg.org/css-overscroll-1/#overscroll-behavior
+// #[value(" [ contain | none | auto ]{1,2} ")]
+// #[initial("auto auto")]
+// #[applies_to("scroll container elements")]
+// #[inherited("no")]
+// #[percentages("n/a")]
+// #[canonical_order("per grammar")]
+// #[animation_type("discrete")]
+// pub struct OverscrollBehavior {}
+
+// https://drafts.csswg.org/css-overscroll-1/#overscroll-behavior-x
+#[value(" contain | none | auto ")]
+#[initial("auto")]
+#[applies_to("scroll container elements")]
+#[inherited("no")]
+#[percentages("n/a")]
+#[canonical_order("per grammar")]
+#[animation_type("discrete")]
+pub enum OverscrollBehaviorX {}
+
+// https://drafts.csswg.org/css-overscroll-1/#overscroll-behavior-y
+#[value(" contain | none | auto ")]
+#[initial("auto")]
+#[applies_to("scroll container elements")]
+#[inherited("no")]
+#[percentages("n/a")]
+#[canonical_order("per grammar")]
+#[animation_type("discrete")]
+pub enum OverscrollBehaviorY {}
+
+// https://drafts.csswg.org/css-overscroll-1/#overscroll-behavior-inline
+#[value(" contain | none | auto ")]
+#[initial("auto")]
+#[applies_to("scroll container elements")]
+#[inherited("no")]
+#[percentages("n/a")]
+#[canonical_order("per grammar")]
+#[animation_type("discrete")]
+pub enum OverscrollBehaviorInline {}
+
+// https://drafts.csswg.org/css-overscroll-1/#overscroll-behavior-block
+#[value(" contain | none | auto ")]
+#[initial("auto")]
+#[applies_to("scroll container elements")]
+#[inherited("no")]
+#[percentages("n/a")]
+#[canonical_order("per grammar")]
+#[animation_type("discrete")]
+pub enum OverscrollBehaviorBlock {}

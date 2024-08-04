@@ -1,21 +1,25 @@
 mod angles;
-mod custom;
+// mod custom;
+mod flex;
 mod float;
-mod frequency;
+// mod frequency;
 mod int;
 mod length;
 mod percent;
 mod resolution;
+mod string;
 mod time;
 
 pub use angles::*;
-pub use custom::*;
+// pub use custom::*;
+pub use flex::*;
 pub use float::*;
-pub use frequency::*;
+// pub use frequency::*;
 pub use int::*;
 pub use length::*;
 pub use percent::*;
-pub use resolution::*;
+// pub use resolution::*;
+pub use string::*;
 pub use time::*;
 
 pub trait AbsoluteUnit: Unit {

@@ -1,9 +1,6 @@
 use hdx_atom::{atom, Atom};
-use hdx_lexer::{Kind, QuoteStyle};
-use hdx_parser::{
-	diagnostics, discard, expect, expect_ignore_case, unexpected, unexpected_ident, AtRule, Parse, Parser,
-	Result as ParserResult, Spanned, Vec,
-};
+use hdx_lexer::{QuoteStyle, Span};
+use hdx_parser::{diagnostics, discard, AtRule, Parse, Parser, Result as ParserResult, Spanned, Token, Vec};
 use hdx_writer::{write_css, CssWriter, Result as WriterResult, WriteCss};
 use smallvec::{smallvec, SmallVec};
 
@@ -19,13 +16,12 @@ pub struct Keyframes<'a> {
 
 impl<'a> Parse<'a> for Keyframes<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		expect_ignore_case!(parser.next(), Kind::AtKeyword, atom!("keyframes"));
-		let span = parser.span();
-		match Self::parse_at_rule(parser)? {
+		let start = parser.offset();
+		match Self::parse_at_rule(parser, Some(atom!("keyframes")))? {
 			(Some(name), Some(rules)) => Ok(Self { name, rules }),
-			(Some(_), None) => Err(diagnostics::MissingAtRuleBlock(span.end(parser.pos())))?,
-			(None, Some(_)) => Err(diagnostics::MissingAtRulePrelude(span.end(parser.pos())))?,
-			(None, None) => Err(diagnostics::MissingAtRulePrelude(span.end(parser.pos())))?,
+			(Some(_), None) => Err(diagnostics::MissingAtRuleBlock(Span::new(start, parser.offset())))?,
+			(None, Some(_)) => Err(diagnostics::MissingAtRulePrelude(Span::new(start, parser.offset())))?,
+			(None, None) => Err(diagnostics::MissingAtRulePrelude(Span::new(start, parser.offset())))?,
 		}
 	}
 }
@@ -59,16 +55,17 @@ impl KeyframeName {
 
 impl<'a> Parse<'a> for KeyframeName {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		match parser.next() {
-			Kind::Ident(atom) => {
-				if Self::valid_ident(atom) {
-					Ok(Self(atom.clone(), QuoteStyle::None))
-				} else {
-					unexpected_ident!(parser, atom)
-				}
-			}
-			Kind::String(atom, quote_style) => Ok(Self(atom.clone(), *quote_style)),
-			token => unexpected!(parser, token),
+		if let Some(token) = parser.peek::<Token![String]>() {
+			parser.hop(token);
+			let atom = parser.parse_atom(token);
+			return Ok(Self(atom, token.quote_style()));
+		}
+		let token = *parser.parse::<Token![Ident]>()?;
+		let atom = parser.parse_atom_lower(token);
+		if Self::valid_ident(&atom) {
+			Ok(Self(atom, QuoteStyle::None))
+		} else {
+			Err(diagnostics::UnexpectedIdent(atom, token.span()))?
 		}
 	}
 }
@@ -85,13 +82,13 @@ pub struct KeyframeList<'a>(Vec<'a, Spanned<Keyframe<'a>>>);
 
 impl<'a> Parse<'a> for KeyframeList<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		expect!(parser.next(), Kind::LeftCurly);
+		parser.parse::<Token![LeftCurly]>()?;
 		let mut rules = parser.new_vec();
 		loop {
-			if discard!(parser, Kind::RightCurly) {
+			if discard!(parser, RightCurly) {
 				return Ok(Self(rules));
 			}
-			rules.push(Keyframe::parse_spanned(parser)?);
+			rules.push(parser.parse_spanned::<Keyframe>()?);
 		}
 	}
 }
@@ -119,21 +116,19 @@ impl<'a> Parse<'a> for Keyframe<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		let mut selector = smallvec![];
 		loop {
-			selector.push(KeyframeSelector::parse(parser)?);
-			if discard!(parser, Kind::LeftCurly | Kind::Eof) {
+			selector.push(parser.parse::<KeyframeSelector>()?);
+			if parser.at_end() || discard!(parser, LeftCurly) {
 				break;
 			}
-			if !discard!(parser, Kind::Comma) {
-				unexpected!(parser, parser.peek());
-			}
+			parser.parse::<Token![,]>()?;
 		}
 		let mut properties = parser.new_vec();
 		loop {
-			discard!(parser, Kind::Semicolon);
-			if discard!(parser, Kind::RightCurly | Kind::Eof) {
+			discard!(parser, Semicolon);
+			if parser.at_end() || discard!(parser, RightCurly) {
 				break;
 			}
-			properties.push(Property::parse_spanned(parser)?);
+			properties.push(parser.parse_spanned::<Property>()?);
 		}
 		Ok(Self { selector, properties })
 	}
@@ -172,22 +167,21 @@ pub enum KeyframeSelector {
 
 impl<'a> Parse<'a> for KeyframeSelector {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let token = parser.next();
-		match token.kind() {
-			Kind::Ident => match parser.parse_atom_lower(token) {
+		if let Some(token) = parser.peek::<Token![Ident]>() {
+			parser.hop(token);
+			return match parser.parse_atom_lower(token) {
 				atom!("from") => Ok(KeyframeSelector::From),
 				atom!("to") => Ok(KeyframeSelector::To),
-				atom => unexpected_ident!(parser, atom),
-			},
-			Kind::Dimension => {
-				let n = parser.parse_number(token);
-				if matches!(parser.parse_atom(token), atom!("%")) && n >= 0.0 && n <= 100.0 {
-					Ok(Self::Percent(n.into()))
-				} else {
-					unexpected!(parser, token)
-				}
-			},
-			_ => unexpected!(parser, token),
+				atom => Err(diagnostics::UnexpectedIdent(atom, token.span()))?,
+			};
+		}
+		let token = *parser.parse::<Token![Dimension]>()?;
+		let n = parser.parse_number(token);
+		let unit = parser.parse_atom(token);
+		if unit == atom!("%") && (0.0..=100.0).contains(&n) {
+			Ok(Self::Percent(n.into()))
+		} else {
+			Err(diagnostics::UnexpectedDimension(unit, token.span()))?
 		}
 	}
 }

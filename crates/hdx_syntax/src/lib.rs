@@ -11,8 +11,6 @@ pub const LF: char = '\u{a}';
 
 pub const TAB: char = '\u{9}';
 
-pub const REPLACEMENT: char = '\u{fffd}';
-
 #[inline(always)]
 pub fn is_whitespace(c: char) -> bool {
 	c == ' ' || c == TAB || is_newline(c)
@@ -44,8 +42,9 @@ mod tests {
 
 	#[test]
 	fn test_is_ident_start_sequence() {
-		assert_eq!(is_ident_start_sequence('-', '-', 'a'), true);
-		assert_eq!(is_ident_start_sequence('\0', '\0', '\0'), false);
-		assert_eq!(is_ident_start_sequence(CR, LF, FF), false);
+		assert!(is_ident_start_sequence('-', '-', 'a'));
+		assert!(!is_ident_start_sequence('\0', '\0', '\0'));
+		assert!(is_ident_start_sequence('\u{FFFD}', '\u{FFFD}', '\u{FFFD}'));
+		assert!(!is_ident_start_sequence(CR, LF, FF));
 	}
 }

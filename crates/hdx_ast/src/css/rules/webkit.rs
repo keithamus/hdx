@@ -1,5 +1,6 @@
 use hdx_atom::atom;
-use hdx_parser::{diagnostics, expect_ignore_case, AtRule, Parse, Parser, Result as ParserResult, Spanned};
+use hdx_lexer::Span;
+use hdx_parser::{diagnostics, AtRule, Parse, Parser, Result as ParserResult, Spanned};
 use hdx_writer::{write_css, CssWriter, Result as WriterResult, WriteCss};
 
 use super::{KeyframeList, KeyframeName};
@@ -14,13 +15,12 @@ pub struct WebkitKeyframes<'a> {
 
 impl<'a> Parse<'a> for WebkitKeyframes<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		expect_ignore_case!(parser.next(), Kind::AtKeyword, atom!("-webkit-keyframes"));
-		let span = parser.span();
-		match Self::parse_at_rule(parser)? {
+		let start = parser.offset();
+		match Self::parse_at_rule(parser, Some(atom!("-webkit-keyframes")))? {
 			(Some(name), Some(rules)) => Ok(Self { name, rules }),
-			(Some(_), None) => Err(diagnostics::MissingAtRuleBlock(span.end(parser.pos())))?,
-			(None, Some(_)) => Err(diagnostics::MissingAtRulePrelude(span.end(parser.pos())))?,
-			(None, None) => Err(diagnostics::MissingAtRulePrelude(span.end(parser.pos())))?,
+			(Some(_), None) => Err(diagnostics::MissingAtRuleBlock(Span::new(start, parser.offset())))?,
+			(None, Some(_)) => Err(diagnostics::MissingAtRulePrelude(Span::new(start, parser.offset())))?,
+			(None, None) => Err(diagnostics::MissingAtRulePrelude(Span::new(start, parser.offset())))?,
 		}
 	}
 }

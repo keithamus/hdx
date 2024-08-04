@@ -1,15 +1,14 @@
-use std::{default::Default, fmt::Debug, hash::Hash};
+use std::{fmt::Debug, hash::Hash};
 
 use hdx_atom::{atom, Atom};
 use hdx_derive::Visitable;
-use hdx_lexer::{Kind, Token};
-use hdx_parser::{Declaration, DeclarationValue, Parse, Parser, Result as ParserResult, State};
+use hdx_parser::{Declaration, DeclarationValue, Parse, Parser, Peek, Result as ParserResult, State, Token};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 
 use crate::{css::values, syntax::ComponentValues};
 
-mod property_list;
-use property_list::apply_properties;
+// The build.rs generates a list of CSS properties from the value mods
+include!(concat!(env!("OUT_DIR"), "/css_apply_properties.rs"));
 
 #[derive(PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
@@ -23,7 +22,13 @@ impl<'a> WriteCss<'a> for Custom<'a> {
 
 impl<'a> Parse<'a> for Custom<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		Ok(Self(ComponentValues::parse_with_state(parser, State::StopOnSemicolon)?))
+		let old_state = parser.set_state(State::StopOnSemicolon);
+		parser
+			.parse::<ComponentValues>()
+			.inspect_err(|_| {
+				parser.set_state(old_state);
+			})
+			.map(Self)
 	}
 }
 
@@ -37,9 +42,40 @@ impl<'a> WriteCss<'a> for Computed<'a> {
 	}
 }
 
+impl<'a> Peek<'a> for Computed<'a> {
+	fn peek(parser: &Parser<'a>) -> Option<hdx_lexer::Token> {
+		if let Some(token) = parser.peek::<Token![Function]>() {
+			if matches!(
+				parser.parse_atom_lower(token),
+				atom!("var")
+					| atom!("calc") | atom!("min")
+					| atom!("max") | atom!("clamp")
+					| atom!("round")
+					| atom!("mod") | atom!("rem")
+					| atom!("sin") | atom!("cos")
+					| atom!("tan") | atom!("asin")
+					| atom!("atan") | atom!("atan2")
+					| atom!("pow") | atom!("sqrt")
+					| atom!("hypot")
+					| atom!("log") | atom!("exp")
+					| atom!("abs") | atom!("sign")
+			) {
+				return Some(token);
+			}
+		}
+		None
+	}
+}
+
 impl<'a> Parse<'a> for Computed<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		Ok(Self(ComponentValues::parse_with_state(parser, State::StopOnSemicolon | State::Nested)?))
+		let old_state = parser.set_state(State::StopOnSemicolon | State::Nested);
+		parser
+			.parse::<ComponentValues>()
+			.inspect_err(|_| {
+				parser.set_state(old_state);
+			})
+			.map(Self)
 	}
 }
 
@@ -49,7 +85,13 @@ pub struct Unknown<'a>(pub ComponentValues<'a>);
 
 impl<'a> Parse<'a> for Unknown<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		Ok(Self(ComponentValues::parse_with_state(parser, State::StopOnSemicolon | State::Nested)?))
+		let old_state = parser.set_state(State::StopOnSemicolon | State::Nested);
+		parser
+			.parse::<ComponentValues>()
+			.inspect_err(|_| {
+				parser.set_state(old_state);
+			})
+			.map(Self)
 	}
 }
 
@@ -95,26 +137,6 @@ impl<'a> WriteCss<'a> for Property<'a> {
 		}
 		Ok(())
 	}
-}
-
-#[inline]
-fn is_computed_token(parser: &mut Parser) -> bool {
-	let token = parser.peek();
-	token.kind() == Kind::Function
-		&& matches!(
-			parser.parse_atom_lower(token),
-			atom!("var")
-				| atom!("calc") | atom!("min")
-				| atom!("max") | atom!("clamp")
-				| atom!("round") | atom!("mod")
-				| atom!("rem") | atom!("sin")
-				| atom!("cos") | atom!("tan")
-				| atom!("asin") | atom!("atan")
-				| atom!("atan2") | atom!("pow")
-				| atom!("sqrt") | atom!("hypot")
-				| atom!("log") | atom!("exp")
-				| atom!("abs") | atom!("sign")
-		)
 }
 
 macro_rules! style_value {
@@ -193,34 +215,33 @@ impl<'a> DeclarationValue<'a> for StyleValue<'a> {
 		if name.starts_with("--") {
 			return Ok(Self::Custom(Custom::parse(parser)?));
 		}
-		let peek = parser.peek();
-		if peek.kind() == Kind::Ident {
-			match parser.parse_atom_lower(peek) {
+		if let Some(token) = parser.peek::<Token![Ident]>() {
+			match parser.parse_atom_lower(token) {
 				atom!("initial") => {
-					parser.next();
+					parser.hop(token);
 					return Ok(Self::Initial);
 				}
 				atom!("inherit") => {
-					parser.next();
+					parser.hop(token);
 					return Ok(Self::Inherit);
 				}
 				atom!("unset") => {
-					parser.next();
+					parser.hop(token);
 					return Ok(Self::Unset);
 				}
 				atom!("revert") => {
-					parser.next();
+					parser.hop(token);
 					return Ok(Self::Revert);
 				}
 				atom!("revert-layer") => {
-					parser.next();
+					parser.hop(token);
 					return Ok(Self::RevertLayer);
 				}
 				_ => {}
 			}
 		}
-		if is_computed_token(parser) {
-			return Ok(Self::Computed(Computed::parse(parser)?));
+		if parser.peek::<Computed>().is_some() {
+			return parser.parse::<Computed>().map(Self::Computed);
 		}
 		macro_rules! parse_declaration_value {
 			( $(
@@ -229,23 +250,20 @@ impl<'a> DeclarationValue<'a> for StyleValue<'a> {
 				match name {
 					$(
 						&$atom => {
-							let checkpoint = parser.checkpoint();
-							if let Ok(val) = values::$name::parse(parser) {
-								let peek = parser.peek();
-								if peek.kind() == Kind::Eof || matches!(peek.char(), Some(';' | '}' | '!')) {
+							if let Ok(val) = parser.try_parse::<values::$name>() {
+								if parser.at_end() {
 									return Ok(Self::$name(val))
 								}
+								if let Some(token) = parser.peek::<Token![Delim]>() {
+									if matches!(token.char(), Some(';' | '}' | '!')) {
+										return Ok(Self::$name(val))
+									}
+								}
 							}
-							if is_computed_token(parser) {
-								parser.rewind(checkpoint);
+							if parser.peek::<Computed>().is_some() {
 								Self::Computed(Computed::parse(parser)?)
 							} else {
-								parser.rewind(checkpoint);
-								if is_computed_token(parser) {
-									Self::Computed(Computed::parse(parser)?)
-								} else {
-									Self::Unknown(Unknown::parse(parser)?)
-								}
+								Self::Unknown(Unknown::parse(parser)?)
 							}
 						},
 					)+

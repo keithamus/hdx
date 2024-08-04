@@ -1,497 +1,551 @@
-macro_rules! parse_rect {
-	($name: ident, $prop: ident, $top: ident, $bottom: ident, $left: ident, $right: ident) => {
+// macro_rules! parse_rect {
+// 	($name: ident, $prop: ident, $top: ident, $bottom: ident, $left: ident, $right: ident) => {
+// 		impl<'a> hdx_parser::Parse<'a> for $name {
+// 			fn parse(parser: &mut hdx_parser::Parser<'a>) -> hdx_parser::Result<Self> {
+// 				if let Ok(first) = $prop::try_parse(parser) {
+// 					if let Ok(second) = $prop::try_parse(parser) {
+// 						if let Ok(third) = $prop::try_parse(parser) {
+// 							if let Ok(fourth) = $prop::try_parse(parser) {
+// 								Ok($name($top(first), $bottom(third), $left(fourth), $right(second)))
+// 							} else {
+// 								Ok($name($top(first.clone()), $bottom(third), $left(second.clone()), $right(second)))
+// 							}
+// 						} else {
+// 							Ok($name($top(first.clone()), $bottom(first), $left(second.clone()), $right(second)))
+// 						}
+// 					} else {
+// 						Ok($name($top(first.clone()), $bottom(first.clone()), $left(first.clone()), $right(first)))
+// 					}
+// 				} else {
+// 					hdx_parser::unexpected!(parser)
+// 				}
+// 			}
+// 		}
+// 	};
+// }
+//
+// pub(crate) use parse_rect;
+
+// macro_rules! write_rect {
+// 	($name: ident) => {
+// 		impl<'a> hdx_writer::WriteCss<'a> for $name {
+// 			fn write_css<W: hdx_writer::CssWriter>(&self, sink: &mut W) -> hdx_writer::Result {
+// 				let (top, bottom, left, right) = (&self.0, &self.1, &self.2, &self.3);
+// 				if right.0 == left.0 && !sink.can_output(hdx_writer::OutputOption::RedundantShorthandValues) {
+// 					if top.0 == bottom.0 && !sink.can_output(hdx_writer::OutputOption::RedundantShorthandValues) {
+// 						if top.0 == right.0 && !sink.can_output(hdx_writer::OutputOption::RedundantShorthandValues) {
+// 							top.write_css(sink)?;
+// 						} else {
+// 							top.write_css(sink)?;
+// 							sink.write_char(' ')?;
+// 							right.write_css(sink)?;
+// 						}
+// 					} else {
+// 						top.write_css(sink)?;
+// 						sink.write_char(' ')?;
+// 						right.write_css(sink)?;
+// 						sink.write_char(' ')?;
+// 						bottom.write_css(sink)?;
+// 					}
+// 				} else {
+// 					top.write_css(sink)?;
+// 					sink.write_char(' ')?;
+// 					right.write_css(sink)?;
+// 					sink.write_char(' ')?;
+// 					bottom.write_css(sink)?;
+// 					sink.write_char(' ')?;
+// 					left.write_css(sink)?;
+// 				}
+// 				Ok(())
+// 			}
+// 		}
+// 	};
+// }
+//
+// pub(crate) use write_rect;
+
+// macro_rules! parse_logical_sides {
+// 	($name: ident, $prop: ident, $block: ident, $inline: ident) => {
+// 		impl<'a> hdx_parser::Parse<'a> for $name {
+// 			fn parse(parser: &mut hdx_parser::Parser<'a>) -> hdx_parser::Result<Self> {
+// 				if let Ok(first) = $prop::parse(parser) {
+// 					if let Ok(second) = $prop::parse(parser) {
+// 						Ok($name($block(first), $inline(second)))
+// 					} else {
+// 						Ok($name($block(first.clone()), $inline(first)))
+// 					}
+// 				} else {
+// 					hdx_parser::unexpected!(parser)
+// 				}
+// 			}
+// 		}
+// 	};
+// }
+//
+// pub(crate) use parse_logical_sides;
+
+// macro_rules! write_logical_sides {
+// 	($name: ident) => {
+// 		impl<'a> hdx_writer::WriteCss<'a> for $name {
+// 			fn write_css<W: hdx_writer::CssWriter>(&self, sink: &mut W) -> hdx_writer::Result {
+// 				let (block, inline) = (&self.0, &self.1);
+// 				if block.0 == inline.0 && !sink.can_output(hdx_writer::OutputOption::RedundantShorthandValues) {
+// 					block.write_css(sink)
+// 				} else {
+// 					block.write_css(sink)?;
+// 					sink.write_char(' ')?;
+// 					inline.write_css(sink)
+// 				}
+// 			}
+// 		}
+// 	};
+// }
+//
+// pub(crate) use write_logical_sides;
+
+// macro_rules! parse_option_shorthand {
+// 	($name: ident, $first: ty, $second: ty, $third: ty) => {
+// 		impl<'a> hdx_parser::Parse<'a> for $name {
+// 			fn parse(parser: &mut hdx_parser::Parser<'a>) -> hdx_parser::Result<Self> {
+// 				let mut first = None;
+// 				let mut second = None;
+// 				let mut third = None;
+// 				loop {
+// 					if first.is_none() {
+// 						if let Ok(val) = <$first>::try_parse(parser) {
+// 							first = Some(val);
+// 							continue;
+// 						}
+// 					}
+// 					if second.is_none() {
+// 						if let Ok(val) = <$second>::try_parse(parser) {
+// 							second = Some(val);
+// 							continue;
+// 						}
+// 					}
+// 					if third.is_none() {
+// 						if let Ok(val) = <$third>::try_parse(parser) {
+// 							third = Some(val);
+// 							continue;
+// 						}
+// 					}
+// 					break;
+// 				}
+// 				if first.is_none() && second.is_none() && third.is_none() {
+// 					hdx_parser::unexpected!(parser);
+// 				}
+// 				Ok(Self(first, second, third))
+// 			}
+// 		}
+// 	};
+// }
+// pub(crate) use parse_option_shorthand;
+
+// macro_rules! write_option_shorthand {
+// 	($name: ident, 3) => {
+// 		impl<'a> hdx_writer::WriteCss<'a> for $name {
+// 			fn write_css<W: hdx_writer::CssWriter>(&self, sink: &mut W) -> hdx_writer::Result {
+// 				// Option<T> has a write_css impl
+// 				self.0.write_css(sink)?;
+// 				if self.0.is_some() && self.1.is_some() {
+// 					sink.write_char(' ')?;
+// 				}
+// 				self.1.write_css(sink)?;
+// 				if (self.0.is_some() || self.1.is_some()) && self.2.is_some() {
+// 					sink.write_char(' ')?;
+// 				}
+// 				self.2.write_css(sink)?;
+// 				Ok(())
+// 			}
+// 		}
+// 	};
+// 	($name: ident, 2) => {
+// 		impl<'a> hdx_writer::WriteCss<'a> for $name {
+// 			fn write_css<W: hdx_writer::CssWriter>(&self, sink: &mut W) -> hdx_writer::Result {
+// 				// Option<T> has a write_css impl
+// 				self.0.write_css(sink)?;
+// 				if self.0.is_some() && self.1.is_some() {
+// 					sink.write_char(' ')?;
+// 				}
+// 				self.1.write_css(sink)?;
+// 				Ok(())
+// 			}
+// 		}
+// 	};
+// }
+// pub(crate) use write_option_shorthand;
+
+// macro_rules! write_simple_shorthand {
+// 	($name: ident, $first: ty, $second: ty, $third: ty, $fourth: ty, $fifth: ty, $sixth: ty, $seventh: ty, $eighth: ty) => {
+// 		impl<'a> hdx_writer::WriteCss<'a> for $name {
+// 			fn write_css<W: hdx_writer::CssWriter>(&self, sink: &mut W) -> hdx_writer::Result {
+// 				let mut wrote = false;
+// 				if self.0 != <$first>::default() || sink.can_output(hdx_writer::OutputOption::RedundantDefaultValues) {
+// 					self.0.write_css(sink)?;
+// 					wrote = true
+// 				}
+// 				if self.1 != <$second>::default() || sink.can_output(hdx_writer::OutputOption::RedundantDefaultValues) {
+// 					if wrote {
+// 						sink.write_char(' ')?;
+// 					}
+// 					self.1.write_css(sink)?;
+// 					wrote = true
+// 				}
+// 				if self.2 != <$third>::default() || sink.can_output(hdx_writer::OutputOption::RedundantDefaultValues) {
+// 					if wrote {
+// 						sink.write_char(' ')?;
+// 					}
+// 					self.2.write_css(sink)?;
+// 					wrote = true
+// 				}
+// 				if self.3 != <$fourth>::default() || sink.can_output(hdx_writer::OutputOption::RedundantDefaultValues) {
+// 					if wrote {
+// 						sink.write_char(' ')?;
+// 					}
+// 					self.3.write_css(sink)?;
+// 					wrote = true
+// 				}
+// 				if self.4 != <$fifth>::default() || sink.can_output(hdx_writer::OutputOption::RedundantDefaultValues) {
+// 					if wrote {
+// 						sink.write_char(' ')?;
+// 					}
+// 					self.4.write_css(sink)?;
+// 					wrote = true
+// 				}
+// 				if self.5 != <$sixth>::default() || sink.can_output(hdx_writer::OutputOption::RedundantDefaultValues) {
+// 					if wrote {
+// 						sink.write_char(' ')?;
+// 					}
+// 					self.5.write_css(sink)?;
+// 					wrote = true
+// 				}
+// 				if self.6 != <$seventh>::default() || sink.can_output(hdx_writer::OutputOption::RedundantDefaultValues)
+// 				{
+// 					if wrote {
+// 						sink.write_char(' ')?;
+// 					}
+// 					self.6.write_css(sink)?;
+// 					wrote = true
+// 				}
+// 				if self.7 != <$eigth>::default() || sink.can_output(hdx_writer::OutputOption::RedundantDefaultValues) {
+// 					if wrote {
+// 						sink.write_char(' ')?;
+// 					}
+// 					self.7.write_css(sink)?;
+// 					wrote = true
+// 				}
+// 				if !wrote {
+// 					self.0.write_css(sink)?;
+// 				}
+// 				Ok(())
+// 			}
+// 		}
+// 	};
+// 	($name: ident, $first: ty, $second: ty, $third: ty, $fourth: ty, $fifth: ty, $sixth: ty, $seventh: ty) => {
+// 		impl<'a> hdx_writer::WriteCss<'a> for $name {
+// 			fn write_css<W: hdx_writer::CssWriter>(&self, sink: &mut W) -> hdx_writer::Result {
+// 				let mut wrote = false;
+// 				if self.0 != <$first>::default() || sink.can_output(hdx_writer::OutputOption::RedundantDefaultValues) {
+// 					self.0.write_css(sink)?;
+// 					wrote = true
+// 				}
+// 				if self.1 != <$second>::default() || sink.can_output(hdx_writer::OutputOption::RedundantDefaultValues) {
+// 					if wrote {
+// 						sink.write_char(' ')?;
+// 					}
+// 					self.1.write_css(sink)?;
+// 					wrote = true
+// 				}
+// 				if self.2 != <$third>::default() || sink.can_output(hdx_writer::OutputOption::RedundantDefaultValues) {
+// 					if wrote {
+// 						sink.write_char(' ')?;
+// 					}
+// 					self.2.write_css(sink)?;
+// 					wrote = true
+// 				}
+// 				if self.3 != <$fourth>::default() || sink.can_output(hdx_writer::OutputOption::RedundantDefaultValues) {
+// 					if wrote {
+// 						sink.write_char(' ')?;
+// 					}
+// 					self.3.write_css(sink)?;
+// 					wrote = true
+// 				}
+// 				if self.4 != <$fifth>::default() || sink.can_output(hdx_writer::OutputOption::RedundantDefaultValues) {
+// 					if wrote {
+// 						sink.write_char(' ')?;
+// 					}
+// 					self.4.write_css(sink)?;
+// 					wrote = true
+// 				}
+// 				if self.5 != <$sixth>::default() || sink.can_output(hdx_writer::OutputOption::RedundantDefaultValues) {
+// 					if wrote {
+// 						sink.write_char(' ')?;
+// 					}
+// 					self.5.write_css(sink)?;
+// 					wrote = true
+// 				}
+// 				if self.6 != <$seventh>::default() || sink.can_output(hdx_writer::OutputOption::RedundantDefaultValues)
+// 				{
+// 					if wrote {
+// 						sink.write_char(' ')?;
+// 					}
+// 					self.6.write_css(sink)?;
+// 					wrote = true
+// 				}
+// 				if !wrote {
+// 					self.0.write_css(sink)?;
+// 				}
+// 				Ok(())
+// 			}
+// 		}
+// 	};
+// 	($name: ident, $first: ty, $second: ty, $third: ty, $fourth: ty, $fifth: ty, $sixth: ty) => {
+// 		impl<'a> hdx_writer::WriteCss<'a> for $name {
+// 			fn write_css<W: hdx_writer::CssWriter>(&self, sink: &mut W) -> hdx_writer::Result {
+// 				let mut wrote = false;
+// 				if self.0 != <$first>::default() || sink.can_output(hdx_writer::OutputOption::RedundantDefaultValues) {
+// 					self.0.write_css(sink)?;
+// 					wrote = true
+// 				}
+// 				if self.1 != <$second>::default() || sink.can_output(hdx_writer::OutputOption::RedundantDefaultValues) {
+// 					if wrote {
+// 						sink.write_char(' ')?;
+// 					}
+// 					self.1.write_css(sink)?;
+// 					wrote = true
+// 				}
+// 				if self.2 != <$third>::default() || sink.can_output(hdx_writer::OutputOption::RedundantDefaultValues) {
+// 					if wrote {
+// 						sink.write_char(' ')?;
+// 					}
+// 					self.2.write_css(sink)?;
+// 					wrote = true
+// 				}
+// 				if self.3 != <$fourth>::default() || sink.can_output(hdx_writer::OutputOption::RedundantDefaultValues) {
+// 					if wrote {
+// 						sink.write_char(' ')?;
+// 					}
+// 					self.3.write_css(sink)?;
+// 					wrote = true
+// 				}
+// 				if self.4 != <$fifth>::default() || sink.can_output(hdx_writer::OutputOption::RedundantDefaultValues) {
+// 					if wrote {
+// 						sink.write_char(' ')?;
+// 					}
+// 					self.4.write_css(sink)?;
+// 					wrote = true
+// 				}
+// 				if self.5 != <$sixth>::default() || sink.can_output(hdx_writer::OutputOption::RedundantDefaultValues) {
+// 					if wrote {
+// 						sink.write_char(' ')?;
+// 					}
+// 					self.5.write_css(sink)?;
+// 					wrote = true
+// 				}
+// 				if !wrote {
+// 					self.0.write_css(sink)?;
+// 				}
+// 				Ok(())
+// 			}
+// 		}
+// 	};
+// 	($name: ident, $first: ty, $second: ty, $third: ty, $fourth: ty, $fifth: ty) => {
+// 		impl<'a> hdx_writer::WriteCss<'a> for $name {
+// 			fn write_css<W: hdx_writer::CssWriter>(&self, sink: &mut W) -> hdx_writer::Result {
+// 				let mut wrote = false;
+// 				if self.0 != <$first>::default() || sink.can_output(hdx_writer::OutputOption::RedundantDefaultValues) {
+// 					self.0.write_css(sink)?;
+// 					wrote = true
+// 				}
+// 				if self.1 != <$second>::default() || sink.can_output(hdx_writer::OutputOption::RedundantDefaultValues) {
+// 					if wrote {
+// 						sink.write_char(' ')?;
+// 					}
+// 					self.1.write_css(sink)?;
+// 					wrote = true
+// 				}
+// 				if self.2 != <$third>::default() || sink.can_output(hdx_writer::OutputOption::RedundantDefaultValues) {
+// 					if wrote {
+// 						sink.write_char(' ')?;
+// 					}
+// 					self.2.write_css(sink)?;
+// 					wrote = true
+// 				}
+// 				if self.3 != <$fourth>::default() || sink.can_output(hdx_writer::OutputOption::RedundantDefaultValues) {
+// 					if wrote {
+// 						sink.write_char(' ')?;
+// 					}
+// 					self.3.write_css(sink)?;
+// 					wrote = true
+// 				}
+// 				if self.4 != <$fifth>::default() || sink.can_output(hdx_writer::OutputOption::RedundantDefaultValues) {
+// 					if wrote {
+// 						sink.write_char(' ')?;
+// 					}
+// 					self.4.write_css(sink)?;
+// 					wrote = true
+// 				}
+// 				if !wrote {
+// 					self.0.write_css(sink)?;
+// 				}
+// 				Ok(())
+// 			}
+// 		}
+// 	};
+// 	($name: ident, $first: ty, $second: ty, $third: ty, $fourth: ty) => {
+// 		impl<'a> hdx_writer::WriteCss<'a> for $name {
+// 			fn write_css<W: hdx_writer::CssWriter>(&self, sink: &mut W) -> hdx_writer::Result {
+// 				let mut wrote = false;
+// 				if self.0 != <$first>::default() || sink.can_output(hdx_writer::OutputOption::RedundantDefaultValues) {
+// 					self.0.write_css(sink)?;
+// 					wrote = true
+// 				}
+// 				if self.1 != <$second>::default() || sink.can_output(hdx_writer::OutputOption::RedundantDefaultValues) {
+// 					if wrote {
+// 						sink.write_char(' ')?;
+// 					}
+// 					self.1.write_css(sink)?;
+// 					wrote = true
+// 				}
+// 				if self.2 != <$third>::default() || sink.can_output(hdx_writer::OutputOption::RedundantDefaultValues) {
+// 					if wrote {
+// 						sink.write_char(' ')?;
+// 					}
+// 					self.2.write_css(sink)?;
+// 					wrote = true
+// 				}
+// 				if self.3 != <$fourth>::default() || sink.can_output(hdx_writer::OutputOption::RedundantDefaultValues) {
+// 					if wrote {
+// 						sink.write_char(' ')?;
+// 					}
+// 					self.3.write_css(sink)?;
+// 					wrote = true
+// 				}
+// 				if !wrote {
+// 					self.0.write_css(sink)?;
+// 				}
+// 				Ok(())
+// 			}
+// 		}
+// 	};
+// 	($name: ident, $first: ty, $second: ty, $third: ty) => {
+// 		impl<'a> hdx_writer::WriteCss<'a> for $name {
+// 			fn write_css<W: hdx_writer::CssWriter>(&self, sink: &mut W) -> hdx_writer::Result {
+// 				let mut wrote = false;
+// 				if self.0 != <$first>::default() || sink.can_output(hdx_writer::OutputOption::RedundantDefaultValues) {
+// 					self.0.write_css(sink)?;
+// 					wrote = true
+// 				}
+// 				if self.1 != <$second>::default() || sink.can_output(hdx_writer::OutputOption::RedundantDefaultValues) {
+// 					if wrote {
+// 						sink.write_char(' ')?;
+// 					}
+// 					self.1.write_css(sink)?;
+// 					wrote = true
+// 				}
+// 				if self.2 != <$third>::default() || sink.can_output(hdx_writer::OutputOption::RedundantDefaultValues) {
+// 					if wrote {
+// 						sink.write_char(' ')?;
+// 					}
+// 					self.2.write_css(sink)?;
+// 					wrote = true
+// 				}
+// 				if !wrote {
+// 					self.0.write_css(sink)?;
+// 				}
+// 				Ok(())
+// 			}
+// 		}
+// 	};
+// 	($name: ident, $first: ty, $second: ty) => {
+// 		impl<'a> hdx_writer::WriteCss<'a> for $name {
+// 			fn write_css<W: hdx_writer::CssWriter>(&self, sink: &mut W) -> hdx_writer::Result {
+// 				let mut wrote = false;
+// 				if self.0 != <$first>::default() || sink.can_output(hdx_writer::OutputOption::RedundantDefaultValues) {
+// 					self.0.write_css(sink)?;
+// 					wrote = true
+// 				}
+// 				if !wrote
+// 					|| self.1 != <$second>::default()
+// 					|| sink.can_output(hdx_writer::OutputOption::RedundantDefaultValues)
+// 				{
+// 					if wrote {
+// 						sink.write_char(' ')?;
+// 					}
+// 					self.1.write_css(sink)?;
+// 					wrote = true
+// 				}
+// 				if !wrote {
+// 					self.0.write_css(sink)?;
+// 				}
+// 				Ok(())
+// 			}
+// 		}
+// 	};
+// 	($name: ident, $first: ty) => {
+// 		impl<'a> hdx_writer::WriteCss<'a> for $name {
+// 			fn write_css<W: hdx_writer::CssWriter>(&self, sink: &mut W) -> hdx_writer::Result {
+// 				self.0.write_css(sink)
+// 			}
+// 		}
+// 	};
+// }
+//
+// pub(crate) use write_simple_shorthand;
+
+macro_rules! keyword_typedef {
+	($name: ident { $( $variant: ident: atom!($variant_atom: tt),)+ }) => {
+		#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+		#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(rename_all = "kebab-case"))]
+		pub enum $name {
+			$($variant),+
+		}
+
+		impl hdx_atom::Atomizable for $name {
+			fn from_atom(atom: &hdx_atom::Atom) -> Option<Self> {
+				match atom.to_ascii_lowercase() {
+					$(hdx_atom::atom!($variant_atom) => Some(Self::$variant),)+
+					_ => None,
+				}
+			}
+
+			fn to_atom(&self) -> hdx_atom::Atom {
+				match self {
+					$(Self::$variant => hdx_atom::atom!($variant_atom)),+
+				}
+			}
+		}
+
+		impl<'a> hdx_parser::Peek<'a> for $name {
+			fn peek(parser: &hdx_parser::Parser<'a>) -> Option<hdx_lexer::Token> {
+				parser.peek::<hdx_parser::Token![Ident]>().filter(|token| {
+					let atom = parser.parse_atom_lower(*token);
+					matches!(atom, $(hdx_atom::atom!($variant_atom))|+)
+				})
+			}
+		}
+
 		impl<'a> hdx_parser::Parse<'a> for $name {
 			fn parse(parser: &mut hdx_parser::Parser<'a>) -> hdx_parser::Result<Self> {
-				if let Ok(first) = $prop::try_parse(parser) {
-					if let Ok(second) = $prop::try_parse(parser) {
-						if let Ok(third) = $prop::try_parse(parser) {
-							if let Ok(fourth) = $prop::try_parse(parser) {
-								Ok($name($top(first), $bottom(third), $left(fourth), $right(second)))
-							} else {
-								Ok($name($top(first.clone()), $bottom(third), $left(second.clone()), $right(second)))
-							}
-						} else {
-							Ok($name($top(first.clone()), $bottom(first), $left(second.clone()), $right(second)))
-						}
-					} else {
-						Ok($name($top(first.clone()), $bottom(first.clone()), $left(first.clone()), $right(first)))
-					}
-				} else {
-					hdx_parser::unexpected!(parser)
-				}
+				use hdx_atom::Atomizable;
+				let token = *parser.parse::<hdx_parser::Token![Ident]>()?;
+				let atom = parser.parse_atom_lower(token);
+				Self::from_atom(&atom).ok_or_else(|| {
+					hdx_parser::diagnostics::UnexpectedIdent(atom, token.span()).into()
+				})
 			}
 		}
-	};
+
+		impl<'a> hdx_writer::WriteCss<'a> for $name {
+			fn write_css<W: hdx_writer::CssWriter>(&self, sink: &mut W) -> hdx_writer::Result {
+				use hdx_atom::Atomizable;
+				self.to_atom().write_css(sink)
+			}
+		}
+	}
 }
 
-pub(crate) use parse_rect;
-
-macro_rules! write_rect {
-	($name: ident) => {
-		impl<'a> hdx_writer::WriteCss<'a> for $name {
-			fn write_css<W: hdx_writer::CssWriter>(&self, sink: &mut W) -> hdx_writer::Result {
-				let (top, bottom, left, right) = (&self.0, &self.1, &self.2, &self.3);
-				if right.0 == left.0 && !sink.can_output(hdx_writer::OutputOption::RedundantShorthandValues) {
-					if top.0 == bottom.0 && !sink.can_output(hdx_writer::OutputOption::RedundantShorthandValues) {
-						if top.0 == right.0 && !sink.can_output(hdx_writer::OutputOption::RedundantShorthandValues) {
-							top.write_css(sink)?;
-						} else {
-							top.write_css(sink)?;
-							sink.write_char(' ')?;
-							right.write_css(sink)?;
-						}
-					} else {
-						top.write_css(sink)?;
-						sink.write_char(' ')?;
-						right.write_css(sink)?;
-						sink.write_char(' ')?;
-						bottom.write_css(sink)?;
-					}
-				} else {
-					top.write_css(sink)?;
-					sink.write_char(' ')?;
-					right.write_css(sink)?;
-					sink.write_char(' ')?;
-					bottom.write_css(sink)?;
-					sink.write_char(' ')?;
-					left.write_css(sink)?;
-				}
-				Ok(())
-			}
-		}
-	};
-}
-
-pub(crate) use write_rect;
-
-macro_rules! parse_logical_sides {
-	($name: ident, $prop: ident, $block: ident, $inline: ident) => {
-		impl<'a> hdx_parser::Parse<'a> for $name {
-			fn parse(parser: &mut hdx_parser::Parser<'a>) -> hdx_parser::Result<Self> {
-				if let Ok(first) = $prop::parse(parser) {
-					if let Ok(second) = $prop::parse(parser) {
-						Ok($name($block(first), $inline(second)))
-					} else {
-						Ok($name($block(first.clone()), $inline(first)))
-					}
-				} else {
-					hdx_parser::unexpected!(parser)
-				}
-			}
-		}
-	};
-}
-
-pub(crate) use parse_logical_sides;
-
-macro_rules! write_logical_sides {
-	($name: ident) => {
-		impl<'a> hdx_writer::WriteCss<'a> for $name {
-			fn write_css<W: hdx_writer::CssWriter>(&self, sink: &mut W) -> hdx_writer::Result {
-				let (block, inline) = (&self.0, &self.1);
-				if block.0 == inline.0 && !sink.can_output(hdx_writer::OutputOption::RedundantShorthandValues) {
-					block.write_css(sink)
-				} else {
-					block.write_css(sink)?;
-					sink.write_char(' ')?;
-					inline.write_css(sink)
-				}
-			}
-		}
-	};
-}
-
-pub(crate) use write_logical_sides;
-
-macro_rules! parse_option_shorthand {
-	($name: ident, $first: ty, $second: ty, $third: ty) => {
-		impl<'a> hdx_parser::Parse<'a> for $name {
-			fn parse(parser: &mut hdx_parser::Parser<'a>) -> hdx_parser::Result<Self> {
-				let mut first = None;
-				let mut second = None;
-				let mut third = None;
-				loop {
-					if first.is_none() {
-						if let Ok(val) = <$first>::try_parse(parser) {
-							first = Some(val);
-							continue;
-						}
-					}
-					if second.is_none() {
-						if let Ok(val) = <$second>::try_parse(parser) {
-							second = Some(val);
-							continue;
-						}
-					}
-					if third.is_none() {
-						if let Ok(val) = <$third>::try_parse(parser) {
-							third = Some(val);
-							continue;
-						}
-					}
-					break;
-				}
-				if first.is_none() && second.is_none() && third.is_none() {
-					hdx_parser::unexpected!(parser);
-				}
-				Ok(Self(first, second, third))
-			}
-		}
-	};
-}
-pub(crate) use parse_option_shorthand;
-
-macro_rules! write_option_shorthand {
-	($name: ident, 3) => {
-		impl<'a> hdx_writer::WriteCss<'a> for $name {
-			fn write_css<W: hdx_writer::CssWriter>(&self, sink: &mut W) -> hdx_writer::Result {
-				// Option<T> has a write_css impl
-				self.0.write_css(sink)?;
-				if self.0.is_some() && self.1.is_some() {
-					sink.write_char(' ')?;
-				}
-				self.1.write_css(sink)?;
-				if (self.0.is_some() || self.1.is_some()) && self.2.is_some() {
-					sink.write_char(' ')?;
-				}
-				self.2.write_css(sink)?;
-				Ok(())
-			}
-		}
-	};
-	($name: ident, 2) => {
-		impl<'a> hdx_writer::WriteCss<'a> for $name {
-			fn write_css<W: hdx_writer::CssWriter>(&self, sink: &mut W) -> hdx_writer::Result {
-				// Option<T> has a write_css impl
-				self.0.write_css(sink)?;
-				if self.0.is_some() && self.1.is_some() {
-					sink.write_char(' ')?;
-				}
-				self.1.write_css(sink)?;
-				Ok(())
-			}
-		}
-	};
-}
-pub(crate) use write_option_shorthand;
-
-macro_rules! write_simple_shorthand {
-	($name: ident, $first: ty, $second: ty, $third: ty, $fourth: ty, $fifth: ty, $sixth: ty, $seventh: ty, $eighth: ty) => {
-		impl<'a> hdx_writer::WriteCss<'a> for $name {
-			fn write_css<W: hdx_writer::CssWriter>(&self, sink: &mut W) -> hdx_writer::Result {
-				let mut wrote = false;
-				if self.0 != <$first>::default() || sink.can_output(hdx_writer::OutputOption::RedundantDefaultValues) {
-					self.0.write_css(sink)?;
-					wrote = true
-				}
-				if self.1 != <$second>::default() || sink.can_output(hdx_writer::OutputOption::RedundantDefaultValues) {
-					if wrote {
-						sink.write_char(' ')?;
-					}
-					self.1.write_css(sink)?;
-					wrote = true
-				}
-				if self.2 != <$third>::default() || sink.can_output(hdx_writer::OutputOption::RedundantDefaultValues) {
-					if wrote {
-						sink.write_char(' ')?;
-					}
-					self.2.write_css(sink)?;
-					wrote = true
-				}
-				if self.3 != <$fourth>::default() || sink.can_output(hdx_writer::OutputOption::RedundantDefaultValues) {
-					if wrote {
-						sink.write_char(' ')?;
-					}
-					self.3.write_css(sink)?;
-					wrote = true
-				}
-				if self.4 != <$fifth>::default() || sink.can_output(hdx_writer::OutputOption::RedundantDefaultValues) {
-					if wrote {
-						sink.write_char(' ')?;
-					}
-					self.4.write_css(sink)?;
-					wrote = true
-				}
-				if self.5 != <$sixth>::default() || sink.can_output(hdx_writer::OutputOption::RedundantDefaultValues) {
-					if wrote {
-						sink.write_char(' ')?;
-					}
-					self.5.write_css(sink)?;
-					wrote = true
-				}
-				if self.6 != <$seventh>::default() || sink.can_output(hdx_writer::OutputOption::RedundantDefaultValues)
-				{
-					if wrote {
-						sink.write_char(' ')?;
-					}
-					self.6.write_css(sink)?;
-					wrote = true
-				}
-				if self.7 != <$eigth>::default() || sink.can_output(hdx_writer::OutputOption::RedundantDefaultValues) {
-					if wrote {
-						sink.write_char(' ')?;
-					}
-					self.7.write_css(sink)?;
-					wrote = true
-				}
-				if !wrote {
-					self.0.write_css(sink)?;
-				}
-				Ok(())
-			}
-		}
-	};
-	($name: ident, $first: ty, $second: ty, $third: ty, $fourth: ty, $fifth: ty, $sixth: ty, $seventh: ty) => {
-		impl<'a> hdx_writer::WriteCss<'a> for $name {
-			fn write_css<W: hdx_writer::CssWriter>(&self, sink: &mut W) -> hdx_writer::Result {
-				let mut wrote = false;
-				if self.0 != <$first>::default() || sink.can_output(hdx_writer::OutputOption::RedundantDefaultValues) {
-					self.0.write_css(sink)?;
-					wrote = true
-				}
-				if self.1 != <$second>::default() || sink.can_output(hdx_writer::OutputOption::RedundantDefaultValues) {
-					if wrote {
-						sink.write_char(' ')?;
-					}
-					self.1.write_css(sink)?;
-					wrote = true
-				}
-				if self.2 != <$third>::default() || sink.can_output(hdx_writer::OutputOption::RedundantDefaultValues) {
-					if wrote {
-						sink.write_char(' ')?;
-					}
-					self.2.write_css(sink)?;
-					wrote = true
-				}
-				if self.3 != <$fourth>::default() || sink.can_output(hdx_writer::OutputOption::RedundantDefaultValues) {
-					if wrote {
-						sink.write_char(' ')?;
-					}
-					self.3.write_css(sink)?;
-					wrote = true
-				}
-				if self.4 != <$fifth>::default() || sink.can_output(hdx_writer::OutputOption::RedundantDefaultValues) {
-					if wrote {
-						sink.write_char(' ')?;
-					}
-					self.4.write_css(sink)?;
-					wrote = true
-				}
-				if self.5 != <$sixth>::default() || sink.can_output(hdx_writer::OutputOption::RedundantDefaultValues) {
-					if wrote {
-						sink.write_char(' ')?;
-					}
-					self.5.write_css(sink)?;
-					wrote = true
-				}
-				if self.6 != <$seventh>::default() || sink.can_output(hdx_writer::OutputOption::RedundantDefaultValues)
-				{
-					if wrote {
-						sink.write_char(' ')?;
-					}
-					self.6.write_css(sink)?;
-					wrote = true
-				}
-				if !wrote {
-					self.0.write_css(sink)?;
-				}
-				Ok(())
-			}
-		}
-	};
-	($name: ident, $first: ty, $second: ty, $third: ty, $fourth: ty, $fifth: ty, $sixth: ty) => {
-		impl<'a> hdx_writer::WriteCss<'a> for $name {
-			fn write_css<W: hdx_writer::CssWriter>(&self, sink: &mut W) -> hdx_writer::Result {
-				let mut wrote = false;
-				if self.0 != <$first>::default() || sink.can_output(hdx_writer::OutputOption::RedundantDefaultValues) {
-					self.0.write_css(sink)?;
-					wrote = true
-				}
-				if self.1 != <$second>::default() || sink.can_output(hdx_writer::OutputOption::RedundantDefaultValues) {
-					if wrote {
-						sink.write_char(' ')?;
-					}
-					self.1.write_css(sink)?;
-					wrote = true
-				}
-				if self.2 != <$third>::default() || sink.can_output(hdx_writer::OutputOption::RedundantDefaultValues) {
-					if wrote {
-						sink.write_char(' ')?;
-					}
-					self.2.write_css(sink)?;
-					wrote = true
-				}
-				if self.3 != <$fourth>::default() || sink.can_output(hdx_writer::OutputOption::RedundantDefaultValues) {
-					if wrote {
-						sink.write_char(' ')?;
-					}
-					self.3.write_css(sink)?;
-					wrote = true
-				}
-				if self.4 != <$fifth>::default() || sink.can_output(hdx_writer::OutputOption::RedundantDefaultValues) {
-					if wrote {
-						sink.write_char(' ')?;
-					}
-					self.4.write_css(sink)?;
-					wrote = true
-				}
-				if self.5 != <$sixth>::default() || sink.can_output(hdx_writer::OutputOption::RedundantDefaultValues) {
-					if wrote {
-						sink.write_char(' ')?;
-					}
-					self.5.write_css(sink)?;
-					wrote = true
-				}
-				if !wrote {
-					self.0.write_css(sink)?;
-				}
-				Ok(())
-			}
-		}
-	};
-	($name: ident, $first: ty, $second: ty, $third: ty, $fourth: ty, $fifth: ty) => {
-		impl<'a> hdx_writer::WriteCss<'a> for $name {
-			fn write_css<W: hdx_writer::CssWriter>(&self, sink: &mut W) -> hdx_writer::Result {
-				let mut wrote = false;
-				if self.0 != <$first>::default() || sink.can_output(hdx_writer::OutputOption::RedundantDefaultValues) {
-					self.0.write_css(sink)?;
-					wrote = true
-				}
-				if self.1 != <$second>::default() || sink.can_output(hdx_writer::OutputOption::RedundantDefaultValues) {
-					if wrote {
-						sink.write_char(' ')?;
-					}
-					self.1.write_css(sink)?;
-					wrote = true
-				}
-				if self.2 != <$third>::default() || sink.can_output(hdx_writer::OutputOption::RedundantDefaultValues) {
-					if wrote {
-						sink.write_char(' ')?;
-					}
-					self.2.write_css(sink)?;
-					wrote = true
-				}
-				if self.3 != <$fourth>::default() || sink.can_output(hdx_writer::OutputOption::RedundantDefaultValues) {
-					if wrote {
-						sink.write_char(' ')?;
-					}
-					self.3.write_css(sink)?;
-					wrote = true
-				}
-				if self.4 != <$fifth>::default() || sink.can_output(hdx_writer::OutputOption::RedundantDefaultValues) {
-					if wrote {
-						sink.write_char(' ')?;
-					}
-					self.4.write_css(sink)?;
-					wrote = true
-				}
-				if !wrote {
-					self.0.write_css(sink)?;
-				}
-				Ok(())
-			}
-		}
-	};
-	($name: ident, $first: ty, $second: ty, $third: ty, $fourth: ty) => {
-		impl<'a> hdx_writer::WriteCss<'a> for $name {
-			fn write_css<W: hdx_writer::CssWriter>(&self, sink: &mut W) -> hdx_writer::Result {
-				let mut wrote = false;
-				if self.0 != <$first>::default() || sink.can_output(hdx_writer::OutputOption::RedundantDefaultValues) {
-					self.0.write_css(sink)?;
-					wrote = true
-				}
-				if self.1 != <$second>::default() || sink.can_output(hdx_writer::OutputOption::RedundantDefaultValues) {
-					if wrote {
-						sink.write_char(' ')?;
-					}
-					self.1.write_css(sink)?;
-					wrote = true
-				}
-				if self.2 != <$third>::default() || sink.can_output(hdx_writer::OutputOption::RedundantDefaultValues) {
-					if wrote {
-						sink.write_char(' ')?;
-					}
-					self.2.write_css(sink)?;
-					wrote = true
-				}
-				if self.3 != <$fourth>::default() || sink.can_output(hdx_writer::OutputOption::RedundantDefaultValues) {
-					if wrote {
-						sink.write_char(' ')?;
-					}
-					self.3.write_css(sink)?;
-					wrote = true
-				}
-				if !wrote {
-					self.0.write_css(sink)?;
-				}
-				Ok(())
-			}
-		}
-	};
-	($name: ident, $first: ty, $second: ty, $third: ty) => {
-		impl<'a> hdx_writer::WriteCss<'a> for $name {
-			fn write_css<W: hdx_writer::CssWriter>(&self, sink: &mut W) -> hdx_writer::Result {
-				let mut wrote = false;
-				if self.0 != <$first>::default() || sink.can_output(hdx_writer::OutputOption::RedundantDefaultValues) {
-					self.0.write_css(sink)?;
-					wrote = true
-				}
-				if self.1 != <$second>::default() || sink.can_output(hdx_writer::OutputOption::RedundantDefaultValues) {
-					if wrote {
-						sink.write_char(' ')?;
-					}
-					self.1.write_css(sink)?;
-					wrote = true
-				}
-				if self.2 != <$third>::default() || sink.can_output(hdx_writer::OutputOption::RedundantDefaultValues) {
-					if wrote {
-						sink.write_char(' ')?;
-					}
-					self.2.write_css(sink)?;
-					wrote = true
-				}
-				if !wrote {
-					self.0.write_css(sink)?;
-				}
-				Ok(())
-			}
-		}
-	};
-	($name: ident, $first: ty, $second: ty) => {
-		impl<'a> hdx_writer::WriteCss<'a> for $name {
-			fn write_css<W: hdx_writer::CssWriter>(&self, sink: &mut W) -> hdx_writer::Result {
-				let mut wrote = false;
-				if self.0 != <$first>::default() || sink.can_output(hdx_writer::OutputOption::RedundantDefaultValues) {
-					self.0.write_css(sink)?;
-					wrote = true
-				}
-				if !wrote
-					|| self.1 != <$second>::default()
-					|| sink.can_output(hdx_writer::OutputOption::RedundantDefaultValues)
-				{
-					if wrote {
-						sink.write_char(' ')?;
-					}
-					self.1.write_css(sink)?;
-					wrote = true
-				}
-				if !wrote {
-					self.0.write_css(sink)?;
-				}
-				Ok(())
-			}
-		}
-	};
-	($name: ident, $first: ty) => {
-		impl<'a> hdx_writer::WriteCss<'a> for $name {
-			fn write_css<W: hdx_writer::CssWriter>(&self, sink: &mut W) -> hdx_writer::Result {
-				self.0.write_css(sink)
-			}
-		}
-	};
-}
-
-pub(crate) use write_simple_shorthand;
+pub(crate) use keyword_typedef;
 
 macro_rules! discrete_media_feature {
 	($feat: tt[atom!($atom: tt)] { $( $name: ident: atom!($name_atom: tt),)+ }) => {
@@ -512,10 +566,12 @@ macro_rules! discrete_media_feature {
 
 		impl<'a> hdx_parser::DiscreteMediaFeature<'a> for $feat {
 			fn parse_media_feature_value(parser: &mut hdx_parser::Parser<'a>) -> hdx_parser::Result<Self> {
-				hdx_parser::expect_ignore_case!{ parser.next(), Token::Ident(_):
+				let token = *parser.parse::<hdx_parser::Token![Ident]>()?;
+				match parser.parse_atom_lower(token) {
 					$(
 						hdx_atom::atom!($name_atom) => Ok(Self::$name),
 					)+
+					atom => Err(::hdx_parser::diagnostics::UnexpectedIdent(atom, token.span()))?
 				}
 			}
 		}
@@ -560,18 +616,16 @@ macro_rules! bool_media_feature {
 
 		impl<'a> hdx_parser::DiscreteMediaFeature<'a> for $feat {
 			fn parse_media_feature_value(parser: &mut hdx_parser::Parser<'a>) -> hdx_parser::Result<Self> {
-				match parser.next() {
-					hdx_lexer::Token::Number(val, ty) => {
-						if *val == 1.0 && ty.is_int() {
-							Ok(Self::One)
-						} else if *val == 0.0 && ty.is_int() {
-							Ok(Self::Zero)
-						} else {
-							hdx_parser::unexpected!(parser)
-						}
+				let token = *parser.parse::<hdx_parser::Token![Number]>()?;
+				if token.is_int() {
+					let val = parser.parse_number(token);
+					if val == 1.0 {
+						return Ok(Self::One);
+					} else if val == 0.0 {
+						return Ok(Self::Zero);
 					}
-					token => hdx_parser::unexpected!(parser, token),
 				}
+				Err(::hdx_parser::diagnostics::Unexpected(token, token.span()))?
 			}
 		}
 

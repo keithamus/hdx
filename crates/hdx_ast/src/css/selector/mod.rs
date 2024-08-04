@@ -1,8 +1,7 @@
 use hdx_atom::{Atom, Atomizable};
-use hdx_lexer::Kind;
 use hdx_parser::{
-	expect_delim, unexpected, Parse, Parser, Result as ParserResult, SelectorComponent as SelectorComponentTrait,
-	SelectorList as SelectorListTrait, Spanned, Vec,
+	Delim, Parse, Parser, Result as ParserResult, SelectorComponent as SelectorComponentTrait,
+	SelectorList as SelectorListTrait, Spanned, Token, Vec,
 };
 use hdx_writer::{write_css, CssWriter, Result as WriterResult, WriteCss};
 
@@ -148,14 +147,14 @@ impl<'a> SelectorComponentTrait<'a> for SelectorComponent<'a> {
 	fn ns_type_from_token(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		let prefix = NSPrefix::parse(parser)?;
 		if !matches!(prefix, NSPrefix::None) {
-			expect_delim!(parser.next(), '|');
+			parser.parse::<Delim![|]>()?;
 		}
-		let token = parser.next();
-		match token.kind() {
-			Kind::Ident => Ok(Self::NSPrefixedTag((prefix, parser.parse_atom(token)))),
-			Kind::Delim if matches!(token.char(), Some('*')) => Ok(Self::NSPrefixedWildcard(prefix)),
-			_ => unexpected!(parser, token),
+		if let Some(token) = parser.peek::<Delim![*]>() {
+			parser.hop(token);
+			return Ok(Self::NSPrefixedWildcard(prefix));
 		}
+		let token = *parser.parse::<Token![Ident]>()?;
+		Ok(Self::NSPrefixedTag((prefix, parser.parse_atom(token))))
 	}
 
 	fn parse_combinator(parser: &mut Parser<'a>) -> ParserResult<Self> {
@@ -226,13 +225,16 @@ pub enum NSPrefix {
 
 impl<'a> Parse<'a> for NSPrefix {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let token = parser.next();
-		match token.kind() {
-			Kind::Delim if matches!(token.char(), Some('*')) => Ok(Self::Wildcard),
-			Kind::Ident  => Ok(Self::Named(parser.parse_atom(token))),
-			Kind::Delim if matches!(token.char(), Some('|')) => Ok(Self::None),
-			_ => unexpected!(parser, token),
+		if let Some(token) = parser.peek::<Delim![*]>() {
+			parser.hop(token);
+			return Ok(Self::Wildcard);
 		}
+		if let Some(token) = parser.peek::<Delim![|]>() {
+			parser.hop(token);
+			return Ok(Self::None);
+		}
+		let token = *parser.parse::<Token![Ident]>()?;
+		Ok(Self::Named(parser.parse_atom(token)))
 	}
 }
 

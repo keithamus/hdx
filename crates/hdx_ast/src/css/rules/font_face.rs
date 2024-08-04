@@ -1,5 +1,5 @@
 use hdx_atom::{atom, Atom};
-use hdx_parser::{expect_ignore_case, Declaration, Parse, Parser, Result as ParserResult, RuleList, Spanned, Vec};
+use hdx_parser::{diagnostics, Declaration, Parse, Parser, Result as ParserResult, RuleList, Spanned, Token, Vec};
 use hdx_writer::{write_css, CssWriter, Result as WriterResult, WriteCss};
 
 use crate::css::properties::StyleValue;
@@ -11,7 +11,11 @@ pub struct FontFace<'a>(Vec<'a, Spanned<FontProperty<'a>>>);
 
 impl<'a> Parse<'a> for FontFace<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		expect_ignore_case!(parser.next(), Kind::AtKeyword, atom!("font-face"));
+		let token = *parser.parse::<Token![AtKeyword]>()?;
+		let atom = parser.parse_atom_lower(token);
+		if atom != atom!("font-face") {
+			Err(diagnostics::UnexpectedAtRule(atom, token.span()))?
+		}
 		Ok(Self(Self::parse_rule_list(parser)?))
 	}
 }
@@ -50,9 +54,10 @@ pub struct FontProperty<'a> {
 
 impl<'a> Parse<'a> for FontProperty<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		expect_ignore_case!(
-			parser.peek(),
-			Token::Ident(
+		if let Some(token) = parser.peek::<Token![Ident]>() {
+			let atom = parser.parse_atom_lower(token);
+			if !matches!(
+				atom,
 				atom!("ascent-override")
 					| atom!("descent-override")
 					| atom!("font-display")
@@ -65,9 +70,14 @@ impl<'a> Parse<'a> for FontProperty<'a> {
 					| atom!("font-weight")
 					| atom!("font-width")
 					| atom!("line-gap-override")
-					| atom!("src") | atom!("unicode-range")
-			)
-		);
+					| atom!("src") | atom!("unicode-range"),
+			) {
+				Err(diagnostics::UnexpectedIdent(atom, token.span()))?
+			}
+		} else {
+			let token = parser.peek::<Token![Any]>().unwrap();
+			Err(diagnostics::Unexpected(token, token.span()))?
+		}
 		let (name, value, important) = Self::parse_declaration(parser)?;
 		Ok(Self { name, value, important })
 	}

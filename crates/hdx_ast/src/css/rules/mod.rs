@@ -1,5 +1,4 @@
-use hdx_lexer::Token;
-use hdx_parser::{unexpected, Parse, Parser, Result as ParserResult};
+use hdx_parser::{diagnostics, Parse, Parser, Result as ParserResult, Token};
 
 pub mod charset;
 pub mod color_profile;
@@ -46,9 +45,11 @@ pub use webkit::*;
 pub struct NoPreludeAllowed;
 impl<'a> Parse<'a> for NoPreludeAllowed {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		match parser.cur() {
-			Token::LeftCurly | Token::Semicolon => Ok(Self {}),
-			token => unexpected!(parser, token),
+		if parser.peek::<Token![LeftCurly]>().is_some() || parser.peek::<Token![;]>().is_some() {
+			Ok(Self {})
+		} else {
+			let token = parser.peek::<Token![Any]>().unwrap();
+			Err(diagnostics::Unexpected(token, token.span()))?
 		}
 	}
 }
@@ -56,9 +57,11 @@ impl<'a> Parse<'a> for NoPreludeAllowed {
 pub struct NoBlockAllowed;
 impl<'a> Parse<'a> for NoBlockAllowed {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		match parser.cur() {
-			Token::Semicolon | Token::Eof => Ok(Self {}),
-			token => unexpected!(parser, token),
+		if parser.at_end() || parser.peek::<Token![;]>().is_some() {
+			Ok(Self {})
+		} else {
+			let token = parser.peek::<Token![Any]>().unwrap();
+			Err(diagnostics::Unexpected(token, token.span()))?
 		}
 	}
 }

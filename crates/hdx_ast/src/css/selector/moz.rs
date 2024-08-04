@@ -1,7 +1,6 @@
 use hdx_atom::atom;
 use hdx_derive::Atomizable;
-use hdx_lexer::Kind;
-use hdx_parser::{expect, expect_ignore_case, todo, Parse, Parser, Result as ParserResult};
+use hdx_parser::{diagnostics, todo, Parse, Parser, Result as ParserResult, Token};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 
 use super::functional_pseudo_class::DirValue;
@@ -178,7 +177,8 @@ pub enum MozFunctionalPseudoElement {
 
 impl<'a> Parse<'a> for MozFunctionalPseudoElement {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		expect_ignore_case! { parser.next(), Token::Function(_):
+		let token = *parser.parse::<Token![Function]>()?;
+		match parser.parse_atom_lower(token) {
 			atom!("-moz-tree-cell") => todo!(parser),
 			atom!("-moz-tree-cell-text") => todo!(parser),
 			atom!("-moz-tree-checkbox") => todo!(parser),
@@ -190,6 +190,7 @@ impl<'a> Parse<'a> for MozFunctionalPseudoElement {
 			atom!("-moz-tree-row") => todo!(parser),
 			atom!("-moz-tree-separator") => todo!(parser),
 			atom!("-moz-tree-twisty") => todo!(parser),
+			atom => Err(diagnostics::UnexpectedIdent(atom, token.span()))?,
 		}
 	}
 }
@@ -268,12 +269,14 @@ pub enum MozFunctionalPseudoClass {
 
 impl<'a> Parse<'a> for MozFunctionalPseudoClass {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		expect_ignore_case! { parser.next(), Token::Function(_):
+		let token = *parser.parse::<Token![Function]>()?;
+		match parser.parse_atom_lower(token) {
 			atom!("-moz-locale-dir") => {
 				let dir = DirValue::parse(parser)?;
-				expect!(parser.next(), Kind::RightParen);
+				parser.parse::<Token![RightParen]>()?;
 				Ok(Self::LocaleDir(dir))
 			}
+			atom => Err(diagnostics::UnexpectedIdent(atom, token.span()))?,
 		}
 	}
 }

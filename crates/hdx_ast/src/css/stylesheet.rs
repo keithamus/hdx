@@ -1,7 +1,6 @@
 use hdx_atom::atom;
 use hdx_derive::{Atomizable, Visitable};
-use hdx_lexer::Kind;
-use hdx_parser::{diagnostics, Parse, Parser, Result as ParserResult, Spanned, StyleSheet as StyleSheetTrait, Vec};
+use hdx_parser::{Parse, Parser, Result as ParserResult, Spanned, StyleSheet as StyleSheetTrait, Token, Vec};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 
 use crate::{
@@ -99,35 +98,24 @@ apply_rules!(rule);
 
 impl<'a> Parse<'a> for Rule<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let token = parser.peek();
-		Ok(match token.kind() {
-			Kind::AtKeyword => {
-				let atom = parser.parse_atom(token);
-				macro_rules! parse_rule {
-					( $(
-						$name: ident$(<$a: lifetime>)?: $atom: pat,
-					)+ ) => {
-						match atom.to_ascii_lowercase() {
-							$($atom => rules::$name::try_parse(parser).map(Self::$name),)+
-							_ => {
-								let rule = AtRule::parse_spanned(parser)?;
-								parser.warn(diagnostics::UnknownRule(rule.span).into());
-								Ok(Self::UnknownAt(rule.node))
-							}
+		if let Some(token) = parser.peek::<Token![AtKeyword]>() {
+			macro_rules! parse_rule {
+				( $(
+					$name: ident$(<$a: lifetime>)?: $atom: pat,
+				)+ ) => {
+					match parser.parse_atom_lower(token) {
+						$($atom => rules::$name::try_parse(parser).map(Self::$name),)+
+						_ => {
+							let rule = AtRule::parse_spanned(parser)?;
+							Ok(Self::UnknownAt(rule.node))
 						}
 					}
 				}
-				apply_rules!(parse_rule).or_else(|err| {
-					parser.warn(err);
-					AtRule::parse(parser).map(Self::UnknownAt)
-				})?
 			}
-			// "Consume a qualified rule from input. If anything is returned, append it to rules."
-			_ => StyleRule::try_parse(parser).map(Self::Style).or_else(|err| {
-				parser.warn(err);
-				QualifiedRule::parse(parser).map(Self::Unknown)
-			})?,
-		})
+			return apply_rules!(parse_rule).or_else(|_| AtRule::parse(parser).map(Self::UnknownAt));
+		}
+		// "Consume a qualified rule from input. If anything is returned, append it to rules."
+		StyleRule::try_parse(parser).map(Self::Style).or_else(|_| QualifiedRule::parse(parser).map(Self::Unknown))
 	}
 }
 

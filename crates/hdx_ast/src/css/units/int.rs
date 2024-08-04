@@ -1,6 +1,5 @@
 use hdx_derive::Writable;
-use hdx_lexer::Kind;
-use hdx_parser::{unexpected, Parse, Parser, Result as ParserResult};
+use hdx_parser::{diagnostics, Parse, Parser, Peek, Result as ParserResult, Token};
 use std::{
 	fmt::{Display, Result as DisplayResult},
 	ops::{Add, Div, Mul, Sub},
@@ -11,15 +10,36 @@ use std::{
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(transparent))]
 pub struct CSSInt(i32);
 
-impl Display for CSSInt {
-	fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> DisplayResult {
-		self.0.fmt(f)
+impl CSSInt {
+	#[allow(non_upper_case_globals)]
+	pub const Zero: CSSInt = CSSInt(0);
+
+	pub fn to_i32(&self) -> i32 {
+		self.0
+	}
+}
+
+impl From<CSSInt> for i32 {
+	fn from(value: CSSInt) -> Self {
+		value.to_i32()
+	}
+}
+
+impl From<CSSInt> for f32 {
+	fn from(value: CSSInt) -> Self {
+		value.into()
 	}
 }
 
 impl From<f32> for CSSInt {
 	fn from(f: f32) -> Self {
 		Self(f as i32)
+	}
+}
+
+impl Display for CSSInt {
+	fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> DisplayResult {
+		self.0.fmt(f)
 	}
 }
 
@@ -101,12 +121,19 @@ impl PartialOrd<i32> for CSSInt {
 	}
 }
 
+impl<'a> Peek<'a> for CSSInt {
+	fn peek(parser: &Parser<'a>) -> Option<hdx_lexer::Token> {
+		parser.peek::<Token![Number]>().filter(|t| !t.is_float())
+	}
+}
+
 impl<'a> Parse<'a> for CSSInt {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let token = parser.next();
-		match token.kind() {
-			Kind::Number if !token.is_float() => Ok(parser.parse_number(token).into()),
-			_ => unexpected!(parser, token),
+		let token = *parser.parse::<Token![Number]>()?;
+		let number = parser.parse_number(token);
+		if token.is_float() {
+			Err(diagnostics::ExpectedInt(number, token.span()))?;
 		}
+		Ok(number.into())
 	}
 }

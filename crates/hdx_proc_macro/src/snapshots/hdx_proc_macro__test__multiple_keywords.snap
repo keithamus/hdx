@@ -1,0 +1,61 @@
+---
+source: crates/hdx_proc_macro/src/test.rs
+expression: pretty
+---
+#[derive(Debug, PartialEq, Clone, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+enum Foo {
+    Black,
+    White,
+    LineThrough,
+    Pink,
+}
+#[automatically_derived]
+impl<'a> ::hdx_parser::Peek<'a> for Foo {
+    fn peek(parser: &::hdx_parser::Parser<'a>) -> Option<::hdx_lexer::Token> {
+        use ::hdx_parser::Peek;
+        parser.peek::<::hdx_parser::token::Ident>()
+    }
+}
+#[automatically_derived]
+impl<'a> ::hdx_parser::Parse<'a> for Foo {
+    fn parse(parser: &mut ::hdx_parser::Parser<'a>) -> ::hdx_parser::Result<Self> {
+        use ::hdx_parser::Parse;
+        let token = *parser.parse::<::hdx_parser::token::Ident>()?;
+        Ok(
+            match parser.parse_atom_lower(token) {
+                ::hdx_atom::atom!("black") => Self::Black,
+                ::hdx_atom::atom!("white") => Self::White,
+                ::hdx_atom::atom!("line-through") => Self::LineThrough,
+                ::hdx_atom::atom!("pink") => Self::Pink,
+                atom => {
+                    Err(::hdx_parser::diagnostics::UnexpectedIdent(atom, token.span()))?
+                }
+            },
+        )
+    }
+}
+#[automatically_derived]
+impl<'a> ::hdx_writer::WriteCss<'a> for Foo {
+    fn write_css<W: ::hdx_writer::CssWriter>(
+        &self,
+        sink: &mut W,
+    ) -> ::hdx_writer::Result {
+        use ::hdx_writer::WriteCss;
+        match self {
+            Self::Black => {
+                ::hdx_atom::atom!("black").write_css(sink)?;
+            }
+            Self::White => {
+                ::hdx_atom::atom!("white").write_css(sink)?;
+            }
+            Self::LineThrough => {
+                ::hdx_atom::atom!("line-through").write_css(sink)?;
+            }
+            Self::Pink => {
+                ::hdx_atom::atom!("pink").write_css(sink)?;
+            }
+        }
+        Ok(())
+    }
+}

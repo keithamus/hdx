@@ -1,0 +1,48 @@
+---
+source: crates/hdx_proc_macro/src/test.rs
+expression: pretty
+---
+#[derive(Debug, PartialEq, Clone, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+enum Foo {
+    None,
+    CustomIdent(::hdx_atom::Atom),
+}
+#[automatically_derived]
+impl<'a> ::hdx_parser::Peek<'a> for Foo {
+    fn peek(parser: &::hdx_parser::Parser<'a>) -> Option<::hdx_lexer::Token> {
+        use ::hdx_parser::Peek;
+        parser.peek::<::hdx_parser::token::Ident>()
+    }
+}
+#[automatically_derived]
+impl<'a> ::hdx_parser::Parse<'a> for Foo {
+    fn parse(parser: &mut ::hdx_parser::Parser<'a>) -> ::hdx_parser::Result<Self> {
+        use ::hdx_parser::Parse;
+        let token = *parser.parse::<::hdx_parser::token::Ident>()?;
+        Ok(
+            match parser.parse_atom_lower(token) {
+                ::hdx_atom::atom!("none") => Self::None,
+                atom => Self::CustomIdent(atom),
+            },
+        )
+    }
+}
+#[automatically_derived]
+impl<'a> ::hdx_writer::WriteCss<'a> for Foo {
+    fn write_css<W: ::hdx_writer::CssWriter>(
+        &self,
+        sink: &mut W,
+    ) -> ::hdx_writer::Result {
+        use ::hdx_writer::WriteCss;
+        match self {
+            Self::None => {
+                ::hdx_atom::atom!("none").write_css(sink)?;
+            }
+            Self::CustomIdent(inner) => {
+                inner.write_css(sink)?;
+            }
+        }
+        Ok(())
+    }
+}

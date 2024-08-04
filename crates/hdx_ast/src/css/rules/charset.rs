@@ -1,10 +1,7 @@
 use hdx_atom::{atom, Atomizable};
 use hdx_derive::Atomizable;
-use hdx_lexer::{Include, Kind, QuoteStyle};
-use hdx_parser::{
-	diagnostics::{self},
-	expect, expect_ignore_case, unexpected, Parse, Parser, Result as ParserResult,
-};
+use hdx_lexer::{Include, QuoteStyle};
+use hdx_parser::{diagnostics, Parse, Parser, Result as ParserResult, Token};
 use hdx_writer::{write_css, CssWriter, OutputOption, Result as WriterResult, WriteCss};
 
 // https://drafts.csswg.org/css-syntax-3/#charset-rule
@@ -65,20 +62,23 @@ pub enum Charset {
 
 impl<'a> Parse<'a> for Charset {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		expect_ignore_case!(parser.next(), Kind::AtKeyword, atom!("charset"));
-		expect!(parser.next_with(Include::Whitespace), Kind::Whitespace);
-		let token = parser.next_with(Include::Whitespace);
-		match token.kind() {
-			Kind::String if token.quote_style() == QuoteStyle::Double => {
-				let atom = parser.parse_atom(token);
-				if let Some(rule) = Self::from_atom(&atom) {
-					expect!(parser.next_with(Include::Whitespace), Kind::Semicolon);
-					Ok(rule)
-				} else {
-					Err(diagnostics::UnexpectedCharset(atom, parser.span()))?
-				}
-			}
-			_ => unexpected!(parser, token),
+		let token = *parser.parse::<Token![AtKeyword]>()?;
+		let atom = parser.parse_atom_lower(token);
+		let span = token.span();
+		if atom != atom!("charset") {
+			Err(diagnostics::UnexpectedAtRule(atom, span))?;
+		}
+		parser.parse_with::<Token![]>(Include::Whitespace)?;
+		let token = *parser.parse_with::<Token![String]>(Include::Whitespace)?;
+		if token.quote_style() != QuoteStyle::Double {
+			Err(diagnostics::Unexpected(token, token.span()))?
+		}
+		let atom = parser.parse_atom(token);
+		if let Some(rule) = Self::from_atom(&atom) {
+			parser.parse_with::<Token![;]>(Include::Whitespace)?;
+			Ok(rule)
+		} else {
+			Err(diagnostics::UnexpectedCharset(atom, token.span()))?
 		}
 	}
 }

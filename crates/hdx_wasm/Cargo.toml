@@ -38,22 +38,6 @@ console_error_panic_hook = { workspace = true, optional = true }
 [dev-dependencies]
 wasm-bindgen-test = "0.3.42"
 
-[profile.dev]
-opt-level = 3
-lto = "fat"
-codegen-units = 1
-strip = "symbols"
-debug = true
-panic = "abort"
-
-[profile.release]
-opt-level = 3
-lto = "fat"
-codegen-units = 1
-strip = "symbols"
-debug = true
-panic = "abort"
-
 [package.metadata.wasm-pack.profile.release]
 wasm-opt = false
 # wasm-opt = ['-O4']

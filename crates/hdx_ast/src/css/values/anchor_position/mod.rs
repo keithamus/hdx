@@ -1,8 +1,89 @@
-mod anchor_default;
-mod anchor_position;
-mod position_fallback;
-mod position_fallback_bounds;
-pub use anchor_default::*;
-pub use anchor_position::*;
-pub use position_fallback::*;
-pub use position_fallback_bounds::*;
+mod impls;
+pub mod types;
+
+use impls::*;
+
+/*
+ * https://drafts.csswg.org/css-anchor-position-1/
+ * CSS Anchor Positioning
+ */
+
+// // https://drafts.csswg.org/css-anchor-position-1/#anchor-name
+// #[value(" none | <dashed-ident># ")]
+// #[initial("none")]
+// #[applies_to("all elements that generate a principal box")]
+// #[inherited("no")]
+// #[percentages("n/a")]
+// #[canonical_order("per grammar")]
+// #[animation_type("discrete")]
+// pub enum AnchorName {}
+
+// // https://drafts.csswg.org/css-anchor-position-1/#anchor-scope
+// #[value(" none | all | <dashed-ident># ")]
+// #[initial("none")]
+// #[applies_to("all elements")]
+// #[inherited("no")]
+// #[percentages("n/a")]
+// #[canonical_order("per grammar")]
+// #[animation_type("discrete")]
+// pub enum AnchorScope {}
+
+// https://drafts.csswg.org/css-anchor-position-1/#position-anchor
+#[value(" auto | <anchor-name> ")]
+#[initial("auto")]
+#[applies_to("absolutely positioned boxes")]
+#[inherited("no")]
+#[percentages("n/a")]
+#[canonical_order("per grammar")]
+#[animation_type("discrete")]
+pub enum PositionAnchor {}
+
+// https://drafts.csswg.org/css-anchor-position-1/#position-area
+#[value(" none | <position-area> ")]
+#[initial("none")]
+#[applies_to("positioned boxes with a default anchor box")]
+#[inherited("no")]
+#[percentages("n/a")]
+#[canonical_order("per grammar")]
+#[animation_type("tbd")]
+pub enum PositionArea {}
+
+// // https://drafts.csswg.org/css-anchor-position-1/#position-visibility
+// #[value(" always | [ anchors-valid || anchors-visible || no-overflow ] ")]
+// #[initial("anchors-visible")]
+// #[applies_to("absolutely positioned boxes")]
+// #[inherited("no")]
+// #[percentages("n/a")]
+// #[canonical_order("per grammar")]
+// #[animation_type("discrete")]
+// pub enum PositionVisibility {}
+
+// // https://drafts.csswg.org/css-anchor-position-1/#position-try-fallbacks
+// #[value(" none | [ [<dashed-ident> || <try-tactic>] | <'position-area'> ]# ")]
+// #[initial("none")]
+// #[applies_to("absolutely positioned boxes")]
+// #[inherited("no")]
+// #[percentages("n/a")]
+// #[canonical_order("per grammar")]
+// #[animation_type("discrete")]
+// pub enum PositionTryFallbacks {}
+
+// https://drafts.csswg.org/css-anchor-position-1/#position-try-order
+#[value(" normal | <try-size> ")]
+#[initial("normal")]
+#[applies_to("absolutely positioned boxes")]
+#[inherited("no")]
+#[percentages("n/a")]
+#[canonical_order("per grammar")]
+#[animation_type("discrete")]
+pub enum PositionTryOrder {}
+
+// // https://drafts.csswg.org/css-anchor-position-1/#position-try
+// #[value(" <'position-try-order'>? <'position-try-fallbacks'> ")]
+// #[initial("see individual properties")]
+// #[applies_to("see individual properties")]
+// #[inherited("see individual properties")]
+// #[percentages("see individual properties")]
+// #[canonical_order("per grammar")]
+// #[animation_type("see individual properties")]
+// pub struct PositionTry;

@@ -1,0 +1,55 @@
+---
+source: crates/hdx_proc_macro/src/test.rs
+expression: pretty
+---
+#[derive(Debug, PartialEq, Clone, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+struct Foo(pub ::smallvec::SmallVec<[types::Length; 2usize]>);
+#[automatically_derived]
+impl<'a> ::hdx_parser::Peek<'a> for Foo {
+    fn peek(parser: &::hdx_parser::Parser<'a>) -> Option<::hdx_lexer::Token> {
+        use ::hdx_parser::Peek;
+        parser.peek::<types::Length>()
+    }
+}
+#[automatically_derived]
+impl<'a> ::hdx_parser::Parse<'a> for Foo {
+    fn parse(parser: &mut ::hdx_parser::Parser<'a>) -> ::hdx_parser::Result<Self> {
+        use ::hdx_parser::Parse;
+        let mut i = 0;
+        let mut items = ::smallvec::smallvec![];
+        loop {
+            if i > 4usize {
+                break;
+            } else if parser.peek::<types::Length>().is_some() {
+                let item = parser.parse::<types::Length>()?;
+                i += 1;
+                items.push(item)
+            } else {
+                break;
+            }
+        }
+        if i < 2usize {
+            let token = parser.peek::<::hdx_parser::token::Any>().unwrap();
+            return Err(::hdx_parser::diagnostics::Unexpected(token, token.span()))?;
+        }
+        return Ok(Self(items));
+    }
+}
+#[automatically_derived]
+impl<'a> ::hdx_writer::WriteCss<'a> for Foo {
+    fn write_css<W: ::hdx_writer::CssWriter>(
+        &self,
+        sink: &mut W,
+    ) -> ::hdx_writer::Result {
+        use ::hdx_writer::WriteCss;
+        let mut iter = self.0.iter().peekable();
+        while let Some(item) = iter.next() {
+            item.write_css(sink)?;
+            if iter.peek().is_some() {
+                sink.write_char(' ')?;
+            }
+        }
+        Ok(())
+    }
+}

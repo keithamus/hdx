@@ -139,6 +139,7 @@ impl CSSTokenizerTestCase {
 }
 
 fn convert_token(lexer: &Lexer, token: Token) -> CSSTokenizerTestToken {
+	let allocator = Bump::default();
 	let raw = lexer.parse_raw_str(token);
 	let structured = match token.kind() {
 		Kind::Number => Some(Structured::Number(NumberStructured {
@@ -146,25 +147,25 @@ fn convert_token(lexer: &Lexer, token: Token) -> CSSTokenizerTestToken {
 			kind: Some(String::from(if token.is_int() { "integer" } else { "number" })),
 		})),
 		Kind::Dimension => {
-			if lexer.parse_atom(token) == atom!("%") {
+			if lexer.parse_atom(token, &allocator) == atom!("%") {
 				Some(Structured::Number(NumberStructured { value: lexer.parse_number(token), kind: None }))
 			} else {
 				Some(Structured::Dimension(DimensionStructured {
 					value: lexer.parse_number(token),
-					unit: lexer.parse_str(token).to_owned(),
+					unit: lexer.parse_str(token, &allocator).to_owned(),
 					kind: String::from(if token.is_int() { "integer" } else { "number" }),
 				}))
 			}
 		}
 		Kind::Ident | Kind::String | Kind::AtKeyword | Kind::Function | Kind::Url | Kind::Hash => {
-			Some(Structured::String(StringStructured { value: lexer.parse_str(token).into() }))
+			Some(Structured::String(StringStructured { value: lexer.parse_str(token, &allocator).into() }))
 		}
 		Kind::Delim => Some(Structured::String(StringStructured { value: token.char().unwrap().to_string() })),
 		_ => None,
 	};
 	// token.start/end count utf8 bytes because rust strings are utf8. The tokenizer tests,
 	// however, are JS based and JS strings are utf16. So recalculate the indexes to utf16
-	let fake_token = Token::new(Kind::Whitespace, 0, 0, token.offset);
+	let fake_token = Token::new(Kind::Whitespace, 0, 0, token.offset());
 	let start_index = lexer.parse_raw_str(fake_token).encode_utf16().count() as u32;
 	let end_index = start_index + raw.encode_utf16().count() as u32;
 	CSSTokenizerTestToken {
@@ -181,7 +182,7 @@ fn convert_token(lexer: &Lexer, token: Token) -> CSSTokenizerTestToken {
 			Kind::Delim => CSSTokenizerTestKind::Delim,
 			Kind::Number => CSSTokenizerTestKind::Number,
 			Kind::Dimension => {
-				if lexer.parse_atom(token) == atom!("%") {
+				if lexer.parse_atom(token, &allocator) == atom!("%") {
 					CSSTokenizerTestKind::Percentage
 				} else {
 					CSSTokenizerTestKind::Dimension
@@ -214,8 +215,8 @@ fn convert_token(lexer: &Lexer, token: Token) -> CSSTokenizerTestToken {
 }
 
 fn test_case(case: CSSTokenizerTestCase) -> u8 {
-	let allocator = Bump::default();
-	let mut lexer = Lexer::new(&allocator, &case.source_text, Include::all());
+	dbg!(&case.name);
+	let mut lexer = Lexer::new(&case.source_text, Include::all_bits());
 	let mut tokens = vec![];
 	loop {
 		let token = lexer.advance();
@@ -251,5 +252,5 @@ fn full_suite() {
 	for case in cases {
 		fails += test_case(case);
 	}
-	assert_eq!(fails, 0);
+	assert_eq!(fails, 0, "Should have zero failures but {} tests failed", fails);
 }

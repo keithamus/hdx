@@ -73,6 +73,7 @@ impl WritableArgs {
 
 pub fn derive(input: DeriveInput) -> TokenStream {
 	let ident = input.ident;
+	let generics = input.generics;
 	let input_args = WritableArgs::parse(&input.attrs);
 	match input.data {
 		Data::Enum(DataEnum { variants, .. }) => {
@@ -197,7 +198,7 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 			};
 			quote! {
 				#[automatically_derived]
-				impl<'a> ::hdx_writer::WriteCss<'a> for #ident {
+				impl<'a> ::hdx_writer::WriteCss<'a> for #ident #generics {
 					fn write_css<W: ::hdx_writer::CssWriter>(&self, sink: &mut W) -> ::hdx_writer::Result {
 						use ::hdx_writer::{WriteCss, CssWriter};
 						#match_block
@@ -246,7 +247,7 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 			}
 			quote! {
 				#[automatically_derived]
-				impl<'a> ::hdx_writer::WriteCss<'a> for #ident {
+				impl<'a> ::hdx_writer::WriteCss<'a> for #ident #generics {
 					fn write_css<W: ::hdx_writer::CssWriter>(&self, sink: &mut W) -> ::hdx_writer::Result {
 						use ::hdx_writer::{WriteCss, CssWriter};
 						#head

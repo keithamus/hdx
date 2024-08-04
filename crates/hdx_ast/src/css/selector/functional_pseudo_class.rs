@@ -1,7 +1,6 @@
 use hdx_atom::{atom, Atom};
 use hdx_derive::{Atomizable, Parsable, Writable};
-use hdx_lexer::{Kind, Token};
-use hdx_parser::{discard, expect, unexpected, unexpected_function, Parse, Parser, Result as ParserResult};
+use hdx_parser::{diagnostics, discard, Parse, Parser, Result as ParserResult, Token};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 use smallvec::{smallvec, SmallVec};
 
@@ -33,47 +32,46 @@ pub enum FunctionalPseudoClass<'a> {
 
 impl<'a> Parse<'a> for FunctionalPseudoClass<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let val = match parser.next() {
-			Token::Function(ident) => match ident.to_ascii_lowercase() {
-				atom!("dir") => Self::Dir(DirValue::parse(parser)?),
-				atom!("has") => Self::Has(RelativeSelector::parse(parser)?),
-				atom!("host") => Self::Host(SelectorList::parse(parser)?),
-				atom!("host-context") => Self::HostContext(SelectorList::parse(parser)?),
-				atom!("is") => Self::Is(ForgivingSelector::parse(parser)?),
-				atom!("lang") => {
-					let mut langs = smallvec![];
-					loop {
-						match parser.next() {
-							Token::Ident(atom) | Token::String(atom, _) => langs.push(atom.clone()),
-							token => unexpected!(parser, token),
-						}
-						if !discard!(parser, Kind::Comma) {
-							break;
-						}
-					}
-					Self::Lang(langs)
-				}
-				atom!("not") => Self::Not(SelectorList::parse(parser)?),
-				atom!("nth-child") => Self::NthChild(Nth::parse(parser)?),
-				atom!("nth-col") => Self::NthCol(Nth::parse(parser)?),
-				atom!("nth-last-child") => Self::NthLastChild(Nth::parse(parser)?),
-				atom!("nth-last-col") => Self::NthLastCol(Nth::parse(parser)?),
-				atom!("nth-last-of-type") => Self::NthLastOfType(Nth::parse(parser)?),
-				atom!("nth-of-type") => Self::NthOfType(Nth::parse(parser)?),
-				atom!("where") => Self::Where(ForgivingSelector::parse(parser)?),
-				atom!("state") => {
-					if let Token::Ident(atom) = parser.next().clone() {
-						Self::State(atom)
+		let token = *parser.parse::<Token![Function]>()?;
+		let value = match parser.parse_atom_lower(token) {
+			atom!("dir") => parser.parse::<DirValue>().map(Self::Dir)?,
+			atom!("has") => parser.parse::<RelativeSelector>().map(Self::Has)?,
+			atom!("host") => parser.parse::<SelectorList>().map(Self::Host)?,
+			atom!("host-context") => parser.parse::<SelectorList>().map(Self::HostContext)?,
+			atom!("is") => parser.parse::<ForgivingSelector>().map(Self::Is)?,
+			atom!("lang") => {
+				let mut langs = smallvec![];
+				loop {
+					if let Some(token) = parser.peek::<Token![Ident]>() {
+						parser.hop(token);
+						langs.push(parser.parse_atom(token));
 					} else {
-						unexpected!(parser)
+						let token = *parser.parse::<Token![String]>()?;
+						parser.hop(token);
+						langs.push(parser.parse_atom(token));
+					}
+					if !discard!(parser, Comma) {
+						break;
 					}
 				}
-				_ => unexpected_function!(parser, ident),
-			},
-			token => unexpected!(parser, token),
+				Self::Lang(langs)
+			}
+			atom!("not") => parser.parse::<SelectorList>().map(Self::Not)?,
+			atom!("nth-child") => parser.parse::<Nth>().map(Self::NthChild)?,
+			atom!("nth-col") => parser.parse::<Nth>().map(Self::NthCol)?,
+			atom!("nth-last-child") => parser.parse::<Nth>().map(Self::NthLastCol)?,
+			atom!("nth-last-col") => parser.parse::<Nth>().map(Self::NthLastCol)?,
+			atom!("nth-last-of-type") => parser.parse::<Nth>().map(Self::NthLastOfType)?,
+			atom!("nth-of-type") => parser.parse::<Nth>().map(Self::NthOfType)?,
+			atom!("where") => parser.parse::<ForgivingSelector>().map(Self::Where)?,
+			atom!("state") => {
+				let token = *parser.parse::<Token![Ident]>()?;
+				Self::State(parser.parse_atom(token))
+			}
+			ident => Err(diagnostics::UnexpectedFunction(ident, token.span()))?,
 		};
-		expect!(parser.next(), Kind::RightParen);
-		Ok(val)
+		parser.parse::<Token![RightParen]>()?;
+		Ok(value)
 	}
 }
 

@@ -1,177 +1,36 @@
-use hdx_atom::atom;
-use hdx_lexer::Kind;
-use hdx_parser::{match_ignore_case, unexpected, unexpected_ident, Parse, Parser, Result as ParserResult};
-use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
+use crate::css::units::CSSInt;
+use hdx_parser::{Delim, Parse, Parser, Peek, Result as ParserResult, Token};
+use hdx_writer::{write_css, CssWriter, Result as WriterResult, WriteCss};
 
-use crate::css::units::LengthPercentage;
-
+// https://drafts.csswg.org/css-values-4/#ratios
 #[derive(Debug, Clone, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-pub struct Ratio(pub HorizontalRatio, pub VerticalRatio);
+pub struct Ratio(pub CSSInt, pub CSSInt);
+
+impl<'a> Peek<'a> for Ratio {
+	fn peek(parser: &Parser<'a>) -> Option<hdx_lexer::Token> {
+		parser.peek::<Token![Number]>()
+	}
+}
 
 impl<'a> Parse<'a> for Ratio {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let maybe_horizontal = if match_ignore_case!(parser.peek(), Kind::Ident, atom!("top") | atom!("bottom")) {
-			None
+		let token = *parser.parse::<Token![Number]>()?;
+		let a: CSSInt = parser.parse_number(token).into();
+		let b: CSSInt = if let Some(token) = parser.peek::<Delim![/]>() {
+			parser.hop(token);
+			let token = *parser.parse::<Token![Number]>()?;
+			parser.parse_number(token).into()
 		} else {
-			HorizontalRatio::parse(parser).ok()
+			1.into()
 		};
-		let vertical = VerticalRatio::parse(parser).unwrap_or_else(|_| {
-			if matches!(maybe_horizontal, Some(HorizontalRatio::LengthPercentage(_))) {
-				VerticalRatio::LengthPercentage(LengthPercentage::Percent(50.0.into()))
-			} else {
-				VerticalRatio::default()
-			}
-		});
-		let horizontal = maybe_horizontal
-			.unwrap_or_else(|| HorizontalRatio::parse(parser).unwrap_or_else(|_| HorizontalRatio::default()));
-		// Horizontal cannot have a Top/Bottom with a length, if Vertical does not also (IOW no three-value syntax)
-		if (matches!(horizontal, HorizontalRatio::Left(Some(_)) | HorizontalRatio::Right(Some(_)))
-			&& matches!(vertical, VerticalRatio::Top(None) | VerticalRatio::Bottom(None)))
-			|| (matches!(vertical, VerticalRatio::Top(Some(_)) | VerticalRatio::Bottom(Some(_)))
-				&& matches!(horizontal, HorizontalRatio::Left(None) | HorizontalRatio::Right(None)))
-		{
-			unexpected!(parser);
-		}
-		Ok(Self(horizontal, vertical))
+		Ok(Self(a, b))
 	}
 }
 
 impl<'a> WriteCss<'a> for Ratio {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
-		self.0.write_css(sink)?;
-		sink.write_char(' ')?;
-		self.1.write_css(sink)
-	}
-}
-
-#[derive(Debug, Default, Clone, PartialEq, Hash)]
-#[cfg_attr(
-	feature = "serde",
-	derive(serde::Serialize),
-	serde(tag = "type", content = "value", rename_all = "kebab-case")
-)]
-pub enum HorizontalRatio {
-	#[default]
-	Center,
-	Left(Option<LengthPercentage>),
-	Right(Option<LengthPercentage>),
-	LengthPercentage(LengthPercentage),
-}
-
-impl<'a> Parse<'a> for HorizontalRatio {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let token = parser.peek();
-		Ok(match token.kind() {
-			Kind::Ident => match parser.parse_atom_lower(token) {
-				atom!("center") => {
-					parser.next();
-					Self::Center
-				}
-				atom!("left") => {
-					parser.next();
-					let len = LengthPercentage::try_parse(parser).ok();
-					Self::Left(len)
-				}
-				atom!("right") => {
-					parser.next();
-					let len = LengthPercentage::try_parse(parser).ok();
-					Self::Right(len)
-				}
-				_ => unexpected_ident!(parser, atom),
-			},
-			_ => Self::LengthPercentage(LengthPercentage::parse(parser)?),
-		})
-	}
-}
-
-impl<'a> WriteCss<'a> for HorizontalRatio {
-	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
-		match self {
-			Self::Center => atom!("center").write_css(sink),
-			Self::Left(pos) => {
-				atom!("left").write_css(sink)?;
-				if let Some(pos) = pos {
-					sink.write_char(' ')?;
-					pos.write_css(sink)?;
-				}
-				Ok(())
-			}
-			Self::Right(pos) => {
-				atom!("right").write_css(sink)?;
-				if let Some(pos) = pos {
-					sink.write_char(' ')?;
-					pos.write_css(sink)?;
-				}
-				Ok(())
-			}
-			Self::LengthPercentage(l) => l.write_css(sink),
-		}
-	}
-}
-
-#[derive(Debug, Default, Clone, PartialEq, Hash)]
-#[cfg_attr(
-	feature = "serde",
-	derive(serde::Serialize),
-	serde(tag = "type", content = "value", rename_all = "kebab-case")
-)]
-pub enum VerticalRatio {
-	#[default]
-	Center,
-	Top(Option<LengthPercentage>),
-	Bottom(Option<LengthPercentage>),
-	LengthPercentage(LengthPercentage),
-}
-
-impl<'a> Parse<'a> for VerticalRatio {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-	  let token = parser.peek();
-		Ok(match token.kind() {
-			Kind::Ident => match parser.parse_atom_lower(token) {
-				atom!("center") => {
-					parser.next();
-					Self::Center
-				}
-				atom!("top") => {
-					parser.next();
-					let len = LengthPercentage::try_parse(parser).ok();
-					Self::Top(len)
-				}
-				atom!("bottom") => {
-					parser.next();
-					let len = LengthPercentage::try_parse(parser).ok();
-					Self::Bottom(len)
-				}
-				_ => unexpected_ident!(parser, atom),
-			},
-			_ => Self::LengthPercentage(LengthPercentage::parse(parser)?),
-		})
-	}
-}
-
-impl<'a> WriteCss<'a> for VerticalRatio {
-	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
-		match self {
-			Self::Center => atom!("center").write_css(sink),
-			Self::Top(pos) => {
-				atom!("top").write_css(sink)?;
-				if let Some(pos) = pos {
-					sink.write_char(' ')?;
-					pos.write_css(sink)?;
-				}
-				Ok(())
-			}
-			Self::Bottom(pos) => {
-				atom!("bottom").write_css(sink)?;
-				if let Some(pos) = pos {
-					sink.write_char(' ')?;
-					pos.write_css(sink)?;
-				}
-				Ok(())
-			}
-			Self::LengthPercentage(l) => l.write_css(sink),
-		}
+		Ok(write_css!(sink, self.0, (), '/', (), self.1))
 	}
 }
 
@@ -182,56 +41,29 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(Ratio, 24);
+		assert_size!(Ratio, 8);
 	}
 
 	#[test]
 	fn test_writes() {
-		assert_parse!(Ratio, "left", "left center");
-		assert_parse!(Ratio, "right", "right center");
-		assert_parse!(Ratio, "top", "center top");
-		assert_parse!(Ratio, "bottom", "center bottom");
-		assert_parse!(Ratio, "center", "center center");
-		assert_parse!(Ratio, "center center");
-		assert_parse!(Ratio, "center top");
-		assert_parse!(Ratio, "left top");
-		assert_parse!(Ratio, "top left", "left top");
-		assert_parse!(Ratio, "50% 50%");
-		assert_parse!(Ratio, "50%", "50% 50%");
-		assert_parse!(Ratio, "20px 30px");
-		assert_parse!(Ratio, "2% bottom");
-		assert_parse!(Ratio, "-70% -180%");
-		assert_parse!(Ratio, "right 8.5%", "right 8.5% center");
-		assert_parse!(Ratio, "right -6px bottom 12vmin");
+		assert_parse!(Ratio, "1 / 1", "1 / 1");
+		assert_parse!(Ratio, "5 / 3", "5 / 3");
+		assert_parse!(Ratio, "5", "5 / 1");
 	}
 
 	#[test]
 	fn test_errors() {
-		assert_parse_error!(Ratio, "left left");
-		assert_parse_error!(Ratio, "bottom top");
-		assert_parse_error!(Ratio, "10px 15px 20px 15px");
-		// 3 value syntax is not allowed
-		assert_parse_error!(Ratio, "right -6px bottom");
+		assert_parse_error!(Ratio, "5 : 3");
+		assert_parse_error!(Ratio, "5 / 1 / 1");
 	}
 
 	#[cfg(feature = "serde")]
 	#[test]
 	fn test_serializes() {
-		assert_json!(Ratio, "center center", {
-			"node": [
-				{"type": "center"},
-				{"type": "center"},
-			],
+		assert_json!(Ratio, "5 / 3", {
+			"node": [5, 3],
 			"start": 0,
-			"end": 13
-		});
-		assert_json!(Ratio, "left bottom", {
-			"node": [
-				{"type": "left", "value": null},
-				{"type": "bottom", "value": null},
-			],
-			"start": 0,
-			"end": 11
+			"end": 5
 		});
 	}
 }
