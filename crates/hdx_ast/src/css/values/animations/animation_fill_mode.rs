@@ -36,7 +36,7 @@ impl<'a> Parse<'a> for AnimationFillMode {
 				}
 				_ => unexpected!(parser, token),
 			}
-			if !discard!(parser, Kind::Comma) {
+			if !discard!(parser, Comma) {
 				break;
 			}
 		}

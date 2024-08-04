@@ -16,7 +16,7 @@ impl<'a> Parse<'a> for BackgroundImage {
 		loop {
 			let value = SingleBackgroundImage::parse_spanned(parser)?;
 			values.push(value);
-			if !discard!(parser, Kind::Comma) {
+			if !discard!(parser, Comma) {
 				break;
 			}
 		}

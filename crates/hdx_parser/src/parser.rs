@@ -1,9 +1,14 @@
 use bitmask_enum::bitmask;
 use bumpalo::Bump;
-use hdx_lexer::{Include, Kind, Lexer, Token};
+use hdx_lexer::{Include, Kind, Lexer, Spanned, Token};
 use miette::Error;
+use std::mem::take;
 
-use crate::{diagnostics, span::Spanned, traits::Parse};
+use crate::{
+	diagnostics,
+	traits::{Parse, Peek},
+	Result,
+};
 
 pub struct Parser<'a> {
 	pub(crate) lexer: Lexer<'a>,
@@ -53,7 +58,7 @@ impl<'a> Parser<'a> {
 	/// Create a new parser
 	pub fn new(allocator: &'a Bump, source_text: &'a str, features: Features) -> Self {
 		Self {
-			lexer: Lexer::new(allocator, source_text, Include::none()),
+			lexer: Lexer::new(source_text, Include::none()),
 			features,
 			warnings: std::vec::Vec::new(),
 			errors: std::vec::Vec::new(),
@@ -79,16 +84,16 @@ impl<'a> Parser<'a> {
 		self.state.contains(state)
 	}
 
-	pub fn parse_entirely_with<T: Parse<'a>>(mut self) -> ParserReturn<Spanned<T>> {
-		let (output, panicked) = match T::parse_spanned(&mut self) {
+	pub fn parse_entirely_with<T: Parse<'a>>(&mut self) -> ParserReturn<Spanned<T>> {
+		let (output, panicked) = match T::parse_spanned(self) {
 			Ok(output) => (Some(output), false),
 			Err(error) => {
 				self.errors.push(error);
 				(None, true)
 			}
 		};
-		if !matches!(self.next().kind(), Kind::Eof) {
-			let span = self.span();
+		if !self.at_end() {
+			let span = self.cur().span();
 			loop {
 				if matches!(self.next().kind(), Kind::Eof) {
 					break;
@@ -96,18 +101,49 @@ impl<'a> Parser<'a> {
 			}
 			self.errors.push(diagnostics::ExpectedEnd(span.end(self.pos())).into());
 		}
-		ParserReturn { output, warnings: self.warnings, errors: self.errors, panicked }
+		ParserReturn { output, warnings: take(&mut self.warnings), errors: take(&mut self.errors), panicked }
 	}
 
-	pub fn parse_with<T: Parse<'a>>(mut self) -> ParserReturn<Spanned<T>> {
-		let (output, panicked) = match T::parse_spanned(&mut self) {
-			Ok(output) => (Some(output), false),
-			Err(error) => {
-				self.errors.push(error);
-				(None, true)
-			}
-		};
-		ParserReturn { output, warnings: self.warnings, errors: self.errors, panicked }
+	pub fn parse<T: Parse<'a>>(&mut self) -> Result<T> {
+		T::parse(self)
+	}
+
+	pub fn parse_with<T: Parse<'a>>(&mut self, inc: Include) -> Result<T> {
+		let old_inc = self.lexer.include;
+		self.lexer = self.lexer.clone_with(inc);
+		let res = T::parse(self);
+		self.lexer = self.lexer.clone_with(old_inc);
+		res
+	}
+
+	pub fn parse_spanned<T: Parse<'a>>(&mut self) -> Result<Spanned<T>> {
+		T::parse_spanned(self)
+	}
+
+	pub fn peek<T: Peek<'a>>(&self) -> Option<Token> {
+		T::peek(self)
+	}
+
+	pub fn peek_with<T: Peek<'a>>(&mut self, inc: Include) -> Option<Token> {
+		let old_inc = self.lexer.include;
+		self.lexer = self.lexer.clone_with(inc);
+		let token = T::peek(self);
+		self.lexer = self.lexer.clone_with(old_inc);
+		token
+	}
+
+	pub fn try_parse<T: Parse<'a>>(&mut self) -> Result<T> {
+		T::try_parse(self)
+	}
+
+	pub fn try_parse_spanned<T: Parse<'a>>(&mut self) -> Option<Spanned<T>> {
+		let checkpoint = self.checkpoint();
+		if let Ok(res) = T::parse_spanned(self) {
+			Some(res)
+		} else {
+			self.rewind(checkpoint);
+			None
+		}
 	}
 
 	#[inline]
@@ -116,27 +152,27 @@ impl<'a> Parser<'a> {
 	}
 
 	#[inline]
-	pub fn parse_atom(&mut self, tok: Token) -> hdx_atom::Atom {
-		self.lexer.parse_atom(tok)
+	pub fn parse_atom(&self, tok: Token) -> hdx_atom::Atom {
+		self.lexer.parse_atom(tok, self.allocator)
 	}
 
 	#[inline]
-	pub fn parse_atom_lower(&mut self, tok: Token) -> hdx_atom::Atom {
-		self.lexer.parse_atom_lower(tok)
+	pub fn parse_atom_lower(&self, tok: Token) -> hdx_atom::Atom {
+		self.lexer.parse_atom_lower(tok, self.allocator)
 	}
 
 	#[inline]
-	pub fn parse_number(&mut self, tok: Token) -> f32 {
+	pub fn parse_number(&self, tok: Token) -> f32 {
 		self.lexer.parse_number(tok)
 	}
 
 	#[inline]
-	pub fn parse_raw_str(&mut self, tok: Token) -> &'a str {
+	pub fn parse_raw_str(&self, tok: Token) -> &'a str {
 		self.lexer.parse_raw_str(tok)
 	}
 
 	#[inline]
-	pub fn parse_str(&mut self, tok: Token) -> &'a str {
-		self.lexer.parse_str(tok)
+	pub fn parse_str(&self, tok: Token) -> &'a str {
+		self.lexer.parse_str(tok, self.allocator)
 	}
 }

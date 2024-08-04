@@ -1,9 +1,8 @@
 use crate::{css::stylesheet::Rule, syntax::SimpleBlock};
 use hdx_atom::atom;
-use hdx_lexer::{Kind, Token};
 use hdx_parser::{
 	diagnostics, expect, expect_ignore_case, match_ignore_case, peek, unexpected, unexpected_ident, AtRule, Parse,
-	Parser, Result as ParserResult, RuleList, Spanned, Vec,
+	Parser, Result as ParserResult, RuleList, Spanned, Vec, Token,
 };
 use hdx_writer::{CssWriter, OutputOption, Result as WriterResult, WriteCss};
 
@@ -18,8 +17,12 @@ pub struct Supports<'a> {
 // https://drafts.csswg.org/css-conditional-3/#at-ruledef-supports
 impl<'a> Parse<'a> for Supports<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		expect_ignore_case!(parser.next(), Kind::AtKeyword, atom!("supports"));
-		let span = parser.span();
+		let token = *parser.parse::<Token![AtKeyword]>()?;
+		let atom = parser.parse_atom_lower(token);
+		let span = token.span(); 
+		if atom != atom!("supports") {
+			Err(diagnostics::UnexpectedAtRule(atom, span))?;
+		}
 		match Self::parse_at_rule(parser)? {
 			(Some(condition), Some(rules)) => Ok(Self { condition, rules }),
 			(Some(_), None) => Err(diagnostics::MissingAtRuleBlock(span.end(parser.pos())))?,
@@ -194,7 +197,7 @@ impl<'a> WriteCss<'a> for SupportsCondition<'a> {
 			}
 			Self::And(features) => {
 				let mut first = true;
-				let mut iter = features.iter().peekable();
+				let mut iter = features.into_iter().peekable();
 				while let Some(feature) = iter.next() {
 					if first {
 						first = false;
@@ -211,7 +214,7 @@ impl<'a> WriteCss<'a> for SupportsCondition<'a> {
 			}
 			Self::Or(features) => {
 				let mut first = true;
-				let mut iter = features.iter().peekable();
+				let mut iter = features.into_iter().peekable();
 				while let Some(feature) = iter.next() {
 					if first {
 						first = false;

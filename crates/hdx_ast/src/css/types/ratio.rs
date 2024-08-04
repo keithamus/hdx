@@ -1,6 +1,5 @@
 use hdx_atom::atom;
-use hdx_lexer::Kind;
-use hdx_parser::{match_ignore_case, unexpected, unexpected_ident, Parse, Parser, Result as ParserResult};
+use hdx_parser::{token, unexpected, unexpected_ident, Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 
 use crate::css::units::LengthPercentage;
@@ -11,12 +10,15 @@ pub struct Ratio(pub HorizontalRatio, pub VerticalRatio);
 
 impl<'a> Parse<'a> for Ratio {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let maybe_horizontal = if match_ignore_case!(parser.peek(), Kind::Ident, atom!("top") | atom!("bottom")) {
-			None
+		let maybe_horizontal = if let Some(token) = parser.peek::<token::Ident>() {
+			match parser.parse_atom_lower(token) {
+				atom!("top") | atom!("bottom") => parser.parse::<HorizontalRatio>().ok(),
+				_ => None,
+			}
 		} else {
-			HorizontalRatio::parse(parser).ok()
+			None
 		};
-		let vertical = VerticalRatio::parse(parser).unwrap_or_else(|_| {
+		let vertical = parser.parse::<VerticalRatio>().unwrap_or_else(|_| {
 			if matches!(maybe_horizontal, Some(HorizontalRatio::LengthPercentage(_))) {
 				VerticalRatio::LengthPercentage(LengthPercentage::Percent(50.0.into()))
 			} else {
@@ -61,27 +63,22 @@ pub enum HorizontalRatio {
 
 impl<'a> Parse<'a> for HorizontalRatio {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let token = parser.peek();
-		Ok(match token.kind() {
-			Kind::Ident => match parser.parse_atom_lower(token) {
-				atom!("center") => {
-					parser.next();
-					Self::Center
-				}
+		if let Some(token) = parser.peek::<token::Ident>() {
+			parser.advance_to(token);
+			return match parser.parse_atom_lower(token) {
+				atom!("center") => Ok(Self::Center),
 				atom!("left") => {
-					parser.next();
 					let len = LengthPercentage::try_parse(parser).ok();
-					Self::Left(len)
+					Ok(Self::Left(len))
 				}
 				atom!("right") => {
-					parser.next();
 					let len = LengthPercentage::try_parse(parser).ok();
-					Self::Right(len)
+					Ok(Self::Right(len))
 				}
-				_ => unexpected_ident!(parser, atom),
-			},
-			_ => Self::LengthPercentage(LengthPercentage::parse(parser)?),
-		})
+				atom => unexpected_ident!(parser, atom),
+			};
+		}
+		parser.parse::<LengthPercentage>().map(Self::LengthPercentage)
 	}
 }
 
@@ -126,27 +123,16 @@ pub enum VerticalRatio {
 
 impl<'a> Parse<'a> for VerticalRatio {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-	  let token = parser.peek();
-		Ok(match token.kind() {
-			Kind::Ident => match parser.parse_atom_lower(token) {
-				atom!("center") => {
-					parser.next();
-					Self::Center
-				}
-				atom!("top") => {
-					parser.next();
-					let len = LengthPercentage::try_parse(parser).ok();
-					Self::Top(len)
-				}
-				atom!("bottom") => {
-					parser.next();
-					let len = LengthPercentage::try_parse(parser).ok();
-					Self::Bottom(len)
-				}
-				_ => unexpected_ident!(parser, atom),
-			},
-			_ => Self::LengthPercentage(LengthPercentage::parse(parser)?),
-		})
+		if let Some(token) = parser.peek::<token::Ident>() {
+			parser.advance_to(token);
+			return match parser.parse_atom_lower(token) {
+				atom!("center") => Ok(Self::Center),
+				atom!("top") => Ok(Self::Top(parser.try_parse::<LengthPercentage>().ok())),
+				atom!("bottom") => Ok(Self::Bottom(parser.try_parse::<LengthPercentage>().ok())),
+				atom => unexpected_ident!(parser, atom),
+			};
+		}
+		parser.parse::<LengthPercentage>().map(Self::LengthPercentage)
 	}
 }
 

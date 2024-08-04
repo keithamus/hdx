@@ -5,7 +5,7 @@ use serde::{
 	Serialize,
 };
 
-use crate::Include;
+use crate::{Include, Span};
 
 #[derive(Default)]
 #[bitmask(u8)] // Actually more like a "u5" as the 3 LMB are unused
@@ -191,6 +191,10 @@ impl Token {
 		Self { flags, offset }
 	}
 
+	pub fn span(&self) -> Span {
+		Span::new(self.offset, self.offset + self.len())
+	}
+
 	#[inline(always)]
 	pub(crate) fn kind_bits(&self) -> u8 {
 		(self.flags.bits >> 24 & 0b11111) as u8
@@ -218,7 +222,7 @@ impl Token {
 	}
 
 	#[inline(always)]
-	pub(crate) fn is_ident_like(&self) -> bool {
+	pub fn is_ident_like(&self) -> bool {
 		self.kind_bits() & 0b11000 == 0b01000 && self.kind_bits() != Kind::String.bits
 	}
 
@@ -243,10 +247,13 @@ impl Token {
 			debug_assert!(matches!(
 				self.kind(),
 				Kind::Colon
-					| Kind::Semicolon | Kind::Comma
-					| Kind::LeftSquare | Kind::RightSquare
-					| Kind::LeftParen | Kind::RightParen
-					| Kind::LeftCurly | Kind::RightCurly
+					| Kind::Semicolon
+					| Kind::Comma | Kind::LeftSquare
+					| Kind::RightSquare
+					| Kind::LeftParen
+					| Kind::RightParen
+					| Kind::LeftCurly
+					| Kind::RightCurly
 			));
 			1
 		// CdcOrCdo
@@ -418,6 +425,29 @@ impl core::fmt::Debug for Token {
 	}
 }
 
+impl std::fmt::Display for Token {
+	fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+		match self.kind() {
+			Kind::Delim => write!(f, "Delim({})", self.char().unwrap()),
+			k => write!(f, "{}", k.as_str()),
+		}
+	}
+}
+
+#[cfg(feature = "serde")]
+impl serde::ser::Serialize for Token {
+	fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+	where
+		S: Serializer,
+	{
+		let mut state = serializer.serialize_struct("Token", 3)?;
+		state.serialize_field("kind", self.kind().as_str())?;
+		state.serialize_field("offset", &self.offset)?;
+		state.serialize_field("len", &self.len())?;
+		state.end()
+	}
+}
+
 #[derive(Debug, Eq, PartialEq, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize))]
 pub enum PairWise {
@@ -453,28 +483,5 @@ impl PairWise {
 			Self::Curly => Kind::RightCurly,
 			Self::Square => Kind::RightSquare,
 		}
-	}
-}
-
-impl std::fmt::Display for Token {
-	fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-		match self.kind() {
-			Kind::Delim => write!(f, "Delim({})", self.char().unwrap()),
-			k => write!(f, "{}", k.as_str()),
-		}
-	}
-}
-
-#[cfg(feature = "serde")]
-impl serde::ser::Serialize for Token {
-	fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-	where
-		S: Serializer,
-	{
-		let mut state = serializer.serialize_struct("Token", 3)?;
-		state.serialize_field("kind", self.kind().as_str())?;
-		state.serialize_field("offset", &self.offset)?;
-		state.serialize_field("len", &self.len())?;
-		state.end()
 	}
 }

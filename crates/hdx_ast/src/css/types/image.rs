@@ -1,10 +1,8 @@
 use bitmask_enum::bitmask;
 use hdx_atom::{atom, Atom, Atomizable};
-use hdx_derive::{Atomizable, Parsable, Writable};
-use hdx_lexer::{Kind, QuoteStyle};
-use hdx_parser::{
-	discard, expect, expect_ignore_case, peek, unexpected, unexpected_ident, Parse, Parser, Result as ParserResult,
-};
+use hdx_derive::{Atomizable, Writable};
+use hdx_lexer::QuoteStyle;
+use hdx_parser::{unexpected, unexpected_function, unexpected_ident, Parse, Parser, Result as ParserResult, Token};
 use hdx_writer::{CssWriter, OutputOption, Result as WriterResult, WriteCss};
 use smallvec::{smallvec, SmallVec};
 
@@ -25,28 +23,19 @@ pub enum Image {
 
 impl<'a> Parse<'a> for Image {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let token = parser.peek();
-		Ok(match token.kind() {
-			Kind::Url => {
-				parser.next();
-				Self::Url(parser.parse_atom(token), token.quote_style())
+		if let Some(token) = parser.peek::<Token![Url]>() {
+			parser.advance_to(token);
+			return Ok(Self::Url(parser.parse_atom(token), token.quote_style()));
+		}
+		if let Some(token) = parser.peek::<Token![Function]>() {
+			if parser.parse_atom_lower(token) == atom!("url") {
+				parser.advance_to(token);
+				let string_token = parser.parse::<Token![String]>()?;
+				parser.parse::<Token![RightParen]>()?;
+				return Ok(Self::Url(parser.parse_atom(*string_token), string_token.quote_style()));
 			}
-			Kind::Function => match parser.parse_atom_lower(token) {
-				atom!("url") => {
-					parser.next();
-					let token = parser.next();
-					match token.kind() {
-						Kind::String => {
-							expect!(parser.next(), Kind::RightParen);
-							Self::Url(parser.parse_atom(token), token.quote_style())
-						}
-						_ => unexpected!(parser, token),
-					}
-				}
-				_ => Self::Gradient(Gradient::parse(parser)?),
-			},
-			_ => unexpected!(parser, token),
-		})
+		}
+		parser.parse::<Gradient>().map(Self::Gradient)
 	}
 }
 
@@ -79,21 +68,20 @@ impl<'a> Gradient {
 		let mut stops = smallvec![];
 		let mut allow_hint = false;
 		loop {
-			if let Some(hint) = LengthPercentage::try_parse(parser).ok() {
-				if allow_hint {
+			if allow_hint {
+				if let Some(hint) = parser.try_parse::<LengthPercentage>().ok() {
 					stops.push(ColorStopOrHint::Hint(hint));
-					expect!(parser.next(), Kind::Comma);
-				} else {
-					unexpected!(parser);
+					parser.parse::<Token![Comma]>()?;
 				}
 			}
-			let color = Color::parse(parser)?;
-			let hint = LengthPercentage::try_parse(parser).ok();
+			let color = parser.parse::<Color>()?;
+			let hint = parser.try_parse::<LengthPercentage>().ok();
 			stops.push(ColorStopOrHint::Stop(color, hint));
 			allow_hint = hint.is_some();
-			if !discard!(parser, Kind::Comma) {
+			if parser.peek::<Token![Comma]>().is_none() {
 				break;
 			}
+			parser.parse::<Token![Comma]>()?;
 		}
 		Ok(stops)
 	}
@@ -101,56 +89,56 @@ impl<'a> Gradient {
 
 impl<'a> Parse<'a> for Gradient {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let gradient = expect_ignore_case! { parser.next(), Token::Function(_):
+		let func_token = parser.parse::<Token![Function]>()?;
+		let gradient = match parser.parse_atom_lower(*func_token) {
 			atom @ atom!("linear-gradient") | atom @ atom!("repeating-linear-gradient") => {
-				let dir = if let Ok(dir) = LinearDirection::try_parse(parser) {
-					expect!(parser.next(), Kind::Comma);
+				let dir = if let Ok(dir) = parser.try_parse::<LinearDirection>() {
+					parser.parse::<Token![Comma]>()?;
 					dir
 				} else {
 					LinearDirection::default()
 				};
-				match atom {
-					atom!("linear-gradient") => Self::Linear(dir, Self::parse_stops(parser)?),
-					atom!("repeating-linear-gradient") => {
-						Self::RepeatingLinear(dir, Self::parse_stops(parser)?)
-					}
-					_ => unexpected_ident!(parser, atom),
-				}
-			},
-			atom @ atom!("radial-gradient") | atom @ atom!("repeating-linear-gradient") => {
-				let mut size = RadialSize::parse(parser).ok();
-				let shape = RadialShape::parse(parser).ok();
-				if size.is_none() && shape.is_some() {
-					size = RadialSize::parse(parser).ok();
-				}
-				let position = if matches!(parser.cur(), Token::Ident(atom) if atom.to_ascii_lowercase() == atom!("at"))
-				{
-					parser.next();
-					Some(Position::parse(parser)?)
+				if atom == atom!("linear-gradient") {
+					Self::Linear(dir, Self::parse_stops(parser)?)
 				} else {
-					None
-				};
+					Self::RepeatingLinear(dir, Self::parse_stops(parser)?)
+				}
+			}
+			atom @ atom!("radial-gradient") | atom @ atom!("repeating-linear-gradient") => {
+				let mut size = parser.try_parse::<RadialSize>().ok();
+				let shape = parser.parse::<RadialShape>().ok();
+				if size.is_none() && shape.is_some() {
+					size = Some(RadialSize::parse(parser)?);
+				}
+				let mut position = None;
+				if let Some(token) = parser.peek::<Token![Ident]>() {
+					if parser.parse_atom_lower(token) == atom!("at") {
+						parser.advance_to(token);
+						position = Some(Position::parse(parser)?)
+					}
+				}
 				if size.is_some() || shape.is_some() {
-					expect!(parser.next(), Kind::Comma);
+					parser.parse::<Token![Comma]>();
 				}
-				match atom {
-					atom!("radial-gradient") => Self::Radial(
+				if atom == atom!("radial-gradient") {
+					Self::Radial(
 						size.unwrap_or(RadialSize::default()),
 						shape.unwrap_or(RadialShape::default()),
 						position,
 						Self::parse_stops(parser)?,
-					),
-					atom!("repeating-radial-gradient") => Self::RepeatingRadial(
+					)
+				} else {
+					Self::RepeatingRadial(
 						size.unwrap_or(RadialSize::default()),
 						shape.unwrap_or(RadialShape::default()),
 						position,
 						Self::parse_stops(parser)?,
-					),
-					_ => unexpected_ident!(parser, atom),
+					)
 				}
-			},
+			}
+			atom => unexpected_function!(parser, atom),
 		};
-		expect!(parser.next(), Kind::RightParen);
+		parser.parse::<Token![RightParen]>();
 		Ok(gradient)
 	}
 }
@@ -263,45 +251,51 @@ pub enum NamedDirection {
 
 impl<'a> Parse<'a> for LinearDirection {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		match parser.peek() {
-			Token::Dimension(_, _, _) => return Ok(Self::Angle(Angle::parse(parser)?)),
-			Token::Ident(_) => {}
-			token => unexpected!(parser, token.clone()),
-		};
-		expect_ignore_case!(parser.next(), Kind::Ident, atom!("to"));
+		if let Ok(angle) = parser.try_parse::<Angle>() {
+			return Ok(Self::Angle(angle));
+		}
+		let to_token = parser.parse::<Token![Ident]>()?;
+		let to = parser.parse_atom_lower(*to_token);
+		if to != atom!("to") {
+			unexpected_ident!(parser, to);
+		}
 		let mut dir = NamedDirection::none();
-		dir |= expect_ignore_case! { parser.next(), Token::Ident(_):
+		let token = parser.parse::<Token![Ident]>()?;
+		dir |= match parser.parse_atom_lower(*token) {
 			atom!("top") => NamedDirection::Top,
 			atom!("left") => NamedDirection::Left,
 			atom!("right") => NamedDirection::Right,
 			atom!("bottom") => NamedDirection::Bottom,
+			atom => unexpected_ident!(parser, atom),
 		};
-		if peek!(parser, Kind::Ident) {
-			dir |= expect_ignore_case! { parser.next(), Token::Ident(_):
+		if let Some(token) = parser.peek::<Token![Ident]>() {
+			parser.advance_to(token);
+			dir |= match parser.parse_atom_lower(token) {
 				atom @ atom!("top") => {
 					if dir.contains(NamedDirection::Top) || dir.contains(NamedDirection::Bottom) {
 						unexpected_ident!(parser, atom)
 					}
 					NamedDirection::Top
-				},
+				}
 				atom @ atom!("left") => {
 					if dir.contains(NamedDirection::Left) || dir.contains(NamedDirection::Right) {
 						unexpected_ident!(parser, atom)
 					}
 					NamedDirection::Left
-				},
+				}
 				atom @ atom!("right") => {
 					if dir.contains(NamedDirection::Right) || dir.contains(NamedDirection::Left) {
 						unexpected_ident!(parser, atom)
 					}
 					NamedDirection::Right
-				},
+				}
 				atom @ atom!("bottom") => {
 					if dir.contains(NamedDirection::Bottom) || dir.contains(NamedDirection::Top) {
 						unexpected_ident!(parser, atom)
 					}
 					NamedDirection::Bottom
 				}
+				atom => unexpected_ident!(parser, atom),
 			};
 		}
 		Ok(Self::Named(dir))
@@ -354,47 +348,58 @@ pub enum RadialSize {
 
 impl<'a> Parse<'a> for RadialSize {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		Ok(match parser.peek().clone() {
-			Token::Ident(atom) => {
-				parser.next();
-				match atom.to_ascii_lowercase() {
-					atom!("closest-corner") => RadialSize::ClosestCorner,
-					atom!("closest-side") => RadialSize::ClosestSide,
-					atom!("farthest-corner") => RadialSize::FarthestCorner,
-					atom!("farthest-side") => RadialSize::FarthestSide,
-					_ => unexpected_ident!(parser, atom),
-				}
+		if let Some(token) = parser.peek::<Token![Ident]>() {
+			parser.advance_to(token);
+			return Ok(match parser.parse_atom_lower(token) {
+				atom!("closest-corner") => RadialSize::ClosestCorner,
+				atom!("closest-side") => RadialSize::ClosestSide,
+				atom!("farthest-corner") => RadialSize::FarthestCorner,
+				atom!("farthest-side") => RadialSize::FarthestSide,
+				atom => unexpected_ident!(parser, atom),
+			});
+		}
+		if let Some(_) = parser.peek::<Token![Number]>() {
+			let first_len = parser.parse::<LengthPercentage>()?;
+			if parser.peek::<Token![Number]>().is_none() {
+				return parser.parse::<Length>().map(Self::Circular);
 			}
-			first @ Token::Number(_, _) | first @ Token::Dimension(_, atom!("%"), _) => {
-				match parser.peek_n(2).clone() {
-					second @ Token::Number(_, _) | second @ Token::Dimension(_, atom!("%"), _) => {
-						if matches!(first, Token::Number(_, _)) != matches!(second, Token::Number(_, _)) {
-							unexpected!(parser);
-						}
-						let first_len = LengthPercentage::parse(parser)?;
-						let second_len = LengthPercentage::parse(parser)?;
-						Self::Elliptical(first_len, second_len)
-					}
-					_ => {
-						if matches!(first, Token::Dimension(_, _, _)) {
-							unexpected!(parser, first);
-						}
-						Self::Circular(Length::parse(parser)?)
-					}
+			let second_len = parser.parse::<LengthPercentage>()?;
+			return Ok(Self::Elliptical(first_len, second_len));
+		}
+		if let Some(token) = parser.peek::<Token![Dimension]>() {
+			if parser.parse_atom(token) == atom!("%") {
+				let first_len = parser.parse::<LengthPercentage>()?;
+				if parser.peek::<Token![Dimension]>().is_none() {
+					unexpected!(parser);
 				}
+				let second_len = parser.parse::<LengthPercentage>()?;
+				return Ok(Self::Elliptical(first_len, second_len));
+			} else {
+				unexpected_dimension!(parser, token);
 			}
-			token => unexpected!(parser, token),
-		})
+		}
+		unexpected!(parser)
 	}
 }
 
-// https://drafts.csswg.org/css-images-3/#typedef-rg-ending-shape
-#[derive(Atomizable, Parsable, Default, Debug, Clone, PartialEq, Hash)]
+// https://drafts.csswg.org/css-images-3/#typedef-radial-shape
+#[derive(Atomizable, Default, Debug, Clone, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", rename_all = "kebab-case"))]
 pub enum RadialShape {
 	#[default]
 	Circle, // atom!("circle")
 	Ellipse, // atom!("ellipse")
+}
+
+impl<'a> Parse<'a> for RadialShape {
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
+		let token = parser.parse::<Token![Ident]>()?;
+		match parser.parse_atom_lower(*token) {
+			atom!("circle") => Ok(Self::Circle),
+			atom!("ellipse") => Ok(Self::Ellipse),
+			atom => unexpected_ident!(parser, atom),
+		}
+	}
 }
 
 #[derive(Debug, Clone, PartialEq, Hash)]

@@ -88,7 +88,7 @@ impl<'a> Parse<'a> for KeyframeList<'a> {
 		expect!(parser.next(), Kind::LeftCurly);
 		let mut rules = parser.new_vec();
 		loop {
-			if discard!(parser, Kind::RightCurly) {
+			if discard!(parser, RightCurly) {
 				return Ok(Self(rules));
 			}
 			rules.push(Keyframe::parse_spanned(parser)?);
@@ -120,17 +120,17 @@ impl<'a> Parse<'a> for Keyframe<'a> {
 		let mut selector = smallvec![];
 		loop {
 			selector.push(KeyframeSelector::parse(parser)?);
-			if discard!(parser, Kind::LeftCurly | Kind::Eof) {
+			if discard!(parser, LeftCurly) || discard!(parser, Eof) {
 				break;
 			}
-			if !discard!(parser, Kind::Comma) {
+			if !discard!(parser, Comma) {
 				unexpected!(parser, parser.peek());
 			}
 		}
 		let mut properties = parser.new_vec();
 		loop {
-			discard!(parser, Kind::Semicolon);
-			if discard!(parser, Kind::RightCurly | Kind::Eof) {
+			discard!(parser, Semicolon);
+			if discard!(parser, RightCurly) || discard!(parser, Eof) {
 				break;
 			}
 			properties.push(Property::parse_spanned(parser)?);
@@ -186,7 +186,7 @@ impl<'a> Parse<'a> for KeyframeSelector {
 				} else {
 					unexpected!(parser, token)
 				}
-			},
+			}
 			_ => unexpected!(parser, token),
 		}
 	}

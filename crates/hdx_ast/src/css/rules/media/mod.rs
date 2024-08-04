@@ -102,7 +102,7 @@ impl<'a> Parse<'a> for MediaQueryList {
 		let mut queries = smallvec![];
 		loop {
 			queries.push(MediaQuery::parse_spanned(parser)?);
-			if !discard!(parser, Kind::Comma) {
+			if !discard!(parser, Comma) {
 				return Ok(Self(queries));
 			}
 		}

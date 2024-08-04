@@ -1,7 +1,7 @@
-use hdx_lexer::{Include, Kind, Token};
+use hdx_lexer::Include;
 use hdx_parser::{
-	diagnostics, expect, expect_ignore_case, unexpected, AtRule, DeclarationRuleList, Parse, Parser,
-	Result as ParserResult, Spanned, Vec,
+	discard, diagnostics, unexpected, AtRule, DeclarationRuleList, Parse, Parser,
+	Result as ParserResult, Spanned, Vec, Token
 };
 use hdx_writer::{write_css, write_list, CssWriter, OutputOption, Result as WriterResult, WriteCss};
 use smallvec::{smallvec, SmallVec};
@@ -23,8 +23,12 @@ pub struct Page<'a> {
 // https://drafts.csswg.org/css-page-3/#syntax-page-selector
 impl<'a> Parse<'a> for Page<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		expect_ignore_case!(parser.next(), Kind::AtKeyword, atom!("page"));
-		let span = parser.span();
+		let token = *parser.parse::<Token![AtKeyword]>()?;
+		let atom = parser.parse_atom_lower(token);
+		let span = token.span(); 
+		if atom != atom!("page") {
+			Err(diagnostics::UnexpectedAtRule(atom, span))?;
+		}
 		let (selectors, style) = Self::parse_at_rule(parser)?;
 		if let Some(style) = style {
 			Ok(Self { selectors, style })
@@ -64,11 +68,9 @@ impl<'a> Parse<'a> for PageSelectorList {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		let mut selectors = smallvec![];
 		loop {
-			let selector = PageSelector::parse_spanned(parser)?;
+			let selector = parser.parse_spanned::<PageSelector>()?;
 			selectors.push(selector);
-			if matches!(parser.cur(), Token::Comma) {
-				parser.next();
-			} else {
+			if !discard!(parser, Comma) {
 				return Ok(Self(selectors));
 			}
 		}
@@ -93,14 +95,17 @@ impl<'a> Parse<'a> for PageSelector {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		let mut page_type = None;
 		let mut pseudos = smallvec![];
-		if let Token::Ident(atom) = parser.peek() {
-			page_type = Some(atom.clone());
-			parser.next();
+		if let Some(token) = parser.peek::<Token![Ident]>() {
+			parser.advance_to(token);
+			page_type = Some(parser.parse_atom(token));
 		}
-		while let Token::Colon = parser.peek() {
-			pseudos.push(PagePseudoClass::parse_spanned(parser)?);
+		loop {
+			if parser.peek::<Token![:]>().is_some() {
+				pseudos.push(parser.parse_spanned::<PagePseudoClass>()?);
+			} else {
+				return Ok(Self { page_type, pseudos });
+			}
 		}
-		Ok(Self { page_type, pseudos })
 	}
 }
 
@@ -111,7 +116,7 @@ impl<'a> WriteCss<'a> for PageSelector {
 		}
 		for pseudo in self.pseudos.iter() {
 			sink.write_char(':')?;
-			sink.write_str(pseudo.to_atom().as_ref())?;
+			sink.write_str(pseudo.node.to_atom().as_ref())?;
 		}
 		Ok(())
 	}
@@ -144,14 +149,13 @@ pub enum PagePseudoClass {
 
 impl<'a> Parse<'a> for PagePseudoClass {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		expect!(parser.next(), Kind::Colon);
-		match parser.next_with(Include::Whitespace) {
-			Token::Ident(name) => match Self::from_atom(name) {
-				Some(v) => Ok(v),
-				_ => Err(diagnostics::UnexpectedPseudoClass(name.clone(), parser.span()).into()),
-			},
-			token => unexpected!(parser, token),
-		}
+		parser.parse::<Token![:]>()?;
+		let token = *parser.parse_with::<Token![Ident]>(Include::Whitespace)?;
+		let atom = parser.parse_atom(token);
+		match Self::from_atom(atom) {
+			Some(v) => Ok(v),
+			_ => Err(diagnostics::UnexpectedPseudoClass(atom, token.span()).into()),
+		},
 	}
 }
 
@@ -231,7 +235,7 @@ pub struct MarginRule<'a> {
 
 impl<'a> Parse<'a> for MarginRule<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let span = parser.span();
+		let span = parser.cur().span();
 		match parser.next() {
 			Token::AtKeyword(atom) => {
 				if let Some(name) = PageMarginBox::from_atom(atom) {
@@ -242,7 +246,7 @@ impl<'a> Parse<'a> for MarginRule<'a> {
 						Err(diagnostics::MissingAtRuleBlock(span.end(parser.pos())))?
 					}
 				} else {
-					Err(diagnostics::UnexpectedAtRule(atom.clone(), parser.span()))?
+					Err(diagnostics::UnexpectedAtRule(atom.clone(), parser.cur().span()))?
 				}
 			}
 			token => unexpected!(parser, token),

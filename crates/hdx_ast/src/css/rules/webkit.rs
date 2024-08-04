@@ -15,7 +15,7 @@ pub struct WebkitKeyframes<'a> {
 impl<'a> Parse<'a> for WebkitKeyframes<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		expect_ignore_case!(parser.next(), Kind::AtKeyword, atom!("-webkit-keyframes"));
-		let span = parser.span();
+		let span = parser.cur().span();
 		match Self::parse_at_rule(parser)? {
 			(Some(name), Some(rules)) => Ok(Self { name, rules }),
 			(Some(_), None) => Err(diagnostics::MissingAtRuleBlock(span.end(parser.pos())))?,

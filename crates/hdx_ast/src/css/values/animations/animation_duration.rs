@@ -31,7 +31,7 @@ impl<'a> Parse<'a> for AnimationDuration {
 				let mut values = smallvec![];
 				loop {
 					values.push(Time::parse(parser)?);
-					if !discard!(parser, Kind::Comma) {
+					if !discard!(parser, Comma) {
 						break;
 					}
 				}

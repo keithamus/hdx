@@ -87,7 +87,7 @@ impl<'a> Parse<'a> for FontVariantAlternates {
 							break;
 						}
 						idents.push(parser.parse_atom(token));
-						if !discard!(parser, Kind::Comma) {
+						if !discard!(parser, Comma) {
 							break;
 						}
 					}
@@ -102,7 +102,7 @@ impl<'a> Parse<'a> for FontVariantAlternates {
 							break;
 						}
 						idents.push(parser.parse_atom(token));
-						if !discard!(parser, Kind::Comma) {
+						if !discard!(parser, Comma) {
 							break;
 						}
 					}

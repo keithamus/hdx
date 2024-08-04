@@ -2,15 +2,16 @@ use bumpalo::collections::String;
 use hdx_atom::Atom;
 mod constants;
 mod private;
-mod string_builder;
+mod span;
 mod token;
 
-use std::{collections::VecDeque, str::Chars};
+use std::str::Chars;
 
 use bitmask_enum::bitmask;
 use bumpalo::Bump;
 use constants::SURROGATE_RANGE;
 use hdx_syntax::{identifier::is_ident, is_escape_sequence, is_whitespace, EOF, REPLACEMENT};
+pub use span::{Span, Spanned};
 pub use token::{Kind, PairWise, QuoteStyle, Token};
 
 #[bitmask(u8)]
@@ -21,10 +22,9 @@ pub enum Include {
 }
 
 pub struct Lexer<'a> {
-	allocator: &'a Bump,
 	source: &'a str,
 	chars: Chars<'a>,
-	lookahead: VecDeque<Token>,
+	offset: u32,
 	pub include: Include,
 }
 
@@ -36,18 +36,12 @@ impl<'a> Clone for Lexer<'a> {
 
 impl<'a> Lexer<'a> {
 	#[inline]
-	pub fn new(allocator: &'a Bump, source: &'a str, include: Include) -> Self {
-		Self { allocator, source, chars: source.chars(), lookahead: VecDeque::with_capacity(4), include }
+	pub fn new(source: &'a str, include: Include) -> Self {
+		Self { source, chars: source.chars(), offset: 0, include }
 	}
 
 	pub fn clone_with(&self, include: Include) -> Self {
-		Self {
-			allocator: self.allocator,
-			source: self.source,
-			chars: self.chars.clone(),
-			lookahead: VecDeque::with_capacity(4),
-			include,
-		}
+		Self { source: self.source, chars: self.chars.clone(), offset: self.offset, include }
 	}
 
 	/// Remaining string from `Chars`
@@ -63,22 +57,32 @@ impl<'a> Lexer<'a> {
 	/// Current position in file
 	#[inline]
 	pub fn pos(&self) -> u32 {
-		(self.source.len() - self.remaining().len()) as u32
+		(self.source.len() as u32) - self.offset
 	}
 
 	/// Rewinds the lexer to the same state as when the passed in `checkpoint` was created.
 	pub fn rewind(&mut self, token: Token) {
-		self.lookahead.clear();
-		self.chars = self.source[token.offset as usize..].chars()
+		debug_assert!(token.offset < self.offset);
+		// TODO: can this be optimised?
+		self.chars = self.source[token.offset as usize..].chars();
+		self.offset = token.offset
+	}
+
+	/// Advances the lexer to the token
+	pub fn advance_to(&mut self, token: Token) {
+		debug_assert!(token.offset > self.offset);
+		// TODO: can this be optimised?
+		self.chars = self.source[token.offset as usize..].chars();
+		self.offset = token.offset
 	}
 
 	#[inline]
 	pub fn advance(&mut self) -> Token {
-		self.lookahead.clear();
 		let token = self.read_next_token();
 		if token.should_skip(self.include) {
 			return self.advance();
 		}
+		self.offset = token.offset;
 		token
 	}
 
@@ -114,13 +118,13 @@ impl<'a> Lexer<'a> {
 	}
 
 	#[inline]
-	pub fn parse_atom(&self, tok: Token) -> Atom {
-		Atom::from(self.parse_str(tok))
+	pub fn parse_atom(&self, tok: Token, allocator: &'a Bump) -> Atom {
+		Atom::from(self.parse_str(tok, allocator))
 	}
 
 	#[inline]
-	pub fn parse_atom_lower(&self, tok: Token) -> Atom {
-		let atom = self.parse_atom(tok);
+	pub fn parse_atom_lower(&self, tok: Token, allocator: &'a Bump) -> Atom {
+		let atom = self.parse_atom(tok, allocator);
 		if !tok.is_lower_case() {
 			return atom.to_ascii_lowercase();
 		}
@@ -131,11 +135,11 @@ impl<'a> Lexer<'a> {
 	pub fn parse_number(&self, tok: Token) -> f32 {
 		match self.source[tok.offset as usize..(tok.offset + tok.numeric_len()) as usize].parse::<f32>() {
 			Ok(value) => value,
-			Err(_err) => std::f32::NAN,
+			Err(_err) => f32::NAN,
 		}
 	}
 
-	fn parse_url_str(&self, tok: Token) -> &'a str {
+	fn parse_url_str(&self, tok: Token, allocator: &'a Bump) -> &'a str {
 		debug_assert!(tok.kind() == Kind::Url);
 		// Url is special because we need to factor in that the function identifier itself can be escaped;
 		let mut off = if tok.contains_escape_chars() {
@@ -184,9 +188,9 @@ impl<'a> Lexer<'a> {
 				'\\' => {
 					if str.is_none() {
 						str = if i == 0 {
-							Some(String::from_str_in("", self.allocator))
+							Some(String::from_str_in("", allocator))
 						} else {
-							Some(String::from_str_in(&self.source[start..(start + i)], self.allocator))
+							Some(String::from_str_in(&self.source[start..(start + i)], allocator))
 						}
 					}
 					i += 1;
@@ -206,10 +210,10 @@ impl<'a> Lexer<'a> {
 		}
 	}
 
-	pub fn parse_str(&self, tok: Token) -> &'a str {
+	pub fn parse_str(&self, tok: Token, allocator: &'a Bump) -> &'a str {
 		let kind = tok.kind();
 		if kind == Kind::Url {
-			return self.parse_url_str(tok);
+			return self.parse_url_str(tok, allocator);
 		}
 		let start = tok.offset as usize
 			+ match kind {
@@ -239,9 +243,9 @@ impl<'a> Lexer<'a> {
 			} else if c == '\\' {
 				if str.is_none() {
 					str = if i == 0 {
-						Some(String::from_str_in("", self.allocator))
+						Some(String::from_str_in("", allocator))
 					} else {
-						Some(String::from_str_in(&self.source[start..(start + i)], self.allocator))
+						Some(String::from_str_in(&self.source[start..(start + i)], allocator))
 					}
 				}
 				i += 1;

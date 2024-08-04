@@ -40,7 +40,7 @@ impl<'a> Parse<'a> for AnimationIterationCount {
 				}
 				_ => unexpected!(parser, token),
 			}
-			if !discard!(parser, Kind::Comma) {
+			if !discard!(parser, Comma) {
 				break;
 			}
 		}

@@ -3,10 +3,9 @@ mod syntax;
 
 use crate::css::units::{Angle, CSSFloat, Percent};
 use hdx_atom::{atom, Atomizable};
-use hdx_lexer::{Kind};
 use hdx_parser::{
-	discard, expect, expect_delim, match_ignore_case, todo, unexpected, unexpected_function, unexpected_ident, Parse,
-	Parser, Result as ParserResult,
+	discard, todo, unexpected, unexpected_function, unexpected_ident, Delim, Parse, Parser, Result as ParserResult,
+	Token,
 };
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 use std::str::Chars;
@@ -25,22 +24,21 @@ pub enum Channel {
 
 impl<'a> Parse<'a> for Channel {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let token = parser.peek();
-		match token.kind() {
-			Kind::Ident if parser.parse_atom_lower(token) == atom!("none") => {
-				parser.next();
-				Ok(Self::None)
+		if let Some(token) = parser.peek::<Token![Ident]>() {
+			if parser.parse_atom_lower(token) == atom!("none") {
+				parser.advance_to(token);
+				return Ok(Self::None);
 			}
-			Kind::Number => {
-				parser.next();
-				Ok(Self::Float(parser.parse_number(token).into()))
-			}
-			Kind::Dimension if parser.parse_atom(token) == atom!("%") => {
-				parser.next();
-				Ok(Self::Percent(parser.parse_number(token).into()))
-			}
-			Kind::Dimension => Ok(Self::Hue(Angle::parse(parser)?)),
-			_ => unexpected!(parser, token),
+		}
+		if let Some(token) = parser.peek::<Token![Number]>() {
+			parser.advance_to(token);
+			return Ok(Self::Float(parser.parse_number(token).into()));
+		}
+		let token = *parser.parse::<Token![Dimension]>()?;
+		if parser.parse_atom(token) == atom!("%") {
+			Ok(Self::Percent(parser.parse_number(token).into()))
+		} else {
+			Ok(Self::Hue(Angle::parse(parser)?))
 		}
 	}
 }
@@ -62,64 +60,61 @@ pub struct AbsoluteColorFunction(pub ColorFunctionSyntax, pub Channel, pub Chann
 
 impl<'a> Parse<'a> for AbsoluteColorFunction {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let mut syntax = match parser.next() {
-			Token::Function(atom) => match atom.to_ascii_lowercase() {
-				atom!("color") => match parser.next() {
-					Token::Ident(atom) => {
-						if let Some(space) = ColorFunctionSyntax::from_color_space(atom.clone()) {
-							space
-						} else {
-							unexpected_ident!(parser, atom)
-						}
-					}
-					token => unexpected!(parser, token),
-				},
-				named => {
-					if let Some(func) = ColorFunctionSyntax::from_named_function(named) {
-						func
-					} else {
-						unexpected_function!(parser, atom)
-					}
+		let token = *parser.parse::<Token![Function]>()?;
+		let mut syntax = match parser.parse_atom_lower(token) {
+			atom!("color") => {
+				let token = *parser.parse::<Token![Ident]>()?;
+				let atom = parser.parse_atom_lower(token);
+				if let Some(space) = ColorFunctionSyntax::from_color_space(&atom) {
+					space
+				} else {
+					unexpected_ident!(parser, atom)
 				}
-			},
-			token => unexpected!(parser, token),
+			}
+			named => {
+				if let Some(func) = ColorFunctionSyntax::from_named_function(&named) {
+					func
+				} else {
+					unexpected_function!(parser, named)
+				}
+			}
 		};
-		let first = Channel::parse(parser)?;
+		let first = parser.parse::<Channel>()?;
 		let percent = matches!(first, Channel::Percent(_));
 		if matches!(first, Channel::Hue(_)) != syntax.first_is_hue() {
 			unexpected!(parser);
 		}
-		if discard!(parser, Kind::Comma) {
+		if discard!(parser, Comma) {
 			syntax |= ColorFunctionSyntax::Legacy;
 		}
-		let second = Channel::parse(parser)?;
+		let second = parser.parse::<Channel>()?;
 		if (syntax.is_legacy() && matches!(second, Channel::Percent(_)) != percent) || matches!(second, Channel::Hue(_))
 		{
 			unexpected!(parser)
 		}
-		if syntax.contains(ColorFunctionSyntax::Legacy) != discard!(parser, Kind::Comma) {
+		if syntax.contains(ColorFunctionSyntax::Legacy) != discard!(parser, Comma) {
 			unexpected!(parser)
 		}
-		let third = Channel::parse(parser)?;
+		let third = parser.parse::<Channel>()?;
 		if syntax.is_legacy() && matches!(third, Channel::Percent(_)) != percent {
 			unexpected!(parser)
 		}
 		if matches!(third, Channel::Hue(_)) != syntax.third_is_hue() {
 			unexpected!(parser);
 		}
-		if discard!(parser, Kind::RightParen) {
+		if discard!(parser, RightParen) {
 			return Ok(Self(syntax | ColorFunctionSyntax::OmitAlpha, first, second, third, Channel::None));
 		}
 		if syntax.contains(ColorFunctionSyntax::Legacy) {
-			expect!(parser.next(), Kind::Comma);
+			parser.parse::<Delim![,]>()?;
 		} else {
-			expect_delim!(parser.next(), '/');
+			parser.parse::<Delim![/]>()?;
 		}
-		let fourth = Channel::parse(parser)?;
+		let fourth = parser.parse::<Channel>()?;
 		if matches!(fourth, Channel::None) {
 			unexpected!(parser)
 		}
-		expect!(parser.next(), Kind::RightParen);
+		parser.parse::<Token![RightParen]>()?;
 		Ok(Self(syntax, first, second, third, fourth))
 	}
 }
@@ -196,60 +191,61 @@ impl<'a> HexableChars for Chars<'a> {
 
 impl<'a> Parse<'a> for Color {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		match_ignore_case! { parser.peek(), Kind::Function:
-			atom!("color") => todo!(parser),
-			atom!("color-mix") => todo!(parser),
-			_ => return Ok(Color::Absolute(AbsoluteColorFunction::parse(parser)?))
-		};
-		Ok(match parser.next() {
-			Token::Ident(atom) => match atom.to_ascii_lowercase() {
-				atom!("currentcolor") => Color::CurrentColor,
-				atom!("transparent") => Color::Transparent,
+		if let Some(token) = parser.peek::<Token![Function]>() {
+			match parser.parse_atom_lower(token) {
+				atom!("color") => todo!(parser),
+				atom!("color-mix") => todo!(parser),
+				_ => return AbsoluteColorFunction::parse(parser).map(Color::Absolute),
+			}
+		}
+		if let Some(token) = parser.peek::<Token![Function]>() {
+			return match parser.parse_atom_lower(token) {
+				atom!("currentcolor") => Ok(Color::CurrentColor),
+				atom!("transparent") => Ok(Color::Transparent),
 				name => {
 					if let Some(named) = NamedColor::from_atom(&name) {
-						Color::Named(named)
+						Ok(Color::Named(named))
 					} else {
-						unexpected_ident!(parser, atom)
+						unexpected_ident!(parser, name)
 					}
 				}
-			},
-			Token::Hash(atom) | Token::HashId(atom) => {
-				let mut chars = atom.chars();
-				let (r, g, b, a) = match atom.len() {
-					// <r><g><b> implied alpha
-					3 => (
-						chars.next_as_hex().unwrap() * 17,
-						chars.next_as_hex().unwrap() * 17,
-						chars.next_as_hex().unwrap() * 17,
-						255,
-					),
-					// <r><g><b><a>
-					4 => (
-						chars.next_as_hex().unwrap() * 17,
-						chars.next_as_hex().unwrap() * 17,
-						chars.next_as_hex().unwrap() * 17,
-						chars.next_as_hex().unwrap() * 17,
-					),
-					// <rr><gg><bb> implied alpha
-					6 => (
-						chars.next_as_hex().unwrap() << 4 | chars.next_as_hex().unwrap(),
-						chars.next_as_hex().unwrap() << 4 | chars.next_as_hex().unwrap(),
-						chars.next_as_hex().unwrap() << 4 | chars.next_as_hex().unwrap(),
-						255,
-					),
-					// <rr><gg><bb><aa>
-					8 => (
-						chars.next_as_hex().unwrap() << 4 | chars.next_as_hex().unwrap(),
-						chars.next_as_hex().unwrap() << 4 | chars.next_as_hex().unwrap(),
-						chars.next_as_hex().unwrap() << 4 | chars.next_as_hex().unwrap(),
-						chars.next_as_hex().unwrap() << 4 | chars.next_as_hex().unwrap(),
-					),
-					_ => unexpected!(parser),
-				};
-				Color::Hex(r << 24 | g << 16 | b << 8 | a)
-			}
-			token => unexpected!(parser, token),
-		})
+			};
+		}
+		let token = parser.parse::<Token![Hash]>()?;
+		let str = parser.parse_str(*token);
+		let mut chars = str.chars();
+		let (r, g, b, a) = match str.len() {
+			// <r><g><b> implied alpha
+			3 => (
+				chars.next_as_hex().unwrap() * 17,
+				chars.next_as_hex().unwrap() * 17,
+				chars.next_as_hex().unwrap() * 17,
+				255,
+			),
+			// <r><g><b><a>
+			4 => (
+				chars.next_as_hex().unwrap() * 17,
+				chars.next_as_hex().unwrap() * 17,
+				chars.next_as_hex().unwrap() * 17,
+				chars.next_as_hex().unwrap() * 17,
+			),
+			// <rr><gg><bb> implied alpha
+			6 => (
+				chars.next_as_hex().unwrap() << 4 | chars.next_as_hex().unwrap(),
+				chars.next_as_hex().unwrap() << 4 | chars.next_as_hex().unwrap(),
+				chars.next_as_hex().unwrap() << 4 | chars.next_as_hex().unwrap(),
+				255,
+			),
+			// <rr><gg><bb><aa>
+			8 => (
+				chars.next_as_hex().unwrap() << 4 | chars.next_as_hex().unwrap(),
+				chars.next_as_hex().unwrap() << 4 | chars.next_as_hex().unwrap(),
+				chars.next_as_hex().unwrap() << 4 | chars.next_as_hex().unwrap(),
+				chars.next_as_hex().unwrap() << 4 | chars.next_as_hex().unwrap(),
+			),
+			_ => unexpected!(parser, *token),
+		};
+		Ok(Color::Hex(r << 24 | g << 16 | b << 8 | a))
 	}
 }
 

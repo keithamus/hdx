@@ -1,6 +1,6 @@
-use hdx_atom::atom;
-use hdx_lexer::{Include, Token};
-use hdx_parser::{unexpected, unexpected_ident, Parse, Parser, Result as ParserResult};
+use hdx_atom::{atom, Atom};
+use hdx_lexer::Include;
+use hdx_parser::{unexpected, unexpected_function, unexpected_ident, Parse, Parser, Result as ParserResult, Token};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 
 #[derive(Debug, PartialEq, Hash)]
@@ -9,32 +9,38 @@ pub struct Nth(i32, i32);
 
 impl<'a> Parse<'a> for Nth {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
+		if let Some(token) = parser.peek::<Token![Number]>() {
+			parser.advance_to(token);
+			return Ok(Self(0, parser.parse_number(token) as i32));
+		}
+
 		let mut b_sign = 0;
-		let a = match parser.peek().clone() {
-			Token::Number(b, t) if !t.is_float() => {
-				parser.next();
-				return Ok(Self(0, b as i32));
+		let a = if let Some(token) = parser.peek::<Token![Dimension]>() {
+			if token.is_float() {
+				unexpected!(parser, token);
 			}
-			Token::Dimension(a, _, t) if !t.is_float() => a as i32,
-			Token::Ident(atom) => match atom.to_ascii_lowercase() {
+			parser.advance_to(token);
+			parser.parse_number(token) as i32
+		} else if let Some(token) = parser.peek::<Token![Ident]>() {
+			match parser.parse_atom_lower(token) {
 				atom!("even") => {
-					parser.next();
+					parser.advance_to(token);
 					return Ok(Self(2, 0));
 				}
 				atom!("odd") => {
-					parser.next();
+					parser.advance_to(token);
 					return Ok(Self(2, 1));
 				}
 				atom!("-n") => {
-					parser.next();
+					parser.advance_to(token);
 					-1
 				}
 				atom!("n") => {
-					parser.next();
+					parser.advance_to(token);
 					1
 				}
 				atom!("n-") => {
-					parser.next();
+					parser.advance_to(token);
 					b_sign = -1;
 					1
 				}
@@ -45,77 +51,79 @@ impl<'a> Parse<'a> for Nth {
 						1
 					}
 				}
-			},
-			Token::Delim('+') => {
-				parser.next();
-				match parser.peek_with(Include::Whitespace) {
-					Token::Ident(anb) => {
-						if !anb.starts_with('n') && !anb.starts_with('N') {
-							unexpected_ident!(parser, anb);
-						}
-						1
-					}
-					token => unexpected!(parser, token),
+			}
+		} else {
+			parser.parse::<Token![Delim]>()?;
+			if let Some(next) = parser.peek_with::<Token![Ident]>(Include::Whitespace) {
+				let anb = parser.parse_atom_lower(next);
+				if !anb.starts_with('n') {
+					unexpected_ident!(parser, anb);
+				}
+				1
+			} else {
+				unexpected!(parser)
+			}
+		};
+		let mut str = None;
+		if let Some(token) = parser.peek::<Token![Ident]>() {
+			parser.advance_to(token);
+			str = Some(parser.parse_str(token));
+		} else if let Some(token) = parser.peek::<Token![Dimension]>() {
+			parser.advance_to(token);
+			str = Some(parser.parse_str(token));
+		}
+		let b = if let Some(str) = str {
+			let mut chars = str.chars();
+			if str.starts_with('-') {
+				if a == -1 {
+					chars.next();
+				} else {
+					unexpected!(parser);
 				}
 			}
-			token => unexpected!(parser, token),
-		};
-		let b = match parser.peek().clone() {
-			Token::Ident(atom!("n"))
-			| Token::Ident(atom!("N"))
-			| Token::Dimension(_, atom!("n"), _)
-			| Token::Dimension(_, atom!("N"), _) => {
-				parser.next();
+			if !matches!(chars.next(), Some('n') | Some('N')) {
+				unexpected_ident!(parser, Atom::from(str))
+			}
+			if let Ok(i) = chars.as_str().parse::<i32>() {
+				Some(i)
+			} else if chars.as_str() != "" {
+				unexpected_ident!(parser, Atom::from(str))
+			} else {
 				None
 			}
-			Token::Ident(atom) | Token::Dimension(_, atom, _) => {
-				parser.next();
-				let mut chars = atom.chars();
-				if atom.starts_with('-') {
-					if a == -1 {
-						chars.next();
-					} else {
-						unexpected!(parser);
-					}
-				}
-				if !matches!(chars.next(), Some('n') | Some('N')) {
-					unexpected_ident!(parser, atom)
-				}
-				if let Ok(i) = chars.as_str().parse::<i32>() {
-					Some(i)
-				} else if chars.as_str() != "" {
-					unexpected_ident!(parser, atom)
-				} else {
-					None
-				}
-			}
-			_ => None,
+		} else {
+			None
 		};
-		match parser.peek().clone() {
-			Token::Number(i, t) if b.is_none() && !t.is_float() => {
-				parser.next();
-				if t.is_signed() && b_sign != 0 {
-					unexpected!(parser)
-				}
-				if b_sign == 0 {
-					b_sign = 1
-				}
-				Ok(Self(a, (i as i32) * b_sign))
+		if let Some(token) = parser.peek::<Token![Number]>() {
+			if b.is_some() || token.is_float() || (!token.has_sign() || b_sign == 0) {
+				unexpected!(parser, token)
 			}
-			token @ Token::Delim('+') | token @ Token::Delim('-') if b.is_none() => {
-				parser.next();
-				if matches!(token, Token::Delim('-')) {
-					b_sign = -1;
-				} else {
-					b_sign = 1;
-				}
-				match parser.next().clone() {
-					Token::Number(i, t) if !t.is_float() && !t.is_signed() => Ok(Self(a, (i as i32) * b_sign)),
-					token => unexpected!(parser, token),
-				}
+			parser.advance_to(token);
+			if b_sign == 0 {
+				b_sign = 1
 			}
-			_ => Ok(Self(a, b.unwrap_or(0))),
+			let i = parser.parse_number(token);
+			return Ok(Self(a, (i as i32) * b_sign));
 		}
+		if let Some(token) = parser.peek::<Token![Delim]>() {
+			if b.is_none() {
+				let char = token.char().unwrap();
+				if char == '-' {
+					b_sign = -1;
+				} else if char == '+' {
+					b_sign = 1;
+				} else {
+					unexpected!(parser, token);
+				}
+			}
+			let num_token = *parser.parse::<Token![Number]>()?;
+			if num_token.is_float() || num_token.has_sign() {
+				unexpected!(parser, num_token)
+			}
+			let i = parser.parse_number(token);
+			return Ok(Self(a, (i as i32) * b_sign));
+		}
+		Ok(Self(a, b.unwrap_or(0)))
 	}
 }
 

@@ -21,7 +21,7 @@ pub fn test_write_with_options<'a, T: Parse<'a> + WriteCss<'a>>(
 ) {
 	let mut string = String::new();
 	let mut writer = BaseCssWriter::new(&mut string, opts);
-	let parser = Parser::new(allocator, source_text, Features::default());
+	let mut parser = Parser::new(allocator, source_text, Features::default());
 	let result = parser.parse_entirely_with::<T>();
 	if !result.errors.is_empty() {
 		panic!("\n\nParse on {}:{} failed. ({:?}) saw error {:?}", file, line, source_text, result.errors[0]);
@@ -79,7 +79,7 @@ pub(crate) use assert_minify;
 
 #[cfg(test)]
 pub fn test_error<'a, T: Parse<'a> + WriteCss<'a>>(allocator: &'a Bump, source_text: &'a str, file: &str, line: u32) {
-	let parser = Parser::new(allocator, source_text, Features::default());
+	let mut parser = Parser::new(allocator, source_text, Features::default());
 	let result = parser.parse_entirely_with::<T>();
 	if result.errors.is_empty() {
 		let mut string = String::new();
@@ -107,7 +107,7 @@ pub fn test_serialize<'a, T: Parse<'a> + WriteCss<'a> + serde::Serialize>(
 	expected: serde_json::Value,
 ) {
 	use serde_json::{from_str, to_string, Value};
-	let parser = Parser::new(allocator, source_text, Features::default());
+	let mut parser = Parser::new(allocator, source_text, Features::default());
 	let result = parser.parse_entirely_with::<T>();
 	if let Some(res) = result.output {
 		let actual = from_str::<Value>(&to_string(&res).unwrap()).unwrap();

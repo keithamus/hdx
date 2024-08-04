@@ -1,7 +1,7 @@
 use hdx_atom::{atom, Atom, Atomizable};
 use hdx_derive::{Atomizable, Writable};
-use hdx_lexer::{QuoteStyle, Kind};
-use hdx_parser::{expect_ignore_case, unexpected, Parse, Parser, Result as ParserResult};
+use hdx_lexer::QuoteStyle;
+use hdx_parser::{unexpected_ident, Parse, Parser, Result as ParserResult, Token};
 use hdx_writer::{OutputOption, Result as WriterResult, WriteCss};
 use smallvec::{smallvec, SmallVec};
 
@@ -14,38 +14,30 @@ pub struct Symbols(pub SymbolsType, SmallVec<[Symbol; 0]>);
 
 impl<'a> Parse<'a> for Symbols {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		expect_ignore_case!(parser.next(), Kind::Function, atom!("symbols"));
+		let func_token = parser.parse::<Token![Function]>()?;
+		let func_atom = parser.parse_atom_lower(*func_token);
+		if func_atom != atom!("symbols") {
+			unexpected_ident!(parser, func_atom);
+		}
 		let mut symbol_type = SymbolsType::default();
 		let mut symbols = smallvec![];
-		let token = parser.peek();
-		match token.kind() {
-			Kind::Ident => {
-				if let Some(st) = SymbolsType::from_atom(&parser.parse_atom(token)) {
-					parser.next();
-					symbol_type = st;
-				}
+		if discard!(parser, RightParen) {
+			return Ok(Self(symbol_type, symbols));
+		}
+		if let Some(token) = parser.peek::<Token![Ident]>() {
+			if let Some(st) = SymbolsType::from_atom(&parser.parse_atom(token)) {
+				parser.advance_to(token);
+				symbol_type = st;
 			}
-			Kind::RightParen => {
-				parser.next();
-				return Ok(Self(symbol_type, symbols));
-			}
-			_ => {}
 		}
 		loop {
-			let token = parser.peek();
-			match token.kind() {
-				Kind::String => {
-					parser.next();
-					symbols.push(Symbol::String(parser.parse_atom(token), token.quote_style()));
-				}
-				Kind::Function => {
-					symbols.push(Symbol::Image(Image::parse(parser)?));
-				}
-				Kind::RightParen => {
-					parser.next();
-					return Ok(Self(symbol_type, symbols));
-				}
-				_ => unexpected!(parser, token),
+			if discard!(parser, RightParen) {
+				return Ok(Self(symbol_type, symbols));
+			}
+			if let Some(token) = parser.peek::<Token![String]>() {
+				symbols.push(Symbol::String(parser.parse_atom(token), token.quote_style()));
+			} else {
+				symbols.push(Symbol::Image(Image::parse(parser)?));
 			}
 		}
 	}

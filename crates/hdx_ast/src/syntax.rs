@@ -230,7 +230,7 @@ pub struct Declaration<'a> {
 // https://drafts.csswg.org/css-syntax-3/#consume-a-declaration
 impl<'a> Parse<'a> for Declaration<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-    let token = parser.next();
+		let token = parser.next();
 		match token.kind() {
 			Kind::Ident => {
 				expect!(parser.next(), Kind::Colon);
@@ -240,7 +240,7 @@ impl<'a> Parse<'a> for Declaration<'a> {
 				let important =
 					matches!(iter.nth_back(1), Some(Spanned { node: ComponentValue::Ident(atom!("important")), .. }))
 						&& matches!(iter.nth_back(2), Some(Spanned { node: ComponentValue::Delim('!'), .. }));
-        let name = parser.parse_atom(token);
+				let name = parser.parse_atom(token);
 				Ok(Self { name, value, important })
 			}
 			_ => unexpected!(parser, token),
