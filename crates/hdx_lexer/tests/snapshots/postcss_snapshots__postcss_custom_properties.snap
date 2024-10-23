@@ -1,793 +1,712 @@
 ---
 source: crates/hdx_lexer/tests/postcss_snapshots.rs
-expression: "get_tokens(\"../../tasks/coverage/postcss-parser-tests/cases/custom-properties.css\".into())"
+expression: tokens
 ---
 [
   {
-    "kind": "Colon"
+    "kind": "Colon",
+    "offset": 0,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "root"
+    "offset": 1,
+    "len": 4
   },
   {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "LeftCurly"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "LeftCurly",
+    "offset": 6,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "--number"
+    "offset": 10,
+    "len": 8
   },
   {
-    "kind": "Colon"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Colon",
+    "offset": 18,
+    "len": 1
   },
   {
     "kind": "Number",
-    "value": [
-      1.0,
-      {
-        "bits": 0
-      }
-    ]
+    "offset": 20,
+    "len": 1
   },
   {
-    "kind": "Semicolon"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Semicolon",
+    "offset": 21,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "--unit"
+    "offset": 25,
+    "len": 6
   },
   {
-    "kind": "Colon"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Colon",
+    "offset": 31,
+    "len": 1
   },
   {
     "kind": "Dimension",
-    "value": [
-      100.0,
-      "vw",
-      {
-        "bits": 0
-      }
-    ]
+    "offset": 33,
+    "len": 5,
+    "unit": "vw"
   },
   {
-    "kind": "Semicolon"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Semicolon",
+    "offset": 38,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "--color"
+    "offset": 42,
+    "len": 7
   },
   {
-    "kind": "Colon"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Colon",
+    "offset": 49,
+    "len": 1
   },
   {
     "kind": "Hash",
-    "value": "06c"
+    "offset": 51,
+    "len": 4
   },
   {
-    "kind": "Semicolon"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Semicolon",
+    "offset": 55,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "--function"
+    "offset": 60,
+    "len": 10
   },
   {
-    "kind": "Colon"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Colon",
+    "offset": 70,
+    "len": 1
   },
   {
     "kind": "Function",
-    "value": "calc"
+    "offset": 72,
+    "len": 5
   },
   {
     "kind": "Number",
-    "value": [
-      1.0,
-      {
-        "bits": 0
-      }
-    ]
-  },
-  {
-    "kind": "Whitespace"
+    "offset": 77,
+    "len": 1
   },
   {
     "kind": "Delim",
-    "value": "+"
-  },
-  {
-    "kind": "Whitespace"
+    "offset": 79,
+    "len": 1
   },
   {
     "kind": "Number",
-    "value": [
-      1.0,
-      {
-        "bits": 0
-      }
-    ]
+    "offset": 81,
+    "len": 1
   },
   {
-    "kind": "RightParen"
+    "kind": "RightParen",
+    "offset": 82,
+    "len": 1
   },
   {
-    "kind": "Semicolon"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Semicolon",
+    "offset": 83,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "--variable"
+    "offset": 87,
+    "len": 10
   },
   {
-    "kind": "Colon"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Colon",
+    "offset": 97,
+    "len": 1
   },
   {
     "kind": "Function",
-    "value": "var"
+    "offset": 99,
+    "len": 4
   },
   {
     "kind": "Ident",
-    "value": "--unit"
+    "offset": 103,
+    "len": 6
   },
   {
-    "kind": "RightParen"
+    "kind": "RightParen",
+    "offset": 109,
+    "len": 1
   },
   {
-    "kind": "Semicolon"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Semicolon",
+    "offset": 110,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "--string"
+    "offset": 115,
+    "len": 8
   },
   {
-    "kind": "Colon"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Colon",
+    "offset": 123,
+    "len": 1
   },
   {
     "kind": "String",
-    "value": [
-      "single quoted string",
-      {
-        "kind": "Single"
-      }
-    ]
+    "offset": 125,
+    "len": 22
   },
   {
-    "kind": "Semicolon"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Semicolon",
+    "offset": 147,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "--string"
+    "offset": 151,
+    "len": 8
   },
   {
-    "kind": "Colon"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Colon",
+    "offset": 159,
+    "len": 1
   },
   {
     "kind": "String",
-    "value": [
-      "double quoted string",
-      {
-        "kind": "Double"
-      }
-    ]
+    "offset": 161,
+    "len": 22
   },
   {
-    "kind": "Semicolon"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Semicolon",
+    "offset": 183,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "--square-block"
+    "offset": 188,
+    "len": 14
   },
   {
-    "kind": "Colon"
+    "kind": "Colon",
+    "offset": 202,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "LeftSquare"
-  },
-  {
-    "kind": "Number",
-    "value": [
-      1.0,
-      {
-        "bits": 0
-      }
-    ]
-  },
-  {
-    "kind": "Comma"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "LeftSquare",
+    "offset": 204,
+    "len": 1
   },
   {
     "kind": "Number",
-    "value": [
-      2.0,
-      {
-        "bits": 0
-      }
-    ]
+    "offset": 205,
+    "len": 1
   },
   {
-    "kind": "Comma"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Comma",
+    "offset": 206,
+    "len": 1
   },
   {
     "kind": "Number",
-    "value": [
-      3.0,
-      {
-        "bits": 0
-      }
-    ]
+    "offset": 208,
+    "len": 1
   },
   {
-    "kind": "RightSquare"
+    "kind": "Comma",
+    "offset": 209,
+    "len": 1
   },
   {
-    "kind": "Semicolon"
+    "kind": "Number",
+    "offset": 211,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
+    "kind": "RightSquare",
+    "offset": 212,
+    "len": 1
+  },
+  {
+    "kind": "Semicolon",
+    "offset": 213,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "--round-block"
+    "offset": 217,
+    "len": 13
   },
   {
-    "kind": "Colon"
+    "kind": "Colon",
+    "offset": 230,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "LeftParen"
-  },
-  {
-    "kind": "Number",
-    "value": [
-      1.0,
-      {
-        "bits": 0
-      }
-    ]
-  },
-  {
-    "kind": "Comma"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "LeftParen",
+    "offset": 232,
+    "len": 1
   },
   {
     "kind": "Number",
-    "value": [
-      2.0,
-      {
-        "bits": 0
-      }
-    ]
+    "offset": 233,
+    "len": 1
   },
   {
-    "kind": "Comma"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Comma",
+    "offset": 234,
+    "len": 1
   },
   {
     "kind": "Number",
-    "value": [
-      3.0,
-      {
-        "bits": 0
-      }
-    ]
+    "offset": 236,
+    "len": 1
   },
   {
-    "kind": "RightParen"
+    "kind": "Comma",
+    "offset": 237,
+    "len": 1
   },
   {
-    "kind": "Semicolon"
+    "kind": "Number",
+    "offset": 239,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
+    "kind": "RightParen",
+    "offset": 240,
+    "len": 1
   },
   {
-    "kind": "Ident",
-    "value": "--empty1"
-  },
-  {
-    "kind": "Colon"
-  },
-  {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "Semicolon"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Semicolon",
+    "offset": 241,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "--empty2"
+    "offset": 246,
+    "len": 8
   },
   {
-    "kind": "Colon"
+    "kind": "Colon",
+    "offset": 254,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "Comment",
-    "value": ""
-  },
-  {
-    "kind": "Semicolon"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Semicolon",
+    "offset": 256,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "--empty3"
+    "offset": 260,
+    "len": 8
   },
   {
-    "kind": "Colon"
+    "kind": "Colon",
+    "offset": 268,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
+    "kind": "Semicolon",
+    "offset": 274,
+    "len": 1
+  },
+  {
+    "kind": "Ident",
+    "offset": 278,
+    "len": 8
+  },
+  {
+    "kind": "Colon",
+    "offset": 286,
+    "len": 1
   },
   {
     "kind": "Delim",
-    "value": "!"
+    "offset": 288,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "important"
+    "offset": 289,
+    "len": 9
   },
   {
-    "kind": "Semicolon"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Semicolon",
+    "offset": 298,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "--empty4"
+    "offset": 302,
+    "len": 8
   },
   {
-    "kind": "Colon"
-  },
-  {
-    "kind": "Comment",
-    "value": ""
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Colon",
+    "offset": 310,
+    "len": 1
   },
   {
     "kind": "Delim",
-    "value": "!"
+    "offset": 316,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "important"
+    "offset": 317,
+    "len": 9
   },
   {
-    "kind": "Semicolon"
-  },
-  {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "Ident",
-    "value": "--empty5"
-  },
-  {
-    "kind": "Colon"
-  },
-  {
-    "kind": "Comment",
-    "value": ""
-  },
-  {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "Semicolon"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Semicolon",
+    "offset": 326,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "--bracket-block"
+    "offset": 330,
+    "len": 8
   },
   {
-    "kind": "Colon"
+    "kind": "Colon",
+    "offset": 338,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "LeftCurly"
-  },
-  {
-    "kind": "Number",
-    "value": [
-      1.0,
-      {
-        "bits": 0
-      }
-    ]
-  },
-  {
-    "kind": "Comma"
-  },
-  {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "Number",
-    "value": [
-      2.0,
-      {
-        "bits": 0
-      }
-    ]
-  },
-  {
-    "kind": "Comma"
-  },
-  {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "Number",
-    "value": [
-      3.0,
-      {
-        "bits": 0
-      }
-    ]
-  },
-  {
-    "kind": "RightCurly"
-  },
-  {
-    "kind": "Semicolon"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Semicolon",
+    "offset": 344,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "--JSON"
+    "offset": 349,
+    "len": 15
   },
   {
-    "kind": "Colon"
+    "kind": "Colon",
+    "offset": 364,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "LeftSquare"
+    "kind": "LeftCurly",
+    "offset": 366,
+    "len": 1
   },
   {
     "kind": "Number",
-    "value": [
-      1.0,
-      {
-        "bits": 0
-      }
-    ]
+    "offset": 367,
+    "len": 1
   },
   {
-    "kind": "Comma"
+    "kind": "Comma",
+    "offset": 368,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
+    "kind": "Number",
+    "offset": 370,
+    "len": 1
+  },
+  {
+    "kind": "Comma",
+    "offset": 371,
+    "len": 1
+  },
+  {
+    "kind": "Number",
+    "offset": 373,
+    "len": 1
+  },
+  {
+    "kind": "RightCurly",
+    "offset": 374,
+    "len": 1
+  },
+  {
+    "kind": "Semicolon",
+    "offset": 375,
+    "len": 1
+  },
+  {
+    "kind": "Ident",
+    "offset": 379,
+    "len": 6
+  },
+  {
+    "kind": "Colon",
+    "offset": 385,
+    "len": 1
+  },
+  {
+    "kind": "LeftSquare",
+    "offset": 387,
+    "len": 1
+  },
+  {
+    "kind": "Number",
+    "offset": 388,
+    "len": 1
+  },
+  {
+    "kind": "Comma",
+    "offset": 389,
+    "len": 1
   },
   {
     "kind": "String",
-    "value": [
-      "2",
-      {
-        "kind": "Double"
-      }
-    ]
+    "offset": 391,
+    "len": 3
   },
   {
-    "kind": "Comma"
+    "kind": "Comma",
+    "offset": 394,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "LeftCurly"
+    "kind": "LeftCurly",
+    "offset": 396,
+    "len": 1
   },
   {
     "kind": "String",
-    "value": [
-      "three",
-      {
-        "kind": "Double"
-      }
-    ]
+    "offset": 397,
+    "len": 7
   },
   {
-    "kind": "Colon"
+    "kind": "Colon",
+    "offset": 404,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "LeftCurly"
+    "kind": "LeftCurly",
+    "offset": 406,
+    "len": 1
   },
   {
     "kind": "String",
-    "value": [
-      "a",
-      {
-        "kind": "Double"
-      }
-    ]
+    "offset": 407,
+    "len": 3
   },
   {
-    "kind": "Colon"
-  },
-  {
-    "kind": "Number",
-    "value": [
-      1.0,
-      {
-        "bits": 0
-      }
-    ]
-  },
-  {
-    "kind": "RightCurly"
-  },
-  {
-    "kind": "RightCurly"
-  },
-  {
-    "kind": "Comma"
-  },
-  {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "LeftSquare"
+    "kind": "Colon",
+    "offset": 410,
+    "len": 1
   },
   {
     "kind": "Number",
-    "value": [
-      4.0,
-      {
-        "bits": 0
-      }
-    ]
+    "offset": 411,
+    "len": 1
   },
   {
-    "kind": "RightSquare"
+    "kind": "RightCurly",
+    "offset": 412,
+    "len": 1
   },
   {
-    "kind": "RightSquare"
+    "kind": "RightCurly",
+    "offset": 413,
+    "len": 1
   },
   {
-    "kind": "Semicolon"
+    "kind": "Comma",
+    "offset": 414,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
+    "kind": "LeftSquare",
+    "offset": 416,
+    "len": 1
+  },
+  {
+    "kind": "Number",
+    "offset": 417,
+    "len": 1
+  },
+  {
+    "kind": "RightSquare",
+    "offset": 418,
+    "len": 1
+  },
+  {
+    "kind": "RightSquare",
+    "offset": 419,
+    "len": 1
+  },
+  {
+    "kind": "Semicolon",
+    "offset": 420,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "--javascript"
+    "offset": 424,
+    "len": 12
   },
   {
-    "kind": "Colon"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Colon",
+    "offset": 436,
+    "len": 1
   },
   {
     "kind": "Function",
-    "value": "function"
+    "offset": 438,
+    "len": 9
   },
   {
     "kind": "Ident",
-    "value": "rule"
+    "offset": 447,
+    "len": 4
   },
   {
-    "kind": "RightParen"
+    "kind": "RightParen",
+    "offset": 451,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "LeftCurly"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "LeftCurly",
+    "offset": 453,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "console"
+    "offset": 455,
+    "len": 7
   },
   {
     "kind": "Delim",
-    "value": "."
+    "offset": 462,
+    "len": 1
   },
   {
     "kind": "Function",
-    "value": "log"
+    "offset": 463,
+    "len": 4
   },
   {
     "kind": "Ident",
-    "value": "rule"
+    "offset": 467,
+    "len": 4
   },
   {
-    "kind": "RightParen"
+    "kind": "RightParen",
+    "offset": 471,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
+    "kind": "RightCurly",
+    "offset": 473,
+    "len": 1
   },
   {
-    "kind": "RightCurly"
+    "kind": "Semicolon",
+    "offset": 474,
+    "len": 1
   },
   {
-    "kind": "Semicolon"
+    "kind": "RightCurly",
+    "offset": 476,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "RightCurly"
-  },
-  {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "Colon"
-  },
-  {
-    "kind": "Ident",
-    "value": "root"
-  },
-  {
-    "kind": "LeftCurly"
+    "kind": "Colon",
+    "offset": 479,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "--a"
+    "offset": 480,
+    "len": 4
   },
   {
-    "kind": "Colon"
+    "kind": "LeftCurly",
+    "offset": 484,
+    "len": 1
+  },
+  {
+    "kind": "Ident",
+    "offset": 485,
+    "len": 3
+  },
+  {
+    "kind": "Colon",
+    "offset": 488,
+    "len": 1
   },
   {
     "kind": "Number",
-    "value": [
-      1.0,
-      {
-        "bits": 0
-      }
-    ]
+    "offset": 489,
+    "len": 1
   },
   {
-    "kind": "RightCurly"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "RightCurly",
+    "offset": 490,
+    "len": 1
   },
   {
     "kind": "Delim",
-    "value": "."
+    "offset": 493,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "semicolon-less"
+    "offset": 494,
+    "len": 14
   },
   {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "LeftCurly"
+    "kind": "LeftCurly",
+    "offset": 509,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "--empty-end"
+    "offset": 510,
+    "len": 11
   },
   {
-    "kind": "Colon"
+    "kind": "Colon",
+    "offset": 521,
+    "len": 1
   },
   {
-    "kind": "Comment",
-    "value": ""
-  },
-  {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "RightCurly"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "RightCurly",
+    "offset": 527,
+    "len": 1
   },
   {
     "kind": "Delim",
-    "value": "."
+    "offset": 530,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "empty"
+    "offset": 531,
+    "len": 5
   },
   {
-    "kind": "LeftCurly"
+    "kind": "LeftCurly",
+    "offset": 536,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "--a"
+    "offset": 537,
+    "len": 3
   },
   {
-    "kind": "Colon"
+    "kind": "Colon",
+    "offset": 540,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "RightCurly"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "RightCurly",
+    "offset": 542,
+    "len": 1
   }
 ]

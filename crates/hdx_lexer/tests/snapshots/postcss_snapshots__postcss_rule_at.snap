@@ -1,135 +1,108 @@
 ---
 source: crates/hdx_lexer/tests/postcss_snapshots.rs
-expression: "get_tokens(\"../../tasks/coverage/postcss-parser-tests/cases/rule-at.css\".into())"
+expression: tokens
 ---
 [
   {
     "kind": "Ident",
-    "value": "a"
+    "offset": 0,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "LeftCurly"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "LeftCurly",
+    "offset": 2,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "width"
+    "offset": 8,
+    "len": 5
   },
   {
-    "kind": "Colon"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Colon",
+    "offset": 13,
+    "len": 1
   },
   {
     "kind": "Dimension",
-    "value": [
-      10.0,
-      "px",
-      {
-        "bits": 0
-      }
-    ]
+    "offset": 15,
+    "len": 4,
+    "unit": "px"
   },
   {
-    "kind": "Semicolon"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Semicolon",
+    "offset": 19,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "margin"
+    "offset": 25,
+    "len": 6
   },
   {
-    "kind": "Colon"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Colon",
+    "offset": 31,
+    "len": 1
   },
   {
     "kind": "Number",
-    "value": [
-      0.0,
-      {
-        "bits": 0
-      }
-    ]
-  },
-  {
-    "kind": "Whitespace"
+    "offset": 33,
+    "len": 1
   },
   {
     "kind": "AtKeyword",
-    "value": "width"
+    "offset": 35,
+    "len": 6
   },
   {
-    "kind": "Semicolon"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Semicolon",
+    "offset": 41,
+    "len": 1
   },
   {
     "kind": "AtKeyword",
-    "value": "mixin"
-  },
-  {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "Ident",
-    "value": "mobile"
-  },
-  {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "LeftCurly"
-  },
-  {
-    "kind": "Whitespace"
+    "offset": 47,
+    "len": 6
   },
   {
     "kind": "Ident",
-    "value": "height"
+    "offset": 54,
+    "len": 6
   },
   {
-    "kind": "Colon"
+    "kind": "LeftCurly",
+    "offset": 61,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
+    "kind": "Ident",
+    "offset": 71,
+    "len": 6
+  },
+  {
+    "kind": "Colon",
+    "offset": 77,
+    "len": 1
   },
   {
     "kind": "Dimension",
-    "value": [
-      100.0,
-      "px",
-      {
-        "bits": 0
-      }
-    ]
+    "offset": 79,
+    "len": 5,
+    "unit": "px"
   },
   {
-    "kind": "Semicolon"
+    "kind": "Semicolon",
+    "offset": 84,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
+    "kind": "RightCurly",
+    "offset": 90,
+    "len": 1
   },
   {
-    "kind": "RightCurly"
-  },
-  {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "RightCurly"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "RightCurly",
+    "offset": 92,
+    "len": 1
   }
 ]

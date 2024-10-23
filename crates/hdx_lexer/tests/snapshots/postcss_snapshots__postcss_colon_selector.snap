@@ -1,25 +1,26 @@
 ---
 source: crates/hdx_lexer/tests/postcss_snapshots.rs
-expression: "get_tokens(\"../../tasks/coverage/postcss-parser-tests/cases/colon-selector.css\".into())"
+expression: tokens
 ---
 [
   {
-    "kind": "Colon"
+    "kind": "Colon",
+    "offset": 0,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "fullscreen"
+    "offset": 1,
+    "len": 10
   },
   {
-    "kind": "Whitespace"
+    "kind": "LeftCurly",
+    "offset": 12,
+    "len": 1
   },
   {
-    "kind": "LeftCurly"
-  },
-  {
-    "kind": "RightCurly"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "RightCurly",
+    "offset": 13,
+    "len": 1
   }
 ]

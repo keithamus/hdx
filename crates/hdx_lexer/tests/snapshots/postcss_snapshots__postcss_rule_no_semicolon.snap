@@ -1,30 +1,36 @@
 ---
 source: crates/hdx_lexer/tests/postcss_snapshots.rs
-expression: "get_tokens(\"../../tasks/coverage/postcss-parser-tests/cases/rule-no-semicolon.css\".into())"
+expression: tokens
 ---
 [
   {
     "kind": "Ident",
-    "value": "a"
+    "offset": 0,
+    "len": 1
   },
   {
-    "kind": "LeftCurly"
-  },
-  {
-    "kind": "Ident",
-    "value": "color"
-  },
-  {
-    "kind": "Colon"
+    "kind": "LeftCurly",
+    "offset": 1,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "black"
+    "offset": 2,
+    "len": 5
   },
   {
-    "kind": "RightCurly"
+    "kind": "Colon",
+    "offset": 7,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
+    "kind": "Ident",
+    "offset": 8,
+    "len": 5
+  },
+  {
+    "kind": "RightCurly",
+    "offset": 13,
+    "len": 1
   }
 ]

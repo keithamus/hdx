@@ -1,5 +1,5 @@
 ---
 source: crates/hdx_lexer/tests/postcss_snapshots.rs
-expression: "get_tokens(\"../../tasks/coverage/postcss-parser-tests/cases/empty.css\".into())"
+expression: tokens
 ---
 []

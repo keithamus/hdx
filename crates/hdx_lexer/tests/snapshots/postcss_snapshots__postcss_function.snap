@@ -1,120 +1,101 @@
 ---
 source: crates/hdx_lexer/tests/postcss_snapshots.rs
-expression: "get_tokens(\"../../tasks/coverage/postcss-parser-tests/cases/function.css\".into())"
+expression: tokens
 ---
 [
   {
     "kind": "Ident",
-    "value": "a"
+    "offset": 0,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "LeftCurly"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "LeftCurly",
+    "offset": 2,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "background-image"
+    "offset": 8,
+    "len": 16
   },
   {
-    "kind": "Colon"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Colon",
+    "offset": 24,
+    "len": 1
   },
   {
     "kind": "Url",
-    "value": [
-      "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7",
-      {
-        "kind": "None"
-      }
-    ]
+    "offset": 26,
+    "len": 83
   },
   {
-    "kind": "Semicolon"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Semicolon",
+    "offset": 109,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "background-image"
+    "offset": 115,
+    "len": 16
   },
   {
-    "kind": "Colon"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Colon",
+    "offset": 131,
+    "len": 1
   },
   {
     "kind": "Function",
-    "value": "url"
+    "offset": 133,
+    "len": 4
   },
   {
     "kind": "String",
-    "value": [
-      "./image (1).jpg",
-      {
-        "kind": "Double"
-      }
-    ]
+    "offset": 137,
+    "len": 17
   },
   {
-    "kind": "RightParen"
+    "kind": "RightParen",
+    "offset": 154,
+    "len": 1
   },
   {
-    "kind": "Semicolon"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Semicolon",
+    "offset": 155,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "background-image"
+    "offset": 161,
+    "len": 16
   },
   {
-    "kind": "Colon"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Colon",
+    "offset": 177,
+    "len": 1
   },
   {
     "kind": "Function",
-    "value": "url"
-  },
-  {
-    "kind": "Whitespace"
+    "offset": 179,
+    "len": 4
   },
   {
     "kind": "String",
-    "value": [
-      "./image (1).jpg",
-      {
-        "kind": "Single"
-      }
-    ]
+    "offset": 184,
+    "len": 17
   },
   {
-    "kind": "Whitespace"
+    "kind": "RightParen",
+    "offset": 202,
+    "len": 1
   },
   {
-    "kind": "RightParen"
+    "kind": "Semicolon",
+    "offset": 203,
+    "len": 1
   },
   {
-    "kind": "Semicolon"
-  },
-  {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "RightCurly"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "RightCurly",
+    "offset": 205,
+    "len": 1
   }
 ]

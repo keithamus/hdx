@@ -1,60 +1,46 @@
 ---
 source: crates/hdx_lexer/tests/postcss_snapshots.rs
-expression: "get_tokens(\"../../tasks/coverage/postcss-parser-tests/cases/selector.css\".into())"
+expression: tokens
 ---
 [
   {
-    "kind": "Whitespace"
+    "kind": "Ident",
+    "offset": 1,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "a"
+    "offset": 12,
+    "len": 1
   },
   {
-    "kind": "Comment",
-    "value": " { } "
+    "kind": "LeftCurly",
+    "offset": 14,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "Ident",
-    "value": "b"
-  },
-  {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "LeftCurly"
-  },
-  {
-    "kind": "RightCurly"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "RightCurly",
+    "offset": 15,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "a"
-  },
-  {
-    "kind": "Comment",
-    "value": " test "
+    "offset": 18,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "b"
+    "offset": 29,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
+    "kind": "LeftCurly",
+    "offset": 31,
+    "len": 1
   },
   {
-    "kind": "LeftCurly"
-  },
-  {
-    "kind": "RightCurly"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "RightCurly",
+    "offset": 32,
+    "len": 1
   }
 ]

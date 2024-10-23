@@ -1,44 +1,31 @@
 ---
 source: crates/hdx_lexer/tests/postcss_snapshots.rs
-expression: "get_tokens(\"../../tasks/coverage/postcss-parser-tests/cases/inside.css\".into())"
+expression: tokens
 ---
 [
   {
     "kind": "Ident",
-    "value": "a"
+    "offset": 0,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "LeftCurly"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "LeftCurly",
+    "offset": 2,
+    "len": 1
   },
   {
     "kind": "AtKeyword",
-    "value": "import"
-  },
-  {
-    "kind": "Whitespace"
+    "offset": 4,
+    "len": 7
   },
   {
     "kind": "String",
-    "value": [
-      "a.css",
-      {
-        "kind": "Double"
-      }
-    ]
+    "offset": 12,
+    "len": 7
   },
   {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "RightCurly"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "RightCurly",
+    "offset": 20,
+    "len": 1
   }
 ]

@@ -26,7 +26,8 @@ expression: tokens
   {
     "kind": "Dimension",
     "offset": 20,
-    "len": 5
+    "len": 5,
+    "unit": "px"
   },
   {
     "kind": "Semicolon",

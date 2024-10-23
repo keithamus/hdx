@@ -1,52 +1,41 @@
 ---
 source: crates/hdx_lexer/tests/postcss_snapshots.rs
-expression: "get_tokens(\"../../tasks/coverage/postcss-parser-tests/cases/atrule-no-semicolon.css\".into())"
+expression: tokens
 ---
 [
   {
     "kind": "AtKeyword",
-    "value": "media"
-  },
-  {
-    "kind": "Whitespace"
+    "offset": 0,
+    "len": 6
   },
   {
     "kind": "Ident",
-    "value": "screen"
+    "offset": 7,
+    "len": 6
   },
   {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "LeftCurly"
-  },
-  {
-    "kind": "AtKeyword",
-    "value": "content"
-  },
-  {
-    "kind": "RightCurly"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "LeftCurly",
+    "offset": 14,
+    "len": 1
   },
   {
     "kind": "AtKeyword",
-    "value": "charset"
+    "offset": 15,
+    "len": 8
   },
   {
-    "kind": "Whitespace"
+    "kind": "RightCurly",
+    "offset": 23,
+    "len": 1
+  },
+  {
+    "kind": "AtKeyword",
+    "offset": 26,
+    "len": 8
   },
   {
     "kind": "String",
-    "value": [
-      "UTF-8",
-      {
-        "kind": "Double"
-      }
-    ]
-  },
-  {
-    "kind": "Whitespace"
+    "offset": 35,
+    "len": 7
   }
 ]

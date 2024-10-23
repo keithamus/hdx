@@ -1,279 +1,193 @@
 ---
 source: crates/hdx_lexer/tests/postcss_snapshots.rs
-expression: "get_tokens(\"../../tasks/coverage/postcss-parser-tests/cases/comments.css\".into())"
+expression: tokens
 ---
 [
   {
-    "kind": "Comment",
-    "value": " a { color: black } "
+    "kind": "Ident",
+    "offset": 36,
+    "len": 3
   },
   {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "Comment",
-    "value": ""
-  },
-  {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "Comment",
-    "value": " "
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "LeftCurly",
+    "offset": 40,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "div"
+    "offset": 63,
+    "len": 5
   },
   {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "LeftCurly"
-  },
-  {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "Comment",
-    "value": " inside "
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Colon",
+    "offset": 68,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "color"
+    "offset": 70,
+    "len": 5
   },
   {
-    "kind": "Colon"
-  },
-  {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "Ident",
-    "value": "black"
-  },
-  {
-    "kind": "Semicolon"
-  },
-  {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "Comment",
-    "value": " between "
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Semicolon",
+    "offset": 75,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "border-radius"
+    "offset": 99,
+    "len": 13
   },
   {
-    "kind": "Colon"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Colon",
+    "offset": 112,
+    "len": 1
   },
   {
     "kind": "Dimension",
-    "value": [
-      3.0,
-      "px",
-      {
-        "bits": 0
-      }
-    ]
-  },
-  {
-    "kind": "Whitespace"
+    "offset": 114,
+    "len": 3,
+    "unit": "px"
   },
   {
     "kind": "Delim",
-    "value": "/"
-  },
-  {
-    "kind": "Whitespace"
+    "offset": 118,
+    "len": 1
   },
   {
     "kind": "Dimension",
-    "value": [
-      7.0,
-      "px",
-      {
-        "bits": 0
-      }
-    ]
+    "offset": 120,
+    "len": 3,
+    "unit": "px"
   },
   {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "Comment",
-    "value": " end "
-  },
-  {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "RightCurly"
-  },
-  {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "Comment",
-    "value": " b "
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "RightCurly",
+    "offset": 138,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "a"
+    "offset": 149,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "LeftCurly"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "LeftCurly",
+    "offset": 151,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "color"
+    "offset": 157,
+    "len": 5
   },
   {
-    "kind": "Colon"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Colon",
+    "offset": 162,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "black"
+    "offset": 164,
+    "len": 5
   },
   {
-    "kind": "Semicolon"
+    "kind": "Semicolon",
+    "offset": 169,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "Comment",
-    "value": " c "
-  },
-  {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "RightCurly"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "RightCurly",
+    "offset": 183,
+    "len": 1
   },
   {
     "kind": "Delim",
-    "value": "."
+    "offset": 186,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "in"
-  },
-  {
-    "kind": "Comment",
-    "value": ""
+    "offset": 187,
+    "len": 2
   },
   {
     "kind": "Ident",
-    "value": "side"
+    "offset": 193,
+    "len": 4
   },
   {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "LeftCurly"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "LeftCurly",
+    "offset": 198,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "color"
+    "offset": 202,
+    "len": 5
   },
   {
-    "kind": "Colon"
-  },
-  {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "Ident",
-    "value": "var"
-  },
-  {
-    "kind": "Comment",
-    "value": ""
-  },
-  {
-    "kind": "LeftParen"
+    "kind": "Colon",
+    "offset": 207,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "--broken"
+    "offset": 209,
+    "len": 3
   },
   {
-    "kind": "RightParen"
-  },
-  {
-    "kind": "Semicolon"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "LeftParen",
+    "offset": 216,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "font-family"
+    "offset": 217,
+    "len": 8
   },
   {
-    "kind": "Colon"
+    "kind": "RightParen",
+    "offset": 225,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "Ident",
-    "value": "sans-serif"
-  },
-  {
-    "kind": "Comma"
-  },
-  {
-    "kind": "Comment",
-    "value": ""
+    "kind": "Semicolon",
+    "offset": 226,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "serif"
+    "offset": 230,
+    "len": 11
   },
   {
-    "kind": "Semicolon"
+    "kind": "Colon",
+    "offset": 241,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
+    "kind": "Ident",
+    "offset": 243,
+    "len": 10
   },
   {
-    "kind": "RightCurly"
+    "kind": "Comma",
+    "offset": 253,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
+    "kind": "Ident",
+    "offset": 258,
+    "len": 5
+  },
+  {
+    "kind": "Semicolon",
+    "offset": 263,
+    "len": 1
+  },
+  {
+    "kind": "RightCurly",
+    "offset": 265,
+    "len": 1
   }
 ]

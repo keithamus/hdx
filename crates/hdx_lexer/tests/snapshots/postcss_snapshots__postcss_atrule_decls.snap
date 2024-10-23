@@ -1,247 +1,208 @@
 ---
 source: crates/hdx_lexer/tests/postcss_snapshots.rs
-expression: "get_tokens(\"../../tasks/coverage/postcss-parser-tests/cases/atrule-decls.css\".into())"
+expression: tokens
 ---
 [
   {
     "kind": "AtKeyword",
-    "value": "page"
+    "offset": 0,
+    "len": 5
   },
   {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "Colon"
-  },
-  {
-    "kind": "Ident",
-    "value": "left"
-  },
-  {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "LeftCurly"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Colon",
+    "offset": 6,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "background"
+    "offset": 7,
+    "len": 4
   },
   {
-    "kind": "Colon"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "LeftCurly",
+    "offset": 12,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "black"
+    "offset": 18,
+    "len": 10
   },
   {
-    "kind": "Whitespace"
+    "kind": "Colon",
+    "offset": 28,
+    "len": 1
   },
   {
-    "kind": "RightCurly"
+    "kind": "Ident",
+    "offset": 30,
+    "len": 5
   },
   {
-    "kind": "Whitespace"
+    "kind": "RightCurly",
+    "offset": 36,
+    "len": 1
   },
   {
     "kind": "AtKeyword",
-    "value": "media"
+    "offset": 39,
+    "len": 6
   },
   {
-    "kind": "LeftParen"
+    "kind": "LeftParen",
+    "offset": 45,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "min-width"
+    "offset": 46,
+    "len": 9
   },
   {
-    "kind": "Colon"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Colon",
+    "offset": 55,
+    "len": 1
   },
   {
     "kind": "Number",
-    "value": [
-      0.0,
-      {
-        "bits": 0
-      }
-    ]
+    "offset": 57,
+    "len": 1
   },
   {
-    "kind": "RightParen"
+    "kind": "RightParen",
+    "offset": 58,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "LeftCurly"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "LeftCurly",
+    "offset": 60,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "background"
+    "offset": 66,
+    "len": 10
   },
   {
-    "kind": "Colon"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Colon",
+    "offset": 76,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "white"
+    "offset": 78,
+    "len": 5
   },
   {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "RightCurly"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "RightCurly",
+    "offset": 84,
+    "len": 1
   },
   {
     "kind": "AtKeyword",
-    "value": "font-face"
+    "offset": 87,
+    "len": 10
   },
   {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "LeftCurly"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "LeftCurly",
+    "offset": 98,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "family-name"
+    "offset": 104,
+    "len": 11
   },
   {
-    "kind": "Colon"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Colon",
+    "offset": 115,
+    "len": 1
   },
   {
     "kind": "String",
-    "value": [
-      "A;' /**/",
-      {
-        "kind": "Double"
-      }
-    ]
+    "offset": 117,
+    "len": 10
   },
   {
-    "kind": "Semicolon"
+    "kind": "Semicolon",
+    "offset": 127,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "RightCurly"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "RightCurly",
+    "offset": 129,
+    "len": 1
   },
   {
     "kind": "AtKeyword",
-    "value": "viewport"
+    "offset": 132,
+    "len": 9
   },
   {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "LeftCurly"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "LeftCurly",
+    "offset": 142,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "width"
+    "offset": 148,
+    "len": 5
   },
   {
-    "kind": "Colon"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Colon",
+    "offset": 153,
+    "len": 1
   },
   {
     "kind": "Dimension",
-    "value": [
-      110.0,
-      "px",
-      {
-        "bits": 0
-      }
-    ]
+    "offset": 155,
+    "len": 5,
+    "unit": "px"
   },
   {
-    "kind": "Semicolon"
+    "kind": "Semicolon",
+    "offset": 160,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "RightCurly"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "RightCurly",
+    "offset": 162,
+    "len": 1
   },
   {
     "kind": "AtKeyword",
-    "value": "-ms-viewport"
+    "offset": 165,
+    "len": 13
   },
   {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "LeftCurly"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "LeftCurly",
+    "offset": 179,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "width"
+    "offset": 185,
+    "len": 5
   },
   {
-    "kind": "Colon"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Colon",
+    "offset": 190,
+    "len": 1
   },
   {
     "kind": "Dimension",
-    "value": [
-      100.0,
-      "px",
-      {
-        "bits": 0
-      }
-    ]
+    "offset": 192,
+    "len": 5,
+    "unit": "px"
   },
   {
-    "kind": "Semicolon"
+    "kind": "Semicolon",
+    "offset": 197,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "RightCurly"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "RightCurly",
+    "offset": 199,
+    "len": 1
   }
 ]

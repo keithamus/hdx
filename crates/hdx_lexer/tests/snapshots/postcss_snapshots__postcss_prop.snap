@@ -1,136 +1,127 @@
 ---
 source: crates/hdx_lexer/tests/postcss_snapshots.rs
-expression: "get_tokens(\"../../tasks/coverage/postcss-parser-tests/cases/prop.css\".into())"
+expression: tokens
 ---
 [
   {
     "kind": "Ident",
-    "value": "a"
+    "offset": 0,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "LeftCurly"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "LeftCurly",
+    "offset": 2,
+    "len": 1
   },
   {
     "kind": "Delim",
-    "value": "*"
+    "offset": 8,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "color"
+    "offset": 9,
+    "len": 5
   },
   {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "Colon"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Colon",
+    "offset": 15,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "black"
+    "offset": 17,
+    "len": 5
   },
   {
-    "kind": "Semicolon"
-  },
-  {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "Ident",
-    "value": "_background"
-  },
-  {
-    "kind": "Colon"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Semicolon",
+    "offset": 22,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "white"
+    "offset": 28,
+    "len": 11
   },
   {
-    "kind": "Semicolon"
-  },
-  {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "Ident",
-    "value": "font-size"
-  },
-  {
-    "kind": "Comment",
-    "value": ""
-  },
-  {
-    "kind": "Colon"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Colon",
+    "offset": 39,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "big"
+    "offset": 41,
+    "len": 5
   },
   {
-    "kind": "Semicolon"
+    "kind": "Semicolon",
+    "offset": 46,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
+    "kind": "Ident",
+    "offset": 52,
+    "len": 9
+  },
+  {
+    "kind": "Colon",
+    "offset": 65,
+    "len": 1
+  },
+  {
+    "kind": "Ident",
+    "offset": 67,
+    "len": 3
+  },
+  {
+    "kind": "Semicolon",
+    "offset": 70,
+    "len": 1
   },
   {
     "kind": "Delim",
-    "value": "$"
+    "offset": 76,
+    "len": 1
   },
   {
-    "kind": "LeftParen"
-  },
-  {
-    "kind": "Ident",
-    "value": "var"
-  },
-  {
-    "kind": "RightParen"
+    "kind": "LeftParen",
+    "offset": 77,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "-size"
+    "offset": 78,
+    "len": 3
   },
   {
-    "kind": "Colon"
+    "kind": "RightParen",
+    "offset": 81,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
+    "kind": "Ident",
+    "offset": 82,
+    "len": 5
+  },
+  {
+    "kind": "Colon",
+    "offset": 87,
+    "len": 1
   },
   {
     "kind": "Dimension",
-    "value": [
-      100.0,
-      "%",
-      {
-        "bits": 0
-      }
-    ]
+    "offset": 89,
+    "len": 4,
+    "unit": "%"
   },
   {
-    "kind": "Semicolon"
+    "kind": "Semicolon",
+    "offset": 93,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "RightCurly"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "RightCurly",
+    "offset": 95,
+    "len": 1
   }
 ]

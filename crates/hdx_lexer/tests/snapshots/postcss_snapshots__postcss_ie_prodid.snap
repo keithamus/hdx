@@ -1,138 +1,146 @@
 ---
 source: crates/hdx_lexer/tests/postcss_snapshots.rs
-expression: "get_tokens(\"../../tasks/coverage/postcss-parser-tests/cases/ie-progid.css\".into())"
+expression: tokens
 ---
 [
   {
     "kind": "Ident",
-    "value": "a"
+    "offset": 0,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "LeftCurly"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "LeftCurly",
+    "offset": 2,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "filter"
+    "offset": 8,
+    "len": 6
   },
   {
-    "kind": "Colon"
-  },
-  {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "Ident",
-    "value": "progid"
-  },
-  {
-    "kind": "Colon"
+    "kind": "Colon",
+    "offset": 14,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "DXImageTransform"
+    "offset": 16,
+    "len": 6
+  },
+  {
+    "kind": "Colon",
+    "offset": 22,
+    "len": 1
+  },
+  {
+    "kind": "Ident",
+    "offset": 23,
+    "len": 16
   },
   {
     "kind": "Delim",
-    "value": "."
+    "offset": 39,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "Microsoft"
+    "offset": 40,
+    "len": 9
   },
   {
     "kind": "Delim",
-    "value": "."
+    "offset": 49,
+    "len": 1
   },
   {
     "kind": "Function",
-    "value": "Blur"
+    "offset": 50,
+    "len": 5
   },
   {
     "kind": "Ident",
-    "value": "pixelradius"
+    "offset": 55,
+    "len": 11
   },
   {
     "kind": "Delim",
-    "value": "="
+    "offset": 66,
+    "len": 1
   },
   {
     "kind": "Number",
-    "value": [
-      2.0,
-      {
-        "bits": 0
-      }
-    ]
+    "offset": 67,
+    "len": 1
   },
   {
-    "kind": "RightParen"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "RightParen",
+    "offset": 68,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "progid"
+    "offset": 70,
+    "len": 6
   },
   {
-    "kind": "Colon"
+    "kind": "Colon",
+    "offset": 76,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "DXImageTransform"
+    "offset": 77,
+    "len": 16
   },
   {
     "kind": "Delim",
-    "value": "."
+    "offset": 93,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "Microsoft"
+    "offset": 94,
+    "len": 9
   },
   {
     "kind": "Delim",
-    "value": "."
+    "offset": 103,
+    "len": 1
   },
   {
     "kind": "Function",
-    "value": "Wheel"
+    "offset": 104,
+    "len": 6
   },
   {
     "kind": "Ident",
-    "value": "duration"
+    "offset": 110,
+    "len": 8
   },
   {
     "kind": "Delim",
-    "value": "="
+    "offset": 118,
+    "len": 1
   },
   {
     "kind": "Number",
-    "value": [
-      3.0,
-      {
-        "bits": 0
-      }
-    ]
+    "offset": 119,
+    "len": 1
   },
   {
-    "kind": "RightParen"
+    "kind": "RightParen",
+    "offset": 120,
+    "len": 1
   },
   {
-    "kind": "Semicolon"
+    "kind": "Semicolon",
+    "offset": 121,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "RightCurly"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "RightCurly",
+    "offset": 123,
+    "len": 1
   }
 ]

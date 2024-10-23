@@ -1,85 +1,76 @@
 ---
 source: crates/hdx_lexer/tests/postcss_snapshots.rs
-expression: "get_tokens(\"../../tasks/coverage/postcss-parser-tests/cases/quotes.css\".into())"
+expression: tokens
 ---
 [
   {
     "kind": "Ident",
-    "value": "a"
+    "offset": 0,
+    "len": 1
   },
   {
-    "kind": "Colon"
+    "kind": "Colon",
+    "offset": 1,
+    "len": 1
   },
   {
-    "kind": "Colon"
-  },
-  {
-    "kind": "Ident",
-    "value": "before"
-  },
-  {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "LeftCurly"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Colon",
+    "offset": 2,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "content"
+    "offset": 3,
+    "len": 6
   },
   {
-    "kind": "Colon"
+    "kind": "LeftCurly",
+    "offset": 10,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
+    "kind": "Ident",
+    "offset": 16,
+    "len": 7
+  },
+  {
+    "kind": "Colon",
+    "offset": 23,
+    "len": 1
   },
   {
     "kind": "String",
-    "value": [
-      ";'@ /**/\"",
-      {
-        "kind": "Double"
-      }
-    ]
+    "offset": 25,
+    "len": 12
   },
   {
-    "kind": "Semicolon"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Semicolon",
+    "offset": 37,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "content"
+    "offset": 43,
+    "len": 7
   },
   {
-    "kind": "Colon"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Colon",
+    "offset": 50,
+    "len": 1
   },
   {
     "kind": "String",
-    "value": [
-      "'\"\\",
-      {
-        "kind": "Single"
-      }
-    ]
+    "offset": 52,
+    "len": 7
   },
   {
-    "kind": "Semicolon"
+    "kind": "Semicolon",
+    "offset": 59,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "RightCurly"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "RightCurly",
+    "offset": 61,
+    "len": 1
   }
 ]

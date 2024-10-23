@@ -4,180 +4,155 @@ expression: tokens
 ---
 [
   {
-    "kind": "Colon"
+    "kind": "Colon",
+    "offset": 0,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "root"
+    "offset": 1,
+    "len": 4
   },
   {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "LeftCurly"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "LeftCurly",
+    "offset": 6,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "--zero-size"
+    "offset": 10,
+    "len": 11
   },
   {
-    "kind": "Colon"
+    "kind": "Colon",
+    "offset": 21,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "LeftCurly"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "LeftCurly",
+    "offset": 23,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "width"
+    "offset": 29,
+    "len": 5
   },
   {
-    "kind": "Colon"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Colon",
+    "offset": 34,
+    "len": 1
   },
   {
     "kind": "Number",
-    "value": [
-      0.0,
-      {
-        "bits": 0
-      }
-    ]
+    "offset": 36,
+    "len": 1
   },
   {
-    "kind": "Semicolon"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Semicolon",
+    "offset": 37,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "height"
+    "offset": 43,
+    "len": 6
   },
   {
-    "kind": "Colon"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Colon",
+    "offset": 49,
+    "len": 1
   },
   {
     "kind": "Number",
-    "value": [
-      0.0,
-      {
-        "bits": 0
-      }
-    ]
+    "offset": 51,
+    "len": 1
   },
   {
-    "kind": "Semicolon"
+    "kind": "Semicolon",
+    "offset": 52,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
+    "kind": "RightCurly",
+    "offset": 56,
+    "len": 1
   },
   {
-    "kind": "RightCurly"
-  },
-  {
-    "kind": "Semicolon"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Semicolon",
+    "offset": 57,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "--small-icon"
+    "offset": 61,
+    "len": 12
   },
   {
-    "kind": "Colon"
+    "kind": "Colon",
+    "offset": 73,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "LeftCurly"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "LeftCurly",
+    "offset": 75,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "width"
+    "offset": 81,
+    "len": 5
   },
   {
-    "kind": "Colon"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Colon",
+    "offset": 86,
+    "len": 1
   },
   {
     "kind": "Dimension",
-    "value": [
-      16.0,
-      "px",
-      {
-        "bits": 0
-      }
-    ]
+    "offset": 88,
+    "len": 4,
+    "unit": "px"
   },
   {
-    "kind": "Semicolon"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Semicolon",
+    "offset": 92,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "height"
+    "offset": 98,
+    "len": 6
   },
   {
-    "kind": "Colon"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Colon",
+    "offset": 104,
+    "len": 1
   },
   {
     "kind": "Dimension",
-    "value": [
-      16.0,
-      "px",
-      {
-        "bits": 0
-      }
-    ]
+    "offset": 106,
+    "len": 4,
+    "unit": "px"
   },
   {
-    "kind": "Semicolon"
+    "kind": "Semicolon",
+    "offset": 110,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
+    "kind": "RightCurly",
+    "offset": 114,
+    "len": 1
   },
   {
-    "kind": "RightCurly"
+    "kind": "Semicolon",
+    "offset": 118,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "Semicolon"
-  },
-  {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "RightCurly"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "RightCurly",
+    "offset": 120,
+    "len": 1
   }
 ]

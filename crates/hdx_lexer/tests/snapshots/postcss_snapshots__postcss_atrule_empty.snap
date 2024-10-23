@@ -1,28 +1,21 @@
 ---
 source: crates/hdx_lexer/tests/postcss_snapshots.rs
-expression: "get_tokens(\"../../tasks/coverage/postcss-parser-tests/cases/atrule-empty.css\".into())"
+expression: tokens
 ---
 [
   {
     "kind": "AtKeyword",
-    "value": "charset"
-  },
-  {
-    "kind": "Whitespace"
+    "offset": 0,
+    "len": 8
   },
   {
     "kind": "String",
-    "value": [
-      "UTF-8",
-      {
-        "kind": "Double"
-      }
-    ]
+    "offset": 9,
+    "len": 7
   },
   {
-    "kind": "Semicolon"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Semicolon",
+    "offset": 16,
+    "len": 1
   }
 ]

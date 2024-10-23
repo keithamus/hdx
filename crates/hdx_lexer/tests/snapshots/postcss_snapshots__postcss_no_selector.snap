@@ -1,15 +1,16 @@
 ---
 source: crates/hdx_lexer/tests/postcss_snapshots.rs
-expression: "get_tokens(\"../../tasks/coverage/postcss-parser-tests/cases/no-selector.css\".into())"
+expression: tokens
 ---
 [
   {
-    "kind": "LeftCurly"
+    "kind": "LeftCurly",
+    "offset": 0,
+    "len": 1
   },
   {
-    "kind": "RightCurly"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "RightCurly",
+    "offset": 1,
+    "len": 1
   }
 ]
