@@ -1,1447 +1,1382 @@
 ---
 source: crates/hdx_lexer/tests/popular_snapshots.rs
-expression: "get_tokens(\"../../tasks/coverage/popular/reset.2.0.css\".into())"
+expression: tokens
 ---
 [
   {
-    "kind": "Comment",
-    "value": " http://meyerweb.com/eric/tools/css/reset/ \n   v2.0 | 20110126\n   License: none (public domain)\n"
-  },
-  {
-    "kind": "Whitespace"
-  },
-  {
     "kind": "Ident",
-    "value": "html"
-  },
-  {
-    "kind": "Comma"
+    "offset": 102,
+    "len": 4
   },
   {
-    "kind": "Whitespace"
+    "kind": "Comma",
+    "offset": 106,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "body"
-  },
-  {
-    "kind": "Comma"
+    "offset": 108,
+    "len": 4
   },
   {
-    "kind": "Whitespace"
+    "kind": "Comma",
+    "offset": 112,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "div"
-  },
-  {
-    "kind": "Comma"
+    "offset": 114,
+    "len": 3
   },
   {
-    "kind": "Whitespace"
+    "kind": "Comma",
+    "offset": 117,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "span"
+    "offset": 119,
+    "len": 4
   },
   {
-    "kind": "Comma"
+    "kind": "Comma",
+    "offset": 123,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
-  },
-  {
     "kind": "Ident",
-    "value": "applet"
+    "offset": 125,
+    "len": 6
   },
   {
-    "kind": "Comma"
+    "kind": "Comma",
+    "offset": 131,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
-  },
-  {
     "kind": "Ident",
-    "value": "object"
-  },
-  {
-    "kind": "Comma"
+    "offset": 133,
+    "len": 6
   },
   {
-    "kind": "Whitespace"
+    "kind": "Comma",
+    "offset": 139,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "iframe"
-  },
-  {
-    "kind": "Comma"
+    "offset": 141,
+    "len": 6
   },
   {
-    "kind": "Whitespace"
+    "kind": "Comma",
+    "offset": 147,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "h1"
+    "offset": 149,
+    "len": 2
   },
   {
-    "kind": "Comma"
+    "kind": "Comma",
+    "offset": 151,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
-  },
-  {
     "kind": "Ident",
-    "value": "h2"
-  },
-  {
-    "kind": "Comma"
+    "offset": 153,
+    "len": 2
   },
   {
-    "kind": "Whitespace"
+    "kind": "Comma",
+    "offset": 155,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "h3"
-  },
-  {
-    "kind": "Comma"
+    "offset": 157,
+    "len": 2
   },
   {
-    "kind": "Whitespace"
+    "kind": "Comma",
+    "offset": 159,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "h4"
-  },
-  {
-    "kind": "Comma"
+    "offset": 161,
+    "len": 2
   },
   {
-    "kind": "Whitespace"
+    "kind": "Comma",
+    "offset": 163,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "h5"
+    "offset": 165,
+    "len": 2
   },
   {
-    "kind": "Comma"
+    "kind": "Comma",
+    "offset": 167,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
-  },
-  {
     "kind": "Ident",
-    "value": "h6"
+    "offset": 169,
+    "len": 2
   },
   {
-    "kind": "Comma"
+    "kind": "Comma",
+    "offset": 171,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
-  },
-  {
     "kind": "Ident",
-    "value": "p"
-  },
-  {
-    "kind": "Comma"
+    "offset": 173,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
+    "kind": "Comma",
+    "offset": 174,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "blockquote"
-  },
-  {
-    "kind": "Comma"
+    "offset": 176,
+    "len": 10
   },
   {
-    "kind": "Whitespace"
+    "kind": "Comma",
+    "offset": 186,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "pre"
-  },
-  {
-    "kind": "Comma"
+    "offset": 188,
+    "len": 3
   },
   {
-    "kind": "Whitespace"
+    "kind": "Comma",
+    "offset": 191,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "a"
+    "offset": 193,
+    "len": 1
   },
   {
-    "kind": "Comma"
+    "kind": "Comma",
+    "offset": 194,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
-  },
-  {
     "kind": "Ident",
-    "value": "abbr"
-  },
-  {
-    "kind": "Comma"
+    "offset": 196,
+    "len": 4
   },
   {
-    "kind": "Whitespace"
+    "kind": "Comma",
+    "offset": 200,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "acronym"
-  },
-  {
-    "kind": "Comma"
+    "offset": 202,
+    "len": 7
   },
   {
-    "kind": "Whitespace"
+    "kind": "Comma",
+    "offset": 209,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "address"
+    "offset": 211,
+    "len": 7
   },
   {
-    "kind": "Comma"
+    "kind": "Comma",
+    "offset": 218,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
-  },
-  {
     "kind": "Ident",
-    "value": "big"
+    "offset": 220,
+    "len": 3
   },
   {
-    "kind": "Comma"
+    "kind": "Comma",
+    "offset": 223,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
-  },
-  {
     "kind": "Ident",
-    "value": "cite"
-  },
-  {
-    "kind": "Comma"
+    "offset": 225,
+    "len": 4
   },
   {
-    "kind": "Whitespace"
+    "kind": "Comma",
+    "offset": 229,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "code"
-  },
-  {
-    "kind": "Comma"
+    "offset": 231,
+    "len": 4
   },
   {
-    "kind": "Whitespace"
+    "kind": "Comma",
+    "offset": 235,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "del"
-  },
-  {
-    "kind": "Comma"
+    "offset": 237,
+    "len": 3
   },
   {
-    "kind": "Whitespace"
+    "kind": "Comma",
+    "offset": 240,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "dfn"
+    "offset": 242,
+    "len": 3
   },
   {
-    "kind": "Comma"
+    "kind": "Comma",
+    "offset": 245,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
-  },
-  {
     "kind": "Ident",
-    "value": "em"
+    "offset": 247,
+    "len": 2
   },
   {
-    "kind": "Comma"
+    "kind": "Comma",
+    "offset": 249,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
-  },
-  {
     "kind": "Ident",
-    "value": "img"
-  },
-  {
-    "kind": "Comma"
+    "offset": 251,
+    "len": 3
   },
   {
-    "kind": "Whitespace"
+    "kind": "Comma",
+    "offset": 254,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "ins"
-  },
-  {
-    "kind": "Comma"
+    "offset": 256,
+    "len": 3
   },
   {
-    "kind": "Whitespace"
+    "kind": "Comma",
+    "offset": 259,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "kbd"
+    "offset": 261,
+    "len": 3
   },
   {
-    "kind": "Comma"
+    "kind": "Comma",
+    "offset": 264,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
-  },
-  {
     "kind": "Ident",
-    "value": "q"
-  },
-  {
-    "kind": "Comma"
+    "offset": 266,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
+    "kind": "Comma",
+    "offset": 267,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "s"
-  },
-  {
-    "kind": "Comma"
+    "offset": 269,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
+    "kind": "Comma",
+    "offset": 270,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "samp"
-  },
-  {
-    "kind": "Comma"
+    "offset": 272,
+    "len": 4
   },
   {
-    "kind": "Whitespace"
+    "kind": "Comma",
+    "offset": 276,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "small"
+    "offset": 278,
+    "len": 5
   },
   {
-    "kind": "Comma"
+    "kind": "Comma",
+    "offset": 283,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
-  },
-  {
     "kind": "Ident",
-    "value": "strike"
-  },
-  {
-    "kind": "Comma"
+    "offset": 285,
+    "len": 6
   },
   {
-    "kind": "Whitespace"
+    "kind": "Comma",
+    "offset": 291,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "strong"
-  },
-  {
-    "kind": "Comma"
+    "offset": 293,
+    "len": 6
   },
   {
-    "kind": "Whitespace"
+    "kind": "Comma",
+    "offset": 299,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "sub"
+    "offset": 301,
+    "len": 3
   },
   {
-    "kind": "Comma"
+    "kind": "Comma",
+    "offset": 304,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
-  },
-  {
     "kind": "Ident",
-    "value": "sup"
+    "offset": 306,
+    "len": 3
   },
   {
-    "kind": "Comma"
+    "kind": "Comma",
+    "offset": 309,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
-  },
-  {
     "kind": "Ident",
-    "value": "tt"
-  },
-  {
-    "kind": "Comma"
+    "offset": 311,
+    "len": 2
   },
   {
-    "kind": "Whitespace"
+    "kind": "Comma",
+    "offset": 313,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "var"
-  },
-  {
-    "kind": "Comma"
+    "offset": 315,
+    "len": 3
   },
   {
-    "kind": "Whitespace"
+    "kind": "Comma",
+    "offset": 318,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "b"
+    "offset": 320,
+    "len": 1
   },
   {
-    "kind": "Comma"
+    "kind": "Comma",
+    "offset": 321,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
-  },
-  {
     "kind": "Ident",
-    "value": "u"
-  },
-  {
-    "kind": "Comma"
+    "offset": 323,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
+    "kind": "Comma",
+    "offset": 324,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "i"
-  },
-  {
-    "kind": "Comma"
+    "offset": 326,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
+    "kind": "Comma",
+    "offset": 327,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "center"
-  },
-  {
-    "kind": "Comma"
+    "offset": 329,
+    "len": 6
   },
   {
-    "kind": "Whitespace"
+    "kind": "Comma",
+    "offset": 335,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "dl"
+    "offset": 337,
+    "len": 2
   },
   {
-    "kind": "Comma"
+    "kind": "Comma",
+    "offset": 339,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
-  },
-  {
     "kind": "Ident",
-    "value": "dt"
+    "offset": 341,
+    "len": 2
   },
   {
-    "kind": "Comma"
+    "kind": "Comma",
+    "offset": 343,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
-  },
-  {
     "kind": "Ident",
-    "value": "dd"
-  },
-  {
-    "kind": "Comma"
+    "offset": 345,
+    "len": 2
   },
   {
-    "kind": "Whitespace"
+    "kind": "Comma",
+    "offset": 347,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "ol"
-  },
-  {
-    "kind": "Comma"
+    "offset": 349,
+    "len": 2
   },
   {
-    "kind": "Whitespace"
+    "kind": "Comma",
+    "offset": 351,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "ul"
-  },
-  {
-    "kind": "Comma"
+    "offset": 353,
+    "len": 2
   },
   {
-    "kind": "Whitespace"
+    "kind": "Comma",
+    "offset": 355,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "li"
+    "offset": 357,
+    "len": 2
   },
   {
-    "kind": "Comma"
+    "kind": "Comma",
+    "offset": 359,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
-  },
-  {
     "kind": "Ident",
-    "value": "fieldset"
-  },
-  {
-    "kind": "Comma"
+    "offset": 361,
+    "len": 8
   },
   {
-    "kind": "Whitespace"
+    "kind": "Comma",
+    "offset": 369,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "form"
-  },
-  {
-    "kind": "Comma"
+    "offset": 371,
+    "len": 4
   },
   {
-    "kind": "Whitespace"
+    "kind": "Comma",
+    "offset": 375,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "label"
+    "offset": 377,
+    "len": 5
   },
   {
-    "kind": "Comma"
+    "kind": "Comma",
+    "offset": 382,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
-  },
-  {
     "kind": "Ident",
-    "value": "legend"
+    "offset": 384,
+    "len": 6
   },
   {
-    "kind": "Comma"
+    "kind": "Comma",
+    "offset": 390,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
-  },
-  {
     "kind": "Ident",
-    "value": "table"
-  },
-  {
-    "kind": "Comma"
+    "offset": 392,
+    "len": 5
   },
   {
-    "kind": "Whitespace"
+    "kind": "Comma",
+    "offset": 397,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "caption"
-  },
-  {
-    "kind": "Comma"
+    "offset": 399,
+    "len": 7
   },
   {
-    "kind": "Whitespace"
+    "kind": "Comma",
+    "offset": 406,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "tbody"
-  },
-  {
-    "kind": "Comma"
+    "offset": 408,
+    "len": 5
   },
   {
-    "kind": "Whitespace"
+    "kind": "Comma",
+    "offset": 413,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "tfoot"
+    "offset": 415,
+    "len": 5
   },
   {
-    "kind": "Comma"
+    "kind": "Comma",
+    "offset": 420,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
-  },
-  {
     "kind": "Ident",
-    "value": "thead"
+    "offset": 422,
+    "len": 5
   },
   {
-    "kind": "Comma"
+    "kind": "Comma",
+    "offset": 427,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
-  },
-  {
     "kind": "Ident",
-    "value": "tr"
-  },
-  {
-    "kind": "Comma"
+    "offset": 429,
+    "len": 2
   },
   {
-    "kind": "Whitespace"
+    "kind": "Comma",
+    "offset": 431,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "th"
-  },
-  {
-    "kind": "Comma"
+    "offset": 433,
+    "len": 2
   },
   {
-    "kind": "Whitespace"
+    "kind": "Comma",
+    "offset": 435,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "td"
+    "offset": 437,
+    "len": 2
   },
   {
-    "kind": "Comma"
+    "kind": "Comma",
+    "offset": 439,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
-  },
-  {
     "kind": "Ident",
-    "value": "article"
-  },
-  {
-    "kind": "Comma"
+    "offset": 441,
+    "len": 7
   },
   {
-    "kind": "Whitespace"
+    "kind": "Comma",
+    "offset": 448,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "aside"
-  },
-  {
-    "kind": "Comma"
+    "offset": 450,
+    "len": 5
   },
   {
-    "kind": "Whitespace"
+    "kind": "Comma",
+    "offset": 455,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "canvas"
-  },
-  {
-    "kind": "Comma"
+    "offset": 457,
+    "len": 6
   },
   {
-    "kind": "Whitespace"
+    "kind": "Comma",
+    "offset": 463,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "details"
+    "offset": 465,
+    "len": 7
   },
   {
-    "kind": "Comma"
+    "kind": "Comma",
+    "offset": 472,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
-  },
-  {
     "kind": "Ident",
-    "value": "embed"
+    "offset": 474,
+    "len": 5
   },
   {
-    "kind": "Comma"
+    "kind": "Comma",
+    "offset": 479,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
-  },
-  {
     "kind": "Ident",
-    "value": "figure"
-  },
-  {
-    "kind": "Comma"
+    "offset": 482,
+    "len": 6
   },
   {
-    "kind": "Whitespace"
+    "kind": "Comma",
+    "offset": 488,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "figcaption"
-  },
-  {
-    "kind": "Comma"
+    "offset": 490,
+    "len": 10
   },
   {
-    "kind": "Whitespace"
+    "kind": "Comma",
+    "offset": 500,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "footer"
-  },
-  {
-    "kind": "Comma"
+    "offset": 502,
+    "len": 6
   },
   {
-    "kind": "Whitespace"
+    "kind": "Comma",
+    "offset": 508,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "header"
+    "offset": 510,
+    "len": 6
   },
   {
-    "kind": "Comma"
+    "kind": "Comma",
+    "offset": 516,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
-  },
-  {
     "kind": "Ident",
-    "value": "hgroup"
-  },
-  {
-    "kind": "Comma"
+    "offset": 518,
+    "len": 6
   },
   {
-    "kind": "Whitespace"
+    "kind": "Comma",
+    "offset": 524,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "menu"
-  },
-  {
-    "kind": "Comma"
+    "offset": 527,
+    "len": 4
   },
   {
-    "kind": "Whitespace"
+    "kind": "Comma",
+    "offset": 531,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "nav"
+    "offset": 533,
+    "len": 3
   },
   {
-    "kind": "Comma"
+    "kind": "Comma",
+    "offset": 536,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
-  },
-  {
     "kind": "Ident",
-    "value": "output"
+    "offset": 538,
+    "len": 6
   },
   {
-    "kind": "Comma"
+    "kind": "Comma",
+    "offset": 544,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
-  },
-  {
     "kind": "Ident",
-    "value": "ruby"
-  },
-  {
-    "kind": "Comma"
+    "offset": 546,
+    "len": 4
   },
   {
-    "kind": "Whitespace"
+    "kind": "Comma",
+    "offset": 550,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "section"
-  },
-  {
-    "kind": "Comma"
+    "offset": 552,
+    "len": 7
   },
   {
-    "kind": "Whitespace"
+    "kind": "Comma",
+    "offset": 559,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "summary"
+    "offset": 561,
+    "len": 7
   },
   {
-    "kind": "Comma"
+    "kind": "Comma",
+    "offset": 568,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
-  },
-  {
     "kind": "Ident",
-    "value": "time"
-  },
-  {
-    "kind": "Comma"
+    "offset": 570,
+    "len": 4
   },
   {
-    "kind": "Whitespace"
+    "kind": "Comma",
+    "offset": 574,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "mark"
-  },
-  {
-    "kind": "Comma"
+    "offset": 576,
+    "len": 4
   },
   {
-    "kind": "Whitespace"
+    "kind": "Comma",
+    "offset": 580,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "audio"
-  },
-  {
-    "kind": "Comma"
+    "offset": 582,
+    "len": 5
   },
   {
-    "kind": "Whitespace"
+    "kind": "Comma",
+    "offset": 587,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "video"
+    "offset": 589,
+    "len": 5
   },
   {
-    "kind": "Whitespace"
+    "kind": "LeftCurly",
+    "offset": 595,
+    "len": 1
   },
   {
-    "kind": "LeftCurly"
-  },
-  {
-    "kind": "Whitespace"
-  },
-  {
     "kind": "Ident",
-    "value": "margin"
-  },
-  {
-    "kind": "Colon"
+    "offset": 598,
+    "len": 6
   },
   {
-    "kind": "Whitespace"
+    "kind": "Colon",
+    "offset": 604,
+    "len": 1
   },
   {
     "kind": "Number",
-    "value": [
-      0.0,
-      {
-        "bits": 0
-      }
-    ]
+    "offset": 606,
+    "len": 1
   },
   {
-    "kind": "Semicolon"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Semicolon",
+    "offset": 607,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "padding"
+    "offset": 610,
+    "len": 7
   },
   {
-    "kind": "Colon"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Colon",
+    "offset": 617,
+    "len": 1
   },
   {
     "kind": "Number",
-    "value": [
-      0.0,
-      {
-        "bits": 0
-      }
-    ]
+    "offset": 619,
+    "len": 1
   },
   {
-    "kind": "Semicolon"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Semicolon",
+    "offset": 620,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "border"
+    "offset": 623,
+    "len": 6
   },
   {
-    "kind": "Colon"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Colon",
+    "offset": 629,
+    "len": 1
   },
   {
     "kind": "Number",
-    "value": [
-      0.0,
-      {
-        "bits": 0
-      }
-    ]
+    "offset": 631,
+    "len": 1
   },
   {
-    "kind": "Semicolon"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Semicolon",
+    "offset": 632,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "font-size"
+    "offset": 635,
+    "len": 9
   },
   {
-    "kind": "Colon"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Colon",
+    "offset": 644,
+    "len": 1
   },
   {
     "kind": "Dimension",
-    "value": [
-      100.0,
-      "%",
-      {
-        "bits": 0
-      }
-    ]
+    "offset": 646,
+    "len": 4,
+    "unit": "%"
   },
   {
-    "kind": "Semicolon"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Semicolon",
+    "offset": 650,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "font"
+    "offset": 653,
+    "len": 4
   },
   {
-    "kind": "Colon"
-  },
-  {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "Ident",
-    "value": "inherit"
-  },
-  {
-    "kind": "Semicolon"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Colon",
+    "offset": 657,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "vertical-align"
+    "offset": 659,
+    "len": 7
   },
   {
-    "kind": "Colon"
-  },
-  {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "Ident",
-    "value": "baseline"
-  },
-  {
-    "kind": "Semicolon"
-  },
-  {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "RightCurly"
-  },
-  {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "Comment",
-    "value": " HTML5 display-role reset for older browsers "
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Semicolon",
+    "offset": 666,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "article"
+    "offset": 669,
+    "len": 14
   },
   {
-    "kind": "Comma"
-  },
-  {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "Ident",
-    "value": "aside"
-  },
-  {
-    "kind": "Comma"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Colon",
+    "offset": 683,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "details"
+    "offset": 685,
+    "len": 8
   },
   {
-    "kind": "Comma"
+    "kind": "Semicolon",
+    "offset": 693,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "Ident",
-    "value": "figcaption"
-  },
-  {
-    "kind": "Comma"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "RightCurly",
+    "offset": 695,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "figure"
+    "offset": 747,
+    "len": 7
   },
   {
-    "kind": "Comma"
-  },
-  {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "Ident",
-    "value": "footer"
-  },
-  {
-    "kind": "Comma"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Comma",
+    "offset": 754,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "header"
+    "offset": 756,
+    "len": 5
   },
   {
-    "kind": "Comma"
-  },
-  {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "Ident",
-    "value": "hgroup"
-  },
-  {
-    "kind": "Comma"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Comma",
+    "offset": 761,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "menu"
+    "offset": 763,
+    "len": 7
   },
   {
-    "kind": "Comma"
-  },
-  {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "Ident",
-    "value": "nav"
-  },
-  {
-    "kind": "Comma"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Comma",
+    "offset": 770,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "section"
+    "offset": 772,
+    "len": 10
   },
   {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "LeftCurly"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Comma",
+    "offset": 782,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "display"
+    "offset": 784,
+    "len": 6
   },
   {
-    "kind": "Colon"
-  },
-  {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "Ident",
-    "value": "block"
-  },
-  {
-    "kind": "Semicolon"
-  },
-  {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "RightCurly"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Comma",
+    "offset": 790,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "body"
+    "offset": 793,
+    "len": 6
   },
   {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "LeftCurly"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Comma",
+    "offset": 799,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "line-height"
+    "offset": 801,
+    "len": 6
   },
   {
-    "kind": "Colon"
+    "kind": "Comma",
+    "offset": 807,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
+    "kind": "Ident",
+    "offset": 809,
+    "len": 6
+  },
+  {
+    "kind": "Comma",
+    "offset": 815,
+    "len": 1
+  },
+  {
+    "kind": "Ident",
+    "offset": 817,
+    "len": 4
+  },
+  {
+    "kind": "Comma",
+    "offset": 821,
+    "len": 1
+  },
+  {
+    "kind": "Ident",
+    "offset": 823,
+    "len": 3
+  },
+  {
+    "kind": "Comma",
+    "offset": 826,
+    "len": 1
+  },
+  {
+    "kind": "Ident",
+    "offset": 828,
+    "len": 7
+  },
+  {
+    "kind": "LeftCurly",
+    "offset": 836,
+    "len": 1
+  },
+  {
+    "kind": "Ident",
+    "offset": 839,
+    "len": 7
+  },
+  {
+    "kind": "Colon",
+    "offset": 846,
+    "len": 1
+  },
+  {
+    "kind": "Ident",
+    "offset": 848,
+    "len": 5
+  },
+  {
+    "kind": "Semicolon",
+    "offset": 853,
+    "len": 1
+  },
+  {
+    "kind": "RightCurly",
+    "offset": 855,
+    "len": 1
+  },
+  {
+    "kind": "Ident",
+    "offset": 857,
+    "len": 4
+  },
+  {
+    "kind": "LeftCurly",
+    "offset": 862,
+    "len": 1
+  },
+  {
+    "kind": "Ident",
+    "offset": 865,
+    "len": 11
+  },
+  {
+    "kind": "Colon",
+    "offset": 876,
+    "len": 1
   },
   {
     "kind": "Number",
-    "value": [
-      1.0,
-      {
-        "bits": 0
-      }
-    ]
+    "offset": 878,
+    "len": 1
   },
   {
-    "kind": "Semicolon"
+    "kind": "Semicolon",
+    "offset": 879,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "RightCurly"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "RightCurly",
+    "offset": 881,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "ol"
+    "offset": 883,
+    "len": 2
   },
   {
-    "kind": "Comma"
-  },
-  {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "Ident",
-    "value": "ul"
-  },
-  {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "LeftCurly"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Comma",
+    "offset": 885,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "list-style"
+    "offset": 887,
+    "len": 2
   },
   {
-    "kind": "Colon"
-  },
-  {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "Ident",
-    "value": "none"
-  },
-  {
-    "kind": "Semicolon"
-  },
-  {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "RightCurly"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "LeftCurly",
+    "offset": 890,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "blockquote"
+    "offset": 893,
+    "len": 10
   },
   {
-    "kind": "Comma"
-  },
-  {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "Ident",
-    "value": "q"
-  },
-  {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "LeftCurly"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Colon",
+    "offset": 903,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "quotes"
+    "offset": 905,
+    "len": 4
   },
   {
-    "kind": "Colon"
+    "kind": "Semicolon",
+    "offset": 909,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "Ident",
-    "value": "none"
-  },
-  {
-    "kind": "Semicolon"
-  },
-  {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "RightCurly"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "RightCurly",
+    "offset": 911,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "blockquote"
+    "offset": 913,
+    "len": 10
   },
   {
-    "kind": "Colon"
-  },
-  {
-    "kind": "Ident",
-    "value": "before"
-  },
-  {
-    "kind": "Comma"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Comma",
+    "offset": 923,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "blockquote"
+    "offset": 925,
+    "len": 1
   },
   {
-    "kind": "Colon"
-  },
-  {
-    "kind": "Ident",
-    "value": "after"
-  },
-  {
-    "kind": "Comma"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "LeftCurly",
+    "offset": 927,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "q"
+    "offset": 930,
+    "len": 6
   },
   {
-    "kind": "Colon"
-  },
-  {
-    "kind": "Ident",
-    "value": "before"
-  },
-  {
-    "kind": "Comma"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Colon",
+    "offset": 936,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "q"
+    "offset": 938,
+    "len": 4
   },
   {
-    "kind": "Colon"
+    "kind": "Semicolon",
+    "offset": 942,
+    "len": 1
   },
   {
-    "kind": "Ident",
-    "value": "after"
-  },
-  {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "LeftCurly"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "RightCurly",
+    "offset": 944,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "content"
+    "offset": 946,
+    "len": 10
   },
   {
-    "kind": "Colon"
+    "kind": "Colon",
+    "offset": 956,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
+    "kind": "Ident",
+    "offset": 957,
+    "len": 6
+  },
+  {
+    "kind": "Comma",
+    "offset": 963,
+    "len": 1
+  },
+  {
+    "kind": "Ident",
+    "offset": 965,
+    "len": 10
+  },
+  {
+    "kind": "Colon",
+    "offset": 975,
+    "len": 1
+  },
+  {
+    "kind": "Ident",
+    "offset": 976,
+    "len": 5
+  },
+  {
+    "kind": "Comma",
+    "offset": 981,
+    "len": 1
+  },
+  {
+    "kind": "Ident",
+    "offset": 983,
+    "len": 1
+  },
+  {
+    "kind": "Colon",
+    "offset": 984,
+    "len": 1
+  },
+  {
+    "kind": "Ident",
+    "offset": 985,
+    "len": 6
+  },
+  {
+    "kind": "Comma",
+    "offset": 991,
+    "len": 1
+  },
+  {
+    "kind": "Ident",
+    "offset": 993,
+    "len": 1
+  },
+  {
+    "kind": "Colon",
+    "offset": 994,
+    "len": 1
+  },
+  {
+    "kind": "Ident",
+    "offset": 995,
+    "len": 5
+  },
+  {
+    "kind": "LeftCurly",
+    "offset": 1001,
+    "len": 1
+  },
+  {
+    "kind": "Ident",
+    "offset": 1004,
+    "len": 7
+  },
+  {
+    "kind": "Colon",
+    "offset": 1011,
+    "len": 1
   },
   {
     "kind": "String",
-    "value": [
-      "",
-      {
-        "kind": "Single"
-      }
-    ]
+    "offset": 1013,
+    "len": 2
   },
   {
-    "kind": "Semicolon"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Semicolon",
+    "offset": 1015,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "content"
+    "offset": 1018,
+    "len": 7
   },
   {
-    "kind": "Colon"
-  },
-  {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "Ident",
-    "value": "none"
-  },
-  {
-    "kind": "Semicolon"
-  },
-  {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "RightCurly"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "Colon",
+    "offset": 1025,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "table"
+    "offset": 1027,
+    "len": 4
   },
   {
-    "kind": "Whitespace"
+    "kind": "Semicolon",
+    "offset": 1031,
+    "len": 1
   },
   {
-    "kind": "LeftCurly"
-  },
-  {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "Ident",
-    "value": "border-collapse"
-  },
-  {
-    "kind": "Colon"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "RightCurly",
+    "offset": 1033,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "collapse"
+    "offset": 1035,
+    "len": 5
   },
   {
-    "kind": "Semicolon"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "LeftCurly",
+    "offset": 1041,
+    "len": 1
   },
   {
     "kind": "Ident",
-    "value": "border-spacing"
+    "offset": 1044,
+    "len": 15
   },
   {
-    "kind": "Colon"
+    "kind": "Colon",
+    "offset": 1059,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
+    "kind": "Ident",
+    "offset": 1061,
+    "len": 8
+  },
+  {
+    "kind": "Semicolon",
+    "offset": 1069,
+    "len": 1
+  },
+  {
+    "kind": "Ident",
+    "offset": 1072,
+    "len": 14
+  },
+  {
+    "kind": "Colon",
+    "offset": 1086,
+    "len": 1
   },
   {
     "kind": "Number",
-    "value": [
-      0.0,
-      {
-        "bits": 0
-      }
-    ]
+    "offset": 1088,
+    "len": 1
   },
   {
-    "kind": "Semicolon"
+    "kind": "Semicolon",
+    "offset": 1089,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
-  },
-  {
-    "kind": "RightCurly"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "RightCurly",
+    "offset": 1091,
+    "len": 1
   }
 ]
