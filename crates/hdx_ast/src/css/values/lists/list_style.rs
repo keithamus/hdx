@@ -1,6 +1,6 @@
 use hdx_atom::atom;
 use hdx_derive::Value;
-use hdx_lexer::Token;
+use hdx_lexer::Kind;
 use hdx_parser::{unexpected, Parse, Parser, Result as ParserResult};
 
 use crate::macros::*;
@@ -19,11 +19,12 @@ impl<'a> Parse<'a> for ListStyle {
 		let mut third = ListStyleType::None;
 		let mut nones = 0;
 		loop {
-			if matches!(parser.peek(), Token::Semicolon | Token::Eof | Token::RightParen | Token::RightCurly) {
+			if matches!(parser.peek().kind(), Kind::Semicolon | Kind::Eof | Kind::RightParen | Kind::RightCurly) {
 				break;
 			}
-			if matches!(parser.peek(), Token::Ident(atom) if atom.to_ascii_lowercase() == atom!("none")) {
-				parser.advance();
+			let token = parser.peek();
+			if matches!(token.kind(), Kind::Ident if parser.parse_atom_lower(token) == atom!("none")) {
+				parser.next();
 				nones += 1;
 				if nones > 2 {
 					unexpected!(parser);

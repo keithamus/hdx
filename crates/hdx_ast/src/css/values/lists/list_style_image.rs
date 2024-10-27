@@ -1,6 +1,6 @@
 use hdx_atom::atom;
 use hdx_derive::{Value, Writable};
-use hdx_lexer::Token;
+use hdx_lexer::Kind;
 use hdx_parser::{unexpected, unexpected_ident, Parse, Parser, Result as ParserResult};
 
 use crate::css::types::Image;
@@ -16,16 +16,17 @@ pub enum ListStyleImage {
 
 impl<'a> Parse<'a> for ListStyleImage {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		Ok(match parser.peek() {
-			Token::Ident(atom) => match atom.to_ascii_lowercase() {
+		let token = parser.peek();
+		Ok(match token.kind() {
+			Kind::Ident => match parser.parse_atom_lower(token) {
 				atom!("none") => {
-					parser.advance();
+					parser.next();
 					Self::None
 				}
-				_ => unexpected_ident!(parser, atom),
+				atom => unexpected_ident!(parser, atom),
 			},
-			Token::Function(_) | Token::Url(_, _) => Self::Image(Image::parse(parser)?),
-			token => unexpected!(parser, token),
+			Kind::Function | Kind::Url => Self::Image(Image::parse(parser)?),
+			_ => unexpected!(parser, token),
 		})
 	}
 }

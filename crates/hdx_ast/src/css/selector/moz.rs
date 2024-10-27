@@ -1,6 +1,6 @@
 use hdx_atom::atom;
 use hdx_derive::Atomizable;
-use hdx_lexer::Token;
+use hdx_lexer::Kind;
 use hdx_parser::{expect, expect_ignore_case, todo, Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 
@@ -271,7 +271,7 @@ impl<'a> Parse<'a> for MozFunctionalPseudoClass {
 		expect_ignore_case! { parser.next(), Token::Function(_):
 			atom!("-moz-locale-dir") => {
 				let dir = DirValue::parse(parser)?;
-				expect!(parser.next(), Token::RightParen);
+				expect!(parser.next(), Kind::RightParen);
 				Ok(Self::LocaleDir(dir))
 			}
 		}

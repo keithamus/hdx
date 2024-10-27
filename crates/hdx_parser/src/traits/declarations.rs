@@ -1,7 +1,7 @@
 use hdx_atom::{atom, Atom};
-use hdx_lexer::{Include, Token};
+use hdx_lexer::{Include, Kind};
 
-use crate::{discard, expect, expect_ignore_case, match_ignore_case, parser::Parser, unexpected, Result};
+use crate::{discard, expect, expect_ignore_case, parser::Parser, peek_delim, peek_ignore_case, unexpected, Result};
 
 use super::Parse;
 
@@ -9,21 +9,20 @@ pub trait Declaration<'a>: Sized + Parse<'a> {
 	type DeclarationValue: DeclarationValue<'a>;
 
 	fn parse_name(parser: &mut Parser<'a>) -> Result<Atom> {
-		match parser.next().clone() {
-			Token::Ident(atom) => {
-				expect!(parser.next(), Token::Colon);
-				Ok(atom.to_ascii_lowercase())
+		let token = parser.next();
+		match token.kind() {
+			Kind::Ident => {
+				expect!(parser.next(), Kind::Colon);
+				Ok(parser.parse_atom_lower(token))
 			}
-			token => unexpected!(parser, token),
+			_ => unexpected!(parser, token),
 		}
 	}
 
 	fn parse_important(parser: &mut Parser<'a>) -> Result<bool> {
-		if matches!(parser.peek(), Token::Delim('!'))
-			&& match_ignore_case!(parser.peek_n(2), Token::Ident(atom!("important")))
-		{
-			parser.advance();
-			expect_ignore_case!(parser.next_with(Include::all()), Token::Ident(atom!("important")));
+		if peek_delim!(parser, '!') && peek_ignore_case!(parser, Kind::Ident, atom!("important")) {
+			parser.next();
+			expect_ignore_case!(parser.next_with(Include::all()), Kind::Ident, atom!("important"));
 			Ok(true)
 		} else {
 			Ok(false)
@@ -34,7 +33,7 @@ pub trait Declaration<'a>: Sized + Parse<'a> {
 		let name = Self::parse_name(parser)?;
 		let value = Self::DeclarationValue::parse_declaration_value(&name, parser)?;
 		let important = Self::parse_important(parser)?;
-		discard!(parser, Token::Semicolon);
+		discard!(parser, Kind::Semicolon);
 		Ok((name, value, important))
 	}
 }

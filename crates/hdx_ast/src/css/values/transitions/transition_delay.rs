@@ -1,5 +1,5 @@
 use hdx_derive::Value;
-use hdx_lexer::Token;
+use hdx_lexer::Kind;
 use hdx_parser::{discard, expect, Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 
@@ -13,11 +13,11 @@ pub struct TransitionDelay(pub SmallVec<[Time; 2]>);
 
 impl<'a> Parse<'a> for TransitionDelay {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		expect!(parser.peek(), Token::Dimension(_, _, _));
+		expect!(parser.peek(), Kind::Dimension);
 		let mut values = smallvec![];
 		loop {
 			values.push(Time::parse(parser)?);
-			if !discard!(parser, Token::Comma) {
+			if !discard!(parser, Kind::Comma) {
 				return Ok(TransitionDelay(values));
 			}
 		}

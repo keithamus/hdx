@@ -1,7 +1,7 @@
 use bitmask_enum::bitmask;
 use hdx_atom::atom;
 use hdx_derive::Value;
-use hdx_lexer::Token;
+use hdx_lexer::Kind;
 use hdx_parser::{unexpected, Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 
@@ -53,23 +53,28 @@ impl FontVariantLigatures {
 
 impl<'a> Parse<'a> for FontVariantLigatures {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		match parser.peek() {
-			Token::Ident(atom) => match atom.to_ascii_lowercase() {
+		let token = parser.peek();
+		match token.kind() {
+			Kind::Ident => match parser.parse_atom_lower(token) {
 				atom!("none") => {
-					parser.advance();
+					parser.next();
 					return Ok(Self::None);
 				}
 				atom!("normal") => {
-					parser.advance();
+					parser.next();
 					return Ok(Self::Normal);
 				}
 				_ => {}
 			},
-			token => unexpected!(parser, token),
+			_ => unexpected!(parser, token),
 		}
 		let mut value = Self::Normal;
-		while let Token::Ident(atom) = parser.peek() {
-			match atom.to_ascii_lowercase() {
+		loop {
+			let token = parser.peek();
+			if token.kind() != Kind::Ident {
+				break;
+			}
+			match parser.parse_atom_lower(token) {
 				atom!("common-ligatures") if !value.has_common_lig() => value |= Self::CommonLigatures,
 				atom!("no-common-ligatures") if !value.has_common_lig() => value |= Self::NoCommonLigatures,
 				atom!("discretionary-ligatures") if !value.has_discretionary_lig() => {
@@ -84,7 +89,7 @@ impl<'a> Parse<'a> for FontVariantLigatures {
 				atom!("no-contextual") if !value.has_contextual() => value |= Self::NoContextual,
 				_ => break,
 			}
-			parser.advance();
+			parser.next();
 		}
 		if value == Self::Normal {
 			unexpected!(parser)

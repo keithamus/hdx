@@ -6,6 +6,13 @@ use super::is_escape_sequence;
 #[repr(C, align(64))]
 pub struct Align64<T>(pub(crate) T);
 
+pub const ASCII_LOWER: Align64<[bool; 128]> = Align64([
+	F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F,
+	F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F,
+	F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T,
+	T, T, T, T, T, T, T, T, T, F, F, F, F, F,
+]);
+
 pub const ASCII_START: Align64<[bool; 128]> = Align64([
 	F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F,
 	F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, T, T, T, T, T, T, T, T, T, T, T,
@@ -46,6 +53,11 @@ pub fn is_ident_start(c: char) -> bool {
 #[inline]
 pub fn is_ident_ascii(c: char) -> bool {
 	ASCII_CONTINUE.0[c as usize]
+}
+
+#[inline]
+pub fn is_ident_ascii_lower(c: char) -> bool {
+	c.is_ascii() && ASCII_LOWER.0[c as usize]
 }
 
 #[inline]

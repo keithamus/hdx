@@ -1,5 +1,5 @@
 use hdx_atom::{atom, Atom};
-use hdx_lexer::{QuoteStyle, Token};
+use hdx_lexer::{Kind, QuoteStyle};
 use hdx_parser::{
 	diagnostics, discard, expect, expect_ignore_case, unexpected, unexpected_ident, AtRule, Parse, Parser,
 	Result as ParserResult, Spanned, Vec,
@@ -19,7 +19,7 @@ pub struct Keyframes<'a> {
 
 impl<'a> Parse<'a> for Keyframes<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		expect_ignore_case!(parser.next(), Token::AtKeyword(atom!("keyframes")));
+		expect_ignore_case!(parser.next(), Kind::AtKeyword, atom!("keyframes"));
 		let span = parser.span();
 		match Self::parse_at_rule(parser)? {
 			(Some(name), Some(rules)) => Ok(Self { name, rules }),
@@ -60,14 +60,14 @@ impl KeyframeName {
 impl<'a> Parse<'a> for KeyframeName {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		match parser.next() {
-			Token::Ident(atom) => {
+			Kind::Ident(atom) => {
 				if Self::valid_ident(atom) {
 					Ok(Self(atom.clone(), QuoteStyle::None))
 				} else {
 					unexpected_ident!(parser, atom)
 				}
 			}
-			Token::String(atom, quote_style) => Ok(Self(atom.clone(), *quote_style)),
+			Kind::String(atom, quote_style) => Ok(Self(atom.clone(), *quote_style)),
 			token => unexpected!(parser, token),
 		}
 	}
@@ -85,10 +85,10 @@ pub struct KeyframeList<'a>(Vec<'a, Spanned<Keyframe<'a>>>);
 
 impl<'a> Parse<'a> for KeyframeList<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		expect!(parser.next(), Token::LeftCurly);
+		expect!(parser.next(), Kind::LeftCurly);
 		let mut rules = parser.new_vec();
 		loop {
-			if discard!(parser, Token::RightCurly) {
+			if discard!(parser, Kind::RightCurly) {
 				return Ok(Self(rules));
 			}
 			rules.push(Keyframe::parse_spanned(parser)?);
@@ -120,17 +120,17 @@ impl<'a> Parse<'a> for Keyframe<'a> {
 		let mut selector = smallvec![];
 		loop {
 			selector.push(KeyframeSelector::parse(parser)?);
-			if discard!(parser, Token::LeftCurly | Token::Eof) {
+			if discard!(parser, Kind::LeftCurly | Kind::Eof) {
 				break;
 			}
-			if !discard!(parser, Token::Comma) {
+			if !discard!(parser, Kind::Comma) {
 				unexpected!(parser, parser.peek());
 			}
 		}
 		let mut properties = parser.new_vec();
 		loop {
-			discard!(parser, Token::Semicolon);
-			if discard!(parser, Token::RightCurly | Token::Eof) {
+			discard!(parser, Kind::Semicolon);
+			if discard!(parser, Kind::RightCurly | Kind::Eof) {
 				break;
 			}
 			properties.push(Property::parse_spanned(parser)?);
@@ -172,14 +172,22 @@ pub enum KeyframeSelector {
 
 impl<'a> Parse<'a> for KeyframeSelector {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		match parser.next() {
-			Token::Ident(atom) => match atom.to_ascii_lowercase() {
+		let token = parser.next();
+		match token.kind() {
+			Kind::Ident => match parser.parse_atom_lower(token) {
 				atom!("from") => Ok(KeyframeSelector::From),
 				atom!("to") => Ok(KeyframeSelector::To),
-				_ => unexpected_ident!(parser, atom),
+				atom => unexpected_ident!(parser, atom),
 			},
-			Token::Dimension(n, atom!("%"), _) if *n >= 0.0 && *n <= 100.0 => Ok(Self::Percent(n.into())),
-			token => unexpected!(parser, token),
+			Kind::Dimension => {
+				let n = parser.parse_number(token);
+				if matches!(parser.parse_atom(token), atom!("%")) && n >= 0.0 && n <= 100.0 {
+					Ok(Self::Percent(n.into()))
+				} else {
+					unexpected!(parser, token)
+				}
+			},
+			_ => unexpected!(parser, token),
 		}
 	}
 }

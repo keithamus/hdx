@@ -1,6 +1,6 @@
 use hdx_atom::{atom, Atom, Atomizable};
 use hdx_derive::{Atomizable, Writable};
-use hdx_lexer::{QuoteStyle, Token};
+use hdx_lexer::{QuoteStyle, Kind};
 use hdx_parser::{expect_ignore_case, unexpected, Parse, Parser, Result as ParserResult};
 use hdx_writer::{OutputOption, Result as WriterResult, WriteCss};
 use smallvec::{smallvec, SmallVec};
@@ -14,36 +14,38 @@ pub struct Symbols(pub SymbolsType, SmallVec<[Symbol; 0]>);
 
 impl<'a> Parse<'a> for Symbols {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		expect_ignore_case!(parser.next(), Token::Function(atom!("symbols")));
+		expect_ignore_case!(parser.next(), Kind::Function, atom!("symbols"));
 		let mut symbol_type = SymbolsType::default();
 		let mut symbols = smallvec![];
-		match parser.peek() {
-			Token::Ident(atom) => {
-				if let Some(st) = SymbolsType::from_atom(atom) {
-					parser.advance();
+		let token = parser.peek();
+		match token.kind() {
+			Kind::Ident => {
+				if let Some(st) = SymbolsType::from_atom(&parser.parse_atom(token)) {
+					parser.next();
 					symbol_type = st;
 				}
 			}
-			Token::RightParen => {
-				parser.advance();
+			Kind::RightParen => {
+				parser.next();
 				return Ok(Self(symbol_type, symbols));
 			}
 			_ => {}
 		}
 		loop {
-			match parser.peek().clone() {
-				Token::String(atom, style) => {
-					parser.advance();
-					symbols.push(Symbol::String(atom, style));
+			let token = parser.peek();
+			match token.kind() {
+				Kind::String => {
+					parser.next();
+					symbols.push(Symbol::String(parser.parse_atom(token), token.quote_style()));
 				}
-				Token::Function(_) => {
+				Kind::Function => {
 					symbols.push(Symbol::Image(Image::parse(parser)?));
 				}
-				Token::RightParen => {
-					parser.advance();
+				Kind::RightParen => {
+					parser.next();
 					return Ok(Self(symbol_type, symbols));
 				}
-				token => unexpected!(parser, token),
+				_ => unexpected!(parser, token),
 			}
 		}
 	}

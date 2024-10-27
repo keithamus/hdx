@@ -1,48 +1,33 @@
-use hdx_atom::{atom, Atom};
 use hdx_syntax::{
-	identifier::{is_ident, is_ident_ascii_start, is_ident_start, is_ident_start_sequence},
+	identifier::{is_ident, is_ident_ascii_lower, is_ident_ascii_start, is_ident_start, is_ident_start_sequence},
 	is_escape_sequence, is_newline, is_quote, is_sign, is_whitespace,
 	url::{is_non_printable, is_url_ident},
-	EOF, REPLACEMENT,
+	EOF,
 };
 
-use crate::{
-	constants::{SINGLE_CHAR_TOKENS, SURROGATE_RANGE},
-	string_builder::AutoCow,
-	token::{NumType, QuoteStyle, Token},
-	Include, Lexer,
-};
+use crate::{constants::SINGLE_CHAR_TOKENS, token::Token, Kind, Lexer};
 
 impl<'a> Lexer<'a> {
 	#[inline]
-	fn include_whitspace(&self) -> bool {
-		self.include & Include::Whitespace == Include::Whitespace
-	}
-
-	#[inline]
-	fn include_comments(&self) -> bool {
-		self.include & Include::Comments == Include::Comments
-	}
-
-	#[inline]
 	fn nth_char(&self, n: usize) -> char {
-		self.current.chars.clone().nth(n).unwrap_or(EOF)
+		self.chars.clone().nth(n).unwrap_or(EOF)
 	}
 
 	pub(crate) fn read_next_token(&mut self) -> Token {
-		let remaining = self.current.chars.as_str();
+		let pos = self.pos();
+		let remaining = self.chars.as_str();
 		if remaining.is_empty() {
-			return Token::Eof;
+			return Token::new(Kind::Eof, 0, pos, 0);
 		}
 		let c = self.nth_char(0);
 		// fast path for single character tokens
 		// '{'  '}'  '('  ')'  '['  ']'  ';' ',' ':'
 		let size = c as usize;
 		if size < 128 {
-			let token = &SINGLE_CHAR_TOKENS[size];
-			if token != &Token::Undetermined {
-				self.current.chars.next();
-				return token.clone();
+			let kind = SINGLE_CHAR_TOKENS[size];
+			if kind != Kind::Eof {
+				self.chars.next();
+				return Token::new(kind, 0, pos, c as u32);
 			}
 			// fast path for identifiers
 			if is_ident_ascii_start(c) {
@@ -53,10 +38,7 @@ impl<'a> Lexer<'a> {
 			// Whitespace Range
 			c if is_whitespace(c) => {
 				self.consume_whitespace();
-				if self.include_whitspace() {
-					return Token::Whitespace;
-				}
-				self.read_next_token()
+				Token::new(Kind::Whitespace, 0, pos, self.pos() - pos)
 			}
 			// Quote Range
 			c if is_quote(c) => self.consume_string_token(),
@@ -65,10 +47,10 @@ impl<'a> Lexer<'a> {
 			// Sign Range
 			'-' => {
 				if self.nth_char(1) == '-' && self.nth_char(2) == '>' {
-					self.current.chars.next();
-					self.current.chars.next();
-					self.current.chars.next();
-					return Token::Cdc;
+					self.chars.next();
+					self.chars.next();
+					self.chars.next();
+					return Token::new(Kind::CdcOrCdo, 1, pos, 3);
 				}
 				if is_ident_start_sequence(c, self.nth_char(1), self.nth_char(2)) {
 					return self.consume_ident_like_token();
@@ -76,175 +58,174 @@ impl<'a> Lexer<'a> {
 				if self.is_number_start() {
 					return self.consume_numeric_token();
 				}
-				Token::Delim(self.current.chars.next().unwrap())
+				Token::new(Kind::Delim, 0, pos, self.chars.next().unwrap() as u32)
 			}
 			// Dot or Plus
 			'.' | '+' => {
 				if self.is_number_start() {
 					return self.consume_numeric_token();
 				}
-				Token::Delim(self.current.chars.next().unwrap())
+				Token::new(Kind::Delim, 0, pos, self.chars.next().unwrap() as u32)
 			}
 			// Less Than
 			'<' => {
 				if self.nth_char(1) == '!' && self.nth_char(2) == '-' && self.nth_char(3) == '-' {
-					self.current.chars.next();
-					self.current.chars.next();
-					self.current.chars.next();
-					self.current.chars.next();
-					return Token::Cdo;
+					self.chars.next();
+					self.chars.next();
+					self.chars.next();
+					self.chars.next();
+					return Token::new(Kind::CdcOrCdo, 0, pos, 4);
 				}
-				Token::Delim(self.current.chars.next().unwrap())
+				Token::new(Kind::Delim, 0, pos, self.chars.next().unwrap() as u32)
 			}
 			// Hash / Pound Sign
 			'#' => {
 				if is_ident(self.nth_char(1)) || is_escape_sequence(self.nth_char(1), self.nth_char(2)) {
-					self.current.chars.next();
 					self.consume_hash_token()
 				} else {
-					Token::Delim(self.current.chars.next().unwrap())
+					Token::new(Kind::Delim, 0, pos, self.chars.next().unwrap() as u32)
 				}
 			}
 			// Commercial At
 			'@' => {
 				if is_ident_start_sequence(self.nth_char(1), self.nth_char(2), self.nth_char(3)) {
-					self.current.chars.next();
-					let ident = self.consume_ident_sequence();
-					return Token::AtKeyword(ident);
+					self.chars.next();
+					let flags = self.consume_ident_sequence();
+					return Token::new(Kind::AtKeyword, flags, pos, self.pos() - pos);
 				}
-				Token::Delim(self.current.chars.next().unwrap())
+				Token::new(Kind::Delim, 0, pos, self.chars.next().unwrap() as u32)
 			}
 			// Reverse Solidus
 			'\\' => {
 				if is_escape_sequence(c, self.nth_char(1)) {
 					return self.consume_ident_like_token();
 				}
-				Token::Delim(self.current.chars.next().unwrap())
+				Token::new(Kind::Delim, 0, pos, self.chars.next().unwrap() as u32)
 			}
 			// Solidus
 			'/' => match self.nth_char(1) {
 				'*' => {
-					self.current.chars.next();
-					self.current.chars.next();
-					if self.include_comments() {
-						let mut builder = AutoCow::new(self);
-						loop {
-							if self.nth_char(0) == EOF || (self.nth_char(0) == '*' && self.nth_char(1) == '/') {
-								let str = builder.finish(self);
-								self.current.chars.next();
-								self.current.chars.next();
-								return Token::Comment(Atom::from(str));
-							}
-							builder.push_matching(self.current.chars.next().unwrap());
+					self.chars.next();
+					self.chars.next();
+					while let Some(c) = self.chars.next() {
+						if c == '*' && self.nth_char(0) == '/' {
+							self.chars.next();
+							break;
 						}
-					} else {
-						while let Some(c) = self.current.chars.next() {
-							if c == '*' && self.nth_char(0) == '/' {
-								self.current.chars.next();
-								break;
-							}
-						}
-						self.read_next_token()
 					}
+					Token::new(Kind::Comment, 0, pos, self.pos() - pos)
 				}
-				_ => Token::Delim(self.current.chars.next().unwrap()),
+				_ => Token::new(Kind::Delim, 0, pos, self.chars.next().unwrap() as u32),
 			},
 			c if is_ident_start(c) => self.consume_ident_like_token(),
-			_ => Token::Delim(self.current.chars.next().unwrap()),
+			_ => Token::new(Kind::Delim, 0, pos, self.chars.next().unwrap() as u32),
 		}
 	}
 
-	fn consume_whitespace(&mut self) {
+	fn consume_whitespace(&mut self) -> usize {
+		let mut i = 0;
 		while is_whitespace(self.nth_char(0)) {
-			self.current.chars.next();
+			self.chars.next();
+			i += 1;
 		}
+		i
 	}
 
-	fn consume_ident_sequence(&mut self) -> Atom {
-		let mut builder = AutoCow::new(self);
+	fn consume_ident_sequence(&mut self) -> u8 {
+		let mut flags = 0b000;
 		loop {
-			let mut c = self.nth_char(0);
-			if is_ident(c) {
-				c = self.current.chars.next().unwrap();
-				builder.push_matching(c);
+			let c = self.nth_char(0);
+			if is_ident_ascii_lower(c) {
+				self.chars.next();
+			} else if is_ident(c) {
+				self.chars.next();
+				flags |= 0b001;
 			} else if is_escape_sequence(c, self.nth_char(1)) {
-				self.current.chars.next();
-				builder.force_allocation_without_current_ascii_char(self);
-				builder.push_different(self.consume_escape_sequence());
+				self.chars.next();
+				flags |= 0b100;
+				self.consume_escape_sequence();
 			} else {
-				return Atom::from(builder.finish(self));
+				break;
+			}
+		}
+		flags
+	}
+
+	fn consume_escape_sequence(&mut self) {
+		if self.chars.next().unwrap_or(EOF).is_ascii_hexdigit() {
+			let mut i = 0;
+			let mut chars = self.chars.clone().peekable();
+			while chars.peek().unwrap_or(&EOF).is_ascii_hexdigit() {
+				chars.next();
+				self.chars.next();
+				i += 1;
+				if i > 4 {
+					break;
+				}
+			}
+			if is_whitespace(*chars.peek().unwrap_or(&EOF)) {
+				self.chars.next();
 			}
 		}
 	}
 
-	fn consume_escape_sequence(&mut self) -> char {
-		if !self.nth_char(0).is_ascii_hexdigit() {
-			let char = self.current.chars.next().unwrap_or(REPLACEMENT);
-			return char;
+	fn consume_url_sequence(&mut self, pos: u32, ident_flags: u8) -> Token {
+		let mut flags = ident_flags & 0b100;
+		if self.consume_whitespace() > 0 {
+			flags |= 0b010;
 		}
-		if let Some(n) = self.code_point() {
-			return n;
-		}
-		REPLACEMENT
-	}
-
-	fn consume_url_sequence(&mut self, quote: QuoteStyle) -> Token {
-		self.consume_whitespace();
-		let mut builder = AutoCow::new(self);
-		builder.start = self.remaining();
-		builder.value = None;
 		loop {
-			let c = self.current.chars.next().unwrap_or(EOF);
+			let c = self.chars.next().unwrap_or(EOF);
 			match c {
 				')' => {
-					builder.force_allocation_without_current_ascii_char(self);
+					flags |= 0b001;
 					break;
 				}
 				EOF => {
 					break;
 				}
 				_ if is_whitespace(c) => {
-					builder.force_allocation_without_current_ascii_char(self);
 					self.consume_whitespace();
-					match self.current.chars.next().unwrap_or(EOF) {
+					// Consider trailing whitespace as escape to allow the string
+					// parser to consume characters one-by-one
+					flags |= 0b100;
+					match self.chars.next().unwrap_or(EOF) {
 						')' => {
+							flags |= 0b001;
 							break;
 						}
 						EOF => {
 							break;
 						}
 						_ => {
-							return self.consume_remnants_of_bad_url();
+							return self.consume_remnants_of_bad_url(pos);
 						}
 					};
 				}
 				'\'' | '"' | '(' => {
-					return self.consume_remnants_of_bad_url();
+					return self.consume_remnants_of_bad_url(pos);
 				}
 				_ if is_non_printable(c) => {
-					return self.consume_remnants_of_bad_url();
+					return self.consume_remnants_of_bad_url(pos);
 				}
 				'\\' => {
 					if is_escape_sequence(c, self.nth_char(0)) {
-						builder.force_allocation_without_current_ascii_char(self);
-						let c = self.consume_escape_sequence();
-						builder.push_different(c);
+						self.consume_escape_sequence();
+						flags |= 0b100;
 					} else {
-						self.current.chars.next();
-						return self.consume_remnants_of_bad_url();
+						self.chars.next();
+						return self.consume_remnants_of_bad_url(pos);
 					}
 				}
-				_ => {
-					builder.push_matching(c);
-				}
+				_ => {}
 			}
 		}
-		Token::Url(Atom::from(builder.finish(self)), quote)
+		Token::new(Kind::Url, flags, pos, self.pos() - pos)
 	}
 
-	fn consume_remnants_of_bad_url(&mut self) -> Token {
+	fn consume_remnants_of_bad_url(&mut self, pos: u32) -> Token {
 		loop {
-			match self.current.chars.next().unwrap_or(EOF) {
+			match self.chars.next().unwrap_or(EOF) {
 				')' => {
 					break;
 				}
@@ -253,79 +234,79 @@ impl<'a> Lexer<'a> {
 				}
 				c @ '\\' => {
 					if is_escape_sequence(c, self.nth_char(0)) {
-						self.current.chars.next();
+						self.chars.next();
 						self.consume_escape_sequence();
 					}
 				}
 				_ => {}
 			}
 		}
-		Token::BadUrl
+		Token::new(Kind::BadUrl, 0, pos, self.pos() - pos)
 	}
 
 	fn consume_numeric_token(&mut self) -> Token {
-		let mut builder = AutoCow::new(self);
-		let c = self.current.chars.next().unwrap();
-		builder.push_matching(c);
-		let mut num_type = NumType::none();
+		let pos = self.pos();
+		let c = self.chars.next().unwrap();
+		let mut flags = 0b000;
 		if is_sign(c) {
-			num_type = num_type.signed();
+			flags |= 0b010;
 		}
 		if c == '.' {
-			num_type = num_type.float();
+			flags |= 0b001;
 		}
 		self.consume_decimal_digits();
-		if num_type.is_int() && self.nth_char(0) == '.' && self.nth_char(1).is_ascii_digit() {
-			self.current.chars.next();
+		if flags & 0b001 == 0 && self.nth_char(0) == '.' && self.nth_char(1).is_ascii_digit() {
+			self.chars.next();
 			self.consume_decimal_digits();
-			num_type = num_type.float();
+			flags |= 0b001;
 		}
 		if matches!(self.nth_char(0), 'e' | 'E')
 			&& (self.nth_char(1).is_ascii_digit()
 				|| (matches!(self.nth_char(1), '-' | '+') && self.nth_char(2).is_ascii_digit()))
 		{
-			self.current.chars.next();
+			self.chars.next();
 			if matches!(self.nth_char(0), '-' | '+') {
-				self.current.chars.next();
+				self.chars.next();
 			}
 			self.consume_decimal_digits();
-			num_type = num_type.float();
+			flags |= 0b001;
 		}
-		let value = self.parse_number(builder.finish(self));
 		match self.nth_char(0) {
 			'%' => {
-				self.current.chars.next();
-				Token::Dimension(value, atom!("%"), num_type)
+				self.chars.next();
+				Token::new_dimension(flags, pos, self.pos() - pos, 1)
 			}
 			c if is_ident_start_sequence(c, self.nth_char(1), self.nth_char(2)) => {
-				let unit = self.consume_ident_sequence();
-				Token::Dimension(value, unit, num_type)
+				let num_pos = self.pos();
+				self.consume_ident_sequence();
+				Token::new_dimension(flags, pos, num_pos - pos, self.pos() - num_pos)
 			}
-			_ => Token::Number(value, num_type),
+			_ => Token::new(Kind::Number, flags, pos, self.pos() - pos),
 		}
 	}
 
 	fn consume_hash_token(&mut self) -> Token {
-		let ident = self.consume_ident_sequence();
-		if ident.starts_with(is_ident_start) {
-			Token::HashId(ident)
-		} else {
-			Token::Hash(ident)
-		}
+		let pos = self.pos();
+		self.chars.next();
+		let hash_flags = if is_ident(self.nth_char(0)) { 0b010 } else { 0b000 };
+		let flags = (self.consume_ident_sequence() & 0b101) | hash_flags;
+		Token::new(Kind::Hash, flags, pos, self.pos() - pos)
 	}
 
 	fn consume_decimal_digits(&mut self) {
 		while self.nth_char(0).is_ascii_digit() {
-			self.current.chars.next();
+			self.chars.next();
 		}
 	}
 
 	fn consume_ident_like_token(&mut self) -> Token {
-		let ident = self.consume_ident_sequence();
+		let pos = self.pos();
+		let flags = self.consume_ident_sequence();
 		if self.nth_char(0) == '(' {
-			self.current.chars.next();
-			if is_url_ident(&ident) {
-				let mut chars = self.current.chars.clone();
+			self.chars.next();
+			let token = Token::new(Kind::Function, flags, pos, self.pos() - pos);
+			if is_url_ident(self.parse_str(token)) {
+				let mut chars = self.chars.clone();
 				let mut char = chars.next().unwrap_or(EOF);
 				for _i in 0..=3 {
 					if is_whitespace(char) {
@@ -333,55 +314,53 @@ impl<'a> Lexer<'a> {
 					}
 				}
 				if !is_quote(char) {
-					self.consume_whitespace();
-					return self.consume_url_sequence(QuoteStyle::None);
+					return self.consume_url_sequence(pos, flags);
 				}
 			}
-			return Token::Function(ident);
+			return token;
 		}
-		Token::Ident(ident)
+		Token::new(Kind::Ident, flags, pos, self.pos() - pos)
 	}
 
 	fn consume_string_token(&mut self) -> Token {
-		let delimiter = self.current.chars.next().unwrap();
-		let quote = if delimiter == '"' { QuoteStyle::Double } else { QuoteStyle::Single };
-		let mut builder = AutoCow::new(self);
+		let pos = self.pos();
+		let delimiter = self.chars.next().unwrap();
+		let mut flags = (delimiter == '"') as u8;
 		loop {
 			match self.nth_char(0) {
 				c if is_newline(c) => {
-					return Token::BadString;
+					return Token::new(Kind::BadString, flags, pos, self.pos() - pos);
 				}
 				EOF => {
-					return Token::String(Atom::from(builder.finish(self)), quote);
+					return Token::new(Kind::String, flags, pos, self.pos() - pos);
 				}
 				c @ ('"' | '\'') => {
-					self.current.chars.next();
+					self.chars.next();
 					if c == delimiter {
-						return Token::String(Atom::from(builder.finish_without_push(self)), quote);
+						flags |= 0b010;
+						return Token::new(Kind::String, flags, pos, self.pos() - pos);
 					}
-					builder.push_matching(c);
 				}
-				'\\' => {
-					let c = self.current.chars.next().unwrap();
-					builder.force_allocation_without_current_ascii_char(self);
+				c @ '\\' => {
+					self.chars.next();
 					match self.nth_char(0) {
 						EOF => {
-							return Token::String(Atom::from(builder.finish(self)), quote);
+							return Token::new(Kind::String, flags, pos, self.pos() - pos);
 						}
 						p if is_newline(p) => {
-							self.current.chars.next();
+							self.chars.next();
 						}
 						p if is_escape_sequence(c, p) => {
-							builder.push_different(self.consume_escape_sequence());
+							self.consume_escape_sequence();
+							flags |= 0b100;
 						}
 						_ => {
-							return Token::BadString;
+							return Token::new(Kind::BadString, flags, pos, self.pos() - pos);
 						}
 					}
 				}
-				c => {
-					self.current.chars.next();
-					builder.push_matching(c);
+				_ => {
+					self.chars.next();
 				}
 			}
 		}
@@ -392,42 +371,5 @@ impl<'a> Lexer<'a> {
 			|| (is_sign(self.nth_char(0))
 				&& (self.nth_char(1).is_ascii_digit() || self.nth_char(1) == '.' && self.nth_char(2).is_ascii_digit()))
 			|| (self.nth_char(0) == '.' && self.nth_char(1).is_ascii_digit())
-	}
-
-	fn hex_digit(&mut self) -> Option<u32> {
-		let value = match self.nth_char(0) {
-			c if c.is_ascii_digit() => c as u32 - '0' as u32,
-			c @ 'a'..='f' => 10 + (c as u32 - 'a' as u32),
-			c @ 'A'..='F' => 10 + (c as u32 - 'A' as u32),
-			_ => return None,
-		};
-		self.current.chars.next();
-		Some(value)
-	}
-
-	fn code_point(&mut self) -> Option<char> {
-		let mut value = self.hex_digit()?;
-		let mut i = 0;
-		while let Some(next) = self.hex_digit() {
-			value = (value << 4) | next;
-			i += 1;
-			if i > 4 {
-				break;
-			}
-		}
-		if is_whitespace(self.nth_char(0)) {
-			self.current.chars.next();
-		}
-		if value == 0 || SURROGATE_RANGE.contains(&value) {
-			return None;
-		}
-		char::from_u32(value)
-	}
-
-	fn parse_number(&mut self, s: &'a str) -> f32 {
-		match s.parse::<f32>() {
-			Ok(value) => value,
-			Err(_err) => std::f32::NAN,
-		}
 	}
 }

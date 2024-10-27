@@ -1,6 +1,6 @@
 use hdx_atom::{atom, Atom};
 use hdx_derive::{Value, Writable};
-use hdx_lexer::{QuoteStyle, Token};
+use hdx_lexer::{Kind, QuoteStyle};
 use hdx_parser::{discard, expect, unexpected, Parse, Parser, Result as ParserResult, Spanned};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 
@@ -44,9 +44,10 @@ pub enum SingleFontFamily {
 
 impl<'a> Parse<'a> for SingleFontFamily {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let value = match parser.next() {
-			Token::String(atom, quote) => Self::Named(atom.clone(), *quote),
-			Token::Ident(ident) => match ident.to_ascii_lowercase() {
+		let token = parser.next();
+		let value = match token.kind() {
+			Kind::String => Self::Named(parser.parse_atom(token), token.quote_style()),
+			Kind::Ident => match parser.parse_atom(token) {
 				atom!("serif") => Self::Serif,
 				atom!("sans-serif") => Self::SansSerif,
 				atom!("cursive") => Self::Cursive,
@@ -65,14 +66,17 @@ impl<'a> Parse<'a> for SingleFontFamily {
 				atom!("status-bar") => Self::StatusBar,
 				_ => Self::Named(ident.clone(), QuoteStyle::None),
 			},
-			Token::Function(atom!("generic")) => match parser.next().clone() {
-				Token::Ident(ident) => {
-					expect!(parser.next(), Token::RightParen);
-					Self::Generic(ident)
+			Kind::Function if parser.parse_atom_lower(token) == atom!("generic") => {
+				let token = parser.next();
+				match token.kind() {
+					Kind::Ident => {
+						expect!(parser.next(), Kind::RightParen);
+						Self::Generic(parser.parse_atom(token))
+					}
+					_ => unexpected!(parser, token),
 				}
-				token => unexpected!(parser, token),
 			},
-			token => unexpected!(parser, token),
+			_ => unexpected!(parser, token),
 		};
 		Ok(value)
 	}
@@ -83,7 +87,7 @@ impl<'a> Parse<'a> for FontFamily {
 		let mut values = smallvec![];
 		loop {
 			values.push(SingleFontFamily::parse_spanned(parser)?);
-			if !discard!(parser, Token::Comma) {
+			if !discard!(parser, Kind::Comma) {
 				break;
 			}
 		}

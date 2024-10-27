@@ -3,10 +3,10 @@ mod syntax;
 
 use crate::css::units::{Angle, CSSFloat, Percent};
 use hdx_atom::{atom, Atomizable};
-use hdx_lexer::Token;
+use hdx_lexer::{Kind};
 use hdx_parser::{
-	discard, expect, match_ignore_case, todo, unexpected, unexpected_function, unexpected_ident, Parse, Parser,
-	Result as ParserResult,
+	discard, expect, expect_delim, match_ignore_case, todo, unexpected, unexpected_function, unexpected_ident, Parse,
+	Parser, Result as ParserResult,
 };
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 use std::str::Chars;
@@ -25,21 +25,22 @@ pub enum Channel {
 
 impl<'a> Parse<'a> for Channel {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		match parser.peek().clone() {
-			Token::Ident(atom) if atom.to_ascii_lowercase() == atom!("none") => {
-				parser.advance();
+		let token = parser.peek();
+		match token.kind() {
+			Kind::Ident if parser.parse_atom_lower(token) == atom!("none") => {
+				parser.next();
 				Ok(Self::None)
 			}
-			Token::Number(n, _) => {
-				parser.advance();
-				Ok(Self::Float(n.into()))
+			Kind::Number => {
+				parser.next();
+				Ok(Self::Float(parser.parse_number(token).into()))
 			}
-			Token::Dimension(n, unit, _) if unit.to_ascii_lowercase() == atom!("%") => {
-				parser.advance();
-				Ok(Self::Percent(n.into()))
+			Kind::Dimension if parser.parse_atom(token) == atom!("%") => {
+				parser.next();
+				Ok(Self::Percent(parser.parse_number(token).into()))
 			}
-			Token::Dimension(_, _, _) => Ok(Self::Hue(Angle::parse(parser)?)),
-			token => unexpected!(parser, token),
+			Kind::Dimension => Ok(Self::Hue(Angle::parse(parser)?)),
+			_ => unexpected!(parser, token),
 		}
 	}
 }
@@ -88,7 +89,7 @@ impl<'a> Parse<'a> for AbsoluteColorFunction {
 		if matches!(first, Channel::Hue(_)) != syntax.first_is_hue() {
 			unexpected!(parser);
 		}
-		if discard!(parser, Token::Comma) {
+		if discard!(parser, Kind::Comma) {
 			syntax |= ColorFunctionSyntax::Legacy;
 		}
 		let second = Channel::parse(parser)?;
@@ -96,7 +97,7 @@ impl<'a> Parse<'a> for AbsoluteColorFunction {
 		{
 			unexpected!(parser)
 		}
-		if syntax.contains(ColorFunctionSyntax::Legacy) != discard!(parser, Token::Comma) {
+		if syntax.contains(ColorFunctionSyntax::Legacy) != discard!(parser, Kind::Comma) {
 			unexpected!(parser)
 		}
 		let third = Channel::parse(parser)?;
@@ -106,19 +107,19 @@ impl<'a> Parse<'a> for AbsoluteColorFunction {
 		if matches!(third, Channel::Hue(_)) != syntax.third_is_hue() {
 			unexpected!(parser);
 		}
-		if discard!(parser, Token::RightParen) {
+		if discard!(parser, Kind::RightParen) {
 			return Ok(Self(syntax | ColorFunctionSyntax::OmitAlpha, first, second, third, Channel::None));
 		}
 		if syntax.contains(ColorFunctionSyntax::Legacy) {
-			expect!(parser.next(), Token::Comma);
+			expect!(parser.next(), Kind::Comma);
 		} else {
-			expect!(parser.next(), Token::Delim('/'));
+			expect_delim!(parser.next(), '/');
 		}
 		let fourth = Channel::parse(parser)?;
 		if matches!(fourth, Channel::None) {
 			unexpected!(parser)
 		}
-		expect!(parser.next(), Token::RightParen);
+		expect!(parser.next(), Kind::RightParen);
 		Ok(Self(syntax, first, second, third, fourth))
 	}
 }
@@ -195,7 +196,7 @@ impl<'a> HexableChars for Chars<'a> {
 
 impl<'a> Parse<'a> for Color {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		match_ignore_case! { parser.peek(), Token::Function(_):
+		match_ignore_case! { parser.peek(), Kind::Function:
 			atom!("color") => todo!(parser),
 			atom!("color-mix") => todo!(parser),
 			_ => return Ok(Color::Absolute(AbsoluteColorFunction::parse(parser)?))

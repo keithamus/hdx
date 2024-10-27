@@ -1,5 +1,5 @@
 use hdx_atom::Atom;
-use hdx_lexer::Token;
+use hdx_lexer::Kind;
 
 mod declarations;
 mod rules;
@@ -81,19 +81,19 @@ pub trait Block<'a>: Sized + Parse<'a> {
 	fn parse_block(
 		parser: &mut Parser<'a>,
 	) -> Result<(Vec<'a, Spanned<Self::Declaration>>, Vec<'a, Spanned<Self::Rule>>)> {
-		expect!(parser.next(), Token::LeftCurly);
+		expect!(parser.next(), Kind::LeftCurly);
 		let mut declarations = parser.new_vec();
 		let mut rules = parser.new_vec();
 		loop {
-			match parser.peek() {
-				Token::Semicolon => {
-					parser.advance();
+			match parser.peek().kind() {
+				Kind::Semicolon => {
+					parser.next();
 				}
-				Token::Eof | Token::RightCurly => {
-					parser.advance();
+				Kind::Eof | Kind::RightCurly => {
+					parser.next();
 					break;
 				}
-				Token::AtKeyword(_) => {
+				Kind::AtKeyword => {
 					rules.push(Self::Rule::parse_spanned_with_state(parser, State::Nested)?);
 				}
 				_ => {
@@ -117,12 +117,12 @@ pub trait StyleSheet<'a>: Sized + Parse<'a> {
 	fn parse_stylesheet(parser: &mut Parser<'a>) -> Result<Vec<'a, Spanned<Self::Rule>>> {
 		let mut rules: Vec<'a, Spanned<Self::Rule>> = parser.new_vec();
 		loop {
-			match parser.peek() {
-				Token::Eof => {
+			match parser.peek().kind() {
+				Kind::Eof => {
 					return Ok(rules);
 				}
-				Token::Cdc | Token::Cdo => {
-					parser.advance();
+				Kind::CdcOrCdo => {
+					parser.next();
 				}
 				_ => {
 					rules.push(Self::Rule::parse_spanned(parser)?);
@@ -136,10 +136,10 @@ pub trait DiscreteMediaFeature<'a>: Sized + Default {
 	fn parse_media_feature_value(parser: &mut Parser<'a>) -> Result<Self>;
 
 	fn parse_descrete_media_feature(name: Atom, parser: &mut Parser<'a>) -> Result<Self> {
-		expect_ignore_case!(parser.next(), Token::Ident(name));
-		let value = match parser.peek() {
-			Token::Colon => {
-				parser.advance();
+		expect_ignore_case!(parser.next(), Kind::Ident, name);
+		let value = match parser.peek().kind() {
+			Kind::Colon => {
+				parser.next();
 				Self::parse_media_feature_value(parser)?
 			}
 			_ => Self::default(),
@@ -154,13 +154,13 @@ pub trait RangedMediaFeature<'a>: Sized {
 	fn new(left: (Comparison, Self::Type), right: Option<(Comparison, Self::Type)>, legacy: bool) -> Self;
 
 	fn parse_ranged_media_feature(name: Atom, parser: &mut Parser<'a>) -> Result<Self> {
-		let left = match parser.peek().clone() {
-			Token::Ident(atom) => {
-				parser.next();
+		let checkpoint = parser.checkpoint();
+		let left = match parser.next() {
+			token if token.kind() == Kind::Ident => {
 				let mut legacy = false;
-				let legacy_cmp = match atom.to_ascii_lowercase() {
+				let legacy_cmp = match parser.parse_atom_lower(token) {
 					atom if atom == name => {
-						legacy = peek!(parser, Token::Colon);
+						legacy = peek!(parser, Kind::Colon);
 						Comparison::Equal
 					}
 					atom if atom.strip_prefix("max-").unwrap_or("") == name.as_ref() => {
@@ -171,10 +171,10 @@ pub trait RangedMediaFeature<'a>: Sized {
 						legacy = true;
 						Comparison::LessThanEqual
 					}
-					_ => unexpected_ident!(parser, atom),
+					_ => unexpected_ident!(parser, parser.parse_atom(token)),
 				};
 				if legacy {
-					expect!(parser.next(), Token::Colon);
+					expect!(parser.next(), Kind::Colon);
 					return Ok(Self::new((legacy_cmp, Self::Type::parse(parser)?), None, true));
 				} else {
 					let cmp = Comparison::parse(parser)?;
@@ -182,12 +182,13 @@ pub trait RangedMediaFeature<'a>: Sized {
 				}
 			}
 			_ => {
+				parser.rewind(checkpoint);
 				Self::Type::parse(parser)?
 			}
 		};
 		let left_cmp = Comparison::parse(parser)?;
-		expect_ignore_case!(parser.next(), Token::Ident(name));
-		if !peek!(parser, Token::Delim(_)) {
+		expect_ignore_case!(parser.next(), Kind::Ident, name);
+		if !peek!(parser, Kind::Delim) {
 			return Ok(Self::new((left_cmp, left), None, false));
 		}
 		let right_cmp = Comparison::parse(parser)?;

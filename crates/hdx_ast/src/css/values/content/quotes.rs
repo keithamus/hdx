@@ -1,6 +1,6 @@
 use hdx_atom::{atom, Atom};
 use hdx_derive::Value;
-use hdx_lexer::{QuoteStyle, Token};
+use hdx_lexer::{QuoteStyle, Kind};
 use hdx_parser::{unexpected, unexpected_ident, Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 use smallvec::{smallvec, SmallVec};
@@ -18,29 +18,30 @@ pub enum Quotes {
 
 impl<'a> Parse<'a> for Quotes {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		Ok(match parser.next() {
-			Token::Ident(atom) => match atom.to_ascii_lowercase() {
+		let token = parser.next();
+		Ok(match token.kind() {
+			Kind::Ident => match parser.parse_atom_lower(token) {
 				atom!("none") => Quotes::None,
 				atom!("auto") => Quotes::Auto,
 				atom!("match-parent") => Quotes::MatchParent,
-				_ => unexpected_ident!(parser, atom),
+				atom => unexpected_ident!(parser, atom),
 			},
-			Token::String(atom, style) => {
-				let mut quotes = smallvec![(atom.clone(), *style)];
+			Kind::String => {
+				let mut quotes = smallvec![(parser.parse_atom_lower(token), token.quote_style())];
 				loop {
-					if let Token::String(atom, style) = parser.peek().clone() {
-						parser.advance();
-						quotes.push((atom, style));
-					} else {
+					let token = parser.peek();
+					if token.kind() != Kind::String {
 						break;
-					};
+					}
+					parser.next();
+					quotes.push((parser.parse_atom_lower(token), token.quote_style()));
 				}
 				if quotes.len() % 2 != 0 {
 					unexpected!(parser, parser.peek());
 				}
 				Quotes::Pairs(quotes)
 			}
-			token => unexpected!(parser, token),
+			_ => unexpected!(parser, token),
 		})
 	}
 }

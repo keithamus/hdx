@@ -1,41 +1,41 @@
 ---
 source: crates/hdx_lexer/tests/basic_snapshots.rs
-expression: "get_tokens(\"../../tasks/coverage/basic/nth.css\".into())"
+expression: tokens
 ---
 [
   {
-    "kind": "Colon"
+    "kind": "Colon",
+    "offset": 0,
+    "len": 1
   },
   {
     "kind": "Function",
-    "value": "nth-child"
+    "offset": 1,
+    "len": 10
   },
   {
     "kind": "Ident",
-    "value": "n"
+    "offset": 11,
+    "len": 1
   },
   {
     "kind": "Number",
-    "value": [
-      1.0,
-      {
-        "bits": 16
-      }
-    ]
+    "offset": 12,
+    "len": 2
   },
   {
-    "kind": "RightParen"
+    "kind": "RightParen",
+    "offset": 14,
+    "len": 1
   },
   {
-    "kind": "Whitespace"
+    "kind": "LeftCurly",
+    "offset": 16,
+    "len": 1
   },
   {
-    "kind": "LeftCurly"
-  },
-  {
-    "kind": "RightCurly"
-  },
-  {
-    "kind": "Whitespace"
+    "kind": "RightCurly",
+    "offset": 17,
+    "len": 1
   }
 ]

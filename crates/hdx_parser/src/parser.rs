@@ -1,6 +1,6 @@
 use bitmask_enum::bitmask;
 use bumpalo::Bump;
-use hdx_lexer::{Lexer, Token};
+use hdx_lexer::{Include, Kind, Lexer, Token};
 use miette::Error;
 
 use crate::{diagnostics, span::Spanned, traits::Parse};
@@ -53,7 +53,7 @@ impl<'a> Parser<'a> {
 	/// Create a new parser
 	pub fn new(allocator: &'a Bump, source_text: &'a str, features: Features) -> Self {
 		Self {
-			lexer: Lexer::new(allocator, source_text),
+			lexer: Lexer::new(allocator, source_text, Include::none()),
 			features,
 			warnings: std::vec::Vec::new(),
 			errors: std::vec::Vec::new(),
@@ -87,10 +87,10 @@ impl<'a> Parser<'a> {
 				(None, true)
 			}
 		};
-		if !matches!(self.next(), Token::Eof) {
+		if !matches!(self.next().kind(), Kind::Eof) {
 			let span = self.span();
 			loop {
-				if matches!(self.next(), Token::Eof) {
+				if matches!(self.next().kind(), Kind::Eof) {
 					break;
 				}
 			}
@@ -110,7 +110,33 @@ impl<'a> Parser<'a> {
 		ParserReturn { output, warnings: self.warnings, errors: self.errors, panicked }
 	}
 
+	#[inline]
 	pub fn warn(&mut self, error: Error) {
 		self.warnings.push(error);
+	}
+
+	#[inline]
+	pub fn parse_atom(&mut self, tok: Token) -> hdx_atom::Atom {
+		self.lexer.parse_atom(tok)
+	}
+
+	#[inline]
+	pub fn parse_atom_lower(&mut self, tok: Token) -> hdx_atom::Atom {
+		self.lexer.parse_atom_lower(tok)
+	}
+
+	#[inline]
+	pub fn parse_number(&mut self, tok: Token) -> f32 {
+		self.lexer.parse_number(tok)
+	}
+
+	#[inline]
+	pub fn parse_raw_str(&mut self, tok: Token) -> &'a str {
+		self.lexer.parse_raw_str(tok)
+	}
+
+	#[inline]
+	pub fn parse_str(&mut self, tok: Token) -> &'a str {
+		self.lexer.parse_str(tok)
 	}
 }

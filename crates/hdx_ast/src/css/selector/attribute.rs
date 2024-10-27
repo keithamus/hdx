@@ -1,6 +1,6 @@
 use hdx_atom::{atom, Atom};
-use hdx_lexer::{Include, QuoteStyle, Token};
-use hdx_parser::{expect, peek, unexpected, unexpected_ident, Parse, Parser, Result as ParserResult};
+use hdx_lexer::{Include, Kind, QuoteStyle};
+use hdx_parser::{expect, expect_delim, peek, unexpected, unexpected_ident, Parse, Parser, Result as ParserResult};
 use hdx_writer::{write_css, CssWriter, Result as WriterResult, WriteCss};
 
 use super::NSPrefix;
@@ -18,89 +18,109 @@ pub struct Attribute {
 
 impl<'a> Parse<'a> for Attribute {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		expect!(parser.next(), Token::LeftSquare);
+		expect!(parser.next(), Kind::LeftSquare);
 		let mut attr = Self::default();
-		match parser.next().clone() {
-			Token::Delim('|') => match parser.next_with(Include::Whitespace) {
-				Token::Ident(name) => {
-					attr.name = name.clone();
-				}
-				token => unexpected!(parser, token),
-			},
-			Token::Delim('*') => match parser.next_with(Include::Whitespace) {
-				Token::Delim('|') => match parser.next_with(Include::Whitespace) {
-					Token::Ident(name) => {
-						attr.ns_prefix = NSPrefix::Wildcard;
-						attr.name = name.clone();
+		let token = parser.next();
+		match token.kind() {
+			Kind::Delim if matches!(token.char(), Some('|')) => {
+				let token = parser.next_with(Include::Whitespace);
+				match token.kind() {
+					Kind::Ident => {
+						attr.name = parser.parse_atom(token);
 					}
-					token => unexpected!(parser, token),
-				},
-				token => unexpected!(parser, token),
+					_ => unexpected!(parser, token),
+				}
 			},
-			Token::Ident(ns) => match parser.peek_with(Include::Whitespace).clone() {
-				Token::Delim('|') if peek!(parser, 2, Token::Ident(_)) => {
-					expect!(parser.next_with(Include::Whitespace), Token::Delim('|'));
-					match parser.next_with(Include::Whitespace) {
-						Token::Ident(name) => {
-							attr.ns_prefix = NSPrefix::Named(ns);
-							attr.name = name.clone();
+			Kind::Delim if matches!(token.char(), Some('*')) => {
+				let token = parser.next_with(Include::Whitespace);
+				match token.kind() {
+					Kind::Delim if matches!(token.char(), Some('|')) => {
+						let token = parser.next_with(Include::Whitespace);
+						match token.kind() {
+							Kind::Ident => {
+								attr.ns_prefix = NSPrefix::Wildcard;
+								attr.name = parser.parse_atom(token);
+							}
+							_ => unexpected!(parser, token),
 						}
-						token => unexpected!(parser, token),
-					}
-				}
-				_ => {
-					attr.name = ns;
+					},
+					_ => unexpected!(parser, token),
 				}
 			},
-			token => unexpected!(parser, token),
+			Kind::Ident => {
+				let ns = parser.parse_atom(token);
+				let token = parser.peek_with(Include::Whitespace);
+				match token.kind() {
+					Kind::Delim if matches!(token.char(), Some('|')) && peek!(parser, 2, Kind::Ident) => {
+						expect_delim!(parser.next_with(Include::Whitespace), '|');
+						let token = parser.next_with(Include::Whitespace);
+						match token.kind() {
+							Kind::Ident => {
+								attr.ns_prefix = NSPrefix::Named(ns);
+								attr.name = parser.parse_atom(token);
+							}
+							_ => unexpected!(parser, token),
+						}
+					},
+					_ => {
+						attr.name = ns;
+					}
+				}
+			},
+			_ => unexpected!(parser, token),
 		};
-		match parser.next() {
-			Token::Delim('=') => attr.matcher = AttributeMatch::Exact,
-			Token::Delim('~') => {
-				expect!(parser.next_with(Include::all()), Token::Delim('='));
-				attr.matcher = AttributeMatch::SpaceList
-			}
-			Token::Delim('|') => {
-				expect!(parser.next_with(Include::all()), Token::Delim('='));
-				attr.matcher = AttributeMatch::LangPrefix
-			}
-			Token::Delim('^') => {
-				expect!(parser.next_with(Include::all()), Token::Delim('='));
-				attr.matcher = AttributeMatch::Prefix
-			}
-			Token::Delim('$') => {
-				expect!(parser.next_with(Include::all()), Token::Delim('='));
-				attr.matcher = AttributeMatch::Suffix
-			}
-			Token::Delim('*') => {
-				expect!(parser.next_with(Include::all()), Token::Delim('='));
-				attr.matcher = AttributeMatch::Contains
-			}
-			Token::RightSquare => {
+		let token = parser.next();
+		match token.kind() {
+			Kind::Delim => match token.char().unwrap() {
+				'=' => attr.matcher = AttributeMatch::Exact,
+				'~' => {
+					expect_delim!(parser.next_with(Include::all_bits()), '=');
+					attr.matcher = AttributeMatch::SpaceList
+				}
+				'|' => {
+					expect_delim!(parser.next_with(Include::all_bits()), '=');
+					attr.matcher = AttributeMatch::LangPrefix
+				}
+				'^' => {
+					expect_delim!(parser.next_with(Include::all_bits()), '=');
+					attr.matcher = AttributeMatch::Prefix
+				}
+				'$' => {
+					expect_delim!(parser.next_with(Include::all_bits()), '=');
+					attr.matcher = AttributeMatch::Suffix
+				}
+				'*' => {
+					expect_delim!(parser.next_with(Include::all_bits()), '=');
+					attr.matcher = AttributeMatch::Contains
+				}
+			},
+			Kind::RightSquare => {
 				return Ok(attr);
 			}
-			token => unexpected!(parser, token),
+			_ => unexpected!(parser, token),
 		}
-		match parser.next().clone() {
-			Token::Ident(value) => attr.value = value,
-			Token::String(value, quote_style) => {
-				attr.quote = quote_style;
-				attr.value = value;
+		let token = parser.next();
+		match token.kind() {
+			Kind::Ident => attr.value = parser.parse_atom(token),
+			Kind::String => {
+				attr.quote = token.quote_style();
+				attr.value = parser.parse_atom(token);
 			}
-			token => unexpected!(parser, token),
+			_ => unexpected!(parser, token),
 		};
-		match parser.next() {
-			Token::Ident(ident) => {
-				attr.modifier = match ident.to_ascii_lowercase() {
+		let token = parser.next();
+		match token.kind() {
+			Kind::Ident => {
+				attr.modifier = match parser.parse_atom_lower(token) {
 					atom!("i") => AttributeModifier::Insensitive,
 					atom!("s") => AttributeModifier::Sensitive,
 					atom => unexpected_ident!(parser, atom),
 				};
-				expect!(parser.next(), Token::RightSquare);
+				expect!(parser.next(), Kind::RightSquare);
 				Ok(attr)
 			}
-			Token::RightSquare => Ok(attr),
-			token => unexpected!(parser, token),
+			Kind::RightSquare => Ok(attr),
+			_ => unexpected!(parser, token),
 		}
 	}
 }

@@ -1,7 +1,7 @@
 use bitmask_enum::bitmask;
 use hdx_atom::{atom, Atom};
 use hdx_derive::Value;
-use hdx_lexer::Token;
+use hdx_lexer::Kind;
 use hdx_parser::{diagnostics, unexpected_ident, Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 
@@ -173,8 +173,9 @@ impl<'a> Parse<'a> for Display {
 		let span = parser.span();
 		// Certain values can only be used in a "standalone way" and so complete the
 		// value:
-		let single_value = match parser.peek() {
-			Token::Ident(atom) => match atom.to_ascii_lowercase() {
+		let token = parser.peek();
+		let single_value = match token.kind() {
+			Kind::Ident => match parser.parse_atom_lower(token) {
 				// <display-box>
 				atom!("none") => Some(Self::None),
 				atom!("contents") => Some(Self::Contents),
@@ -201,14 +202,18 @@ impl<'a> Parse<'a> for Display {
 			_ => None,
 		};
 		if let Some(value) = single_value {
-			parser.advance();
+			parser.next();
 			return Ok(value);
 		}
 
 		// If a legacy/internal/box value is not applied then it must be a pair/triplet
 		let mut value = Self::None;
-		while let Token::Ident(atom) = parser.next() {
-			match atom.to_ascii_lowercase() {
+		loop {
+			let token = parser.next();
+			if token.kind() != Kind::Ident {
+				break;
+			}
+			match parser.parse_atom_lower(token) {
 				// <display-outside>
 				atom!("block") if !value.has_outside() => value |= Self::Block,
 				atom!("inline") if !value.has_outside() => value |= Self::Inline,
@@ -222,7 +227,7 @@ impl<'a> Parse<'a> for Display {
 				atom!("table") if !value.has_inside() => value |= Self::Table,
 				// <display-listitem>
 				atom!("list-item") if !value.has_list_item() => value |= Self::ListItem,
-				_ => unexpected_ident!(parser, atom),
+				atom => unexpected_ident!(parser, atom),
 			}
 		}
 		if value.has_list_item() && !value.valid_list_item() {

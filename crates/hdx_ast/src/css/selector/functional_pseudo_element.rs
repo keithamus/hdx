@@ -1,5 +1,5 @@
 use hdx_atom::{atom, Atom};
-use hdx_lexer::{Include, Token};
+use hdx_lexer::{Include, Kind, Token};
 use hdx_parser::{expect, todo, unexpected, unexpected_function, Parse, Parser, Result as ParserResult, Vec};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 use smallvec::{smallvec, SmallVec};
@@ -23,8 +23,8 @@ impl<'a> Parse<'a> for FunctionalPseudoElement<'a> {
 			Token::Function(ident) => match ident.to_ascii_lowercase() {
 				atom!("highlight") => match parser.next().clone() {
 					Token::Ident(name) => {
-						expect!(parser.next(), Token::RightParen);
-						parser.advance_with(Include::Whitespace);
+						expect!(parser.next(), Kind::RightParen);
+						parser.next_with(Include::Whitespace);
 						Ok(Self::Highlight(name))
 					}
 					token => unexpected!(parser, token),
@@ -37,7 +37,7 @@ impl<'a> Parse<'a> for FunctionalPseudoElement<'a> {
 								parts.push(name.clone());
 							}
 							Token::RightParen => {
-								parser.advance_with(Include::Whitespace);
+								parser.next_with(Include::Whitespace);
 								break;
 							}
 							token => unexpected!(parser, token),
@@ -46,7 +46,7 @@ impl<'a> Parse<'a> for FunctionalPseudoElement<'a> {
 					Ok(Self::Part(parts))
 				}
 				atom!("slotted") => {
-					parser.advance();
+					parser.next();
 					let selector = parser.new_vec();
 					loop {
 						if matches!(parser.cur(), Token::RightParen) {

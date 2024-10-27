@@ -1,6 +1,6 @@
 use hdx_atom::{atom, Atom};
 use hdx_derive::{Atomizable, Parsable, Writable};
-use hdx_lexer::Token;
+use hdx_lexer::{Kind, Token};
 use hdx_parser::{discard, expect, unexpected, unexpected_function, Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 use smallvec::{smallvec, SmallVec};
@@ -47,7 +47,7 @@ impl<'a> Parse<'a> for FunctionalPseudoClass<'a> {
 							Token::Ident(atom) | Token::String(atom, _) => langs.push(atom.clone()),
 							token => unexpected!(parser, token),
 						}
-						if !discard!(parser, Token::Comma) {
+						if !discard!(parser, Kind::Comma) {
 							break;
 						}
 					}
@@ -72,7 +72,7 @@ impl<'a> Parse<'a> for FunctionalPseudoClass<'a> {
 			},
 			token => unexpected!(parser, token),
 		};
-		expect!(parser.next(), Token::RightParen);
+		expect!(parser.next(), Kind::RightParen);
 		Ok(val)
 	}
 }

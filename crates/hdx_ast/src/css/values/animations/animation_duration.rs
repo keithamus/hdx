@@ -1,6 +1,6 @@
 use hdx_atom::atom;
 use hdx_derive::Value;
-use hdx_lexer::Token;
+use hdx_lexer::Kind;
 use hdx_parser::{discard, unexpected, unexpected_ident, Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 use smallvec::{smallvec, SmallVec};
@@ -18,25 +18,26 @@ pub enum AnimationDuration {
 
 impl<'a> Parse<'a> for AnimationDuration {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		Ok(match parser.peek() {
-			Token::Ident(atom) => match atom.to_ascii_lowercase() {
+		let token = parser.peek();
+		Ok(match token.kind() {
+			Kind::Ident => match parser.parse_atom_lower(token) {
 				atom!("auto") => {
-					parser.advance();
+					parser.next();
 					AnimationDuration::Auto
 				}
 				atom => unexpected_ident!(parser, atom),
 			},
-			Token::Dimension(_, _, _) => {
+			Kind::Dimension => {
 				let mut values = smallvec![];
 				loop {
 					values.push(Time::parse(parser)?);
-					if !discard!(parser, Token::Comma) {
+					if !discard!(parser, Kind::Comma) {
 						break;
 					}
 				}
 				AnimationDuration::Absolute(values)
 			}
-			token => unexpected!(parser, token),
+			_ => unexpected!(parser, token),
 		})
 	}
 }

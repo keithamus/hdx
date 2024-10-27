@@ -22,18 +22,19 @@ impl<'a> Parse<'a> for WhiteSpaceTrim {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		let mut value = Self::none();
 		loop {
-			if value.is_all() {
+			if value.is_all_bits() {
 				break;
 			}
-			match parser.next() {
-				Token::Ident(atom) => match atom.to_ascii_lowercase() {
+			let token = parser.next();
+			match token.kind() {
+				Kind::Ident => match parser.parse_atom_lower(token) {
 					atom!("none") if value.is_none() => return Ok(Self::None),
 					atom!("discard-before") if !value.contains(Self::DiscardBefore) => value |= Self::DiscardBefore,
 					atom!("discard-after") if !value.contains(Self::DiscardAfter) => value |= Self::DiscardAfter,
 					atom!("discard-inner") if !value.contains(Self::DiscardInner) => value |= Self::DiscardInner,
 					_ => break,
 				},
-				token => unexpected!(parser, token),
+				_ => unexpected!(parser, token),
 			}
 		}
 		Ok(value)

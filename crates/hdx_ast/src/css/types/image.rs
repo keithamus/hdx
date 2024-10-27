@@ -1,7 +1,7 @@
 use bitmask_enum::bitmask;
 use hdx_atom::{atom, Atom, Atomizable};
 use hdx_derive::{Atomizable, Parsable, Writable};
-use hdx_lexer::{QuoteStyle, Token};
+use hdx_lexer::{Kind, QuoteStyle};
 use hdx_parser::{
 	discard, expect, expect_ignore_case, peek, unexpected, unexpected_ident, Parse, Parser, Result as ParserResult,
 };
@@ -25,25 +25,27 @@ pub enum Image {
 
 impl<'a> Parse<'a> for Image {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		Ok(match parser.peek().clone() {
-			Token::Url(atom, style) => {
-				parser.advance();
-				Self::Url(atom.clone(), style)
+		let token = parser.peek();
+		Ok(match token.kind() {
+			Kind::Url => {
+				parser.next();
+				Self::Url(parser.parse_atom(token), token.quote_style())
 			}
-			Token::Function(atom) => match atom.to_ascii_lowercase() {
+			Kind::Function => match parser.parse_atom_lower(token) {
 				atom!("url") => {
-					parser.advance();
-					match parser.next().clone() {
-						Token::String(atom, style) => {
-							expect!(parser.next(), Token::RightParen);
-							Self::Url(atom, style)
+					parser.next();
+					let token = parser.next();
+					match token.kind() {
+						Kind::String => {
+							expect!(parser.next(), Kind::RightParen);
+							Self::Url(parser.parse_atom(token), token.quote_style())
 						}
-						token => unexpected!(parser, token),
+						_ => unexpected!(parser, token),
 					}
 				}
 				_ => Self::Gradient(Gradient::parse(parser)?),
 			},
-			token => unexpected!(parser, token),
+			_ => unexpected!(parser, token),
 		})
 	}
 }
@@ -80,7 +82,7 @@ impl<'a> Gradient {
 			if let Some(hint) = LengthPercentage::try_parse(parser).ok() {
 				if allow_hint {
 					stops.push(ColorStopOrHint::Hint(hint));
-					expect!(parser.next(), Token::Comma);
+					expect!(parser.next(), Kind::Comma);
 				} else {
 					unexpected!(parser);
 				}
@@ -89,7 +91,7 @@ impl<'a> Gradient {
 			let hint = LengthPercentage::try_parse(parser).ok();
 			stops.push(ColorStopOrHint::Stop(color, hint));
 			allow_hint = hint.is_some();
-			if !discard!(parser, Token::Comma) {
+			if !discard!(parser, Kind::Comma) {
 				break;
 			}
 		}
@@ -102,7 +104,7 @@ impl<'a> Parse<'a> for Gradient {
 		let gradient = expect_ignore_case! { parser.next(), Token::Function(_):
 			atom @ atom!("linear-gradient") | atom @ atom!("repeating-linear-gradient") => {
 				let dir = if let Ok(dir) = LinearDirection::try_parse(parser) {
-					expect!(parser.next(), Token::Comma);
+					expect!(parser.next(), Kind::Comma);
 					dir
 				} else {
 					LinearDirection::default()
@@ -123,13 +125,13 @@ impl<'a> Parse<'a> for Gradient {
 				}
 				let position = if matches!(parser.cur(), Token::Ident(atom) if atom.to_ascii_lowercase() == atom!("at"))
 				{
-					parser.advance();
+					parser.next();
 					Some(Position::parse(parser)?)
 				} else {
 					None
 				};
 				if size.is_some() || shape.is_some() {
-					expect!(parser.next(), Token::Comma);
+					expect!(parser.next(), Kind::Comma);
 				}
 				match atom {
 					atom!("radial-gradient") => Self::Radial(
@@ -148,7 +150,7 @@ impl<'a> Parse<'a> for Gradient {
 				}
 			},
 		};
-		expect!(parser.next(), Token::RightParen);
+		expect!(parser.next(), Kind::RightParen);
 		Ok(gradient)
 	}
 }
@@ -266,7 +268,7 @@ impl<'a> Parse<'a> for LinearDirection {
 			Token::Ident(_) => {}
 			token => unexpected!(parser, token.clone()),
 		};
-		expect_ignore_case!(parser.next(), Token::Ident(atom!("to")));
+		expect_ignore_case!(parser.next(), Kind::Ident, atom!("to"));
 		let mut dir = NamedDirection::none();
 		dir |= expect_ignore_case! { parser.next(), Token::Ident(_):
 			atom!("top") => NamedDirection::Top,
@@ -274,7 +276,7 @@ impl<'a> Parse<'a> for LinearDirection {
 			atom!("right") => NamedDirection::Right,
 			atom!("bottom") => NamedDirection::Bottom,
 		};
-		if peek!(parser, Token::Ident(_)) {
+		if peek!(parser, Kind::Ident) {
 			dir |= expect_ignore_case! { parser.next(), Token::Ident(_):
 				atom @ atom!("top") => {
 					if dir.contains(NamedDirection::Top) || dir.contains(NamedDirection::Bottom) {

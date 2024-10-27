@@ -1,5 +1,5 @@
 use hdx_atom::atom;
-use hdx_lexer::Token;
+use hdx_lexer::Kind;
 use hdx_parser::{match_ignore_case, unexpected, unexpected_ident, Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 
@@ -11,7 +11,7 @@ pub struct Ratio(pub HorizontalRatio, pub VerticalRatio);
 
 impl<'a> Parse<'a> for Ratio {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let maybe_horizontal = if match_ignore_case!(parser.peek(), Token::Ident(atom!("top") | atom!("bottom"))) {
+		let maybe_horizontal = if match_ignore_case!(parser.peek(), Kind::Ident, atom!("top") | atom!("bottom")) {
 			None
 		} else {
 			HorizontalRatio::parse(parser).ok()
@@ -61,19 +61,20 @@ pub enum HorizontalRatio {
 
 impl<'a> Parse<'a> for HorizontalRatio {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		Ok(match parser.peek() {
-			Token::Ident(atom) => match atom.to_ascii_lowercase() {
+		let token = parser.peek();
+		Ok(match token.kind() {
+			Kind::Ident => match parser.parse_atom_lower(token) {
 				atom!("center") => {
-					parser.advance();
+					parser.next();
 					Self::Center
 				}
 				atom!("left") => {
-					parser.advance();
+					parser.next();
 					let len = LengthPercentage::try_parse(parser).ok();
 					Self::Left(len)
 				}
 				atom!("right") => {
-					parser.advance();
+					parser.next();
 					let len = LengthPercentage::try_parse(parser).ok();
 					Self::Right(len)
 				}
@@ -125,19 +126,20 @@ pub enum VerticalRatio {
 
 impl<'a> Parse<'a> for VerticalRatio {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		Ok(match parser.peek() {
-			Token::Ident(atom) => match atom.to_ascii_lowercase() {
+	  let token = parser.peek();
+		Ok(match token.kind() {
+			Kind::Ident => match parser.parse_atom_lower(token) {
 				atom!("center") => {
-					parser.advance();
+					parser.next();
 					Self::Center
 				}
 				atom!("top") => {
-					parser.advance();
+					parser.next();
 					let len = LengthPercentage::try_parse(parser).ok();
 					Self::Top(len)
 				}
 				atom!("bottom") => {
-					parser.advance();
+					parser.next();
 					let len = LengthPercentage::try_parse(parser).ok();
 					Self::Bottom(len)
 				}

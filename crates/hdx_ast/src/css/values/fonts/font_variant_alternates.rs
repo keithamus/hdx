@@ -1,6 +1,6 @@
 use hdx_atom::{atom, Atom};
 use hdx_derive::{Value, Writable};
-use hdx_lexer::Token;
+use hdx_lexer::{Kind, Token};
 use hdx_parser::{
 	discard, expect, unexpected, unexpected_function, unexpected_ident, Parse, Parser, Result as ParserResult,
 };
@@ -31,66 +31,87 @@ pub enum FontVariantAlternates {
 
 impl<'a> Parse<'a> for FontVariantAlternates {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		Ok(match parser.next().clone() {
-			Token::Ident(atom) => match atom.to_ascii_lowercase() {
+		let token = parser.next();
+		Ok(match token.kind() {
+			Kind::Ident => match parser.parse_atom_lower(token) {
 				atom!("normal") => Self::Normal,
 				atom!("historical-forms") => Self::HistoricalForms,
-				_ => unexpected_ident!(parser, atom),
+				atom => unexpected_ident!(parser, atom),
 			},
-			Token::Function(atom) => match atom.to_ascii_lowercase() {
-				atom!("stylistic") => match parser.next().clone() {
-					Token::Ident(atom) => {
-						expect!(parser.next(), Token::RightParen);
-						Self::Stylistic(atom.clone())
+			Kind::Function => match parser.parse_atom_lower(token) {
+				atom!("stylistic") => {
+					let token = parser.next();
+					match token.kind() {
+						Kind::Ident => {
+							expect!(parser.next(), Kind::RightParen);
+							Self::Stylistic(parser.parse_atom(token))
+						}
+						_ => unexpected!(parser, token),
 					}
-					token => unexpected!(parser, token),
 				},
-				atom!("swash") => match parser.next().clone() {
-					Token::Ident(atom) => {
-						expect!(parser.next(), Token::RightParen);
-						Self::Swash(atom.clone())
+				atom!("swash") => {
+					let token = parser.next();
+					match token.kind() {
+						Kind::Ident => {
+							expect!(parser.next(), Kind::RightParen);
+							Self::Swash(parser.parse_atom(token))
+						}
+						_ => unexpected!(parser, token),
 					}
-					token => unexpected!(parser, token),
 				},
-				atom!("ornaments") => match parser.next().clone() {
-					Token::Ident(atom) => {
-						expect!(parser.next(), Token::RightParen);
-						Self::Ornaments(atom.clone())
+				atom!("ornaments") => {
+					let token = parser.next();
+					match token.kind() {
+						Kind::Ident => {
+							expect!(parser.next(), Kind::RightParen);
+							Self::Ornaments(parser.parse_atom(token))
+						}
+						_ => unexpected!(parser, token),
 					}
-					token => unexpected!(parser, token),
 				},
-				atom!("annotation") => match parser.next().clone() {
-					Token::Ident(atom) => {
-						expect!(parser.next(), Token::RightParen);
-						Self::Annotation(atom.clone())
+				atom!("annotation") => {
+					let token = parser.next();
+					match token.kind() {
+						Kind::Ident => {
+							expect!(parser.next(), Kind::RightParen);
+							Self::Annotation(parser.parse_atom(token))
+						}
+						_ => unexpected!(parser, token),
 					}
-					token => unexpected!(parser, token),
 				},
 				atom!("styleset") => {
 					let mut idents = smallvec![];
-					while let Token::Ident(atom) = parser.next() {
-						idents.push(atom.clone());
-						if !discard!(parser, Token::Comma) {
+					loop {
+						let token = parser.next();
+						if token.kind() != Kind::Ident {
+							break;
+						}
+						idents.push(parser.parse_atom(token));
+						if !discard!(parser, Kind::Comma) {
 							break;
 						}
 					}
-					expect!(parser.next(), Token::RightParen);
+					expect!(parser.next(), Kind::RightParen);
 					Self::Styleset(idents)
 				}
 				atom!("character-variant") => {
 					let mut idents = smallvec![];
-					while let Token::Ident(atom) = parser.next() {
-						idents.push(atom.clone());
-						if !discard!(parser, Token::Comma) {
+					loop {
+						let token = parser.next();
+						if token.kind() != Kind::Ident {
+							break;
+						}
+						idents.push(parser.parse_atom(token));
+						if !discard!(parser, Kind::Comma) {
 							break;
 						}
 					}
-					expect!(parser.next(), Token::RightParen);
+					expect!(parser.next(), Kind::RightParen);
 					Self::CharacterVariant(idents)
 				}
-				_ => unexpected_function!(parser, atom),
+				atom => unexpected_function!(parser, atom),
 			},
-			token => unexpected!(parser, token),
+			_ => unexpected!(parser, token),
 		})
 	}
 }

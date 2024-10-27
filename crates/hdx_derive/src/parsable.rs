@@ -111,10 +111,9 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 			} else {
 				let field = fields.unnamed.first().unwrap();
 				let field_ty = &field.ty;
-				let args = ParsableArgs::parse(&field.attrs);
 				let value = quote! {
-                    Self(#field_ty::parse(parser)?)
-                };
+					Self(#field_ty::parse(parser)?)
+				};
 				quote! {
 					#[automatically_derived]
 					impl<'a> hdx_parser::Parse<'a> for #ident {
@@ -187,31 +186,33 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 								.iter()
 								.map(|check| match check {
 									Check::Float => quote! {
-										if !ty.is_float() {
-											Err(hdx_parser::diagnostics::ExpectedFloat(val, parser.span()))?
+										if !token.is_float() {
+											Err(hdx_parser::diagnostics::ExpectedFloat(parser.parse_number(token), parser.span()))?
 										}
 									},
 									Check::Int => quote! {
-										if !ty.is_int() {
-											Err(hdx_parser::diagnostics::ExpectedInt(val, parser.span()))?
+										if !token.is_int() {
+											Err(hdx_parser::diagnostics::ExpectedInt(parser.parse_number(token), parser.span()))?
 										}
 									},
 									Check::Signed => quote! {
-										if !ty.is_signed() {
-											Err(hdx_parser::diagnostics::ExpectedSign(val, parser.span()))?
+										if !token.is_signed() {
+											Err(hdx_parser::diagnostics::ExpectedSign(parser.parse_number(token), parser.span()))?
 										}
 									},
 									Check::Unsigned => quote! {
-										if ty.is_signed() {
-											Err(hdx_parser::diagnostics::ExpectedUnsigned(val, parser.span()))?
+										if token.is_signed() {
+											Err(hdx_parser::diagnostics::ExpectedUnsigned(parser.parse_number(token), parser.span()))?
 										}
 									},
 									Check::Zero => quote! {
+										let val = parser.parse_number(token);
 										if val != 0.0 {
 											Err(hdx_parser::diagnostics::ExpectedZero(val, parser.span()))?
 										}
 									},
 									Check::Range(r) => quote! {
+										let val = parser.parse_number(token);
 										if !(#r).contains(&val) {
 											Err(hdx_parser::diagnostics::NumberOutOfBounds(val, "#r".to_string(), parser.span()))?
 										}
@@ -237,20 +238,20 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 								let field = unnamed[0].clone().ty;
 								if args.parse_inner {
 									dimension_matcher = Some(quote! {
-										hdx_lexer::Token::Dimension(val, _, ty) => {
+										hdx_lexer::Kind::Dimension => {
 											#(#checks)*
 											Ok(Self::#var_ident(#field::parse(parser)?))
 										},
 									});
 									number_matcher = match args.kind {
 										Kind::DimensionOrZero => Some(quote! {
-											hdx_lexer::Token::Number(val, ty) if val == 0.0 => {
+											hdx_lexer::Kind::Number if parser.parse_number(token) == 0.0 => {
 												#(#checks)*
 												Ok(Self::#var_ident(#field::parse(parser)?))
 											}
 										}),
 										Kind::DimensionOrNumber => Some(quote! {
-											hdx_lexer::Token::Number(val, ty) {
+											hdx_lexer::Kind::Number {
 												#(#checks)*
 												Ok(Self::#var_ident(#field::parse(parser)?))
 											}
@@ -260,9 +261,9 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 								} else {
 									dimension_matchers.push(quote! {
 										hdx_atom::atom!(#str) => {
-											parser.advance();
+											parser.next();
 											#(#checks)*
-											Ok(Self::#var_ident(val.into()))
+											Ok(Self::#var_ident(parser.parse_number(token).into()))
 										},
 									});
 								}
@@ -320,15 +321,15 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 									.collect();
 								if args.parse_inner {
 									quote! {
-										hdx_lexer::Token::Number(val, ty) => {
+										hdx_lexer::Kind::Number => {
 											#(#checks)*
 											Ok(Self::#var_ident(#field::parse(parser)?))
 										},
 									}
 								} else {
 									quote! {
-										hdx_lexer::Token::Number(val, ty) => {
-											parser.advance();
+										hdx_lexer::Kind::Number => {
+											parser.next();
 											#(#checks)*
 											Ok(Self::#var_ident(val.into()))
 										},
@@ -352,13 +353,13 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 								let field = unnamed[0].clone().ty;
 								if args.parse_inner {
 									quote! {
-										hdx_lexer::Token::String(_) => {
+										hdx_lexer::Kind::String => {
 											Ok(Self::#var_ident(#field::parse(parser)?))
 										},
 									}
 								} else {
 									quote! {
-										hdx_lexer::Token::String(val) => {
+										hdx_lexer::Kind::String => {
 											Ok(Self::#var_ident(val.into()))
 										},
 									}
@@ -382,13 +383,13 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 								)
 							} else {
 								let field = unnamed[0].clone().ty;
-                                quote! {
-                                    hdx_atom::atom!(#str) => {
-                                        let val = #field::parse(parser)?;
-                                        hdx_parser::expect!(parser.next(), hdx_lexer::Token::RightParen);
-                                        Ok(Self::#var_ident(val))
-                                    }
-                                }
+								quote! {
+									hdx_atom::atom!(#str) => {
+										let val = #field::parse(parser)?;
+										hdx_parser::expect!(parser.next(), hdx_lexer::Kind::RightParen);
+										Ok(Self::#var_ident(val))
+									}
+								}
 							});
 						}
 						// AtKeywords can be assigned to a single unnamed field:
@@ -429,8 +430,9 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 				quote! {}
 			} else {
 				quote! {
-					hdx_lexer::Token::Ident(atom) => {
-						parser.advance();
+					hdx_lexer::Kind::Ident => {
+						parser.next();
+						let atom = parser.parse_atom(token);
 						match atom.to_ascii_lowercase() {
 							#(#ident_matchers)*
 							_ => Err(hdx_parser::diagnostics::UnexpectedIdent(atom, parser.span()))?
@@ -442,8 +444,9 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 				quote! {}
 			} else {
 				quote! {
-					hdx_lexer::Token::Function(atom) => {
-						parser.advance();
+					hdx_lexer::Kind::Function => {
+						parser.next();
+						let atom = parser.parse_atom(token);
 						match atom.to_ascii_lowercase() {
 							#(#function_matchers)*
 							_ => Err(hdx_parser::diagnostics::UnexpectedFunction(atom, parser.span()))?
@@ -455,9 +458,9 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 				quote! {}
 			} else {
 				quote! {
-					hdx_lexer::Token::AtKeyword(atom) => match atom.to_ascii_lowercase() {
+					hdx_lexer::Kind::AtKeyword => match parser.parse_atom_lower(token) {
 						#(#at_matchers)*
-						_ => Err(hdx_parser::diagnostics::UnexpectedAtRule(atom, parser.span()))?
+						atom => Err(hdx_parser::diagnostics::UnexpectedAtRule(atom, parser.span()))?
 					}
 				}
 			};
@@ -467,9 +470,9 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 				quote
 			} else {
 				quote! {
-					hdx_lexer::Token::Dimension(val, unit, ty) => match unit.to_ascii_lowercase() {
+					hdx_lexer::Kind::Dimension => match parser.parse_atom_lower(token) {
 						#(#dimension_matchers)*
-						_ => Err(hdx_parser::diagnostics::UnexpectedDimension(unit, parser.span()))?
+						atom => Err(hdx_parser::diagnostics::UnexpectedDimension(atom, parser.span()))?
 					}
 				}
 			};
@@ -478,14 +481,15 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 				impl<'a> hdx_parser::Parse<'a> for #ident {
 					fn parse(parser: &mut hdx_parser::Parser<'a>) -> hdx_parser::Result<Self> {
 						use hdx_parser::Parse;
-						match parser.peek().clone() {
+						let token = parser.peek();
+						match token.kind() {
 							#ident_match_arm
 							#string_matcher
 							#number_matcher
 							#dimension_match_arm
 							#at_match_arm
 							#function_match_arm
-							token => hdx_parser::unexpected!(parser, token)
+							_ => hdx_parser::unexpected!(parser, token)
 						}
 					}
 				}

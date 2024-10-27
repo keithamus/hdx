@@ -1,4 +1,4 @@
-use hdx_lexer::{Include, Token};
+use hdx_lexer::{Include, Kind, Token};
 use hdx_parser::{
 	diagnostics, expect, expect_ignore_case, unexpected, AtRule, DeclarationRuleList, Parse, Parser,
 	Result as ParserResult, Spanned, Vec,
@@ -23,7 +23,7 @@ pub struct Page<'a> {
 // https://drafts.csswg.org/css-page-3/#syntax-page-selector
 impl<'a> Parse<'a> for Page<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		expect_ignore_case!(parser.next(), Token::AtKeyword(atom!("page")));
+		expect_ignore_case!(parser.next(), Kind::AtKeyword, atom!("page"));
 		let span = parser.span();
 		let (selectors, style) = Self::parse_at_rule(parser)?;
 		if let Some(style) = style {
@@ -67,7 +67,7 @@ impl<'a> Parse<'a> for PageSelectorList {
 			let selector = PageSelector::parse_spanned(parser)?;
 			selectors.push(selector);
 			if matches!(parser.cur(), Token::Comma) {
-				parser.advance();
+				parser.next();
 			} else {
 				return Ok(Self(selectors));
 			}
@@ -95,7 +95,7 @@ impl<'a> Parse<'a> for PageSelector {
 		let mut pseudos = smallvec![];
 		if let Token::Ident(atom) = parser.peek() {
 			page_type = Some(atom.clone());
-			parser.advance();
+			parser.next();
 		}
 		while let Token::Colon = parser.peek() {
 			pseudos.push(PagePseudoClass::parse_spanned(parser)?);
@@ -144,7 +144,7 @@ pub enum PagePseudoClass {
 
 impl<'a> Parse<'a> for PagePseudoClass {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		expect!(parser.next(), Token::Colon);
+		expect!(parser.next(), Kind::Colon);
 		match parser.next_with(Include::Whitespace) {
 			Token::Ident(name) => match Self::from_atom(name) {
 				Some(v) => Ok(v),

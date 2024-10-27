@@ -24,7 +24,7 @@ impl<'a> Parse<'a> for MarginTrim {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		let mut value = Self::none();
 		loop {
-			if value.is_all() {
+			if value.is_all_bits() {
 				break;
 			}
 			expect_ignore_case! { parser.next(), Token::Ident(_):

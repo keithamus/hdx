@@ -1,6 +1,6 @@
 use crate::{css::stylesheet::Rule, syntax::SimpleBlock};
 use hdx_atom::atom;
-use hdx_lexer::Token;
+use hdx_lexer::{Kind, Token};
 use hdx_parser::{
 	diagnostics, expect, expect_ignore_case, match_ignore_case, peek, unexpected, unexpected_ident, AtRule, Parse,
 	Parser, Result as ParserResult, RuleList, Spanned, Vec,
@@ -18,7 +18,7 @@ pub struct Supports<'a> {
 // https://drafts.csswg.org/css-conditional-3/#at-ruledef-supports
 impl<'a> Parse<'a> for Supports<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		expect_ignore_case!(parser.next(), Token::AtKeyword(atom!("supports")));
+		expect_ignore_case!(parser.next(), Kind::AtKeyword, atom!("supports"));
 		let span = parser.span();
 		match Self::parse_at_rule(parser)? {
 			(Some(condition), Some(rules)) => Ok(Self { condition, rules }),
@@ -97,24 +97,26 @@ pub enum SupportsCondition<'a> {
 
 impl<'a> Parse<'a> for SupportsCondition<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		match parser.peek() {
-			Token::LeftParen => {
-				let wrapped = peek!(parser, 2, Token::LeftParen);
+		let token = parser.peek();
+		match token.kind() {
+			Kind::LeftParen => {
+				let wrapped = peek!(parser, 2, Kind::LeftParen);
 				if wrapped {
 					parser.next();
 				}
 				let feature = SupportsFeature::parse(parser)?;
-				match parser.peek() {
-					Token::Ident(ident) => match ident.to_ascii_lowercase() {
+				let token = parser.peek();
+				match token.kind() {
+					Token::Ident => match parser.parse_atom_lower(token) {
 						atom!("and") => {
 							let mut features = parser.new_vec();
 							features.push(feature);
 							loop {
-								expect_ignore_case!(parser.next(), Token::Ident(atom!("and")));
+								expect_ignore_case!(parser.next(), Kind::Ident, atom!("and"));
 								features.push(SupportsFeature::parse(parser)?);
-								if !match_ignore_case!(parser.peek(), Token::Ident(atom!("and"))) {
+								if !match_ignore_case!(parser.peek(), Kind::Ident, atom!("and")) {
 									if wrapped {
-										expect!(parser.next(), Token::RightParen);
+										expect!(parser.next(), Kind::RightParen);
 									}
 									return Ok(Self::And(features));
 								}
@@ -124,11 +126,11 @@ impl<'a> Parse<'a> for SupportsCondition<'a> {
 							let mut features = parser.new_vec();
 							features.push(feature);
 							loop {
-								expect_ignore_case!(parser.next(), Token::Ident(atom!("or")));
+								expect_ignore_case!(parser.next(), Kind::Ident, atom!("or"));
 								features.push(SupportsFeature::parse(parser)?);
-								if !match_ignore_case!(parser.peek(), Token::Ident(atom!("or"))) {
+								if !match_ignore_case!(parser.peek(), Kind::Ident, atom!("or")) {
 									if wrapped {
-										expect!(parser.next(), Token::RightParen);
+										expect!(parser.next(), Kind::RightParen);
 									}
 									return Ok(Self::Or(features));
 								}
@@ -136,26 +138,26 @@ impl<'a> Parse<'a> for SupportsCondition<'a> {
 						}
 						_ => {
 							if wrapped {
-								expect!(parser.next(), Token::RightParen);
+								expect!(parser.next(), Kind::RightParen);
 							}
 							Ok(Self::Is(feature))
 						}
 					},
 					_ => {
 						if wrapped {
-							expect!(parser.next(), Token::RightParen);
+							expect!(parser.next(), Kind::RightParen);
 						}
 						Ok(Self::Is(feature))
 					}
 				}
 			}
-			Token::Ident(ident) => match ident.to_ascii_lowercase() {
+			Kind::Ident => match parser.parse_atom_lower(token) {
 				atom!("and") => {
 					let mut features = parser.new_vec();
 					loop {
-						expect_ignore_case!(parser.next(), Token::Ident(atom!("and")));
+						expect_ignore_case!(parser.next(), Kind::Ident, atom!("and"));
 						features.push(SupportsFeature::parse(parser)?);
-						if !match_ignore_case!(parser.peek(), Token::Ident(atom!("and"))) {
+						if !match_ignore_case!(parser.peek(), Kind::Ident, atom!("and")) {
 							return Ok(Self::And(features));
 						}
 					}
@@ -163,20 +165,20 @@ impl<'a> Parse<'a> for SupportsCondition<'a> {
 				atom!("or") => {
 					let mut features = parser.new_vec();
 					loop {
-						expect_ignore_case!(parser.next(), Token::Ident(atom!("or")));
+						expect_ignore_case!(parser.next(), Kind::Ident, atom!("or"));
 						features.push(SupportsFeature::parse(parser)?);
-						if !match_ignore_case!(parser.peek(), Token::Ident(atom!("or"))) {
+						if !match_ignore_case!(parser.peek(), Kind::Ident, atom!("or")) {
 							return Ok(Self::And(features));
 						}
 					}
 				}
 				atom!("not") => {
-					parser.advance();
+					parser.next();
 					Ok(Self::Not(SupportsFeature::parse(parser)?))
 				}
 				_ => unexpected_ident!(parser, ident),
 			},
-			token => unexpected!(parser, token),
+			_ => unexpected!(parser, token),
 		}
 	}
 }
@@ -234,7 +236,7 @@ pub struct SupportsFeature<'a>(pub SimpleBlock<'a>);
 
 impl<'a> Parse<'a> for SupportsFeature<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		expect!(parser.peek(), Token::LeftParen);
+		expect!(parser.peek(), Kind::LeftParen);
 		Ok(Self(SimpleBlock::parse(parser)?))
 	}
 }

@@ -1,6 +1,6 @@
 use hdx_atom::{atom, Atom};
 use hdx_derive::Writable;
-use hdx_lexer::Token;
+use hdx_lexer::Kind;
 use hdx_parser::{unexpected, unexpected_ident, Parse, Parser, Result as ParserResult};
 
 use super::CSSFloat;
@@ -50,16 +50,17 @@ macro_rules! length {
 
 		impl<'a> Parse<'a> for Length {
 			fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-				match parser.next() {
-					Token::Number(n, _) if *n == 0.0 => Ok(Self::Zero),
-					token @ Token::Dimension(n, unit, _) => {
-						if let Some(d) = Self::new(n.into(), unit.clone()) {
+				let token = parser.next();
+				match token.kind() {
+					Kind::Number if parser.parse_number(token) == 0.0 => Ok(Self::Zero),
+					Kind::Dimension => {
+						if let Some(d) = Self::new(parser.parse_number(token).into(), parser.parse_atom_lower(token)) {
 							Ok(d)
 						} else {
 							unexpected!(parser, token)
 						}
 					}
-					token => unexpected!(parser, token),
+					_ => unexpected!(parser, token),
 				}
 			}
 		}
@@ -101,16 +102,17 @@ macro_rules! length {
 
 		impl<'a> Parse<'a> for LengthPercentage {
 			fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-				match parser.next() {
-					Token::Number(n, _) if *n == 0.0 => Ok(Self::Zero),
-					token @ Token::Dimension(n, unit, _) => {
-						if let Some(d) = Self::new(n.into(), unit.clone()) {
+				let token = parser.next();
+				match token.kind() {
+					Kind::Number if parser.parse_number(token) == 0.0 => Ok(Self::Zero),
+					Kind::Dimension => {
+						if let Some(d) = Self::new(parser.parse_number(token).into(), parser.parse_atom_lower(token)) {
 							Ok(d)
 						} else {
 							unexpected!(parser, token)
 						}
 					}
-					token => unexpected!(parser, token),
+					_ => unexpected!(parser, token),
 				}
 			}
 		}
@@ -186,20 +188,21 @@ pub enum LengthPercentageOrAuto {
 
 impl<'a> Parse<'a> for LengthPercentageOrAuto {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		match parser.next() {
-			Token::Ident(atom) => match atom.to_ascii_lowercase() {
+		let token = parser.next();
+		match token.kind() {
+			Kind::Ident => match parser.parse_atom_lower(token) {
 				atom!("auto") => Ok(Self::Auto),
-				_ => unexpected_ident!(parser, atom),
+				atom => unexpected_ident!(parser, atom),
 			},
-			token @ Token::Dimension(val, unit, _) => {
-				if let Some(l) = LengthPercentage::new(val.into(), unit.clone()) {
+			Kind::Dimension => {
+				if let Some(l) = LengthPercentage::new(parser.parse_number(token).into(), parser.parse_atom_lower(token)) {
 					Ok(Self::LengthPercentage(l))
 				} else {
 					unexpected!(parser, token)
 				}
 			}
-			Token::Number(val, _) if *val == 0.0 => Ok(Self::LengthPercentage(LengthPercentage::Zero)),
-			token => unexpected!(parser, token),
+			Kind::Number if parser.parse_number(token) == 0.0 => Ok(Self::LengthPercentage(LengthPercentage::Zero)),
+			_ => unexpected!(parser, token),
 		}
 	}
 }
@@ -216,22 +219,23 @@ pub enum LineWidth {
 
 impl<'a> Parse<'a> for LineWidth {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		match parser.next() {
-			Token::Ident(atom) => match atom.to_ascii_lowercase() {
+		let token = parser.next();
+		match token.kind() {
+			Kind::Ident => match parser.parse_atom_lower(token) {
 				atom!("thin") => Ok(Self::Thin),
 				atom!("medium") => Ok(Self::Medium),
 				atom!("thick") => Ok(Self::Thick),
-				_ => unexpected_ident!(parser, atom),
+				atom => unexpected_ident!(parser, atom),
 			},
-			token @ Token::Dimension(val, unit, _) => {
-				if let Some(l) = Length::new(val.into(), unit.clone()).map(Self::Length) {
+			Kind::Dimension => {
+				if let Some(l) = Length::new(parser.parse_number(token).into(), parser.parse_atom_lower(token)).map(Self::Length) {
 					Ok(l)
 				} else {
 					unexpected!(parser, token)
 				}
 			}
-			Token::Number(val, _) if *val == 0.0 => Ok(Self::Length(Length::Zero)),
-			token => unexpected!(parser, token),
+			Kind::Number if parser.parse_number(token) == 0.0 => Ok(Self::Length(Length::Zero)),
+			_ => unexpected!(parser, token),
 		}
 	}
 }

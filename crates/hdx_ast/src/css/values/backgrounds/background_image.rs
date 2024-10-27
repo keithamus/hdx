@@ -1,6 +1,6 @@
 use hdx_atom::atom;
 use hdx_derive::{Value, Writable};
-use hdx_lexer::Token;
+use hdx_lexer::{Kind};
 use hdx_parser::{discard, Parse, Parser, Result as ParserResult, Spanned};
 use smallvec::{smallvec, SmallVec};
 
@@ -16,7 +16,7 @@ impl<'a> Parse<'a> for BackgroundImage {
 		loop {
 			let value = SingleBackgroundImage::parse_spanned(parser)?;
 			values.push(value);
-			if !discard!(parser, Token::Comma) {
+			if !discard!(parser, Kind::Comma) {
 				break;
 			}
 		}
@@ -33,9 +33,10 @@ pub enum SingleBackgroundImage {
 }
 impl<'a> Parse<'a> for SingleBackgroundImage {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		Ok(match parser.peek().clone() {
-			Token::Ident(ident) if ident.to_ascii_lowercase() == atom!("none") => {
-				parser.advance();
+		let token = parser.peek();
+		Ok(match token.kind() {
+			Kind::Ident if parser.parse_atom_lower(token) == atom!("none") => {
+				parser.next();
 				Self::None
 			}
 			_ => Self::Image(Image::parse(parser)?),

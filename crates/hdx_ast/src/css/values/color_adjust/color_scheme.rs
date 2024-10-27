@@ -1,6 +1,6 @@
 use hdx_atom::{atom, Atom};
 use hdx_derive::Value;
-use hdx_lexer::Token;
+use hdx_lexer::Kind;
 use hdx_parser::{unexpected, unexpected_ident, Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 use smallvec::{smallvec, SmallVec};
@@ -24,10 +24,14 @@ impl<'a> Parse<'a> for ColorScheme {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		let mut only = false;
 		let mut keywords = smallvec![];
-		while let Token::Ident(ident) = parser.peek() {
-			match ident.to_ascii_lowercase() {
+		loop {
+			let token = parser.peek();
+			if token.kind() != Token::Ident {
+				break;
+			}
+			match parser.parse_atom_lower(token) {
 				atom!("normal") => {
-					parser.advance();
+					parser.next();
 					return Ok(Self::Normal);
 				}
 				atom!("only") => {
@@ -38,9 +42,9 @@ impl<'a> Parse<'a> for ColorScheme {
 				}
 				atom!("light") => keywords.push(ColorSchemeKeyword::Light),
 				atom!("dark") => keywords.push(ColorSchemeKeyword::Dark),
-				_ => keywords.push(ColorSchemeKeyword::Custom(ident.clone())),
+				atom => keywords.push(ColorSchemeKeyword::Custom(atom)),
 			}
-			parser.advance();
+			parser.next();
 		}
 		if only && keywords.is_empty() {
 			unexpected!(parser)

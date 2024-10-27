@@ -1,5 +1,6 @@
+use crate::css::units::CSSFloat;
 use hdx_atom::{atom, Atom};
-use hdx_lexer::{Include, PairWise, Token};
+use hdx_lexer::{Include, Kind, PairWise, QuoteStyle};
 use hdx_parser::{
 	expect, unexpected, AtRule as AtRuleTrait, Block as BlockTrait, Parse, Parser, QualifiedRule as QualifiedRuleTrait,
 	Result as ParserResult, Span, Spanned, State, Vec,
@@ -15,17 +16,17 @@ impl<'a> Parse<'a> for ComponentValues<'a> {
 	// https://drafts.csswg.org/css-syntax-3/#consume-list-of-components
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		let mut values = parser.new_vec();
-		if matches!(parser.peek_with(Include::Whitespace), Token::Whitespace) {
-			parser.advance_with(Include::Whitespace);
+		if matches!(parser.peek_with(Include::Whitespace).kind(), Kind::Whitespace) {
+			parser.next_with(Include::Whitespace);
 		}
 		loop {
-			match parser.peek_with(Include::Whitespace).clone() {
-				Token::Eof => break,
-				Token::RightCurly if parser.is(State::Nested) => break,
+			match parser.peek_with(Include::Whitespace).kind() {
+				Kind::Eof => break,
+				Kind::RightCurly if parser.is(State::Nested) => break,
 				// ComponentValues can be passed a "stop token" which could be any token.
 				// In reality it is only ever called with a comma-token or semicolon-token.
-				Token::Semicolon if parser.is(State::StopOnSemicolon) => break,
-				Token::Comma if parser.is(State::StopOnComma) => break,
+				Kind::Semicolon if parser.is(State::StopOnSemicolon) => break,
+				Kind::Comma if parser.is(State::StopOnComma) => break,
 				_ => values.push(ComponentValue::parse_spanned(parser)?),
 			}
 		}
@@ -43,24 +44,50 @@ impl<'a> WriteCss<'a> for ComponentValues<'a> {
 }
 
 // https://drafts.csswg.org/css-syntax-3/#consume-component-value
+// A compatible "Token" per CSS grammar, subsetted to the tokens possibly
+// rendered by ComponentValue (so no pairwise, function tokens, etc).
 #[derive(PartialEq, Debug, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(untagged))]
 pub enum ComponentValue<'a> {
 	SimpleBlock(SimpleBlock<'a>),
 	Function(Function<'a>),
-	Token(Token),
+	Whitespace,
+	Number(CSSFloat),
+	Dimension(CSSFloat, Atom),
+	Ident(Atom),
+	AtKeyword(Atom),
+	Hash(Atom),
+	String(&'a str, QuoteStyle),
+	Url(&'a str, QuoteStyle),
+	Delim(char),
+	Colon,
+	Semicolon,
+	Comma,
 }
 
 // https://drafts.csswg.org/css-syntax-3/#consume-component-value
 impl<'a> Parse<'a> for ComponentValue<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		match parser.peek_with(Include::Whitespace) {
-			Token::LeftCurly | Token::LeftSquare | Token::LeftParen => {
-				Ok(Self::SimpleBlock(SimpleBlock::parse_with_state(parser, State::Nested)?))
+		let peek = parser.peek_with(Include::Whitespace);
+		Ok(match peek.kind() {
+			Kind::LeftCurly | Kind::LeftSquare | Kind::LeftParen => {
+				Self::SimpleBlock(SimpleBlock::parse_with_state(parser, State::Nested)?)
 			}
-			Token::Function(_) => Ok(Self::Function(Function::parse(parser)?)),
-			_ => Ok(Self::Token(parser.next_with(Include::Whitespace).clone())),
-		}
+			Kind::Function => Self::Function(Function::parse(parser)?),
+			Kind::Whitespace => Self::Whitespace,
+			Kind::Number => Self::Number(parser.parse_number(peek).into()),
+			Kind::Dimension => Self::Dimension(parser.parse_number(peek).into(), parser.parse_atom(peek)),
+			Kind::Ident => Self::Ident(parser.parse_atom(peek)),
+			Kind::AtKeyword => Self::AtKeyword(parser.parse_atom(peek)),
+			Kind::Hash => Self::Hash(parser.parse_atom(peek)),
+			Kind::String => Self::String(parser.parse_str(peek), peek.quote_style()),
+			Kind::Url => Self::Url(parser.parse_str(peek), peek.quote_style()),
+			Kind::Delim => Self::Delim(peek.char().unwrap()),
+			Kind::Colon => Self::Colon,
+			Kind::Semicolon => Self::Semicolon,
+			Kind::Comma => Self::Comma,
+			_ => unexpected!(parser, peek),
+		})
 	}
 }
 
@@ -69,56 +96,32 @@ impl<'a> WriteCss<'a> for ComponentValue<'a> {
 		match self {
 			Self::SimpleBlock(b) => b.write_css(sink),
 			Self::Function(f) => f.write_css(sink),
-			Self::Token(token) => {
-				match token {
-					Token::Ident(name) => sink.write_str(name)?,
-					Token::AtKeyword(name) => {
-						sink.write_char('@')?;
-						sink.write_str(name)?;
-					}
-					Token::Hash(hash) | Token::HashId(hash) => {
-						sink.write_char('#')?;
-						sink.write_str(hash)?;
-					}
-					Token::String(string, quote) => {
-						sink.write_with_quotes(string, *quote, false)?;
-					}
-					Token::Url(url, quote) => {
-						atom!("url").write_css(sink)?;
-						sink.write_char('(')?;
-						sink.write_with_quotes(url.as_ref(), *quote, true)?;
-						sink.write_char(')')?;
-					}
-					Token::Delim(ch) => {
-						sink.write_char(*ch)?;
-					}
-					Token::Number(n, _) => sink.write_str(&format!("{}", n))?,
-					Token::Dimension(n, unit, _) => {
-						sink.write_str(&format!("{}", n))?;
-						sink.write_str(unit)?;
-					}
-					Token::Whitespace => sink.write_char(' ')?,
-					Token::Cdo => atom!("<!--").write_css(sink)?,
-					Token::Cdc => atom!("-->").write_css(sink)?,
-					Token::Colon => sink.write_char(':')?,
-					Token::Semicolon => sink.write_char(';')?,
-					Token::Comma => sink.write_char(',')?,
-					Token::LeftSquare => sink.write_char('[')?,
-					Token::RightSquare => sink.write_char(']')?,
-					Token::LeftParen => sink.write_char('(')?,
-					Token::RightParen => sink.write_char(')')?,
-					Token::LeftCurly => sink.write_char('{')?,
-					Token::RightCurly => sink.write_char('}')?,
-					Token::Undetermined => {}
-					Token::Comment(content) => sink.write_comment(content)?,
-					Token::Function(name) => {
-						sink.write_str(name)?;
-						sink.write_char('(')?;
-					}
-					Token::Eof | Token::BadString | Token::BadUrl => {}
-				}
-				Ok(())
+			Self::Ident(name) => sink.write_str(name),
+			Self::AtKeyword(name) => {
+				sink.write_char('@')?;
+				sink.write_str(name)
 			}
+			Self::Hash(hash) => {
+				sink.write_char('#')?;
+				sink.write_str(hash)
+			}
+			Self::String(string, quote) => sink.write_with_quotes(string, *quote, false),
+			Self::Url(url, quote) => {
+				atom!("url").write_css(sink)?;
+				sink.write_char('(')?;
+				sink.write_with_quotes(url.as_ref(), *quote, true)?;
+				sink.write_char(')')
+			}
+			Self::Delim(ch) => sink.write_char(*ch),
+			Self::Number(n) => sink.write_str(&format!("{}", n)),
+			Self::Dimension(n, unit) => {
+				sink.write_str(&format!("{}", n))?;
+				sink.write_str(unit)
+			}
+			Self::Whitespace => sink.write_char(' '),
+			Self::Colon => sink.write_char(':'),
+			Self::Semicolon => sink.write_char(';'),
+			Self::Comma => sink.write_char(','),
 		}
 	}
 }
@@ -135,15 +138,15 @@ impl<'a> Parse<'a> for SimpleBlock<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		if let Some(pairwise) = parser.next().to_pairwise() {
 			let mut values = parser.new_vec();
-			let ending_token = pairwise.end();
+			let end_kind = pairwise.end();
 			loop {
 				match parser.peek_with(Include::Whitespace) {
-					Token::Eof => break,
-					t if t == ending_token => break,
+					t if t.kind() == Kind::Eof => break,
+					t if t.kind() == end_kind => break,
 					_ => values.push(ComponentValue::parse_spanned(parser)?),
 				}
 			}
-			if parser.next() != pairwise.end() {
+			if parser.next().kind() != pairwise.end() {
 				unexpected!(parser)
 			}
 			Ok(Self { values, pairwise })
@@ -181,8 +184,8 @@ pub enum Rule<'a> {
 
 impl<'a> Parse<'a> for Rule<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		Ok(match parser.next() {
-			Token::AtKeyword(_) => Rule::AtRule(AtRule::parse(parser)?),
+		Ok(match parser.next().kind() {
+			Kind::AtKeyword => Rule::AtRule(AtRule::parse(parser)?),
 			_ => Rule::QualifiedRule(QualifiedRule::parse(parser)?),
 		})
 	}
@@ -227,22 +230,20 @@ pub struct Declaration<'a> {
 // https://drafts.csswg.org/css-syntax-3/#consume-a-declaration
 impl<'a> Parse<'a> for Declaration<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		match parser.next().clone() {
-			Token::Ident(name) => {
-				expect!(parser.next(), Token::Colon);
+    let token = parser.next();
+		match token.kind() {
+			Kind::Ident => {
+				expect!(parser.next(), Kind::Colon);
 				let mut value =
 					ComponentValues::parse_spanned_with_state(parser, State::StopOnSemicolon | State::Nested)?;
 				let mut iter = value.node.0.iter_mut();
-				let important = matches!(
-					iter.nth_back(1),
-					Some(Spanned { node: ComponentValue::Token(Token::Ident(atom!("important"))), .. })
-				) && matches!(
-					iter.nth_back(2),
-					Some(Spanned { node: ComponentValue::Token(Token::Delim('!')), .. })
-				);
-				Ok(Self { name: name.clone(), value, important })
+				let important =
+					matches!(iter.nth_back(1), Some(Spanned { node: ComponentValue::Ident(atom!("important")), .. }))
+						&& matches!(iter.nth_back(2), Some(Spanned { node: ComponentValue::Delim('!'), .. }));
+        let name = parser.parse_atom(token);
+				Ok(Self { name, value, important })
 			}
-			token => unexpected!(parser, token),
+			_ => unexpected!(parser, token),
 		}
 	}
 }
@@ -294,8 +295,9 @@ pub struct AtRule<'a> {
 // https://drafts.csswg.org/css-syntax-3/#consume-an-at-rule
 impl<'a> Parse<'a> for AtRule<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		match parser.next().clone() {
-			Token::AtKeyword(name) => {
+		let token = parser.next();
+		match token.kind() {
+			Kind::AtKeyword => {
 				let (prelude_opt, block_opt) = Self::parse_at_rule(parser)?;
 				let prelude = prelude_opt
 					.unwrap_or_else(|| Spanned { node: ComponentValues(parser.new_vec()), span: Span::dummy() });
@@ -303,9 +305,10 @@ impl<'a> Parse<'a> for AtRule<'a> {
 					node: Block { declarations: parser.new_vec(), rules: parser.new_vec() },
 					span: Span::dummy(),
 				});
+				let name = parser.parse_atom(token);
 				Ok(Self { name, prelude, block })
 			}
-			token => unexpected!(parser, token),
+			_ => unexpected!(parser, token),
 		}
 	}
 }
@@ -365,20 +368,22 @@ pub struct Function<'a> {
 // https://drafts.csswg.org/css-syntax-3/#consume-function
 impl<'a> Parse<'a> for Function<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		match parser.next().clone() {
-			Token::Function(name) => {
+		let token = parser.next();
+		match token.kind() {
+			Kind::Function => {
 				let mut values = parser.new_vec();
 				loop {
-					match parser.peek() {
-						Token::Eof => break,
-						Token::RightParen => break,
+					match parser.peek().kind() {
+						Kind::Eof => break,
+						Kind::RightParen => break,
 						_ => values.push(ComponentValue::parse_spanned(parser)?),
 					}
 				}
-				expect!(parser.next(), Token::RightParen);
-				Ok(Self { name: name.clone(), values })
+				expect!(parser.next(), Kind::RightParen);
+				let name = parser.parse_atom(token);
+				Ok(Self { name, values })
 			}
-			token => unexpected!(parser, token),
+			_ => unexpected!(parser, token),
 		}
 	}
 }

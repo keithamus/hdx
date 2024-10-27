@@ -2,7 +2,7 @@ use hdx_derive::{Atomizable, Parsable};
 use smallvec::{smallvec, SmallVec};
 
 use hdx_atom::{atom, Atom, Atomizable};
-use hdx_lexer::Token;
+use hdx_lexer::{Kind, Token};
 use hdx_parser::{
 	diagnostics, discard, expect, expect_ignore_case, match_ignore_case, peek, todo, unexpected_ident, AtRule, Parse,
 	Parser, Result as ParserResult, RuleList, Spanned, Vec,
@@ -25,7 +25,7 @@ pub struct Media<'a> {
 // https://drafts.csswg.org/css-conditional-3/#at-ruledef-media
 impl<'a> Parse<'a> for Media<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		expect_ignore_case!(parser.next(), Token::AtKeyword(atom!("media")));
+		expect_ignore_case!(parser.next(), Kind::AtKeyword, atom!("media"));
 		let span = parser.span();
 		match Self::parse_at_rule(parser)? {
 			(Some(query), Some(rules)) => Ok(Self { query, rules }),
@@ -102,7 +102,7 @@ impl<'a> Parse<'a> for MediaQueryList {
 		let mut queries = smallvec![];
 		loop {
 			queries.push(MediaQuery::parse_spanned(parser)?);
-			if !discard!(parser, Token::Comma) {
+			if !discard!(parser, Kind::Comma) {
 				return Ok(Self(queries));
 			}
 		}
@@ -140,7 +140,7 @@ impl<'a> Parse<'a> for MediaQuery {
 		let mut precondition = None;
 		let mut media_type = None;
 		let mut condition = None;
-		if peek!(parser, Token::LeftParen) {
+		if peek!(parser, Kind::LeftParen) {
 			condition = Some(MediaCondition::parse(parser)?);
 			return Ok(Self { precondition, media_type, condition });
 		}
@@ -159,15 +159,15 @@ impl<'a> Parse<'a> for MediaQuery {
 			Token::Ident(ident) if precondition.is_some() => {
 				media_type = MediaType::from_atom(ident);
 				if media_type.is_some() {
-					parser.advance();
+					parser.next();
 				} else {
 					unexpected_ident!(parser, ident)
 				}
 			}
 			_ => {}
 		}
-		if media_type.is_some() && match_ignore_case!(parser.peek(), Token::Ident(atom!("and"))) {
-			parser.advance();
+		if media_type.is_some() && match_ignore_case!(parser.peek(), Kind::Ident, atom!("and")) {
+			parser.next();
 			condition = Some(MediaCondition::parse(parser)?);
 		} else if media_type.is_none() {
 			condition = Some(MediaCondition::parse(parser)?);
@@ -252,7 +252,7 @@ pub enum MediaCondition {
 impl<'a> Parse<'a> for MediaCondition {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		let feature = if matches!(parser.peek(), Token::LeftParen) {
-			if peek!(parser, 2, Token::LeftParen) {
+			if peek!(parser, 2, Kind::LeftParen) {
 				todo!(parser)
 			} else {
 				Some(MediaFeature::parse(parser)?)
@@ -262,7 +262,7 @@ impl<'a> Parse<'a> for MediaCondition {
 		};
 		let mut features = smallvec![];
 		if let Some(feature) = feature {
-			if !peek!(parser, Token::Ident(_)) {
+			if !peek!(parser, Kind::Ident) {
 				return Ok(Self::Is(feature));
 			}
 			features.push(feature);
@@ -272,7 +272,7 @@ impl<'a> Parse<'a> for MediaCondition {
 				loop {
 					expect_ignore_case!(parser.next(), Token::Ident(atom!("and")));
 					features.push(MediaFeature::parse(parser)?);
-					if !match_ignore_case!(parser.peek(), Token::Ident(atom!("and"))) {
+					if !match_ignore_case!(parser.peek(), Kind::Ident, atom!("and")) {
 						return Ok(Self::And(features));
 					}
 				}
@@ -281,13 +281,13 @@ impl<'a> Parse<'a> for MediaCondition {
 				loop {
 					expect_ignore_case!(parser.next(), Token::Ident(atom!("or")));
 					features.push(MediaFeature::parse(parser)?);
-					if !match_ignore_case!(parser.peek(), Token::Ident(atom!("or"))) {
+					if !match_ignore_case!(parser.peek(), Kind::Ident, atom!("or")) {
 						return Ok(Self::Or(features));
 					}
 				}
 			},
 			atom!("not") => {
-				parser.advance();
+				parser.next();
 				Ok(Self::Not(MediaFeature::parse(parser)?))
 			},
 		}
@@ -347,7 +347,7 @@ apply_medias!(media_feature);
 
 impl<'a> Parse<'a> for MediaFeature {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		expect!(parser.next(), Token::LeftParen);
+		expect!(parser.next(), Kind::LeftParen);
 		macro_rules! match_media {
 			( $($name: ident($typ: ident): atom!($atom: tt)$(| $alts:pat)*,)+) => {
 				expect_ignore_case!{ parser.peek(), Token::Ident(_):
@@ -362,7 +362,7 @@ impl<'a> Parse<'a> for MediaFeature {
 			}
 		}
 		if value.is_ok() {
-			expect!(parser.next(), Token::RightParen);
+			expect!(parser.next(), Kind::RightParen);
 		}
 		value
 	}

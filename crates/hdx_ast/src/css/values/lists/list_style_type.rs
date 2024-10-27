@@ -1,6 +1,6 @@
 use hdx_atom::{atom, Atom};
 use hdx_derive::{Value, Writable};
-use hdx_lexer::{QuoteStyle, Token};
+use hdx_lexer::{QuoteStyle, Kind};
 use hdx_parser::{Parse, Parser, Result as ParserResult, Spanned};
 
 use crate::css::types::CounterStyle;
@@ -17,17 +17,18 @@ pub enum ListStyleType {
 
 impl<'a> Parse<'a> for ListStyleType {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		Ok(match parser.peek().clone() {
-			Token::Ident(atom) => match atom.to_ascii_lowercase() {
+		let token = parser.peek();
+		Ok(match token.kind() {
+			Kind::Ident => match parser.parse_atom_lower(token) {
 				atom!("none") => {
-					parser.advance();
+					parser.next();
 					Self::None
 				}
 				_ => Self::CounterStyle(CounterStyle::parse_spanned(parser)?),
 			},
-			Token::String(atom, style) => {
-				parser.advance();
-				Self::String(atom, style)
+			Kind::String => {
+				parser.next();
+				Self::String(parser.parse_atom(token), token.quote_style())
 			}
 			_ => Self::CounterStyle(CounterStyle::parse_spanned(parser)?),
 		})

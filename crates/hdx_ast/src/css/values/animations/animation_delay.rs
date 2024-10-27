@@ -1,5 +1,5 @@
 use hdx_derive::Value;
-use hdx_lexer::Token;
+use hdx_lexer::{Kind, Token};
 use hdx_parser::{discard, unexpected, Parse, Parser, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 use smallvec::{smallvec, SmallVec};
@@ -13,18 +13,18 @@ pub struct AnimationDelay(pub SmallVec<[Time; 2]>);
 
 impl<'a> Parse<'a> for AnimationDelay {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		Ok(match parser.peek() {
-			Token::Dimension(_, _, _) => {
+		Ok(match parser.peek().kind() {
+			Kind::Dimension => {
 				let mut values = smallvec![];
 				loop {
 					values.push(Time::parse(parser)?);
-					if !discard!(parser, Token::Comma) {
+					if !discard!(parser, Kind::Comma) {
 						break;
 					}
 				}
 				AnimationDelay(values)
 			}
-			token => unexpected!(parser, token),
+			_ => unexpected!(parser),
 		})
 	}
 }
