@@ -341,3 +341,10 @@ fn ordered_custom_function_last_option() {
 	let data = to_deriveinput! { struct Foo; };
 	assert_snapshot!(syntax, data, "ordered_custom_function_last_option");
 }
+
+#[test]
+fn enum_with_variable_count_type() {
+	let syntax = to_valuedef!(" auto | <animateable-feature># ");
+	let data = to_deriveinput! { enum Foo {} };
+	assert_snapshot!(syntax, data, "enum_with_variable_count_type");
+}

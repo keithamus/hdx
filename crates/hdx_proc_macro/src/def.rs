@@ -339,10 +339,10 @@ impl DataType {
 }
 
 impl Def {
-	pub fn to_variant_name(&self, capture: Option<Ident>) -> TokenStream {
+	pub fn to_variant_name(&self, capture: Option<Ident>, size_hint: usize) -> TokenStream {
 		match self {
-			Self::Ident(v) => v.to_variant_name(),
-			Self::Type(v) => v.to_variant_name(capture),
+			Self::Ident(v) => v.to_variant_name(size_hint),
+			Self::Type(v) => v.to_variant_name(capture, size_hint),
 			Self::Function(v, ty) => {
 				let variant_str = pascal(v.0.to_string());
 				let ident = format_ident!("{}Function", variant_str);
@@ -361,6 +361,7 @@ impl Def {
 					}
 				}
 			}
+			Self::Multiplier(v, style) => v.deref().to_variant_name(capture, style.smallvec_size_hint()),
 			_ => {
 				dbg!("TODO variant name", self);
 				todo!("variant name")
@@ -423,7 +424,7 @@ impl Def {
 					.map(|(p, def)| {
 						let peek = def.peek_steps();
 						let parse = def.parse_steps(Some(format_ident!("val")));
-						let var = def.to_variant_name(Some(format_ident!("val")));
+						let var = def.to_variant_name(Some(format_ident!("val")), 0);
 						// If it's the only parse block we don't need to peek, just return it.
 						if p == Position::Only {
 							quote! { #parse; Ok(Self::#var) }
@@ -437,16 +438,29 @@ impl Def {
 				let keyword_if = if keywords.is_empty() {
 					None
 				} else {
-					let mut last_arm = quote! {
-						atom => Err(::hdx_parser::diagnostics::UnexpectedIdent(atom, token.span()))?
+					let mut last_arm = if other_if.is_empty() {
+						quote! {
+							atom => Err(::hdx_parser::diagnostics::UnexpectedIdent(atom, token.span()))?
+						}
+					} else {
+						// likely cant Err as other Alternatives might use idents
+						quote! { atom => {} }
 					};
 					let keyword_arms = keywords.into_iter().map(|def| {
 						if let Def::Ident(ident) = def {
 							let atom = ident.to_atom_macro();
-							let variant_name = ident.to_variant_name();
-							quote! { #atom => Self::#variant_name, }
+							let variant_name = ident.to_variant_name(0);
+							quote! { #atom => {
+								parser.hop(token);
+								return Ok(Self::#variant_name);
+							} }
 						} else if def == &Def::Type(DefType::CustomIdent) {
-							last_arm = quote! { atom => Self::CustomIdent(atom) };
+							last_arm = quote! {
+								atom => {
+									parser.hop(token);
+									return Ok(Self::CustomIdent(atom));
+								}
+							};
 							quote! {}
 						} else {
 							quote! {}
@@ -455,19 +469,18 @@ impl Def {
 					if other_if.is_empty() {
 						Some(quote! {
 							let token = *parser.parse::<::hdx_parser::token::Ident>()?;
-							Ok(match parser.parse_atom_lower(token) {
+							match parser.parse_atom_lower(token) {
 								#(#keyword_arms)*
 								#last_arm
-							})
+							}
 						})
 					} else {
 						Some(quote! {
 							if let Some(token) = parser.peek::<::hdx_parser::token::Ident>() {
-								parser.hop(token);
-								return Ok(match parser.parse_atom_lower(token) {
+								match parser.parse_atom_lower(token) {
 								#(#keyword_arms)*
 								#last_arm
-								})
+								}
 							}
 						})
 					}
@@ -628,7 +641,7 @@ impl Def {
 					.iter()
 					.map(|def| {
 						let name = format_ident!("inner");
-						let var = def.to_variant_name(Some(name.clone()));
+						let var = def.to_variant_name(Some(name.clone()), 0);
 						let write = def.write_steps(quote! { #name });
 						quote! { Self::#var => { #write } }
 					})
@@ -770,7 +783,7 @@ impl GenerateDefinition for Def {
 			},
 			DataType::Enum => match self {
 				Self::Combinator(children, DefCombinatorStyle::Alternatives) => {
-					let variants: Vec<TokenStream> = children.iter().map(|d| d.to_variant_name(None)).collect();
+					let variants: Vec<TokenStream> = children.iter().map(|d| d.to_variant_name(None, 0)).collect();
 					quote! { #vis enum #ident #life { #(#variants),* } }
 				}
 				Self::Combinator(_, _) => {
@@ -835,7 +848,7 @@ impl GenerateWriteImpl for Def {
 					.iter()
 					.map(|def| {
 						let name = format_ident!("inner");
-						let var = def.to_variant_name(Some(name.clone()));
+						let var = def.to_variant_name(Some(name.clone()), 0);
 						let write = def.write_steps(quote! { #name });
 						quote! { Self::#var => { #write } }
 					})
@@ -854,8 +867,7 @@ impl GenerateWriteImpl for Def {
 				let name = format_ident!("item");
 				let post_write = match style {
 					DefMultiplierStyle::OneOrMoreCommaSeparated(_) => quote! {
-						::hdx_parser::token::Comma.write_css(sink)?;
-						sink.write_whitespace(sink)?;
+						::hdx_writer::write_css!(sink, ',', ());
 					},
 					_ => quote! { sink.write_char(' ')?; },
 				};
@@ -938,7 +950,10 @@ impl GenerateParseImpl for Def {
 					#inner
 				}
 			}
-			Self::Multiplier(def, DefMultiplierStyle::Range(range)) => {
+			Self::Multiplier(
+				def,
+				DefMultiplierStyle::Range(range) | DefMultiplierStyle::OneOrMoreCommaSeparated(range),
+			) => {
 				let peek_steps = def.peek_steps();
 				let steps = def.parse_steps(Some(format_ident!("item")));
 				let max_check = match range {
@@ -966,19 +981,38 @@ impl GenerateParseImpl for Def {
 						}
 					}
 				};
+				let instantiate_i =
+					if matches!(range, DefRange::None) { None } else { Some(quote! { let mut i = 0; }) };
+				let increment_i = if matches!(range, DefRange::None) { None } else { Some(quote! { i += 1; }) };
 				let capture_name = capture.unwrap_or_else(|| format_ident!("items"));
-				quote! {
-					let mut i = 0;
-					let mut #capture_name = ::smallvec::smallvec![];
-					loop {
-						#max_check
+				let inloop = if matches!(self, Self::Multiplier(_, DefMultiplierStyle::OneOrMoreCommaSeparated(_))) {
+					quote! {
+						#steps
+						#capture_name.push(item);
+						#increment_i
+						if let Some(token) = parser.peek::<::hdx_parser::Token![,]>() {
+							parser.hop(token);
+						} else {
+							break;
+						}
+					}
+				} else {
+					quote! {
 						if #peek_steps.is_some() {
 							#steps
-							i += 1;
+							#increment_i
 							#capture_name.push(item)
 						} else {
 							break;
 						}
+					}
+				};
+				quote! {
+					#instantiate_i
+					let mut #capture_name = ::smallvec::smallvec![];
+					loop {
+						#max_check
+						#inloop
 					}
 					#min_check
 				}
@@ -1007,26 +1041,70 @@ impl GenerateParseImpl for Def {
 }
 
 impl DefType {
-	pub fn to_variant_name(&self, capture: Option<Ident>) -> TokenStream {
-		let inner = if let Some(ident) = capture {
+	pub fn to_variant_name(&self, capture: Option<Ident>, size_hint: usize) -> TokenStream {
+		let inner = if let Some(ident) = &capture {
 			quote! { #ident }
 		} else {
 			self.to_type_name()
 		};
-		match self {
-			Self::Length(_) => quote! { Length(#inner) },
-			Self::LengthPercentage(_) => quote! { LengthPercentage(#inner) },
-			Self::Percentage(_) => quote! { Percentage(#inner) },
-			Self::Angle(_) => quote! { Angle(#inner) },
-			Self::Time(_) => quote! { Time(#inner) },
-			Self::Resolution(_) => quote! { Resolution(#inner) },
-			Self::Integer(_) => quote! { Integer(#inner) },
-			Self::Number(_) => quote! { Number(#inner) },
-			Self::String => quote! { String(#inner) },
-			Self::Color => quote! { Color(#inner) },
-			Self::Image => quote! { Image(#inner) },
-			Self::CustomIdent => quote! { CustomIdent(#inner) },
-			Self::Custom(_, ident) => quote! { #ident(#inner) },
+		if size_hint > 0 {
+			if capture.is_some() {
+				match self {
+					Self::Length(_) => quote! { Lengths(#inner) },
+					Self::LengthPercentage(_) => quote! { LengthPercentages(#inner) },
+					Self::Percentage(_) => quote! { Percentages(#inner) },
+					Self::Angle(_) => quote! { Angles(#inner) },
+					Self::Time(_) => quote! { Times(#inner) },
+					Self::Resolution(_) => quote! { Resolutions(#inner) },
+					Self::Integer(_) => quote! { Integers(#inner) },
+					Self::Number(_) => quote! { Numbers(#inner) },
+					Self::String => quote! { Strings(#inner) },
+					Self::Color => quote! { Colors(#inner) },
+					Self::Image => quote! { Images(#inner) },
+					Self::CustomIdent => quote! { CustomIdents(#inner) },
+					Self::Custom(_, ident) => {
+						let ident = ident.pluralize();
+						quote! { #ident(#inner) }
+					}
+				}
+			} else {
+				match self {
+					Self::Length(_) => quote! { Lengths(smallvec::SmallVec::<[#inner; #size_hint]>) },
+					Self::LengthPercentage(_) => {
+						quote! { LengthPercentages(smallvec::SmallVec::<[#inner; #size_hint]>) }
+					}
+					Self::Percentage(_) => quote! { Percentages(smallvec::SmallVec::<[#inner; #size_hint]>) },
+					Self::Angle(_) => quote! { Angles(smallvec::SmallVec::<[#inner; #size_hint]>) },
+					Self::Time(_) => quote! { Times(smallvec::SmallVec::<[#inner; #size_hint]>) },
+					Self::Resolution(_) => quote! { Resolutions(smallvec::SmallVec::<[#inner; #size_hint]>) },
+					Self::Integer(_) => quote! { Integers(smallvec::SmallVec::<[#inner; #size_hint]>) },
+					Self::Number(_) => quote! { Numbers(smallvec::SmallVec::<[#inner; #size_hint]>) },
+					Self::String => quote! { Strings(smallvec::SmallVec::<[#inner; #size_hint]>) },
+					Self::Color => quote! { Colors(smallvec::SmallVec::<[#inner; #size_hint]>) },
+					Self::Image => quote! { Images(smallvec::SmallVec::<[#inner; #size_hint]>) },
+					Self::CustomIdent => quote! { CustomIdents(smallvec::SmallVec::<[#inner; #size_hint]>) },
+					Self::Custom(_, ident) => {
+						let ident = ident.pluralize();
+						quote! { #ident(smallvec::SmallVec::<[#inner; #size_hint]>) }
+					}
+				}
+			}
+		} else {
+			match self {
+				Self::Length(_) => quote! { Length(#inner) },
+				Self::LengthPercentage(_) => quote! { LengthPercentage(#inner) },
+				Self::Percentage(_) => quote! { Percentage(#inner) },
+				Self::Angle(_) => quote! { Angle(#inner) },
+				Self::Time(_) => quote! { Time(#inner) },
+				Self::Resolution(_) => quote! { Resolution(#inner) },
+				Self::Integer(_) => quote! { Integer(#inner) },
+				Self::Number(_) => quote! { Number(#inner) },
+				Self::String => quote! { String(#inner) },
+				Self::Color => quote! { Color(#inner) },
+				Self::Image => quote! { Image(#inner) },
+				Self::CustomIdent => quote! { CustomIdent(#inner) },
+				Self::Custom(_, ident) => quote! { #ident(#inner) },
+			}
 		}
 	}
 
@@ -1145,9 +1223,17 @@ impl DefIdent {
 		quote! { ::hdx_atom::atom!(#name) }
 	}
 
-	pub fn to_variant_name(&self) -> TokenStream {
+	pub fn pluralize(&self) -> DefIdent {
+		if self.0.ends_with("s") {
+			self.clone()
+		} else {
+			Self(Atom::from(format!("{}s", self.0)))
+		}
+	}
+
+	pub fn to_variant_name(&self, size_hint: usize) -> TokenStream {
 		let variant_str = pascal(self.0.to_lowercase());
-		let ident = format_ident!("{}", variant_str);
+		let ident = if size_hint > 0 { format_ident!("{}s", variant_str) } else { format_ident!("{}", variant_str) };
 		quote! { #ident }
 	}
 }

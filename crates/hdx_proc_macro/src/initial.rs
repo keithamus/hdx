@@ -50,7 +50,7 @@ pub fn generate(args: Args, ast: DeriveInput) -> TokenStream {
 		Data::Enum(DataEnum { variants, .. }) => {
 			match args {
 				Args::Ident(ident) => {
-					let var = ident.to_variant_name();
+					let var = ident.to_variant_name(0);
 					// The initial is one of the root level variants
 					if variants.iter().any(|v| v.ident == var.to_string()) {
 						quote! { Self::#var }
@@ -99,7 +99,7 @@ pub fn generate(args: Args, ast: DeriveInput) -> TokenStream {
 						if let Some(type_path) = unpack_smallvec_type(type_path) {
 							match args {
 								Args::Ident(ident) => {
-									let var = ident.to_variant_name();
+									let var = ident.to_variant_name(0);
 									quote! { Self(::smallvec::smallvec![#type_path::#var]) }
 								}
 								Args::Dimension(f) => {
@@ -121,7 +121,7 @@ pub fn generate(args: Args, ast: DeriveInput) -> TokenStream {
 					} else {
 						match args {
 							Args::Ident(ident) => {
-								let var = ident.to_variant_name();
+								let var = ident.to_variant_name(0);
 								quote! { Self(#type_path::#var) }
 							}
 							Args::Dimension(f) => {

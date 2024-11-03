@@ -22,20 +22,13 @@ impl<'a> ::hdx_parser::Parse<'a> for Foo {
     fn parse(parser: &mut ::hdx_parser::Parser<'a>) -> ::hdx_parser::Result<Self> {
         use ::hdx_parser::Parse;
         if let Some(token) = parser.peek::<::hdx_parser::token::Ident>() {
-            parser.hop(token);
-            return Ok(
-                match parser.parse_atom_lower(token) {
-                    ::hdx_atom::atom!("fit-content") => Self::FitContent,
-                    atom => {
-                        Err(
-                            ::hdx_parser::diagnostics::UnexpectedIdent(
-                                atom,
-                                token.span(),
-                            ),
-                        )?
-                    }
-                },
-            );
+            match parser.parse_atom_lower(token) {
+                ::hdx_atom::atom!("fit-content") => {
+                    parser.hop(token);
+                    return Ok(Self::FitContent);
+                }
+                atom => {}
+            }
         }
         let token = *parser.parse::<::hdx_parser::token::Function>()?;
         let atom = parser.parse_atom_lower(token);

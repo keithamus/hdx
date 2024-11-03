@@ -22,17 +22,25 @@ impl<'a> ::hdx_parser::Parse<'a> for Foo {
     fn parse(parser: &mut ::hdx_parser::Parser<'a>) -> ::hdx_parser::Result<Self> {
         use ::hdx_parser::Parse;
         let token = *parser.parse::<::hdx_parser::token::Ident>()?;
-        Ok(
-            match parser.parse_atom_lower(token) {
-                ::hdx_atom::atom!("black") => Self::Black,
-                ::hdx_atom::atom!("white") => Self::White,
-                ::hdx_atom::atom!("line-through") => Self::LineThrough,
-                ::hdx_atom::atom!("pink") => Self::Pink,
-                atom => {
-                    Err(::hdx_parser::diagnostics::UnexpectedIdent(atom, token.span()))?
-                }
-            },
-        )
+        match parser.parse_atom_lower(token) {
+            ::hdx_atom::atom!("black") => {
+                parser.hop(token);
+                return Ok(Self::Black);
+            }
+            ::hdx_atom::atom!("white") => {
+                parser.hop(token);
+                return Ok(Self::White);
+            }
+            ::hdx_atom::atom!("line-through") => {
+                parser.hop(token);
+                return Ok(Self::LineThrough);
+            }
+            ::hdx_atom::atom!("pink") => {
+                parser.hop(token);
+                return Ok(Self::Pink);
+            }
+            atom => Err(::hdx_parser::diagnostics::UnexpectedIdent(atom, token.span()))?,
+        }
     }
 }
 #[automatically_derived]

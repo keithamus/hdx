@@ -5,8 +5,8 @@ expression: pretty
 #[derive(Debug, PartialEq, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 enum Foo {
-    None,
-    LengthPercentage(types::LengthPercentage),
+    Auto,
+    AnimateableFeatures(smallvec::SmallVec<[types::AnimateableFeature; 1usize]>),
 }
 #[automatically_derived]
 impl<'a> ::hdx_parser::Peek<'a> for Foo {
@@ -14,7 +14,7 @@ impl<'a> ::hdx_parser::Peek<'a> for Foo {
         use ::hdx_parser::Peek;
         parser
             .peek::<::hdx_parser::token::Ident>()
-            .or_else(|| parser.peek::<types::LengthPercentage>())
+            .or_else(|| parser.peek::<types::AnimateableFeature>())
     }
 }
 #[automatically_derived]
@@ -23,25 +23,24 @@ impl<'a> ::hdx_parser::Parse<'a> for Foo {
         use ::hdx_parser::Parse;
         if let Some(token) = parser.peek::<::hdx_parser::token::Ident>() {
             match parser.parse_atom_lower(token) {
-                ::hdx_atom::atom!("none") => {
+                ::hdx_atom::atom!("auto") => {
                     parser.hop(token);
-                    return Ok(Self::None);
+                    return Ok(Self::Auto);
                 }
                 atom => {}
             }
         }
-        let start = parser.offset();
-        let val = parser.parse::<types::LengthPercentage>()?;
-        let valf32: f32 = val.into();
-        if 0f32 > valf32 {
-            return Err(
-                ::hdx_parser::diagnostics::NumberTooSmall(
-                    0f32,
-                    ::hdx_lexer::Span::new(start, parser.offset()),
-                ),
-            )?;
-        }
-        Ok(Self::LengthPercentage(val))
+        let mut val = ::smallvec::smallvec![];
+        loop {
+            let item = parser.parse::<types::AnimateableFeature>()?;
+            val.push(item);
+            if let Some(token) = parser.peek::<::hdx_parser::Token![,]>() {
+                parser.hop(token);
+            } else {
+                break;
+            }
+        };
+        Ok(Self::AnimateableFeatures(val))
     }
 }
 #[automatically_derived]
@@ -52,11 +51,17 @@ impl<'a> ::hdx_writer::WriteCss<'a> for Foo {
     ) -> ::hdx_writer::Result {
         use ::hdx_writer::WriteCss;
         match self {
-            Self::None => {
-                ::hdx_atom::atom!("none").write_css(sink)?;
+            Self::Auto => {
+                ::hdx_atom::atom!("auto").write_css(sink)?;
             }
-            Self::LengthPercentage(inner) => {
-                inner.write_css(sink)?;
+            Self::AnimateableFeatures(inner) => {
+                let mut iter = inner.iter().peekable();
+                while let Some(item) = iter.next() {
+                    item.write_css(sink)?;
+                    if iter.peek().is_some() {
+                        ::hdx_writer::write_css!(sink, ',', ());
+                    }
+                }
             }
         }
         Ok(())
