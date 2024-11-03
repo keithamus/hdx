@@ -266,10 +266,10 @@ fn value_lone_type() {
 }
 
 #[test]
-fn value_lone_type_adds_lifetime_when_necessary() {
+fn value_lone_type_errors_with_lifetime_when_necessary() {
 	let syntax = to_valuedef! { <string> }; // <string> needs 'a lifetime
 	let data = to_deriveinput! { struct Foo; };
-	assert_snapshot!(syntax, data, "value_lone_type_adds_lifetime_when_necessary");
+	assert_snapshot!(syntax, data, "value_lone_type_errors_with_lifetime_when_necessary");
 }
 
 #[test]

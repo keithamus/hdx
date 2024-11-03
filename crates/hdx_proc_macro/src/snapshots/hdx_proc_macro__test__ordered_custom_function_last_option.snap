@@ -28,10 +28,10 @@ impl<'a> ::hdx_writer::WriteCss<'a> for Foo {
         sink: &mut W,
     ) -> ::hdx_writer::Result {
         use ::hdx_writer::WriteCss;
-        self.0.write_css(sink);
+        self.0.write_css(sink)?;
         if let Some(inner) = &self.1 {
-            sink.write_char(' ');
-            inner.write_css(sink);
+            sink.write_char(' ')?;
+            inner.write_css(sink)?;
         }
         Ok(())
     }

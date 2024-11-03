@@ -58,24 +58,24 @@ impl<'a> ::hdx_writer::WriteCss<'a> for Foo {
         let mut written = false;
         if let Some(inner) = &self.0 {
             if written {
-                sink.write_char(' ');
+                sink.write_char(' ')?;
             }
             written = true;
-            inner.write_css(sink);
+            inner.write_css(sink)?;
         }
         if let Some(inner) = &self.1 {
             if written {
-                sink.write_char(' ');
+                sink.write_char(' ')?;
             }
             written = true;
-            inner.write_css(sink);
+            inner.write_css(sink)?;
         }
         if let Some(inner) = &self.2 {
             if written {
-                sink.write_char(' ');
+                sink.write_char(' ')?;
             }
             written = true;
-            inner.write_css(sink);
+            inner.write_css(sink)?;
         }
         Ok(())
     }
