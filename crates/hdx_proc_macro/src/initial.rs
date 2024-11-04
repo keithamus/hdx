@@ -70,19 +70,35 @@ pub fn generate(args: Args, ast: DeriveInput) -> TokenStream {
 					}
 				}
 				Args::Dimension(f) => {
-					let first_deep = variants.iter().find(|v| v.fields != Fields::Unit);
+					let first_deep = variants.iter().find(|v| v.fields != Fields::Unit).expect("Cannot find variant");
 					let num = f.base10_digits();
-					let ty = first_deep.expect("Cannot find variant").ident.clone();
-					if let Ok(0) = f.base10_parse() {
-						quote! { Self(#ty::Zero) }
+					let variant_ident = quote! { first_deep.ident.clone() };
+					let mut vec = false;
+					let ty = if let Fields::Unnamed(FieldsUnnamed { unnamed, .. }) = &first_deep.fields {
+						if let Type::Path(type_path) = &unnamed.first().unwrap().ty {
+							vec = type_path.path.segments.first().map(|s| s.ident == "smallvec").unwrap_or(false);
+							quote! { type_path }
+						} else {
+							quote! { variant_ident }
+						}
+					} else {
+						quote! { variant_ident }
+					};
+					let val = if let Ok(0) = f.base10_parse() {
+						quote! { #ty::Zero }
 					} else if let Ok(0.0) = f.base10_parse() {
-						quote! { Self(#ty::Zero) }
+						quote! { #ty::Zero }
 					} else if !f.suffix().is_empty() {
 						let var = format_ident!("{}", pascal(f.suffix().to_lowercase()));
 						let num = LitFloat::new(&format!("{}f32", f.base10_digits()), f.span());
-						quote! { Self(#ty::#var::from(#num)) }
+						quote! { #ty::#var::from(#num) }
 					} else {
-						quote! { Self::#ty(#ty(#num)) }
+						quote! { #ty::from(#num) }
+					};
+					if vec {
+						quote! { Self::#variant_ident(::smallvec::smallvec![#val]) }
+					} else {
+						quote! { Self::#variant_ident(#val) }
 					}
 				}
 				Args::Individual => {
@@ -103,9 +119,18 @@ pub fn generate(args: Args, ast: DeriveInput) -> TokenStream {
 									quote! { Self(::smallvec::smallvec![#type_path::#var]) }
 								}
 								Args::Dimension(f) => {
-									let var = f.suffix();
-									let num = f.base10_digits();
-									quote! { Self(::smallvec::smallvec![#type_path::#var(#num)]) }
+									let num = LitFloat::new(&format!("{}f32", f.base10_digits()), f.span());
+									let val = if let Ok(0) = f.base10_parse() {
+										quote! { #type_path::Zero }
+									} else if let Ok(0.0) = f.base10_parse() {
+										quote! { #type_path::Zero }
+									} else if !f.suffix().is_empty() {
+										let var = format_ident!("{}", pascal(f.suffix().to_lowercase()));
+										quote! { #type_path::#var::from(#num) }
+									} else {
+										quote! { #type_path::from(#num) }
+									};
+									dbg!(quote! { Self(::smallvec::smallvec![#val]) })
 								}
 								Args::Individual => {
 									return quote! {
