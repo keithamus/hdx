@@ -219,7 +219,7 @@ pub enum TokenFlags {
 	//                        And so the packing for this is as follows:
 	//
 	//     |------|--------|---|---------------|
-	//     | NL   | D      | - |               |
+	//     | NL   | D      | + |               |
 	//     | 0000 | 000000 | 0 | 0000000000000 |
 	//     |------|--------|---|---------------|
 	//     | 4--- | 6----- | 1 | 13----------- |
@@ -309,7 +309,7 @@ impl Token {
 		{
 			let num_len = (num_len << 20) & KNOWN_DIMENSION_NUMBER_LENGTH_MASK;
 			let known_unit = ((known_unit as u32) << 14) & KNOWN_DIMENSION_NUMBER_PACK_MASK;
-			let sign = ((value.is_positive() as u32) << 13) & KNOWN_DIMENSION_NUMBER_PACK_MASK;
+			let sign = ((!value.is_negative() as u32) << 13) & KNOWN_DIMENSION_NUMBER_PACK_MASK;
 			num_len | known_unit | sign | value.unsigned_abs()
 		} else {
 			type_flags &= 0b011;
@@ -386,9 +386,8 @@ impl Token {
 			0
 		} else if self.kind_bits() == Kind::Delim as u8 {
 			debug_assert!(self.kind() == Kind::Delim);
-			(self.flags.bits >> 29) as u32
-			// self.char().unwrap().len_utf8() as u32
-			// Delim-like flag is set
+			self.flags.bits >> 29
+		// Delim-like flag is set
 		} else if self.kind_bits() & 0b10000 == 0b10000 {
 			debug_assert!(matches!(
 				self.kind(),
@@ -471,7 +470,7 @@ impl Token {
 				-((self.flags.bits & !NUMBER_PACK_MASK) as f32)
 			})
 		} else if self.kind_bits() == Kind::Dimension as u8 {
-			Some(if ((self.flags.bits >> 13) & 0b1) == 1 {
+			Some(if (self.flags.bits >> 13 & 0b1) == 1 {
 				let bits = self.flags.bits & !KNOWN_DIMENSION_NUMBER_PACK_MASK;
 				bits as f32
 			} else {

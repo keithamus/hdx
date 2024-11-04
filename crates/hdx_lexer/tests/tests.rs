@@ -387,7 +387,14 @@ fn returns_correct_unicode_values() {
 
 #[test]
 fn tokenizer_encodes_small_numbers_into_token_bytes() {
-	let mut lexer = Lexer::new("11 52 00004 12682 +12 -14 32767 -32767", Include::none());
+	let mut lexer = Lexer::new("0 11 52 00004 12682 +12 -14 32767 -32767", Include::none());
+	{
+		let token = lexer.advance();
+		assert_eq!(token.kind(), Kind::Number);
+		assert_eq!(token.len(), 1);
+		assert_eq!(lexer.parse_raw_str(token), "0");
+		assert_eq!(token.stored_small_number(), Some(0.0));
+	}
 	{
 		let token = lexer.advance();
 		assert_eq!(token.kind(), Kind::Number);
@@ -485,7 +492,16 @@ fn tokenizer_does_not_encode_large_or_weird_numbers_into_token_bytes() {
 
 #[test]
 fn tokenizer_encodes_known_small_dimensions_into_token_bytes() {
-	let mut lexer = Lexer::new("11px 52rem 00004dvw 2682% +12rad -14deg 8191x -8191q", Include::none());
+	let mut lexer = Lexer::new("0s 11px 52rem 00004dvw 2682% +12rad -14deg 8191x -8191q", Include::none());
+	{
+		let token = lexer.advance();
+		assert_eq!(token.kind(), Kind::Dimension);
+		assert_eq!(token.numeric_len(), 1);
+		assert_eq!(token.len(), 2);
+		assert_eq!(lexer.parse_raw_str(token), "0s");
+		assert_eq!(token.stored_small_number(), Some(0.0));
+		assert_eq!(token.dimension_unit(), DimensionUnit::S);
+	}
 	{
 		let token = lexer.advance();
 		assert_eq!(token.kind(), Kind::Dimension);
@@ -562,7 +578,16 @@ fn tokenizer_encodes_known_small_dimensions_into_token_bytes() {
 
 #[test]
 fn tokenizer_does_not_encode_large_or_weird_dimensions_into_token_bytes() {
-	let mut lexer = Lexer::new("4e12px 0.132rem .4dvw 40--custom", Include::none());
+	let mut lexer = Lexer::new("1.2345678901234s 4e12px 0.132rem .4dvw 40--custom", Include::none());
+	{
+		let token = lexer.advance();
+		assert_eq!(token.kind(), Kind::Dimension);
+		assert_eq!(token.numeric_len(), 15);
+		assert_eq!(token.len(), 16);
+		assert_eq!(lexer.parse_raw_str(token), "1.2345678901234s");
+		assert_eq!(token.stored_small_number(), None);
+		assert_eq!(token.dimension_unit(), DimensionUnit::Unknown);
+	}
 	{
 		let token = lexer.advance();
 		assert_eq!(token.kind(), Kind::Dimension);
