@@ -455,7 +455,7 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(Gradient, 72);
+		assert_size!(Gradient, 64);
 		assert_size!(LinearDirection, 8);
 		assert_size!(RadialSize, 16);
 		assert_size!(ColorStopOrHint, 44);

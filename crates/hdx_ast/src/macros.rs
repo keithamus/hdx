@@ -1,5 +1,5 @@
 macro_rules! keyword_typedef {
-	($name: ident { $( $variant: ident: atom!($variant_atom: tt),)+ }) => {
+	($name: ident { $( $variant: ident: atom!($variant_atom: tt)),+ $(,)* }) => {
 		#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 		#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(rename_all = "kebab-case"))]
 		pub enum $name {

@@ -99,7 +99,7 @@ mod tests {
 	#[test]
 	fn size_test() {
 		assert_size!(Symbols, 32);
-		assert_size!(Symbol, 72);
+		assert_size!(Symbol, 64);
 		assert_size!(SymbolsType, 1);
 	}
 
