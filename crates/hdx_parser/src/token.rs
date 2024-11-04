@@ -110,10 +110,8 @@ macro_rules! custom_dimension {
 		impl<'a> $crate::Peek<'a> for $ident {
 			fn peek(parser: &$crate::Parser<'a>) -> Option<hdx_lexer::Token> {
 				parser.peek::<$crate::Token![Dimension]>().filter(|token| {
-					matches!(
-						token.dimension_unit(),
-						hdx_lexer::DimensionUnit::Unknown | hdx_lexer::DimensionUnit::$ident
-					)
+					matches!(token.dimension_unit(), hdx_lexer::DimensionUnit::$ident)
+						|| parser.parse_atom_lower(*token) == ::hdx_atom::atom!($atom)
 				})
 			}
 		}
