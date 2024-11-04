@@ -16,28 +16,28 @@ pub enum Time {
 impl Time {
 	pub fn new(val: CSSFloat, unit: Atom) -> Option<Self> {
 		match unit {
-			atom!("ms") => Some(Self::Ms(val.into())),
-			atom!("s") => Some(Self::S(val.into())),
+			atom!("ms") => Some(Self::Ms(val)),
+			atom!("s") => Some(Self::S(val)),
 			_ => None,
 		}
 	}
 }
 
-impl Into<f32> for Time {
-	fn into(self) -> f32 {
-		match self {
-			Self::Zero => 0.0,
-			Self::Ms(f) => f.into(),
-			Self::S(f) => f.into(),
+impl From<Time> for f32 {
+	fn from(val: Time) -> Self {
+		match val {
+			Time::Zero => 0.0,
+			Time::Ms(f) => f.into(),
+			Time::S(f) => f.into(),
 		}
 	}
 }
 
-impl Into<CSSFloat> for Time {
-	fn into(self) -> CSSFloat {
-		match self {
-			Self::Zero => 0.0.into(),
-			Self::Ms(f) | Self::S(f) => f,
+impl From<Time> for CSSFloat {
+	fn from(val: Time) -> Self {
+		match val {
+			Time::Zero => 0.0.into(),
+			Time::Ms(f) | Time::S(f) => f,
 		}
 	}
 }
@@ -69,7 +69,7 @@ impl<'a> Parse<'a> for Time {
 			Ok(Self::Ms(parser.parse_number(token).into()))
 		} else {
 			let token = *parser.parse::<Dimension![S]>()?;
-			Ok(Self::Ms(parser.parse_number(token).into()))
+			Ok(Self::S(parser.parse_number(token).into()))
 		}
 	}
 }
