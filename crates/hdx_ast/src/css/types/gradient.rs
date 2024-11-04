@@ -44,7 +44,7 @@ impl<'a> Gradient {
 			if allow_hint && parser.peek::<LengthPercentage>().is_some() {
 				let hint = parser.parse::<LengthPercentage>()?;
 				stops.push(ColorStopOrHint::Hint(hint));
-				parser.parse::<Token![Comma]>()?;
+				parser.parse::<Token![,]>()?;
 			}
 			let color = parser.parse::<Color>()?;
 			let hint = if parser.peek::<LengthPercentage>().is_some() {
@@ -55,10 +55,9 @@ impl<'a> Gradient {
 				None
 			};
 			stops.push(ColorStopOrHint::Stop(color, hint));
-			if parser.peek::<Token![Comma]>().is_none() {
+			if parser.parse_if_peek::<Token![,]>()?.is_none() {
 				break;
 			}
-			parser.parse::<Token![Comma]>()?;
 		}
 		Ok(stops)
 	}
@@ -81,7 +80,9 @@ impl<'a> Parse<'a> for Gradient {
 			let dir = parser
 				.parse_if_peek::<LinearDirection>()
 				.and_then(|f| {
-					parser.parse::<Token![Comma]>()?;
+					if f.is_some() {
+						parser.parse::<Token![,]>()?;
+					}
 					Ok(f)
 				})?
 				.unwrap_or_default();
@@ -91,7 +92,9 @@ impl<'a> Parse<'a> for Gradient {
 			let dir = parser
 				.parse_if_peek::<LinearDirection>()
 				.and_then(|f| {
-					parser.parse::<Token![Comma]>()?;
+					if f.is_some() {
+						parser.parse::<Token![Comma]>()?;
+					}
 					Ok(f)
 				})?
 				.unwrap_or_default();
@@ -244,9 +247,7 @@ pub enum NamedDirection {
 
 impl<'a> Peek<'a> for LinearDirection {
 	fn peek(parser: &Parser<'a>) -> Option<hdx_lexer::Token> {
-		parser
-			.peek::<Angle>()
-			.or_else(|| parser.peek::<Token![Ident]>().filter(|t| parser.parse_atom_lower(*t) == atom!("to")))
+		parser.peek::<Angle>().or_else(|| parser.peek::<kw::To>())
 	}
 }
 
@@ -258,7 +259,6 @@ impl<'a> Parse<'a> for LinearDirection {
 			}
 		}
 		parser.parse::<kw::To>()?;
-		dbg!("saw the to keyword");
 		let mut dir = NamedDirection::none();
 		let token = parser.parse::<Token![Ident]>()?;
 		dir |= match parser.parse_atom_lower(*token) {

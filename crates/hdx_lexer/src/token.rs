@@ -279,7 +279,7 @@ impl Token {
 		let mut type_flags = type_flags;
 		let pack_data = if type_flags & 0b100 == 0b100 && num_len <= 255 && (-32767..=32767).contains(&value) {
 			((num_len << 16) & NUMBER_PACK_MASK)
-				| ((value.is_positive() as u32) << 15 & NUMBER_PACK_MASK)
+				| ((!value.is_negative() as u32) << 15 & NUMBER_PACK_MASK)
 				| value.unsigned_abs()
 		} else {
 			type_flags &= 0b011;
