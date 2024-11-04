@@ -48,12 +48,12 @@ pub enum Clear {}
 #[animation_type("discrete")]
 pub enum FloatDefer {}
 
-// // https://drafts.csswg.org/css-page-floats-3/#float-offset
-// #[value(" <length> | <percentage> ")]
-// #[initial("0")]
-// #[applies_to("floats")]
-// #[inherited("no")]
-// #[percentages("see prose")]
-// #[canonical_order("per grammar")]
-// #[animation_type("by computed value type")]
-// pub enum FloatOffset {}
+// https://drafts.csswg.org/css-page-floats-3/#float-offset
+#[value(" <length-percentage> ")]
+#[initial("0")]
+#[applies_to("floats")]
+#[inherited("no")]
+#[percentages("see prose")]
+#[canonical_order("per grammar")]
+#[animation_type("by computed value type")]
+pub struct FloatOffset;
