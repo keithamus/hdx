@@ -16,7 +16,7 @@ use impls::*;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("not animatable")]
-// pub enum AnimationName {}
+// pub struct AnimationName {}
 
 // // https://drafts.csswg.org/css-animations-2/#animation-duration
 // #[value(" [ auto | <time [0s,∞]> ]# ")]

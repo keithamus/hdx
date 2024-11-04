@@ -13,6 +13,7 @@ const requiresAllocatorLifetime = new Map([
 // Some properties should be enums but they have complex grammars that aren't worth attempting to
 // parse so let's just hardcode a list...
 const enumOverrides = new Map([
+	["animation", new Set(["AnimationName"])],
 	["ui", new Set(["Cursor"])],
 	["overscroll", new Set(["OverscrollBehavior"])],
 ]);
