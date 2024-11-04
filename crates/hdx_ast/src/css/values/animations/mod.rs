@@ -38,15 +38,15 @@ use impls::*;
 // #[animation_type("not animatable")]
 // pub struct AnimationTimingFunction;
 
-// // https://drafts.csswg.org/css-animations-2/#animation-iteration-count
-// #[value(" <single-animation-iteration-count># ")]
-// #[initial("1")]
-// #[applies_to("all elements")]
-// #[inherited("no")]
-// #[percentages("n/a")]
-// #[canonical_order("per grammar")]
-// #[animation_type("not animatable")]
-// pub struct AnimationIterationCount;
+// https://drafts.csswg.org/css-animations-2/#animation-iteration-count
+#[value(" <single-animation-iteration-count># ")]
+#[initial("1")]
+#[applies_to("all elements")]
+#[inherited("no")]
+#[percentages("n/a")]
+#[canonical_order("per grammar")]
+#[animation_type("not animatable")]
+pub struct AnimationIterationCount;
 
 // // https://drafts.csswg.org/css-animations-2/#animation-direction
 // #[value(" <single-animation-direction># ")]
