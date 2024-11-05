@@ -1,5 +1,6 @@
 mod named;
 mod syntax;
+mod system;
 
 use crate::css::units::{Angle, CSSFloat, Percent};
 use hdx_atom::{atom, Atomizable};
@@ -9,13 +10,13 @@ use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 use std::str::Chars;
 
 pub use named::*;
+pub use system::*;
 pub use syntax::*;
 
 mod kw {
 	use hdx_parser::custom_keyword;
 	custom_keyword!(None, atom!("none"));
 	custom_keyword!(Currentcolor, atom!("currentcolor"));
-	custom_keyword!(Canvastext, atom!("canvastext"));
 	custom_keyword!(Transparent, atom!("transparent"));
 }
 
@@ -195,19 +196,24 @@ impl<'a> WriteCss<'a> for AbsoluteColorFunction {
 	}
 }
 
-#[derive(Debug, Default, Clone, PartialEq, Hash)]
+#[derive(Debug, Clone, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub enum Color {
-	#[default]
 	Currentcolor,
-	Canvastext,
 	Transparent,
+	System(SystemColor),
 	Hex(u32),
 	Named(NamedColor),
 	Absolute(AbsoluteColorFunction),
 	// TODO: need bumpalo::Box PartialEq, or bumpalo::Box serde
 	// Relative(Box<'a, Color<'a>>, ColorFunction),
 	// Mix(ColorMixSyntax, Box<'a, Color<'a>>, u8, Box<'a, Color<'a>>),
+}
+
+impl Color {
+	// Alias CanvasText for #[initial()]
+	#[allow(non_upper_case_globals)]
+	pub const Canvastext: Color = Color::System(SystemColor::CanvasText);
 }
 
 trait HexableChars {
@@ -237,18 +243,14 @@ impl<'a> Peek<'a> for Color {
 			.peek::<func::Color>()
 			.or_else(|| parser.peek::<func::ColorMix>())
 			.or_else(|| parser.peek::<AbsoluteColorFunction>())
-			.or_else(|| parser.peek::<kw::Currentcolor>())
-			.or_else(|| parser.peek::<kw::Canvastext>())
-			.or_else(|| parser.peek::<kw::Transparent>())
-			.or_else(|| {
-				if let Some(token) = parser.peek::<Token![Ident]>() {
-					if NamedColor::from_atom(&parser.parse_atom_lower(token)).is_some() {
-						return Some(token);
-					}
-				}
-				None
-			})
 			.or_else(|| parser.peek::<Token![Hash]>())
+			.or_else(|| {
+				parser.peek::<Token![Ident]>().filter(|token| {
+					let atom = parser.parse_atom_lower(*token);
+					matches!(atom, atom!("currentcolor") | atom!("canvastext") | atom!("transparent"))
+						|| NamedColor::from_atom(&atom).is_some()
+				})
+			})
 	}
 }
 
@@ -265,6 +267,9 @@ impl<'a> Parse<'a> for Color {
 			if let Some(named) = NamedColor::from_atom(&name) {
 				parser.hop(token);
 				Ok(Color::Named(named))
+			} else if let Some(named) = SystemColor::from_atom(&name) {
+				parser.hop(token);
+				Ok(Color::System(named))
 			} else {
 				Err(diagnostics::UnexpectedIdent(name, token.span()))?
 			}
@@ -321,7 +326,7 @@ impl<'a> WriteCss<'a> for Color {
 		match self {
 			Self::Currentcolor => kw::Currentcolor::atom().write_css(sink),
 			Self::Transparent => kw::Transparent::atom().write_css(sink),
-			Self::Canvastext => kw::Canvastext::atom().write_css(sink),
+			Self::System(name) => name.to_atom().write_css(sink),
 			Self::Named(name) => name.to_atom().write_css(sink),
 			Self::Absolute(func) => func.write_css(sink),
 			Self::Hex(d) => {
