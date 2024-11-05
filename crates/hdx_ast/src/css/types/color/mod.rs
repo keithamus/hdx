@@ -46,6 +46,7 @@ impl<'a> Parse<'a> for Channel {
 		}
 		if let Some(token) = parser.peek::<Token![Dimension]>() {
 			if parser.parse_atom(token) == atom!("%") {
+				parser.hop(token);
 				Ok(Self::Percent(parser.parse_number(token).into()))
 			} else {
 				Ok(Self::Hue(Angle::parse(parser)?))
@@ -141,7 +142,7 @@ impl<'a> Parse<'a> for AbsoluteColorFunction {
 		if matches!(third, Channel::Hue(_)) != syntax.third_is_hue() {
 			Err(diagnostics::ColorMustNotHaveHueInMiddle(Span::new(start, parser.offset())))?
 		}
-		if discard!(parser, RightParen) {
+		if parser.parse_if_peek::<Token![RightParen]>()?.is_some() {
 			return Ok(Self(syntax | ColorFunctionSyntax::OmitAlpha, first, second, third, Channel::None));
 		}
 		if syntax.contains(ColorFunctionSyntax::Legacy) {
@@ -149,11 +150,10 @@ impl<'a> Parse<'a> for AbsoluteColorFunction {
 		} else {
 			parser.parse::<Delim![/]>()?;
 		}
-		let start = parser.offset();
+		let token = parser.peek::<Token![Any]>().unwrap();
 		let fourth = parser.parse::<Channel>()?;
 		if matches!(fourth, Channel::None) {
-			let dummy = hdx_lexer::Token::new(hdx_lexer::Kind::Ident, 0, start, parser.offset());
-			Err(diagnostics::ExpectedNumber(dummy, dummy.span()))?
+			Err(diagnostics::ExpectedNumber(token, token.span()))?
 		}
 		parser.parse::<Token![RightParen]>()?;
 		Ok(Self(syntax, first, second, third, fourth))
