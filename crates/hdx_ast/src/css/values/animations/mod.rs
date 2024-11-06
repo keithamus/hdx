@@ -48,45 +48,45 @@ use impls::*;
 #[animation_type("not animatable")]
 pub struct AnimationIterationCount;
 
-// // https://drafts.csswg.org/css-animations-2/#animation-direction
-// #[value(" <single-animation-direction># ")]
-// #[initial("normal")]
-// #[applies_to("all elements")]
-// #[inherited("no")]
-// #[percentages("n/a")]
-// #[canonical_order("per grammar")]
-// #[animation_type("not animatable")]
-// pub struct AnimationDirection;
+// https://drafts.csswg.org/css-animations-2/#animation-direction
+#[value(" <single-animation-direction># ")]
+#[initial("normal")]
+#[applies_to("all elements")]
+#[inherited("no")]
+#[percentages("n/a")]
+#[canonical_order("per grammar")]
+#[animation_type("not animatable")]
+pub struct AnimationDirection;
 
-// // https://drafts.csswg.org/css-animations-2/#animation-play-state
-// #[value(" <single-animation-play-state># ")]
-// #[initial("running")]
-// #[applies_to("all elements")]
-// #[inherited("no")]
-// #[percentages("n/a")]
-// #[canonical_order("per grammar")]
-// #[animation_type("not animatable")]
-// pub struct AnimationPlayState;
+// https://drafts.csswg.org/css-animations-2/#animation-play-state
+#[value(" <single-animation-play-state># ")]
+#[initial("running")]
+#[applies_to("all elements")]
+#[inherited("no")]
+#[percentages("n/a")]
+#[canonical_order("per grammar")]
+#[animation_type("not animatable")]
+pub struct AnimationPlayState;
 
-// // https://drafts.csswg.org/css-animations-2/#animation-delay
-// #[value(" <time># ")]
-// #[initial("0s")]
-// #[applies_to("all elements")]
-// #[inherited("no")]
-// #[percentages("n/a")]
-// #[canonical_order("per grammar")]
-// #[animation_type("not animatable")]
-// pub struct AnimationDelay;
+// https://drafts.csswg.org/css-animations-2/#animation-delay
+#[value(" <time># ")]
+#[initial("0s")]
+#[applies_to("all elements")]
+#[inherited("no")]
+#[percentages("n/a")]
+#[canonical_order("per grammar")]
+#[animation_type("not animatable")]
+pub struct AnimationDelay;
 
-// // https://drafts.csswg.org/css-animations-2/#animation-fill-mode
-// #[value(" <single-animation-fill-mode># ")]
-// #[initial("none")]
-// #[applies_to("all elements")]
-// #[inherited("no")]
-// #[percentages("n/a")]
-// #[canonical_order("per grammar")]
-// #[animation_type("not animatable")]
-// pub struct AnimationFillMode;
+// https://drafts.csswg.org/css-animations-2/#animation-fill-mode
+#[value(" <single-animation-fill-mode># ")]
+#[initial("none")]
+#[applies_to("all elements")]
+#[inherited("no")]
+#[percentages("n/a")]
+#[canonical_order("per grammar")]
+#[animation_type("not animatable")]
+pub struct AnimationFillMode;
 
 // // https://drafts.csswg.org/css-animations-2/#animation
 // #[value(" <single-animation># ")]
@@ -98,15 +98,15 @@ pub struct AnimationIterationCount;
 // #[animation_type("not animatable")]
 // pub struct Animation;
 
-// // https://drafts.csswg.org/css-animations-2/#animation-composition
-// #[value(" <single-animation-composition># ")]
-// #[initial("replace")]
-// #[applies_to("all elements")]
-// #[inherited("no")]
-// #[percentages("n/a")]
-// #[canonical_order("per grammar")]
-// #[animation_type("not animatable")]
-// pub struct AnimationComposition;
+// https://drafts.csswg.org/css-animations-2/#animation-composition
+#[value(" <single-animation-composition># ")]
+#[initial("replace")]
+#[applies_to("all elements")]
+#[inherited("no")]
+#[percentages("n/a")]
+#[canonical_order("per grammar")]
+#[animation_type("not animatable")]
+pub struct AnimationComposition;
 
 // // https://drafts.csswg.org/css-animations-2/#animation-timeline
 // #[value(" <single-animation-timeline># ")]

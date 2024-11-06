@@ -1,8 +1,9 @@
+use crate::macros::keyword_typedef;
 use hdx_lexer::Span;
 use hdx_parser::{diagnostics, Parse, Parser, Peek, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 
-use crate::css::units::CSSFloat;
+pub use crate::css::units::*;
 
 mod kw {
 	use hdx_parser::custom_keyword;
@@ -24,7 +25,7 @@ pub enum SingleAnimationIterationCount {
 
 impl From<f32> for SingleAnimationIterationCount {
 	fn from(f: f32) -> Self {
-	    Self::Number(f.into())
+		Self::Number(f.into())
 	}
 }
 
@@ -57,3 +58,33 @@ impl<'a> WriteCss<'a> for SingleAnimationIterationCount {
 		}
 	}
 }
+
+// https://drafts.csswg.org/css-animations/#typedef-single-animation-direction
+// <single-animation-direction> = normal | reverse | alternate | alternate-reverse
+keyword_typedef!(SingleAnimationDirection {
+	Normal: atom!("normal"),
+	Reverse: atom!("reverse"),
+	Alternate: atom!("alternate"),
+	AlternateReverse: atom!("alternate-reverse"),
+});
+
+// https://drafts.csswg.org/css-animations/#typedef-single-animation-play-state
+// <single-animation-play-state> = running | paused
+keyword_typedef!(SingleAnimationPlayState { Running: atom!("running"), Paused: atom!("paused") });
+
+// https://drafts.csswg.org/css-animations/#typedef-single-animation-fill-mode
+// <single-animation-fill-mode> = none | forwards | backwards | both
+keyword_typedef!(SingleAnimationFillMode {
+	None: atom!("none"),
+	Forwards: atom!("forwards"),
+	Backwards: atom!("backwards"),
+	Both: atom!("both"),
+});
+
+// https://drafts.csswg.org/css-animations-2/#typedef-single-animation-composition
+// <single-animation-composition> = replace | add | accumulate
+keyword_typedef!(SingleAnimationComposition {
+	Replace: atom!("replace"),
+	Add: atom!("add"),
+	Accumulate: atom!("accumulate"),
+});
