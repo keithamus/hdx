@@ -8,65 +8,77 @@ use impls::*;
  * CSS Box Sizing Module Level 4
  */
 
-// // https://drafts.csswg.org/css-sizing-4/#width
-// #[value(" auto | <length-percentage [0,∞]> | min-content | max-content | fit-content(<length-percentage [0,∞]>) | <calc-size()> ")]
-// #[initial("auto")]
-// #[applies_to("all elements except non-replaced inlines")]
-// #[inherited("no")]
-// #[percentages("relative to width/height of containing block")]
-// #[canonical_order("per grammar")]
-// #[animation_type("by computed value type, recursing into fit-content()")]
-// pub enum Width {}
+// https://drafts.csswg.org/css-sizing-3/#width
+// https://drafts.csswg.org/css-sizing-4/#sizing-values
+// XXX: sizing-4 includes new Sizing Values: the stretch, fit-content, and contain keywords
+#[value(" auto | <length-percentage [0,∞]> | min-content | max-content | fit-content(<length-percentage [0,∞]>) | <calc-size()> | stretch | fit-content | contain ")]
+#[initial("auto")]
+#[applies_to("all elements except non-replaced inlines")]
+#[inherited("no")]
+#[percentages("relative to width/height of containing block")]
+#[canonical_order("per grammar")]
+#[animation_type("by computed value type, recursing into fit-content()")]
+pub enum Width {}
 
-// // https://drafts.csswg.org/css-sizing-4/#height
-// #[value(" auto | <length-percentage [0,∞]> | min-content | max-content | fit-content(<length-percentage [0,∞]>) | <calc-size()> ")]
-// #[initial("auto")]
-// #[applies_to("all elements except non-replaced inlines")]
-// #[inherited("no")]
-// #[percentages("relative to width/height of containing block")]
-// #[canonical_order("per grammar")]
-// #[animation_type("by computed value type, recursing into fit-content()")]
-// pub enum Height {}
+// https://drafts.csswg.org/css-sizing-3/#height
+// https://drafts.csswg.org/css-sizing-4/#sizing-values
+// XXX: sizing-4 includes new Sizing Values: the stretch, fit-content, and contain keywords
+#[value(" auto | <length-percentage [0,∞]> | min-content | max-content | fit-content(<length-percentage [0,∞]>) | <calc-size()> | stretch | fit-content | contain ")]
+#[initial("auto")]
+#[applies_to("all elements except non-replaced inlines")]
+#[inherited("no")]
+#[percentages("relative to width/height of containing block")]
+#[canonical_order("per grammar")]
+#[animation_type("by computed value type, recursing into fit-content()")]
+pub enum Height {}
 
-// // https://drafts.csswg.org/css-sizing-4/#min-width
-// #[value(" auto | <length-percentage [0,∞]> | min-content | max-content | fit-content(<length-percentage [0,∞]>) | <calc-size()> ")]
-// #[initial("auto")]
-// #[applies_to("all elements that accept width or height")]
-// #[inherited("no")]
-// #[percentages("relative to width/height of containing block")]
-// #[canonical_order("per grammar")]
-// #[animation_type("by computed value, recursing into fit-content()")]
-// pub enum MinWidth {}
+// https://drafts.csswg.org/css-sizing-3/#min-width
+// https://drafts.csswg.org/css-sizing-4/#sizing-values
+// XXX: sizing-4 includes new Sizing Values: the stretch, fit-content, and contain keywords
+#[value(" auto | <length-percentage [0,∞]> | min-content | max-content | fit-content(<length-percentage [0,∞]>) | <calc-size()> | stretch | fit-content | contain ")]
+#[initial("auto")]
+#[applies_to("all elements that accept width or height")]
+#[inherited("no")]
+#[percentages("relative to width/height of containing block")]
+#[canonical_order("per grammar")]
+#[animation_type("by computed value, recursing into fit-content()")]
+pub enum MinWidth {}
 
-// // https://drafts.csswg.org/css-sizing-4/#min-height
-// #[value(" auto | <length-percentage [0,∞]> | min-content | max-content | fit-content(<length-percentage [0,∞]>) | <calc-size()> ")]
-// #[initial("auto")]
-// #[applies_to("all elements that accept width or height")]
-// #[inherited("no")]
-// #[percentages("relative to width/height of containing block")]
-// #[canonical_order("per grammar")]
-// #[animation_type("by computed value, recursing into fit-content()")]
-// pub enum MinHeight {}
+// https://drafts.csswg.org/css-sizing-3/#min-height
+// https://drafts.csswg.org/css-sizing-4/#sizing-values
+// XXX: sizing-4 includes new Sizing Values: the stretch, fit-content, and contain keywords
+#[value(" auto | <length-percentage [0,∞]> | min-content | max-content | fit-content(<length-percentage [0,∞]>) | <calc-size()> | stretch | fit-content | contain ")]
+#[initial("auto")]
+#[applies_to("all elements that accept width or height")]
+#[inherited("no")]
+#[percentages("relative to width/height of containing block")]
+#[canonical_order("per grammar")]
+#[animation_type("by computed value, recursing into fit-content()")]
+pub enum MinHeight {}
 
-// // https://drafts.csswg.org/css-sizing-4/#max-width
-// #[value(" none | <length-percentage [0,∞]> | min-content | max-content | fit-content(<length-percentage [0,∞]>) | <calc-size()> ")]
-// #[initial("none")]
-// #[applies_to("all elements that accept width or height")]
-// #[inherited("no")]
-// #[percentages("relative to width/height of containing block")]
-// #[canonical_order("per grammar")]
-// #[animation_type("by computed value, recursing into fit-content()")]
-// pub enum MaxWidth {}
+// https://drafts.csswg.org/css-sizing-3/#max-width
+// https://drafts.csswg.org/css-sizing-4/#sizing-values
+// XXX: sizing-4 includes new Sizing Values: the stretch, fit-content, and contain keywords
+#[value(" none | <length-percentage [0,∞]> | min-content | max-content | fit-content(<length-percentage [0,∞]>) | <calc-size()> | stretch | fit-content | contain ")]
+#[initial("none")]
+#[applies_to("all elements that accept width or height")]
+#[inherited("no")]
+#[percentages("relative to width/height of containing block")]
+#[canonical_order("per grammar")]
+#[animation_type("by computed value, recursing into fit-content()")]
+pub enum MaxWidth {}
 
-// // https://drafts.csswg.org/css-sizing-4/#max-height
-// #[value(" none | <length-percentage [0,∞]> | min-content | max-content | fit-content(<length-percentage [0,∞]>) | <calc-size()> ")]
-// #[initial("none")]
-// #[applies_to("all elements that accept width or height")]
-// #[inherited("no")]
-// #[percentages("relative to width/height of containing block")]
-// #[canonical_order("per grammar")]
-// #[animation_type("by computed value, recursing into fit-content()")]
-// pub enum MaxHeight {}
+// https://drafts.csswg.org/css-sizing-3/#max-height
+// https://drafts.csswg.org/css-sizing-4/#sizing-values
+// XXX: sizing-4 includes new Sizing Values: the stretch, fit-content, and contain keywords
+#[value(" none | <length-percentage [0,∞]> | min-content | max-content | fit-content(<length-percentage [0,∞]>) | <calc-size()> | stretch | fit-content | contain ")]
+#[initial("none")]
+#[applies_to("all elements that accept width or height")]
+#[inherited("no")]
+#[percentages("relative to width/height of containing block")]
+#[canonical_order("per grammar")]
+#[animation_type("by computed value, recursing into fit-content()")]
+pub enum MaxHeight {}
 
 // https://drafts.csswg.org/css-sizing-4/#box-sizing
 #[value(" content-box | border-box ")]

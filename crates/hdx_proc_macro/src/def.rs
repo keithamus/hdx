@@ -948,6 +948,7 @@ impl GenerateParseImpl for Def {
 						return Err(::hdx_parser::diagnostics::UnexpectedFunction(atom, token.span()))?
 					}
 					#inner
+					parser.parse::<::hdx_parser::token::RightParen>()?;
 				}
 			}
 			Self::Multiplier(

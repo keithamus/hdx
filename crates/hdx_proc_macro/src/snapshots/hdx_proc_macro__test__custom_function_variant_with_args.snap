@@ -48,6 +48,7 @@ impl<'a> ::hdx_parser::Parse<'a> for Foo {
                 ),
             )?;
         }
+        parser.parse::<::hdx_parser::token::RightParen>()?;
         Ok(Self::FitContentFunction(val))
     }
 }
