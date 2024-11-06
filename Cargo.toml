@@ -29,7 +29,7 @@ clap = { version = "4.5.20" }
 
 closestmatch = { version = "0.1.2" }
 miette = { version = "7.2.0", default-features = false }
-thiserror = { version = "1.0.65" }
+thiserror = { version = "2.0.0" }
 serde = { version = "1.0.213" }
 serde_json = { version = "1.0.132" }
 syn = { version = "2.0.83" }
