@@ -6,7 +6,8 @@ use crate::def::*;
 
 pub fn generate(defs: Def, ast: DeriveInput) -> TokenStream {
 	if defs.requires_allocator_lifetime() && !ast.generics.lifetimes().any(|l| l.lifetime.ident == "a") {
-		return Error::new(ast.ident.span(), "this object needs the <'a> lifetime but it didn't have it. Add it").into_compile_error();
+		return Error::new(ast.ident.span(), "this object needs the <'a> lifetime but it didn't have it. Add it")
+			.into_compile_error();
 	}
 	let vis = &ast.vis;
 	let attrs = &ast.attrs;

@@ -10,8 +10,8 @@ use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 use std::str::Chars;
 
 pub use named::*;
-pub use system::*;
 pub use syntax::*;
+pub use system::*;
 
 mod kw {
 	use hdx_parser::custom_keyword;

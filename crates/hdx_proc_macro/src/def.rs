@@ -570,7 +570,7 @@ impl Def {
 			#[automatically_derived]
 			impl<'a> ::hdx_parser::Parse<'a> for #ident #life {
 				fn parse(parser: &mut ::hdx_parser::Parser<'a>) -> ::hdx_parser::Result<Self> {
-		  use ::hdx_parser::Parse;
+					use ::hdx_parser::Parse;
 					#steps
 				}
 			}

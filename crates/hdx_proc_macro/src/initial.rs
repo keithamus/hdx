@@ -130,7 +130,7 @@ pub fn generate(args: Args, ast: DeriveInput) -> TokenStream {
 									} else {
 										quote! { #type_path::from(#num) }
 									};
-									dbg!(quote! { Self(::smallvec::smallvec![#val]) })
+									quote! { Self(::smallvec::smallvec![#val]) }
 								}
 								Args::Individual => {
 									return quote! {

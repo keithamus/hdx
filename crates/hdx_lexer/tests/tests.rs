@@ -1,6 +1,6 @@
 use bumpalo::Bump;
 use hdx_atom::{atom, Atom};
-use hdx_lexer::{DimensionUnit, Feature, Include, Kind, Lexer, QuoteStyle, Token};
+use hdx_lexer::{DimensionUnit, Include, Kind, Lexer, QuoteStyle, Token};
 
 #[test]
 fn size_test() {
