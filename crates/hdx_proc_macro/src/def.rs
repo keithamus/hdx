@@ -451,13 +451,11 @@ impl Def {
 							let atom = ident.to_atom_macro();
 							let variant_name = ident.to_variant_name(0);
 							quote! { #atom => {
-								parser.hop(token);
 								return Ok(Self::#variant_name);
 							} }
 						} else if def == &Def::Type(DefType::CustomIdent) {
 							last_arm = quote! {
 								atom => {
-									parser.hop(token);
 									return Ok(Self::CustomIdent(atom));
 								}
 							};

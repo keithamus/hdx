@@ -15,6 +15,7 @@ mod tests {
 		assert_size!(MinHeight, 12);
 		assert_size!(MaxWidth, 12);
 		assert_size!(MaxHeight, 12);
+		assert_size!(BoxSizing, 1);
 	}
 
 	#[test]

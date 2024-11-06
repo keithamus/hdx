@@ -22,11 +22,9 @@ impl<'a> ::hdx_parser::Parse<'a> for Foo {
         let token = *parser.parse::<::hdx_parser::token::Ident>()?;
         match parser.parse_atom_lower(token) {
             ::hdx_atom::atom!("none") => {
-                parser.hop(token);
                 return Ok(Self::None);
             }
             atom => {
-                parser.hop(token);
                 return Ok(Self::CustomIdent(atom));
             }
         }

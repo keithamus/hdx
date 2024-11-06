@@ -8,55 +8,55 @@ use impls::*;
  * CSS Overflow Module Level 5
  */
 
-// // https://drafts.csswg.org/css-overflow-5/#overflow-x
-// #[value(" visible | hidden | clip | scroll | auto ")]
-// #[initial("visible")]
-// #[applies_to("block containers [CSS2], flex containers [CSS3-FLEXBOX], grid containers [CSS3-GRID-LAYOUT]")]
-// #[inherited("no")]
-// #[percentages("n/a")]
-// #[canonical_order("per grammar")]
-// #[animation_type("discrete")]
-// pub enum OverflowX {}
+// https://drafts.csswg.org/css-overflow-5/#overflow-x
+#[value(" visible | hidden | clip | scroll | auto ")]
+#[initial("visible")]
+#[applies_to("block containers [CSS2], flex containers [CSS3-FLEXBOX], grid containers [CSS3-GRID-LAYOUT]")]
+#[inherited("no")]
+#[percentages("n/a")]
+#[canonical_order("per grammar")]
+#[animation_type("discrete")]
+pub enum OverflowX {}
 
-// // https://drafts.csswg.org/css-overflow-5/#overflow-y
-// #[value(" visible | hidden | clip | scroll | auto ")]
-// #[initial("visible")]
-// #[applies_to("block containers [CSS2], flex containers [CSS3-FLEXBOX], grid containers [CSS3-GRID-LAYOUT]")]
-// #[inherited("no")]
-// #[percentages("n/a")]
-// #[canonical_order("per grammar")]
-// #[animation_type("discrete")]
-// pub enum OverflowY {}
+// https://drafts.csswg.org/css-overflow-5/#overflow-y
+#[value(" visible | hidden | clip | scroll | auto ")]
+#[initial("visible")]
+#[applies_to("block containers [CSS2], flex containers [CSS3-FLEXBOX], grid containers [CSS3-GRID-LAYOUT]")]
+#[inherited("no")]
+#[percentages("n/a")]
+#[canonical_order("per grammar")]
+#[animation_type("discrete")]
+pub enum OverflowY {}
 
-// // https://drafts.csswg.org/css-overflow-5/#overflow-block
-// #[value(" visible | hidden | clip | scroll | auto ")]
-// #[initial("visible")]
-// #[applies_to("block containers [CSS2], flex containers [CSS3-FLEXBOX], grid containers [CSS3-GRID-LAYOUT]")]
-// #[inherited("no")]
-// #[percentages("n/a")]
-// #[canonical_order("per grammar")]
-// #[animation_type("discrete")]
-// pub enum OverflowBlock {}
+// https://drafts.csswg.org/css-overflow-5/#overflow-block
+#[value(" visible | hidden | clip | scroll | auto ")]
+#[initial("visible")]
+#[applies_to("block containers [CSS2], flex containers [CSS3-FLEXBOX], grid containers [CSS3-GRID-LAYOUT]")]
+#[inherited("no")]
+#[percentages("n/a")]
+#[canonical_order("per grammar")]
+#[animation_type("discrete")]
+pub enum OverflowBlock {}
 
-// // https://drafts.csswg.org/css-overflow-5/#overflow-inline
-// #[value(" visible | hidden | clip | scroll | auto ")]
-// #[initial("visible")]
-// #[applies_to("block containers [CSS2], flex containers [CSS3-FLEXBOX], grid containers [CSS3-GRID-LAYOUT]")]
-// #[inherited("no")]
-// #[percentages("n/a")]
-// #[canonical_order("per grammar")]
-// #[animation_type("discrete")]
-// pub enum OverflowInline {}
+// https://drafts.csswg.org/css-overflow-5/#overflow-inline
+#[value(" visible | hidden | clip | scroll | auto ")]
+#[initial("visible")]
+#[applies_to("block containers [CSS2], flex containers [CSS3-FLEXBOX], grid containers [CSS3-GRID-LAYOUT]")]
+#[inherited("no")]
+#[percentages("n/a")]
+#[canonical_order("per grammar")]
+#[animation_type("discrete")]
+pub enum OverflowInline {}
 
-// // https://drafts.csswg.org/css-overflow-5/#overflow
-// #[value(" <'overflow-block'>{1,2} ")]
-// #[initial("visible")]
-// #[applies_to("block containers [CSS2], flex containers [CSS3-FLEXBOX], and grid containers [CSS3-GRID-LAYOUT]")]
-// #[inherited("no")]
-// #[percentages("n/a")]
-// #[canonical_order("per grammar")]
-// #[animation_type("discrete")]
-// pub struct Overflow;
+// https://drafts.csswg.org/css-overflow-5/#overflow
+#[value(" <'overflow-block'>{1,2} ")]
+#[initial("visible")]
+#[applies_to("block containers [CSS2], flex containers [CSS3-FLEXBOX], and grid containers [CSS3-GRID-LAYOUT]")]
+#[inherited("no")]
+#[percentages("n/a")]
+#[canonical_order("per grammar")]
+#[animation_type("discrete")]
+pub struct Overflow;
 
 // // https://drafts.csswg.org/css-overflow-5/#overflow-clip-margin
 // #[value(" <visual-box> || <length [0,∞]> ")]
