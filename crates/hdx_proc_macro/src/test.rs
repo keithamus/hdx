@@ -355,3 +355,10 @@ fn bounded_range_multiplier_is_optimized_to_options() {
 	let data = to_deriveinput! { struct Foo; };
 	assert_snapshot!(syntax, data, "bounded_range_multiplier_is_optimized_to_options");
 }
+
+#[test]
+fn enum_with_group() {
+	let syntax = to_valuedef!(" [ <display-outside> || <display-inside> ] | <display-listitem> ");
+	let data = to_deriveinput! { enum Foo {} };
+	assert_snapshot!(syntax, data, "enum_with_group");
+}

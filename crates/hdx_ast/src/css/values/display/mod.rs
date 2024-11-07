@@ -8,15 +8,15 @@ use impls::*;
  * CSS Display Module Level 4
  */
 
-// // https://drafts.csswg.org/css-display-4/#display
-// #[value(" [ <display-outside> || <display-inside> ] | <display-listitem> | <display-internal> | <display-box> | <display-legacy> ")]
-// #[initial("inline")]
-// #[applies_to("all elements")]
-// #[inherited("no")]
-// #[percentages("n/a")]
-// #[canonical_order("per grammar")]
-// #[animation_type("see § 2.9 animating and interpolating display")]
-// pub enum Display {}
+// https://drafts.csswg.org/css-display-4/#display
+#[value(" [ <display-outside> || <display-inside> ] | <display-listitem> | <display-internal> | <display-box> | <display-legacy> ")]
+// #[initial("inline")] XXX: Manual implementation in impls
+#[applies_to("all elements")]
+#[inherited("no")]
+#[percentages("n/a")]
+#[canonical_order("per grammar")]
+#[animation_type("see § 2.9 animating and interpolating display")]
+pub enum Display {}
 
 // https://drafts.csswg.org/css-display-4/#order
 #[value(" <integer> ")]

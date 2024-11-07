@@ -43,9 +43,10 @@ impl<'a> ::hdx_parser::Parse<'a> for Foo {
                 let token = parser.peek::<::hdx_parser::token::Any>().unwrap();
                 Err(::hdx_parser::diagnostics::Unexpected(token, token.span()))?
             } else {
-                return Ok(Self(val0, val1, val2));
+                break;
             }
         }
+        return Ok(Self(val0, val1, val2));
     }
 }
 #[automatically_derived]

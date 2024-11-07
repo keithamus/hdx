@@ -350,6 +350,13 @@ impl Def {
 			}
 			Self::Multiplier(v, style) => v.deref().to_variant_name(style.smallvec_size_hint()),
 			Self::Group(def, _) => def.deref().to_variant_name(size_hint),
+			Self::Combinator(def, _) => {
+				let name = format_ident!(
+					"{}",
+					def.iter().map(|def| def.to_variant_name(size_hint).to_string()).collect::<String>()
+				);
+				quote! { #name }
+			}
 			_ => {
 				dbg!("TODO variant name", self);
 				todo!("variant name")
@@ -381,6 +388,28 @@ impl Def {
 				todo!("variant name")
 			}
 			Self::Multiplier(def, style) => def.deref().to_variant_type(style.smallvec_size_hint()),
+			Self::Group(def, _) => match def.deref() {
+				Self::Combinator(defs, DefCombinatorStyle::Options) => {
+					let inner_types = defs
+						.iter()
+						.map(|def| match def {
+							Self::Type(ty) => {
+								let type_name = ty.to_type_name();
+								quote! { Option<#type_name> }
+							}
+							_ => {
+								dbg!("TODO group variant", self);
+								todo!("group variant")
+							}
+						})
+						.collect::<Vec<TokenStream>>();
+					quote! { #name(#(#inner_types),*) }
+				}
+				_ => {
+					dbg!("TODO group variant", self);
+					todo!("group variant")
+				}
+			},
 			_ => {
 				dbg!("TODO variant name", self);
 				todo!("variant name")
@@ -530,37 +559,10 @@ impl Def {
 			}
 			Self::Combinator(opts, DefCombinatorStyle::Options) => {
 				let idents: Vec<Ident> = (0..opts.len()).map(|i| format_ident!("val{}", i)).collect();
-				let steps: Vec<TokenStream> = opts
-					.iter()
-					.enumerate()
-					.map(|(i, def)| {
-						let ident = format_ident!("val{}", i);
-						let ty = match def {
-							Def::Type(ty) => ty.to_type_name(),
-							_ => {
-								dbg!("generate_parse_trait_implementation type on group options", self);
-								todo!("generate_parse_trait_implementation type on group options")
-							}
-						};
-						quote! {
-							if #ident.is_none() && parser.peek::<#ty>().is_some() {
-								#ident = Some(parser.parse::<#ty>()?);
-								continue;
-							}
-						}
-					})
-					.collect();
+				let steps = self.parse_steps(Some(format_ident!("val")));
 				quote! {
-					#(let mut #idents = None);*;
-					loop {
-						#(#steps)*
-						if #(#idents.is_none())&&* {
-							let token = parser.peek::<::hdx_parser::token::Any>().unwrap();
-							Err(::hdx_parser::diagnostics::Unexpected(token, token.span()))?
-						} else {
-							return Ok(Self(#(#idents),*));
-						}
-					}
+					#steps
+					return Ok(Self(#(#idents),*));
 				}
 			}
 			Self::Combinator(defs, DefCombinatorStyle::Ordered) => {
