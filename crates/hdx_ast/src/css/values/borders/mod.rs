@@ -98,25 +98,25 @@ pub enum BorderInlineEndColor {}
 // #[animation_type("see individual properties")]
 // pub enum BorderColor {}
 
-// // https://drafts.csswg.org/css-borders-4/#border-block-color
-// #[value(" <'border-top-color'>{1,2} ")]
-// #[initial("see individual properties")]
-// #[applies_to("see individual properties")]
-// #[inherited("see individual properties")]
-// #[percentages("see individual properties")]
-// #[canonical_order("per grammar")]
-// #[animation_type("see individual properties")]
-// pub struct BorderBlockColor;
+// https://drafts.csswg.org/css-borders-4/#border-block-color
+#[value(" <'border-top-color'>{1,2} ")]
+#[initial("see individual properties")]
+#[applies_to("see individual properties")]
+#[inherited("see individual properties")]
+#[percentages("see individual properties")]
+#[canonical_order("per grammar")]
+#[animation_type("see individual properties")]
+pub struct BorderBlockColor;
 
-// // https://drafts.csswg.org/css-borders-4/#border-inline-color
-// #[value(" <'border-top-color'>{1,2} ")]
-// #[initial("see individual properties")]
-// #[applies_to("see individual properties")]
-// #[inherited("see individual properties")]
-// #[percentages("see individual properties")]
-// #[canonical_order("per grammar")]
-// #[animation_type("see individual properties")]
-// pub struct BorderInlineColor;
+// https://drafts.csswg.org/css-borders-4/#border-inline-color
+#[value(" <'border-top-color'>{1,2} ")]
+#[initial("see individual properties")]
+#[applies_to("see individual properties")]
+#[inherited("see individual properties")]
+#[percentages("see individual properties")]
+#[canonical_order("per grammar")]
+#[animation_type("see individual properties")]
+pub struct BorderInlineColor;
 
 // https://drafts.csswg.org/css-borders-4/#border-top-style
 #[value(" <line-style> ")]
@@ -198,25 +198,25 @@ pub struct BorderInlineStartStyle;
 #[animation_type("discrete")]
 pub struct BorderInlineEndStyle;
 
-// // https://drafts.csswg.org/css-borders-4/#border-block-style
-// #[value(" <'border-top-style'>{1,2} ")]
-// #[initial("see individual properties")]
-// #[applies_to("see individual properties")]
-// #[inherited("see individual properties")]
-// #[percentages("see individual properties")]
-// #[canonical_order("per grammar")]
-// #[animation_type("see individual properties")]
-// pub struct BorderBlockStyle;
+// https://drafts.csswg.org/css-borders-4/#border-block-style
+#[value(" <'border-top-style'>{1,2} ")]
+#[initial("see individual properties")]
+#[applies_to("see individual properties")]
+#[inherited("see individual properties")]
+#[percentages("see individual properties")]
+#[canonical_order("per grammar")]
+#[animation_type("see individual properties")]
+pub struct BorderBlockStyle;
 
-// // https://drafts.csswg.org/css-borders-4/#border-inline-style
-// #[value(" <'border-top-style'>{1,2} ")]
-// #[initial("see individual properties")]
-// #[applies_to("see individual properties")]
-// #[inherited("see individual properties")]
-// #[percentages("see individual properties")]
-// #[canonical_order("per grammar")]
-// #[animation_type("see individual properties")]
-// pub struct BorderInlineStyle;
+// https://drafts.csswg.org/css-borders-4/#border-inline-style
+#[value(" <'border-top-style'>{1,2} ")]
+#[initial("see individual properties")]
+#[applies_to("see individual properties")]
+#[inherited("see individual properties")]
+#[percentages("see individual properties")]
+#[canonical_order("per grammar")]
+#[animation_type("see individual properties")]
+pub struct BorderInlineStyle;
 
 // https://drafts.csswg.org/css-borders-4/#border-top-width
 #[value(" <line-width> ")]
@@ -298,25 +298,25 @@ pub struct BorderInlineStartWidth;
 #[animation_type("by computed value")]
 pub struct BorderInlineEndWidth;
 
-// // https://drafts.csswg.org/css-borders-4/#border-block-width
-// #[value(" <'border-top-width'>{1,2} ")]
-// #[initial("see individual properties")]
-// #[applies_to("see individual properties")]
-// #[inherited("see individual properties")]
-// #[percentages("see individual properties")]
-// #[canonical_order("per grammar")]
-// #[animation_type("see individual properties")]
-// pub struct BorderBlockWidth;
+// https://drafts.csswg.org/css-borders-4/#border-block-width
+#[value(" <'border-top-width'>{1,2} ")]
+#[initial("see individual properties")]
+#[applies_to("see individual properties")]
+#[inherited("see individual properties")]
+#[percentages("see individual properties")]
+#[canonical_order("per grammar")]
+#[animation_type("see individual properties")]
+pub struct BorderBlockWidth;
 
-// // https://drafts.csswg.org/css-borders-4/#border-inline-width
-// #[value(" <'border-top-width'>{1,2} ")]
-// #[initial("see individual properties")]
-// #[applies_to("see individual properties")]
-// #[inherited("see individual properties")]
-// #[percentages("see individual properties")]
-// #[canonical_order("per grammar")]
-// #[animation_type("see individual properties")]
-// pub struct BorderInlineWidth;
+// https://drafts.csswg.org/css-borders-4/#border-inline-width
+#[value(" <'border-top-width'>{1,2} ")]
+#[initial("see individual properties")]
+#[applies_to("see individual properties")]
+#[inherited("see individual properties")]
+#[percentages("see individual properties")]
+#[canonical_order("per grammar")]
+#[animation_type("see individual properties")]
+pub struct BorderInlineWidth;
 
 // https://drafts.csswg.org/css-borders-4/#border-top
 #[value(" <line-width> || <line-style> || <color> ")]
@@ -418,85 +418,85 @@ pub struct BorderBlock;
 #[animation_type("see individual properties")]
 pub struct BorderInline;
 
-// // https://drafts.csswg.org/css-borders-4/#border-top-left-radius
-// #[value(" <length-percentage [0,∞]>{1,2} ")]
-// #[initial("0")]
-// #[applies_to("all elements (but see prose)")]
-// #[inherited("no")]
-// #[percentages("refer to corresponding dimension of the border box.")]
-// #[canonical_order("per grammar")]
-// #[animation_type("by computed value")]
-// pub struct BorderTopLeftRadius;
+// https://drafts.csswg.org/css-borders-4/#border-top-left-radius
+#[value(" <length-percentage [0,∞]>{1,2} ")]
+#[initial("0")]
+#[applies_to("all elements (but see prose)")]
+#[inherited("no")]
+#[percentages("refer to corresponding dimension of the border box.")]
+#[canonical_order("per grammar")]
+#[animation_type("by computed value")]
+pub struct BorderTopLeftRadius;
 
-// // https://drafts.csswg.org/css-borders-4/#border-top-right-radius
-// #[value(" <length-percentage [0,∞]>{1,2} ")]
-// #[initial("0")]
-// #[applies_to("all elements (but see prose)")]
-// #[inherited("no")]
-// #[percentages("refer to corresponding dimension of the border box.")]
-// #[canonical_order("per grammar")]
-// #[animation_type("by computed value")]
-// pub struct BorderTopRightRadius;
+// https://drafts.csswg.org/css-borders-4/#border-top-right-radius
+#[value(" <length-percentage [0,∞]>{1,2} ")]
+#[initial("0")]
+#[applies_to("all elements (but see prose)")]
+#[inherited("no")]
+#[percentages("refer to corresponding dimension of the border box.")]
+#[canonical_order("per grammar")]
+#[animation_type("by computed value")]
+pub struct BorderTopRightRadius;
 
-// // https://drafts.csswg.org/css-borders-4/#border-bottom-right-radius
-// #[value(" <length-percentage [0,∞]>{1,2} ")]
-// #[initial("0")]
-// #[applies_to("all elements (but see prose)")]
-// #[inherited("no")]
-// #[percentages("refer to corresponding dimension of the border box.")]
-// #[canonical_order("per grammar")]
-// #[animation_type("by computed value")]
-// pub struct BorderBottomRightRadius;
+// https://drafts.csswg.org/css-borders-4/#border-bottom-right-radius
+#[value(" <length-percentage [0,∞]>{1,2} ")]
+#[initial("0")]
+#[applies_to("all elements (but see prose)")]
+#[inherited("no")]
+#[percentages("refer to corresponding dimension of the border box.")]
+#[canonical_order("per grammar")]
+#[animation_type("by computed value")]
+pub struct BorderBottomRightRadius;
 
-// // https://drafts.csswg.org/css-borders-4/#border-bottom-left-radius
-// #[value(" <length-percentage [0,∞]>{1,2} ")]
-// #[initial("0")]
-// #[applies_to("all elements (but see prose)")]
-// #[inherited("no")]
-// #[percentages("refer to corresponding dimension of the border box.")]
-// #[canonical_order("per grammar")]
-// #[animation_type("by computed value")]
-// pub struct BorderBottomLeftRadius;
+// https://drafts.csswg.org/css-borders-4/#border-bottom-left-radius
+#[value(" <length-percentage [0,∞]>{1,2} ")]
+#[initial("0")]
+#[applies_to("all elements (but see prose)")]
+#[inherited("no")]
+#[percentages("refer to corresponding dimension of the border box.")]
+#[canonical_order("per grammar")]
+#[animation_type("by computed value")]
+pub struct BorderBottomLeftRadius;
 
-// // https://drafts.csswg.org/css-borders-4/#border-start-start-radius
-// #[value(" <length-percentage [0,∞]>{1,2} ")]
-// #[initial("0")]
-// #[applies_to("all elements (but see prose)")]
-// #[inherited("no")]
-// #[percentages("refer to corresponding dimension of the border box.")]
-// #[canonical_order("per grammar")]
-// #[animation_type("by computed value")]
-// pub struct BorderStartStartRadius;
+// https://drafts.csswg.org/css-borders-4/#border-start-start-radius
+#[value(" <length-percentage [0,∞]>{1,2} ")]
+#[initial("0")]
+#[applies_to("all elements (but see prose)")]
+#[inherited("no")]
+#[percentages("refer to corresponding dimension of the border box.")]
+#[canonical_order("per grammar")]
+#[animation_type("by computed value")]
+pub struct BorderStartStartRadius;
 
-// // https://drafts.csswg.org/css-borders-4/#border-start-end-radius
-// #[value(" <length-percentage [0,∞]>{1,2} ")]
-// #[initial("0")]
-// #[applies_to("all elements (but see prose)")]
-// #[inherited("no")]
-// #[percentages("refer to corresponding dimension of the border box.")]
-// #[canonical_order("per grammar")]
-// #[animation_type("by computed value")]
-// pub struct BorderStartEndRadius;
+// https://drafts.csswg.org/css-borders-4/#border-start-end-radius
+#[value(" <length-percentage [0,∞]>{1,2} ")]
+#[initial("0")]
+#[applies_to("all elements (but see prose)")]
+#[inherited("no")]
+#[percentages("refer to corresponding dimension of the border box.")]
+#[canonical_order("per grammar")]
+#[animation_type("by computed value")]
+pub struct BorderStartEndRadius;
 
-// // https://drafts.csswg.org/css-borders-4/#border-end-start-radius
-// #[value(" <length-percentage [0,∞]>{1,2} ")]
-// #[initial("0")]
-// #[applies_to("all elements (but see prose)")]
-// #[inherited("no")]
-// #[percentages("refer to corresponding dimension of the border box.")]
-// #[canonical_order("per grammar")]
-// #[animation_type("by computed value")]
-// pub struct BorderEndStartRadius;
+// https://drafts.csswg.org/css-borders-4/#border-end-start-radius
+#[value(" <length-percentage [0,∞]>{1,2} ")]
+#[initial("0")]
+#[applies_to("all elements (but see prose)")]
+#[inherited("no")]
+#[percentages("refer to corresponding dimension of the border box.")]
+#[canonical_order("per grammar")]
+#[animation_type("by computed value")]
+pub struct BorderEndStartRadius;
 
-// // https://drafts.csswg.org/css-borders-4/#border-end-end-radius
-// #[value(" <length-percentage [0,∞]>{1,2} ")]
-// #[initial("0")]
-// #[applies_to("all elements (but see prose)")]
-// #[inherited("no")]
-// #[percentages("refer to corresponding dimension of the border box.")]
-// #[canonical_order("per grammar")]
-// #[animation_type("by computed value")]
-// pub struct BorderEndEndRadius;
+// https://drafts.csswg.org/css-borders-4/#border-end-end-radius
+#[value(" <length-percentage [0,∞]>{1,2} ")]
+#[initial("0")]
+#[applies_to("all elements (but see prose)")]
+#[inherited("no")]
+#[percentages("refer to corresponding dimension of the border box.")]
+#[canonical_order("per grammar")]
+#[animation_type("by computed value")]
+pub struct BorderEndEndRadius;
 
 // // https://drafts.csswg.org/css-borders-4/#border-top-radius
 // #[value(" <length-percentage [0,∞]>{1,2} [ / <length-percentage [0,∞]>{1,2} ]? ")]
@@ -689,25 +689,25 @@ pub struct BorderInline;
 // treating none as 0 0 when interpolated with non-none values.")]
 // pub enum BoxShadowOffset {}
 
-// // https://drafts.csswg.org/css-borders-4/#box-shadow-blur
-// #[value(" <length [0,∞]># ")]
-// #[initial("0")]
-// #[applies_to("all elements")]
-// #[inherited("no")]
-// #[percentages("n/a")]
-// #[canonical_order("per grammar")]
-// #[animation_type("by computed value")]
-// pub struct BoxShadowBlur;
+// https://drafts.csswg.org/css-borders-4/#box-shadow-blur
+#[value(" <length [0,∞]># ")]
+#[initial("0")]
+#[applies_to("all elements")]
+#[inherited("no")]
+#[percentages("n/a")]
+#[canonical_order("per grammar")]
+#[animation_type("by computed value")]
+pub struct BoxShadowBlur;
 
-// // https://drafts.csswg.org/css-borders-4/#box-shadow-spread
-// #[value(" <length># ")]
-// #[initial("0")]
-// #[applies_to("all elements")]
-// #[inherited("no")]
-// #[percentages("n/a")]
-// #[canonical_order("per grammar")]
-// #[animation_type("by computed value")]
-// pub struct BoxShadowSpread;
+// https://drafts.csswg.org/css-borders-4/#box-shadow-spread
+#[value(" <length># ")]
+#[initial("0")]
+#[applies_to("all elements")]
+#[inherited("no")]
+#[percentages("n/a")]
+#[canonical_order("per grammar")]
+#[animation_type("by computed value")]
+pub struct BoxShadowSpread;
 
 // // https://drafts.csswg.org/css-borders-4/#box-shadow-position
 // #[value(" [ outset | inset ]# ")]

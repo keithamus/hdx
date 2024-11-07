@@ -339,29 +339,48 @@ impl DataType {
 }
 
 impl Def {
-	pub fn to_variant_name(&self, capture: Option<Ident>, size_hint: usize) -> TokenStream {
+	pub fn to_variant_name(&self, size_hint: usize) -> TokenStream {
 		match self {
 			Self::Ident(v) => v.to_variant_name(size_hint),
-			Self::Type(v) => v.to_variant_name(capture, size_hint),
-			Self::Function(v, ty) => {
+			Self::Type(v) => v.to_variant_name(size_hint),
+			Self::Function(v, _) => {
 				let variant_str = pascal(v.0.to_string());
 				let ident = format_ident!("{}Function", variant_str);
-				match ty.deref() {
-					Def::Type(ty) => {
-						let inner = if let Some(ident) = capture {
-							quote! { #ident }
-						} else {
-							ty.to_type_name()
-						};
-						quote! { #ident(#inner) }
-					}
-					_ => {
-						dbg!("TODO function variant", self);
-						todo!("function variant")
-					}
-				}
+				quote! { #ident }
 			}
-			Self::Multiplier(v, style) => v.deref().to_variant_name(capture, style.smallvec_size_hint()),
+			Self::Multiplier(v, style) => v.deref().to_variant_name(style.smallvec_size_hint()),
+			Self::Group(def, _) => def.deref().to_variant_name(size_hint),
+			_ => {
+				dbg!("TODO variant name", self);
+				todo!("variant name")
+			}
+		}
+	}
+
+	pub fn has_inner_type(&self) -> bool {
+		!matches!(self, Self::Ident(_))
+	}
+
+	pub fn to_variant_type(&self, size_hint: usize) -> TokenStream {
+		let name = self.to_variant_name(size_hint);
+		match self {
+			Self::Ident(_) => name,
+			Self::Type(v) => v.to_variant_type(size_hint),
+			Self::Function(_, ty) => match ty.deref() {
+				Def::Type(ty) => {
+					let inner = ty.to_type_name();
+					quote! { #name(#inner) }
+				}
+				_ => {
+					dbg!("TODO function variant", self);
+					todo!("function variant")
+				}
+			},
+			Self::Combinator(_def, _) => {
+				dbg!("TODO variant name", self);
+				todo!("variant name")
+			}
+			Self::Multiplier(def, style) => def.deref().to_variant_type(style.smallvec_size_hint()),
 			_ => {
 				dbg!("TODO variant name", self);
 				todo!("variant name")
@@ -424,14 +443,23 @@ impl Def {
 					.map(|(p, def)| {
 						let peek = def.peek_steps();
 						let parse = def.parse_steps(Some(format_ident!("val")));
-						let var = def.to_variant_name(Some(format_ident!("val")), 0);
+						let var = def.to_variant_name(0);
+						let val = match def {
+							Def::Group(def, DefGroupStyle::None) => match def.deref() {
+								Def::Combinator(opts, DefCombinatorStyle::Options) => {
+									let idents: Vec<Ident> =
+										(0..opts.len()).map(|i| format_ident!("val{}", i)).collect();
+									quote! { #(#idents),* }
+								}
+								_ => quote! { val },
+							},
+							_ => quote! { val },
+						};
 						// If it's the only parse block we don't need to peek, just return it.
 						if p == Position::Only {
-							quote! { #parse; Ok(Self::#var) }
-						} else if p == Position::First && keywords.is_empty() {
-							quote! { if #peek.is_some() { #parse } }
+							quote! { #parse; Ok(Self::#var(#val)) }
 						} else {
-							quote! { if #peek.is_some() { #parse; return Ok(Self::#var); } }
+							quote! { if #peek.is_some() { #parse; return Ok(Self::#var(#val)); } }
 						}
 					})
 					.collect();
@@ -646,10 +674,30 @@ impl Def {
 				let arms: Vec<TokenStream> = opts
 					.iter()
 					.map(|def| {
-						let name = format_ident!("inner");
-						let var = def.to_variant_name(Some(name.clone()), 0);
+						let name = match def {
+							Self::Group(def, DefGroupStyle::None) => match def.deref() {
+								Self::Combinator(opts, DefCombinatorStyle::Options) => {
+									let idents: Vec<Ident> =
+										(0..opts.len()).map(|i| format_ident!("inner{}", i)).collect();
+									quote! { #(#idents),* }
+								}
+								_ => {
+									let ident = format_ident!("inner");
+									quote! { #ident }
+								}
+							},
+							_ => {
+								let ident = format_ident!("inner");
+								quote! { #ident }
+							}
+						};
+						let var = def.to_variant_name(0);
 						let write = def.write_steps(quote! { #name });
-						quote! { Self::#var => { #write } }
+						if def.has_inner_type() {
+							quote! { Self::#var(#name) => { #write } }
+						} else {
+							quote! { Self::#var => { #write } }
+						}
 					})
 					.collect();
 				quote! {
@@ -805,7 +853,7 @@ impl GenerateDefinition for Def {
 			},
 			DataType::Enum => match self {
 				Self::Combinator(children, DefCombinatorStyle::Alternatives) => {
-					let variants: Vec<TokenStream> = children.iter().map(|d| d.to_variant_name(None, 0)).collect();
+					let variants: Vec<TokenStream> = children.iter().map(|d| d.to_variant_type(0)).collect();
 					quote! { #vis enum #ident #life { #(#variants),* } }
 				}
 				Self::Combinator(_, _) => {
@@ -886,9 +934,9 @@ impl GenerateWriteImpl for Def {
 					.iter()
 					.map(|def| {
 						let name = format_ident!("inner");
-						let var = def.to_variant_name(Some(name.clone()), 0);
+						let var = def.to_variant_name(0);
 						let write = def.write_steps(quote! { #name });
-						quote! { Self::#var => { #write } }
+						quote! { Self::#var(#name) => { #write } }
 					})
 					.collect();
 				quote! {
@@ -897,6 +945,7 @@ impl GenerateWriteImpl for Def {
 					}
 				}
 			}
+			Self::Group(def, DefGroupStyle::None) => def.write_steps(capture),
 			Self::Group(_, _) => {
 				dbg!("generate_writecss_trait_implementation Group TODO", self);
 				todo!("generate_writecss_trait_implementation Group TODO")
@@ -1117,69 +1166,79 @@ impl GenerateParseImpl for Def {
 }
 
 impl DefType {
-	pub fn to_variant_name(&self, capture: Option<Ident>, size_hint: usize) -> TokenStream {
-		let inner = if let Some(ident) = &capture {
-			quote! { #ident }
-		} else {
-			self.to_type_name()
-		};
+	pub fn to_variant_name(&self, size_hint: usize) -> TokenStream {
 		if size_hint > 0 {
-			if capture.is_some() {
-				match self {
-					Self::Length(_) => quote! { Lengths(#inner) },
-					Self::LengthPercentage(_) => quote! { LengthPercentages(#inner) },
-					Self::Percentage(_) => quote! { Percentages(#inner) },
-					Self::Angle(_) => quote! { Angles(#inner) },
-					Self::Time(_) => quote! { Times(#inner) },
-					Self::Resolution(_) => quote! { Resolutions(#inner) },
-					Self::Integer(_) => quote! { Integers(#inner) },
-					Self::Number(_) => quote! { Numbers(#inner) },
-					Self::String => quote! { Strings(#inner) },
-					Self::Color => quote! { Colors(#inner) },
-					Self::Image => quote! { Images(#inner) },
-					Self::CustomIdent => quote! { CustomIdents(#inner) },
-					Self::Custom(_, ident) => {
-						let ident = ident.pluralize();
-						quote! { #ident(#inner) }
-					}
-				}
-			} else {
-				match self {
-					Self::Length(_) => quote! { Lengths(smallvec::SmallVec::<[#inner; #size_hint]>) },
-					Self::LengthPercentage(_) => {
-						quote! { LengthPercentages(smallvec::SmallVec::<[#inner; #size_hint]>) }
-					}
-					Self::Percentage(_) => quote! { Percentages(smallvec::SmallVec::<[#inner; #size_hint]>) },
-					Self::Angle(_) => quote! { Angles(smallvec::SmallVec::<[#inner; #size_hint]>) },
-					Self::Time(_) => quote! { Times(smallvec::SmallVec::<[#inner; #size_hint]>) },
-					Self::Resolution(_) => quote! { Resolutions(smallvec::SmallVec::<[#inner; #size_hint]>) },
-					Self::Integer(_) => quote! { Integers(smallvec::SmallVec::<[#inner; #size_hint]>) },
-					Self::Number(_) => quote! { Numbers(smallvec::SmallVec::<[#inner; #size_hint]>) },
-					Self::String => quote! { Strings(smallvec::SmallVec::<[#inner; #size_hint]>) },
-					Self::Color => quote! { Colors(smallvec::SmallVec::<[#inner; #size_hint]>) },
-					Self::Image => quote! { Images(smallvec::SmallVec::<[#inner; #size_hint]>) },
-					Self::CustomIdent => quote! { CustomIdents(smallvec::SmallVec::<[#inner; #size_hint]>) },
-					Self::Custom(_, ident) => {
-						let ident = ident.pluralize();
-						quote! { #ident(smallvec::SmallVec::<[#inner; #size_hint]>) }
-					}
+			match self {
+				Self::Length(_) => quote! { Lengths },
+				Self::LengthPercentage(_) => quote! { LengthPercentages },
+				Self::Percentage(_) => quote! { Percentages },
+				Self::Angle(_) => quote! { Angles },
+				Self::Time(_) => quote! { Times },
+				Self::Resolution(_) => quote! { Resolutions },
+				Self::Integer(_) => quote! { Integers },
+				Self::Number(_) => quote! { Numbers },
+				Self::String => quote! { Strings },
+				Self::Color => quote! { Colors },
+				Self::Image => quote! { Images },
+				Self::CustomIdent => quote! { CustomIdents },
+				Self::Custom(_, ident) => {
+					let ident = ident.pluralize();
+					quote! { #ident }
 				}
 			}
 		} else {
 			match self {
-				Self::Length(_) => quote! { Length(#inner) },
-				Self::LengthPercentage(_) => quote! { LengthPercentage(#inner) },
-				Self::Percentage(_) => quote! { Percentage(#inner) },
-				Self::Angle(_) => quote! { Angle(#inner) },
-				Self::Time(_) => quote! { Time(#inner) },
-				Self::Resolution(_) => quote! { Resolution(#inner) },
-				Self::Integer(_) => quote! { Integer(#inner) },
-				Self::Number(_) => quote! { Number(#inner) },
-				Self::String => quote! { String(#inner) },
-				Self::Color => quote! { Color(#inner) },
-				Self::Image => quote! { Image(#inner) },
-				Self::CustomIdent => quote! { CustomIdent(#inner) },
-				Self::Custom(_, ident) => quote! { #ident(#inner) },
+				Self::Length(_) => quote! { Length },
+				Self::LengthPercentage(_) => quote! { LengthPercentage },
+				Self::Percentage(_) => quote! { Percentage },
+				Self::Angle(_) => quote! { Angle },
+				Self::Time(_) => quote! { Time },
+				Self::Resolution(_) => quote! { Resolution },
+				Self::Integer(_) => quote! { Integer },
+				Self::Number(_) => quote! { Number },
+				Self::String => quote! { String },
+				Self::Color => quote! { Color },
+				Self::Image => quote! { Image },
+				Self::CustomIdent => quote! { CustomIdent },
+				Self::Custom(_, ident) => quote! { #ident },
+			}
+		}
+	}
+
+	pub fn to_variant_type(&self, size_hint: usize) -> TokenStream {
+		let inner = self.to_type_name();
+		let name = self.to_variant_name(size_hint);
+		if size_hint > 0 {
+			match self {
+				Self::Length(_) => quote! { #name(smallvec::SmallVec::<[#inner; #size_hint]>) },
+				Self::LengthPercentage(_) => quote! { #name(smallvec::SmallVec::<[#inner; #size_hint]>) },
+				Self::Percentage(_) => quote! { #name(smallvec::SmallVec::<[#inner; #size_hint]>) },
+				Self::Angle(_) => quote! { #name(smallvec::SmallVec::<[#inner; #size_hint]>) },
+				Self::Time(_) => quote! { #name(smallvec::SmallVec::<[#inner; #size_hint]>) },
+				Self::Resolution(_) => quote! { #name(smallvec::SmallVec::<[#inner; #size_hint]>) },
+				Self::Integer(_) => quote! { #name(smallvec::SmallVec::<[#inner; #size_hint]>) },
+				Self::Number(_) => quote! { #name(smallvec::SmallVec::<[#inner; #size_hint]>) },
+				Self::String => quote! { #name(smallvec::SmallVec::<[#inner; #size_hint]>) },
+				Self::Color => quote! { #name(smallvec::SmallVec::<[#inner; #size_hint]>) },
+				Self::Image => quote! { #name(smallvec::SmallVec::<[#inner; #size_hint]>) },
+				Self::CustomIdent => quote! { #name(smallvec::SmallVec::<[#inner; #size_hint]>) },
+				Self::Custom(_, _) => quote! { #name(smallvec::SmallVec::<[#inner; #size_hint]>) },
+			}
+		} else {
+			match self {
+				Self::Length(_) => quote! { #name(#inner) },
+				Self::LengthPercentage(_) => quote! { #name(#inner) },
+				Self::Percentage(_) => quote! { #name(#inner) },
+				Self::Angle(_) => quote! { #name(#inner) },
+				Self::Time(_) => quote! { #name(#inner) },
+				Self::Resolution(_) => quote! { #name(#inner) },
+				Self::Integer(_) => quote! { #name(#inner) },
+				Self::Number(_) => quote! { #name(#inner) },
+				Self::String => quote! { #name(#inner) },
+				Self::Color => quote! { #name(#inner) },
+				Self::Image => quote! { #name(#inner) },
+				Self::CustomIdent => quote! { #name(#inner) },
+				Self::Custom(_, _) => quote! { #name(#inner) },
 			}
 		}
 	}
