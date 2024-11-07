@@ -12,7 +12,7 @@ mod tests {
 		assert_size!(OverflowY, 1);
 		assert_size!(OverflowBlock, 1);
 		assert_size!(OverflowInline, 1);
-		assert_size!(Overflow, 24);
+		assert_size!(Overflow, 2);
 		// assert_size!(OverflowClipMargin, 12);
 		assert_size!(ScrollBehavior, 1);
 		// assert_size!(ScrollbarGutter, 12);

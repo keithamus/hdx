@@ -348,3 +348,10 @@ fn enum_with_variable_count_type() {
 	let data = to_deriveinput! { enum Foo {} };
 	assert_snapshot!(syntax, data, "enum_with_variable_count_type");
 }
+
+#[test]
+fn bounded_range_multiplier_is_optimized_to_options() {
+	let syntax = to_valuedef!(" <animateable-feature>{1,3} ");
+	let data = to_deriveinput! { struct Foo; };
+	assert_snapshot!(syntax, data, "bounded_range_multiplier_is_optimized_to_options");
+}
