@@ -72,17 +72,17 @@ pub fn generate(args: Args, ast: DeriveInput) -> TokenStream {
 				Args::Dimension(f) => {
 					let first_deep = variants.iter().find(|v| v.fields != Fields::Unit).expect("Cannot find variant");
 					let num = f.base10_digits();
-					let variant_ident = quote! { first_deep.ident.clone() };
+					let variant_ident = first_deep.ident.clone();
 					let mut vec = false;
 					let ty = if let Fields::Unnamed(FieldsUnnamed { unnamed, .. }) = &first_deep.fields {
 						if let Type::Path(type_path) = &unnamed.first().unwrap().ty {
 							vec = type_path.path.segments.first().map(|s| s.ident == "smallvec").unwrap_or(false);
-							quote! { type_path }
+							quote! { #type_path }
 						} else {
-							quote! { variant_ident }
+							quote! { #variant_ident }
 						}
 					} else {
-						quote! { variant_ident }
+						quote! { #variant_ident }
 					};
 					let val = if let Ok(0) = f.base10_parse() {
 						quote! { #ty::Zero }
