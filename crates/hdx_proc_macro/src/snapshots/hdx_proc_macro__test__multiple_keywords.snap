@@ -21,22 +21,31 @@ impl<'a> ::hdx_parser::Peek<'a> for Foo {
 impl<'a> ::hdx_parser::Parse<'a> for Foo {
     fn parse(parser: &mut ::hdx_parser::Parser<'a>) -> ::hdx_parser::Result<Self> {
         use ::hdx_parser::Parse;
-        let token = *parser.parse::<::hdx_parser::token::Ident>()?;
-        match parser.parse_atom_lower(token) {
-            ::hdx_atom::atom!("black") => {
-                return Ok(Self::Black);
+        if let Some(token) = parser.peek::<::hdx_parser::token::Ident>() {
+            match parser.parse_atom_lower(token) {
+                ::hdx_atom::atom!("black") => {
+                    parser.hop(token);
+                    return Ok(Self::Black);
+                }
+                ::hdx_atom::atom!("white") => {
+                    parser.hop(token);
+                    return Ok(Self::White);
+                }
+                ::hdx_atom::atom!("line-through") => {
+                    parser.hop(token);
+                    return Ok(Self::LineThrough);
+                }
+                ::hdx_atom::atom!("pink") => {
+                    parser.hop(token);
+                    return Ok(Self::Pink);
+                }
+                atom => {
+                    Err(::hdx_parser::diagnostics::UnexpectedIdent(atom, token.span()))?
+                }
             }
-            ::hdx_atom::atom!("white") => {
-                return Ok(Self::White);
-            }
-            ::hdx_atom::atom!("line-through") => {
-                return Ok(Self::LineThrough);
-            }
-            ::hdx_atom::atom!("pink") => {
-                return Ok(Self::Pink);
-            }
-            atom => Err(::hdx_parser::diagnostics::UnexpectedIdent(atom, token.span()))?,
         }
+        let token = parser.peek::<::hdx_parser::token::Any>().unwrap();
+        Err(::hdx_parser::diagnostics::Unexpected(token, token.span()))?
     }
 }
 #[automatically_derived]

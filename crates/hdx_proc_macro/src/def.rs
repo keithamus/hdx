@@ -451,11 +451,13 @@ impl Def {
 							let atom = ident.to_atom_macro();
 							let variant_name = ident.to_variant_name(0);
 							quote! { #atom => {
+								parser.hop(token);
 								return Ok(Self::#variant_name);
 							} }
 						} else if def == &Def::Type(DefType::CustomIdent) {
 							last_arm = quote! {
 								atom => {
+									parser.hop(token);
 									return Ok(Self::CustomIdent(atom));
 								}
 							};
@@ -464,24 +466,23 @@ impl Def {
 							quote! {}
 						}
 					});
-					if other_if.is_empty() {
+					let error = if other_if.is_empty() {
 						Some(quote! {
-							let token = *parser.parse::<::hdx_parser::token::Ident>()?;
+							let token = parser.peek::<::hdx_parser::token::Any>().unwrap();
+							Err(::hdx_parser::diagnostics::Unexpected(token, token.span()))?
+						})
+					} else {
+						None
+					};
+					Some(quote! {
+						if let Some(token) = parser.peek::<::hdx_parser::token::Ident>() {
 							match parser.parse_atom_lower(token) {
 								#(#keyword_arms)*
 								#last_arm
 							}
-						})
-					} else {
-						Some(quote! {
-							if let Some(token) = parser.peek::<::hdx_parser::token::Ident>() {
-								match parser.parse_atom_lower(token) {
-								#(#keyword_arms)*
-								#last_arm
-								}
-							}
-						})
-					}
+						}
+						#error
+					})
 				};
 				if other_if.is_empty() {
 					quote! { #keyword_if }

@@ -19,15 +19,20 @@ impl<'a> ::hdx_parser::Peek<'a> for Foo {
 impl<'a> ::hdx_parser::Parse<'a> for Foo {
     fn parse(parser: &mut ::hdx_parser::Parser<'a>) -> ::hdx_parser::Result<Self> {
         use ::hdx_parser::Parse;
-        let token = *parser.parse::<::hdx_parser::token::Ident>()?;
-        match parser.parse_atom_lower(token) {
-            ::hdx_atom::atom!("none") => {
-                return Ok(Self::None);
-            }
-            atom => {
-                return Ok(Self::CustomIdent(atom));
+        if let Some(token) = parser.peek::<::hdx_parser::token::Ident>() {
+            match parser.parse_atom_lower(token) {
+                ::hdx_atom::atom!("none") => {
+                    parser.hop(token);
+                    return Ok(Self::None);
+                }
+                atom => {
+                    parser.hop(token);
+                    return Ok(Self::CustomIdent(atom));
+                }
             }
         }
+        let token = parser.peek::<::hdx_parser::token::Any>().unwrap();
+        Err(::hdx_parser::diagnostics::Unexpected(token, token.span()))?
     }
 }
 #[automatically_derived]

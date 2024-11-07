@@ -24,6 +24,7 @@ impl<'a> ::hdx_parser::Parse<'a> for Foo {
         if let Some(token) = parser.peek::<::hdx_parser::token::Ident>() {
             match parser.parse_atom_lower(token) {
                 ::hdx_atom::atom!("line-through") => {
+                    parser.hop(token);
                     return Ok(Self::LineThrough);
                 }
                 atom => {}
