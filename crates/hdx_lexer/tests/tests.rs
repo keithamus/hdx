@@ -627,6 +627,37 @@ fn tokenizer_does_not_encode_large_or_weird_dimensions_into_token_bytes() {
 }
 
 #[test]
+fn tokenizer_encodes_flags_for_dashed_idents() {
+	let mut lexer = Lexer::new("foo --bar baz --bing", Include::none());
+	dbg!("start");
+	{
+		let token = lexer.advance();
+		assert_eq!(token.kind(), Kind::Ident);
+		assert_eq!(lexer.parse_raw_str(token), "foo");
+		assert!(!token.is_dashed_ident());
+	}
+	{
+		let token = lexer.advance();
+		assert_eq!(token.kind(), Kind::Ident);
+		assert_eq!(lexer.parse_raw_str(token), "--bar");
+		assert!(token.is_dashed_ident());
+	}
+	{
+		let token = lexer.advance();
+		assert_eq!(token.kind(), Kind::Ident);
+		assert_eq!(lexer.parse_raw_str(token), "baz");
+		assert!(!token.is_dashed_ident());
+	}
+	{
+		let token = lexer.advance();
+		assert_eq!(token.kind(), Kind::Ident);
+		assert_eq!(lexer.parse_raw_str(token), "--bing");
+		assert!(token.is_dashed_ident());
+	}
+	assert_eq!(lexer.advance().kind(), Kind::Eof);
+}
+
+#[test]
 fn tricky_idents() {
 	let mut lexer = Lexer::new("@\\@ foo\\\n", Include::none());
 	{

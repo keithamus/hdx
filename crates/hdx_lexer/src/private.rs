@@ -748,7 +748,17 @@ impl<'a> CharsConsumer for Chars<'a> {
 		let mut i = 0;
 		loop {
 			let c = self.peek_nth(0);
-			if is_ident_ascii_lower(c) {
+			if i == 0 && c == '-' {
+				self.next();
+				i += 1;
+				len += 1;
+				if self.peek_nth(0) == '-' {
+					self.next();
+					i += 1;
+					len += 1;
+					flags |= 0b010;
+				}
+			} else if is_ident_ascii_lower(c) {
 				if (i == 0 && c != 'u') || (i == 1 && c != 'r') || (i == 2 && c != 'l') {
 					is_url_like_keyword = false;
 				}

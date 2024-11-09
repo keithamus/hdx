@@ -132,7 +132,7 @@ pub enum TokenFlags {
 	//                          100 = Includes escape characters
 	//                        If K is Ident, Function, AtKeyword:
 	//                          001 = Contains non-lower-ASCII (e.g. uppercase or unicode)
-	//                          010 = Is a "Custom Ident" - starts with two dashes
+	//                          010 = Is a "Dashed Ident" - starts with two dashes
 	//                          100 = Includes escape characters
 	//                        If K is Hash:
 	//                          001 = Contains non-lower-ASCII (e.g. uppercase or unicode)

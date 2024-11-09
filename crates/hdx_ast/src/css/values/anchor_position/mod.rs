@@ -8,25 +8,25 @@ use impls::*;
  * CSS Anchor Positioning
  */
 
-// // https://drafts.csswg.org/css-anchor-position-1/#anchor-name
-// #[value(" none | <dashed-ident># ")]
-// #[initial("none")]
-// #[applies_to("all elements that generate a principal box")]
-// #[inherited("no")]
-// #[percentages("n/a")]
-// #[canonical_order("per grammar")]
-// #[animation_type("discrete")]
-// pub enum AnchorName {}
+// https://drafts.csswg.org/css-anchor-position-1/#anchor-name
+#[value(" none | <dashed-ident># ")]
+#[initial("none")]
+#[applies_to("all elements that generate a principal box")]
+#[inherited("no")]
+#[percentages("n/a")]
+#[canonical_order("per grammar")]
+#[animation_type("discrete")]
+pub enum AnchorName {}
 
-// // https://drafts.csswg.org/css-anchor-position-1/#anchor-scope
-// #[value(" none | all | <dashed-ident># ")]
-// #[initial("none")]
-// #[applies_to("all elements")]
-// #[inherited("no")]
-// #[percentages("n/a")]
-// #[canonical_order("per grammar")]
-// #[animation_type("discrete")]
-// pub enum AnchorScope {}
+// https://drafts.csswg.org/css-anchor-position-1/#anchor-scope
+#[value(" none | all | <dashed-ident># ")]
+#[initial("none")]
+#[applies_to("all elements")]
+#[inherited("no")]
+#[percentages("n/a")]
+#[canonical_order("per grammar")]
+#[animation_type("discrete")]
+pub enum AnchorScope {}
 
 // https://drafts.csswg.org/css-anchor-position-1/#position-anchor
 #[value(" auto | <anchor-name> ")]
