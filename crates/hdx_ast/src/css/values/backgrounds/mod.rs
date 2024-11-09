@@ -26,27 +26,27 @@ pub struct BackgroundColor;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub struct BackgroundImage;
+// pub struct BackgroundImage<'a>;
 
-// // https://drafts.csswg.org/css-backgrounds-4/#background-repeat
-// #[value(" <repeat-style># ")]
-// #[initial("repeat")]
-// #[applies_to("all elements")]
-// #[inherited("no")]
-// #[percentages("n/a")]
-// #[canonical_order("per grammar")]
-// #[animation_type("discrete")]
-// pub struct BackgroundRepeat;
+// https://drafts.csswg.org/css-backgrounds-4/#background-repeat
+#[value(" <repeat-style># ")]
+#[initial("repeat")]
+#[applies_to("all elements")]
+#[inherited("no")]
+#[percentages("n/a")]
+#[canonical_order("per grammar")]
+#[animation_type("discrete")]
+pub struct BackgroundRepeat;
 
-// // https://drafts.csswg.org/css-backgrounds-4/#background-attachment
-// #[value(" <attachment># ")]
-// #[initial("scroll")]
-// #[applies_to("all elements")]
-// #[inherited("no")]
-// #[percentages("n/a")]
-// #[canonical_order("per grammar")]
-// #[animation_type("discrete")]
-// pub struct BackgroundAttachment;
+// https://drafts.csswg.org/css-backgrounds-4/#background-attachment
+#[value(" <attachment># ")]
+#[initial("scroll")]
+#[applies_to("all elements")]
+#[inherited("no")]
+#[percentages("n/a")]
+#[canonical_order("per grammar")]
+#[animation_type("discrete")]
+pub struct BackgroundAttachment;
 
 // // https://drafts.csswg.org/css-backgrounds-4/#background-position
 // #[value(" <bg-position># ")]
@@ -58,25 +58,25 @@ pub struct BackgroundColor;
 // #[animation_type("repeatable list")]
 // pub struct BackgroundPosition;
 
-// // https://drafts.csswg.org/css-backgrounds-4/#background-clip
-// #[value(" <bg-clip># ")]
-// #[initial("border-box")]
-// #[applies_to("all elements")]
-// #[inherited("no")]
-// #[percentages("n/a")]
-// #[canonical_order("per grammar")]
-// #[animation_type("repeatable list")]
-// pub struct BackgroundClip;
+// https://drafts.csswg.org/css-backgrounds-4/#background-clip
+#[value(" <bg-clip># ")]
+#[initial("border-box")]
+#[applies_to("all elements")]
+#[inherited("no")]
+#[percentages("n/a")]
+#[canonical_order("per grammar")]
+#[animation_type("repeatable list")]
+pub struct BackgroundClip;
 
-// // https://drafts.csswg.org/css-backgrounds-4/#background-origin
-// #[value(" <visual-box># ")]
-// #[initial("padding-box")]
-// #[applies_to("all elements")]
-// #[inherited("no")]
-// #[percentages("n/a")]
-// #[canonical_order("per grammar")]
-// #[animation_type("repeatable list")]
-// pub struct BackgroundOrigin;
+// https://drafts.csswg.org/css-backgrounds-4/#background-origin
+#[value(" <visual-box># ")]
+#[initial("padding-box")]
+#[applies_to("all elements")]
+#[inherited("no")]
+#[percentages("n/a")]
+#[canonical_order("per grammar")]
+#[animation_type("repeatable list")]
+pub struct BackgroundOrigin;
 
 // // https://drafts.csswg.org/css-backgrounds-4/#background-size
 // #[value(" <bg-size># ")]
@@ -159,45 +159,45 @@ pub enum BorderImageSource<'a> {}
 // #[animation_type("see individual properties")]
 // pub enum BorderImage {}
 
-// // https://drafts.csswg.org/css-backgrounds-4/#background-repeat-x
-// #[value(" <repetition># ")]
-// #[initial("repeat")]
-// #[applies_to("all elements")]
-// #[inherited("no")]
-// #[percentages("n/a")]
-// #[canonical_order("per grammar")]
-// #[animation_type("discrete")]
-// pub struct BackgroundRepeatX;
+// https://drafts.csswg.org/css-backgrounds-4/#background-repeat-x
+#[value(" <repetition># ")]
+#[initial("repeat")]
+#[applies_to("all elements")]
+#[inherited("no")]
+#[percentages("n/a")]
+#[canonical_order("per grammar")]
+#[animation_type("discrete")]
+pub struct BackgroundRepeatX;
 
-// // https://drafts.csswg.org/css-backgrounds-4/#background-repeat-y
-// #[value(" <repetition># ")]
-// #[initial("repeat")]
-// #[applies_to("all elements")]
-// #[inherited("no")]
-// #[percentages("n/a")]
-// #[canonical_order("per grammar")]
-// #[animation_type("discrete")]
-// pub struct BackgroundRepeatY;
+// https://drafts.csswg.org/css-backgrounds-4/#background-repeat-y
+#[value(" <repetition># ")]
+#[initial("repeat")]
+#[applies_to("all elements")]
+#[inherited("no")]
+#[percentages("n/a")]
+#[canonical_order("per grammar")]
+#[animation_type("discrete")]
+pub struct BackgroundRepeatY;
 
-// // https://drafts.csswg.org/css-backgrounds-4/#background-repeat-block
-// #[value(" <repetition># ")]
-// #[initial("repeat")]
-// #[applies_to("all elements")]
-// #[inherited("no")]
-// #[percentages("n/a")]
-// #[canonical_order("per grammar")]
-// #[animation_type("discrete")]
-// pub struct BackgroundRepeatBlock;
+// https://drafts.csswg.org/css-backgrounds-4/#background-repeat-block
+#[value(" <repetition># ")]
+#[initial("repeat")]
+#[applies_to("all elements")]
+#[inherited("no")]
+#[percentages("n/a")]
+#[canonical_order("per grammar")]
+#[animation_type("discrete")]
+pub struct BackgroundRepeatBlock;
 
-// // https://drafts.csswg.org/css-backgrounds-4/#background-repeat-inline
-// #[value(" <repetition># ")]
-// #[initial("repeat")]
-// #[applies_to("all elements")]
-// #[inherited("no")]
-// #[percentages("n/a")]
-// #[canonical_order("per grammar")]
-// #[animation_type("discrete")]
-// pub struct BackgroundRepeatInline;
+// https://drafts.csswg.org/css-backgrounds-4/#background-repeat-inline
+#[value(" <repetition># ")]
+#[initial("repeat")]
+#[applies_to("all elements")]
+#[inherited("no")]
+#[percentages("n/a")]
+#[canonical_order("per grammar")]
+#[animation_type("discrete")]
+pub struct BackgroundRepeatInline;
 
 // // https://drafts.csswg.org/css-backgrounds-4/#background-position-x
 // #[value(" [ center | [ [ left | right | x-start | x-end ]? <length-percentage>? ]! ]# ")]
