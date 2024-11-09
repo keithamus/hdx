@@ -23,6 +23,17 @@ impl OpacityValue {
 		}
 	}
 }
+impl From<i32> for OpacityValue {
+	fn from(value: i32) -> Self {
+		Self::Number((value as f32).into())
+	}
+}
+
+impl From<f32> for OpacityValue {
+	fn from(value: f32) -> Self {
+		Self::Number(value.into())
+	}
+}
 
 impl From<OpacityValue> for i32 {
 	fn from(value: OpacityValue) -> Self {

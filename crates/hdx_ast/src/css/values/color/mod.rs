@@ -18,12 +18,12 @@ use impls::*;
 #[animation_type("by computed value type")]
 pub struct Color;
 
-// // https://drafts.csswg.org/css-color-6/#opacity
-// #[value(" <opacity-value> ")]
-// #[initial("1")]
-// #[applies_to("all elements")]
-// #[inherited("no")]
-// #[percentages("map to the range [0,1]")]
-// #[canonical_order("per grammar")]
-// #[animation_type("by computed value type")]
-// pub struct Opacity;
+// https://drafts.csswg.org/css-color-6/#opacity
+#[value(" <opacity-value> ")]
+#[initial("1")]
+#[applies_to("all elements")]
+#[inherited("no")]
+#[percentages("map to the range [0,1]")]
+#[canonical_order("per grammar")]
+#[animation_type("by computed value type")]
+pub struct Opacity;
