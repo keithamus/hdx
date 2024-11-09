@@ -1,6 +1,20 @@
 pub(crate) use crate::traits::StyleValue;
 pub(crate) use hdx_proc_macro::*;
 
+use super::types::LengthPercentage;
+use super::{MarginTop, PaddingTop};
+
+// shortcuts for logical properties to resolve to 0
+impl MarginTop {
+	#[allow(non_upper_case_globals)]
+	pub const Zero: MarginTop = MarginTop::LengthPercentage(LengthPercentage::Zero);
+}
+
+impl PaddingTop {
+	#[allow(non_upper_case_globals)]
+	pub const Zero: PaddingTop = PaddingTop(LengthPercentage::Zero);
+}
+
 #[cfg(test)]
 mod tests {
 	use super::super::*;

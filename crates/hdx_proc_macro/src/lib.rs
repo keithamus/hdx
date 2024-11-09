@@ -34,7 +34,7 @@ pub fn initial(args: TokenStream, input: TokenStream) -> TokenStream {
 		|| args_string == "\"See individual properties\""
 		// https://github.com/w3c/csswg-drafts/pull/11108/files
 		|| args_string == "\"N/A (see individual properties)\""
-		|| args_string.starts_with("Same as")
+		|| args_string.starts_with("\"Same as")
 	{
 		StrWrapped(initial::Args::Individual)
 	} else {

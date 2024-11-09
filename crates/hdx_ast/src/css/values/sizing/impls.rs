@@ -1,6 +1,20 @@
 pub(crate) use crate::traits::StyleValue;
 pub(crate) use hdx_proc_macro::*;
 
+use super::types::LengthPercentage;
+use super::{Width, MinWidth};
+
+// shortcuts for logical properties to resolve to 0
+impl Width {
+	#[allow(non_upper_case_globals)]
+	pub const Zero: Width = Width::LengthPercentage(LengthPercentage::Zero);
+}
+
+impl MinWidth {
+	#[allow(non_upper_case_globals)]
+	pub const Zero: MinWidth = MinWidth::LengthPercentage(LengthPercentage::Zero);
+}
+
 #[cfg(test)]
 mod tests {
 	use super::super::*;
