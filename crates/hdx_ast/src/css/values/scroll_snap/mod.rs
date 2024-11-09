@@ -238,25 +238,25 @@ pub struct ScrollMarginBlockEnd;
 #[animation_type("by computed value type")]
 pub struct ScrollMarginInlineEnd;
 
-// // https://drafts.csswg.org/css-scroll-snap-2/#scroll-margin-block
-// #[value(" <length>{1,2} ")]
-// #[initial("0")]
-// #[applies_to("all elements")]
-// #[inherited("no")]
-// #[percentages("n/a")]
-// #[canonical_order("per grammar")]
-// #[animation_type("by computed value type")]
-// pub struct ScrollMarginBlock;
+// https://drafts.csswg.org/css-scroll-snap-2/#scroll-margin-block
+#[value(" <length>{1,2} ")]
+#[initial("0")]
+#[applies_to("all elements")]
+#[inherited("no")]
+#[percentages("n/a")]
+#[canonical_order("per grammar")]
+#[animation_type("by computed value type")]
+pub struct ScrollMarginBlock;
 
-// // https://drafts.csswg.org/css-scroll-snap-2/#scroll-margin-inline
-// #[value(" <length>{1,2} ")]
-// #[initial("0")]
-// #[applies_to("all elements")]
-// #[inherited("no")]
-// #[percentages("n/a")]
-// #[canonical_order("per grammar")]
-// #[animation_type("by computed value type")]
-// pub struct ScrollMarginInline;
+// https://drafts.csswg.org/css-scroll-snap-2/#scroll-margin-inline
+#[value(" <length>{1,2} ")]
+#[initial("0")]
+#[applies_to("all elements")]
+#[inherited("no")]
+#[percentages("n/a")]
+#[canonical_order("per grammar")]
+#[animation_type("by computed value type")]
+pub struct ScrollMarginInline;
 
 // https://drafts.csswg.org/css-scroll-snap-2/#scroll-start-target
 #[value(" none | auto ")]
