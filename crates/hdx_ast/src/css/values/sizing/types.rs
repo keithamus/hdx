@@ -1,4 +1,4 @@
-use hdx_parser::{Parse, Parser, Peek, Result as ParserResult, Token};
+use hdx_parser::{Parse, Parser, Peek, Result as ParserResult};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 
 pub use crate::css::units::*;
