@@ -68,15 +68,15 @@ pub struct FlexGrow;
 #[animation_type("number")]
 pub struct FlexShrink;
 
-// // https://drafts.csswg.org/css-flexbox-1/#flex-basis
-// #[value(" content | <'width'> ")]
-// #[initial("auto")]
-// #[applies_to("flex items")]
-// #[inherited("no")]
-// #[percentages("relative to the flex container’s inner main size")]
-// #[canonical_order("per grammar")]
-// #[animation_type("by computed value type")]
-// pub enum FlexBasis {}
+// https://drafts.csswg.org/css-flexbox-1/#flex-basis
+#[value(" content | <'width'> ")]
+#[initial("auto")]
+#[applies_to("flex items")]
+#[inherited("no")]
+#[percentages("relative to the flex container’s inner main size")]
+#[canonical_order("per grammar")]
+#[animation_type("by computed value type")]
+pub enum FlexBasis {}
 
 // https://drafts.csswg.org/css-flexbox-1/#justify-content
 #[value(" flex-start | flex-end | center | space-between | space-around ")]
