@@ -38,15 +38,15 @@ use impls::*;
 // #[animation_type("discrete")]
 // pub enum StringSet {}
 
-// // https://drafts.csswg.org/css-content-3/#bookmark-level
-// #[value(" none | <integer [1,∞]> ")]
-// #[initial("none")]
-// #[applies_to("all elements")]
-// #[inherited("no")]
-// #[percentages("n/a")]
-// #[canonical_order("per grammar")]
-// #[animation_type("by computed value type")]
-// pub enum BookmarkLevel {}
+// https://drafts.csswg.org/css-content-3/#bookmark-level
+#[value(" none | <integer [1,∞]> ")]
+#[initial("none")]
+#[applies_to("all elements")]
+#[inherited("no")]
+#[percentages("n/a")]
+#[canonical_order("per grammar")]
+#[animation_type("by computed value type")]
+pub enum BookmarkLevel {}
 
 // // https://drafts.csswg.org/css-content-3/#bookmark-label
 // #[value(" <content-list> ")]
