@@ -84,7 +84,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           if-no-files-found: error
-          name: binaries
+          name: binary-${{ matrix.code-target }}
           path: |
             *.zip
             *.tar.gz
