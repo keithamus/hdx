@@ -1,6 +1,6 @@
 use hdx_atom::Atom;
 use hdx_lexer::{Kind, Spanned};
-use smallvec::{SmallVec, smallvec};
+use smallvec::{smallvec, SmallVec};
 
 use crate::{diagnostics, discard, parser::Parser, Delim, Result, State, Token, Vec};
 
@@ -79,59 +79,56 @@ pub trait QualifiedRule<'a>: Sized + Parse<'a> {
 	// https://drafts.csswg.org/css-syntax-3/#consume-a-qualified-rule
 	fn parse_qualified_rule(parser: &mut Parser<'a>) -> Result<(Spanned<Self::Prelude>, Spanned<Self::Block>)> {
 		// Let rule be a new qualified rule with its prelude, declarations, and child rules all initially set to empty lists.
-		let mut prelude = None;
 
 		// Process input:
-		loop {
-			// <EOF-token>
-			// stop token (if passed)
-			//   This is a parse error. Return nothing.
-			if parser.at_end() {
-				Err(diagnostics::UnexpectedEnd())?
-			}
-			// <}-token>
-			//   This is a parse error. If nested is true, return nothing. Otherwise, consume a token and append the result to rule’s prelude.
-			if parser.is(State::Nested) {
-				if let Some(token) = parser.peek::<Token![RightCurly]>() {
-					Err(diagnostics::UnexpectedCloseCurly(token.span()))?;
-				}
-			}
 
-			// <{-token>
-			//	If the first two non-<whitespace-token> values of rule’s prelude are an <ident-token> whose value starts with "--" followed by a <colon-token>, then:
-			if let Some(token) = parser.peek::<Token![Ident]>() {
-				if prelude.is_none() && token.is_dashed_ident() {
-					let checkpoint = parser.checkpoint();
-					parser.hop(token);
-					if let Some(colon_token) = parser.peek::<Delim![:]>() {
-						parser.hop(colon_token);
-						if parser.peek::<Token![LeftCurly]>().is_some() {
-							if parser.is(State::Nested) {
-								// If nested is true, consume the remnants of a bad declaration from input, with nested set to true, and return nothing.
-								parser.rewind(checkpoint);
-								todo!();
-							} else {
-								// If nested is false, consume a block from input, and return nothing.
-								parser.rewind(checkpoint);
-								todo!();
-							}
-						} else {
-							prelude = Some(Self::parse_prelude(parser)?);
-						}
-					} else {
-						// Otherwise, consume a block from input, and let child rules be the result. If the first item of child rules is a list of declarations, remove it from child rules and assign it to rule’s declarations. If any remaining items of child rules are lists of declarations, replace them with nested declarations rules containing the list as its sole child. Assign child rules to rule’s child rules.
-						todo!();
-					}
-				} else if prelude.is_some() {
-					break;
-				} else {
-					prelude = Some(Self::parse_prelude(parser)?);
-				}
-			} else {
-				break;
+		// <EOF-token>
+		// stop token (if passed)
+		//   This is a parse error. Return nothing.
+		if parser.at_end() {
+			Err(diagnostics::UnexpectedEnd())?
+		}
+		// <}-token>
+		//   This is a parse error. If nested is true, return nothing. Otherwise, consume a token and append the result to rule’s prelude.
+		if parser.is(State::Nested) {
+			if let Some(token) = parser.peek::<Token![RightCurly]>() {
+				Err(diagnostics::UnexpectedCloseCurly(token.span()))?;
 			}
 		}
-		if let Some(prelude) = prelude {
+
+		let mut potential_custom = false;
+
+		// <{-token>
+		//	If the first two non-<whitespace-token> values of rule’s prelude are an <ident-token> whose value starts with "--" followed by a <colon-token>....
+		let checkpoint = parser.checkpoint();
+		if let Some(token) = parser.peek::<Token![Ident]>() {
+			if token.is_dashed_ident() {
+				parser.hop(token);
+				potential_custom = parser.peek::<Delim![:]>().is_some();
+				parser.rewind(checkpoint);
+			}
+		}
+
+		let prelude = Self::parse_prelude(parser);
+
+		// <{-token>
+		//	If the first two non-<whitespace-token> values of rule’s prelude are an <ident-token> whose value starts with "--" followed by a <colon-token>, then:
+		if potential_custom && parser.is(State::Nested) {
+			// If nested is true, consume the remnants of a bad declaration from input, with nested set to true, and return nothing.
+			parser.rewind(checkpoint);
+			todo!();
+		} else if potential_custom {
+			// If nested is false, consume a block from input, and return nothing.
+			parser.rewind(checkpoint);
+			todo!();
+		}
+		// Otherwise, consume a block from input, and let child rules be the result.
+		// If the first item of child rules is a list of declarations,
+		// remove it from child rules and assign it to rule’s declarations.
+		// If any remaining items of child rules are lists of declarations,
+		// replace them with nested declarations rules containing the list as its sole child.
+		// Assign child rules to rule’s child rules.
+		if let Ok(prelude) = prelude {
 			Ok((prelude, Self::parse_block(parser)?))
 		} else {
 			let token = parser.peek::<Token![Any]>().unwrap();
@@ -198,7 +195,7 @@ pub trait ConditionalAtRule<'a>: Sized + Parse<'a> {
 	fn create_not(features: Self) -> Self;
 	fn create_and(features: SmallVec<[Self::Feature; 2]>) -> Self;
 	fn create_or(features: SmallVec<[Self::Feature; 2]>) -> Self;
-		
+
 	fn parse_condition(parser: &mut Parser<'a>) -> Result<Self> {
 		// handle double parens
 		let mut wrapped = true;
@@ -216,7 +213,7 @@ pub trait ConditionalAtRule<'a>: Sized + Parse<'a> {
 		let mut features = smallvec![];
 		if let Some(feature) = feature {
 			if parser.peek::<Token![Ident]>().is_none() {
-				return Ok(Self::create_is(feature))
+				return Ok(Self::create_is(feature));
 			}
 			features.push(feature);
 		}

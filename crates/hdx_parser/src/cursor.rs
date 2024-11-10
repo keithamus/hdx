@@ -2,6 +2,7 @@ use hdx_lexer::{Include, Kind, LexerCheckpoint, Token};
 
 use crate::Parser;
 
+#[derive(Copy, Clone, PartialEq, Default, Hash)]
 pub struct ParserCheckpoint {
 	checkpoint: LexerCheckpoint,
 	errors_pos: u8,

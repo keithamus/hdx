@@ -29,6 +29,7 @@ pub enum Feature {
 	TokenizeDoubleSlashesAsComments = 0b0001,
 }
 
+#[derive(Copy, Clone, PartialEq, Default, Hash)]
 pub struct LexerCheckpoint(pub(crate) Token);
 
 pub struct Lexer<'a> {

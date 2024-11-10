@@ -163,6 +163,7 @@ mod tests {
 		assert_parse!(StyleSheet, "body {\n}\n");
 		assert_parse!(StyleSheet, "body, tr:nth-child(n-1) {\n}\n");
 		assert_parse!(StyleSheet, "body {\n\twidth: 1px;\n}\n");
+		assert_parse!(StyleSheet, "body {\n\twidth: 1px;\n}\n.a {\n\twidth: 2px;\n}\n");
 	}
 
 	#[test]
