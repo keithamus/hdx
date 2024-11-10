@@ -1,11 +1,14 @@
-const css = require("eleventy-postcss-extension");
 const syntaxHighlight = require("@11ty/eleventy-plugin-syntaxhighlight");
 const pluginRss = require("@11ty/eleventy-plugin-rss");
 const generateSocialImages = require("@manustays/eleventy-plugin-generate-social-images");
 const glob = require("glob");
+const fs = require("fs");
 const htmlmin = require("html-minifier");
 const { build } = require("esbuild");
+const postcss = require("postcss");
+const postcssConfig = require("./postcss.config.js");
 const { wasmLoader } = require("esbuild-plugin-wasm");
+const { css } = require("@codemirror/lang-css");
 
 const buildJS = (config = {}) => {
 	return build({
@@ -21,18 +24,35 @@ const buildJS = (config = {}) => {
 	});
 };
 
+const buildCSS = (config = {}) => {
+	for (const file of config.entryPoints) {
+		const css = fs.readFileSync(file, "utf-8");
+		let res = postcss(postcssConfig.plugins).process(css, { from: file, to: `_site/${file}` }).then(res => {
+			fs.mkdirSync('_site/css', { recursive: true });
+			fs.writeFileSync(`_site/${file}`, res.css);
+		});
+	}
+};
+
 module.exports = (eleventyConfig) => {
 	eleventyConfig.addPlugin(css);
 
-	const entryPoints = glob.sync("src/*.[tj]s");
+	const jsEntryPoints = glob.sync("src/*.[tj]s");
 	eleventyConfig.addWatchTarget("src/*.[tj]s");
 
-	buildJS({ entryPoints });
+	const cssEntryPoints = glob.sync("css/*.css");
+	eleventyConfig.addWatchTarget("css/*.css");
+
+	buildJS({ entryPoints: jsEntryPoints });
+	buildCSS({ entryPoints: cssEntryPoints });
 
 	eleventyConfig.on("beforeWatch", (changedFiles) => {
 		// Run me before --watch or --serve re-runs
-		if (changedFiles.some((watchPath) => entryPoints.includes(watchPath))) {
-			buildJS({ entryPoints });
+		if (changedFiles.some((watchPath) => jsEntryPoints.includes(watchPath))) {
+			buildJS({ entryPoints: jsEntryPoints });
+		}
+		if (changedFiles.some((watchPath) => cssEntryPoints.includes(watchPath))) {
+			buildCSS({ entryPoints: cssEntryPoints });
 		}
 	});
 
@@ -66,6 +86,7 @@ module.exports = (eleventyConfig) => {
 	eleventyConfig.addLiquidFilter("date_to_rfc822", pluginRss.dateToRfc822);
 
 	eleventyConfig.ignores.add("js");
+	eleventyConfig.ignores.add("css");
 	eleventyConfig.ignores.add("fonts");
 	eleventyConfig.ignores.add("images");
 	eleventyConfig.ignores.add("examples");
