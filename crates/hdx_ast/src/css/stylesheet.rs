@@ -98,13 +98,14 @@ apply_rules!(rule);
 
 impl<'a> Parse<'a> for Rule<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
+		let checkpoint = parser.checkpoint();
 		if let Some(token) = parser.peek::<Token![AtKeyword]>() {
 			macro_rules! parse_rule {
 				( $(
 					$name: ident$(<$a: lifetime>)?: $atom: pat,
 				)+ ) => {
 					match parser.parse_atom_lower(token) {
-						$($atom => rules::$name::try_parse(parser).map(Self::$name),)+
+						$($atom => rules::$name::parse(parser).map(Self::$name),)+
 						_ => {
 							let rule = AtRule::parse_spanned(parser)?;
 							Ok(Self::UnknownAt(rule.node))
@@ -112,10 +113,18 @@ impl<'a> Parse<'a> for Rule<'a> {
 					}
 				}
 			}
-			return apply_rules!(parse_rule).or_else(|_| AtRule::parse(parser).map(Self::UnknownAt));
+			if let Ok(rule) = apply_rules!(parse_rule) {
+				Ok(rule)
+			} else {
+				parser.rewind(checkpoint);
+				AtRule::parse(parser).map(Self::UnknownAt)
+			}
+		} else if let Ok(rule) = StyleRule::parse(parser) {
+			Ok(Self::Style(rule))
+		} else {
+			parser.rewind(checkpoint);
+			QualifiedRule::parse(parser).map(Self::Unknown)
 		}
-		// "Consume a qualified rule from input. If anything is returned, append it to rules."
-		StyleRule::try_parse(parser).map(Self::Style).or_else(|_| QualifiedRule::parse(parser).map(Self::Unknown))
 	}
 }
 
