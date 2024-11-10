@@ -1,5 +1,5 @@
 use hdx_atom::atom;
-use hdx_lexer::Include;
+use hdx_lexer::{Include, Kind};
 use hdx_parser::{diagnostics, Parse, Parser, Result as ParserResult, Token};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 
@@ -12,15 +12,6 @@ impl<'a> Parse<'a> for Nth {
 		if let Some(token) = parser.peek::<Token![Number]>() {
 			parser.hop(token);
 			return Ok(Self(0, parser.parse_number(token) as i32));
-		}
-
-		let mut b_sign = 0;
-		let a = if let Some(token) = parser.peek::<Token![Dimension]>() {
-			if token.is_float() {
-				Err(diagnostics::ExpectedInt(parser.parse_number(token), token.span()))?
-			}
-			parser.hop(token);
-			parser.parse_number(token) as i32
 		} else if let Some(token) = parser.peek::<Token![Ident]>() {
 			match parser.parse_atom_lower(token) {
 				atom!("even") => {
@@ -31,101 +22,85 @@ impl<'a> Parse<'a> for Nth {
 					parser.hop(token);
 					return Ok(Self(2, 1));
 				}
-				atom!("-n") => {
-					parser.hop(token);
-					-1
-				}
-				atom!("n") => {
-					parser.hop(token);
-					1
-				}
-				atom!("n-") => {
-					parser.hop(token);
-					b_sign = -1;
-					1
-				}
-				anb => {
-					if anb.starts_with('-') {
-						-1
-					} else {
-						1
-					}
-				}
+				_ => {}
 			}
-		} else {
-			parser.parse::<Token![Delim]>()?;
-			if let Some(next) = parser.peek_with::<Token![Ident]>(Include::Whitespace) {
-				let anb = parser.parse_atom_lower(next);
-				if !anb.starts_with('n') {
-					Err(diagnostics::UnexpectedIdent(anb, next.span()))?
-				}
-				1
-			} else {
-				let token = parser.peek::<Token![Any]>().unwrap();
-				Err(diagnostics::ExpectedIdent(token, token.span()))?
-			}
-		};
-		let mut token = None;
-		if let Some(t) = parser.peek::<Token![Ident]>() {
-			parser.hop(t);
-			token = Some(t);
-		} else if let Some(t) = parser.peek::<Token![Dimension]>() {
-			parser.hop(t);
-			token = Some(t);
 		}
-		let b = if let Some(token) = token {
-			let str = parser.parse_str(token);
-			let mut chars = str.chars();
-			if str.starts_with('-') {
-				if a == -1 {
-					chars.next();
+
+		let a;
+		let mut b_sign = 0;
+		let mut token = *parser.parse::<Token![Any]>()?;
+		if matches!(token.char(), Some('+')) {
+			token = *parser.parse_with::<Token![Any]>(Include::Whitespace)?;
+		}
+		if !matches!(token.kind(), Kind::Number | Kind::Dimension | Kind::Ident) {
+			Err(diagnostics::Unexpected(token, token.span()))?
+		}
+		if token.is_float() {
+			Err(diagnostics::ExpectedInt(parser.parse_number(token), token.span()))?
+		}
+		match parser.parse_atom(token) {
+			atom!("-n") | atom!("-N") => {
+				if token.is_int() {
+					Err(diagnostics::Unexpected(token, token.span()))?
+				}
+				a = -1;
+			}
+			atom!("n") | atom!("N") => {
+				a = if token.is_int() { parser.parse_number(token) as i32 } else { 1 };
+			}
+			atom!("n-") | atom!("N-") => {
+				b_sign = -1;
+				a = if token.is_int() { parser.parse_number(token) as i32 } else { 1 };
+			}
+			anb => {
+				let mut chars = anb.chars();
+				let mut c = chars.next();
+				a = if token.is_int() {
+					parser.parse_number(token) as i32
+				} else if matches!(c, Some('-')) {
+					c = chars.next();
+					-1
 				} else {
+					1
+				};
+				if !matches!(c, Some('n') | Some('N')) {
+					Err(diagnostics::Unexpected(token, token.span()))?
+				}
+				if let Ok(b) = chars.as_str().parse::<i32>() {
+					return Ok(Self(a, b));
+				} else if !chars.as_str().is_empty() {
 					Err(diagnostics::Unexpected(token, token.span()))?
 				}
 			}
-			if !matches!(chars.next(), Some('n') | Some('N')) {
-				Err(diagnostics::UnexpectedIdent(parser.parse_atom(token), token.span()))?
+		}
+
+		if b_sign == 0 {
+			if let Some(token) = parser.peek::<Token![+]>() {
+				b_sign = 1;
+				parser.hop(token);
+			} else if let Some(token) = parser.peek::<Token![-]>() {
+				b_sign = -1;
+				parser.hop(token);
 			}
-			if let Ok(i) = chars.as_str().parse::<i32>() {
-				Some(i)
-			} else if chars.as_str() != "" {
-				Err(diagnostics::UnexpectedIdent(parser.parse_atom(token), token.span()))?
-			} else {
-				None
-			}
-		} else {
-			None
-		};
-		if let Some(token) = parser.peek::<Token![Number]>() {
-			if b.is_some() || token.is_float() || (!token.has_sign() || b_sign == 0) {
+		}
+
+		let b = if let Some(token) = parser.peek::<Token![Number]>() {
+			if token.is_float() {
 				Err(diagnostics::ExpectedInt(parser.parse_number(token), token.span()))?
 			}
-			parser.hop(token);
+			if token.has_sign() && b_sign != 0 {
+				Err(diagnostics::ExpectedUnsigned(parser.parse_number(token), token.span()))?
+			}
 			if b_sign == 0 {
-				b_sign = 1
+				b_sign = 1;
 			}
 			let i = parser.parse_number(token);
-			return Ok(Self(a, (i as i32) * b_sign));
-		}
-		if let Some(token) = parser.peek::<Token![Delim]>() {
-			if b.is_none() {
-				let char = token.char().unwrap();
-				if char == '-' {
-					b_sign = -1;
-				} else if char == '+' {
-					b_sign = 1;
-				} else {
-					Err(diagnostics::Unexpected(token, token.span()))?
-				}
-			}
-			let num_token = *parser.parse::<Token![Number]>()?;
-			if num_token.is_float() || num_token.has_sign() {
-				Err(diagnostics::ExpectedInt(parser.parse_number(num_token), num_token.span()))?
-			}
-			let i = parser.parse_number(token);
-			return Ok(Self(a, (i as i32) * b_sign));
-		}
-		Ok(Self(a, b.unwrap_or(0)))
+			parser.hop(token);
+			(i.abs() as i32) * b_sign
+		} else {
+			0
+		};
+		Ok(Self(a, b))
 	}
 }
 
@@ -159,9 +134,12 @@ mod tests {
 	#[test]
 	fn test_writes() {
 		assert_parse!(Nth, "odd");
+		assert_parse!(Nth, "ODD", "odd");
+		assert_parse!(Nth, "eVeN", "even");
 		assert_parse!(Nth, "5");
 		assert_parse!(Nth, "n");
 		assert_parse!(Nth, "+n", "n");
+		assert_parse!(Nth, "+N", "n");
 		assert_parse!(Nth, "-n");
 		assert_parse!(Nth, "+5", "5");
 		assert_parse!(Nth, "5n");
@@ -172,6 +150,7 @@ mod tests {
 		assert_parse!(Nth, "+n-4", "n-4");
 		assert_parse!(Nth, "+n+4", "n+4");
 		assert_parse!(Nth, "+n-123456789", "n-123456789");
+		assert_parse!(Nth, "2n", "even");
 		assert_parse!(Nth, "2n+1", "odd");
 		assert_parse!(Nth, "+2n+1", "odd");
 		assert_parse!(Nth, "-2n+1");

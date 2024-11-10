@@ -146,11 +146,7 @@ impl<'a> Lexer<'a> {
 				return unit.to_atom();
 			}
 		}
-		let atom = self.parse_atom(token, allocator);
-		if !token.is_lower_case() {
-			return atom.to_ascii_lowercase();
-		}
-		atom
+		Atom::from(self.parse_str(token, allocator).to_ascii_lowercase())
 	}
 
 	#[inline]
