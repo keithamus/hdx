@@ -1,10 +1,12 @@
+use hdx_atom::{atom, Atom, Atomizable};
 use hdx_derive::{Atomizable, Parsable};
 use hdx_lexer::Span;
-use smallvec::{smallvec, SmallVec};
-
-use hdx_atom::{atom, Atom, Atomizable};
-use hdx_parser::{diagnostics, discard, AtRule, Parse, Parser, Result as ParserResult, RuleList, Spanned, Token, Vec};
+use hdx_parser::{
+	diagnostics, discard, AtRule, ConditionalAtRule, Parse, Parser, Result as ParserResult, RuleList, Spanned, Token,
+	Vec,
+};
 use hdx_writer::{write_css, write_list, CssWriter, OutputOption, Result as WriterResult, WriteCss};
+use smallvec::{smallvec, SmallVec};
 
 use crate::css::stylesheet::Rule;
 
@@ -14,8 +16,6 @@ use features::*;
 mod kw {
 	use hdx_parser::custom_keyword;
 	custom_keyword!(And, atom!("and"));
-	custom_keyword!(Or, atom!("or"));
-	custom_keyword!(Not, atom!("not"));
 }
 
 // https://drafts.csswg.org/mediaqueries-4/
@@ -195,9 +195,12 @@ impl<'a> WriteCss<'a> for MediaQuery {
 		}
 		if let Some(condition) = &self.condition {
 			if self.media_type.is_some() {
-				write_css!(sink, atom!("and"), ' ');
+				write_css!(sink, atom!("and"), ' ', condition);
+			} else if matches!(self.precondition, Some(MediaPreCondition::Not)) {
+				write_css!(sink, '(', condition, ')');
+			} else {
+				write_css!(sink, condition);
 			}
-			write_css!(sink, condition);
 		}
 		Ok(())
 	}
@@ -250,59 +253,30 @@ impl<'a> WriteCss<'a> for MediaType {
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", content = "value"))]
 pub enum MediaCondition {
 	Is(MediaFeature),
-	Not(MediaFeature),
-	And(SmallVec<[MediaFeature; 1]>),
-	Or(SmallVec<[MediaFeature; 1]>),
+	Not(Box<MediaCondition>),
+	And(SmallVec<[MediaFeature; 2]>),
+	Or(SmallVec<[MediaFeature; 2]>),
+}
+
+impl<'a> ConditionalAtRule<'a> for MediaCondition {
+	type Feature = MediaFeature;
+	fn create_is(feature: MediaFeature) -> Self {
+		Self::Is(feature)
+	}
+	fn create_not(condition: MediaCondition) -> Self {
+		Self::Not(Box::new(condition))
+	}
+	fn create_and(feature: SmallVec<[MediaFeature; 2]>) -> Self {
+		Self::And(feature)
+	}
+	fn create_or(feature: SmallVec<[MediaFeature; 2]>) -> Self {
+		Self::Or(feature)
+	}
 }
 
 impl<'a> Parse<'a> for MediaCondition {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		// handle double parens
-		let mut wrapped = true;
-		let feature = if let Some(token) = parser.peek::<Token![LeftParen]>() {
-			let checkpoint = parser.checkpoint();
-			parser.hop(token);
-			if parser.peek::<Token![LeftParen]>().is_none() {
-				wrapped = false;
-				parser.rewind(checkpoint);
-			}
-			Some(parser.parse::<MediaFeature>()?)
-		} else {
-			None
-		};
-		let mut features = smallvec![];
-		if let Some(feature) = feature {
-			if parser.peek::<Token![Ident]>().is_none() {
-				return Ok(Self::Is(feature));
-			}
-			features.push(feature);
-		}
-		if parser.peek::<kw::And>().is_some() {
-			loop {
-				parser.parse::<kw::And>()?;
-				features.push(parser.parse::<MediaFeature>()?);
-				if parser.peek::<kw::And>().is_none() {
-					if wrapped {
-						parser.parse::<Token![RightParen]>()?;
-					}
-					return Ok(Self::And(features));
-				}
-			}
-		} else if parser.peek::<kw::Or>().is_some() {
-			loop {
-				parser.parse::<kw::Or>()?;
-				features.push(parser.parse::<MediaFeature>()?);
-				if parser.peek::<kw::Or>().is_none() {
-					if wrapped {
-						parser.parse::<Token![RightParen]>()?;
-					}
-					return Ok(Self::Or(features));
-				}
-			}
-		} else {
-			parser.parse::<kw::Not>()?;
-			Ok(Self::Not(MediaFeature::parse(parser)?))
-		}
+		Self::parse_condition(parser)
 	}
 }
 
@@ -311,9 +285,8 @@ impl<'a> WriteCss<'a> for MediaCondition {
 		match self {
 			Self::Is(feature) => feature.write_css(sink),
 			Self::Not(feature) => {
-				atom!("not").write_css(sink)?;
-				sink.write_whitespace()?;
-				feature.write_css(sink)
+				write_css!(sink, atom!("not"), (), '(', feature, ')');
+				Ok(())
 			}
 			Self::And(features) => {
 				let mut iter = features.iter().peekable();
@@ -366,25 +339,21 @@ impl<'a> Parse<'a> for MediaFeature {
 				( $($name: ident($typ: ident): atom!($atom: tt)$(| $alts:pat)*,)+) => {
 					// Only peek at the token as the underlying media feature parser needs to parse the leading atom.
 					{
-						match dbg!(parser.parse_atom_lower(token)) {
+						match parser.parse_atom_lower(token) {
 							$(atom!($atom)$(| $alts)* => $typ::parse(parser).map(Self::$name),)+
 							atom => Err(diagnostics::UnexpectedIdent(atom, token.span()))?,
 						}
 					}
 				}
 			}
-			let value = apply_medias!(match_media)
-				.or_else(|err| {
-					dbg!(&err);
-					parser.rewind(checkpoint);
-					dbg!("trying hack media query");
-					if let Ok(hack) = HackMediaFeature::parse(parser) {
-						Ok(Self::Hack(hack))
-					} else {
-						Err(err)
-					}
-				})?;
-			dbg!(&value);
+			let value = apply_medias!(match_media).or_else(|err| {
+				parser.rewind(checkpoint);
+				if let Ok(hack) = HackMediaFeature::parse(parser) {
+					Ok(Self::Hack(hack))
+				} else {
+					Err(err)
+				}
+			})?;
 			parser.parse::<Token![RightParen]>()?;
 			Ok(value)
 		} else {
@@ -490,10 +459,10 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(Media, 144);
-		assert_size!(MediaQueryList, 96);
-		assert_size!(MediaQuery, 72);
-		assert_size!(MediaCondition, 48);
+		assert_size!(Media, 168);
+		assert_size!(MediaQueryList, 120);
+		assert_size!(MediaQuery, 96);
+		assert_size!(MediaCondition, 72);
 		assert_size!(MediaType, 16);
 	}
 
@@ -508,8 +477,8 @@ mod tests {
 		assert_parse!(MediaQuery, "screen and (orientation: landscape)");
 		assert_parse!(MediaQuery, "(hover) and (pointer)");
 		assert_parse!(MediaQuery, "(hover) or (pointer)");
-		assert_parse!(MediaQuery, "not (hover) and (pointer)");
-		assert_parse!(MediaQuery, "not (hover) or (pointer)");
+		assert_parse!(MediaQuery, "not ((width: 2px) or (width: 3px))");
+		assert_parse!(MediaQuery, "not ((hover) or (pointer))");
 		assert_parse!(MediaQuery, "only (hover) or (pointer)");
 		assert_parse!(Media, "@media print {\n\n}");
 		assert_parse!(Media, "@media print, (prefers-reduced-motion: reduce) {\n\n}");
@@ -518,11 +487,7 @@ mod tests {
 		assert_parse!(Media, "@media (min-width: 1200px) {\n@page {\n}\n}");
 		assert_parse!(Media, "@media (max-width: 575.98px) and (prefers-reduced-motion: reduce) {\n\n}");
 		assert_parse!(Media, "@media only screen and (max-device-width: 800px), only screen and (device-width: 1024px) and (device-height: 600px), only screen and (width: 1280px) and (orientation: landscape), only screen and (device-width: 800px), only screen and (max-width: 767px) {\n\n}");
-		assert_parse!(
-			Media,
-			"@media(grid){a{padding:4px}}",
-			"@media (grid: 0) {\n\ta {\n\t\tpadding: 4px;\n\t}\n}"
-		);
+		assert_parse!(Media, "@media(grid){a{padding:4px}}", "@media (grid: 0) {\n\ta {\n\t\tpadding: 4px;\n\t}\n}");
 		assert_parse!(
 			Media,
 			"@media(grid){a{color-scheme:light}}",

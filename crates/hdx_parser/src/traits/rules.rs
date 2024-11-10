@@ -1,5 +1,6 @@
 use hdx_atom::Atom;
 use hdx_lexer::{Kind, Spanned};
+use smallvec::{SmallVec, smallvec};
 
 use crate::{diagnostics, discard, parser::Parser, Delim, Result, State, Token, Vec};
 
@@ -172,13 +173,78 @@ pub trait DeclarationRuleList<'a>: Sized + Parse<'a> {
 				return Ok((declarations, rules));
 			}
 			if parser.peek::<Token![AtKeyword]>().is_some() {
-				rules.push(Self::AtRule::parse_spanned(parser)?);
+				rules.push(parser.parse_spanned::<Self::AtRule>()?);
 			} else if parser.peek::<Token![Ident]>().is_some() {
-				declarations.push(Self::Declaration::parse_spanned(parser)?);
+				declarations.push(parser.parse_spanned::<Self::Declaration>()?);
 			} else {
 				let token = parser.peek::<Token![Any]>().unwrap();
 				Err(diagnostics::Unexpected(token, token.span()))?;
 			}
+		}
+	}
+}
+
+mod kw {
+	use crate::custom_keyword;
+	custom_keyword!(And, atom!("and"));
+	custom_keyword!(Or, atom!("or"));
+	custom_keyword!(Not, atom!("not"));
+}
+
+pub trait ConditionalAtRule<'a>: Sized + Parse<'a> {
+	type Feature: Sized + Parse<'a>;
+
+	fn create_is(feature: Self::Feature) -> Self;
+	fn create_not(features: Self) -> Self;
+	fn create_and(features: SmallVec<[Self::Feature; 2]>) -> Self;
+	fn create_or(features: SmallVec<[Self::Feature; 2]>) -> Self;
+		
+	fn parse_condition(parser: &mut Parser<'a>) -> Result<Self> {
+		// handle double parens
+		let mut wrapped = true;
+		let feature = if let Some(token) = parser.peek::<Token![LeftParen]>() {
+			let checkpoint = parser.checkpoint();
+			parser.hop(token);
+			if parser.peek::<Token![LeftParen]>().is_none() {
+				wrapped = false;
+				parser.rewind(checkpoint);
+			}
+			Some(parser.parse::<Self::Feature>()?)
+		} else {
+			None
+		};
+		let mut features = smallvec![];
+		if let Some(feature) = feature {
+			if parser.peek::<Token![Ident]>().is_none() {
+				return Ok(Self::create_is(feature))
+			}
+			features.push(feature);
+		}
+		if parser.peek::<kw::And>().is_some() {
+			loop {
+				parser.parse::<kw::And>()?;
+				features.push(parser.parse::<Self::Feature>()?);
+				if parser.peek::<kw::And>().is_none() {
+					if wrapped {
+						parser.parse::<Token![RightParen]>()?;
+					}
+					return Ok(Self::create_and(features));
+				}
+			}
+		} else if parser.peek::<kw::Or>().is_some() {
+			loop {
+				parser.parse::<kw::Or>()?;
+				features.push(parser.parse::<Self::Feature>()?);
+				if parser.peek::<kw::Or>().is_none() {
+					if wrapped {
+						parser.parse::<Token![RightParen]>()?;
+					}
+					return Ok(Self::create_or(features));
+				}
+			}
+		} else {
+			parser.parse::<kw::Not>()?;
+			Ok(Self::create_not(parser.parse::<Self>()?))
 		}
 	}
 }
