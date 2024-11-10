@@ -193,14 +193,11 @@ pub enum SupportsFeature<'a> {
 
 impl<'a> Parse<'a> for SupportsFeature<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		dbg!(parser.peek::<Token![Any]>());
 		let parens = parser.parse_if_peek::<Token![LeftParen]>()?.is_some();
-		dbg!(parser.peek::<Token![Any]>());
 		if let Some(token) = parser.peek::<Token![Function]>() {
 			match parser.parse_atom_lower(token) {
 				atom!("selector") => {
 					parser.hop(token);
-					dbg!("SELECTOR");
 					let selector = parser.parse::<ComplexSelector>()?;
 					// End function
 					parser.parse::<Token![RightParen]>()?;
