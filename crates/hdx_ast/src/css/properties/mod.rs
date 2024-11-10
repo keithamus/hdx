@@ -22,7 +22,7 @@ impl<'a> WriteCss<'a> for Custom<'a> {
 
 impl<'a> Parse<'a> for Custom<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let old_state = parser.set_state(State::StopOnSemicolon);
+		let old_state = parser.set_state(State::StopOnSemicolon | State::Nested);
 		parser
 			.parse::<ComponentValues>()
 			.inspect_err(|_| {

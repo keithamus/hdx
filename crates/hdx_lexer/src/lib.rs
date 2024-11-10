@@ -32,6 +32,12 @@ pub enum Feature {
 #[derive(Copy, Clone, PartialEq, Default, Hash)]
 pub struct LexerCheckpoint(pub(crate) Token);
 
+impl LexerCheckpoint {
+	pub fn span(&self) -> Span {
+		self.0.span()
+	}
+}
+
 pub struct Lexer<'a> {
 	source: &'a str,
 	current_token: Token,

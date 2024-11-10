@@ -384,9 +384,48 @@ impl<'a> Parse<'a> for QualifiedRule<'a> {
 	}
 }
 
+pub struct BadDeclaration;
+// https://drafts.csswg.org/css-syntax-3/#consume-the-remnants-of-a-bad-declaration
+impl<'a> Parse<'a> for BadDeclaration {
+	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
+		// To consume the remnants of a bad declaration from a token stream input, given a bool nested:
+		//
+		// Process input:
+		loop {
+			let token = parser.peek::<Token![Any]>().unwrap();
+			dbg!(parser.at_end(), token);
+			//
+			// <eof-token>
+			// <semicolon-token>
+			//
+			//     Discard a token from input, and return nothing.
+			if parser.at_end() || token.kind() == Kind::Semicolon {
+				parser.hop(token);
+				return Ok(Self);
+			}
+			// <}-token>
+			//
+			//     If nested is true, return nothing. Otherwise, discard a token.
+			if token.kind() == Kind::RightCurly {
+				if parser.is(State::Nested) {
+					return Ok(Self);
+				} else {
+					parser.hop(token);
+				}
+			}
+			// anything else
+			//
+			//     Consume a component value from input, and do nothing.
+			//
+			parser.parse::<ComponentValue>()?;
+		}
+	}
+}
+
 impl<'a> QualifiedRuleTrait<'a> for QualifiedRule<'a> {
 	type Block = Block<'a>;
 	type Prelude = ComponentValues<'a>;
+	type BadDeclaration = BadDeclaration;
 }
 
 impl<'a> WriteCss<'a> for QualifiedRule<'a> {

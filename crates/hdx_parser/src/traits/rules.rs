@@ -1,5 +1,5 @@
 use hdx_atom::Atom;
-use hdx_lexer::{Kind, Spanned};
+use hdx_lexer::{Kind, Span, Spanned};
 use smallvec::{smallvec, SmallVec};
 
 use crate::{diagnostics, discard, parser::Parser, Delim, Result, State, Token, Vec};
@@ -62,18 +62,31 @@ pub trait QualifiedRule<'a>: Sized + Parse<'a> {
 	type Prelude: Parse<'a>;
 	type Block: Parse<'a>;
 
+	// QualifiedRules must be able to consume a bad declaration, for when
+	// a custom property like declaration is encountered.
+	type BadDeclaration: Parse<'a>;
+
 	// QualifiedRules must have a prelude, consequently parse_prelude must be
 	// implemented.
 	// parse_prelude is called right away, so could start with any token.
 	fn parse_prelude(parser: &mut Parser<'a>) -> Result<Spanned<Self::Prelude>> {
-		Self::Prelude::parse_spanned(parser)
+		parser.parse_spanned::<Self::Prelude>()
 	}
 
 	// QualifiedRules must have a block, consequently parse_prelude must be
 	// implemented.
 	// parse_block will always start with a {-token.
 	fn parse_block(parser: &mut Parser<'a>) -> Result<Spanned<Self::Block>> {
-		Self::Block::parse_spanned(parser)
+		parser.parse_spanned::<Self::Block>()
+	}
+
+	// QualifiedRules must be able to consume a block from their input when encountering
+	// a custom property like declaration that doesn't end but opens a `{` block. This
+	// is implemented as parsing the existing block as that' simplifies downstream logic
+	// but consumers of this trait can instead opt to implement an optimised version of
+	// this which doesn't build up an AST and just throws away tokens.
+	fn consume_block(parser: &mut Parser<'a>) {
+		parser.parse::<Self::Block>().ok();
 	}
 
 	// https://drafts.csswg.org/css-syntax-3/#consume-a-qualified-rule
@@ -96,32 +109,38 @@ pub trait QualifiedRule<'a>: Sized + Parse<'a> {
 			}
 		}
 
-		let mut potential_custom = false;
-
 		// <{-token>
-		//	If the first two non-<whitespace-token> values of rule’s prelude are an <ident-token> whose value starts with "--" followed by a <colon-token>....
+		//	If the first two non-<whitespace-token> values of rule’s prelude are an <ident-token> whose value starts with "--" followed by a <colon-token>, then:
 		let checkpoint = parser.checkpoint();
 		if let Some(token) = parser.peek::<Token![Ident]>() {
 			if token.is_dashed_ident() {
 				parser.hop(token);
-				potential_custom = parser.peek::<Delim![:]>().is_some();
+				if parser.peek::<Delim![:]>().is_some() {
+					// If nested is true, consume the remnants of a bad declaration from input, with nested set to true, and return nothing.
+					if parser.is(State::Nested) {
+						parser.rewind(checkpoint);
+						parser.parse::<Self::BadDeclaration>()?;
+						let token = parser.peek::<Token![Any]>().unwrap();
+						Err(diagnostics::BadDeclaration(Span {
+							start: checkpoint.span().start,
+							end: token.span().end,
+						}))?;
+					// If nested is false, consume a block from input, and return nothing.
+					} else {
+						Self::consume_block(parser);
+						let token = parser.peek::<Token![Any]>().unwrap();
+						Err(diagnostics::BadDeclaration(Span {
+							start: checkpoint.span().start,
+							end: token.span().end,
+						}))?;
+					}
+				}
 				parser.rewind(checkpoint);
 			}
 		}
 
-		let prelude = Self::parse_prelude(parser);
+		let mut prelude = Self::parse_prelude(parser);
 
-		// <{-token>
-		//	If the first two non-<whitespace-token> values of rule’s prelude are an <ident-token> whose value starts with "--" followed by a <colon-token>, then:
-		if potential_custom && parser.is(State::Nested) {
-			// If nested is true, consume the remnants of a bad declaration from input, with nested set to true, and return nothing.
-			parser.rewind(checkpoint);
-			todo!();
-		} else if potential_custom {
-			// If nested is false, consume a block from input, and return nothing.
-			parser.rewind(checkpoint);
-			todo!();
-		}
 		// Otherwise, consume a block from input, and let child rules be the result.
 		// If the first item of child rules is a list of declarations,
 		// remove it from child rules and assign it to rule’s declarations.

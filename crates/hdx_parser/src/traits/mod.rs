@@ -105,7 +105,9 @@ pub trait StyleSheet<'a>: Sized + Parse<'a> {
 				return Ok(rules);
 			}
 			discard!(parser, CdcOrCdo);
-			rules.push(Self::Rule::parse_spanned(parser)?);
+			if let Ok(rule) = Self::Rule::parse_spanned(parser) {
+				rules.push(rule)
+			}
 		}
 	}
 }

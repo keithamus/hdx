@@ -1,4 +1,7 @@
-use crate::css::{properties::Property, selector::SelectorList};
+use crate::{
+	css::{properties::Property, selector::SelectorList},
+	syntax::BadDeclaration,
+};
 use hdx_derive::Visitable;
 use hdx_parser::{Block, Parse, Parser, QualifiedRule, Result as ParserResult, Spanned, Vec};
 use hdx_writer::{CssWriter, OutputOption, Result as WriterResult, WriteCss};
@@ -24,6 +27,7 @@ impl<'a> Parse<'a> for StyleRule<'a> {
 impl<'a> QualifiedRule<'a> for StyleRule<'a> {
 	type Block = StyleDeclaration<'a>;
 	type Prelude = SelectorList<'a>;
+	type BadDeclaration = BadDeclaration;
 }
 
 impl<'a> WriteCss<'a> for StyleRule<'a> {
@@ -114,6 +118,7 @@ mod tests {
 		assert_parse!(StyleRule, ":nth-child(1) {\n\topacity: 0;\n}");
 		assert_parse!(StyleRule, ".foo {\n\t--bar: (baz);\n}");
 		assert_parse!(StyleRule, ".foo {\n\twidth: calc(1px + (var(--foo)) + 1px);\n}");
+		assert_parse!(StyleRule, ".foo {--bar:1}", ".foo {\n\t--bar: 1;\n}");
 	}
 
 	#[test]

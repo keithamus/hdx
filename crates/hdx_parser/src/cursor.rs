@@ -1,4 +1,4 @@
-use hdx_lexer::{Include, Kind, LexerCheckpoint, Token};
+use hdx_lexer::{Include, Kind, LexerCheckpoint, Span, Token};
 
 use crate::Parser;
 
@@ -6,6 +6,12 @@ use crate::Parser;
 pub struct ParserCheckpoint {
 	checkpoint: LexerCheckpoint,
 	errors_pos: u8,
+}
+
+impl ParserCheckpoint {
+	pub fn span(&self) -> Span {
+		self.checkpoint.span()
+	}
 }
 
 impl<'a> Parser<'a> {
