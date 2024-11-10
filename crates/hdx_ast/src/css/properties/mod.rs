@@ -243,6 +243,7 @@ impl<'a> DeclarationValue<'a> for StyleValue<'a> {
 		if parser.peek::<Computed>().is_some() {
 			return parser.parse::<Computed>().map(Self::Computed);
 		}
+		let checkpoint = parser.checkpoint();
 		macro_rules! parse_declaration_value {
 			( $(
 				$name: ident$(<$a: lifetime>)?: $atom: pat,
@@ -250,28 +251,29 @@ impl<'a> DeclarationValue<'a> for StyleValue<'a> {
 				match name {
 					$(
 						&$atom => {
-							if let Ok(val) = parser.try_parse::<values::$name>() {
+							if let Ok(val) = parser.parse::<values::$name>() {
 								if parser.at_end() {
 									return Ok(Self::$name(val))
-								}
-								if let Some(token) = parser.peek::<Token![Delim]>() {
+								} else if let Some(token) = parser.peek::<Token![Any]>() {
 									if matches!(token.char(), Some(';' | '}' | '!')) {
 										return Ok(Self::$name(val))
 									}
 								}
 							}
-							if parser.peek::<Computed>().is_some() {
-								Self::Computed(Computed::parse(parser)?)
-							} else {
-								Self::Unknown(Unknown::parse(parser)?)
-							}
 						},
 					)+
-					_ => Self::Unknown(Unknown::parse(parser)?)
+					_ => {}
 				}
 			}
 		}
-		Ok(apply_properties!(parse_declaration_value))
+		apply_properties!(parse_declaration_value);
+		if parser.peek::<Computed>().is_some() {
+			parser.rewind(checkpoint);
+			Ok(Self::Computed(Computed::parse(parser)?))
+		} else {
+			parser.rewind(checkpoint);
+			Ok(Self::Unknown(Unknown::parse(parser)?))
+		}
 	}
 }
 
@@ -282,8 +284,8 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(Property, 160);
-		assert_size!(StyleValue, 144);
+		assert_size!(Property, 136);
+		assert_size!(StyleValue, 120);
 	}
 
 	#[test]
