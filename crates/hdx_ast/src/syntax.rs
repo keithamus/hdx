@@ -193,6 +193,7 @@ impl<'a> Parse<'a> for SimpleBlock<'a> {
 			}
 			if let Some(token) = parser.peek::<Token![PairWise]>() {
 				if token.to_pairwise() == pair.to_pairwise() {
+					parser.hop(token);
 					break;
 				}
 			}
