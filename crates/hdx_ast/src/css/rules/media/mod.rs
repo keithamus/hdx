@@ -300,8 +300,7 @@ impl<'a> Parse<'a> for MediaCondition {
 				}
 			}
 		} else {
-			let token = *parser.parse::<kw::Not>()?;
-			parser.hop(token);
+			parser.parse::<kw::Not>()?;
 			Ok(Self::Not(MediaFeature::parse(parser)?))
 		}
 	}
@@ -361,30 +360,37 @@ apply_medias!(media_feature);
 impl<'a> Parse<'a> for MediaFeature {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		parser.parse::<Token![LeftParen]>()?;
-		macro_rules! match_media {
-			( $($name: ident($typ: ident): atom!($atom: tt)$(| $alts:pat)*,)+) => {
-				// Only peek at the token as the underlying media feature parser needs to parse the leading atom.
-				{
-					let token = *parser.parse::<Token![Ident]>()?;
-					match parser.parse_atom_lower(token) {
-						$(atom!($atom)$(| $alts)* => $typ::try_parse(parser).map(Self::$name),)+
-						atom => Err(diagnostics::UnexpectedIdent(atom, token.span()))?,
+		let checkpoint = parser.checkpoint();
+		if let Some(token) = parser.peek::<Token![Ident]>() {
+			macro_rules! match_media {
+				( $($name: ident($typ: ident): atom!($atom: tt)$(| $alts:pat)*,)+) => {
+					// Only peek at the token as the underlying media feature parser needs to parse the leading atom.
+					{
+						match dbg!(parser.parse_atom_lower(token)) {
+							$(atom!($atom)$(| $alts)* => $typ::parse(parser).map(Self::$name),)+
+							atom => Err(diagnostics::UnexpectedIdent(atom, token.span()))?,
+						}
 					}
 				}
 			}
-		}
-		let mut value = apply_medias!(match_media);
-		if value.is_err() {
-			dbg!("trying hack media query");
-			dbg!(parser.peek::<Token![Any]>());
-			if let Ok(hack) = HackMediaFeature::parse(parser) {
-				value = Ok(Self::Hack(hack));
-			}
-		}
-		if value.is_ok() {
+			let value = apply_medias!(match_media)
+				.or_else(|err| {
+					dbg!(&err);
+					parser.rewind(checkpoint);
+					dbg!("trying hack media query");
+					if let Ok(hack) = HackMediaFeature::parse(parser) {
+						Ok(Self::Hack(hack))
+					} else {
+						Err(err)
+					}
+				})?;
+			dbg!(&value);
 			parser.parse::<Token![RightParen]>()?;
+			Ok(value)
+		} else {
+			let token = parser.peek::<Token![Any]>().unwrap();
+			Err(diagnostics::Unexpected(token, token.span()))?
 		}
-		value
 	}
 }
 
@@ -515,7 +521,7 @@ mod tests {
 		assert_parse!(
 			Media,
 			"@media(grid){a{padding:4px}}",
-			"@media (grid: 0) {\n\ta {\n\t\tpadding: 4px 4px 4px 4px;\n\t}\n}"
+			"@media (grid: 0) {\n\ta {\n\t\tpadding: 4px;\n\t}\n}"
 		);
 		assert_parse!(
 			Media,
