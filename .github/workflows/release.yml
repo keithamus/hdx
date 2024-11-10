@@ -69,6 +69,7 @@ jobs:
           BIN_NAME=hdx-${{ matrix.code-target }}
           mv target/${{ matrix.target }}/release/hdx.exe $BIN_NAME.exe
           7z a $BIN_NAME.zip $BIN_NAME.exe
+          ls *.zip *.targ.gz
 
       # The binary is zipped to fix permission loss https://github.com/actions/upload-artifact#permission-loss
       - name: Archive Binary
@@ -77,6 +78,7 @@ jobs:
           BIN_NAME=hdx-${{ matrix.code-target }}
           mv target/${{ matrix.target }}/release/hdx $BIN_NAME
           tar czf $BIN_NAME.tar.gz $BIN_NAME
+          ls *.zip *.targ.gz
 
       - name: Upload Binary
         uses: actions/upload-artifact@v4
