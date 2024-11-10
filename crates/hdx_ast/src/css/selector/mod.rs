@@ -59,6 +59,7 @@ impl<'a> WriteCss<'a> for SelectorList<'a> {
 	}
 }
 
+pub type ComplexSelector<'a> = SelectorList<'a>;
 pub type ForgivingSelector<'a> = SelectorList<'a>;
 pub type RelativeSelector<'a> = SelectorList<'a>;
 
@@ -257,6 +258,7 @@ mod tests {
 	#[test]
 	fn size_test() {
 		assert_size!(SelectorList, 32);
+		assert_size!(ComplexSelector, 32);
 		assert_size!(ForgivingSelector, 32);
 		assert_size!(RelativeSelector, 32);
 		assert_size!(SelectorComponent, 48);

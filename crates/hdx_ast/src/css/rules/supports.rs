@@ -1,8 +1,16 @@
-use crate::{css::stylesheet::Rule, syntax::SimpleBlock};
+use std::ops::Deref;
+
+use crate::{
+	css::{properties::Property, selector::ComplexSelector, stylesheet::Rule},
+	syntax::ComponentValues,
+};
 use hdx_atom::atom;
 use hdx_lexer::Span;
-use hdx_parser::{diagnostics, AtRule, Parse, Parser, Result as ParserResult, RuleList, Spanned, Token, Vec};
-use hdx_writer::{CssWriter, OutputOption, Result as WriterResult, WriteCss};
+use hdx_parser::{
+	diagnostics, AtRule, ConditionalAtRule, Parse, Parser, Result as ParserResult, RuleList, Spanned, Token, Vec,
+};
+use hdx_writer::{write_css, CssWriter, OutputOption, Result as WriterResult, WriteCss};
+use smallvec::SmallVec;
 
 mod kw {
 	use hdx_parser::custom_keyword;
@@ -93,81 +101,33 @@ impl<'a> WriteCss<'a> for SupportsRules<'a> {
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", content = "value"))]
 pub enum SupportsCondition<'a> {
 	Is(SupportsFeature<'a>),
-	Not(SupportsFeature<'a>),
-	And(Vec<'a, SupportsFeature<'a>>),
-	Or(Vec<'a, SupportsFeature<'a>>),
+	Not(Box<SupportsCondition<'a>>),
+	And(SmallVec<[SupportsFeature<'a>; 2]>),
+	Or(SmallVec<[SupportsFeature<'a>; 2]>),
+}
+
+impl<'a> ConditionalAtRule<'a> for SupportsCondition<'a> {
+	type Feature = SupportsFeature<'a>;
+	fn create_is(feature: SupportsFeature<'a>) -> Self {
+		Self::Is(feature)
+	}
+	fn create_not(feature: SupportsCondition<'a>) -> Self {
+		Self::Not(Box::new(feature))
+	}
+	fn create_and(feature: SmallVec<[SupportsFeature<'a>; 2]>) -> Self {
+		Self::And(feature)
+	}
+	fn create_or(feature: SmallVec<[SupportsFeature<'a>; 2]>) -> Self {
+		Self::Or(feature)
+	}
 }
 
 impl<'a> Parse<'a> for SupportsCondition<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		if parser.peek::<kw::And>().is_some() {
-			let mut features = parser.new_vec();
-			loop {
-				parser.parse::<kw::And>()?;
-				features.push(parser.parse::<SupportsFeature>()?);
-				if parser.peek::<kw::And>().is_some() {
-					continue;
-				} else {
-					return Ok(Self::And(features));
-				}
-			}
-		} else if parser.peek::<kw::Or>().is_some() {
-			let mut features = parser.new_vec();
-			loop {
-				parser.parse::<kw::Or>()?;
-				features.push(parser.parse::<SupportsFeature>()?);
-				if parser.peek::<kw::Or>().is_some() {
-					continue;
-				} else {
-					return Ok(Self::And(features));
-				}
-			}
-		} else if let Some(token) = parser.peek::<kw::Not>() {
-			parser.hop(token);
-			return parser.parse::<SupportsFeature>().map(Self::Not);
+		if parser.peek::<Token![Function]>().is_some() {
+			return Ok(Self::Is(parser.parse::<SupportsFeature>()?));
 		}
-
-		// handle double parens
-		let mut wrapped = true;
-		let checkpoint = parser.checkpoint();
-		parser.parse::<Token![LeftParen]>()?;
-		if parser.peek::<Token![LeftParen]>().is_none() {
-			wrapped = false;
-			parser.rewind(checkpoint);
-		}
-		let feature = parser.parse::<SupportsFeature>()?;
-		if parser.peek::<kw::And>().is_some() {
-			let mut features = parser.new_vec();
-			features.push(feature);
-			loop {
-				parser.parse::<kw::And>()?;
-				features.push(parser.parse::<SupportsFeature>()?);
-				if parser.peek::<kw::And>().is_none() {
-					if wrapped {
-						parser.parse::<Token![RightParen]>()?;
-					}
-					return Ok(Self::And(features));
-				}
-			}
-		} else if parser.peek::<kw::Or>().is_some() {
-			let mut features = parser.new_vec();
-			features.push(feature);
-			loop {
-				parser.parse::<kw::Or>()?;
-				features.push(parser.parse::<SupportsFeature>()?);
-				if parser.peek::<kw::Or>().is_none() {
-					if wrapped {
-						parser.parse::<Token![RightParen]>()?;
-					}
-					return Ok(Self::Or(features));
-				}
-			}
-		}
-		if wrapped {
-			parser.parse::<Token![RightParen]>()?;
-		}
-		parser.parse::<Token![RightParen]>()?;
-		Ok(Self::Is(feature))
+		Self::parse_condition(parser)
 	}
 }
 
@@ -175,10 +135,14 @@ impl<'a> WriteCss<'a> for SupportsCondition<'a> {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
 		match self {
 			Self::Is(feature) => feature.write_css(sink),
-			Self::Not(feature) => {
-				atom!("not").write_css(sink)?;
-				sink.write_whitespace()?;
-				feature.write_css(sink)
+			Self::Not(condition) => {
+				match condition.deref() {
+					SupportsCondition::Is(_) => {
+						write_css!(sink, atom!("not"), (), condition)
+					}
+					_ => write_css!(sink, atom!("not"), (), '(', condition, ')'),
+				}
+				Ok(())
 			}
 			Self::And(features) => {
 				let mut first = true;
@@ -220,21 +184,60 @@ impl<'a> WriteCss<'a> for SupportsCondition<'a> {
 
 #[derive(PartialEq, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-pub struct SupportsFeature<'a>(pub SimpleBlock<'a>);
+pub enum SupportsFeature<'a> {
+	FontTech(ComponentValues<'a>),
+	FontFormat(ComponentValues<'a>),
+	Selector(ComplexSelector<'a>),
+	Property(Property<'a>),
+}
 
 impl<'a> Parse<'a> for SupportsFeature<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		if parser.peek::<Token![LeftParen]>().is_none() {
-			let token = parser.peek::<Token![Any]>().unwrap();
-			Err(diagnostics::ExpectedOpenCurly(token, token.span()))?
+		dbg!(parser.peek::<Token![Any]>());
+		let parens = parser.parse_if_peek::<Token![LeftParen]>()?.is_some();
+		dbg!(parser.peek::<Token![Any]>());
+		if let Some(token) = parser.peek::<Token![Function]>() {
+			match parser.parse_atom_lower(token) {
+				atom!("selector") => {
+					parser.hop(token);
+					dbg!("SELECTOR");
+					let selector = parser.parse::<ComplexSelector>()?;
+					// End function
+					parser.parse::<Token![RightParen]>()?;
+					if parens {
+						parser.parse::<Token![RightParen]>()?;
+					}
+					Ok(Self::Selector(selector))
+				}
+				atom!("font-tech") => {
+					todo!();
+				}
+				atom!("font-format") => {
+					todo!();
+				}
+				atom => Err(diagnostics::UnexpectedFunction(atom, token.span()))?,
+			}
+		} else {
+			if !parens {
+				let token = parser.peek::<Token![Any]>().unwrap();
+				Err(diagnostics::Unexpected(token, token.span()))?;
+			}
+			let property = parser.parse::<Property>()?;
+			parser.parse::<Token![RightParen]>()?;
+			Ok(Self::Property(property))
 		}
-		Ok(Self(SimpleBlock::parse(parser)?))
 	}
 }
 
 impl<'a> WriteCss<'a> for SupportsFeature<'a> {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
-		self.0.write_css(sink)
+		match self {
+			Self::FontTech(_) => todo!(),
+			Self::FontFormat(_) => todo!(),
+			Self::Selector(selector) => write_css!(sink, atom!("selector"), '(', selector, ')'),
+			Self::Property(property) => write_css!(sink, '(', property, ')'),
+		}
+		Ok(())
 	}
 }
 
@@ -245,8 +248,8 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(Supports, 96);
-		assert_size!(SupportsCondition, 48);
+		assert_size!(Supports, 344);
+		assert_size!(SupportsCondition, 296);
 		assert_size!(SupportsRules, 32);
 	}
 
@@ -259,7 +262,16 @@ mod tests {
 		assert_parse!(Supports, "@supports (width: 1--foo) and (width: 1foo) {\n\n}");
 		assert_parse!(Supports, "@supports (width: 100vw) {\n\tbody {\n\t\twidth: 100vw;\n\t}\n}");
 		assert_parse!(Supports, "@supports not ((text-align-last: justify) or (-moz-text-align-last: justify)) {\n\n}");
-		assert_parse!(Supports, "@supports ((position: -webkit-sticky) or (position: sticky)) {}");
+		assert_parse!(
+			Supports,
+			"@supports ((position: -webkit-sticky) or (position: sticky)) {}",
+			"@supports (position: -webkit-sticky) or (position: sticky) {\n\n}"
+		);
+
+		assert_parse!(Supports, "@supports selector(h2 > p) {\n\n}");
+		assert_parse!(Supports, "@supports (selector(h2 > p)) {}", "@supports selector(h2 > p) {\n\n}");
+		assert_parse!(Supports, "@supports not selector(h2 > p) {\n\n}");
+		assert_parse!(Supports, "@supports not (selector(h2 > p)) {}", "@supports not selector(h2 > p) {\n\n}");
 	}
 
 	#[test]
@@ -267,12 +279,12 @@ mod tests {
 		assert_minify!(
 			Supports,
 			"@supports (width: 1px) { body { width:1px; } }",
-			"@supports(width: 1px){body{width:1px}}"
+			"@supports(width:1px){body{width:1px}}"
 		);
 		assert_minify!(
 			Supports,
 			"@supports not (width: 1--foo) { a { width:1px } }",
-			"@supports not(width: 1--foo){a{width:1px}}"
+			"@supports not(width:1--foo){a{width:1px}}"
 		);
 		assert_minify!(Supports, "@supports (color: black) {}", "");
 	}

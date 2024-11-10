@@ -154,7 +154,7 @@ mod tests {
 	#[test]
 	fn size_test() {
 		assert_size!(StyleSheet, 32);
-		assert_size!(Rule, 152);
+		assert_size!(Rule, 344);
 		assert_size!(AtRuleId, 1);
 	}
 
