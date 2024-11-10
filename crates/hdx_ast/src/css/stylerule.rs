@@ -113,6 +113,7 @@ mod tests {
 		assert_parse!(StyleRule, ".foo *{}", ".foo * {\n}");
 		assert_parse!(StyleRule, ":nth-child(1) {\n\topacity: 0;\n}");
 		assert_parse!(StyleRule, ".foo {\n\t--bar: (baz);\n}");
+		assert_parse!(StyleRule, ".foo {\n\twidth: calc(1px + (var(--foo)) + 1px);\n}");
 	}
 
 	#[test]

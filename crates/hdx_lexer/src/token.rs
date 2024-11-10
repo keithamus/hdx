@@ -652,7 +652,7 @@ impl serde::ser::Serialize for Token {
 	}
 }
 
-#[derive(Debug, Eq, PartialEq, Clone, Hash)]
+#[derive(Debug, Eq, PartialEq, Copy, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize))]
 pub enum PairWise {
 	Paren,

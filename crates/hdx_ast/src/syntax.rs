@@ -185,21 +185,21 @@ pub struct SimpleBlock<'a> {
 // https://drafts.csswg.org/css-syntax-3/#consume-a-simple-block
 impl<'a> Parse<'a> for SimpleBlock<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let pair = parser.parse::<Token![PairWise]>()?;
+		let pair = parser.parse::<Token![PairWise]>()?.to_pairwise().unwrap();
 		let mut values = parser.new_vec();
 		loop {
 			if parser.at_end() {
 				break;
 			}
 			if let Some(token) = parser.peek::<Token![PairWise]>() {
-				if token.to_pairwise() == pair.to_pairwise() {
+				if token.to_pairwise() == Some(pair) && token.kind() == pair.end() {
 					parser.hop(token);
 					break;
 				}
 			}
 			values.push(parser.parse_spanned::<ComponentValue>()?);
 		}
-		Ok(Self { values, pairwise: pair.to_pairwise().unwrap() })
+		Ok(Self { values, pairwise: pair })
 	}
 }
 
