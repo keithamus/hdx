@@ -44,7 +44,7 @@ pico-args = { version = "0.5.0" }
 project-root = { version = "0.2.2" }
 similar = { version = "2.6.0" }
 criterion = { version = "0.5.1" }
-pprof = { version = "0.13.0" }
+pprof = { version = "0.14.0" }
 flate2 = { version = "1.0.34" }
 insta = { version = "1.41.1" }
 console = { version = "0.15.8" }
