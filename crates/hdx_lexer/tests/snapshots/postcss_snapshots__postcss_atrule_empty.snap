@@ -5,17 +5,14 @@ expression: tokens
 [
   {
     "kind": "AtKeyword",
-    "offset": 0,
     "len": 8
   },
   {
     "kind": "String",
-    "offset": 9,
     "len": 7
   },
   {
     "kind": "Semicolon",
-    "offset": 16,
     "len": 1
   }
 ]

@@ -5,37 +5,30 @@ expression: tokens
 [
   {
     "kind": "Colon",
-    "offset": 0,
     "len": 1
   },
   {
     "kind": "Function",
-    "offset": 1,
     "len": 10
   },
   {
     "kind": "Ident",
-    "offset": 11,
     "len": 1
   },
   {
     "kind": "Number",
-    "offset": 12,
     "len": 2
   },
   {
     "kind": "RightParen",
-    "offset": 14,
     "len": 1
   },
   {
     "kind": "LeftCurly",
-    "offset": 16,
     "len": 1
   },
   {
     "kind": "RightCurly",
-    "offset": 17,
     "len": 1
   }
 ]

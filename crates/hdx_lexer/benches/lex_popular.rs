@@ -1,6 +1,6 @@
 use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion, Throughput};
 use glob::glob;
-use hdx_lexer::{Include, Kind, Lexer};
+use hdx_lexer::{Kind, Lexer};
 use pprof::criterion::{Output, PProfProfiler};
 use std::fs::read_to_string;
 
@@ -28,7 +28,7 @@ fn popular(c: &mut Criterion) {
 		group.throughput(Throughput::Bytes(file.source_text.len() as u64));
 		group.bench_with_input(BenchmarkId::from_parameter(&file.name), &file.source_text, |b, source_text| {
 			b.iter(|| {
-				let mut lexer = Lexer::new(source_text, Include::none());
+				let mut lexer = Lexer::new(source_text);
 				loop {
 					if matches!(lexer.advance().kind(), Kind::Eof) {
 						break;

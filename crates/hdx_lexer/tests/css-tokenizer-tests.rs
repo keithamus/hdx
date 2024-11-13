@@ -2,7 +2,7 @@ use bumpalo::Bump;
 use console::Style;
 use glob::glob;
 use hdx_atom::atom;
-use hdx_lexer::{Include, Kind, Lexer, Token};
+use hdx_lexer::{Cursor, Feature, Kind, Lexer};
 use serde::{Deserialize, Serialize};
 use serde_json::{from_str, to_string_pretty};
 use similar::{ChangeTag, TextDiff};
@@ -138,38 +138,36 @@ impl CSSTokenizerTestCase {
 	}
 }
 
-fn convert_token(lexer: &Lexer, token: Token) -> CSSTokenizerTestToken {
-	let allocator = Bump::default();
-	let raw = lexer.parse_raw_str(token);
-	let structured = match token.kind() {
+fn convert_token(source: &str, allocator: &Bump, cursor: Cursor) -> CSSTokenizerTestToken {
+	let raw = cursor.str_slice(source);
+	let structured = match cursor.token().kind() {
 		Kind::Number => Some(Structured::Number(NumberStructured {
-			value: lexer.parse_number(token),
-			kind: Some(String::from(if token.is_int() { "integer" } else { "number" })),
+			value: cursor.token().value(),
+			kind: Some(String::from(if cursor.token().is_int() { "integer" } else { "number" })),
 		})),
 		Kind::Dimension => {
-			if lexer.parse_atom(token, &allocator) == atom!("%") {
-				Some(Structured::Number(NumberStructured { value: lexer.parse_number(token), kind: None }))
+			if cursor.parse_atom(source, allocator) == atom!("%") {
+				Some(Structured::Number(NumberStructured { value: cursor.token().value(), kind: None }))
 			} else {
 				Some(Structured::Dimension(DimensionStructured {
-					value: lexer.parse_number(token),
-					unit: lexer.parse_str(token, &allocator).to_owned(),
-					kind: String::from(if token.is_int() { "integer" } else { "number" }),
+					value: cursor.token().value(),
+					unit: cursor.parse_str(source, allocator).to_owned(),
+					kind: String::from(if cursor.token().is_int() { "integer" } else { "number" }),
 				}))
 			}
 		}
 		Kind::Ident | Kind::String | Kind::AtKeyword | Kind::Function | Kind::Url | Kind::Hash => {
-			Some(Structured::String(StringStructured { value: lexer.parse_str(token, &allocator).into() }))
+			Some(Structured::String(StringStructured { value: cursor.parse_str(source, allocator).into() }))
 		}
-		Kind::Delim => Some(Structured::String(StringStructured { value: token.char().unwrap().to_string() })),
+		Kind::Delim => Some(Structured::String(StringStructured { value: cursor.token().char().unwrap().to_string() })),
 		_ => None,
 	};
 	// token.start/end count utf8 bytes because rust strings are utf8. The tokenizer tests,
 	// however, are JS based and JS strings are utf16. So recalculate the indexes to utf16
-	let fake_token = Token::new(Kind::Whitespace, 0, 0, token.offset());
-	let start_index = lexer.parse_raw_str(fake_token).encode_utf16().count() as u32;
-	let end_index = start_index + raw.encode_utf16().count() as u32;
+	let start_index = source[0..cursor.offset().into()].encode_utf16().count() as u32;
+	let end_index = start_index + cursor.str_slice(source).encode_utf16().count() as u32;
 	CSSTokenizerTestToken {
-		kind: match token.kind() {
+		kind: match cursor.token().kind() {
 			Kind::Comment => CSSTokenizerTestKind::Comment,
 			Kind::Ident => CSSTokenizerTestKind::Ident,
 			Kind::Function => CSSTokenizerTestKind::Function,
@@ -182,7 +180,7 @@ fn convert_token(lexer: &Lexer, token: Token) -> CSSTokenizerTestToken {
 			Kind::Delim => CSSTokenizerTestKind::Delim,
 			Kind::Number => CSSTokenizerTestKind::Number,
 			Kind::Dimension => {
-				if lexer.parse_atom(token, &allocator) == atom!("%") {
+				if cursor.parse_atom(source, allocator) == atom!("%") {
 					CSSTokenizerTestKind::Percentage
 				} else {
 					CSSTokenizerTestKind::Dimension
@@ -190,7 +188,7 @@ fn convert_token(lexer: &Lexer, token: Token) -> CSSTokenizerTestToken {
 			}
 			Kind::Whitespace => CSSTokenizerTestKind::Whitespace,
 			Kind::CdcOrCdo => {
-				if token.is_cdc() {
+				if cursor.token().is_cdc() {
 					CSSTokenizerTestKind::Cdc
 				} else {
 					CSSTokenizerTestKind::Cdo
@@ -216,14 +214,16 @@ fn convert_token(lexer: &Lexer, token: Token) -> CSSTokenizerTestToken {
 
 fn test_case(case: CSSTokenizerTestCase) -> u8 {
 	dbg!(&case.name);
-	let mut lexer = Lexer::new(&case.source_text, Include::all_bits());
+	let mut lexer = Lexer::new_with_features(&case.source_text, Feature::CombinedWhitespace);
+	let allocator = Bump::default();
 	let mut tokens = vec![];
 	loop {
-		let token = lexer.advance();
-		if token.kind() == Kind::Eof {
+		let offset = lexer.offset();
+		let cursor = lexer.advance().with_cursor(offset);
+		if cursor.token().kind() == Kind::Eof {
 			break;
 		}
-		tokens.push(convert_token(&lexer, token));
+		tokens.push(convert_token(&case.source_text, &allocator, cursor));
 	}
 	if tokens != *case.desired {
 		let left: String = to_string_pretty(&tokens).unwrap_or("".to_string());

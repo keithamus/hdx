@@ -1,398 +1,331 @@
-use bitmask_enum::bitmask;
-#[cfg(feature = "serde")]
-use serde::ser::SerializeStruct;
+use crate::{
+	whitespace_style::WhitespaceStyle, CommentStyle, Cursor, DimensionUnit, Kind, KindSet, PairWise, QuoteStyle,
+	SourceOffset,
+};
 
-use crate::{DimensionUnit, Include, Span};
+// The `Token` type is an immutable packing of two u32s that represents a unit in the source text,
+// but without the associated span (offset) data that points to its position in a text document.
+// For the most part a Token doesn't represent data that can be put into a text editor because it
+// lacks concepts such as a "value" (for example the `Ident` token just represents _an_ ident, but
+// it doesn't retain what the keyword is).
+//
+// If you're familiar with "red green" syntax trees such as Swiftlang's libsyntax
+// (https://gh.io/AAtdqpg), or Rust-Analyzer's Rowan (https://gh.io/AAtf8pt) or
+// Roslyn (https://gh.io/AAtab90) this might be familiar.
+//
+// A Token retains certain "facts" about the underlying unit of text, though. For example it retains
+// the `Kind` of a token, how many characters the token consumed, and various other facts depending
+// on the token.
+//
+// In some cases, it's entirely possible to squeeze the "value" of the token into the this u32 (for
+// example chars, or numbers) and this can speed up subsequent parsing and so it is worth taking the
+// time in the tokenizer to gather facts and values to store them in the Tokens bits.
+//
+// This representation of facts, kind, length, or other metadata can be quite complex - so here's a
+// full breakdown:
+//
+// Anatomy of Token
+//
+//   |-----|-------|--------------------------|---------------------------------|
+//   | TF  | K     | VD                       | "Value"                         |
+// 0b| 000 | 00000 | 000000000000000000000000 | 0000000000000000000000000000000 |
+//   |-----|-------|--------------------------|---------------------------------|
+//   | 3-- | 5---- | 24---------------------- | 32----------------------------- |
+//
+//   TF  = Type Flags.    If K is Number/Dimension:
+//                          001 = Floating Point
+//                          010 = Has Sign
+//                        If K is Dimension:
+//                          100 = Unit is a known dimension
+//                        If K is String:
+//                          001 = Uses Double Quotes (0 would be Single)
+//                          010 = Has a closing quote
+//                          100 = Contains escape characters
+//                        If K is Ident, Function, AtKeyword:
+//                          001 = Contains non-lower-ASCII (e.g. uppercase or unicode)
+//                          010 = Is a "Dashed Ident" - starts with two dashes
+//                          100 = Contains escape characters
+//                        If K is Hash:
+//                          001 = Contains non-lower-ASCII (e.g. uppercase or unicode)
+//                          010 = First character is ascii, aka it's a "HashId"
+//                          100 = Contains escape characters
+//                        If K is Url:
+//                          001 = Ended with a `)`
+//                          010 = Contains whitespace after the `(`
+//                          100 = Contains escape characters
+//                        If K is CdcOrCdo
+//                          000 = Is Cdo
+//                          001 = Is Cdc
+//                        If K is Whitespace this maps to the `WhitespaceStyle` enum which
+//                        determines what kind of whitespace this is.
+//                        If K is Comment this maps to the `CommentStyle` enum which determines
+//                        the kind of comment this is.
+//                        If K is Delim this maps to the length of the raw string, which might
+//                        be different from the encoded delim given \0 and surrogates are replaced
+//                        with \u{FFFD}
+//   K   = Kind Flags.    Maps to `Kind` enum
+//
+//   VD  = Value Data.    Depending on the type of the token, this can represent different data.
+//                        If K is Number, this represents the length of that number (this means
+//                        number tokens cannot be longer than 16,777,216 characters which is
+//                        probably an acceptable limit).
+//                        If K is a Dimension, then this is split further (see table just below).
+//                        For all other kinds this is left reserved (zeroed out).
+//
+//                        |--------------|--------------|
+//                        | NL           | DUL          |
+//                        | 000000000000 | 000000000000 |
+//                        |--------------|--------------|
+//                        | 12---------- | 12---------- |
+//
+//                        When a dimension is parsed, the length data is split into 2 regions,
+//                        one storing 12 bits representing the length of the number, and 1 storing
+//                        the length of the dimension unit string. This means in this parser that
+//                        Dimensions are limited; their numerical component can only be 4096
+//                        characters long, same for their unit. However, in reality 99.99% of CSS
+//                        in the wild is using one of the built-in dimension units, of which there
+//                        exists a few dozen, the longest being 5 characters. If the flag
+//                        TF&100 == 100 is set, this means that during the tokenization the unit
+//                        was found to be a recognised unit (e.g. px, rem, dvw etc). In this case
+//                        the DUL region instead stores a `DimensionUnit` enum token. This only
+//                        accounts for unescaped tokens (e.g. `px` and not doing weird escaping
+//                        like `p\u0078`).
+//
+//  Value                 If K is Delim, or one of the non-delim single single char, i.e.
+//                        Colon->RightCurly then this is the packed `char`, as u32.
+//                        If K is Number or Dimension this will be the f32.to_bits().
+//                        In all other cases, this represents the length of the token as utf-8
+//                        bytes. This means the token length is 4294967296 aka ~4GB. This sounds
+//                        very long but also CSS can host very large image data and browsers will
+//                        accomodate very large URLs.
+//                        (https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URLs#common_problems)
+//                        claims Firefox supports 32mb, Chrome over 512mb, and Safari over 2gb)
+//                        the reality is that if someone has such a large data URL in their CSS
+//                        they probably should split it out, but we have 32 bits to store the
+//                        length so we may as well use it..
+//
+#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct Token(u32, u32);
 
-#[derive(Default, Copy, Clone, Eq, PartialEq, Ord, PartialOrd)]
-pub enum Kind {
-	// Trivias (mask as 0b0_00XX)
-	Eof = 0b0000, // https://drafts.csswg.org/css-syntax/#typedef-eof-token
-	#[default]
-	Whitespace = 0b0001, // https://drafts.csswg.org/css-syntax/#whitespace-token-diagram
-	Comment = 0b0010, // https://drafts.csswg.org/css-syntax/#comment-diagram
-	// Stand in for both the CDC and CDO tokens
-	CdcOrCdo = 0b0011, // https://drafts.csswg.org/css-syntax/#CDO-token-diagram, https://drafts.csswg.org/css-syntax/#CDC-token-diagram
-
-	// Numerics (mask as 0b0_010X)
-	Number = 0b0100,    // https://drafts.csswg.org/css-syntax/#number-token-diagram
-	Dimension = 0b0101, // https://drafts.csswg.org/css-syntax/#dimension-token-diagram
-
-	// Errors (mask as 0b0_011X)
-	BadString = 0b0110, // https://drafts.csswg.org/css-syntax/#typedef-bad-string-token
-	BadUrl = 0b0111,    // https://drafts.csswg.org/css-syntax/#typedef-bad-url-token
-
-	// Variable length Atom containing Tokens (mask: 0b0_1XXX)
-	Ident = 0b1000,     // https://drafts.csswg.org/css-syntax/#ident-token-diagram
-	Function = 0b1001,  // https://drafts.csswg.org/css-syntax/#function-token-diagram
-	AtKeyword = 0b1010, // https://drafts.csswg.org/css-syntax/#at-keyword-token-diagram
-	Hash = 0b1011,      // https://drafts.csswg.org/css-syntax/#hash-token-diagram
-	String = 0b1100,    // https://drafts.csswg.org/css-syntax/#string-token-diagram
-	Url = 0b1101,       // https://drafts.csswg.org/css-syntax/#url-token-diagram
-
-	// Single character Tokens (mask 0b1_XXXX)
-	Delim = 0b1_0000,       // https://drafts.csswg.org/css-syntax/#typedef-delim-token
-	Colon = 0b1_0001,       // https://drafts.csswg.org/css-syntax/#typedef-colon-token
-	Semicolon = 0b1_0010,   // https://drafts.csswg.org/css-syntax/#typedef-semicolon-token
-	Comma = 0b1_0011,       // https://drafts.csswg.org/css-syntax/#typedef-comma-token
-	LeftSquare = 0b1_0100,  // https://drafts.csswg.org/css-syntax/#tokendef-open-square
-	RightSquare = 0b1_0101, // https://drafts.csswg.org/css-syntax/#tokendef-close-square
-	LeftParen = 0b1_0110,   // https://drafts.csswg.org/css-syntax/#tokendef-open-paren
-	RightParen = 0b1_0111,  // https://drafts.csswg.org/css-syntax/#tokendef-close-paren
-	LeftCurly = 0b1_1000,   // https://drafts.csswg.org/css-syntax/#tokendef-open-curly
-	RightCurly = 0b1_1001,  // https://drafts.csswg.org/css-syntax/#tokendef-close-curly
-}
-
-impl Kind {
-	pub fn from_bits(bits: u8) -> Self {
-		match bits {
-			0b0001 => Self::Whitespace,
-			0b0010 => Self::Comment,
-			0b0011 => Self::CdcOrCdo,
-			0b0100 => Self::Number,
-			0b0101 => Self::Dimension,
-			0b0110 => Self::BadString,
-			0b0111 => Self::BadUrl,
-			0b1000 => Self::Ident,
-			0b1001 => Self::Function,
-			0b1010 => Self::AtKeyword,
-			0b1011 => Self::Hash,
-			0b1100 => Self::String,
-			0b1101 => Self::Url,
-			0b1_0000 => Self::Delim,
-			0b1_0001 => Self::Colon,
-			0b1_0010 => Self::Semicolon,
-			0b1_0011 => Self::Comma,
-			0b1_0100 => Self::LeftSquare,
-			0b1_0101 => Self::RightSquare,
-			0b1_0110 => Self::LeftParen,
-			0b1_0111 => Self::RightParen,
-			0b1_1000 => Self::LeftCurly,
-			0b1_1001 => Self::RightCurly,
-			_ => Self::Eof,
-		}
-	}
-
-	pub fn as_str(&self) -> &str {
-		match *self {
-			Kind::Eof => "Eof",
-			Kind::Whitespace => "Whitespace",
-			Kind::Comment => "Comment",
-			Kind::CdcOrCdo => "CdcOrCdo",
-			Kind::Number => "Number",
-			Kind::Dimension => "Dimension",
-			Kind::BadString => "BadString",
-			Kind::BadUrl => "BadUrl",
-			Kind::Ident => "Ident",
-			Kind::Function => "Function",
-			Kind::AtKeyword => "AtKeyword",
-			Kind::Hash => "Hash",
-			Kind::String => "String",
-			Kind::Url => "Url",
-			Kind::Delim => "Delim",
-			Kind::Colon => "Colon",
-			Kind::Semicolon => "Semicolon",
-			Kind::Comma => "Comma",
-			Kind::LeftSquare => "LeftSquare",
-			Kind::RightSquare => "RightSquare",
-			Kind::LeftParen => "LeftParen",
-			Kind::RightParen => "RightParen",
-			Kind::LeftCurly => "LeftCurly",
-			Kind::RightCurly => "RightCurly",
-		}
-	}
-}
-
-impl core::fmt::Debug for Kind {
-	fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-		write!(f, "Kind::{}", self.as_str())
-	}
-}
-
-#[bitmask(u32)]
-pub enum TokenFlags {
-	// Anatomy of TokenFlags
-	//
-	//   |-----|-------|--------------------------|
-	//   | TF  | K     | L                        |
-	// 0b| 000 | 00000 | 000000000000000000000000 |
-	//   |-----|-------|--------------------------|
-	//   | 3-- | 5---- | 24---------------------- |
-	//
-	//   TF  = Type Flags.    If K is Number/Dimension:
-	//                          001 = Floating Point
-	//                          010 = Has Sign
-	//                        If K is Number:
-	//                          100 = Number was small enough to fit into NL region
-	//                        If K is Dimension:
-	//                          100 = Number and Unit small enough to fit into NL region
-	//                        If K is String:
-	//                          001 = Uses Double Quotes (0 would be Single)
-	//                          010 = Has a closing quote
-	//                          100 = Includes escape characters
-	//                        If K is Ident, Function, AtKeyword:
-	//                          001 = Contains non-lower-ASCII (e.g. uppercase or unicode)
-	//                          010 = Is a "Dashed Ident" - starts with two dashes
-	//                          100 = Includes escape characters
-	//                        If K is Hash:
-	//                          001 = Contains non-lower-ASCII (e.g. uppercase or unicode)
-	//                          010 = First character is ascii, aka it's a "HashId"
-	//                          100 = Includes escape characters
-	//                        If K is Url:
-	//                          001 = Ended with a `)`
-	//                          010 = Contains whitespace after the `(`
-	//                          100 = Includes escape characters
-	//                        If K is Whitespace/Comment:
-	//                          001 = Contains at least 1 tab character.
-	//                          010 = Contains at least 1 newline character.
-	//                          100 = (Reserved)
-	//                        If K is CdcOrCdo
-	//                          000 = Is Cdo
-	//                          001 = Is Cdc
-	//                        If K is Delim this maps to the length of the raw string, which might
-	//                        be different from the encoded delim given \0 and surrogates are replaced
-	//                        with \u{FFFD}
-	//   K   = Kind Flags.    Maps to `Kind` enum
-	//   L   = Lengthdata.    If K is Delim then this is `char` (see C below)
-	//                        If K is Number/Dimension then this is split further (see NL below)
-	//                        If K is a non-delim single char, i.e. Colon->RightCurly then this is
-	//                        `char` (see C below).
-	//                        If K is Whitespace, Comment, String, Url, Ident, Function, AtKeyword,
-	//                        then this is the length of the token's character count in source, as
-	//                        24-bits. This means the token length is 16777216 aka ~16MB. This sounds
-	//                        very long but also CSS can host very large image data URLs. 16MB seems
-	//                        like a good limitation for this parser though; while browsers need to
-	//                        accomodate much larger data URLs (https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URLs#common_problems
-	//                        claims Firefox supports 32mb, Chrome over 512mb, and Safari over 2gb)
-	//                        the reality is that if someone has such a large data URL in their CSS
-	//                        they probably should split it out.
-	//
-	//   C   = Char.          This is `char` type. All available `chars` in unicode can be
-	//                        represented in 24bits as the upper bits are for surrogates.
-	//   NL  = Number Length. If the Kind is a Number then this may be broken down into further
-	//                        segments. In the basic case, where TF&100 == 000, the 24 bits
-	//                        represents the length of the number in the source. If, however,
-	//                        TF&100 == 100 then the number was considered "small" enough to
-	//                        fit into an i16, and so the 24-bits is broken into an 8 and a 16 bit
-	//                        segment:
-	//
-	//     |----------|------------------|
-	//     | NL       | PACK             |
-	//     | 00000000 | 0000000000000100 |
-	//     |----------|------------------|
-	//     | 8------- | 16-------------- |
-	//
-	//     NL = Number Length The first 8 bits are to store the character length of the number.
-	//                        In practice means these numeric values can only be 255 codepoints long
-	//                        (it's possible to make a number representing an f16 that is longer than
-	//                        255 codepoints (for example more than 255 zero characters), but in
-	//                        practice this makes for nonsensical representations of numbers, and in
-	//                        those cases the tokenizer will not set the TF&100 flag, so they'll go
-	//                        down the "slow" path when parsed.
-	//
-	//     PACK = f16 value   If TF&100 == 100, then during tokenization it was possible to parse the
-	//                        number as f16 and stuff it into the remaining 16 bit space, meaning when
-	//                        re-parsing the number, it doesn't need to be read from the source string.
-	//                        If TF&100 == 000 then this wasn't the case, and instead this space is
-	//                        just 0s. The _majority_ of numbers used in CSS are indeed less than f16
-	//                        (±65,504) and so it maes sense to store them here if possible.
-	//
-	//                        If thie Kind is a Dimension then this is broken into further segments.
-	//                        segments. In the basic case, where TF&100 == 000, the 24 bits
-	//                        represents is broken into 2 12-bit lengths representing the Number
-	//                        Length and the Dimension Unit length. This means dimensions can only
-	//                        have a maximum numerical length of 4095 characters, and the dimension
-	//                        unit also has a maximum numerical length of 4095 characters.
-	//
-	//     |--------------|--------------|
-	//     | NL           | DUL          |
-	//     | 000000000000 | 000000000000 |
-	//     |--------------|--------------|
-	//     | 12---------- | 12---------- |
-	//
-	//                        In reality 99.99% of CSS in the wild is using one of the built-in
-	//                        dimension units, of which there exists a few dozen. Also the vast
-	//                        majority of dimensions are small values, (e.g 4rem, 1024px). If the flag
-	//                        TF&100 == 100 is set, this means that during the tokenization the unit
-	//                        was found to be a recognised unit (e.g. px, rem, dvw etc), _and_ that the
-	//                        number was small enough to stuff to represent in the remaining memory.
-	//                        And so the packing for this is as follows:
-	//
-	//     |------|--------|---|---------------|
-	//     | NL   | D      | + |               |
-	//     | 0000 | 000000 | 0 | 0000000000000 |
-	//     |------|--------|---|---------------|
-	//     | 4--- | 6----- | 1 | 13----------- |
-	//
-	//		 NL = Number Length The first 4 bits represent the number length. This is dramatically shorter
-	//		                    than number's 8 bit character width, which can store 255 characters; this
-	//		                    only stores 15-character numbers. However the _also_ shorter 13 bits for
-	//		                    the value storage means that this can store numbers up to ±8191. The sign
-	//		                    bit makes up for an equivalent "int14". The last 6 bits here are to store
-	//		                    the known dimension unit, provided the source represents this in the ascii
-	//		                    format (e.g. `px` and not doing weird escaping like `p\u0078`). This is
-	//		                    enough to represent the majority of CSS dimensions seen in the wild and
-	//		                    still be able to point to the correct offset/length within the source.
-}
-
-impl Default for TokenFlags {
+impl Default for Token {
 	fn default() -> Self {
-		Self { bits: (Kind::Whitespace as u32) << 24 }
+		Self((Kind::Whitespace as u32) << 24, 0)
 	}
 }
 
-#[derive(Copy, Clone, PartialEq, Default, Hash)]
-pub struct Token {
-	flags: TokenFlags,
-	offset: u32,
-}
-
-#[derive(Debug, Copy, Clone, PartialEq, Default, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "kind", content = "value"))]
-pub enum QuoteStyle {
-	// Some tokens/ast nodesthat would otherwise be strings (e.g. url(), named fonts) can have no quotes.
-	None,
-	Single,
-	#[default]
-	Double,
-}
-
-static TYPEFLAG_MASK: u32 = !((1 << 29) - 1);
-static KIND_MASK: u32 = !((1 << 24) - 1);
-static LENGTH_MASK: u32 = (1 << 24) - 1;
-static KNOWN_DIMENSION_NUMBER_LENGTH_MASK: u32 = !((1 << 20) - 1);
-static NUMBER_PACK_MASK: u32 = !((1 << 15) - 1);
-static KNOWN_DIMENSION_NUMBER_PACK_MASK: u32 = !((1 << 13) - 1);
-static DIMENSION_UNIT_LENGTH_MASK: u32 = !((1 << 12) - 1);
+const KIND_MASK: u32 = !((1 << 24) - 1);
+const LENGTH_MASK: u32 = (1 << 24) - 1;
+const DIMENSION_NUMBER_LENGTH_MASK: u32 = !((1 << 12) - 1);
 
 impl Token {
-	pub fn new(kind: Kind, type_flags: u8, offset: u32, len: u32) -> Self {
-		let flags = TokenFlags {
-			bits: (((type_flags as u32) << 29) & TYPEFLAG_MASK)
-				| (((kind as u32) << 24) & KIND_MASK)
-				| (len & LENGTH_MASK),
-		};
-		Self { flags, offset }
-	}
+	pub const EOF: Token = Token(0b0, 0);
+	pub const CDO: Token = Token(((Kind::CdcOrCdo as u32) << 24) & KIND_MASK, 4);
+	pub const CDC: Token = Token((((Kind::CdcOrCdo as u32) | 0b001_00000) << 24) & KIND_MASK, 3);
+	pub const SPACE: Token =
+		Token((((Kind::Whitespace as u32) | (WhitespaceStyle::Space as u32) << 5) << 24) & KIND_MASK, 1);
+	pub const TAB: Token =
+		Token((((Kind::Whitespace as u32) | (WhitespaceStyle::Tab as u32) << 5) << 24) & KIND_MASK, 1);
+	pub const NEWLINE: Token =
+		Token((((Kind::Whitespace as u32) | (WhitespaceStyle::Newline as u32) << 5) << 24) & KIND_MASK | (1 << 12), 1);
+	pub const NUMBER_ZERO: Token = Token((((Kind::Number as u32) | 0b100_00000) << 24) & KIND_MASK, 1);
+	pub const COLON: Token = Token((((Kind::Colon as u32) | 0b001_00000) << 24) & KIND_MASK, ':' as u32);
+	pub const SEMICOLON: Token = Token((((Kind::Semicolon as u32) | 0b001_00000) << 24) & KIND_MASK, ';' as u32);
+	pub const COMMA: Token = Token((((Kind::Comma as u32) | 0b001_00000) << 24) & KIND_MASK, ',' as u32);
+	pub const LEFT_SQUARE: Token = Token((((Kind::LeftSquare as u32) | 0b001_00000) << 24) & KIND_MASK, '[' as u32);
+	pub const RIGHT_SQUARE: Token = Token((((Kind::RightSquare as u32) | 0b001_00000) << 24) & KIND_MASK, ']' as u32);
+	pub const LEFT_PAREN: Token = Token((((Kind::LeftParen as u32) | 0b001_00000) << 24) & KIND_MASK, '(' as u32);
+	pub const RIGHT_PAREN: Token = Token((((Kind::RightParen as u32) | 0b001_00000) << 24) & KIND_MASK, ')' as u32);
+	pub const LEFT_CURLY: Token = Token((((Kind::LeftCurly as u32) | 0b001_00000) << 24) & KIND_MASK, '{' as u32);
+	pub const RIGHT_CURLY: Token = Token((((Kind::RightCurly as u32) | 0b001_00000) << 24) & KIND_MASK, '}' as u32);
+	// Comon delims
+	pub const BANG: Token = Token((((Kind::Delim as u32) | 0b001_00000) << 24) & KIND_MASK, '!' as u32);
+	pub const HASH: Token = Token((((Kind::Delim as u32) | 0b001_00000) << 24) & KIND_MASK, '#' as u32);
+	pub const DOLLAR: Token = Token((((Kind::Delim as u32) | 0b001_00000) << 24) & KIND_MASK, '$' as u32);
+	pub const PERCENT: Token = Token((((Kind::Delim as u32) | 0b001_00000) << 24) & KIND_MASK, '%' as u32);
+	pub const AMPERSAND: Token = Token((((Kind::Delim as u32) | 0b001_00000) << 24) & KIND_MASK, '&' as u32);
+	pub const ASTERISK: Token = Token((((Kind::Delim as u32) | 0b001_00000) << 24) & KIND_MASK, '*' as u32);
+	pub const PLUS: Token = Token((((Kind::Delim as u32) | 0b001_00000) << 24) & KIND_MASK, '+' as u32);
+	pub const DASH: Token = Token((((Kind::Delim as u32) | 0b001_00000) << 24) & KIND_MASK, '-' as u32);
+	pub const PERIOD: Token = Token((((Kind::Delim as u32) | 0b001_00000) << 24) & KIND_MASK, '.' as u32);
+	pub const SLASH: Token = Token((((Kind::Delim as u32) | 0b001_00000) << 24) & KIND_MASK, '/' as u32);
+	pub const LESS_THAN: Token = Token((((Kind::Delim as u32) | 0b001_00000) << 24) & KIND_MASK, '<' as u32);
+	pub const EQUALS: Token = Token((((Kind::Delim as u32) | 0b001_00000) << 24) & KIND_MASK, '=' as u32);
+	pub const GREATER_THAN: Token = Token((((Kind::Delim as u32) | 0b001_00000) << 24) & KIND_MASK, '>' as u32);
+	pub const QUESTION: Token = Token((((Kind::Delim as u32) | 0b001_00000) << 24) & KIND_MASK, '?' as u32);
+	pub const AT: Token = Token((((Kind::Delim as u32) | 0b001_00000) << 24) & KIND_MASK, '@' as u32);
+	pub const BACKSLASH: Token = Token((((Kind::Delim as u32) | 0b001_00000) << 24) & KIND_MASK, '\\' as u32);
+	pub const CARET: Token = Token((((Kind::Delim as u32) | 0b001_00000) << 24) & KIND_MASK, '^' as u32);
+	pub const UNDERSCORE: Token = Token((((Kind::Delim as u32) | 0b001_00000) << 24) & KIND_MASK, '_' as u32);
+	pub const BACKTICK: Token = Token((((Kind::Delim as u32) | 0b001_00000) << 24) & KIND_MASK, '`' as u32);
+	pub const PIPE: Token = Token((((Kind::Delim as u32) | 0b001_00000) << 24) & KIND_MASK, '|' as u32);
+	pub const TILDE: Token = Token((((Kind::Delim as u32) | 0b001_00000) << 24) & KIND_MASK, '~' as u32);
 
-	pub fn new_number(type_flags: u8, offset: u32, num_len: u32, value: i32) -> Self {
-		let mut type_flags = type_flags;
-		let pack_data = if type_flags & 0b100 == 0b100 && num_len <= 255 && (-32767..=32767).contains(&value) {
-			((num_len << 16) & NUMBER_PACK_MASK)
-				| ((!value.is_negative() as u32) << 15 & NUMBER_PACK_MASK)
-				| value.unsigned_abs()
-		} else {
-			type_flags &= 0b011;
-			num_len & LENGTH_MASK
-		};
-		let flags = TokenFlags {
-			bits: (((type_flags as u32) << 29) & TYPEFLAG_MASK)
-				| (((Kind::Number as u8 as u32) << 24) & KIND_MASK)
-				| pack_data,
-		};
-		Self { flags, offset }
-	}
-
-	pub fn new_dimension(
-		type_flags: u8,
-		offset: u32,
-		num_len: u32,
-		unit_len: u32,
-		value: i32,
-		known_unit: DimensionUnit,
-	) -> Self {
-		let mut type_flags = type_flags;
-		let pack_data = if type_flags & 0b100 == 0b100
-			&& num_len <= 15
-			&& (-8191..=8191).contains(&value)
-			&& known_unit != DimensionUnit::Unknown
-		{
-			let num_len = (num_len << 20) & KNOWN_DIMENSION_NUMBER_LENGTH_MASK;
-			let known_unit = ((known_unit as u32) << 14) & KNOWN_DIMENSION_NUMBER_PACK_MASK;
-			let sign = ((!value.is_negative() as u32) << 13) & KNOWN_DIMENSION_NUMBER_PACK_MASK;
-			num_len | known_unit | sign | value.unsigned_abs()
-		} else {
-			type_flags &= 0b011;
-			let num_len = (num_len << 12) & DIMENSION_UNIT_LENGTH_MASK;
-			let unit_len = unit_len & !DIMENSION_UNIT_LENGTH_MASK;
-			(num_len | unit_len) & LENGTH_MASK
-		};
-		let flags = TokenFlags {
-			bits: (((type_flags as u32) << 29) & TYPEFLAG_MASK)
-				| (((Kind::Dimension as u8 as u32) << 24) & KIND_MASK)
-				| pack_data,
-		};
-		Self { flags, offset }
-	}
-
-	#[inline(always)]
-	pub fn offset(&self) -> u32 {
-		self.offset
-	}
-
-	#[inline(always)]
-	pub fn end_offset(&self) -> u32 {
-		self.offset + self.len()
-	}
-
-	#[inline(always)]
-	pub fn span(&self) -> Span {
-		Span::new(self.offset(), self.end_offset())
-	}
-
-	#[inline(always)]
-	pub(crate) fn kind_bits(&self) -> u8 {
-		(self.flags.bits >> 24 & 0b11111) as u8
-	}
-
-	#[inline(always)]
-	pub(crate) fn should_skip(&self, inc: Include) -> bool {
-		let b = self.kind_bits();
-		b != 0 && b & 0b00011 == b && inc.bits & b != b
-	}
-
-	#[inline(always)]
-	fn first_bit_is_set(&self) -> bool {
-		self.flags.bits >> 31 == 1
-	}
-
-	#[inline(always)]
-	fn second_bit_is_set(&self) -> bool {
-		self.flags.bits >> 30 & 0b1 == 1
-	}
-
-	#[inline(always)]
-	fn third_bit_is_set(&self) -> bool {
-		self.flags.bits >> 29 & 0b1 == 1
-	}
-
-	#[inline(always)]
-	pub fn is_ident_like(&self) -> bool {
-		self.kind_bits() & 0b11000 == 0b01000 && self.kind_bits() != Kind::String as u8
+	#[inline]
+	pub fn call_site(kind: Kind) -> Self {
+		Self((kind as u32) << 24, 0)
 	}
 
 	#[inline]
-	pub fn kind(&self) -> Kind {
+	pub fn new_whitespace(style: WhitespaceStyle, len: u32) -> Self {
+		let flags: u32 = Kind::Whitespace as u32 | ((style as u32) << 5);
+		Self((flags << 24) & KIND_MASK, len)
+	}
+
+	#[inline]
+	pub fn new_comment(style: CommentStyle, len: u32) -> Self {
+		let flags: u32 = Kind::Comment as u32 | ((style as u32) << 5);
+		Self((flags << 24) & KIND_MASK, len)
+	}
+
+	#[inline]
+	pub fn new_number(is_float: bool, has_sign: bool, len: u32, value: f32) -> Self {
+		let flags: u32 = Kind::Number as u32 | ((is_float as u32) << 5) | ((has_sign as u32) << 6);
+		Self((flags << 24) & KIND_MASK | (len & LENGTH_MASK), value.to_bits())
+	}
+
+	#[inline]
+	pub fn new_dimension(
+		is_float: bool,
+		has_sign: bool,
+		num_len: u32,
+		unit_len: u32,
+		value: f32,
+		unit: DimensionUnit,
+	) -> Self {
+		debug_assert!(num_len <= 4097);
+		let num_len = (num_len << 12) & DIMENSION_NUMBER_LENGTH_MASK;
+		let (is_known_unit, known_or_len) =
+			if unit == DimensionUnit::Unknown { (0, unit_len) } else { (0b100_00000, unit as u32) };
+		let flags: u32 = Kind::Dimension as u32 | is_known_unit | ((is_float as u32) << 5) | ((has_sign as u32) << 6);
+		Self(((flags << 24) & KIND_MASK) | ((num_len | known_or_len) & LENGTH_MASK), value.to_bits())
+	}
+
+	#[inline]
+	pub fn new_bad_string(len: u32) -> Self {
+		Self(((Kind::BadString as u32) << 24) & KIND_MASK, len)
+	}
+
+	#[inline]
+	pub fn new_bad_url(len: u32) -> Self {
+		Self(((Kind::BadUrl as u32) << 24) & KIND_MASK, len)
+	}
+
+	#[inline]
+	pub fn new_ident(contains_non_lower_ascii: bool, dashed: bool, contains_escape: bool, len: u32) -> Self {
+		let flags: u32 = Kind::Ident as u32
+			| ((contains_non_lower_ascii as u32) << 5)
+			| ((dashed as u32) << 6)
+			| ((contains_escape as u32) << 7);
+		Self((flags << 24) & KIND_MASK, len)
+	}
+
+	#[inline]
+	pub fn new_function(contains_non_lower_ascii: bool, dashed: bool, contains_escape: bool, len: u32) -> Self {
+		let flags: u32 = Kind::Function as u32
+			| ((contains_non_lower_ascii as u32) << 5)
+			| ((dashed as u32) << 6)
+			| ((contains_escape as u32) << 7);
+		Self((flags << 24) & KIND_MASK, len)
+	}
+
+	#[inline]
+	pub fn new_atkeyword(contains_non_lower_ascii: bool, dashed: bool, contains_escape: bool, len: u32) -> Self {
+		let flags: u32 = Kind::AtKeyword as u32
+			| ((contains_non_lower_ascii as u32) << 5)
+			| ((dashed as u32) << 6)
+			| ((contains_escape as u32) << 7);
+		Self((flags << 24) & KIND_MASK, len)
+	}
+
+	#[inline]
+	pub fn new_hash(contains_non_lower_ascii: bool, first_is_ascii: bool, contains_escape: bool, len: u32) -> Self {
+		let flags: u32 = Kind::Hash as u32
+			| ((contains_non_lower_ascii as u32) << 5)
+			| ((first_is_ascii as u32) << 6)
+			| ((contains_escape as u32) << 7);
+		Self((flags << 24) & KIND_MASK, len)
+	}
+
+	#[inline]
+	pub fn new_string(quotes: QuoteStyle, has_close_quote: bool, contains_escape: bool, len: u32) -> Self {
+		debug_assert!(quotes != QuoteStyle::None);
+		let quotes = if quotes == QuoteStyle::Double { 0b001_00000 } else { 0b0 };
+		let flags: u32 =
+			Kind::String as u32 | quotes | ((has_close_quote as u32) << 6) | ((contains_escape as u32) << 7);
+		Self((flags << 24) & KIND_MASK, len)
+	}
+
+	#[inline]
+	pub fn new_url(
+		ends_with_paren: bool,
+		contains_whitespace_after_open_paren: bool,
+		contains_escape: bool,
+		len: u32,
+	) -> Self {
+		let flags: u32 = Kind::Url as u32
+			| ((ends_with_paren as u32) << 5)
+			| ((contains_whitespace_after_open_paren as u32) << 6)
+			| ((contains_escape as u32) << 7);
+		Self((flags << 24) & KIND_MASK, len)
+	}
+
+	#[inline]
+	pub fn new_delim(char: char) -> Self {
+		let len = char.len_utf8() as u32;
+		debug_assert!(len <= 7);
+		let flags: u32 = Kind::Delim as u32 | (len << 5);
+		Self((flags << 24) & KIND_MASK | (len & LENGTH_MASK), char as u32)
+	}
+
+	#[inline(always)]
+	pub(crate) const fn kind_bits(&self) -> u8 {
+		(self.0 >> 24 & 0b11111) as u8
+	}
+
+	#[inline]
+	pub const fn kind(&self) -> Kind {
 		Kind::from_bits(self.kind_bits())
 	}
 
-	pub fn is_empty(&self) -> bool {
-		self.len() == 0
+	#[inline(always)]
+	const fn first_bit_is_set(&self) -> bool {
+		self.0 >> 31 == 1
+	}
+
+	#[inline(always)]
+	const fn second_bit_is_set(&self) -> bool {
+		self.0 >> 30 & 0b1 == 1
+	}
+
+	#[inline(always)]
+	const fn third_bit_is_set(&self) -> bool {
+		self.0 >> 29 & 0b1 == 1
+	}
+
+	#[inline(always)]
+	pub const fn is_ident_like(&self) -> bool {
+		self.kind_bits() & 0b11000 == 0b01000 && self.kind_bits() != Kind::String as u8
+	}
+
+	#[inline(always)]
+	pub const fn is_delim_like(&self) -> bool {
+		self.kind_bits() & 0b10000 == 0b10000
+	}
+
+	// The only token with an empty length is EOF
+	pub const fn is_empty(&self) -> bool {
+		self.kind_bits() == Kind::Eof as u8
 	}
 
 	pub fn len(&self) -> u32 {
 		if self.kind_bits() == Kind::Eof as u8 {
 			debug_assert!(self.kind() == Kind::Eof);
 			0
-		} else if self.kind_bits() == Kind::Delim as u8 {
-			debug_assert!(self.kind() == Kind::Delim);
-			self.flags.bits >> 29
-		// Delim-like flag is set
-		} else if self.kind_bits() & 0b10000 == 0b10000 {
+		} else if self.is_delim_like() {
 			debug_assert!(matches!(
 				self.kind(),
-				Kind::Colon
-					| Kind::Semicolon
+				Kind::Delim
+					| Kind::Colon | Kind::Semicolon
 					| Kind::Comma | Kind::LeftSquare
 					| Kind::RightSquare
 					| Kind::LeftParen
@@ -400,10 +333,7 @@ impl Token {
 					| Kind::LeftCurly
 					| Kind::RightCurly
 			));
-			1
-		} else if self.kind_bits() == Kind::CdcOrCdo as u8 {
-			debug_assert!(self.kind() == Kind::CdcOrCdo);
-			4 - (self.third_bit_is_set() as u32)
+			self.0 >> 29
 		} else if self.kind_bits() == Kind::Number as u8 {
 			debug_assert!(self.kind() == Kind::Number);
 			self.numeric_len()
@@ -412,70 +342,68 @@ impl Token {
 			if self.first_bit_is_set() {
 				self.numeric_len() + self.dimension_unit().len()
 			} else {
-				((self.flags.bits & LENGTH_MASK) >> 12) + (self.flags.bits & !DIMENSION_UNIT_LENGTH_MASK)
+				((self.0 & LENGTH_MASK) >> 12) + (self.0 & !DIMENSION_NUMBER_LENGTH_MASK)
 			}
 		} else {
-			self.flags.bits & LENGTH_MASK
+			self.1
 		}
 	}
 
 	pub fn char(&self) -> Option<char> {
-		// Delim flag is set
-		if self.kind_bits() & 0b10000 == 0b10000 {
-			return char::from_u32(self.flags.bits & LENGTH_MASK);
+		if self.is_delim_like() {
+			return char::from_u32(self.1);
 		}
 		None
 	}
 
 	// Number Style Checks
 	#[inline]
-	pub fn is_int(&self) -> bool {
+	pub const fn is_int(&self) -> bool {
 		self.kind_bits() & 0b11100 == 0b00100 && !self.third_bit_is_set()
 	}
 
 	#[inline]
-	pub fn is_float(&self) -> bool {
+	pub const fn is_float(&self) -> bool {
 		self.kind_bits() & 0b11100 == 0b00100 && self.third_bit_is_set()
 	}
 
 	#[inline]
-	pub fn has_sign(&self) -> bool {
+	pub const fn has_sign(&self) -> bool {
 		self.kind_bits() & 0b11100 == 0b00100 && self.second_bit_is_set()
 	}
 
 	#[inline]
-	pub fn numeric_len(&self) -> u32 {
+	pub const fn numeric_len(&self) -> u32 {
 		debug_assert!(matches!(self.kind(), Kind::Number | Kind::Dimension));
 		if self.kind_bits() == Kind::Dimension as u8 {
-			if self.first_bit_is_set() {
-				(self.flags.bits & LENGTH_MASK) >> 20
-			} else {
-				(self.flags.bits & LENGTH_MASK) >> 12
-			}
+			(self.0 & LENGTH_MASK) >> 12
 		} else if self.first_bit_is_set() {
-			(self.flags.bits & LENGTH_MASK) >> 16
+			(self.0 & LENGTH_MASK) >> 16
 		} else {
-			self.flags.bits & LENGTH_MASK
+			self.0 & LENGTH_MASK
 		}
 	}
 
 	#[inline]
-	pub fn stored_small_number(&self) -> Option<f32> {
-		if !self.first_bit_is_set() {
-			None
-		} else if self.kind_bits() == Kind::Number as u8 {
-			Some(if ((self.flags.bits >> 15) & 0b1) == 1 {
-				(self.flags.bits & !NUMBER_PACK_MASK) as f32
-			} else {
-				-((self.flags.bits & !NUMBER_PACK_MASK) as f32)
-			})
-		} else if self.kind_bits() == Kind::Dimension as u8 {
-			Some(if (self.flags.bits >> 13 & 0b1) == 1 {
-				let bits = self.flags.bits & !KNOWN_DIMENSION_NUMBER_PACK_MASK;
-				bits as f32
-			} else {
-				-((self.flags.bits & !KNOWN_DIMENSION_NUMBER_PACK_MASK) as f32)
-			})
+	pub const fn value(&self) -> f32 {
+		f32::from_bits(self.1)
+	}
+
+	// Whitespace style checks
+	#[inline]
+	pub const fn whitespace_style(&self) -> WhitespaceStyle {
+		if self.kind_bits() == Kind::Whitespace as u8 {
+			WhitespaceStyle::from_bits((self.0 >> 29) as u8)
+		} else {
+			WhitespaceStyle::None
+		}
+	}
+
+	// Comment style checks
+	#[inline]
+	pub fn comment_style(&self) -> Option<CommentStyle> {
+		if self.kind_bits() == Kind::Comment as u8 {
+			CommentStyle::from_bits((self.0 >> 29) as u8)
 		} else {
 			None
 		}
@@ -487,7 +415,7 @@ impl Token {
 		if !self.first_bit_is_set() || self.kind_bits() != Kind::Dimension as u8 {
 			DimensionUnit::Unknown
 		} else {
-			let unit_bits = (self.flags.bits >> 14 & 0b111111) as u8;
+			let unit_bits = (self.0 & 0b111111) as u8;
 			unit_bits.into()
 		}
 	}
@@ -504,83 +432,88 @@ impl Token {
 		}
 		QuoteStyle::None
 	}
-
 	#[inline]
-	pub fn string_has_closing_quote(&self) -> bool {
+	pub const fn string_has_closing_quote(&self) -> bool {
 		self.kind_bits() == Kind::String as u8 && self.second_bit_is_set()
 	}
 
 	// Escape style checks
 	#[inline]
-	pub fn can_escape(&self) -> bool {
+	pub const fn can_escape(&self) -> bool {
 		self.kind_bits() == Kind::String as u8 || self.kind_bits() == Kind::Dimension as u8 || self.is_ident_like()
 	}
 
 	#[inline]
-	pub fn contains_escape_chars(&self) -> bool {
+	pub const fn contains_escape_chars(&self) -> bool {
 		if self.kind_bits() == Kind::Dimension as u8 {
 			return !self.first_bit_is_set();
 		}
 		self.can_escape() && self.first_bit_is_set()
 	}
 
+	// Ident style checks
 	#[inline]
-	pub fn is_dashed_ident(&self) -> bool {
+	pub const fn is_dashed_ident(&self) -> bool {
 		self.is_ident_like() && self.second_bit_is_set()
 	}
 
 	#[inline]
-	pub fn is_lower_case(&self) -> bool {
-		self.is_ident_like() && self.third_bit_is_set()
+	pub const fn is_lower_case(&self) -> bool {
+		self.is_ident_like() && !self.third_bit_is_set()
 	}
 
 	#[inline]
-	pub fn is_trivia(&self) -> bool {
+	pub const fn is_trivia(&self) -> bool {
 		self.kind_bits() & 0b000011 == self.kind_bits()
 	}
 
 	// Url style checks
 	#[inline]
-	pub fn url_has_leading_space(&self) -> bool {
+	pub const fn url_has_leading_space(&self) -> bool {
 		self.kind_bits() == Kind::Url as u8 && self.second_bit_is_set()
 	}
 
 	#[inline]
-	pub fn url_has_closing_paren(&self) -> bool {
+	pub const fn url_has_closing_paren(&self) -> bool {
 		self.kind_bits() == Kind::Url as u8 && self.third_bit_is_set()
 	}
 
 	// Whitespace/Comment Style checks
 	#[inline]
-	pub fn contains_newline(&self) -> bool {
+	pub const fn contains_newline(&self) -> bool {
 		(self.kind_bits() == Kind::Whitespace as u8 || self.kind_bits() == Kind::Comment as u8)
 			&& self.second_bit_is_set()
 	}
 
 	#[inline]
-	pub fn contains_tab(&self) -> bool {
+	pub const fn contains_tab(&self) -> bool {
 		(self.kind_bits() == Kind::Whitespace as u8 || self.kind_bits() == Kind::Comment as u8)
 			&& self.third_bit_is_set()
 	}
 
 	#[inline]
-	pub fn hash_is_id_like(&self) -> bool {
+	pub const fn hash_is_id_like(&self) -> bool {
 		(self.kind_bits() == Kind::Hash as u8) && self.second_bit_is_set()
 	}
 
 	#[inline]
-	pub fn is_bad(&self) -> bool {
+	pub const fn is_bad(&self) -> bool {
 		(self.kind_bits() | 0b00001) & 0b11001 == 1
 	}
 
 	#[inline]
-	pub fn is_cdc(&self) -> bool {
-		self.kind() == Kind::CdcOrCdo && self.third_bit_is_set()
+	pub const fn is_cdc(&self) -> bool {
+		self.kind_bits() == (Kind::CdcOrCdo as u8) && self.third_bit_is_set()
 	}
 
 	#[inline]
 	pub fn to_pairwise(&self) -> Option<PairWise> {
 		PairWise::from_token(self)
+	}
+
+	#[inline]
+	pub fn with_cursor(self, offset: SourceOffset) -> Cursor {
+		Cursor::new(offset, self)
 	}
 }
 
@@ -589,38 +522,20 @@ impl core::fmt::Debug for Token {
 		let bits = match self.kind() {
 			Kind::Number | Kind::Delim => format!(
 				"{:03b}_{:05b}_{:08b}_{:016b}",
-				&self.flags.bits >> 29,
+				&self.0 >> 29,
 				self.kind_bits(),
-				(self.flags.bits & LENGTH_MASK) >> 16,
-				self.flags.bits & DIMENSION_UNIT_LENGTH_MASK,
+				(self.0 & LENGTH_MASK) >> 16,
+				self.0 & !DIMENSION_NUMBER_LENGTH_MASK
 			),
-			_ => format!(
-				"{:03b}_{:05b}_{:024b}",
-				&self.flags.bits >> 29,
-				self.kind_bits(),
-				self.flags.bits & LENGTH_MASK
-			),
+			_ => format!("{:03b}_{:05b}_{:024b}", &self.0 >> 29, self.kind_bits(), self.0 & LENGTH_MASK),
 		};
 		match self.kind() {
-			Kind::Eof => write!(f, "Token::Eof {{ bits: {}, offset: {} }}", bits, &self.offset),
+			Kind::Eof => write!(f, "Token::Eof {{ bits: {}, }}", bits),
 			Kind::Delim => {
-				write!(
-					f,
-					"Token::Delim {{ bits: {}, char: {:?}, offset: {}, len: 1\n}}",
-					bits,
-					&self.char().unwrap(),
-					&self.offset
-				)
+				write!(f, "Token::Delim {{ bits: {}, char: {:?}, len: 1\n}}", bits, &self.char().unwrap())
 			}
 			_ => {
-				write!(
-					f,
-					"Token::{} {{ bits: {}, offset: {}, len: {} }}",
-					&self.kind().as_str(),
-					bits,
-					&self.offset,
-					&self.len()
-				)
+				write!(f, "Token::{} {{ bits: {}, len: {} }}", &self.kind().as_str(), bits, &self.len())
 			}
 		}
 	}
@@ -641,9 +556,9 @@ impl serde::ser::Serialize for Token {
 	where
 		S: serde::ser::Serializer,
 	{
+		use serde::ser::SerializeStruct;
 		let mut state = serializer.serialize_struct("Token", 3)?;
 		state.serialize_field("kind", self.kind().as_str())?;
-		state.serialize_field("offset", &self.offset)?;
 		state.serialize_field("len", &self.len())?;
 		if self.kind_bits() == Kind::Dimension as u8 {
 			state.serialize_field("unit", &self.dimension_unit())?;
@@ -652,40 +567,145 @@ impl serde::ser::Serialize for Token {
 	}
 }
 
-#[derive(Debug, Eq, PartialEq, Copy, Clone, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize))]
-pub enum PairWise {
-	Paren,
-	Curly,
-	Square,
+impl From<Token> for Kind {
+	fn from(token: Token) -> Self {
+		token.kind()
+	}
 }
 
-impl PairWise {
-	pub fn from_token(token: &Token) -> Option<Self> {
-		match token.kind() {
-			Kind::LeftParen | Kind::Function => Some(Self::Paren),
-			Kind::LeftCurly => Some(Self::Curly),
-			Kind::LeftSquare => Some(Self::Square),
-			Kind::RightParen => Some(Self::Paren),
-			Kind::RightCurly => Some(Self::Curly),
-			Kind::RightSquare => Some(Self::Square),
-			_ => None,
-		}
+impl PartialEq<Kind> for Token {
+	fn eq(&self, other: &Kind) -> bool {
+		self.kind_bits() == *other as u8
 	}
+}
 
-	pub fn start(&self) -> Kind {
-		match self {
-			Self::Paren => Kind::LeftParen,
-			Self::Curly => Kind::LeftCurly,
-			Self::Square => Kind::LeftSquare,
-		}
+impl From<Token> for KindSet {
+	fn from(token: Token) -> Self {
+		KindSet::new(&[token.kind()])
 	}
+}
 
-	pub fn end(&self) -> Kind {
-		match self {
-			Self::Paren => Kind::RightParen,
-			Self::Curly => Kind::RightCurly,
-			Self::Square => Kind::RightSquare,
-		}
+impl PartialEq<KindSet> for Token {
+	fn eq(&self, other: &KindSet) -> bool {
+		other.contains_bits(self.kind_bits())
+	}
+}
+
+impl From<Token> for QuoteStyle {
+	fn from(token: Token) -> Self {
+		token.quote_style()
+	}
+}
+
+impl PartialEq<QuoteStyle> for Token {
+	fn eq(&self, other: &QuoteStyle) -> bool {
+		&self.quote_style() == other
+	}
+}
+
+impl From<Token> for WhitespaceStyle {
+	fn from(token: Token) -> Self {
+		token.whitespace_style()
+	}
+}
+
+impl PartialEq<WhitespaceStyle> for Token {
+	fn eq(&self, other: &WhitespaceStyle) -> bool {
+		self.whitespace_style() == *other
+	}
+}
+
+impl PartialEq<CommentStyle> for Token {
+	fn eq(&self, other: &CommentStyle) -> bool {
+		self.comment_style().map(|style| &style == other).unwrap_or(false)
+	}
+}
+
+impl PartialEq<char> for Token {
+	fn eq(&self, other: &char) -> bool {
+		self.char().map(|char| char == *other).unwrap_or(false)
+	}
+}
+
+impl From<Token> for DimensionUnit {
+	fn from(token: Token) -> Self {
+		token.dimension_unit()
+	}
+}
+
+impl PartialEq<DimensionUnit> for Token {
+	fn eq(&self, other: &DimensionUnit) -> bool {
+		self.dimension_unit() == *other
+	}
+}
+
+#[test]
+fn size_test() {
+	assert_eq!(::std::mem::size_of::<Token>(), 8);
+}
+
+#[test]
+fn test_new_whitespace() {
+	assert_eq!(Token::SPACE, Kind::Whitespace);
+	assert_eq!(Token::SPACE, WhitespaceStyle::Space);
+	assert_eq!(Token::TAB, Kind::Whitespace);
+	assert_eq!(Token::TAB, WhitespaceStyle::Tab);
+	assert_eq!(Token::NEWLINE, Kind::Whitespace);
+	assert_eq!(Token::NEWLINE, WhitespaceStyle::Newline);
+	assert_eq!(Token::new_whitespace(WhitespaceStyle::Space, 4), Kind::Whitespace);
+	assert_eq!(Token::new_whitespace(WhitespaceStyle::Space, 4), WhitespaceStyle::Space);
+	assert_eq!(Token::new_whitespace(WhitespaceStyle::Space, 4).len(), 4);
+	assert_eq!(Token::new_whitespace(WhitespaceStyle::Tab, 4), WhitespaceStyle::Tab);
+	assert_eq!(Token::new_whitespace(WhitespaceStyle::Newline, 4), WhitespaceStyle::Newline);
+	assert_eq!(Token::new_whitespace(WhitespaceStyle::Newline, 4).len(), 4);
+	assert_eq!(Token::new_whitespace(WhitespaceStyle::NewlineUsingCarriageReturn, 4).len(), 4);
+}
+
+#[test]
+fn test_new_comment() {
+	assert_eq!(Token::new_comment(CommentStyle::Block, 4), Kind::Comment);
+	assert_eq!(Token::new_comment(CommentStyle::Block, 4), CommentStyle::Block);
+	assert_eq!(Token::new_comment(CommentStyle::Single, 4), CommentStyle::Single);
+}
+
+#[test]
+fn test_new_number() {
+	assert_eq!(Token::new_number(false, false, 3, 4.2), Kind::Number);
+	assert_eq!(Token::new_number(false, false, 3, 4.2).value(), 4.2);
+	assert_eq!(Token::new_number(false, false, 3, 4.2).len(), 3);
+	assert_eq!(Token::new_number(false, true, 9, 4.2), Kind::Number);
+	assert_eq!(Token::new_number(false, true, 9, 4.2).value(), 4.2);
+	assert_eq!(Token::new_number(false, true, 9, 4.2).len(), 9);
+	assert!(!Token::new_number(false, false, 3, 4.2).has_sign());
+	assert!(Token::new_number(false, true, 3, 4.2).has_sign());
+	assert!(!Token::new_number(false, true, 3, 4.0).is_float());
+	assert!(Token::new_number(true, false, 3, 4.2).is_float());
+}
+
+#[test]
+fn test_new_dimension() {
+	{
+		let token = Token::new_dimension(false, false, 3, 3, 999.0, DimensionUnit::Rad);
+		assert_eq!(token, Kind::Dimension);
+		assert_eq!(token.value(), 999.0);
+		assert_eq!(token.dimension_unit(), DimensionUnit::Rad);
+		assert_eq!(token.numeric_len(), 3);
+		assert_eq!(token.len(), 6);
+		assert!(!token.is_float());
+		assert!(!token.has_sign());
+	}
+	{
+		let token = Token::new_dimension(false, false, 5, 2, 8191.0, DimensionUnit::Px);
+		assert_eq!(token, Kind::Dimension);
+		assert_eq!(token.value(), 8191.0);
+		assert_eq!(token.dimension_unit(), DimensionUnit::Px);
+		assert_eq!(token.numeric_len(), 5);
+		assert_eq!(token.len(), 7);
+		assert!(!token.is_float());
+		assert!(!token.has_sign());
+	}
+	for i in -8191..8191 {
+		let token = Token::new_dimension(false, false, 9, 3, i as f32, DimensionUnit::Rem);
+		assert_eq!(token.value(), i as f32);
 	}
 }
