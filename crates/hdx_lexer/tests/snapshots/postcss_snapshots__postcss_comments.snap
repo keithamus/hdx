@@ -5,189 +5,152 @@ expression: tokens
 [
   {
     "kind": "Ident",
-    "offset": 36,
     "len": 3
   },
   {
     "kind": "LeftCurly",
-    "offset": 40,
     "len": 1
   },
   {
     "kind": "Ident",
-    "offset": 63,
     "len": 5
   },
   {
     "kind": "Colon",
-    "offset": 68,
     "len": 1
   },
   {
     "kind": "Ident",
-    "offset": 70,
     "len": 5
   },
   {
     "kind": "Semicolon",
-    "offset": 75,
     "len": 1
   },
   {
     "kind": "Ident",
-    "offset": 99,
     "len": 13
   },
   {
     "kind": "Colon",
-    "offset": 112,
     "len": 1
   },
   {
     "kind": "Dimension",
-    "offset": 114,
     "len": 3,
     "unit": "px"
   },
   {
     "kind": "Delim",
-    "offset": 118,
     "len": 1
   },
   {
     "kind": "Dimension",
-    "offset": 120,
     "len": 3,
     "unit": "px"
   },
   {
     "kind": "RightCurly",
-    "offset": 138,
     "len": 1
   },
   {
     "kind": "Ident",
-    "offset": 149,
     "len": 1
   },
   {
     "kind": "LeftCurly",
-    "offset": 151,
     "len": 1
   },
   {
     "kind": "Ident",
-    "offset": 157,
     "len": 5
   },
   {
     "kind": "Colon",
-    "offset": 162,
     "len": 1
   },
   {
     "kind": "Ident",
-    "offset": 164,
     "len": 5
   },
   {
     "kind": "Semicolon",
-    "offset": 169,
     "len": 1
   },
   {
     "kind": "RightCurly",
-    "offset": 183,
     "len": 1
   },
   {
     "kind": "Delim",
-    "offset": 186,
     "len": 1
   },
   {
     "kind": "Ident",
-    "offset": 187,
     "len": 2
   },
   {
     "kind": "Ident",
-    "offset": 193,
     "len": 4
   },
   {
     "kind": "LeftCurly",
-    "offset": 198,
     "len": 1
   },
   {
     "kind": "Ident",
-    "offset": 202,
     "len": 5
   },
   {
     "kind": "Colon",
-    "offset": 207,
     "len": 1
   },
   {
     "kind": "Ident",
-    "offset": 209,
     "len": 3
   },
   {
     "kind": "LeftParen",
-    "offset": 216,
     "len": 1
   },
   {
     "kind": "Ident",
-    "offset": 217,
     "len": 8
   },
   {
     "kind": "RightParen",
-    "offset": 225,
     "len": 1
   },
   {
     "kind": "Semicolon",
-    "offset": 226,
     "len": 1
   },
   {
     "kind": "Ident",
-    "offset": 230,
     "len": 11
   },
   {
     "kind": "Colon",
-    "offset": 241,
     "len": 1
   },
   {
     "kind": "Ident",
-    "offset": 243,
     "len": 10
   },
   {
     "kind": "Comma",
-    "offset": 253,
     "len": 1
   },
   {
     "kind": "Ident",
-    "offset": 258,
     "len": 5
   },
   {
     "kind": "Semicolon",
-    "offset": 263,
     "len": 1
   },
   {
     "kind": "RightCurly",
-    "offset": 265,
     "len": 1
   }
 ]

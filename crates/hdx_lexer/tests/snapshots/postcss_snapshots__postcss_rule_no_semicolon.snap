@@ -5,32 +5,26 @@ expression: tokens
 [
   {
     "kind": "Ident",
-    "offset": 0,
     "len": 1
   },
   {
     "kind": "LeftCurly",
-    "offset": 1,
     "len": 1
   },
   {
     "kind": "Ident",
-    "offset": 2,
     "len": 5
   },
   {
     "kind": "Colon",
-    "offset": 7,
     "len": 1
   },
   {
     "kind": "Ident",
-    "offset": 8,
     "len": 5
   },
   {
     "kind": "RightCurly",
-    "offset": 13,
     "len": 1
   }
 ]

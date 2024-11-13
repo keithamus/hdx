@@ -5,747 +5,598 @@ expression: tokens
 [
   {
     "kind": "AtKeyword",
-    "offset": 0,
     "len": 9
   },
   {
     "kind": "LeftParen",
-    "offset": 10,
     "len": 1
   },
   {
     "kind": "Function",
-    "offset": 11,
     "len": 10
   },
   {
     "kind": "String",
-    "offset": 21,
     "len": 11
   },
   {
     "kind": "Comma",
-    "offset": 32,
     "len": 1
   },
   {
     "kind": "LeftCurly",
-    "offset": 34,
     "len": 1
   },
   {
     "kind": "String",
-    "offset": 36,
     "len": 10
   },
   {
     "kind": "Colon",
-    "offset": 46,
     "len": 1
   },
   {
     "kind": "Number",
-    "offset": 48,
     "len": 3
   },
   {
     "kind": "RightCurly",
-    "offset": 52,
     "len": 1
   },
   {
     "kind": "RightParen",
-    "offset": 53,
     "len": 1
   },
   {
     "kind": "RightParen",
-    "offset": 54,
     "len": 1
   },
   {
     "kind": "LeftCurly",
-    "offset": 56,
     "len": 1
   },
   {
     "kind": "LeftSquare",
-    "offset": 60,
     "len": 1
   },
   {
     "kind": "Ident",
-    "offset": 61,
     "len": 6
   },
   {
     "kind": "RightSquare",
-    "offset": 67,
     "len": 1
   },
   {
     "kind": "LeftCurly",
-    "offset": 69,
     "len": 1
   },
   {
     "kind": "Ident",
-    "offset": 75,
     "len": 10
   },
   {
     "kind": "Colon",
-    "offset": 85,
     "len": 1
   },
   {
     "kind": "Ident",
-    "offset": 87,
     "len": 11
   },
   {
     "kind": "Semicolon",
-    "offset": 98,
     "len": 1
   },
   {
     "kind": "RightCurly",
-    "offset": 102,
     "len": 1
   },
   {
     "kind": "RightCurly",
-    "offset": 104,
     "len": 1
   },
   {
     "kind": "AtKeyword",
-    "offset": 107,
     "len": 9
   },
   {
     "kind": "LeftParen",
-    "offset": 117,
     "len": 1
   },
   {
     "kind": "LeftCurly",
-    "offset": 118,
     "len": 1
   },
   {
     "kind": "String",
-    "offset": 119,
     "len": 9
   },
   {
     "kind": "Colon",
-    "offset": 128,
     "len": 1
   },
   {
     "kind": "Number",
-    "offset": 130,
     "len": 1
   },
   {
     "kind": "RightCurly",
-    "offset": 131,
     "len": 1
   },
   {
     "kind": "RightParen",
-    "offset": 132,
     "len": 1
   },
   {
     "kind": "LeftCurly",
-    "offset": 134,
     "len": 1
   },
   {
     "kind": "Delim",
-    "offset": 138,
     "len": 1
   },
   {
     "kind": "LeftCurly",
-    "offset": 140,
     "len": 1
   },
   {
     "kind": "Ident",
-    "offset": 142,
     "len": 10
   },
   {
     "kind": "Colon",
-    "offset": 152,
     "len": 1
   },
   {
     "kind": "Ident",
-    "offset": 154,
     "len": 3
   },
   {
     "kind": "Semicolon",
-    "offset": 157,
     "len": 1
   },
   {
     "kind": "RightCurly",
-    "offset": 159,
     "len": 1
   },
   {
     "kind": "RightCurly",
-    "offset": 161,
     "len": 1
   },
   {
     "kind": "AtKeyword",
-    "offset": 164,
     "len": 9
   },
   {
     "kind": "LeftParen",
-    "offset": 174,
     "len": 1
   },
   {
     "kind": "LeftParen",
-    "offset": 175,
     "len": 1
   },
   {
     "kind": "String",
-    "offset": 176,
     "len": 9
   },
   {
     "kind": "Colon",
-    "offset": 185,
     "len": 1
   },
   {
     "kind": "Number",
-    "offset": 187,
     "len": 1
   },
   {
     "kind": "RightParen",
-    "offset": 188,
     "len": 1
   },
   {
     "kind": "RightParen",
-    "offset": 189,
     "len": 1
   },
   {
     "kind": "LeftCurly",
-    "offset": 191,
     "len": 1
   },
   {
     "kind": "Delim",
-    "offset": 195,
     "len": 1
   },
   {
     "kind": "LeftCurly",
-    "offset": 197,
     "len": 1
   },
   {
     "kind": "Ident",
-    "offset": 199,
     "len": 10
   },
   {
     "kind": "Colon",
-    "offset": 209,
     "len": 1
   },
   {
     "kind": "Ident",
-    "offset": 211,
     "len": 3
   },
   {
     "kind": "Semicolon",
-    "offset": 214,
     "len": 1
   },
   {
     "kind": "RightCurly",
-    "offset": 216,
     "len": 1
   },
   {
     "kind": "RightCurly",
-    "offset": 218,
     "len": 1
   },
   {
     "kind": "AtKeyword",
-    "offset": 221,
     "len": 9
   },
   {
     "kind": "LeftParen",
-    "offset": 231,
     "len": 1
   },
   {
     "kind": "Function",
-    "offset": 232,
     "len": 5
   },
   {
     "kind": "String",
-    "offset": 237,
     "len": 9
   },
   {
     "kind": "Colon",
-    "offset": 246,
     "len": 1
   },
   {
     "kind": "Number",
-    "offset": 248,
     "len": 1
   },
   {
     "kind": "RightParen",
-    "offset": 249,
     "len": 1
   },
   {
     "kind": "RightParen",
-    "offset": 250,
     "len": 1
   },
   {
     "kind": "LeftCurly",
-    "offset": 252,
     "len": 1
   },
   {
     "kind": "Delim",
-    "offset": 256,
     "len": 1
   },
   {
     "kind": "LeftCurly",
-    "offset": 258,
     "len": 1
   },
   {
     "kind": "Ident",
-    "offset": 260,
     "len": 10
   },
   {
     "kind": "Colon",
-    "offset": 270,
     "len": 1
   },
   {
     "kind": "Ident",
-    "offset": 272,
     "len": 3
   },
   {
     "kind": "Semicolon",
-    "offset": 275,
     "len": 1
   },
   {
     "kind": "RightCurly",
-    "offset": 277,
     "len": 1
   },
   {
     "kind": "RightCurly",
-    "offset": 279,
     "len": 1
   },
   {
     "kind": "AtKeyword",
-    "offset": 282,
     "len": 9
   },
   {
     "kind": "LeftParen",
-    "offset": 292,
     "len": 1
   },
   {
     "kind": "Ident",
-    "offset": 293,
     "len": 5
   },
   {
     "kind": "RightParen",
-    "offset": 298,
     "len": 1
   },
   {
     "kind": "LeftCurly",
-    "offset": 300,
     "len": 1
   },
   {
     "kind": "Delim",
-    "offset": 304,
     "len": 1
   },
   {
     "kind": "LeftCurly",
-    "offset": 306,
     "len": 1
   },
   {
     "kind": "Ident",
-    "offset": 308,
     "len": 10
   },
   {
     "kind": "Colon",
-    "offset": 318,
     "len": 1
   },
   {
     "kind": "Ident",
-    "offset": 320,
     "len": 3
   },
   {
     "kind": "Semicolon",
-    "offset": 323,
     "len": 1
   },
   {
     "kind": "RightCurly",
-    "offset": 325,
     "len": 1
   },
   {
     "kind": "RightCurly",
-    "offset": 327,
     "len": 1
   },
   {
     "kind": "AtKeyword",
-    "offset": 330,
     "len": 9
   },
   {
     "kind": "LeftParen",
-    "offset": 340,
     "len": 1
   },
   {
     "kind": "LeftSquare",
-    "offset": 341,
     "len": 1
   },
   {
     "kind": "RightSquare",
-    "offset": 342,
     "len": 1
   },
   {
     "kind": "RightParen",
-    "offset": 343,
     "len": 1
   },
   {
     "kind": "LeftCurly",
-    "offset": 345,
     "len": 1
   },
   {
     "kind": "Delim",
-    "offset": 349,
     "len": 1
   },
   {
     "kind": "LeftCurly",
-    "offset": 351,
     "len": 1
   },
   {
     "kind": "Ident",
-    "offset": 353,
     "len": 10
   },
   {
     "kind": "Colon",
-    "offset": 363,
     "len": 1
   },
   {
     "kind": "Ident",
-    "offset": 365,
     "len": 3
   },
   {
     "kind": "Semicolon",
-    "offset": 368,
     "len": 1
   },
   {
     "kind": "RightCurly",
-    "offset": 370,
     "len": 1
   },
   {
     "kind": "RightCurly",
-    "offset": 372,
     "len": 1
   },
   {
     "kind": "AtKeyword",
-    "offset": 375,
     "len": 9
   },
   {
     "kind": "LeftParen",
-    "offset": 385,
     "len": 1
   },
   {
     "kind": "LeftSquare",
-    "offset": 386,
     "len": 1
   },
   {
     "kind": "Ident",
-    "offset": 387,
     "len": 5
   },
   {
     "kind": "Colon",
-    "offset": 392,
     "len": 1
   },
   {
     "kind": "Ident",
-    "offset": 394,
     "len": 3
   },
   {
     "kind": "RightSquare",
-    "offset": 397,
     "len": 1
   },
   {
     "kind": "RightParen",
-    "offset": 398,
     "len": 1
   },
   {
     "kind": "LeftCurly",
-    "offset": 400,
     "len": 1
   },
   {
     "kind": "Delim",
-    "offset": 404,
     "len": 1
   },
   {
     "kind": "LeftCurly",
-    "offset": 406,
     "len": 1
   },
   {
     "kind": "Ident",
-    "offset": 408,
     "len": 10
   },
   {
     "kind": "Colon",
-    "offset": 418,
     "len": 1
   },
   {
     "kind": "Ident",
-    "offset": 420,
     "len": 3
   },
   {
     "kind": "Semicolon",
-    "offset": 423,
     "len": 1
   },
   {
     "kind": "RightCurly",
-    "offset": 425,
     "len": 1
   },
   {
     "kind": "RightCurly",
-    "offset": 427,
     "len": 1
   },
   {
     "kind": "AtKeyword",
-    "offset": 430,
     "len": 9
   },
   {
     "kind": "LeftParen",
-    "offset": 440,
     "len": 1
   },
   {
     "kind": "LeftSquare",
-    "offset": 441,
     "len": 1
   },
   {
     "kind": "LeftSquare",
-    "offset": 442,
     "len": 1
   },
   {
     "kind": "LeftSquare",
-    "offset": 443,
     "len": 1
   },
   {
     "kind": "LeftSquare",
-    "offset": 444,
     "len": 1
   },
   {
     "kind": "LeftSquare",
-    "offset": 445,
     "len": 1
   },
   {
     "kind": "LeftCurly",
-    "offset": 446,
     "len": 1
   },
   {
     "kind": "Function",
-    "offset": 448,
     "len": 7
   },
   {
     "kind": "Ident",
-    "offset": 455,
     "len": 5
   },
   {
     "kind": "Colon",
-    "offset": 460,
     "len": 1
   },
   {
     "kind": "LeftCurly",
-    "offset": 462,
     "len": 1
   },
   {
     "kind": "Ident",
-    "offset": 464,
     "len": 3
   },
   {
     "kind": "RightCurly",
-    "offset": 468,
     "len": 1
   },
   {
     "kind": "RightParen",
-    "offset": 469,
     "len": 1
   },
   {
     "kind": "RightCurly",
-    "offset": 471,
     "len": 1
   },
   {
     "kind": "RightSquare",
-    "offset": 472,
     "len": 1
   },
   {
     "kind": "RightSquare",
-    "offset": 473,
     "len": 1
   },
   {
     "kind": "RightSquare",
-    "offset": 474,
     "len": 1
   },
   {
     "kind": "RightSquare",
-    "offset": 475,
     "len": 1
   },
   {
     "kind": "RightSquare",
-    "offset": 476,
     "len": 1
   },
   {
     "kind": "RightParen",
-    "offset": 477,
     "len": 1
   },
   {
     "kind": "LeftCurly",
-    "offset": 479,
     "len": 1
   },
   {
     "kind": "Delim",
-    "offset": 483,
     "len": 1
   },
   {
     "kind": "LeftCurly",
-    "offset": 485,
     "len": 1
   },
   {
     "kind": "Ident",
-    "offset": 487,
     "len": 10
   },
   {
     "kind": "Colon",
-    "offset": 497,
     "len": 1
   },
   {
     "kind": "Ident",
-    "offset": 499,
     "len": 3
   },
   {
     "kind": "Semicolon",
-    "offset": 502,
     "len": 1
   },
   {
     "kind": "RightCurly",
-    "offset": 504,
     "len": 1
   },
   {
     "kind": "RightCurly",
-    "offset": 506,
     "len": 1
   }
 ]

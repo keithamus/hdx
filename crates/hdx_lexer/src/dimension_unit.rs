@@ -1,6 +1,6 @@
 use hdx_atom::{atom, Atom, Atomizable};
 
-#[derive(Debug, Default, Copy, Clone, Eq, PartialEq, Ord, PartialOrd)]
+#[derive(Debug, Default, Copy, Clone, Eq, PartialEq, PartialOrd, Ord)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(rename_all = "lowercase"))]
 pub enum DimensionUnit {
 	#[default]
@@ -18,7 +18,11 @@ pub enum DimensionUnit {
 	Dpcm,
 	Dpi,
 	Dppx,
+	Dvb,
 	Dvh,
+	Dvi,
+	Dvmax,
+	Dvmin,
 	Dvw,
 	Em,
 	Ex,
@@ -27,15 +31,19 @@ pub enum DimensionUnit {
 	Hz,
 	Ic,
 	In,
-	KHz,
+	Khz,
 	Lh,
+	Lvb,
 	Lvh,
+	Lvi,
+	Lvmax,
+	Lvmin,
 	Lvw,
 	Mm,
 	Ms,
+	Pc,
 	#[cfg_attr(feature = "serde", serde(rename = "%"))]
 	Percent,
-	Pc,
 	Pt,
 	Px,
 	Q,
@@ -47,7 +55,11 @@ pub enum DimensionUnit {
 	Ric,
 	Rlh,
 	S,
+	Svb,
 	Svh,
+	Svi,
+	Svmax,
+	Svmin,
 	Svw,
 	Turn,
 	Vb,
@@ -93,9 +105,13 @@ impl DimensionUnit {
 			| Self::Cqw
 			| Self::Deg
 			| Self::Dpi
+			| Self::Dvb
+			| Self::Dvi
 			| Self::Dvh
 			| Self::Dvw
-			| Self::KHz
+			| Self::Khz
+			| Self::Lvb
+			| Self::Lvi
 			| Self::Lvh
 			| Self::Lvw
 			| Self::Rad
@@ -104,10 +120,19 @@ impl DimensionUnit {
 			| Self::Rex
 			| Self::Ric
 			| Self::Rlh
+			| Self::Svb
+			| Self::Svi
 			| Self::Svh
 			| Self::Svw => 3,
 			Self::Dpcm | Self::Dppx | Self::Grad | Self::Rcap | Self::Turn | Self::Vmax | Self::Vmin => 4,
-			Self::Cqmax | Self::Cqmin => 5,
+			Self::Dvmax
+			| Self::Dvmin
+			| Self::Lvmax
+			| Self::Lvmin
+			| Self::Svmax
+			| Self::Svmin
+			| Self::Cqmax
+			| Self::Cqmin => 5,
 		}
 	}
 }
@@ -128,44 +153,56 @@ impl From<u8> for DimensionUnit {
 			11 => Self::Dpcm,
 			12 => Self::Dpi,
 			13 => Self::Dppx,
-			14 => Self::Dvh,
-			15 => Self::Dvw,
-			16 => Self::Em,
-			17 => Self::Ex,
-			18 => Self::Fr,
-			19 => Self::Grad,
-			20 => Self::Hz,
-			21 => Self::Ic,
-			22 => Self::In,
-			23 => Self::KHz,
-			24 => Self::Lh,
-			25 => Self::Lvh,
-			26 => Self::Lvw,
-			27 => Self::Mm,
-			28 => Self::Ms,
-			29 => Self::Percent,
-			30 => Self::Pc,
-			31 => Self::Pt,
-			32 => Self::Px,
-			33 => Self::Q,
-			34 => Self::Rad,
-			35 => Self::Rcap,
-			36 => Self::Rch,
-			37 => Self::Rem,
-			38 => Self::Rex,
-			39 => Self::Ric,
-			40 => Self::Rlh,
-			41 => Self::S,
-			42 => Self::Svh,
-			43 => Self::Svw,
-			44 => Self::Turn,
-			45 => Self::Vb,
-			46 => Self::Vh,
-			47 => Self::Vi,
-			48 => Self::Vmax,
-			49 => Self::Vmin,
-			50 => Self::Vw,
-			51 => Self::X,
+			14 => Self::Dvb,
+			15 => Self::Dvh,
+			16 => Self::Dvi,
+			17 => Self::Dvmax,
+			18 => Self::Dvmin,
+			19 => Self::Dvw,
+			20 => Self::Em,
+			21 => Self::Ex,
+			22 => Self::Fr,
+			23 => Self::Grad,
+			24 => Self::Hz,
+			25 => Self::Ic,
+			26 => Self::In,
+			27 => Self::Khz,
+			28 => Self::Lh,
+			29 => Self::Lvb,
+			30 => Self::Lvh,
+			31 => Self::Lvi,
+			32 => Self::Lvmax,
+			33 => Self::Lvmin,
+			34 => Self::Lvw,
+			35 => Self::Mm,
+			36 => Self::Ms,
+			37 => Self::Pc,
+			38 => Self::Percent,
+			39 => Self::Pt,
+			40 => Self::Px,
+			41 => Self::Q,
+			42 => Self::Rad,
+			43 => Self::Rcap,
+			44 => Self::Rch,
+			45 => Self::Rem,
+			46 => Self::Rex,
+			47 => Self::Ric,
+			48 => Self::Rlh,
+			49 => Self::S,
+			50 => Self::Svb,
+			51 => Self::Svh,
+			52 => Self::Svi,
+			53 => Self::Svmax,
+			54 => Self::Svmin,
+			55 => Self::Svw,
+			56 => Self::Turn,
+			57 => Self::Vb,
+			58 => Self::Vh,
+			59 => Self::Vi,
+			60 => Self::Vmax,
+			61 => Self::Vmin,
+			62 => Self::Vw,
+			63 => Self::X,
 			_ => Self::Unknown,
 		};
 		debug_assert!(unit as u8 == value, "{:#010b} != {:#010b} ({:?})", unit as u8, value, unit);
@@ -198,14 +235,14 @@ impl Atomizable for DimensionUnit {
 			atom!("hz") => Some(Self::Hz),
 			atom!("ic") => Some(Self::Ic),
 			atom!("in") => Some(Self::In),
-			atom!("khz") => Some(Self::KHz),
+			atom!("khz") => Some(Self::Khz),
 			atom!("lh") => Some(Self::Lh),
 			atom!("lvh") => Some(Self::Lvh),
 			atom!("lvw") => Some(Self::Lvw),
 			atom!("mm") => Some(Self::Mm),
 			atom!("ms") => Some(Self::Ms),
-			atom!("%") => Some(Self::Percent),
 			atom!("pc") => Some(Self::Pc),
+			atom!("%") => Some(Self::Percent),
 			atom!("pt") => Some(Self::Pt),
 			atom!("px") => Some(Self::Px),
 			atom!("q") => Some(Self::Q),
@@ -247,7 +284,11 @@ impl Atomizable for DimensionUnit {
 			Self::Dpcm => atom!("dpcm"),
 			Self::Dpi => atom!("dpi"),
 			Self::Dppx => atom!("dppx"),
+			Self::Dvb => atom!("dvb"),
 			Self::Dvh => atom!("dvh"),
+			Self::Dvi => atom!("dvi"),
+			Self::Dvmax => atom!("dvmax"),
+			Self::Dvmin => atom!("dvmin"),
 			Self::Dvw => atom!("dvw"),
 			Self::Em => atom!("em"),
 			Self::Ex => atom!("ex"),
@@ -256,14 +297,18 @@ impl Atomizable for DimensionUnit {
 			Self::Hz => atom!("hz"),
 			Self::Ic => atom!("ic"),
 			Self::In => atom!("in"),
-			Self::KHz => atom!("khz"),
+			Self::Khz => atom!("khz"),
 			Self::Lh => atom!("lh"),
+			Self::Lvb => atom!("lvb"),
 			Self::Lvh => atom!("lvh"),
+			Self::Lvi => atom!("lvi"),
+			Self::Lvmax => atom!("lvmax"),
+			Self::Lvmin => atom!("lvmin"),
 			Self::Lvw => atom!("lvw"),
 			Self::Mm => atom!("mm"),
 			Self::Ms => atom!("ms"),
-			Self::Percent => atom!("%"),
 			Self::Pc => atom!("pc"),
+			Self::Percent => atom!("%"),
 			Self::Pt => atom!("pt"),
 			Self::Px => atom!("px"),
 			Self::Q => atom!("q"),
@@ -275,7 +320,11 @@ impl Atomizable for DimensionUnit {
 			Self::Ric => atom!("ric"),
 			Self::Rlh => atom!("rlh"),
 			Self::S => atom!("s"),
+			Self::Svb => atom!("svb"),
 			Self::Svh => atom!("svh"),
+			Self::Svi => atom!("svi"),
+			Self::Svmax => atom!("svmin"),
+			Self::Svmin => atom!("svmax"),
 			Self::Svw => atom!("svw"),
 			Self::Turn => atom!("turn"),
 			Self::Vb => atom!("vb"),
@@ -287,4 +336,9 @@ impl Atomizable for DimensionUnit {
 			Self::X => atom!("x"),
 		}
 	}
+}
+
+#[test]
+fn size_test() {
+	assert_eq!(::std::mem::size_of::<DimensionUnit>(), 1);
 }

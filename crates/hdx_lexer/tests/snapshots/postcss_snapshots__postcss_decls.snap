@@ -5,57 +5,46 @@ expression: tokens
 [
   {
     "kind": "Ident",
-    "offset": 0,
     "len": 1
   },
   {
     "kind": "LeftCurly",
-    "offset": 2,
     "len": 1
   },
   {
     "kind": "Ident",
-    "offset": 8,
     "len": 5
   },
   {
     "kind": "Colon",
-    "offset": 13,
     "len": 1
   },
   {
     "kind": "Ident",
-    "offset": 15,
     "len": 5
   },
   {
     "kind": "Semicolon",
-    "offset": 20,
     "len": 1
   },
   {
     "kind": "Ident",
-    "offset": 26,
     "len": 10
   },
   {
     "kind": "Colon",
-    "offset": 36,
     "len": 1
   },
   {
     "kind": "Ident",
-    "offset": 38,
     "len": 5
   },
   {
     "kind": "Semicolon",
-    "offset": 43,
     "len": 1
   },
   {
     "kind": "RightCurly",
-    "offset": 45,
     "len": 1
   }
 ]

@@ -51,7 +51,7 @@ fn popular_open_props() {
 #[test]
 #[cfg(feature = "serde")]
 fn popular_primer() {
-	assert_snap_tokens!("../../tasks/coverage/popular/primer.20.8.3.css");
+	assert_snap_tokens!("../../tasks/coverage/popular/primer.21.5.1.css");
 }
 
 #[test]

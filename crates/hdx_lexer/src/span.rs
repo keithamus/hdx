@@ -1,73 +1,54 @@
 use std::{fmt::Display, hash::Hash};
 
-use miette::{SourceOffset, SourceSpan};
-#[cfg(feature = "serde")]
-use serde::Serialize;
+use crate::SourceOffset;
+use miette::SourceSpan;
 
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize))]
 pub struct Span {
-	pub start: u32,
-	pub end: u32,
+	pub start: SourceOffset,
+	pub end: SourceOffset,
 }
 
 impl Span {
 	#[inline]
-	pub const fn new(start: u32, end: u32) -> Self {
+	pub const fn new(start: SourceOffset, end: SourceOffset) -> Self {
+		debug_assert!(start.0 <= end.0);
 		Self { start, end }
 	}
 
 	#[inline]
-	pub fn end(self, end: u32) -> Self {
+	pub fn end(self, end: SourceOffset) -> Self {
+		debug_assert!(self.start <= end);
 		Self { start: self.start, end }
 	}
 
 	pub fn dummy() -> Self {
-		Self::new(u32::default(), u32::default())
+		Self::new(SourceOffset::DUMMY, SourceOffset::DUMMY)
 	}
 
 	pub fn is_dummy(&self) -> bool {
-		self.start == self.end && self.end == u32::default()
+		self.start == self.end && self.end == SourceOffset::DUMMY
 	}
 
 	pub fn size(&self) -> u32 {
 		debug_assert!(self.start <= self.end);
-		self.end - self.start
+		self.end.0 - self.start.0
 	}
 
 	pub fn source_text<'a>(&self, source_text: &'a str) -> &'a str {
-		&source_text[self.start as usize..self.end as usize]
+		&source_text[self.start.0 as usize..self.end.0 as usize]
 	}
 }
 
 impl Display for Span {
 	fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-		write!(f, "[{}..{})", self.start, self.end)
+		write!(f, "[{}..{})", self.start.0, self.end.0)
 	}
 }
 
 impl From<Span> for SourceSpan {
 	fn from(val: Span) -> Self {
-		Self::new(SourceOffset::from(val.start as usize), val.size() as usize)
-	}
-}
-
-#[derive(Debug, Clone, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde())]
-pub struct Spanned<T> {
-	pub node: T,
-	#[cfg_attr(feature = "serde", serde(flatten))]
-	pub span: Span,
-}
-
-impl<T> Spanned<T> {
-	pub fn dummy(node: T) -> Self {
-		Self { node, span: Span::dummy() }
-	}
-}
-
-impl<T: Default> Default for Spanned<T> {
-	fn default() -> Self {
-		Self::dummy(T::default())
+		Self::new(miette::SourceOffset::from(val.start.0 as usize), val.size() as usize)
 	}
 }

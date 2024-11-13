@@ -5,123 +5,99 @@ expression: tokens
 [
   {
     "kind": "Ident",
-    "offset": 0,
     "len": 1
   },
   {
     "kind": "LeftCurly",
-    "offset": 2,
     "len": 1
   },
   {
     "kind": "Delim",
-    "offset": 8,
     "len": 1
   },
   {
     "kind": "Ident",
-    "offset": 9,
     "len": 5
   },
   {
     "kind": "Colon",
-    "offset": 15,
     "len": 1
   },
   {
     "kind": "Ident",
-    "offset": 17,
     "len": 5
   },
   {
     "kind": "Semicolon",
-    "offset": 22,
     "len": 1
   },
   {
     "kind": "Ident",
-    "offset": 28,
     "len": 11
   },
   {
     "kind": "Colon",
-    "offset": 39,
     "len": 1
   },
   {
     "kind": "Ident",
-    "offset": 41,
     "len": 5
   },
   {
     "kind": "Semicolon",
-    "offset": 46,
     "len": 1
   },
   {
     "kind": "Ident",
-    "offset": 52,
     "len": 9
   },
   {
     "kind": "Colon",
-    "offset": 65,
     "len": 1
   },
   {
     "kind": "Ident",
-    "offset": 67,
     "len": 3
   },
   {
     "kind": "Semicolon",
-    "offset": 70,
     "len": 1
   },
   {
     "kind": "Delim",
-    "offset": 76,
     "len": 1
   },
   {
     "kind": "LeftParen",
-    "offset": 77,
     "len": 1
   },
   {
     "kind": "Ident",
-    "offset": 78,
     "len": 3
   },
   {
     "kind": "RightParen",
-    "offset": 81,
     "len": 1
   },
   {
     "kind": "Ident",
-    "offset": 82,
     "len": 5
   },
   {
     "kind": "Colon",
-    "offset": 87,
     "len": 1
   },
   {
     "kind": "Dimension",
-    "offset": 89,
     "len": 4,
     "unit": "%"
   },
   {
     "kind": "Semicolon",
-    "offset": 93,
     "len": 1
   },
   {
     "kind": "RightCurly",
-    "offset": 95,
     "len": 1
   }
 ]

@@ -2,11 +2,13 @@ use hdx_syntax::{
 	identifier::{is_ident, is_ident_ascii_lower, is_ident_ascii_start, is_ident_start, is_ident_start_sequence},
 	is_escape_sequence, is_newline, is_quote, is_sign, is_whitespace,
 	url::is_non_printable,
-	CR, EOF, LF,
+	CR, EOF, FF, LF, SPACE, TAB,
 };
 use std::{char::REPLACEMENT_CHARACTER, str::Chars};
 
-use crate::{constants::SINGLE_CHAR_TOKENS, token::Token, DimensionUnit, Kind, Lexer};
+use crate::{
+	constants::SINGLE_CHAR_TOKENS, CommentStyle, DimensionUnit, Feature, Lexer, QuoteStyle, Token, WhitespaceStyle,
+};
 
 trait CharsConsumer {
 	fn is_last(&self) -> bool;
@@ -17,43 +19,40 @@ trait CharsConsumer {
 	fn consume_newline(&mut self) -> u32;
 
 	#[must_use]
+	fn consume_same(&mut self, char: char) -> u32;
+
+	#[must_use]
 	fn consume_whitespace(&mut self) -> u32;
 
 	#[must_use]
-	fn consume_ident_sequence(&mut self) -> (u8, u32);
+	fn consume_ident_sequence(&mut self) -> (u32, bool, bool, bool);
 
 	#[must_use]
 	fn consume_ident_sequence_finding_known_dimension(&mut self) -> (DimensionUnit, u32);
 
 	#[must_use]
-	fn consume_ident_sequence_finding_url_keyword(&mut self) -> (u8, u32, bool);
+	fn consume_ident_sequence_finding_url_keyword(&mut self) -> (u32, bool, bool, bool, bool);
 
 	#[must_use]
 	fn consume_escape_sequence(&mut self) -> u32;
 
 	#[must_use]
-	fn consume_url_sequence(&mut self, offset: u32, len: u32, ident_flags: u8) -> Token;
+	fn consume_url_sequence(&mut self, len: u32, ident_escaped: bool) -> Token;
 
 	#[must_use]
-	fn consume_remnants_of_bad_url(&mut self, offset: u32, len: u32) -> Token;
+	fn consume_remnants_of_bad_url(&mut self, len: u32) -> Token;
 
 	#[must_use]
-	fn consume_numeric_token(&mut self, offset: u32) -> Token;
+	fn consume_numeric_token(&mut self) -> Token;
 
 	#[must_use]
-	fn consume_hash_token(&mut self, offset: u32) -> Token;
+	fn consume_hash_token(&mut self) -> Token;
 
 	#[must_use]
-	fn consume_decimal_digits_returning_val(&mut self, acc: u32) -> (u32, u32);
+	fn consume_ident_like_token(&mut self) -> Token;
 
 	#[must_use]
-	fn consume_decimal_digits(&mut self) -> u32;
-
-	#[must_use]
-	fn consume_ident_like_token(&mut self, offset: u32) -> Token;
-
-	#[must_use]
-	fn consume_string_token(&mut self, offset: u32) -> Token;
+	fn consume_string_token(&mut self) -> Token;
 
 	#[must_use]
 	fn is_number_start(&mut self) -> bool;
@@ -82,6 +81,16 @@ impl<'a> CharsConsumer for Chars<'a> {
 	}
 
 	#[must_use]
+	fn consume_same(&mut self, char: char) -> u32 {
+		let mut i = 0;
+		while self.peek_nth(0) == char {
+			self.next();
+			i += 1;
+		}
+		i
+	}
+
+	#[must_use]
 	fn consume_whitespace(&mut self) -> u32 {
 		let mut i = 0;
 		while is_whitespace(self.peek_nth(0)) {
@@ -92,31 +101,41 @@ impl<'a> CharsConsumer for Chars<'a> {
 	}
 
 	#[must_use]
-	fn consume_ident_sequence(&mut self) -> (u8, u32) {
-		let mut flags = 0b000;
+	fn consume_ident_sequence(&mut self) -> (u32, bool, bool, bool) {
+		let mut dashed_ident = false;
+		let mut contains_non_lower_ascii = false;
+		let mut contains_escape = false;
 		let mut len = 0;
 		loop {
 			let c = self.peek_nth(0);
-			if is_ident_ascii_lower(c) {
+			if len == 0 && c == '-' {
+				self.next();
+				len += 1;
+				if self.peek_nth(0) == '-' {
+					self.next();
+					len += 1;
+					dashed_ident = true;
+				}
+			} else if is_ident_ascii_lower(c) || c == '-' || c.is_ascii_digit() {
 				self.next();
 				len += 1;
 			} else if is_ident(c) {
 				self.next();
 				len += c.len_utf8() as u32;
-				flags |= 0b001;
+				contains_non_lower_ascii = true;
 			} else if is_escape_sequence(c, self.peek_nth(1)) {
 				self.next();
-				flags |= 0b100;
+				contains_escape = true;
 				len += self.consume_escape_sequence();
 			} else if c == '\0' && self.next().is_some() {
 				// Set the escape flag to ensure \0s get replaced
-				flags |= 0b100;
+				contains_escape = true;
 				len += 1;
 			} else {
 				break;
 			}
 		}
-		(flags, len)
+		(len, contains_non_lower_ascii, dashed_ident, contains_escape)
 	}
 
 	#[must_use]
@@ -192,7 +211,7 @@ impl<'a> CharsConsumer for Chars<'a> {
 				}
 			}
 		} else if c == 'd' {
-			// Deg, Dpcm, Dpi, Dppx, Dvh, Dvw
+			// Deg, Dpcm, Dpi, Dppx, Dvb, Dvh, Dvi, Dvw, Dvmax, Dvmin
 			self.next();
 			len += 1;
 			let c = self.peek_nth(0);
@@ -236,14 +255,45 @@ impl<'a> CharsConsumer for Chars<'a> {
 				self.next();
 				len += 1;
 				let c = self.peek_nth(0);
-				if c == 'h' || c == 'H' {
+				if c == 'b' || c == 'B' {
+					self.next();
+					len += 1;
+					unit = DimensionUnit::Dvb
+				} else if c == 'h' || c == 'H' {
 					self.next();
 					len += 1;
 					unit = DimensionUnit::Dvh
+				} else if c == 'i' || c == 'I' {
+					self.next();
+					len += 1;
+					unit = DimensionUnit::Dvi
 				} else if c == 'w' || c == 'W' {
 					self.next();
 					len += 1;
 					unit = DimensionUnit::Dvw
+				} else if c == 'm' || c == 'M' {
+					self.next();
+					len += 1;
+					let c = self.peek_nth(0);
+					if c == 'a' || c == 'A' {
+						self.next();
+						len += 1;
+						let c = self.peek_nth(0);
+						if c == 'x' || c == 'X' {
+							self.next();
+							len += 1;
+							unit = DimensionUnit::Dvmax
+						}
+					} else if c == 'i' || c == 'I' {
+						self.next();
+						len += 1;
+						let c = self.peek_nth(0);
+						if c == 'n' || c == 'N' {
+							self.next();
+							len += 1;
+							unit = DimensionUnit::Dvmin
+						}
+					}
 				}
 			}
 		} else if c == 'e' || c == 'E' {
@@ -319,18 +369,18 @@ impl<'a> CharsConsumer for Chars<'a> {
 			self.next();
 			len += 1;
 			let c = self.peek_nth(0);
-			if c == 'z' || c == 'Z' {
+			if c == 'h' || c == 'H' {
 				self.next();
 				len += 1;
 				let c = self.peek_nth(0);
 				if c == 'z' || c == 'Z' {
 					self.next();
 					len += 1;
-					unit = DimensionUnit::KHz
+					unit = DimensionUnit::Khz
 				}
 			}
 		} else if c == 'l' || c == 'L' {
-			// Lh, Lvh, Lvw,
+			// Lh, Lvb, Lvi, Lvh, Lvw, Lvmax, Lvmin
 			self.next();
 			len += 1;
 			let c = self.peek_nth(0);
@@ -342,14 +392,45 @@ impl<'a> CharsConsumer for Chars<'a> {
 				self.next();
 				len += 1;
 				let c = self.peek_nth(0);
-				if c == 'h' || c == 'H' {
+				if c == 'b' || c == 'B' {
+					self.next();
+					len += 1;
+					unit = DimensionUnit::Lvb
+				} else if c == 'h' || c == 'H' {
 					self.next();
 					len += 1;
 					unit = DimensionUnit::Lvh
+				} else if c == 'i' || c == 'I' {
+					self.next();
+					len += 1;
+					unit = DimensionUnit::Lvi
 				} else if c == 'w' || c == 'W' {
 					self.next();
 					len += 1;
 					unit = DimensionUnit::Lvw
+				} else if c == 'm' || c == 'M' {
+					self.next();
+					len += 1;
+					let c = self.peek_nth(0);
+					if c == 'a' || c == 'A' {
+						self.next();
+						len += 1;
+						let c = self.peek_nth(0);
+						if c == 'x' || c == 'X' {
+							self.next();
+							len += 1;
+							unit = DimensionUnit::Lvmax
+						}
+					} else if c == 'i' || c == 'I' {
+						self.next();
+						len += 1;
+						let c = self.peek_nth(0);
+						if c == 'n' || c == 'N' {
+							self.next();
+							len += 1;
+							unit = DimensionUnit::Lvmin
+						}
+					}
 				}
 			}
 		} else if c == 'm' || c == 'M' {
@@ -454,7 +535,7 @@ impl<'a> CharsConsumer for Chars<'a> {
 				}
 			}
 		} else if c == 's' || c == 'S' {
-			// S, Svh, Svw,
+			// S, Svb, Svi, Svh, Svw, Svmax, Svmin
 			self.next();
 			len += 1;
 			unit = DimensionUnit::S;
@@ -463,18 +544,68 @@ impl<'a> CharsConsumer for Chars<'a> {
 				self.next();
 				len += 1;
 				let c = self.peek_nth(0);
-				if c == 'h' || c == 'H' {
+				if c == 'b' || c == 'B' {
+					self.next();
+					len += 1;
+					unit = DimensionUnit::Svb
+				} else if c == 'h' || c == 'H' {
 					self.next();
 					len += 1;
 					unit = DimensionUnit::Svh
+				} else if c == 'i' || c == 'I' {
+					self.next();
+					len += 1;
+					unit = DimensionUnit::Svi
 				} else if c == 'w' || c == 'W' {
 					self.next();
 					len += 1;
 					unit = DimensionUnit::Svw
+				} else if c == 'm' || c == 'M' {
+					self.next();
+					len += 1;
+					let c = self.peek_nth(0);
+					if c == 'a' || c == 'A' {
+						self.next();
+						len += 1;
+						let c = self.peek_nth(0);
+						if c == 'x' || c == 'X' {
+							self.next();
+							len += 1;
+							unit = DimensionUnit::Svmax
+						}
+					} else if c == 'i' || c == 'I' {
+						self.next();
+						len += 1;
+						let c = self.peek_nth(0);
+						if c == 'n' || c == 'N' {
+							self.next();
+							len += 1;
+							unit = DimensionUnit::Svmin
+						}
+					}
 				}
 			}
 		} else if c == 't' || c == 'T' {
 			// Turn,
+			// Vb, Vh, Vi, Vmax, Vmin, Vw,
+			self.next();
+			len += 1;
+			let c = self.peek_nth(0);
+			if c == 'u' || c == 'U' {
+				self.next();
+				len += 1;
+				let c = self.peek_nth(0);
+				if c == 'r' || c == 'R' {
+					self.next();
+					len += 1;
+					let c = self.peek_nth(0);
+					if c == 'n' || c == 'N' {
+						self.next();
+						len += 1;
+						unit = DimensionUnit::Turn
+					}
+				}
+			}
 		} else if c == 'v' || c == 'V' {
 			// Vb, Vh, Vi, Vmax, Vmin, Vw,
 			self.next();
@@ -526,7 +657,7 @@ impl<'a> CharsConsumer for Chars<'a> {
 			len += 1;
 			unit = DimensionUnit::X
 		}
-		let (_, rest_len) = self.consume_ident_sequence();
+		let (rest_len, _, _, _) = self.consume_ident_sequence();
 		if rest_len > 0 {
 			(DimensionUnit::Unknown, len + rest_len)
 		} else {
@@ -569,13 +700,13 @@ impl<'a> CharsConsumer for Chars<'a> {
 	}
 
 	#[must_use]
-	fn consume_url_sequence(&mut self, offset: u32, len: u32, ident_flags: u8) -> Token {
+	fn consume_url_sequence(&mut self, len: u32, ident_escaped: bool) -> Token {
 		let mut len = len;
-		let mut flags = ident_flags & 0b100;
+		let mut contains_escape = ident_escaped;
+		let mut ends_with_paren = false;
 		let whitespace_count = self.consume_whitespace();
 		if whitespace_count > 0 {
 			len += whitespace_count;
-			flags |= 0b010;
 		}
 		loop {
 			let c = self.peek_nth(0);
@@ -583,7 +714,7 @@ impl<'a> CharsConsumer for Chars<'a> {
 				')' => {
 					self.next();
 					len += 1;
-					flags |= 0b001;
+					ends_with_paren = true;
 					break;
 				}
 				EOF => {
@@ -593,35 +724,35 @@ impl<'a> CharsConsumer for Chars<'a> {
 					len += self.consume_whitespace();
 					// Consider trailing whitespace as escape to allow the string
 					// parser to consume characters one-by-one
-					flags |= 0b100;
-					match self.next().unwrap_or(EOF) {
+					contains_escape = true;
+					match self.peek_nth(0) {
 						')' => {
 							len += 1;
-							flags |= 0b001;
+							self.next();
+							ends_with_paren = true;
 							break;
 						}
 						EOF => {
 							break;
 						}
 						_ => {
-							return self.consume_remnants_of_bad_url(offset, len);
+							return self.consume_remnants_of_bad_url(len);
 						}
 					};
 				}
 				'\'' | '"' | '(' => {
-					return self.consume_remnants_of_bad_url(offset, len);
+					return self.consume_remnants_of_bad_url(len);
 				}
 				_ if is_non_printable(c) => {
-					return self.consume_remnants_of_bad_url(offset, len);
+					return self.consume_remnants_of_bad_url(len);
 				}
 				'\\' => {
-					if is_escape_sequence(c, self.peek_nth(0)) {
+					if is_escape_sequence(c, self.peek_nth(1)) {
 						self.next();
 						len += self.consume_escape_sequence();
-						flags |= 0b100;
+						contains_escape = true;
 					} else {
-						len += 1;
-						return self.consume_remnants_of_bad_url(offset, len);
+						return self.consume_remnants_of_bad_url(len);
 					}
 				}
 				c => {
@@ -630,11 +761,11 @@ impl<'a> CharsConsumer for Chars<'a> {
 				}
 			}
 		}
-		Token::new(Kind::Url, flags, offset, len)
+		Token::new_url(ends_with_paren, whitespace_count > 0, contains_escape, len)
 	}
 
 	#[must_use]
-	fn consume_remnants_of_bad_url(&mut self, offset: u32, len: u32) -> Token {
+	fn consume_remnants_of_bad_url(&mut self, len: u32) -> Token {
 		let mut len = len;
 		while let Some(ch) = self.next() {
 			match ch {
@@ -643,11 +774,10 @@ impl<'a> CharsConsumer for Chars<'a> {
 					break;
 				}
 				'\\' => {
-					len += 1;
 					if is_escape_sequence(ch, self.peek_nth(0)) {
 						len += self.consume_escape_sequence();
 					} else if let Some(ch) = self.next() {
-						len += ch.len_utf8() as u32;
+						len += ch.len_utf8() as u32 + 1;
 					}
 				}
 				_ => {
@@ -655,94 +785,74 @@ impl<'a> CharsConsumer for Chars<'a> {
 				}
 			}
 		}
-		Token::new(Kind::BadUrl, 0, offset, len)
+		Token::new_bad_url(len)
 	}
 
 	#[must_use]
-	fn consume_numeric_token(&mut self, offset: u32) -> Token {
-		let c = self.next().unwrap();
-		let mut len = 1;
-		let mut flags = 0b100;
-		let mut sign = 1;
-		if is_sign(c) {
-			if c == '-' {
-				sign = -1;
+	fn consume_numeric_token(&mut self) -> Token {
+		let mut numchars = self.clone();
+		let c = numchars.next().unwrap();
+		let mut num_len = 1;
+		let mut is_float = c == '.';
+		let has_sign = is_sign(c);
+		while numchars.peek_nth(0).is_ascii_digit() {
+			num_len += 1;
+			numchars.next();
+		}
+		if !is_float && numchars.peek_nth(0) == '.' && numchars.peek_nth(1).is_ascii_digit() {
+			numchars.next();
+			num_len += 1;
+			while numchars.peek_nth(0).is_ascii_digit() {
+				num_len += 1;
+				numchars.next();
 			}
-			flags |= 0b010;
+			is_float = true;
 		}
-		if c == '.' {
-			flags &= 0b011;
-			flags |= 0b001;
-		}
-		let r = self.consume_decimal_digits_returning_val(if c.is_ascii_digit() { c as u32 - 48 } else { 0 });
-		let acc = r.0 as i32 * (sign);
-		len += r.1;
-		if flags & 0b001 == 0 && self.peek_nth(0) == '.' && self.peek_nth(1).is_ascii_digit() {
-			self.next();
-			len += 1;
-			len += self.consume_decimal_digits();
-			flags &= 0b011;
-			flags |= 0b001;
-		}
-		if matches!(self.peek_nth(0), 'e' | 'E')
-			&& (self.peek_nth(1).is_ascii_digit()
-				|| (matches!(self.peek_nth(1), '-' | '+') && self.peek_nth(2).is_ascii_digit()))
+		if matches!(numchars.peek_nth(0), 'e' | 'E')
+			&& (numchars.peek_nth(1).is_ascii_digit()
+				|| (matches!(numchars.peek_nth(1), '-' | '+') && numchars.peek_nth(2).is_ascii_digit()))
 		{
-			self.next();
-			len += 1;
-			if matches!(self.peek_nth(0), '-' | '+') {
-				self.next();
-				len += 1;
+			numchars.next();
+			num_len += 1;
+			let c = numchars.peek_nth(0);
+			if matches!(c, '-' | '+') {
+				numchars.next();
+				num_len += 1;
 			}
-			len += self.consume_decimal_digits();
-			flags &= 0b011;
-			flags |= 0b001;
+			while numchars.peek_nth(0).is_ascii_digit() {
+				num_len += 1;
+				numchars.next();
+			}
+			is_float = true;
 		}
+		let value = self.as_str()[0..num_len].parse::<f32>().unwrap();
+		self.nth(num_len - 1);
 		match self.peek_nth(0) {
 			'%' => {
 				self.next();
-				Token::new_dimension(flags, offset, len, 1, acc, DimensionUnit::Percent)
+				Token::new_dimension(is_float, has_sign, num_len as u32, 1, value, DimensionUnit::Percent)
 			}
 			c if is_ident_start_sequence(c, self.peek_nth(1), self.peek_nth(2)) => {
 				let (known_unit, unit_len) = self.consume_ident_sequence_finding_known_dimension();
-				Token::new_dimension(flags, offset, len, unit_len, acc, known_unit)
+				Token::new_dimension(is_float, has_sign, num_len as u32, unit_len, value, known_unit)
 			}
-			_ => Token::new_number(flags, offset, len, acc),
+			_ => Token::new_number(is_float, has_sign, num_len as u32, value),
 		}
 	}
 
 	#[must_use]
-	fn consume_hash_token(&mut self, offset: u32) -> Token {
+	fn consume_hash_token(&mut self) -> Token {
 		self.next();
-		let hash_flags = if is_ident(self.peek_nth(0)) { 0b010 } else { 0b000 };
-		let (flags, len) = self.consume_ident_sequence();
-		Token::new(Kind::Hash, (flags & 0b101) | hash_flags, offset, len + 1)
+		let first_is_ascii = is_ident(self.peek_nth(0));
+		let (len, contains_non_lower_ascii, _, contains_escape) = self.consume_ident_sequence();
+		Token::new_hash(contains_non_lower_ascii, first_is_ascii, contains_escape, len + 1)
 	}
 
 	#[must_use]
-	fn consume_decimal_digits_returning_val(&mut self, acc: u32) -> (u32, u32) {
-		let mut acc = acc;
-		let mut len = 0;
-		while self.peek_nth(0).is_ascii_digit() {
-			acc = (acc * 10) + (self.next().unwrap() as u32 - 48);
-			len += 1;
-		}
-		(acc, len)
-	}
-
-	#[must_use]
-	fn consume_decimal_digits(&mut self) -> u32 {
-		let mut len = 0;
-		while self.peek_nth(0).is_ascii_digit() {
-			self.next();
-			len += 1;
-		}
-		len
-	}
-
-	#[must_use]
-	fn consume_ident_sequence_finding_url_keyword(&mut self) -> (u8, u32, bool) {
-		let mut flags = 0b000;
+	fn consume_ident_sequence_finding_url_keyword(&mut self) -> (u32, bool, bool, bool, bool) {
+		let mut dashed_ident = false;
+		let mut contains_non_lower = false;
+		let mut contains_escape = false;
 		let mut len = 0;
 		let mut is_url_like_keyword = true;
 		let mut i = 0;
@@ -756,7 +866,7 @@ impl<'a> CharsConsumer for Chars<'a> {
 					self.next();
 					i += 1;
 					len += 1;
-					flags |= 0b010;
+					dashed_ident = true;
 				}
 			} else if is_ident_ascii_lower(c) {
 				if (i == 0 && c != 'u') || (i == 1 && c != 'r') || (i == 2 && c != 'l') {
@@ -772,11 +882,11 @@ impl<'a> CharsConsumer for Chars<'a> {
 				self.next();
 				len += c.len_utf8() as u32;
 				i += 1;
-				flags |= 0b001;
+				contains_non_lower = true;
 			} else if is_url_like_keyword && is_escape_sequence(c, self.peek_nth(1)) {
 				let char_inspect = self.clone();
 				self.next();
-				flags |= 0b100;
+				contains_escape = true;
 				let esc_len = self.consume_escape_sequence();
 				len += esc_len;
 				let str = char_inspect.as_str()[0..esc_len as usize].trim();
@@ -789,28 +899,29 @@ impl<'a> CharsConsumer for Chars<'a> {
 				i += 1;
 			} else if is_escape_sequence(c, self.peek_nth(1)) {
 				self.next();
-				flags |= 0b100;
+				contains_escape = true;
 				len += self.consume_escape_sequence();
 				i += 1;
 			} else if c == '\0' && self.next().is_some() {
 				// Set the escape flag to ensure \0s get replaced
-				flags |= 0b100;
+				contains_escape = true;
 				len += 1;
 				is_url_like_keyword = false;
 			} else {
 				break;
 			}
 		}
-		(flags, len, is_url_like_keyword)
+		(len, contains_non_lower, dashed_ident, contains_escape, is_url_like_keyword)
 	}
 
 	#[must_use]
-	fn consume_ident_like_token(&mut self, offset: u32) -> Token {
-		let (flags, mut len, is_url_like_keyword) = self.consume_ident_sequence_finding_url_keyword();
+	fn consume_ident_like_token(&mut self) -> Token {
+		let (mut len, contains_non_lower_ascii, dashed, contains_escape, is_url_like_keyword) =
+			self.consume_ident_sequence_finding_url_keyword();
 		if self.peek_nth(0) == '(' {
 			self.next();
 			len += 1;
-			let token = Token::new(Kind::Function, flags, offset, len);
+			let token = Token::new_function(contains_non_lower_ascii, dashed, contains_escape, len);
 			if is_url_like_keyword {
 				let mut chars = self.clone();
 				let mut char = chars.next().unwrap_or(EOF);
@@ -820,48 +931,48 @@ impl<'a> CharsConsumer for Chars<'a> {
 					}
 				}
 				if !is_quote(char) {
-					return self.consume_url_sequence(offset, len, flags);
+					return self.consume_url_sequence(len, contains_escape);
 				}
 			}
 			return token;
 		}
-		Token::new(Kind::Ident, flags, offset, len)
+		Token::new_ident(contains_non_lower_ascii, dashed, contains_escape, len)
 	}
 
 	#[must_use]
-	fn consume_string_token(&mut self, offset: u32) -> Token {
+	fn consume_string_token(&mut self) -> Token {
 		let delimiter = self.next().unwrap();
+		let quotes = if delimiter == '"' { QuoteStyle::Double } else { QuoteStyle::Single };
+		let mut contains_escape = false;
 		let mut len = 1;
-		let mut flags = (delimiter == '"') as u8;
 		loop {
 			match self.peek_nth(0) {
 				c if is_newline(c) => {
-					return Token::new(Kind::BadString, flags, offset, len);
+					return Token::new_bad_string(len);
 				}
 				EOF => {
 					if self.next().is_some() {
 						// Set the escape flag to ensure \0s get replaced
-						flags |= 0b100;
+						contains_escape = true;
 						len += 1;
 					} else {
-						return Token::new(Kind::String, flags, offset, len);
+						return Token::new_string(quotes, false, contains_escape, len);
 					}
 				}
 				c @ ('"' | '\'') => {
 					self.next();
 					len += 1;
 					if c == delimiter {
-						flags |= 0b010;
-						return Token::new(Kind::String, flags, offset, len);
+						return Token::new_string(quotes, true, contains_escape, len);
 					}
 				}
 				c @ '\\' => {
 					self.next();
-					flags |= 0b100;
+					contains_escape = true;
 					match self.peek_nth(0) {
 						EOF => {
 							len += 1;
-							return Token::new(Kind::String, flags, offset, len);
+							return Token::new_string(quotes, false, contains_escape, len);
 						}
 						p if is_newline(p) => {
 							len += self.consume_newline() + 1;
@@ -869,9 +980,7 @@ impl<'a> CharsConsumer for Chars<'a> {
 						p if is_escape_sequence(c, p) => {
 							len += self.consume_escape_sequence();
 						}
-						_ => {
-							return Token::new(Kind::BadString, flags, offset, len);
-						}
+						_ => return Token::new_bad_string(len),
 					}
 				}
 				c => {
@@ -893,10 +1002,9 @@ impl<'a> CharsConsumer for Chars<'a> {
 
 impl<'a> Lexer<'a> {
 	#[must_use]
-	pub(crate) fn read_next_token(&mut self) -> Token {
-		let offset = self.current_token.end_offset();
+	pub(crate) fn read_next_token(&mut self, offset: u32) -> Token {
 		if self.source.len() as u32 == offset {
-			return Token::new(Kind::Eof, 0, offset, 0);
+			return Token::EOF;
 		}
 		let mut chars = self.source[offset as usize..].chars();
 		let c = chars.peek_nth(0);
@@ -904,14 +1012,13 @@ impl<'a> Lexer<'a> {
 		// '{'  '}'  '('  ')'  '['  ']'  ';' ',' ':'
 		let size = c as usize;
 		if size < 128 {
-			let kind = SINGLE_CHAR_TOKENS[size];
-			if kind != Kind::Eof {
-				chars.next();
-				return Token::new(kind, 0, offset, c as u32);
+			let token = SINGLE_CHAR_TOKENS[size];
+			if token != Token::EOF {
+				return token;
 			}
 			// fast path for identifiers
 			if is_ident_ascii_start(c) {
-				return chars.consume_ident_like_token(offset);
+				return chars.consume_ident_like_token();
 			}
 		}
 		match c {
@@ -924,46 +1031,80 @@ impl<'a> Lexer<'a> {
 				if !chars.is_last()
 					&& is_ident_start_sequence(REPLACEMENT_CHARACTER, chars.peek_nth(1), chars.peek_nth(2))
 				{
-					chars.consume_ident_like_token(offset)
+					chars.consume_ident_like_token()
 				} else if chars.next().is_some() {
-					Token::new(Kind::Delim, 1, offset, REPLACEMENT_CHARACTER as u32)
+					Token::new_delim(REPLACEMENT_CHARACTER)
 				} else {
-					Token::new(Kind::Eof, 0, offset, 0)
+					Token::EOF
 				}
 			}
-			// Whitespace Range
-			c if is_whitespace(c) => {
+			c if is_whitespace(c) && self.features.intersects(Feature::CombinedWhitespace) => {
 				let len = chars.consume_whitespace();
-				Token::new(Kind::Whitespace, 0, offset, len)
+				Token::new_whitespace(WhitespaceStyle::None, len)
+			}
+			// Whitespace Range
+			TAB => Token::new_whitespace(WhitespaceStyle::NewlineUsingFormFeed, chars.consume_same(TAB)),
+			SPACE => Token::new_whitespace(WhitespaceStyle::Space, chars.consume_same(SPACE)),
+			LF | CR | FF => {
+				// https://drafts.csswg.org/css-syntax/#input-preprocessing
+				//  Replace any U+000D CARRIAGE RETURN (CR) code points, U+000C FORM FEED
+				//  (FF) code points, or pairs of U+000D CARRIAGE RETURN (CR) followed by
+				//  U+000A LINE FEED (LF) in input by a single U+000A LINE FEED (LF) code
+				//  point.
+				let mut len = 0;
+				let mut style = WhitespaceStyle::Newline;
+				loop {
+					let c = chars.peek_nth(0);
+					if !matches!(c, LF | CR | FF) {
+						break;
+					}
+					if c == FF {
+						style = WhitespaceStyle::NewlineUsingFormFeed
+					}
+					if c == CR
+						&& chars.peek_nth(1) != LF
+						&& style == WhitespaceStyle::NewlineUsingCarriageReturnAndLineFeed
+					{
+						break;
+					}
+					if c == CR && chars.peek_nth(1) == LF {
+						chars.next();
+						len += 1;
+						style = WhitespaceStyle::NewlineUsingCarriageReturnAndLineFeed
+					}
+					chars.next();
+					len += 1;
+				}
+				Token::new_whitespace(style, len)
 			}
 			// Quote Range
-			c if is_quote(c) => chars.consume_string_token(offset),
+			c if is_quote(c) => chars.consume_string_token(),
 			// Digit Range
-			c if c.is_ascii_digit() => chars.consume_numeric_token(offset),
+			c if c.is_ascii_digit() => chars.consume_numeric_token(),
 			// Sign Range
 			'-' => {
 				if chars.peek_nth(1) == '-' && chars.peek_nth(2) == '>' {
 					chars.next();
 					chars.next();
 					chars.next();
-					return Token::new(Kind::CdcOrCdo, 1, offset, 3);
+					return Token::CDC;
 				}
 				if is_ident_start_sequence(c, chars.peek_nth(1), chars.peek_nth(2)) {
-					return chars.consume_ident_like_token(offset);
+					return chars.consume_ident_like_token();
 				}
 				if chars.is_number_start() {
-					return chars.consume_numeric_token(offset);
+					return chars.consume_numeric_token();
 				}
 				chars.next();
-				Token::new(Kind::Delim, 1, offset, '-' as u32)
+				Token::DASH
 			}
 			// Dot or Plus
 			'.' | '+' => {
 				if chars.is_number_start() {
-					return chars.consume_numeric_token(offset);
+					return chars.consume_numeric_token();
 				}
 				chars.next();
-				Token::new(Kind::Delim, 1, offset, c as u32)
+				Token::new_delim(c)
 			}
 			// Less Than
 			'<' => {
@@ -972,35 +1113,35 @@ impl<'a> Lexer<'a> {
 					chars.next();
 					chars.next();
 					chars.next();
-					return Token::new(Kind::CdcOrCdo, 0, offset, 4);
+					return Token::CDO;
 				}
-				Token::new(Kind::Delim, 1, offset, '<' as u32)
+				Token::LESS_THAN
 			}
 			// Hash / Pound Sign
 			'#' => {
 				if is_ident(chars.peek_nth(1)) || is_escape_sequence(chars.peek_nth(1), chars.peek_nth(2)) {
-					chars.consume_hash_token(offset)
+					chars.consume_hash_token()
 				} else {
 					chars.next();
-					Token::new(Kind::Delim, 1, offset, '#' as u32)
+					Token::HASH
 				}
 			}
 			// Commercial At
 			'@' => {
 				chars.next();
 				if is_ident_start_sequence(chars.peek_nth(0), chars.peek_nth(1), chars.peek_nth(2)) {
-					let (flags, len) = chars.consume_ident_sequence();
-					return Token::new(Kind::AtKeyword, flags, offset, len + 1);
+					let (len, contains_non_lower_ascii, dashed, contains_escape) = chars.consume_ident_sequence();
+					return Token::new_atkeyword(contains_non_lower_ascii, dashed, contains_escape, len + 1);
 				}
-				Token::new(Kind::Delim, 1, offset, '@' as u32)
+				Token::AT
 			}
 			// Reverse Solidus
 			'\\' => {
 				if is_escape_sequence(c, chars.peek_nth(1)) {
-					return chars.consume_ident_like_token(offset);
+					return chars.consume_ident_like_token();
 				}
 				chars.next();
-				Token::new(Kind::Delim, 1, offset, '\\' as u32)
+				Token::BACKSLASH
 			}
 			// Solidus
 			'/' => match chars.peek_nth(1) {
@@ -1008,6 +1149,13 @@ impl<'a> Lexer<'a> {
 					chars.next();
 					chars.next();
 					let mut len = 2;
+					let comment_style = match chars.peek_nth(0) {
+						'*' if chars.peek_nth(1) != '/' => CommentStyle::BlockStar,
+						'#' => CommentStyle::BlockPound,
+						'!' => CommentStyle::BlockBang,
+						'-' | '=' => CommentStyle::BlockHeading,
+						_ => CommentStyle::Block,
+					};
 					while let Some(c) = chars.next() {
 						len += c.len_utf8() as u32;
 						if c == '*' && chars.peek_nth(0) == '/' {
@@ -1016,17 +1164,32 @@ impl<'a> Lexer<'a> {
 							break;
 						}
 					}
-					Token::new(Kind::Comment, 0, offset, len)
+					Token::new_comment(comment_style, len)
+				}
+				'/' if self.features.intersects(Feature::SingleLineComments) => {
+					chars.next();
+					chars.next();
+					let mut len = 2;
+					let comment_style = match chars.peek_nth(0) {
+						'*' => CommentStyle::SingleStar,
+						'!' => CommentStyle::SingleBang,
+						_ => CommentStyle::Single,
+					};
+					while !matches!(chars.peek_nth(0), LF | CR | FF) {
+						chars.next();
+						len += 1;
+					}
+					Token::new_comment(comment_style, len)
 				}
 				_ => {
 					chars.next();
-					Token::new(Kind::Delim, 1, offset, '/' as u32)
+					Token::SLASH
 				}
 			},
-			c if is_ident_start(c) => chars.consume_ident_like_token(offset),
+			c if is_ident_start(c) => chars.consume_ident_like_token(),
 			c => {
 				chars.next();
-				Token::new(Kind::Delim, c.len_utf8() as u8, offset, c as u32)
+				Token::new_delim(c)
 			}
 		}
 	}
