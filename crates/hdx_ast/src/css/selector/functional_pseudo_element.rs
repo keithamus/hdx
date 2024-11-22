@@ -1,5 +1,5 @@
 use hdx_atom::{atom, Atom};
-use hdx_parser::{diagnostics, discard, todo, Parse, Parser, Result as ParserResult, Vec, T};
+use hdx_parser::{diagnostics, todo, Parse, Parser, Result as ParserResult, Vec, T};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 use smallvec::{smallvec, SmallVec};
 
@@ -17,35 +17,35 @@ pub enum FunctionalPseudoElement<'a> {
 }
 
 impl<'a> Parse<'a> for FunctionalPseudoElement<'a> {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let token = *parser.parse::<T![Function]>()?;
-		match parser.parse_atom_lower(token) {
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		let token = *p.parse::<T![Function]>()?;
+		match p.parse_atom_lower(token) {
 			atom!("highlight") => {
-				let name_token = *parser.parse::<T![Ident]>()?;
-				let name = parser.parse_atom(name_token);
-				parser.parse::<T![RightParen]>()?;
+				let name_token = *p.parse::<T![Ident]>()?;
+				let name = p.parse_atom(name_token);
+				p.parse::<T![RightParen]>()?;
 				Ok(Self::Highlight(name))
 			}
 			atom!("part") => {
 				let mut parts = smallvec![];
 				loop {
-					if discard!(parser, RightParen) {
+					if p.parse::<T![RightParen]>().is_ok() {
 						break;
 					}
-					let name_token = *parser.parse::<T![Ident]>()?;
-					let name = parser.parse_atom(name_token);
+					let name_token = *p.parse::<T![Ident]>()?;
+					let name = p.parse_atom(name_token);
 					parts.push(name);
 				}
 				Ok(Self::Part(parts))
 			}
 			atom!("slotted") => {
-				let selector = parser.new_vec();
+				let selector = p.new_vec();
 				loop {
-					if discard!(parser, RightParen) {
+					if p.parse::<T![RightParen]>().is_ok() {
 						break;
 					}
-					let checkpoint = parser.checkpoint();
-					let component = parser.parse::<SelectorComponent>()?;
+					let checkpoint = p.checkpoint();
+					let component = p.parse::<SelectorComponent>()?;
 					match component {
 						SelectorComponent::Tag(_)
 						| SelectorComponent::NSPrefixedTag(_)
@@ -53,15 +53,15 @@ impl<'a> Parse<'a> for FunctionalPseudoElement<'a> {
 						| SelectorComponent::Wildcard
 							if selector.is_empty() =>
 						{
-							todo!(parser);
+							todo!(p);
 						}
 						SelectorComponent::Id(_)
 						| SelectorComponent::Class(_)
 						| SelectorComponent::Attribute(_)
 						| SelectorComponent::PseudoClass(_) => {}
 						_ => {
-							parser.rewind(checkpoint);
-							let token = parser.peek::<T![Any]>().unwrap();
+							p.rewind(checkpoint);
+							let token = p.peek::<T![Any]>().unwrap();
 							Err(diagnostics::Unexpected(token, token.span()))?
 						}
 					}

@@ -61,15 +61,15 @@ pub enum AnimateableFeature {
 }
 
 impl<'a> Peek<'a> for AnimateableFeature {
-	fn peek(parser: &Parser<'a>) -> Option<hdx_lexer::Token> {
-		parser.peek::<T![Ident]>()
+	fn peek(p: &Parser<'a>) -> Option<hdx_lexer::Token> {
+		p.peek::<T![Ident]>()
 	}
 }
 
 impl<'a> Parse<'a> for AnimateableFeature {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let token = *parser.parse::<T![Ident]>()?;
-		Ok(match parser.parse_atom_lower(token) {
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		let token = *p.parse::<T![Ident]>()?;
+		Ok(match p.parse_atom_lower(token) {
 			atom!("-webkit-backdrop-filter") => Self::WebkitBackdropFilter,
 			atom!("-webkit-box-reflex") => Self::WebkitBoxReflect,
 			atom!("-webkit-mask") => Self::WebkitMask,

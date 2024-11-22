@@ -130,15 +130,15 @@ impl PartialOrd<f32> for CSSFloat {
 }
 
 impl<'a> Peek<'a> for CSSFloat {
-	fn peek(parser: &Parser<'a>) -> Option<hdx_lexer::Token> {
-		parser.peek::<T![Number]>().filter(|t| t.is_float())
+	fn peek(p: &Parser<'a>) -> Option<hdx_lexer::Token> {
+		p.peek::<T![Number]>().filter(|t| t.is_float())
 	}
 }
 
 impl<'a> Parse<'a> for CSSFloat {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let token = *parser.parse::<T![Number]>()?;
-		let number = parser.parse_number(token);
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		let token = *p.parse::<T![Number]>()?;
+		let number = p.parse_number(token);
 		if !token.is_float() {
 			Err(diagnostics::ExpectedFloat(number, token.span()))?;
 		}

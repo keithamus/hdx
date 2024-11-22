@@ -12,23 +12,23 @@ pub enum Comparison {
 }
 
 impl<'a> Parse<'a> for Comparison {
-	fn parse(parser: &mut Parser<'a>) -> Result<Comparison> {
-		let token = *parser.parse::<T![Delim]>()?;
+	fn parse(p: &mut Parser<'a>) -> Result<Comparison> {
+		let token = *p.parse::<T![Delim]>()?;
 		match token.char().unwrap() {
 			'=' => Ok(Comparison::Equal),
 			'>' => {
-				if let Some(token) = parser.peek_with::<T![Delim]>(Include::Whitespace) {
+				if let Some(token) = p.peek_with::<T![Delim]>(Include::Whitespace) {
 					if let Some('=') = token.char() {
-						parser.hop(token);
+						p.hop(token);
 						return Ok(Comparison::GreaterThanEqual);
 					}
 				}
 				Ok(Comparison::GreaterThan)
 			}
 			'<' => {
-				if let Some(token) = parser.peek_with::<T![Delim]>(Include::Whitespace) {
+				if let Some(token) = p.peek_with::<T![Delim]>(Include::Whitespace) {
 					if let Some('=') = token.char() {
-						parser.hop(token);
+						p.hop(token);
 						return Ok(Comparison::LessThanEqual);
 					}
 				}

@@ -18,8 +18,8 @@ pub struct StyleRule<'a> {
 }
 
 impl<'a> Parse<'a> for StyleRule<'a> {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let (selectors, style) = Self::parse_qualified_rule(parser)?;
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		let (selectors, style) = Self::parse_qualified_rule(p)?;
 		Ok(Self { selectors, style })
 	}
 }
@@ -58,8 +58,8 @@ pub struct StyleDeclaration<'a> {
 }
 
 impl<'a> Parse<'a> for StyleDeclaration<'a> {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let (declarations, rules) = Self::parse_block(parser)?;
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		let (declarations, rules) = Self::parse_block(p)?;
 		Ok(Self { declarations, rules })
 	}
 }

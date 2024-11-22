@@ -10,13 +10,13 @@ use crate::css::properties::StyleValue;
 pub struct FontFace<'a>(Vec<'a, Spanned<FontProperty<'a>>>);
 
 impl<'a> Parse<'a> for FontFace<'a> {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let token = *parser.parse::<T![AtKeyword]>()?;
-		let atom = parser.parse_atom_lower(token);
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		let token = *p.parse::<T![AtKeyword]>()?;
+		let atom = p.parse_atom_lower(token);
 		if atom != atom!("font-face") {
 			Err(diagnostics::UnexpectedAtRule(atom, token.span()))?
 		}
-		Ok(Self(Self::parse_rule_list(parser)?))
+		Ok(Self(Self::parse_rule_list(p)?))
 	}
 }
 
@@ -53,9 +53,9 @@ pub struct FontProperty<'a> {
 }
 
 impl<'a> Parse<'a> for FontProperty<'a> {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		if let Some(token) = parser.peek::<T![Ident]>() {
-			let atom = parser.parse_atom_lower(token);
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		if let Some(token) = p.peek::<T![Ident]>() {
+			let atom = p.parse_atom_lower(token);
 			if !matches!(
 				atom,
 				atom!("ascent-override")
@@ -75,10 +75,10 @@ impl<'a> Parse<'a> for FontProperty<'a> {
 				Err(diagnostics::UnexpectedIdent(atom, token.span()))?
 			}
 		} else {
-			let token = parser.peek::<T![Any]>().unwrap();
+			let token = p.peek::<T![Any]>().unwrap();
 			Err(diagnostics::Unexpected(token, token.span()))?
 		}
-		let (name, value, important) = Self::parse_declaration(parser)?;
+		let (name, value, important) = Self::parse_declaration(p)?;
 		Ok(Self { name, value, important })
 	}
 }

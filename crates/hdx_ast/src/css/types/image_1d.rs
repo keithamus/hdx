@@ -15,14 +15,14 @@ mod func {
 pub struct Image1D(SmallVec<[ColorStripe; 1]>);
 
 impl<'a> Peek<'a> for Image1D {
-	fn peek(parser: &Parser<'a>) -> Option<hdx_lexer::Token> {
-		parser.peek::<func::Stripes>()
+	fn peek(p: &Parser<'a>) -> Option<hdx_lexer::Token> {
+		p.peek::<func::Stripes>()
 	}
 }
 
 impl<'a> Parse<'a> for Image1D {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let _token = parser.parse::<func::Stripes>()?;
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		let _token = p.parse::<func::Stripes>()?;
 		Ok(Self(smallvec![]))
 	}
 }

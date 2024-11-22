@@ -30,21 +30,21 @@ impl From<f32> for SingleAnimationIterationCount {
 }
 
 impl<'a> Peek<'a> for SingleAnimationIterationCount {
-	fn peek(parser: &Parser<'a>) -> Option<hdx_lexer::Token> {
-		parser.peek::<kw::Infinite>().or_else(|| parser.peek::<CSSFloat>())
+	fn peek(p: &Parser<'a>) -> Option<hdx_lexer::Token> {
+		p.peek::<kw::Infinite>().or_else(|| p.peek::<CSSFloat>())
 	}
 }
 
 impl<'a> Parse<'a> for SingleAnimationIterationCount {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		if let Some(token) = parser.peek::<kw::Infinite>() {
-			parser.hop(token);
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		if let Some(token) = p.peek::<kw::Infinite>() {
+			p.hop(token);
 			return Ok(Self::Infinite);
 		}
-		let start = parser.offset();
-		let f = parser.parse::<CSSFloat>()?;
+		let start = p.offset();
+		let f = p.parse::<CSSFloat>()?;
 		if f < 0.0 {
-			Err(diagnostics::NumberTooSmall(f.into(), Span::new(start, parser.offset())))?
+			Err(diagnostics::NumberTooSmall(f.into(), Span::new(start, p.offset())))?
 		}
 		Ok(Self::Number(f))
 	}

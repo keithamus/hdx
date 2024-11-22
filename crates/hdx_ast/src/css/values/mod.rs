@@ -130,8 +130,8 @@ pub enum Todo {
 }
 
 impl<'a> Parse<'a> for Todo {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		todo!(parser)
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		todo!(p)
 	}
 }
 

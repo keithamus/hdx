@@ -53,76 +53,72 @@ pub enum PositionArea {
 }
 
 impl<'a> Peek<'a> for PositionArea {
-	fn peek(parser: &Parser<'a>) -> Option<hdx_lexer::Token> {
-		parser
-			.peek::<PositionAreaPhsyicalVertical>()
-			.or_else(|| parser.peek::<PositionAreaPhsyicalHorizontal>())
-			.or_else(|| parser.peek::<PositionAreaBlock>())
-			.or_else(|| parser.peek::<PositionAreaInline>())
-			.or_else(|| parser.peek::<PositionAreaSelfBlock>())
-			.or_else(|| parser.peek::<PositionAreaSelfInline>())
-			.or_else(|| parser.peek::<PositionAreaPosition>())
-			.or_else(|| parser.peek::<PositionAreaSelfPosition>())
+	fn peek(p: &Parser<'a>) -> Option<hdx_lexer::Token> {
+		p.peek::<PositionAreaPhsyicalVertical>()
+			.or_else(|| p.peek::<PositionAreaPhsyicalHorizontal>())
+			.or_else(|| p.peek::<PositionAreaBlock>())
+			.or_else(|| p.peek::<PositionAreaInline>())
+			.or_else(|| p.peek::<PositionAreaSelfBlock>())
+			.or_else(|| p.peek::<PositionAreaSelfInline>())
+			.or_else(|| p.peek::<PositionAreaPosition>())
+			.or_else(|| p.peek::<PositionAreaSelfPosition>())
 	}
 }
 
 impl<'a> Parse<'a> for PositionArea {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		if let Some(first) = parser.parse_if_peek::<PositionAreaPosition>()? {
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		if let Some(first) = p.parse_if_peek::<PositionAreaPosition>()? {
 			let second =
-				if let Some(token) = parser.parse_if_peek::<PositionAreaPosition>()? { token } else { first.clone() };
+				if let Some(token) = p.parse_if_peek::<PositionAreaPosition>()? { token } else { first.clone() };
 			Ok(Self::Position(first, second))
-		} else if let Some(first) = parser.parse_if_peek::<PositionAreaSelfPosition>()? {
-			let second = if let Some(token) = parser.parse_if_peek::<PositionAreaSelfPosition>()? {
-				token
-			} else {
-				first.clone()
-			};
+		} else if let Some(first) = p.parse_if_peek::<PositionAreaSelfPosition>()? {
+			let second =
+				if let Some(token) = p.parse_if_peek::<PositionAreaSelfPosition>()? { token } else { first.clone() };
 			Ok(Self::SelfPosition(first, second))
-		} else if let Some(first) = parser.parse_if_peek::<PositionAreaBlock>()? {
-			let second = if let Some(token) = parser.parse_if_peek::<PositionAreaInline>()? {
+		} else if let Some(first) = p.parse_if_peek::<PositionAreaBlock>()? {
+			let second = if let Some(token) = p.parse_if_peek::<PositionAreaInline>()? {
 				token
 			} else {
 				PositionAreaInline::SpanAll
 			};
 			Ok(Self::Logical(first, second))
-		} else if let Some(first) = parser.parse_if_peek::<PositionAreaInline>()? {
-			let second = if let Some(token) = parser.parse_if_peek::<PositionAreaBlock>()? {
+		} else if let Some(first) = p.parse_if_peek::<PositionAreaInline>()? {
+			let second = if let Some(token) = p.parse_if_peek::<PositionAreaBlock>()? {
 				token
 			} else {
 				PositionAreaBlock::SpanAll
 			};
 			Ok(Self::Logical(second, first))
-		} else if let Some(first) = parser.parse_if_peek::<PositionAreaSelfBlock>()? {
-			let second = if let Some(token) = parser.parse_if_peek::<PositionAreaSelfInline>()? {
+		} else if let Some(first) = p.parse_if_peek::<PositionAreaSelfBlock>()? {
+			let second = if let Some(token) = p.parse_if_peek::<PositionAreaSelfInline>()? {
 				token
 			} else {
 				PositionAreaSelfInline::SpanAll
 			};
 			Ok(Self::SelfLogical(first, second))
-		} else if let Some(first) = parser.parse_if_peek::<PositionAreaSelfInline>()? {
-			let second = if let Some(token) = parser.parse_if_peek::<PositionAreaSelfBlock>()? {
+		} else if let Some(first) = p.parse_if_peek::<PositionAreaSelfInline>()? {
+			let second = if let Some(token) = p.parse_if_peek::<PositionAreaSelfBlock>()? {
 				token
 			} else {
 				PositionAreaSelfBlock::SpanAll
 			};
 			Ok(Self::SelfLogical(second, first))
-		} else if let Some(first) = parser.parse_if_peek::<PositionAreaPhsyicalHorizontal>()? {
-			let second = if let Some(token) = parser.parse_if_peek::<PositionAreaPhsyicalVertical>()? {
+		} else if let Some(first) = p.parse_if_peek::<PositionAreaPhsyicalHorizontal>()? {
+			let second = if let Some(token) = p.parse_if_peek::<PositionAreaPhsyicalVertical>()? {
 				token
 			} else {
 				PositionAreaPhsyicalVertical::SpanAll
 			};
 			Ok(Self::Physical(first, second))
-		} else if let Some(first) = parser.parse_if_peek::<PositionAreaPhsyicalVertical>()? {
-			let second = if let Some(token) = parser.parse_if_peek::<PositionAreaPhsyicalHorizontal>()? {
+		} else if let Some(first) = p.parse_if_peek::<PositionAreaPhsyicalVertical>()? {
+			let second = if let Some(token) = p.parse_if_peek::<PositionAreaPhsyicalHorizontal>()? {
 				token
 			} else {
 				PositionAreaPhsyicalHorizontal::SpanAll
 			};
 			Ok(Self::Physical(second, first))
 		} else {
-			let token = parser.peek::<T![Any]>().unwrap();
+			let token = p.peek::<T![Any]>().unwrap();
 			Err(diagnostics::Unexpected(token, token.span()))?
 		}
 	}

@@ -112,12 +112,12 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 				let field = fields.unnamed.first().unwrap();
 				let field_ty = &field.ty;
 				let value = quote! {
-					Self(parser.parse::<#field_ty>(parser)?)
+					Self(p.parse::<#field_ty>()?)
 				};
 				quote! {
 					#[automatically_derived]
 					impl<'a> hdx_parser::Parse<'a> for #ident {
-						fn parse(parser: &mut hdx_parser::Parser<'a>) -> hdx_parser::Result<Self> {
+						fn parse(p: &mut hdx_parser::Parser<'a>) -> hdx_parser::Result<Self> {
 							use hdx_parser::{Parse};
 							Ok(#value)
 						}
@@ -187,32 +187,32 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 								.map(|check| match check {
 									Check::Float => quote! {
 										if !token.is_float() {
-											Err(hdx_parser::diagnostics::ExpectedFloat(parser.parse_number(token), token.span()))?
+											Err(hdx_parser::diagnostics::ExpectedFloat(p.parse_number(token), token.span()))?
 										}
 									},
 									Check::Int => quote! {
 										if !token.is_int() {
-											Err(hdx_parser::diagnostics::ExpectedInt(parser.parse_number(token), token.span()))?
+											Err(hdx_parser::diagnostics::ExpectedInt(p.parse_number(token), token.span()))?
 										}
 									},
 									Check::Signed => quote! {
 										if !token.is_signed() {
-											Err(hdx_parser::diagnostics::ExpectedSign(parser.parse_number(token), token.span()))?
+											Err(hdx_parser::diagnostics::ExpectedSign(p.parse_number(token), token.span()))?
 										}
 									},
 									Check::Unsigned => quote! {
 										if token.is_signed() {
-											Err(hdx_parser::diagnostics::ExpectedUnsigned(parser.parse_number(token), token.span()))?
+											Err(hdx_parser::diagnostics::ExpectedUnsigned(p.parse_number(token), token.span()))?
 										}
 									},
 									Check::Zero => quote! {
-										let val = parser.parse_number(token);
+										let val = p.parse_number(token);
 										if val != 0.0 {
 											Err(hdx_parser::diagnostics::ExpectedZero(val, token.span()))?
 										}
 									},
 									Check::Range(r) => quote! {
-										let val = parser.parse_number(token);
+										let val = p.parse_number(token);
 										if !(#r).contains(&val) {
 											Err(hdx_parser::diagnostics::NumberOutOfBounds(val, "#r".to_string(), token.span()))?
 										}
@@ -245,7 +245,7 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 									});
 									number_matcher = match args.kind {
 										Kind::DimensionOrZero => Some(quote! {
-											hdx_lexer::Kind::Number if parser.parse_number(token) == 0.0 => {
+											hdx_lexer::Kind::Number if p.parse_number(token) == 0.0 => {
 												#(#checks)*
 												Ok(Self::#var_ident(#field::parse(parser)?))
 											}
@@ -262,7 +262,7 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 									dimension_matchers.push(quote! {
 										hdx_atom::atom!(#str) => {
 											#(#checks)*
-											Ok(Self::#var_ident(parser.parse_number(token).into()))
+											Ok(Self::#var_ident(p.parse_number(token).into()))
 										},
 									});
 								}
@@ -322,7 +322,7 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 									quote! {
 										hdx_lexer::Kind::Number => {
 											#(#checks)*
-											Ok(Self::#var_ident(parser.parse::<#field>()?))
+											Ok(Self::#var_ident(p.parse::<#field>()?))
 										},
 									}
 								} else {
@@ -383,8 +383,8 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 								let field = unnamed[0].clone().ty;
 								quote! {
 									hdx_atom::atom!(#str) => {
-										let val = parser.parse::<#field>()?;
-										parser.parse::<hdx_parser::T![RightParen]>()?;
+										let val = p.parse::<#field>()?;
+										p.parse::<hdx_parser::T![RightParen]>()?;
 										Ok(Self::#var_ident(val))
 									}
 								}
@@ -409,7 +409,7 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 								let field = unnamed[0].clone().ty;
 								quote! {
 									hdx_atom::atom!(#str) => {
-										let val = parser.parse::<#field>(parser)?;
+										let val = p.parse::<#field>()?;
 										Ok(Self::#var_ident(val))
 									}
 								}
@@ -429,7 +429,7 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 			} else {
 				quote! {
 					hdx_lexer::Kind::Ident => {
-						let atom = parser.parse_atom_lower(token);
+						let atom = p.parse_atom_lower(token);
 						match atom {
 							#(#ident_matchers)*
 							_ => None
@@ -442,7 +442,7 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 			} else {
 				quote! {
 					hdx_lexer::Kind::Function => {
-						let atom = parser.parse_atom_lower(token);
+						let atom = p.parse_atom_lower(token);
 						match atom {
 							#(#function_matchers)*
 							_ => Err(hdx_parser::diagnostics::UnexpectedFunction(atom, token.span()))?
@@ -454,7 +454,7 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 				quote! {}
 			} else {
 				quote! {
-					hdx_lexer::Kind::AtKeyword => match parser.parse_atom_lower(token) {
+					hdx_lexer::Kind::AtKeyword => match p.parse_atom_lower(token) {
 						#(#at_matchers)*
 						atom => Err(hdx_parser::diagnostics::UnexpectedAtRule(atom, token.span()))?
 					}
@@ -466,7 +466,7 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 				quote
 			} else {
 				quote! {
-					hdx_lexer::Kind::Dimension => match parser.parse_atom_lower(token) {
+					hdx_lexer::Kind::Dimension => match p.parse_atom_lower(token) {
 						#(#dimension_matchers)*
 						atom => Err(hdx_parser::diagnostics::UnexpectedDimension(atom, token.span()))?
 					}
@@ -475,9 +475,9 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 			quote! {
 				#[automatically_derived]
 				impl<'a> hdx_parser::Peek<'a> for #ident {
-					fn peek(parser: &hdx_parser::Parser<'a>) -> Option<hdx_lexer::Token> {
+					fn peek(p: &hdx_parser::Parser<'a>) -> Option<hdx_lexer::Token> {
 						use hdx_parser::{Parse};
-						let token = parser.peek::<hdx_parser::token::Any>().unwrap();
+						let token = p.peek::<hdx_parser::token::Any>().unwrap();
 						match token.kind() {
 							#ident_match_arm
 							#string_matcher

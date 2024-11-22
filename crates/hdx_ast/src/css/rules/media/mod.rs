@@ -2,7 +2,7 @@ use hdx_atom::{atom, Atom, Atomizable};
 use hdx_derive::{Atomizable, Parsable};
 use hdx_lexer::Span;
 use hdx_parser::{
-	diagnostics, discard, AtRule, ConditionalAtRule, Parse, Parser, Result as ParserResult, RuleList, Spanned, Vec, T,
+	diagnostics, AtRule, ConditionalAtRule, Parse, Parser, Result as ParserResult, RuleList, Spanned, Vec, T,
 };
 use hdx_writer::{write_css, write_list, CssWriter, OutputOption, Result as WriterResult, WriteCss};
 use smallvec::{smallvec, SmallVec};
@@ -27,13 +27,13 @@ pub struct Media<'a> {
 
 // https://drafts.csswg.org/css-conditional-3/#at-ruledef-media
 impl<'a> Parse<'a> for Media<'a> {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let start = parser.offset();
-		match Self::parse_at_rule(parser, Some(atom!("media")))? {
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		let start = p.offset();
+		match Self::parse_at_rule(p, Some(atom!("media")))? {
 			(Some(query), Some(rules)) => Ok(Self { query, rules }),
-			(Some(_), None) => Err(diagnostics::MissingAtRuleBlock(Span::new(start, parser.offset())))?,
-			(None, Some(_)) => Err(diagnostics::MissingAtRulePrelude(Span::new(start, parser.offset())))?,
-			(None, None) => Err(diagnostics::MissingAtRulePrelude(Span::new(start, parser.offset())))?,
+			(Some(_), None) => Err(diagnostics::MissingAtRuleBlock(Span::new(start, p.offset())))?,
+			(None, Some(_)) => Err(diagnostics::MissingAtRulePrelude(Span::new(start, p.offset())))?,
+			(None, None) => Err(diagnostics::MissingAtRulePrelude(Span::new(start, p.offset())))?,
 		}
 	}
 }
@@ -67,8 +67,8 @@ impl<'a> WriteCss<'a> for Media<'a> {
 pub struct MediaRules<'a>(pub Vec<'a, Spanned<Rule<'a>>>);
 
 impl<'a> Parse<'a> for MediaRules<'a> {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		Ok(Self(Self::parse_rule_list(parser)?))
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		Ok(Self(Self::parse_rule_list(p)?))
 	}
 }
 
@@ -104,11 +104,11 @@ impl MediaQueryList {
 }
 
 impl<'a> Parse<'a> for MediaQueryList {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
 		let mut queries = smallvec![];
 		loop {
-			queries.push(MediaQuery::parse_spanned(parser)?);
-			if !discard!(parser, Comma) {
+			queries.push(MediaQuery::parse_spanned(p)?);
+			if !p.parse::<T![,]>().is_ok() {
 				return Ok(Self(queries));
 			}
 		}
@@ -142,16 +142,16 @@ pub struct MediaQuery {
 }
 
 impl<'a> Parse<'a> for MediaQuery {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
 		let mut precondition = None;
 		let mut media_type = None;
 		let mut condition = None;
-		if parser.peek::<T![LeftParen]>().is_some() {
-			condition = Some(parser.parse::<MediaCondition>()?);
+		if p.peek::<T![LeftParen]>().is_some() {
+			condition = Some(p.parse::<MediaCondition>()?);
 			return Ok(Self { precondition, media_type, condition });
 		}
-		let token = *parser.parse::<T![Ident]>()?;
-		let atom = parser.parse_atom_lower(token);
+		let token = *p.parse::<T![Ident]>()?;
+		let atom = p.parse_atom_lower(token);
 		if let Some(cond) = MediaPreCondition::from_atom(&atom) {
 			precondition = Some(cond);
 		} else if let Some(ty) = MediaType::from_atom(&atom) {
@@ -159,23 +159,23 @@ impl<'a> Parse<'a> for MediaQuery {
 		} else {
 			Err(diagnostics::UnexpectedIdent(atom, token.span()))?;
 		}
-		if let Some(token) = parser.peek::<T![Ident]>() {
+		if let Some(token) = p.peek::<T![Ident]>() {
 			if precondition.is_some() {
-				let atom = parser.parse_atom_lower(token);
+				let atom = p.parse_atom_lower(token);
 				media_type = MediaType::from_atom(&atom);
 				if media_type.is_some() {
-					parser.hop(token);
+					p.hop(token);
 				} else {
 					Err(diagnostics::UnexpectedIdent(atom, token.span()))?
 				}
 			}
 		}
-		if let Some(token) = parser.peek::<kw::And>() {
-			parser.hop(token);
-			condition = Some(MediaCondition::parse(parser)?);
+		if let Some(token) = p.peek::<kw::And>() {
+			p.hop(token);
+			condition = Some(p.parse::<MediaCondition>()?);
 		}
 		if media_type.is_none() {
-			condition = Some(MediaCondition::parse(parser)?);
+			condition = Some(p.parse::<MediaCondition>()?);
 		}
 		Ok(Self { precondition, media_type, condition })
 	}
@@ -274,8 +274,8 @@ impl<'a> ConditionalAtRule<'a> for MediaCondition {
 }
 
 impl<'a> Parse<'a> for MediaCondition {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		Self::parse_condition(parser)
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		Self::parse_condition(p)
 	}
 }
 
@@ -330,33 +330,33 @@ macro_rules! media_feature {
 apply_medias!(media_feature);
 
 impl<'a> Parse<'a> for MediaFeature {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		parser.parse::<T![LeftParen]>()?;
-		let checkpoint = parser.checkpoint();
-		if let Some(token) = parser.peek::<T![Ident]>() {
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		p.parse::<T![LeftParen]>()?;
+		let checkpoint = p.checkpoint();
+		if let Some(token) = p.peek::<T![Ident]>() {
 			macro_rules! match_media {
 				( $($name: ident($typ: ident): atom!($atom: tt)$(| $alts:pat)*,)+) => {
 					// Only peek at the token as the underlying media feature parser needs to parse the leading atom.
 					{
-						match parser.parse_atom_lower(token) {
-							$(atom!($atom)$(| $alts)* => $typ::parse(parser).map(Self::$name),)+
+						match p.parse_atom_lower(token) {
+							$(atom!($atom)$(| $alts)* => $typ::parse(p).map(Self::$name),)+
 							atom => Err(diagnostics::UnexpectedIdent(atom, token.span()))?,
 						}
 					}
 				}
 			}
 			let value = apply_medias!(match_media).or_else(|err| {
-				parser.rewind(checkpoint);
-				if let Ok(hack) = HackMediaFeature::parse(parser) {
+				p.rewind(checkpoint);
+				if let Ok(hack) = p.parse::<HackMediaFeature>() {
 					Ok(Self::Hack(hack))
 				} else {
 					Err(err)
 				}
 			})?;
-			parser.parse::<T![RightParen]>()?;
+			p.parse::<T![RightParen]>()?;
 			Ok(value)
 		} else {
-			let token = parser.peek::<T![Any]>().unwrap();
+			let token = p.peek::<T![Any]>().unwrap();
 			Err(diagnostics::Unexpected(token, token.span()))?
 		}
 	}

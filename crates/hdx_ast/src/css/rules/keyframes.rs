@@ -1,6 +1,6 @@
 use hdx_atom::{atom, Atom};
 use hdx_lexer::{QuoteStyle, Span};
-use hdx_parser::{diagnostics, discard, AtRule, Parse, Parser, Result as ParserResult, Spanned, Vec, T};
+use hdx_parser::{diagnostics, AtRule, Parse, Parser, Result as ParserResult, Spanned, Vec, T};
 use hdx_writer::{write_css, CssWriter, Result as WriterResult, WriteCss};
 use smallvec::{smallvec, SmallVec};
 
@@ -15,13 +15,13 @@ pub struct Keyframes<'a> {
 }
 
 impl<'a> Parse<'a> for Keyframes<'a> {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let start = parser.offset();
-		match Self::parse_at_rule(parser, Some(atom!("keyframes")))? {
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		let start = p.offset();
+		match Self::parse_at_rule(p, Some(atom!("keyframes")))? {
 			(Some(name), Some(rules)) => Ok(Self { name, rules }),
-			(Some(_), None) => Err(diagnostics::MissingAtRuleBlock(Span::new(start, parser.offset())))?,
-			(None, Some(_)) => Err(diagnostics::MissingAtRulePrelude(Span::new(start, parser.offset())))?,
-			(None, None) => Err(diagnostics::MissingAtRulePrelude(Span::new(start, parser.offset())))?,
+			(Some(_), None) => Err(diagnostics::MissingAtRuleBlock(Span::new(start, p.offset())))?,
+			(None, Some(_)) => Err(diagnostics::MissingAtRulePrelude(Span::new(start, p.offset())))?,
+			(None, None) => Err(diagnostics::MissingAtRulePrelude(Span::new(start, p.offset())))?,
 		}
 	}
 }
@@ -54,14 +54,14 @@ impl KeyframeName {
 }
 
 impl<'a> Parse<'a> for KeyframeName {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		if let Some(token) = parser.peek::<T![String]>() {
-			parser.hop(token);
-			let atom = parser.parse_atom(token);
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		if let Some(token) = p.peek::<T![String]>() {
+			p.hop(token);
+			let atom = p.parse_atom(token);
 			return Ok(Self(atom, token.quote_style()));
 		}
-		let token = *parser.parse::<T![Ident]>()?;
-		let atom = parser.parse_atom_lower(token);
+		let token = *p.parse::<T![Ident]>()?;
+		let atom = p.parse_atom_lower(token);
 		if Self::valid_ident(&atom) {
 			Ok(Self(atom, QuoteStyle::None))
 		} else {
@@ -81,14 +81,14 @@ impl<'a> WriteCss<'a> for KeyframeName {
 pub struct KeyframeList<'a>(Vec<'a, Spanned<Keyframe<'a>>>);
 
 impl<'a> Parse<'a> for KeyframeList<'a> {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		parser.parse::<T![LeftCurly]>()?;
-		let mut rules = parser.new_vec();
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		p.parse::<T![LeftCurly]>()?;
+		let mut rules = p.new_vec();
 		loop {
-			if discard!(parser, RightCurly) {
+			if p.parse::<T![RightCurly]>().is_ok() {
 				return Ok(Self(rules));
 			}
-			rules.push(parser.parse_spanned::<Keyframe>()?);
+			rules.push(p.parse_spanned::<Keyframe>()?);
 		}
 	}
 }
@@ -113,22 +113,22 @@ pub struct Keyframe<'a> {
 }
 
 impl<'a> Parse<'a> for Keyframe<'a> {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
 		let mut selector = smallvec![];
 		loop {
-			selector.push(parser.parse::<KeyframeSelector>()?);
-			if parser.at_end() || discard!(parser, LeftCurly) {
+			selector.push(p.parse::<KeyframeSelector>()?);
+			if p.at_end() || p.parse::<T![LeftCurly]>().is_ok() {
 				break;
 			}
-			parser.parse::<T![,]>()?;
+			p.parse::<T![,]>()?;
 		}
-		let mut properties = parser.new_vec();
+		let mut properties = p.new_vec();
 		loop {
-			discard!(parser, Semicolon);
-			if parser.at_end() || discard!(parser, RightCurly) {
+			p.parse::<T![;]>().ok();
+			if p.at_end() || p.parse::<T![RightCurly]>().is_ok() {
 				break;
 			}
-			properties.push(parser.parse_spanned::<Property>()?);
+			properties.push(p.parse_spanned::<Property>()?);
 		}
 		Ok(Self { selector, properties })
 	}
@@ -166,18 +166,18 @@ pub enum KeyframeSelector {
 }
 
 impl<'a> Parse<'a> for KeyframeSelector {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		if let Some(token) = parser.peek::<T![Ident]>() {
-			parser.hop(token);
-			return match parser.parse_atom_lower(token) {
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		if let Some(token) = p.peek::<T![Ident]>() {
+			p.hop(token);
+			return match p.parse_atom_lower(token) {
 				atom!("from") => Ok(KeyframeSelector::From),
 				atom!("to") => Ok(KeyframeSelector::To),
 				atom => Err(diagnostics::UnexpectedIdent(atom, token.span()))?,
 			};
 		}
-		let token = *parser.parse::<T![Dimension]>()?;
-		let n = parser.parse_number(token);
-		let unit = parser.parse_atom(token);
+		let token = *p.parse::<T![Dimension]>()?;
+		let n = p.parse_number(token);
+		let unit = p.parse_atom(token);
 		if unit == atom!("%") && (0.0..=100.0).contains(&n) {
 			Ok(Self::Percent(n.into()))
 		} else {

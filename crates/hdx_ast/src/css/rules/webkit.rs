@@ -14,13 +14,13 @@ pub struct WebkitKeyframes<'a> {
 }
 
 impl<'a> Parse<'a> for WebkitKeyframes<'a> {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let start = parser.offset();
-		match Self::parse_at_rule(parser, Some(atom!("-webkit-keyframes")))? {
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		let start = p.offset();
+		match Self::parse_at_rule(p, Some(atom!("-webkit-keyframes")))? {
 			(Some(name), Some(rules)) => Ok(Self { name, rules }),
-			(Some(_), None) => Err(diagnostics::MissingAtRuleBlock(Span::new(start, parser.offset())))?,
-			(None, Some(_)) => Err(diagnostics::MissingAtRulePrelude(Span::new(start, parser.offset())))?,
-			(None, None) => Err(diagnostics::MissingAtRulePrelude(Span::new(start, parser.offset())))?,
+			(Some(_), None) => Err(diagnostics::MissingAtRuleBlock(Span::new(start, p.offset())))?,
+			(None, Some(_)) => Err(diagnostics::MissingAtRulePrelude(Span::new(start, p.offset())))?,
+			(None, None) => Err(diagnostics::MissingAtRulePrelude(Span::new(start, p.offset())))?,
 		}
 	}
 }

@@ -44,11 +44,11 @@ pub use webkit::*;
 
 pub struct NoPreludeAllowed;
 impl<'a> Parse<'a> for NoPreludeAllowed {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		if parser.peek::<T![LeftCurly]>().is_some() || parser.peek::<T![;]>().is_some() {
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		if p.peek::<T![LeftCurly]>().is_some() || p.peek::<T![;]>().is_some() {
 			Ok(Self {})
 		} else {
-			let token = parser.peek::<T![Any]>().unwrap();
+			let token = p.peek::<T![Any]>().unwrap();
 			Err(diagnostics::Unexpected(token, token.span()))?
 		}
 	}
@@ -56,11 +56,11 @@ impl<'a> Parse<'a> for NoPreludeAllowed {
 
 pub struct NoBlockAllowed;
 impl<'a> Parse<'a> for NoBlockAllowed {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		if parser.at_end() || parser.peek::<T![;]>().is_some() {
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		if p.at_end() || p.peek::<T![;]>().is_some() {
 			Ok(Self {})
 		} else {
-			let token = parser.peek::<T![Any]>().unwrap();
+			let token = p.peek::<T![Any]>().unwrap();
 			Err(diagnostics::Unexpected(token, token.span()))?
 		}
 	}

@@ -8,19 +8,19 @@ use hdx_writer::{write_css, CssWriter, Result as WriterResult, WriteCss};
 pub struct Ratio(pub CSSInt, pub CSSInt);
 
 impl<'a> Peek<'a> for Ratio {
-	fn peek(parser: &Parser<'a>) -> Option<hdx_lexer::Token> {
-		parser.peek::<T![Number]>()
+	fn peek(p: &Parser<'a>) -> Option<hdx_lexer::Token> {
+		p.peek::<T![Number]>()
 	}
 }
 
 impl<'a> Parse<'a> for Ratio {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let token = *parser.parse::<T![Number]>()?;
-		let a: CSSInt = parser.parse_number(token).into();
-		let b: CSSInt = if let Some(token) = parser.peek::<T![/]>() {
-			parser.hop(token);
-			let token = *parser.parse::<T![Number]>()?;
-			parser.parse_number(token).into()
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		let token = *p.parse::<T![Number]>()?;
+		let a: CSSInt = p.parse_number(token).into();
+		let b: CSSInt = if let Some(token) = p.peek::<T![/]>() {
+			p.hop(token);
+			let token = *p.parse::<T![Number]>()?;
+			p.parse_number(token).into()
 		} else {
 			1.into()
 		};

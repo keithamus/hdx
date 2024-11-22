@@ -46,8 +46,8 @@ macro_rules! kind {
 		delegate_to_token!($ident);
 
 		impl<'a> $crate::Peek<'a> for $ident {
-			fn peek(parser: &$crate::Parser<'a>) -> Option<::hdx_lexer::Token> {
-				let token = parser.peek_next();
+			fn peek(p: &$crate::Parser<'a>) -> Option<::hdx_lexer::Token> {
+				let token = p.peek_next();
 				if token.kind() == ::hdx_lexer::Kind::$ident {
 					Some(token)
 				} else {
@@ -57,8 +57,8 @@ macro_rules! kind {
 		}
 
 		impl<'a> $crate::Parse<'a> for $ident {
-			fn parse(parser: &mut $crate::Parser<'a>) -> $crate::Result<Self> {
-				let token = parser.next();
+			fn parse(p: &mut $crate::Parser<'a>) -> $crate::Result<Self> {
+				let token = p.next();
 				if token.kind() == ::hdx_lexer::Kind::$ident {
 					Ok(Self(token))
 				} else {
@@ -77,14 +77,14 @@ macro_rules! custom_delim {
 		delegate_to_token!($iden);
 
 		impl<'a> $crate::Peek<'a> for $iden {
-			fn peek(parser: &$crate::Parser<'a>) -> Option<::hdx_lexer::Token> {
-				parser.peek::<$crate::T![Delim]>().filter(|token| matches!(token.char(), Some($ch)))
+			fn peek(p: &$crate::Parser<'a>) -> Option<::hdx_lexer::Token> {
+				p.peek::<$crate::T![Delim]>().filter(|token| matches!(token.char(), Some($ch)))
 			}
 		}
 
 		impl<'a> $crate::Parse<'a> for $iden {
-			fn parse(parser: &mut $crate::Parser<'a>) -> $crate::Result<Self> {
-				let token = *parser.parse::<$crate::T![Delim]>()?;
+			fn parse(p: &mut $crate::Parser<'a>) -> $crate::Result<Self> {
+				let token = *p.parse::<$crate::T![Delim]>()?;
 				if !matches!(token.char(), Some($ch)) {
 					Err($crate::diagnostics::ExpectedDelim(token, token.span()))?;
 				}
@@ -108,18 +108,18 @@ macro_rules! custom_dimension {
 		}
 
 		impl<'a> $crate::Peek<'a> for $ident {
-			fn peek(parser: &$crate::Parser<'a>) -> Option<hdx_lexer::Token> {
-				parser.peek::<$crate::T![Dimension]>().filter(|token| {
+			fn peek(p: &$crate::Parser<'a>) -> Option<hdx_lexer::Token> {
+				p.peek::<$crate::T![Dimension]>().filter(|token| {
 					matches!(token.dimension_unit(), hdx_lexer::DimensionUnit::$ident)
-						|| parser.parse_atom_lower(*token) == ::hdx_atom::atom!($atom)
+						|| p.parse_atom_lower(*token) == ::hdx_atom::atom!($atom)
 				})
 			}
 		}
 
 		impl<'a> $crate::Parse<'a> for $ident {
-			fn parse(parser: &mut $crate::Parser<'a>) -> $crate::Result<Self> {
-				let token = *parser.parse::<$crate::T![Dimension]>()?;
-				let atom = parser.parse_atom_lower(token);
+			fn parse(p: &mut $crate::Parser<'a>) -> $crate::Result<Self> {
+				let token = *p.parse::<$crate::T![Dimension]>()?;
+				let atom = p.parse_atom_lower(token);
 				if atom != ::hdx_atom::atom!($atom) {
 					Err($crate::diagnostics::UnexpectedDimension(atom, token.span()))?
 				}
@@ -143,17 +143,15 @@ macro_rules! custom_keyword {
 		}
 
 		impl<'a> $crate::Peek<'a> for $ident {
-			fn peek(parser: &$crate::Parser<'a>) -> Option<hdx_lexer::Token> {
-				parser
-					.peek::<$crate::T![Ident]>()
-					.filter(|token| parser.parse_atom_lower(*token) == ::hdx_atom::atom!($atom))
+			fn peek(p: &$crate::Parser<'a>) -> Option<hdx_lexer::Token> {
+				p.peek::<$crate::T![Ident]>().filter(|token| p.parse_atom_lower(*token) == ::hdx_atom::atom!($atom))
 			}
 		}
 
 		impl<'a> $crate::Parse<'a> for $ident {
-			fn parse(parser: &mut $crate::Parser<'a>) -> $crate::Result<Self> {
-				let token = *parser.parse::<$crate::T![Ident]>()?;
-				let atom = parser.parse_atom_lower(token);
+			fn parse(p: &mut $crate::Parser<'a>) -> $crate::Result<Self> {
+				let token = *p.parse::<$crate::T![Ident]>()?;
+				let atom = p.parse_atom_lower(token);
 				if atom != ::hdx_atom::atom!($atom) {
 					Err($crate::diagnostics::UnexpectedIdent(atom, token.span()))?
 				}
@@ -176,17 +174,15 @@ macro_rules! custom_function {
 		}
 
 		impl<'a> $crate::Peek<'a> for $ident {
-			fn peek(parser: &$crate::Parser<'a>) -> Option<hdx_lexer::Token> {
-				parser
-					.peek::<$crate::T![Function]>()
-					.filter(|token| parser.parse_atom_lower(*token) == ::hdx_atom::atom!($atom))
+			fn peek(p: &$crate::Parser<'a>) -> Option<hdx_lexer::Token> {
+				p.peek::<$crate::T![Function]>().filter(|token| p.parse_atom_lower(*token) == ::hdx_atom::atom!($atom))
 			}
 		}
 
 		impl<'a> $crate::Parse<'a> for $ident {
-			fn parse(parser: &mut $crate::Parser<'a>) -> $crate::Result<Self> {
-				let token = *parser.parse::<$crate::T![Function]>()?;
-				let atom = parser.parse_atom_lower(token);
+			fn parse(p: &mut $crate::Parser<'a>) -> $crate::Result<Self> {
+				let token = *p.parse::<$crate::T![Function]>()?;
+				let atom = p.parse_atom_lower(token);
 				if atom != ::hdx_atom::atom!($atom) {
 					Err($crate::diagnostics::ExpectedFunctionOf(::hdx_atom::atom!($atom), atom, token.span()))?
 				}
@@ -301,14 +297,14 @@ pub struct Any(Token);
 delegate_to_token!(Any);
 
 impl<'a> Peek<'a> for Any {
-	fn peek(parser: &crate::Parser<'a>) -> Option<Token> {
-		Some(parser.peek_next())
+	fn peek(p: &crate::Parser<'a>) -> Option<Token> {
+		Some(p.peek_next())
 	}
 }
 
 impl<'a> Parse<'a> for Any {
-	fn parse(parser: &mut crate::Parser<'a>) -> Result<Self> {
-		Ok(Self(parser.next()))
+	fn parse(p: &mut crate::Parser<'a>) -> Result<Self> {
+		Ok(Self(p.next()))
 	}
 }
 
@@ -316,8 +312,8 @@ pub struct PairWise(Token);
 delegate_to_token!(PairWise);
 
 impl<'a> Peek<'a> for PairWise {
-	fn peek(parser: &crate::Parser<'a>) -> Option<Token> {
-		let token = parser.peek_next();
+	fn peek(p: &crate::Parser<'a>) -> Option<Token> {
+		let token = p.peek_next();
 		if token.to_pairwise().is_some() {
 			return Some(token);
 		}
@@ -326,8 +322,8 @@ impl<'a> Peek<'a> for PairWise {
 }
 
 impl<'a> Parse<'a> for PairWise {
-	fn parse(parser: &mut crate::Parser<'a>) -> Result<Self> {
-		let token = parser.next();
+	fn parse(p: &mut crate::Parser<'a>) -> Result<Self> {
+		let token = p.next();
 		if token.to_pairwise().is_none() {
 			Err(diagnostics::Unexpected(token, token.span()))?;
 		}

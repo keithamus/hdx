@@ -1,6 +1,6 @@
 use hdx_atom::{atom, Atom};
 use hdx_derive::{Atomizable, Parsable, Writable};
-use hdx_parser::{diagnostics, discard, Parse, Parser, Result as ParserResult, T};
+use hdx_parser::{diagnostics, Parse, Parser, Result as ParserResult, T};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 use smallvec::{smallvec, SmallVec};
 
@@ -31,46 +31,46 @@ pub enum FunctionalPseudoClass<'a> {
 }
 
 impl<'a> Parse<'a> for FunctionalPseudoClass<'a> {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let token = *parser.parse::<T![Function]>()?;
-		let value = match parser.parse_atom_lower(token) {
-			atom!("dir") => parser.parse::<DirValue>().map(Self::Dir)?,
-			atom!("has") => parser.parse::<RelativeSelector>().map(Self::Has)?,
-			atom!("host") => parser.parse::<SelectorList>().map(Self::Host)?,
-			atom!("host-context") => parser.parse::<SelectorList>().map(Self::HostContext)?,
-			atom!("is") => parser.parse::<ForgivingSelector>().map(Self::Is)?,
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		let token = *p.parse::<T![Function]>()?;
+		let value = match p.parse_atom_lower(token) {
+			atom!("dir") => p.parse::<DirValue>().map(Self::Dir)?,
+			atom!("has") => p.parse::<RelativeSelector>().map(Self::Has)?,
+			atom!("host") => p.parse::<SelectorList>().map(Self::Host)?,
+			atom!("host-context") => p.parse::<SelectorList>().map(Self::HostContext)?,
+			atom!("is") => p.parse::<ForgivingSelector>().map(Self::Is)?,
 			atom!("lang") => {
 				let mut langs = smallvec![];
 				loop {
-					if let Some(token) = parser.peek::<T![Ident]>() {
-						parser.hop(token);
-						langs.push(parser.parse_atom(token));
+					if let Some(token) = p.peek::<T![Ident]>() {
+						p.hop(token);
+						langs.push(p.parse_atom(token));
 					} else {
-						let token = *parser.parse::<T![String]>()?;
-						parser.hop(token);
-						langs.push(parser.parse_atom(token));
+						let token = *p.parse::<T![String]>()?;
+						p.hop(token);
+						langs.push(p.parse_atom(token));
 					}
-					if !discard!(parser, Comma) {
+					if !p.parse::<T![,]>().is_ok() {
 						break;
 					}
 				}
 				Self::Lang(langs)
 			}
-			atom!("not") => parser.parse::<SelectorList>().map(Self::Not)?,
-			atom!("nth-child") => parser.parse::<Nth>().map(Self::NthChild)?,
-			atom!("nth-col") => parser.parse::<Nth>().map(Self::NthCol)?,
-			atom!("nth-last-child") => parser.parse::<Nth>().map(Self::NthLastCol)?,
-			atom!("nth-last-col") => parser.parse::<Nth>().map(Self::NthLastCol)?,
-			atom!("nth-last-of-type") => parser.parse::<Nth>().map(Self::NthLastOfType)?,
-			atom!("nth-of-type") => parser.parse::<Nth>().map(Self::NthOfType)?,
-			atom!("where") => parser.parse::<ForgivingSelector>().map(Self::Where)?,
+			atom!("not") => p.parse::<SelectorList>().map(Self::Not)?,
+			atom!("nth-child") => p.parse::<Nth>().map(Self::NthChild)?,
+			atom!("nth-col") => p.parse::<Nth>().map(Self::NthCol)?,
+			atom!("nth-last-child") => p.parse::<Nth>().map(Self::NthLastCol)?,
+			atom!("nth-last-col") => p.parse::<Nth>().map(Self::NthLastCol)?,
+			atom!("nth-last-of-type") => p.parse::<Nth>().map(Self::NthLastOfType)?,
+			atom!("nth-of-type") => p.parse::<Nth>().map(Self::NthOfType)?,
+			atom!("where") => p.parse::<ForgivingSelector>().map(Self::Where)?,
 			atom!("state") => {
-				let token = *parser.parse::<T![Ident]>()?;
-				Self::State(parser.parse_atom(token))
+				let token = *p.parse::<T![Ident]>()?;
+				Self::State(p.parse_atom(token))
 			}
 			ident => Err(diagnostics::UnexpectedFunction(ident, token.span()))?,
 		};
-		parser.parse::<T![RightParen]>()?;
+		p.parse::<T![RightParen]>()?;
 		Ok(value)
 	}
 }

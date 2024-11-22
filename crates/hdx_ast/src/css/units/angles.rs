@@ -23,19 +23,19 @@ pub enum Angle {
 }
 
 impl<'a> Peek<'a> for Angle {
-	fn peek(parser: &Parser<'a>) -> Option<hdx_lexer::Token> {
-		parser.peek::<T![Dimension]>()
+	fn peek(p: &Parser<'a>) -> Option<hdx_lexer::Token> {
+		p.peek::<T![Dimension]>()
 	}
 }
 
 impl<'a> Parse<'a> for Angle {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let token = parser.parse::<T![Dimension]>()?;
-		match parser.parse_atom_lower(*token) {
-			atom!("grad") => Ok(Angle::Grad(parser.parse_number(*token).into())),
-			atom!("rad") => Ok(Angle::Rad(parser.parse_number(*token).into())),
-			atom!("turn") => Ok(Angle::Turn(parser.parse_number(*token).into())),
-			atom!("deg") => Ok(Angle::Deg(parser.parse_number(*token).into())),
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		let token = p.parse::<T![Dimension]>()?;
+		match p.parse_atom_lower(*token) {
+			atom!("grad") => Ok(Angle::Grad(p.parse_number(*token).into())),
+			atom!("rad") => Ok(Angle::Rad(p.parse_number(*token).into())),
+			atom!("turn") => Ok(Angle::Turn(p.parse_number(*token).into())),
+			atom!("deg") => Ok(Angle::Deg(p.parse_number(*token).into())),
 			atom => Err(diagnostics::UnexpectedDimension(atom, token.span()))?,
 		}
 	}

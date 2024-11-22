@@ -29,13 +29,13 @@ pub struct Supports<'a> {
 
 // https://drafts.csswg.org/css-conditional-3/#at-ruledef-supports
 impl<'a> Parse<'a> for Supports<'a> {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let start = parser.offset();
-		match Self::parse_at_rule(parser, Some(atom!("supports")))? {
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		let start = p.offset();
+		match Self::parse_at_rule(p, Some(atom!("supports")))? {
 			(Some(condition), Some(rules)) => Ok(Self { condition, rules }),
-			(Some(_), None) => Err(diagnostics::MissingAtRuleBlock(Span::new(start, parser.offset())))?,
-			(None, Some(_)) => Err(diagnostics::MissingAtRulePrelude(Span::new(start, parser.offset())))?,
-			(None, None) => Err(diagnostics::MissingAtRulePrelude(Span::new(start, parser.offset())))?,
+			(Some(_), None) => Err(diagnostics::MissingAtRuleBlock(Span::new(start, p.offset())))?,
+			(None, Some(_)) => Err(diagnostics::MissingAtRulePrelude(Span::new(start, p.offset())))?,
+			(None, None) => Err(diagnostics::MissingAtRulePrelude(Span::new(start, p.offset())))?,
 		}
 	}
 }
@@ -75,8 +75,8 @@ impl<'a> WriteCss<'a> for Supports<'a> {
 pub struct SupportsRules<'a>(pub Vec<'a, Spanned<Rule<'a>>>);
 
 impl<'a> Parse<'a> for SupportsRules<'a> {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		Ok(Self(Self::parse_rule_list(parser)?))
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		Ok(Self(Self::parse_rule_list(p)?))
 	}
 }
 
@@ -123,11 +123,11 @@ impl<'a> ConditionalAtRule<'a> for SupportsCondition<'a> {
 }
 
 impl<'a> Parse<'a> for SupportsCondition<'a> {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		if parser.peek::<T![Function]>().is_some() {
-			return Ok(Self::Is(parser.parse::<SupportsFeature>()?));
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		if p.peek::<T![Function]>().is_some() {
+			return Ok(Self::Is(p.parse::<SupportsFeature>()?));
 		}
-		Self::parse_condition(parser)
+		Self::parse_condition(p)
 	}
 }
 
@@ -192,17 +192,17 @@ pub enum SupportsFeature<'a> {
 }
 
 impl<'a> Parse<'a> for SupportsFeature<'a> {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let parens = parser.parse_if_peek::<T![LeftParen]>()?.is_some();
-		if let Some(token) = parser.peek::<T![Function]>() {
-			match parser.parse_atom_lower(token) {
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		let parens = p.parse_if_peek::<T![LeftParen]>()?.is_some();
+		if let Some(token) = p.peek::<T![Function]>() {
+			match p.parse_atom_lower(token) {
 				atom!("selector") => {
-					parser.hop(token);
-					let selector = parser.parse::<ComplexSelector>()?;
+					p.hop(token);
+					let selector = p.parse::<ComplexSelector>()?;
 					// End function
-					parser.parse::<T![RightParen]>()?;
+					p.parse::<T![RightParen]>()?;
 					if parens {
-						parser.parse::<T![RightParen]>()?;
+						p.parse::<T![RightParen]>()?;
 					}
 					Ok(Self::Selector(selector))
 				}
@@ -216,11 +216,11 @@ impl<'a> Parse<'a> for SupportsFeature<'a> {
 			}
 		} else {
 			if !parens {
-				let token = parser.peek::<T![Any]>().unwrap();
+				let token = p.peek::<T![Any]>().unwrap();
 				Err(diagnostics::Unexpected(token, token.span()))?;
 			}
-			let property = parser.parse::<Property>()?;
-			parser.parse::<T![RightParen]>()?;
+			let property = p.parse::<Property>()?;
+			p.parse::<T![RightParen]>()?;
 			Ok(Self::Property(property))
 		}
 	}

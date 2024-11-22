@@ -14,17 +14,17 @@ pub enum HackMediaFeature {
 }
 
 impl<'a> Parse<'a> for HackMediaFeature {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		parser.parse::<kw::MinWidth>()?;
-		parser.parse::<T![:]>()?;
-		if let Some(token) = parser.peek::<T![Dimension]>() {
-			let str = parser.parse_raw_str(token);
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		p.parse::<kw::MinWidth>()?;
+		p.parse::<T![:]>()?;
+		if let Some(token) = p.peek::<T![Dimension]>() {
+			let str = p.parse_raw_str(token);
 			if str == "0\\0" {
-				parser.hop(token);
+				p.hop(token);
 				return Ok(Self::IEBackslashZero);
 			}
 		}
-		let token = parser.peek::<T![Any]>().unwrap();
+		let token = p.peek::<T![Any]>().unwrap();
 		Err(diagnostics::Unexpected(token, token.span()))?
 	}
 }

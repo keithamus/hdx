@@ -7,8 +7,8 @@
 /// ```
 #[macro_export]
 macro_rules! todo {
-	($parser: ident) => {
-		Err($crate::diagnostics::Unimplemented(::hdx_lexer::Span::new($parser.offset(), $parser.offset())))?
+	($p: ident) => {
+		Err($crate::diagnostics::Unimplemented(::hdx_lexer::Span::new($p.offset(), $p.offset())))?
 	};
 }
 
@@ -26,17 +26,17 @@ macro_rules! todo {
 /// ```
 #[macro_export]
 macro_rules! discard {
-	($parser: ident, Include::$inc:ident, $tok:ident) => {
-		if let Some(token) = $parser.peek_with::<$crate::T![$tok]>(Include::$inc) {
-			$parser.hop(token);
+	($p: ident, Include::$inc:ident, $tok:ident) => {
+		if let Some(token) = $p.peek_with::<$crate::T![$tok]>(Include::$inc) {
+			$p.hop(token);
 			true
 		} else {
 			false
 		}
 	};
-	($parser: ident, $tok:ident) => {
-		if let Some(token) = $parser.peek::<$crate::T![$tok]>() {
-			$parser.hop(token);
+	($p: ident, $tok:ident) => {
+		if let Some(token) = $p.peek::<$crate::T![$tok]>() {
+			$p.hop(token);
 			true
 		} else {
 			false

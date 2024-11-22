@@ -7,15 +7,15 @@ use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 pub struct DashedIdent(Atom);
 
 impl<'a> Peek<'a> for DashedIdent {
-	fn peek(parser: &Parser<'a>) -> Option<hdx_lexer::Token> {
-		parser.peek::<T![Ident]>().filter(|token| token.is_dashed_ident())
+	fn peek(p: &Parser<'a>) -> Option<hdx_lexer::Token> {
+		p.peek::<T![Ident]>().filter(|token| token.is_dashed_ident())
 	}
 }
 
 impl<'a> Parse<'a> for DashedIdent {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let token = *parser.parse::<T![Ident]>()?;
-		let atom = parser.parse_atom(token);
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		let token = *p.parse::<T![Ident]>()?;
+		let atom = p.parse_atom(token);
 		if !token.is_dashed_ident() {
 			Err(diagnostics::UnexpectedIdent(atom.clone(), token.span()))?
 		}

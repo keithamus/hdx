@@ -14,14 +14,14 @@ mod func {
 pub struct CalcSize;
 
 impl<'a> Peek<'a> for CalcSize {
-	fn peek(parser: &Parser<'a>) -> Option<hdx_lexer::Token> {
-		parser.peek::<func::CalcSize>()
+	fn peek(p: &Parser<'a>) -> Option<hdx_lexer::Token> {
+		p.peek::<func::CalcSize>()
 	}
 }
 
 impl<'a> Parse<'a> for CalcSize {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		parser.parse::<func::CalcSize>()?;
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		p.parse::<func::CalcSize>()?;
 		todo!();
 	}
 }

@@ -20,9 +20,9 @@ pub enum Resolution {
 }
 
 impl<'a> Peek<'a> for Resolution {
-	fn peek(parser: &Parser<'a>) -> Option<hdx_lexer::Token> {
-		if let Some(token) = parser.peek::<T![Dimension]>() {
-			if matches!(parser.parse_atom_lower(token), atom!("dpi") | atom!("dpcm") | atom!("dppx")) {
+	fn peek(p: &Parser<'a>) -> Option<hdx_lexer::Token> {
+		if let Some(token) = p.peek::<T![Dimension]>() {
+			if matches!(p.parse_atom_lower(token), atom!("dpi") | atom!("dpcm") | atom!("dppx")) {
 				return Some(token);
 			}
 		}
@@ -31,12 +31,12 @@ impl<'a> Peek<'a> for Resolution {
 }
 
 impl<'a> Parse<'a> for Resolution {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let token = *parser.parse::<T![Dimension]>()?;
-		return match parser.parse_atom_lower(token) {
-			atom!("dpi") => Ok(Self::Dpi(parser.parse_number(token).into())),
-			atom!("dpcm") => Ok(Self::Dpcm(parser.parse_number(token).into())),
-			atom!("dppx") => Ok(Self::Dppx(parser.parse_number(token).into())),
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		let token = *p.parse::<T![Dimension]>()?;
+		return match p.parse_atom_lower(token) {
+			atom!("dpi") => Ok(Self::Dpi(p.parse_number(token).into())),
+			atom!("dpcm") => Ok(Self::Dpcm(p.parse_number(token).into())),
+			atom!("dppx") => Ok(Self::Dppx(p.parse_number(token).into())),
 			atom => Err(diagnostics::UnexpectedDimension(atom, token.span()))?,
 		};
 	}

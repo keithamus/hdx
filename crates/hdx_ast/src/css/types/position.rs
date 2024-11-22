@@ -25,15 +25,15 @@ pub enum Position {
 }
 
 impl<'a> Parse<'a> for Position {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let first = parser.parse::<PositionSingleValue>()?;
-		let peek_second = parser.peek::<PositionSingleValue>();
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		let first = p.parse::<PositionSingleValue>()?;
+		let peek_second = p.peek::<PositionSingleValue>();
 		// Single case
 		if peek_second.is_none() {
 			return Ok(Self::SingleValue(first));
 		}
-		let second = dbg!(parser.parse::<PositionSingleValue>())?;
-		let peek_third = parser.peek::<T![Ident]>();
+		let second = dbg!(p.parse::<PositionSingleValue>())?;
+		let peek_third = p.peek::<T![Ident]>();
 		// Two value
 		if peek_third.is_none() {
 			if let Some(horizontal) = first.to_horizontal() {
@@ -55,14 +55,14 @@ impl<'a> Parse<'a> for Position {
 			Err(diagnostics::Unexpected(peek_second.unwrap(), peek_second.unwrap().span()))?
 		}
 		if peek_third.is_none() {
-			let token = parser.peek::<T![Any]>().unwrap();
+			let token = p.peek::<T![Any]>().unwrap();
 			Err(diagnostics::Unexpected(token, token.span()))?
 		}
-		let third = parser.parse::<PositionSingleValue>()?;
+		let third = p.parse::<PositionSingleValue>()?;
 		if third.to_horizontal_keyword().is_none() && third.to_vertical_keyword().is_none() {
-			Err(diagnostics::UnexpectedIdent(parser.parse_atom_lower(peek_third.unwrap()), peek_third.unwrap().span()))?
+			Err(diagnostics::UnexpectedIdent(p.parse_atom_lower(peek_third.unwrap()), peek_third.unwrap().span()))?
 		}
-		let fourth = parser.parse::<LengthPercentage>()?;
+		let fourth = p.parse::<LengthPercentage>()?;
 		if let PositionSingleValue::LengthPercentage(second) = second {
 			if let Some(horizontal) = first.to_horizontal_keyword() {
 				if let Some(vertical) = third.to_vertical_keyword() {
@@ -150,26 +150,25 @@ impl PositionSingleValue {
 }
 
 impl<'a> Peek<'a> for PositionSingleValue {
-	fn peek(parser: &Parser<'a>) -> Option<hdx_lexer::Token> {
-		parser
-			.peek::<T![Ident]>()
+	fn peek(p: &Parser<'a>) -> Option<hdx_lexer::Token> {
+		p.peek::<T![Ident]>()
 			.filter(|token| {
 				matches!(
-					parser.parse_atom_lower(*token),
+					p.parse_atom_lower(*token),
 					atom!("left") | atom!("right") | atom!("top") | atom!("bottom") | atom!("center")
 				)
 			})
-			.or_else(|| parser.peek::<LengthPercentage>())
+			.or_else(|| p.peek::<LengthPercentage>())
 	}
 }
 
 impl<'a> Parse<'a> for PositionSingleValue {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		if let Some(length) = parser.parse_if_peek::<LengthPercentage>()? {
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		if let Some(length) = p.parse_if_peek::<LengthPercentage>()? {
 			return Ok(Self::LengthPercentage(length));
 		}
-		let token = *parser.parse::<T![Ident]>()?;
-		match parser.parse_atom_lower(token) {
+		let token = *p.parse::<T![Ident]>()?;
+		match p.parse_atom_lower(token) {
 			atom!("center") => Ok(Self::Center),
 			atom!("left") => Ok(Self::Left),
 			atom!("right") => Ok(Self::Right),

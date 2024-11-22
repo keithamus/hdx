@@ -142,10 +142,10 @@ pub enum WebkitFunctionalPseudoElement {
 }
 
 impl<'a> Parse<'a> for WebkitFunctionalPseudoElement {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let token = *parser.parse::<T![Function]>()?;
-		match parser.parse_atom_lower(token) {
-			atom!("-webkit-distributed") => todo!(parser),
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		let token = *p.parse::<T![Function]>()?;
+		match p.parse_atom_lower(token) {
+			atom!("-webkit-distributed") => todo!(p),
 			atom => Err(diagnostics::UnexpectedFunction(atom, token.span()))?,
 		}
 	}
@@ -166,10 +166,10 @@ pub enum WebkitFunctionalPseudoClass {
 }
 
 impl<'a> Parse<'a> for WebkitFunctionalPseudoClass {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let token = *parser.parse::<T![Function]>()?;
-		match parser.parse_atom_lower(token) {
-			atom!("-webkit-any") => todo!(parser),
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		let token = *p.parse::<T![Function]>()?;
+		match p.parse_atom_lower(token) {
+			atom!("-webkit-any") => todo!(p),
 			atom => Err(diagnostics::UnexpectedFunction(atom, token.span()))?,
 		}
 	}

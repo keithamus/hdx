@@ -61,21 +61,21 @@ pub enum Charset {
 }
 
 impl<'a> Parse<'a> for Charset {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let token = *parser.parse::<T![AtKeyword]>()?;
-		let atom = parser.parse_atom_lower(token);
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		let token = *p.parse::<T![AtKeyword]>()?;
+		let atom = p.parse_atom_lower(token);
 		let span = token.span();
 		if atom != atom!("charset") {
 			Err(diagnostics::UnexpectedAtRule(atom, span))?;
 		}
-		parser.parse_with::<T![' ']>(Include::Whitespace)?;
-		let token = *parser.parse_with::<T![String]>(Include::Whitespace)?;
+		p.parse_with::<T![' ']>(Include::Whitespace)?;
+		let token = *p.parse_with::<T![String]>(Include::Whitespace)?;
 		if token.quote_style() != QuoteStyle::Double {
 			Err(diagnostics::Unexpected(token, token.span()))?
 		}
-		let atom = parser.parse_atom(token);
+		let atom = p.parse_atom(token);
 		if let Some(rule) = Self::from_atom(&atom) {
-			parser.parse_with::<T![;]>(Include::Whitespace)?;
+			p.parse_with::<T![;]>(Include::Whitespace)?;
 			Ok(rule)
 		} else {
 			Err(diagnostics::UnexpectedCharset(atom, token.span()))?

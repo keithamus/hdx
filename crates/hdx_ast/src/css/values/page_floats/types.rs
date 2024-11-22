@@ -18,22 +18,22 @@ mod func {
 pub struct SnapBlock(LengthPercentage, Option<SnapBlockKeyword>);
 
 impl<'a> Peek<'a> for SnapBlock {
-	fn peek(parser: &Parser<'a>) -> Option<hdx_lexer::Token> {
-		parser.peek::<func::SnapBlock>()
+	fn peek(p: &Parser<'a>) -> Option<hdx_lexer::Token> {
+		p.peek::<func::SnapBlock>()
 	}
 }
 
 impl<'a> Parse<'a> for SnapBlock {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		parser.parse::<func::SnapBlock>()?;
-		let length = parser.parse::<LengthPercentage>()?;
-		let keyword = if let Some(token) = parser.peek::<T![,]>() {
-			parser.hop(token);
-			Some(parser.parse::<SnapBlockKeyword>()?)
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		p.parse::<func::SnapBlock>()?;
+		let length = p.parse::<LengthPercentage>()?;
+		let keyword = if let Some(token) = p.peek::<T![,]>() {
+			p.hop(token);
+			Some(p.parse::<SnapBlockKeyword>()?)
 		} else {
 			None
 		};
-		parser.parse::<T![RightParen]>()?;
+		p.parse::<T![RightParen]>()?;
 		Ok(Self(length, keyword))
 	}
 }
@@ -57,22 +57,22 @@ keyword_typedef!(SnapBlockKeyword { Start: atom!("start"), End: atom!("end"), Ne
 pub struct SnapInline(LengthPercentage, Option<SnapInlineKeyword>);
 
 impl<'a> Peek<'a> for SnapInline {
-	fn peek(parser: &Parser<'a>) -> Option<hdx_lexer::Token> {
-		parser.peek::<func::SnapInline>()
+	fn peek(p: &Parser<'a>) -> Option<hdx_lexer::Token> {
+		p.peek::<func::SnapInline>()
 	}
 }
 
 impl<'a> Parse<'a> for SnapInline {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		parser.parse::<func::SnapInline>()?;
-		let length = parser.parse::<LengthPercentage>()?;
-		let keyword = if let Some(token) = parser.peek::<T![,]>() {
-			parser.hop(token);
-			Some(parser.parse::<SnapInlineKeyword>()?)
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		p.parse::<func::SnapInline>()?;
+		let length = p.parse::<LengthPercentage>()?;
+		let keyword = if let Some(token) = p.peek::<T![,]>() {
+			p.hop(token);
+			Some(p.parse::<SnapInlineKeyword>()?)
 		} else {
 			None
 		};
-		parser.parse::<T![RightParen]>()?;
+		p.parse::<T![RightParen]>()?;
 		Ok(Self(length, keyword))
 	}
 }

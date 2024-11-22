@@ -21,8 +21,8 @@ pub struct StyleSheet<'a> {
 // alternate implementations such as SCSS.
 // AtRules vs QualifiedRules are differentiated by two different functions.
 impl<'a> Parse<'a> for StyleSheet<'a> {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		Ok(Self { rules: Self::parse_stylesheet(parser)? })
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		Ok(Self { rules: Self::parse_stylesheet(p)? })
 	}
 }
 
@@ -97,17 +97,17 @@ macro_rules! rule {
 apply_rules!(rule);
 
 impl<'a> Parse<'a> for Rule<'a> {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let checkpoint = parser.checkpoint();
-		if let Some(token) = parser.peek::<T![AtKeyword]>() {
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		let checkpoint = p.checkpoint();
+		if let Some(token) = p.peek::<T![AtKeyword]>() {
 			macro_rules! parse_rule {
 				( $(
 					$name: ident$(<$a: lifetime>)?: $atom: pat,
 				)+ ) => {
-					match parser.parse_atom_lower(token) {
-						$($atom => rules::$name::parse(parser).map(Self::$name),)+
+					match p.parse_atom_lower(token) {
+						$($atom => p.parse::<rules::$name>().map(Self::$name),)+
 						_ => {
-							let rule = AtRule::parse_spanned(parser)?;
+							let rule = p.parse_spanned::<AtRule>()?;
 							Ok(Self::UnknownAt(rule.node))
 						}
 					}
@@ -116,14 +116,14 @@ impl<'a> Parse<'a> for Rule<'a> {
 			if let Ok(rule) = apply_rules!(parse_rule) {
 				Ok(rule)
 			} else {
-				parser.rewind(checkpoint);
-				AtRule::parse(parser).map(Self::UnknownAt)
+				p.rewind(checkpoint);
+				p.parse::<AtRule>().map(Self::UnknownAt)
 			}
-		} else if let Ok(rule) = StyleRule::parse(parser) {
+		} else if let Ok(rule) = p.parse::<StyleRule>() {
 			Ok(Self::Style(rule))
 		} else {
-			parser.rewind(checkpoint);
-			QualifiedRule::parse(parser).map(Self::Unknown)
+			p.rewind(checkpoint);
+			p.parse::<QualifiedRule>().map(Self::Unknown)
 		}
 	}
 }

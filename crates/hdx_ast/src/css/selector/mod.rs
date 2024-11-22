@@ -36,8 +36,8 @@ use webkit::*;
 pub struct SelectorList<'a>(pub Vec<'a, Spanned<Vec<'a, SelectorComponent<'a>>>>);
 
 impl<'a> Parse<'a> for SelectorList<'a> {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		Ok(Self(Self::parse_selector_list(parser)?))
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		Ok(Self(Self::parse_selector_list(p)?))
 	}
 }
 
@@ -101,8 +101,8 @@ pub enum SelectorComponent<'a> {
 }
 
 impl<'a> Parse<'a> for SelectorComponent<'a> {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		Self::parse_selector_component(parser)
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		Self::parse_selector_component(p)
 	}
 }
 
@@ -145,36 +145,36 @@ impl<'a> SelectorComponentTrait<'a> for SelectorComponent<'a> {
 			.or_else(|| OPseudoElement::from_atom(atom).map(Self::OPseudoElement))
 	}
 
-	fn ns_type_from_token(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let prefix = NSPrefix::parse(parser)?;
+	fn ns_type_from_token(p: &mut Parser<'a>) -> ParserResult<Self> {
+		let prefix = p.parse::<NSPrefix>()?;
 		if !matches!(prefix, NSPrefix::None) {
-			parser.parse::<T![|]>()?;
+			p.parse::<T![|]>()?;
 		}
-		if let Some(token) = parser.peek::<T![*]>() {
-			parser.hop(token);
+		if let Some(token) = p.peek::<T![*]>() {
+			p.hop(token);
 			return Ok(Self::NSPrefixedWildcard(prefix));
 		}
-		let token = *parser.parse::<T![Ident]>()?;
-		Ok(Self::NSPrefixedTag((prefix, parser.parse_atom(token))))
+		let token = *p.parse::<T![Ident]>()?;
+		Ok(Self::NSPrefixedTag((prefix, p.parse_atom(token))))
 	}
 
-	fn parse_combinator(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		Ok(Self::Combinator(Combinator::parse(parser)?))
+	fn parse_combinator(p: &mut Parser<'a>) -> ParserResult<Self> {
+		Ok(Self::Combinator(p.parse::<Combinator>()?))
 	}
 
-	fn parse_attribute(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		Ok(Self::Attribute(Attribute::parse(parser)?))
+	fn parse_attribute(p: &mut Parser<'a>) -> ParserResult<Self> {
+		Ok(Self::Attribute(p.parse::<Attribute>()?))
 	}
 
-	fn parse_functional_pseudo_class(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		FunctionalPseudoClass::parse(parser)
+	fn parse_functional_pseudo_class(p: &mut Parser<'a>) -> ParserResult<Self> {
+		p.parse::<FunctionalPseudoClass>()
 			.map(Self::FunctionalPseudoClass)
-			.or_else(|_| MozFunctionalPseudoClass::parse(parser).map(Self::MozFunctionalPseudoClass))
-			.or_else(|_| WebkitFunctionalPseudoClass::parse(parser).map(Self::WebkitFunctionalPseudoClass))
+			.or_else(|_| p.parse::<MozFunctionalPseudoClass>().map(Self::MozFunctionalPseudoClass))
+			.or_else(|_| p.parse::<WebkitFunctionalPseudoClass>().map(Self::WebkitFunctionalPseudoClass))
 	}
 
-	fn parse_functional_pseudo_element(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		Ok(Self::FunctionalPseudoElement(FunctionalPseudoElement::parse(parser)?))
+	fn parse_functional_pseudo_element(p: &mut Parser<'a>) -> ParserResult<Self> {
+		Ok(Self::FunctionalPseudoElement(p.parse::<FunctionalPseudoElement>()?))
 	}
 }
 
@@ -225,17 +225,17 @@ pub enum NSPrefix {
 }
 
 impl<'a> Parse<'a> for NSPrefix {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		if let Some(token) = parser.peek::<T![*]>() {
-			parser.hop(token);
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		if let Some(token) = p.peek::<T![*]>() {
+			p.hop(token);
 			return Ok(Self::Wildcard);
 		}
-		if let Some(token) = parser.peek::<T![|]>() {
-			parser.hop(token);
+		if let Some(token) = p.peek::<T![|]>() {
+			p.hop(token);
 			return Ok(Self::None);
 		}
-		let token = *parser.parse::<T![Ident]>()?;
-		Ok(Self::Named(parser.parse_atom(token)))
+		let token = *p.parse::<T![Ident]>()?;
+		Ok(Self::Named(p.parse_atom(token)))
 	}
 }
 

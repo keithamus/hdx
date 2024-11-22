@@ -18,34 +18,34 @@ mod func {
 pub struct Symbols<'a>(pub SymbolsType, SmallVec<[Symbol<'a>; 0]>);
 
 impl<'a> Peek<'a> for Symbols<'a> {
-	fn peek(parser: &Parser<'a>) -> Option<hdx_lexer::Token> {
-		parser.peek::<T![Function]>()
+	fn peek(p: &Parser<'a>) -> Option<hdx_lexer::Token> {
+		p.peek::<T![Function]>()
 	}
 }
 
 impl<'a> Parse<'a> for Symbols<'a> {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		parser.parse::<func::Symbols>()?;
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		p.parse::<func::Symbols>()?;
 		let mut symbol_type = SymbolsType::default();
 		let mut symbols = smallvec![];
-		if discard!(parser, RightParen) {
+		if p.parse::<T![RightParen]>().is_ok() {
 			return Ok(Self(symbol_type, symbols));
 		}
-		if let Some(token) = parser.peek::<T![Ident]>() {
-			if let Some(st) = SymbolsType::from_atom(&parser.parse_atom(token)) {
-				parser.hop(token);
+		if let Some(token) = p.peek::<T![Ident]>() {
+			if let Some(st) = SymbolsType::from_atom(&p.parse_atom(token)) {
+				p.hop(token);
 				symbol_type = st;
 			}
 		}
 		loop {
-			if discard!(parser, RightParen) {
+			if p.parse::<T![RightParen]>().is_ok() {
 				return Ok(Self(symbol_type, symbols));
 			}
-			if let Some(token) = parser.peek::<T![String]>() {
-				parser.hop(token);
-				symbols.push(Symbol::String(parser.parse_str(token), token.quote_style()));
+			if let Some(token) = p.peek::<T![String]>() {
+				p.hop(token);
+				symbols.push(Symbol::String(p.parse_str(token), token.quote_style()));
 			} else {
-				symbols.push(Symbol::Image(Image::parse(parser)?));
+				symbols.push(Symbol::Image(p.parse::<Image>()?));
 			}
 		}
 	}

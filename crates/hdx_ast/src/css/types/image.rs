@@ -19,24 +19,24 @@ pub enum Image<'a> {
 }
 
 impl<'a> Peek<'a> for Image<'a> {
-	fn peek(parser: &Parser<'a>) -> Option<hdx_lexer::Token> {
-		parser.peek::<T![Url]>().or_else(|| parser.peek::<func::Url>()).or_else(|| parser.peek::<Gradient>())
+	fn peek(p: &Parser<'a>) -> Option<hdx_lexer::Token> {
+		p.peek::<T![Url]>().or_else(|| p.peek::<func::Url>()).or_else(|| p.peek::<Gradient>())
 	}
 }
 
 impl<'a> Parse<'a> for Image<'a> {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		if let Some(token) = parser.peek::<T![Url]>() {
-			parser.hop(token);
-			return Ok(Self::Url(parser.parse_str(token), token.quote_style()));
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		if let Some(token) = p.peek::<T![Url]>() {
+			p.hop(token);
+			return Ok(Self::Url(p.parse_str(token), token.quote_style()));
 		}
-		if let Some(token) = parser.peek::<func::Url>() {
-			parser.hop(token);
-			let string_token = parser.parse::<T![String]>()?;
-			parser.parse::<T![RightParen]>()?;
-			return Ok(Self::Url(parser.parse_str(*string_token), string_token.quote_style()));
+		if let Some(token) = p.peek::<func::Url>() {
+			p.hop(token);
+			let string_token = p.parse::<T![String]>()?;
+			p.parse::<T![RightParen]>()?;
+			return Ok(Self::Url(p.parse_str(*string_token), string_token.quote_style()));
 		}
-		parser.parse::<Gradient>().map(Self::Gradient)
+		p.parse::<Gradient>().map(Self::Gradient)
 	}
 }
 

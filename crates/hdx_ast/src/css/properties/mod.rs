@@ -21,12 +21,11 @@ impl<'a> WriteCss<'a> for Custom<'a> {
 }
 
 impl<'a> Parse<'a> for Custom<'a> {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let old_state = parser.set_state(State::StopOnSemicolon | State::Nested);
-		parser
-			.parse::<ComponentValues>()
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		let old_state = p.set_state(State::StopOnSemicolon | State::Nested);
+		p.parse::<ComponentValues>()
 			.inspect_err(|_| {
-				parser.set_state(old_state);
+				p.set_state(old_state);
 			})
 			.map(Self)
 	}
@@ -43,10 +42,10 @@ impl<'a> WriteCss<'a> for Computed<'a> {
 }
 
 impl<'a> Peek<'a> for Computed<'a> {
-	fn peek(parser: &Parser<'a>) -> Option<hdx_lexer::Token> {
-		if let Some(token) = parser.peek::<T![Function]>() {
+	fn peek(p: &Parser<'a>) -> Option<hdx_lexer::Token> {
+		if let Some(token) = p.peek::<T![Function]>() {
 			if matches!(
-				parser.parse_atom_lower(token),
+				p.parse_atom_lower(token),
 				atom!("var")
 					| atom!("calc") | atom!("min")
 					| atom!("max") | atom!("clamp")
@@ -68,12 +67,11 @@ impl<'a> Peek<'a> for Computed<'a> {
 }
 
 impl<'a> Parse<'a> for Computed<'a> {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let old_state = parser.set_state(State::StopOnSemicolon | State::Nested);
-		parser
-			.parse::<ComponentValues>()
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		let old_state = p.set_state(State::StopOnSemicolon | State::Nested);
+		p.parse::<ComponentValues>()
 			.inspect_err(|_| {
-				parser.set_state(old_state);
+				p.set_state(old_state);
 			})
 			.map(Self)
 	}
@@ -84,12 +82,11 @@ impl<'a> Parse<'a> for Computed<'a> {
 pub struct Unknown<'a>(pub ComponentValues<'a>);
 
 impl<'a> Parse<'a> for Unknown<'a> {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let old_state = parser.set_state(State::StopOnSemicolon | State::Nested);
-		parser
-			.parse::<ComponentValues>()
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		let old_state = p.set_state(State::StopOnSemicolon | State::Nested);
+		p.parse::<ComponentValues>()
 			.inspect_err(|_| {
-				parser.set_state(old_state);
+				p.set_state(old_state);
 			})
 			.map(Self)
 	}
@@ -114,8 +111,8 @@ pub struct Property<'a> {
 }
 
 impl<'a> Parse<'a> for Property<'a> {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let (name, value, important) = Self::parse_declaration(parser)?;
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		let (name, value, important) = Self::parse_declaration(p)?;
 		Ok(Self { name, value, important })
 	}
 }
@@ -211,39 +208,39 @@ impl<'a> WriteCss<'a> for StyleValue<'a> {
 }
 
 impl<'a> DeclarationValue<'a> for StyleValue<'a> {
-	fn parse_declaration_value(name: &Atom, parser: &mut Parser<'a>) -> ParserResult<Self> {
+	fn parse_declaration_value(name: &Atom, p: &mut Parser<'a>) -> ParserResult<Self> {
 		if name.starts_with("--") {
-			return Ok(Self::Custom(Custom::parse(parser)?));
+			return Ok(Self::Custom(p.parse::<Custom>()?));
 		}
-		if let Some(token) = parser.peek::<T![Ident]>() {
-			match parser.parse_atom_lower(token) {
+		if let Some(token) = p.peek::<T![Ident]>() {
+			match p.parse_atom_lower(token) {
 				atom!("initial") => {
-					parser.hop(token);
+					p.hop(token);
 					return Ok(Self::Initial);
 				}
 				atom!("inherit") => {
-					parser.hop(token);
+					p.hop(token);
 					return Ok(Self::Inherit);
 				}
 				atom!("unset") => {
-					parser.hop(token);
+					p.hop(token);
 					return Ok(Self::Unset);
 				}
 				atom!("revert") => {
-					parser.hop(token);
+					p.hop(token);
 					return Ok(Self::Revert);
 				}
 				atom!("revert-layer") => {
-					parser.hop(token);
+					p.hop(token);
 					return Ok(Self::RevertLayer);
 				}
 				_ => {}
 			}
 		}
-		if parser.peek::<Computed>().is_some() {
-			return parser.parse::<Computed>().map(Self::Computed);
+		if p.peek::<Computed>().is_some() {
+			return p.parse::<Computed>().map(Self::Computed);
 		}
-		let checkpoint = parser.checkpoint();
+		let checkpoint = p.checkpoint();
 		macro_rules! parse_declaration_value {
 			( $(
 				$name: ident$(<$a: lifetime>)?: $atom: pat,
@@ -251,10 +248,10 @@ impl<'a> DeclarationValue<'a> for StyleValue<'a> {
 				match name {
 					$(
 						&$atom => {
-							if let Ok(val) = parser.parse::<values::$name>() {
-								if parser.at_end() {
+							if let Ok(val) = p.parse::<values::$name>() {
+								if p.at_end() {
 									return Ok(Self::$name(val))
-								} else if let Some(token) = parser.peek::<T![Any]>() {
+								} else if let Some(token) = p.peek::<T![Any]>() {
 									if matches!(token.char(), Some(';' | '}' | '!')) {
 										return Ok(Self::$name(val))
 									}
@@ -267,12 +264,12 @@ impl<'a> DeclarationValue<'a> for StyleValue<'a> {
 			}
 		}
 		apply_properties!(parse_declaration_value);
-		if parser.peek::<Computed>().is_some() {
-			parser.rewind(checkpoint);
-			Ok(Self::Computed(Computed::parse(parser)?))
+		if p.peek::<Computed>().is_some() {
+			p.rewind(checkpoint);
+			Ok(Self::Computed(p.parse::<Computed>()?))
 		} else {
-			parser.rewind(checkpoint);
-			Ok(Self::Unknown(Unknown::parse(parser)?))
+			p.rewind(checkpoint);
+			Ok(Self::Unknown(p.parse::<Unknown>()?))
 		}
 	}
 }

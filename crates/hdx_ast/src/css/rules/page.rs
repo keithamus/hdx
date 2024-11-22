@@ -1,7 +1,5 @@
 use hdx_lexer::{Include, Span};
-use hdx_parser::{
-	diagnostics, discard, AtRule, DeclarationRuleList, Parse, Parser, Result as ParserResult, Spanned, Vec, T,
-};
+use hdx_parser::{diagnostics, AtRule, DeclarationRuleList, Parse, Parser, Result as ParserResult, Spanned, Vec, T};
 use hdx_writer::{write_css, write_list, CssWriter, OutputOption, Result as WriterResult, WriteCss};
 use smallvec::{smallvec, SmallVec};
 
@@ -21,13 +19,13 @@ pub struct Page<'a> {
 
 // https://drafts.csswg.org/css-page-3/#syntax-page-selector
 impl<'a> Parse<'a> for Page<'a> {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let start = parser.offset();
-		let (selectors, style) = Self::parse_at_rule(parser, Some(atom!("page")))?;
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		let start = p.offset();
+		let (selectors, style) = Self::parse_at_rule(p, Some(atom!("page")))?;
 		if let Some(style) = style {
 			Ok(Self { selectors, style })
 		} else {
-			Err(diagnostics::MissingAtRuleBlock(Span::new(start, parser.offset())))?
+			Err(diagnostics::MissingAtRuleBlock(Span::new(start, p.offset())))?
 		}
 	}
 }
@@ -59,12 +57,12 @@ impl<'a> WriteCss<'a> for Page<'a> {
 pub struct PageSelectorList(pub SmallVec<[Spanned<PageSelector>; 1]>);
 
 impl<'a> Parse<'a> for PageSelectorList {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
 		let mut selectors = smallvec![];
 		loop {
-			let selector = parser.parse_spanned::<PageSelector>()?;
+			let selector = p.parse_spanned::<PageSelector>()?;
 			selectors.push(selector);
-			if !discard!(parser, Comma) {
+			if !p.parse::<T![,]>().is_ok() {
 				return Ok(Self(selectors));
 			}
 		}
@@ -86,16 +84,16 @@ pub struct PageSelector {
 }
 
 impl<'a> Parse<'a> for PageSelector {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
 		let mut page_type = None;
 		let mut pseudos = smallvec![];
-		if let Some(token) = parser.peek::<T![Ident]>() {
-			parser.hop(token);
-			page_type = Some(parser.parse_atom(token));
+		if let Some(token) = p.peek::<T![Ident]>() {
+			p.hop(token);
+			page_type = Some(p.parse_atom(token));
 		}
 		loop {
-			if parser.peek::<T![:]>().is_some() {
-				pseudos.push(parser.parse_spanned::<PagePseudoClass>()?);
+			if p.peek::<T![:]>().is_some() {
+				pseudos.push(p.parse_spanned::<PagePseudoClass>()?);
 			} else {
 				return Ok(Self { page_type, pseudos });
 			}
@@ -142,10 +140,10 @@ pub enum PagePseudoClass {
 }
 
 impl<'a> Parse<'a> for PagePseudoClass {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		parser.parse::<T![:]>()?;
-		let token = *parser.parse_with::<T![Ident]>(Include::Whitespace)?;
-		let atom = parser.parse_atom(token);
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		p.parse::<T![:]>()?;
+		let token = *p.parse_with::<T![Ident]>(Include::Whitespace)?;
+		let atom = p.parse_atom(token);
 		match Self::from_atom(&atom) {
 			Some(v) => Ok(v),
 			_ => Err(diagnostics::UnexpectedPseudoClass(atom, token.span()).into()),
@@ -180,8 +178,8 @@ impl<'a> PageDeclaration<'a> {
 }
 
 impl<'a> Parse<'a> for PageDeclaration<'a> {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let (properties, rules) = Self::parse_declaration_rule_list(parser)?;
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		let (properties, rules) = Self::parse_declaration_rule_list(p)?;
 		Ok(Self { properties, rules })
 	}
 }
@@ -228,21 +226,21 @@ pub struct MarginRule<'a> {
 }
 
 impl<'a> Parse<'a> for MarginRule<'a> {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		if let Some(token) = parser.peek::<T![AtKeyword]>() {
-			let atom = parser.parse_atom_lower(token);
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		if let Some(token) = p.peek::<T![AtKeyword]>() {
+			let atom = p.parse_atom_lower(token);
 			if let Some(name) = PageMarginBox::from_atom(&atom) {
-				let (_, style) = Self::parse_at_rule(parser, None)?;
+				let (_, style) = Self::parse_at_rule(p, None)?;
 				if let Some(style) = style {
 					Ok(Self { name, style })
 				} else {
-					Err(diagnostics::MissingAtRuleBlock(token.span().end(parser.offset())))?
+					Err(diagnostics::MissingAtRuleBlock(token.span().end(p.offset())))?
 				}
 			} else {
 				Err(diagnostics::UnexpectedAtRule(atom.clone(), token.span()))?
 			}
 		} else {
-			let token = parser.peek::<T![Any]>().unwrap();
+			let token = p.peek::<T![Any]>().unwrap();
 			Err(diagnostics::Unexpected(token, token.span()))?
 		}
 	}
@@ -290,8 +288,8 @@ pub struct MarginDeclaration<'a> {
 }
 
 impl<'a> Parse<'a> for MarginDeclaration<'a> {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let (properties, rules) = Self::parse_declaration_rule_list(parser)?;
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		let (properties, rules) = Self::parse_declaration_rule_list(p)?;
 		Ok(Self { properties, rules })
 	}
 }

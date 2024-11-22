@@ -57,16 +57,16 @@ pub enum CounterStyle<'a> {
 }
 
 impl<'a> Peek<'a> for CounterStyle<'a> {
-	fn peek(parser: &Parser<'a>) -> Option<hdx_lexer::Token> {
-		parser.peek::<T![Ident]>().or_else(|| parser.peek::<Symbols>())
+	fn peek(p: &Parser<'a>) -> Option<hdx_lexer::Token> {
+		p.peek::<T![Ident]>().or_else(|| p.peek::<Symbols>())
 	}
 }
 
 impl<'a> Parse<'a> for CounterStyle<'a> {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		if let Some(token) = parser.peek::<T![Ident]>() {
-			let atom = parser.parse_atom(token);
-			parser.hop(token);
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		if let Some(token) = p.peek::<T![Ident]>() {
+			let atom = p.parse_atom(token);
+			p.hop(token);
 			match atom {
 				atom!("decimal") => Ok(Self::Decimal),
 				atom!("decimal-leading-zero") => Ok(Self::DecimalLeadingZero),
@@ -113,7 +113,7 @@ impl<'a> Parse<'a> for CounterStyle<'a> {
 				atom => Ok(Self::Named(atom)),
 			}
 		} else {
-			Ok(Self::Symbols(Symbols::parse_spanned(parser)?))
+			Ok(Self::Symbols(p.parse_spanned::<Symbols>()?))
 		}
 	}
 }

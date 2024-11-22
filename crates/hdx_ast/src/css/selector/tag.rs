@@ -95,9 +95,9 @@ impl Atomizable for Tag {
 }
 
 impl<'a> Parse<'a> for Tag {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let token = *parser.parse::<T![Ident]>()?;
-		let atom = parser.parse_atom_lower(token);
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		let token = *p.parse::<T![Ident]>()?;
+		let atom = p.parse_atom_lower(token);
 		if let Some(tag) = Tag::from_atom(&atom) {
 			Ok(tag)
 		} else {

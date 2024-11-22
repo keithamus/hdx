@@ -14,25 +14,25 @@ pub struct ComponentValues<'a>(pub Vec<'a, Spanned<ComponentValue<'a>>>);
 
 impl<'a> Parse<'a> for ComponentValues<'a> {
 	// https://drafts.csswg.org/css-syntax-3/#consume-list-of-components
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let mut values = parser.new_vec();
-		if let Some(token) = parser.peek_with::<T![Whitespace]>(Include::Whitespace) {
-			parser.hop(token);
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		let mut values = p.new_vec();
+		if let Some(token) = p.peek_with::<T![Whitespace]>(Include::Whitespace) {
+			p.hop(token);
 		}
 		loop {
-			if parser.at_end() {
+			if p.at_end() {
 				break;
 			}
-			if parser.is(State::Nested) && parser.peek::<T![RightCurly]>().is_some() {
+			if p.is(State::Nested) && p.peek::<T![RightCurly]>().is_some() {
 				break;
 			}
-			if parser.is(State::StopOnSemicolon) && parser.peek::<T![;]>().is_some() {
+			if p.is(State::StopOnSemicolon) && p.peek::<T![;]>().is_some() {
 				break;
 			}
-			if parser.is(State::StopOnComma) && parser.peek::<T![,]>().is_some() {
+			if p.is(State::StopOnComma) && p.peek::<T![,]>().is_some() {
 				break;
 			}
-			values.push(ComponentValue::parse_spanned(parser)?);
+			values.push(p.parse_spanned::<ComponentValue>()?);
 		}
 		Ok(Self(values))
 	}
@@ -71,68 +71,67 @@ pub enum ComponentValue<'a> {
 
 // https://drafts.csswg.org/css-syntax-3/#consume-component-value
 impl<'a> Parse<'a> for ComponentValue<'a> {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let token = parser.peek_with::<T![Any]>(Include::Whitespace).unwrap();
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		let token = p.peek_with::<T![Any]>(Include::Whitespace).unwrap();
 		Ok(match token.kind() {
 			Kind::LeftCurly | Kind::LeftSquare | Kind::LeftParen => {
-				let old_state = parser.set_state(State::Nested);
-				parser
-					.parse::<SimpleBlock>()
+				let old_state = p.set_state(State::Nested);
+				p.parse::<SimpleBlock>()
 					.inspect_err(|_| {
-						parser.set_state(old_state);
+						p.set_state(old_state);
 					})
 					.map(|b| {
-						parser.set_state(old_state);
+						p.set_state(old_state);
 						Self::SimpleBlock(b)
 					})?
 			}
-			Kind::Function => Self::Function(Function::parse(parser)?),
+			Kind::Function => Self::Function(p.parse::<Function>()?),
 			Kind::Whitespace => {
-				parser.hop(token);
+				p.hop(token);
 				Self::Whitespace
 			}
 			Kind::Number => {
-				parser.hop(token);
-				Self::Number(parser.parse_number(token).into())
+				p.hop(token);
+				Self::Number(p.parse_number(token).into())
 			}
 			Kind::Dimension => {
-				parser.hop(token);
-				Self::Dimension(parser.parse_number(token).into(), parser.parse_atom(token))
+				p.hop(token);
+				Self::Dimension(p.parse_number(token).into(), p.parse_atom(token))
 			}
 			Kind::Ident => {
-				parser.hop(token);
-				Self::Ident(parser.parse_atom(token))
+				p.hop(token);
+				Self::Ident(p.parse_atom(token))
 			}
 			Kind::AtKeyword => {
-				parser.hop(token);
-				Self::AtKeyword(parser.parse_atom(token))
+				p.hop(token);
+				Self::AtKeyword(p.parse_atom(token))
 			}
 			Kind::Hash => {
-				parser.hop(token);
-				Self::Hash(parser.parse_atom(token))
+				p.hop(token);
+				Self::Hash(p.parse_atom(token))
 			}
 			Kind::String => {
-				parser.hop(token);
-				Self::String(parser.parse_str(token), token.quote_style())
+				p.hop(token);
+				Self::String(p.parse_str(token), token.quote_style())
 			}
 			Kind::Url => {
-				parser.hop(token);
-				Self::Url(parser.parse_str(token), token.quote_style())
+				p.hop(token);
+				Self::Url(p.parse_str(token), token.quote_style())
 			}
 			Kind::Delim => {
-				parser.hop(token);
+				p.hop(token);
 				Self::Delim(token.char().unwrap())
 			}
 			Kind::Colon => {
-				parser.hop(token);
+				p.hop(token);
 				Self::Colon
 			}
 			Kind::Semicolon => {
-				parser.hop(token);
+				p.hop(token);
 				Self::Semicolon
 			}
 			Kind::Comma => {
-				parser.hop(token);
+				p.hop(token);
 				Self::Comma
 			}
 			_ => Err(diagnostics::Unexpected(token, token.span()))?,
@@ -184,20 +183,20 @@ pub struct SimpleBlock<'a> {
 
 // https://drafts.csswg.org/css-syntax-3/#consume-a-simple-block
 impl<'a> Parse<'a> for SimpleBlock<'a> {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let pair = parser.parse::<T![PairWise]>()?.to_pairwise().unwrap();
-		let mut values = parser.new_vec();
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		let pair = p.parse::<T![PairWise]>()?.to_pairwise().unwrap();
+		let mut values = p.new_vec();
 		loop {
-			if parser.at_end() {
+			if p.at_end() {
 				break;
 			}
-			if let Some(token) = parser.peek::<T![PairWise]>() {
+			if let Some(token) = p.peek::<T![PairWise]>() {
 				if token.to_pairwise() == Some(pair) && token.kind() == pair.end() {
-					parser.hop(token);
+					p.hop(token);
 					break;
 				}
 			}
-			values.push(parser.parse_spanned::<ComponentValue>()?);
+			values.push(p.parse_spanned::<ComponentValue>()?);
 		}
 		Ok(Self { values, pairwise: pair })
 	}
@@ -230,11 +229,11 @@ pub enum Rule<'a> {
 }
 
 impl<'a> Parse<'a> for Rule<'a> {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		if parser.peek::<T![AtKeyword]>().is_some() {
-			return parser.parse::<AtRule>().map(Self::AtRule);
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		if p.peek::<T![AtKeyword]>().is_some() {
+			return p.parse::<AtRule>().map(Self::AtRule);
 		}
-		parser.parse::<QualifiedRule>().map(Self::QualifiedRule)
+		p.parse::<QualifiedRule>().map(Self::QualifiedRule)
 	}
 }
 
@@ -255,8 +254,8 @@ pub struct Block<'a> {
 }
 
 impl<'a> Parse<'a> for Block<'a> {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let (declarations, rules) = Self::parse_block(parser)?;
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		let (declarations, rules) = Self::parse_block(p)?;
 		Ok(Self { declarations, rules })
 	}
 }
@@ -276,19 +275,19 @@ pub struct Declaration<'a> {
 
 // https://drafts.csswg.org/css-syntax-3/#consume-a-declaration
 impl<'a> Parse<'a> for Declaration<'a> {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let token = *parser.parse::<T![Ident]>()?;
-		parser.parse::<T![:]>()?;
-		let old_state = parser.set_state(State::StopOnSemicolon | State::Nested);
-		let mut value = parser.parse_spanned::<ComponentValues>().inspect_err(|_| {
-			parser.set_state(old_state);
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		let token = *p.parse::<T![Ident]>()?;
+		p.parse::<T![:]>()?;
+		let old_state = p.set_state(State::StopOnSemicolon | State::Nested);
+		let mut value = p.parse_spanned::<ComponentValues>().inspect_err(|_| {
+			p.set_state(old_state);
 		})?;
-		parser.set_state(old_state);
+		p.set_state(old_state);
 		let mut iter = value.node.0.iter_mut();
 		let important =
 			matches!(iter.nth_back(1), Some(Spanned { node: ComponentValue::Ident(atom!("important")), .. }))
 				&& matches!(iter.nth_back(2), Some(Spanned { node: ComponentValue::Delim('!'), .. }));
-		let name = parser.parse_atom(token);
+		let name = p.parse_atom(token);
 		Ok(Self { name, value, important })
 	}
 }
@@ -339,16 +338,16 @@ pub struct AtRule<'a> {
 
 // https://drafts.csswg.org/css-syntax-3/#consume-an-at-rule
 impl<'a> Parse<'a> for AtRule<'a> {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let token = parser.peek::<T![AtKeyword]>();
-		let (prelude_opt, block_opt) = Self::parse_at_rule(parser, None)?;
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		let token = p.peek::<T![AtKeyword]>();
+		let (prelude_opt, block_opt) = Self::parse_at_rule(p, None)?;
 		let prelude =
-			prelude_opt.unwrap_or_else(|| Spanned { node: ComponentValues(parser.new_vec()), span: Span::dummy() });
+			prelude_opt.unwrap_or_else(|| Spanned { node: ComponentValues(p.new_vec()), span: Span::dummy() });
 		let block = block_opt.unwrap_or_else(|| Spanned {
-			node: Block { declarations: parser.new_vec(), rules: parser.new_vec() },
+			node: Block { declarations: p.new_vec(), rules: p.new_vec() },
 			span: Span::dummy(),
 		});
-		let name = parser.parse_atom(token.unwrap());
+		let name = p.parse_atom(token.unwrap());
 		Ok(Self { name, prelude, block })
 	}
 }
@@ -378,8 +377,8 @@ pub struct QualifiedRule<'a> {
 
 // https://drafts.csswg.org/css-syntax-3/#consume-a-qualified-rule
 impl<'a> Parse<'a> for QualifiedRule<'a> {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let (prelude, block) = Self::parse_qualified_rule(parser)?;
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		let (prelude, block) = Self::parse_qualified_rule(p)?;
 		Ok(Self { prelude, block })
 	}
 }
@@ -387,37 +386,37 @@ impl<'a> Parse<'a> for QualifiedRule<'a> {
 pub struct BadDeclaration;
 // https://drafts.csswg.org/css-syntax-3/#consume-the-remnants-of-a-bad-declaration
 impl<'a> Parse<'a> for BadDeclaration {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
 		// To consume the remnants of a bad declaration from a token stream input, given a bool nested:
 		//
 		// Process input:
 		loop {
-			let token = parser.peek::<T![Any]>().unwrap();
-			dbg!(parser.at_end(), token);
+			let token = p.peek::<T![Any]>().unwrap();
+			dbg!(p.at_end(), token);
 			//
 			// <eof-token>
 			// <semicolon-token>
 			//
 			//     Discard a token from input, and return nothing.
-			if parser.at_end() || token.kind() == Kind::Semicolon {
-				parser.hop(token);
+			if p.at_end() || token.kind() == Kind::Semicolon {
+				p.hop(token);
 				return Ok(Self);
 			}
 			// <}-token>
 			//
 			//     If nested is true, return nothing. Otherwise, discard a token.
 			if token.kind() == Kind::RightCurly {
-				if parser.is(State::Nested) {
+				if p.is(State::Nested) {
 					return Ok(Self);
 				} else {
-					parser.hop(token);
+					p.hop(token);
 				}
 			}
 			// anything else
 			//
 			//     Consume a component value from input, and do nothing.
 			//
-			parser.parse::<ComponentValue>()?;
+			p.parse::<ComponentValue>()?;
 		}
 	}
 }
@@ -446,20 +445,20 @@ pub struct Function<'a> {
 
 // https://drafts.csswg.org/css-syntax-3/#consume-function
 impl<'a> Parse<'a> for Function<'a> {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let token = *parser.parse::<T![Function]>()?;
-		let mut values = parser.new_vec();
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		let token = *p.parse::<T![Function]>()?;
+		let mut values = p.new_vec();
 		loop {
-			if parser.at_end() {
+			if p.at_end() {
 				break;
 			}
-			if parser.peek::<T![RightParen]>().is_some() {
+			if p.peek::<T![RightParen]>().is_some() {
 				break;
 			}
-			values.push(ComponentValue::parse_spanned(parser)?);
+			values.push(p.parse_spanned::<ComponentValue>()?);
 		}
-		parser.parse::<T![RightParen]>()?;
-		let name = parser.parse_atom(token);
+		p.parse::<T![RightParen]>()?;
+		let name = p.parse_atom(token);
 		Ok(Self { name, values })
 	}
 }

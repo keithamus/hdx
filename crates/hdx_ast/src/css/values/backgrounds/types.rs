@@ -22,18 +22,18 @@ pub enum BgImage<'a> {
 }
 
 impl<'a> Peek<'a> for BgImage<'a> {
-	fn peek(parser: &Parser<'a>) -> Option<hdx_lexer::Token> {
-		parser.peek::<kw::None>().or_else(|| parser.peek::<Image>())
+	fn peek(p: &Parser<'a>) -> Option<hdx_lexer::Token> {
+		p.peek::<kw::None>().or_else(|| p.peek::<Image>())
 	}
 }
 
 impl<'a> Parse<'a> for BgImage<'a> {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		if let Some(token) = parser.peek::<kw::None>() {
-			parser.hop(token);
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		if let Some(token) = p.peek::<kw::None>() {
+			p.hop(token);
 			Ok(Self::None)
 		} else {
-			let image = parser.parse::<Image>()?;
+			let image = p.parse::<Image>()?;
 			Ok(Self::Image(image))
 		}
 	}
@@ -64,22 +64,22 @@ impl RepeatStyle {
 }
 
 impl<'a> Peek<'a> for RepeatStyle {
-	fn peek(parser: &Parser<'a>) -> Option<hdx_lexer::Token> {
-		parser.peek::<kw::RepeatX>().or_else(|| parser.peek::<kw::RepeatY>()).or_else(|| parser.peek::<Repetition>())
+	fn peek(p: &Parser<'a>) -> Option<hdx_lexer::Token> {
+		p.peek::<kw::RepeatX>().or_else(|| p.peek::<kw::RepeatY>()).or_else(|| p.peek::<Repetition>())
 	}
 }
 
 impl<'a> Parse<'a> for RepeatStyle {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		if let Some(token) = parser.peek::<kw::RepeatX>() {
-			parser.hop(token);
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		if let Some(token) = p.peek::<kw::RepeatX>() {
+			p.hop(token);
 			Ok(Self::RepeatX)
-		} else if let Some(token) = parser.peek::<kw::RepeatY>() {
-			parser.hop(token);
+		} else if let Some(token) = p.peek::<kw::RepeatY>() {
+			p.hop(token);
 			Ok(Self::RepeatY)
 		} else {
-			let first = parser.parse::<Repetition>()?;
-			let second = parser.parse_if_peek::<Repetition>()?;
+			let first = p.parse::<Repetition>()?;
+			let second = p.parse_if_peek::<Repetition>()?;
 			Ok(Self::Repetition(first, second))
 		}
 	}

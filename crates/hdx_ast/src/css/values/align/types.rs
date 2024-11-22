@@ -26,17 +26,17 @@ pub enum BaselinePosition {
 }
 
 impl<'a> Parse<'a> for BaselinePosition {
-	fn parse(parser: &mut Parser) -> ParserResult<Self> {
-		if let Some(token) = parser.peek::<kw::Baseline>() {
-			parser.hop(token);
+	fn parse(p: &mut Parser) -> ParserResult<Self> {
+		if let Some(token) = p.peek::<kw::Baseline>() {
+			p.hop(token);
 			Ok(Self::Baseline)
-		} else if let Some(token) = parser.peek::<kw::First>() {
-			parser.hop(token);
-			parser.parse::<kw::Baseline>()?;
+		} else if let Some(token) = p.peek::<kw::First>() {
+			p.hop(token);
+			p.parse::<kw::Baseline>()?;
 			Ok(Self::First)
 		} else {
-			parser.parse::<kw::First>()?;
-			parser.parse::<kw::Baseline>()?;
+			p.parse::<kw::First>()?;
+			p.parse::<kw::Baseline>()?;
 			Ok(Self::Last)
 		}
 	}

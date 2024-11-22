@@ -61,23 +61,23 @@ macro_rules! length {
 		}
 
 		impl<'a> Peek<'a> for Length {
-			fn peek(parser: &Parser<'a>) -> Option<hdx_lexer::Token> {
-				parser.peek::<token::Number>().or_else(|| parser.peek::<token::Dimension>())
+			fn peek(p: &Parser<'a>) -> Option<hdx_lexer::Token> {
+				p.peek::<token::Number>().or_else(|| p.peek::<token::Dimension>())
 			}
 		}
 
 		impl<'a> Parse<'a> for Length {
-			fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-				if let Some(token) = parser.peek::<T![Number]>() {
-					parser.hop(token);
-					if parser.parse_number(token) == 0.0 {
+			fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+				if let Some(token) = p.peek::<T![Number]>() {
+					p.hop(token);
+					if p.parse_number(token) == 0.0 {
 						return Ok(Self::Zero);
 					} else {
 						Err(diagnostics::Unexpected(token, token.span()))?
 					}
 				}
-				let token = *parser.parse::<T![Dimension]>()?;
-				if let Some(d) = Self::new(parser.parse_number(token).into(), parser.parse_atom_lower(token)) {
+				let token = *p.parse::<T![Dimension]>()?;
+				if let Some(d) = Self::new(p.parse_number(token).into(), p.parse_atom_lower(token)) {
 					Ok(d)
 				} else {
 					Err(diagnostics::Unexpected(token, token.span()))?
@@ -136,23 +136,23 @@ macro_rules! length {
 		}
 
 		impl<'a> Peek<'a> for LengthPercentage {
-			fn peek(parser: &Parser<'a>) -> Option<hdx_lexer::Token> {
-				parser.peek::<T![Number]>().or_else(|| parser.peek::<T![Dimension]>())
+			fn peek(p: &Parser<'a>) -> Option<hdx_lexer::Token> {
+				p.peek::<T![Number]>().or_else(|| p.peek::<T![Dimension]>())
 			}
 		}
 
 		impl<'a> Parse<'a> for LengthPercentage {
-			fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-				if let Some(token) = parser.peek::<T![Number]>() {
-					parser.hop(token);
-					if parser.parse_number(token) == 0.0 {
+			fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+				if let Some(token) = p.peek::<T![Number]>() {
+					p.hop(token);
+					if p.parse_number(token) == 0.0 {
 						return Ok(Self::Zero);
 					} else {
 						Err(diagnostics::Unexpected(token, token.span()))?
 					}
 				}
-				let token = *parser.parse::<T![Dimension]>()?;
-				if let Some(d) = Self::new(parser.parse_number(token).into(), parser.parse_atom_lower(token)) {
+				let token = *p.parse::<T![Dimension]>()?;
+				if let Some(d) = Self::new(p.parse_number(token).into(), p.parse_atom_lower(token)) {
 					Ok(d)
 				} else {
 					Err(diagnostics::Unexpected(token, token.span()))?
@@ -242,18 +242,18 @@ pub enum LengthPercentageOrAuto {
 }
 
 impl<'a> Peek<'a> for LengthPercentageOrAuto {
-	fn peek(parser: &Parser<'a>) -> Option<hdx_lexer::Token> {
-		parser.peek::<kw::Auto>().or_else(|| parser.peek::<LengthPercentage>())
+	fn peek(p: &Parser<'a>) -> Option<hdx_lexer::Token> {
+		p.peek::<kw::Auto>().or_else(|| p.peek::<LengthPercentage>())
 	}
 }
 
 impl<'a> Parse<'a> for LengthPercentageOrAuto {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		if let Some(token) = parser.peek::<kw::Auto>() {
-			parser.hop(token);
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		if let Some(token) = p.peek::<kw::Auto>() {
+			p.hop(token);
 			Ok(Self::Auto)
 		} else {
-			Ok(Self::LengthPercentage(parser.parse::<LengthPercentage>()?))
+			Ok(Self::LengthPercentage(p.parse::<LengthPercentage>()?))
 		}
 	}
 }
@@ -275,17 +275,17 @@ pub enum LengthPercentageOrFlex {
 }
 
 impl<'a> Peek<'a> for LengthPercentageOrFlex {
-	fn peek(parser: &Parser<'a>) -> Option<hdx_lexer::Token> {
-		parser.peek::<Flex>().or_else(|| parser.peek::<LengthPercentage>())
+	fn peek(p: &Parser<'a>) -> Option<hdx_lexer::Token> {
+		p.peek::<Flex>().or_else(|| p.peek::<LengthPercentage>())
 	}
 }
 
 impl<'a> Parse<'a> for LengthPercentageOrFlex {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		if let Some(flex) = parser.parse_if_peek::<Flex>()? {
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		if let Some(flex) = p.parse_if_peek::<Flex>()? {
 			Ok(Self::Flex(flex))
 		} else {
-			Ok(Self::LengthPercentage(parser.parse::<LengthPercentage>()?))
+			Ok(Self::LengthPercentage(p.parse::<LengthPercentage>()?))
 		}
 	}
 }
@@ -310,28 +310,27 @@ pub enum LineWidth {
 }
 
 impl<'a> Peek<'a> for LineWidth {
-	fn peek(parser: &Parser<'a>) -> Option<hdx_lexer::Token> {
-		parser
-			.peek::<kw::Thin>()
-			.or_else(|| parser.peek::<kw::Medium>())
-			.or_else(|| parser.peek::<kw::Thick>())
-			.or_else(|| parser.peek::<Length>())
+	fn peek(p: &Parser<'a>) -> Option<hdx_lexer::Token> {
+		p.peek::<kw::Thin>()
+			.or_else(|| p.peek::<kw::Medium>())
+			.or_else(|| p.peek::<kw::Thick>())
+			.or_else(|| p.peek::<Length>())
 	}
 }
 
 impl<'a> Parse<'a> for LineWidth {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		if let Some(token) = parser.peek::<kw::Thin>() {
-			parser.hop(token);
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		if let Some(token) = p.peek::<kw::Thin>() {
+			p.hop(token);
 			Ok(Self::Thin)
-		} else if let Some(token) = parser.peek::<kw::Medium>() {
-			parser.hop(token);
+		} else if let Some(token) = p.peek::<kw::Medium>() {
+			p.hop(token);
 			Ok(Self::Medium)
-		} else if let Some(token) = parser.peek::<kw::Thick>() {
-			parser.hop(token);
+		} else if let Some(token) = p.peek::<kw::Thick>() {
+			p.hop(token);
 			Ok(Self::Thick)
 		} else {
-			Ok(Self::Length(parser.parse::<Length>()?))
+			Ok(Self::Length(p.parse::<Length>()?))
 		}
 	}
 }

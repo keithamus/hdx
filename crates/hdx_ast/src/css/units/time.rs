@@ -53,23 +53,22 @@ impl AbsoluteUnit for Time {
 }
 
 impl<'a> Peek<'a> for Time {
-	fn peek(parser: &Parser<'a>) -> Option<hdx_lexer::Token> {
-		parser
-			.peek::<T![Number]>()
+	fn peek(p: &Parser<'a>) -> Option<hdx_lexer::Token> {
+		p.peek::<T![Number]>()
 			.filter(|token| token.stored_small_number() == Some(0.0))
-			.or_else(|| parser.peek::<T![Dimension::Ms]>())
-			.or_else(|| parser.peek::<T![Dimension::S]>())
+			.or_else(|| p.peek::<T![Dimension::Ms]>())
+			.or_else(|| p.peek::<T![Dimension::S]>())
 	}
 }
 
 impl<'a> Parse<'a> for Time {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		if let Some(token) = parser.peek::<T![Dimension::Ms]>() {
-			parser.hop(token);
-			Ok(Self::Ms(parser.parse_number(token).into()))
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		if let Some(token) = p.peek::<T![Dimension::Ms]>() {
+			p.hop(token);
+			Ok(Self::Ms(p.parse_number(token).into()))
 		} else {
-			let token = *parser.parse::<T![Dimension::S]>()?;
-			Ok(Self::S(parser.parse_number(token).into()))
+			let token = *p.parse::<T![Dimension::S]>()?;
+			Ok(Self::S(p.parse_number(token).into()))
 		}
 	}
 }

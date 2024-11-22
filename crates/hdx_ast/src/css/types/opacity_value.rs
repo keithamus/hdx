@@ -48,23 +48,23 @@ impl From<OpacityValue> for f32 {
 }
 
 impl<'a> Peek<'a> for OpacityValue {
-	fn peek(parser: &Parser<'a>) -> Option<hdx_lexer::Token> {
-		parser.peek::<T![Number]>().or_else(|| parser.peek::<T![Dimension]>())
+	fn peek(p: &Parser<'a>) -> Option<hdx_lexer::Token> {
+		p.peek::<T![Number]>().or_else(|| p.peek::<T![Dimension]>())
 	}
 }
 
 impl<'a> Parse<'a> for OpacityValue {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		if let Some(token) = parser.peek::<T![Number]>() {
-			parser.hop(token);
-			return Ok(Self::Number(parser.parse_number(token).into()));
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		if let Some(token) = p.peek::<T![Number]>() {
+			p.hop(token);
+			return Ok(Self::Number(p.parse_number(token).into()));
 		}
-		let token = *parser.parse::<T![Dimension]>()?;
-		let atom = parser.parse_atom_lower(token);
+		let token = *p.parse::<T![Dimension]>()?;
+		let atom = p.parse_atom_lower(token);
 		if atom != atom!("%") {
 			Err(diagnostics::UnexpectedDimension(atom, token.span()))?
 		}
-		Ok(Self::Percentage(parser.parse_number(token).into()))
+		Ok(Self::Percentage(p.parse_number(token).into()))
 	}
 }
 

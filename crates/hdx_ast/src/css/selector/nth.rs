@@ -8,18 +8,18 @@ use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 pub struct Nth(i32, i32);
 
 impl<'a> Parse<'a> for Nth {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		if let Some(token) = parser.peek::<T![Number]>() {
-			parser.hop(token);
-			return Ok(Self(0, parser.parse_number(token) as i32));
-		} else if let Some(token) = parser.peek::<T![Ident]>() {
-			match parser.parse_atom_lower(token) {
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		if let Some(token) = p.peek::<T![Number]>() {
+			p.hop(token);
+			return Ok(Self(0, p.parse_number(token) as i32));
+		} else if let Some(token) = p.peek::<T![Ident]>() {
+			match p.parse_atom_lower(token) {
 				atom!("even") => {
-					parser.hop(token);
+					p.hop(token);
 					return Ok(Self(2, 0));
 				}
 				atom!("odd") => {
-					parser.hop(token);
+					p.hop(token);
 					return Ok(Self(2, 1));
 				}
 				_ => {}
@@ -28,17 +28,17 @@ impl<'a> Parse<'a> for Nth {
 
 		let a;
 		let mut b_sign = 0;
-		let mut token = *parser.parse::<T![Any]>()?;
+		let mut token = *p.parse::<T![Any]>()?;
 		if matches!(token.char(), Some('+')) {
-			token = *parser.parse_with::<T![Any]>(Include::Whitespace)?;
+			token = *p.parse_with::<T![Any]>(Include::Whitespace)?;
 		}
 		if !matches!(token.kind(), Kind::Number | Kind::Dimension | Kind::Ident) {
 			Err(diagnostics::Unexpected(token, token.span()))?
 		}
 		if token.is_float() {
-			Err(diagnostics::ExpectedInt(parser.parse_number(token), token.span()))?
+			Err(diagnostics::ExpectedInt(p.parse_number(token), token.span()))?
 		}
-		match parser.parse_atom(token) {
+		match p.parse_atom(token) {
 			atom!("-n") | atom!("-N") => {
 				if token.is_int() {
 					Err(diagnostics::Unexpected(token, token.span()))?
@@ -46,17 +46,17 @@ impl<'a> Parse<'a> for Nth {
 				a = -1;
 			}
 			atom!("n") | atom!("N") => {
-				a = if token.is_int() { parser.parse_number(token) as i32 } else { 1 };
+				a = if token.is_int() { p.parse_number(token) as i32 } else { 1 };
 			}
 			atom!("n-") | atom!("N-") => {
 				b_sign = -1;
-				a = if token.is_int() { parser.parse_number(token) as i32 } else { 1 };
+				a = if token.is_int() { p.parse_number(token) as i32 } else { 1 };
 			}
 			anb => {
 				let mut chars = anb.chars();
 				let mut c = chars.next();
 				a = if token.is_int() {
-					parser.parse_number(token) as i32
+					p.parse_number(token) as i32
 				} else if matches!(c, Some('-')) {
 					c = chars.next();
 					-1
@@ -75,27 +75,27 @@ impl<'a> Parse<'a> for Nth {
 		}
 
 		if b_sign == 0 {
-			if let Some(token) = parser.peek::<T![+]>() {
+			if let Some(token) = p.peek::<T![+]>() {
 				b_sign = 1;
-				parser.hop(token);
-			} else if let Some(token) = parser.peek::<T![-]>() {
+				p.hop(token);
+			} else if let Some(token) = p.peek::<T![-]>() {
 				b_sign = -1;
-				parser.hop(token);
+				p.hop(token);
 			}
 		}
 
-		let b = if let Some(token) = parser.peek::<T![Number]>() {
+		let b = if let Some(token) = p.peek::<T![Number]>() {
 			if token.is_float() {
-				Err(diagnostics::ExpectedInt(parser.parse_number(token), token.span()))?
+				Err(diagnostics::ExpectedInt(p.parse_number(token), token.span()))?
 			}
 			if token.has_sign() && b_sign != 0 {
-				Err(diagnostics::ExpectedUnsigned(parser.parse_number(token), token.span()))?
+				Err(diagnostics::ExpectedUnsigned(p.parse_number(token), token.span()))?
 			}
 			if b_sign == 0 {
 				b_sign = 1;
 			}
-			let i = parser.parse_number(token);
-			parser.hop(token);
+			let i = p.parse_number(token);
+			p.hop(token);
 			(i.abs() as i32) * b_sign
 		} else {
 			0

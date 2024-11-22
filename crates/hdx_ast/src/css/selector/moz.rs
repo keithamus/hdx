@@ -176,20 +176,20 @@ pub enum MozFunctionalPseudoElement {
 }
 
 impl<'a> Parse<'a> for MozFunctionalPseudoElement {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let token = *parser.parse::<T![Function]>()?;
-		match parser.parse_atom_lower(token) {
-			atom!("-moz-tree-cell") => todo!(parser),
-			atom!("-moz-tree-cell-text") => todo!(parser),
-			atom!("-moz-tree-checkbox") => todo!(parser),
-			atom!("-moz-tree-column") => todo!(parser),
-			atom!("-moz-tree-drop-feedback") => todo!(parser),
-			atom!("-moz-tree-image") => todo!(parser),
-			atom!("-moz-tree-indentation") => todo!(parser),
-			atom!("-moz-tree-line") => todo!(parser),
-			atom!("-moz-tree-row") => todo!(parser),
-			atom!("-moz-tree-separator") => todo!(parser),
-			atom!("-moz-tree-twisty") => todo!(parser),
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		let token = *p.parse::<T![Function]>()?;
+		match p.parse_atom_lower(token) {
+			atom!("-moz-tree-cell") => todo!(p),
+			atom!("-moz-tree-cell-text") => todo!(p),
+			atom!("-moz-tree-checkbox") => todo!(p),
+			atom!("-moz-tree-column") => todo!(p),
+			atom!("-moz-tree-drop-feedback") => todo!(p),
+			atom!("-moz-tree-image") => todo!(p),
+			atom!("-moz-tree-indentation") => todo!(p),
+			atom!("-moz-tree-line") => todo!(p),
+			atom!("-moz-tree-row") => todo!(p),
+			atom!("-moz-tree-separator") => todo!(p),
+			atom!("-moz-tree-twisty") => todo!(p),
 			atom => Err(diagnostics::UnexpectedIdent(atom, token.span()))?,
 		}
 	}
@@ -268,12 +268,12 @@ pub enum MozFunctionalPseudoClass {
 }
 
 impl<'a> Parse<'a> for MozFunctionalPseudoClass {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let token = *parser.parse::<T![Function]>()?;
-		match parser.parse_atom_lower(token) {
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		let token = *p.parse::<T![Function]>()?;
+		match p.parse_atom_lower(token) {
 			atom!("-moz-locale-dir") => {
-				let dir = DirValue::parse(parser)?;
-				parser.parse::<T![RightParen]>()?;
+				let dir = p.parse::<DirValue>()?;
+				p.parse::<T![RightParen]>()?;
 				Ok(Self::LocaleDir(dir))
 			}
 			atom => Err(diagnostics::UnexpectedIdent(atom, token.span()))?,

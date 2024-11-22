@@ -28,15 +28,15 @@ impl From<CSSFloat> for Flex {
 }
 
 impl<'a> Peek<'a> for Flex {
-	fn peek(parser: &Parser<'a>) -> Option<hdx_lexer::Token> {
-		parser.peek::<T![Dimension::Fr]>()
+	fn peek(p: &Parser<'a>) -> Option<hdx_lexer::Token> {
+		p.peek::<T![Dimension::Fr]>()
 	}
 }
 
 impl<'a> Parse<'a> for Flex {
-	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let token = *parser.parse::<T![Dimension::Fr]>()?;
-		Ok(parser.parse_number(token).into())
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		let token = *p.parse::<T![Dimension::Fr]>()?;
+		Ok(p.parse_number(token).into())
 	}
 }
 
