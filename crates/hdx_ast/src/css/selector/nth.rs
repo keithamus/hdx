@@ -1,6 +1,6 @@
 use hdx_atom::atom;
 use hdx_lexer::{Include, Kind};
-use hdx_parser::{diagnostics, Parse, Parser, Result as ParserResult, Token};
+use hdx_parser::{diagnostics, Parse, Parser, Result as ParserResult, T};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 
 #[derive(Debug, PartialEq, Hash)]
@@ -9,10 +9,10 @@ pub struct Nth(i32, i32);
 
 impl<'a> Parse<'a> for Nth {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		if let Some(token) = parser.peek::<Token![Number]>() {
+		if let Some(token) = parser.peek::<T![Number]>() {
 			parser.hop(token);
 			return Ok(Self(0, parser.parse_number(token) as i32));
-		} else if let Some(token) = parser.peek::<Token![Ident]>() {
+		} else if let Some(token) = parser.peek::<T![Ident]>() {
 			match parser.parse_atom_lower(token) {
 				atom!("even") => {
 					parser.hop(token);
@@ -28,9 +28,9 @@ impl<'a> Parse<'a> for Nth {
 
 		let a;
 		let mut b_sign = 0;
-		let mut token = *parser.parse::<Token![Any]>()?;
+		let mut token = *parser.parse::<T![Any]>()?;
 		if matches!(token.char(), Some('+')) {
-			token = *parser.parse_with::<Token![Any]>(Include::Whitespace)?;
+			token = *parser.parse_with::<T![Any]>(Include::Whitespace)?;
 		}
 		if !matches!(token.kind(), Kind::Number | Kind::Dimension | Kind::Ident) {
 			Err(diagnostics::Unexpected(token, token.span()))?
@@ -75,16 +75,16 @@ impl<'a> Parse<'a> for Nth {
 		}
 
 		if b_sign == 0 {
-			if let Some(token) = parser.peek::<Token![+]>() {
+			if let Some(token) = parser.peek::<T![+]>() {
 				b_sign = 1;
 				parser.hop(token);
-			} else if let Some(token) = parser.peek::<Token![-]>() {
+			} else if let Some(token) = parser.peek::<T![-]>() {
 				b_sign = -1;
 				parser.hop(token);
 			}
 		}
 
-		let b = if let Some(token) = parser.peek::<Token![Number]>() {
+		let b = if let Some(token) = parser.peek::<T![Number]>() {
 			if token.is_float() {
 				Err(diagnostics::ExpectedInt(parser.parse_number(token), token.span()))?
 			}

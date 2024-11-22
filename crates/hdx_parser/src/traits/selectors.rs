@@ -1,7 +1,7 @@
 use hdx_atom::Atom;
 use hdx_lexer::{Include, Kind, Span, Spanned};
 
-use crate::{diagnostics, discard, parser::Parser, Result, Token, Vec};
+use crate::{diagnostics, discard, parser::Parser, Result, Vec, T};
 
 use super::Parse;
 
@@ -46,7 +46,7 @@ pub trait SelectorList<'a>: Sized + Parse<'a> {
 			}
 			// Discard all leading whitespace
 			while discard!(parser, Include::Whitespace, Whitespace) {}
-			let next_token_kind = parser.peek::<Token![Any]>().map(|t| t.kind()).unwrap_or(Kind::Eof);
+			let next_token_kind = parser.peek::<T![Any]>().map(|t| t.kind()).unwrap_or(Kind::Eof);
 			if matches!(next_token_kind, Kind::LeftCurly | Kind::RightParen) {
 				break;
 			}
@@ -119,7 +119,7 @@ pub trait SelectorComponent<'a>: Sized {
 			},
 			Kind::Colon => {
 				parser.next();
-				let token = parser.peek_with::<Token![Any]>(Include::Whitespace).unwrap();
+				let token = parser.peek_with::<T![Any]>(Include::Whitespace).unwrap();
 				match token.kind() {
 					Kind::Colon => {
 						parser.next_with(Include::Whitespace);

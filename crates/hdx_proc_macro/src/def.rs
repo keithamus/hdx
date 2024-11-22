@@ -1078,7 +1078,7 @@ impl GenerateParseImpl for Def {
 						#steps
 						#capture_name.push(item);
 						#increment_i
-						if let Some(token) = parser.peek::<::hdx_parser::Token![,]>() {
+						if let Some(token) = parser.peek::<::hdx_parser::T![,]>() {
 							parser.hop(token);
 						} else {
 							break;

@@ -384,7 +384,7 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 								quote! {
 									hdx_atom::atom!(#str) => {
 										let val = parser.parse::<#field>()?;
-										parser.parse::<Token![RightParen]>()?;
+										parser.parse::<hdx_parser::T![RightParen]>()?;
 										Ok(Self::#var_ident(val))
 									}
 								}
@@ -476,7 +476,7 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 				#[automatically_derived]
 				impl<'a> hdx_parser::Peek<'a> for #ident {
 					fn peek(parser: &hdx_parser::Parser<'a>) -> Option<hdx_lexer::Token> {
-						use hdx_parser::{Parse, Token};
+						use hdx_parser::{Parse};
 						let token = parser.peek::<hdx_parser::token::Any>().unwrap();
 						match token.kind() {
 							#ident_match_arm

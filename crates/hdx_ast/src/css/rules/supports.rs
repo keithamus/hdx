@@ -7,7 +7,7 @@ use crate::{
 use hdx_atom::atom;
 use hdx_lexer::Span;
 use hdx_parser::{
-	diagnostics, AtRule, ConditionalAtRule, Parse, Parser, Result as ParserResult, RuleList, Spanned, Token, Vec,
+	diagnostics, AtRule, ConditionalAtRule, Parse, Parser, Result as ParserResult, RuleList, Spanned, Vec, T,
 };
 use hdx_writer::{write_css, CssWriter, OutputOption, Result as WriterResult, WriteCss};
 use smallvec::SmallVec;
@@ -124,7 +124,7 @@ impl<'a> ConditionalAtRule<'a> for SupportsCondition<'a> {
 
 impl<'a> Parse<'a> for SupportsCondition<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		if parser.peek::<Token![Function]>().is_some() {
+		if parser.peek::<T![Function]>().is_some() {
 			return Ok(Self::Is(parser.parse::<SupportsFeature>()?));
 		}
 		Self::parse_condition(parser)
@@ -193,16 +193,16 @@ pub enum SupportsFeature<'a> {
 
 impl<'a> Parse<'a> for SupportsFeature<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let parens = parser.parse_if_peek::<Token![LeftParen]>()?.is_some();
-		if let Some(token) = parser.peek::<Token![Function]>() {
+		let parens = parser.parse_if_peek::<T![LeftParen]>()?.is_some();
+		if let Some(token) = parser.peek::<T![Function]>() {
 			match parser.parse_atom_lower(token) {
 				atom!("selector") => {
 					parser.hop(token);
 					let selector = parser.parse::<ComplexSelector>()?;
 					// End function
-					parser.parse::<Token![RightParen]>()?;
+					parser.parse::<T![RightParen]>()?;
 					if parens {
-						parser.parse::<Token![RightParen]>()?;
+						parser.parse::<T![RightParen]>()?;
 					}
 					Ok(Self::Selector(selector))
 				}
@@ -216,11 +216,11 @@ impl<'a> Parse<'a> for SupportsFeature<'a> {
 			}
 		} else {
 			if !parens {
-				let token = parser.peek::<Token![Any]>().unwrap();
+				let token = parser.peek::<T![Any]>().unwrap();
 				Err(diagnostics::Unexpected(token, token.span()))?;
 			}
 			let property = parser.parse::<Property>()?;
-			parser.parse::<Token![RightParen]>()?;
+			parser.parse::<T![RightParen]>()?;
 			Ok(Self::Property(property))
 		}
 	}

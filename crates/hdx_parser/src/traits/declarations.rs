@@ -1,6 +1,6 @@
 use hdx_atom::Atom;
 
-use crate::{discard, parser::Parser, Delim, Parse, Peek, Result, Token};
+use crate::{discard, parser::Parser, Parse, Peek, Result, T};
 
 mod kw {
 	use crate::custom_keyword;
@@ -10,13 +10,13 @@ mod kw {
 pub struct Important;
 impl<'a> Peek<'a> for Important {
 	fn peek(parser: &Parser<'a>) -> Option<hdx_lexer::Token> {
-		parser.peek::<Delim![!]>()
+		parser.peek::<T![!]>()
 	}
 }
 
 impl<'a> Parse<'a> for Important {
 	fn parse(parser: &mut Parser<'a>) -> Result<Self> {
-		parser.parse::<Delim![!]>()?;
+		parser.parse::<T![!]>()?;
 		parser.parse::<kw::Important>()?;
 		Ok(Self)
 	}
@@ -26,8 +26,8 @@ pub trait Declaration<'a>: Sized + Parse<'a> {
 	type DeclarationValue: DeclarationValue<'a>;
 
 	fn parse_name(parser: &mut Parser<'a>) -> Result<Atom> {
-		let token = *parser.parse::<Token![Ident]>()?;
-		parser.parse::<Delim![:]>()?;
+		let token = *parser.parse::<T![Ident]>()?;
+		parser.parse::<T![:]>()?;
 		Ok(parser.parse_atom_lower(token))
 	}
 

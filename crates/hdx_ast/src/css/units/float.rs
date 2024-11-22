@@ -1,5 +1,5 @@
 use hdx_derive::Writable;
-use hdx_parser::{diagnostics, Parse, Parser, Peek, Result as ParserResult, Token};
+use hdx_parser::{diagnostics, Parse, Parser, Peek, Result as ParserResult, T};
 use std::{
 	fmt::{Display, Result as DisplayResult},
 	hash::{Hash, Hasher},
@@ -131,13 +131,13 @@ impl PartialOrd<f32> for CSSFloat {
 
 impl<'a> Peek<'a> for CSSFloat {
 	fn peek(parser: &Parser<'a>) -> Option<hdx_lexer::Token> {
-		parser.peek::<Token![Number]>().filter(|t| t.is_float())
+		parser.peek::<T![Number]>().filter(|t| t.is_float())
 	}
 }
 
 impl<'a> Parse<'a> for CSSFloat {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let token = *parser.parse::<Token![Number]>()?;
+		let token = *parser.parse::<T![Number]>()?;
 		let number = parser.parse_number(token);
 		if !token.is_float() {
 			Err(diagnostics::ExpectedFloat(number, token.span()))?;

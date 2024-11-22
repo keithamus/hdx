@@ -1,6 +1,6 @@
 use hdx_atom::{atom, Atom};
 use hdx_derive::{Atomizable, Parsable, Writable};
-use hdx_parser::{diagnostics, discard, Parse, Parser, Result as ParserResult, Token};
+use hdx_parser::{diagnostics, discard, Parse, Parser, Result as ParserResult, T};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 use smallvec::{smallvec, SmallVec};
 
@@ -32,7 +32,7 @@ pub enum FunctionalPseudoClass<'a> {
 
 impl<'a> Parse<'a> for FunctionalPseudoClass<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let token = *parser.parse::<Token![Function]>()?;
+		let token = *parser.parse::<T![Function]>()?;
 		let value = match parser.parse_atom_lower(token) {
 			atom!("dir") => parser.parse::<DirValue>().map(Self::Dir)?,
 			atom!("has") => parser.parse::<RelativeSelector>().map(Self::Has)?,
@@ -42,11 +42,11 @@ impl<'a> Parse<'a> for FunctionalPseudoClass<'a> {
 			atom!("lang") => {
 				let mut langs = smallvec![];
 				loop {
-					if let Some(token) = parser.peek::<Token![Ident]>() {
+					if let Some(token) = parser.peek::<T![Ident]>() {
 						parser.hop(token);
 						langs.push(parser.parse_atom(token));
 					} else {
-						let token = *parser.parse::<Token![String]>()?;
+						let token = *parser.parse::<T![String]>()?;
 						parser.hop(token);
 						langs.push(parser.parse_atom(token));
 					}
@@ -65,12 +65,12 @@ impl<'a> Parse<'a> for FunctionalPseudoClass<'a> {
 			atom!("nth-of-type") => parser.parse::<Nth>().map(Self::NthOfType)?,
 			atom!("where") => parser.parse::<ForgivingSelector>().map(Self::Where)?,
 			atom!("state") => {
-				let token = *parser.parse::<Token![Ident]>()?;
+				let token = *parser.parse::<T![Ident]>()?;
 				Self::State(parser.parse_atom(token))
 			}
 			ident => Err(diagnostics::UnexpectedFunction(ident, token.span()))?,
 		};
-		parser.parse::<Token![RightParen]>()?;
+		parser.parse::<T![RightParen]>()?;
 		Ok(value)
 	}
 }

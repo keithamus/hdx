@@ -1,5 +1,4 @@
-use hdx_parser::Token;
-use hdx_parser::{Parse, Parser, Peek, Result as ParserResult};
+use hdx_parser::{Parse, Parser, Peek, Result as ParserResult, T};
 use hdx_writer::{write_css, CssWriter, Result as WriterResult, WriteCss};
 
 pub(crate) use crate::css::units::*;
@@ -28,13 +27,13 @@ impl<'a> Parse<'a> for SnapBlock {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		parser.parse::<func::SnapBlock>()?;
 		let length = parser.parse::<LengthPercentage>()?;
-		let keyword = if let Some(token) = parser.peek::<Token![,]>() {
+		let keyword = if let Some(token) = parser.peek::<T![,]>() {
 			parser.hop(token);
 			Some(parser.parse::<SnapBlockKeyword>()?)
 		} else {
 			None
 		};
-		parser.parse::<Token![RightParen]>()?;
+		parser.parse::<T![RightParen]>()?;
 		Ok(Self(length, keyword))
 	}
 }
@@ -67,13 +66,13 @@ impl<'a> Parse<'a> for SnapInline {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		parser.parse::<func::SnapInline>()?;
 		let length = parser.parse::<LengthPercentage>()?;
-		let keyword = if let Some(token) = parser.peek::<Token![,]>() {
+		let keyword = if let Some(token) = parser.peek::<T![,]>() {
 			parser.hop(token);
 			Some(parser.parse::<SnapInlineKeyword>()?)
 		} else {
 			None
 		};
-		parser.parse::<Token![RightParen]>()?;
+		parser.parse::<T![RightParen]>()?;
 		Ok(Self(length, keyword))
 	}
 }

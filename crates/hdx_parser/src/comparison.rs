@@ -1,4 +1,4 @@
-use crate::{diagnostics, Parse, Parser, Result, Token};
+use crate::{diagnostics, Parse, Parser, Result, T};
 use hdx_lexer::Include;
 
 #[derive(Debug, PartialEq, Hash)]
@@ -13,11 +13,11 @@ pub enum Comparison {
 
 impl<'a> Parse<'a> for Comparison {
 	fn parse(parser: &mut Parser<'a>) -> Result<Comparison> {
-		let token = *parser.parse::<Token![Delim]>()?;
+		let token = *parser.parse::<T![Delim]>()?;
 		match token.char().unwrap() {
 			'=' => Ok(Comparison::Equal),
 			'>' => {
-				if let Some(token) = parser.peek_with::<Token![Delim]>(Include::Whitespace) {
+				if let Some(token) = parser.peek_with::<T![Delim]>(Include::Whitespace) {
 					if let Some('=') = token.char() {
 						parser.hop(token);
 						return Ok(Comparison::GreaterThanEqual);
@@ -26,7 +26,7 @@ impl<'a> Parse<'a> for Comparison {
 				Ok(Comparison::GreaterThan)
 			}
 			'<' => {
-				if let Some(token) = parser.peek_with::<Token![Delim]>(Include::Whitespace) {
+				if let Some(token) = parser.peek_with::<T![Delim]>(Include::Whitespace) {
 					if let Some('=') = token.char() {
 						parser.hop(token);
 						return Ok(Comparison::LessThanEqual);

@@ -3,7 +3,7 @@ use hdx_atom::{atom, Atom};
 use hdx_lexer::{Include, Kind, PairWise, QuoteStyle};
 use hdx_parser::{
 	diagnostics, AtRule as AtRuleTrait, Block as BlockTrait, Parse, Parser, QualifiedRule as QualifiedRuleTrait,
-	Result as ParserResult, Span, Spanned, State, Token, Vec,
+	Result as ParserResult, Span, Spanned, State, Vec, T,
 };
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 
@@ -16,20 +16,20 @@ impl<'a> Parse<'a> for ComponentValues<'a> {
 	// https://drafts.csswg.org/css-syntax-3/#consume-list-of-components
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		let mut values = parser.new_vec();
-		if let Some(token) = parser.peek_with::<Token![Whitespace]>(Include::Whitespace) {
+		if let Some(token) = parser.peek_with::<T![Whitespace]>(Include::Whitespace) {
 			parser.hop(token);
 		}
 		loop {
 			if parser.at_end() {
 				break;
 			}
-			if parser.is(State::Nested) && parser.peek::<Token![RightCurly]>().is_some() {
+			if parser.is(State::Nested) && parser.peek::<T![RightCurly]>().is_some() {
 				break;
 			}
-			if parser.is(State::StopOnSemicolon) && parser.peek::<Token![;]>().is_some() {
+			if parser.is(State::StopOnSemicolon) && parser.peek::<T![;]>().is_some() {
 				break;
 			}
-			if parser.is(State::StopOnComma) && parser.peek::<Token![,]>().is_some() {
+			if parser.is(State::StopOnComma) && parser.peek::<T![,]>().is_some() {
 				break;
 			}
 			values.push(ComponentValue::parse_spanned(parser)?);
@@ -72,7 +72,7 @@ pub enum ComponentValue<'a> {
 // https://drafts.csswg.org/css-syntax-3/#consume-component-value
 impl<'a> Parse<'a> for ComponentValue<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let token = parser.peek_with::<Token![Any]>(Include::Whitespace).unwrap();
+		let token = parser.peek_with::<T![Any]>(Include::Whitespace).unwrap();
 		Ok(match token.kind() {
 			Kind::LeftCurly | Kind::LeftSquare | Kind::LeftParen => {
 				let old_state = parser.set_state(State::Nested);
@@ -185,13 +185,13 @@ pub struct SimpleBlock<'a> {
 // https://drafts.csswg.org/css-syntax-3/#consume-a-simple-block
 impl<'a> Parse<'a> for SimpleBlock<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let pair = parser.parse::<Token![PairWise]>()?.to_pairwise().unwrap();
+		let pair = parser.parse::<T![PairWise]>()?.to_pairwise().unwrap();
 		let mut values = parser.new_vec();
 		loop {
 			if parser.at_end() {
 				break;
 			}
-			if let Some(token) = parser.peek::<Token![PairWise]>() {
+			if let Some(token) = parser.peek::<T![PairWise]>() {
 				if token.to_pairwise() == Some(pair) && token.kind() == pair.end() {
 					parser.hop(token);
 					break;
@@ -231,7 +231,7 @@ pub enum Rule<'a> {
 
 impl<'a> Parse<'a> for Rule<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		if parser.peek::<Token![AtKeyword]>().is_some() {
+		if parser.peek::<T![AtKeyword]>().is_some() {
 			return parser.parse::<AtRule>().map(Self::AtRule);
 		}
 		parser.parse::<QualifiedRule>().map(Self::QualifiedRule)
@@ -277,8 +277,8 @@ pub struct Declaration<'a> {
 // https://drafts.csswg.org/css-syntax-3/#consume-a-declaration
 impl<'a> Parse<'a> for Declaration<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let token = *parser.parse::<Token![Ident]>()?;
-		parser.parse::<Token![:]>()?;
+		let token = *parser.parse::<T![Ident]>()?;
+		parser.parse::<T![:]>()?;
 		let old_state = parser.set_state(State::StopOnSemicolon | State::Nested);
 		let mut value = parser.parse_spanned::<ComponentValues>().inspect_err(|_| {
 			parser.set_state(old_state);
@@ -340,7 +340,7 @@ pub struct AtRule<'a> {
 // https://drafts.csswg.org/css-syntax-3/#consume-an-at-rule
 impl<'a> Parse<'a> for AtRule<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let token = parser.peek::<Token![AtKeyword]>();
+		let token = parser.peek::<T![AtKeyword]>();
 		let (prelude_opt, block_opt) = Self::parse_at_rule(parser, None)?;
 		let prelude =
 			prelude_opt.unwrap_or_else(|| Spanned { node: ComponentValues(parser.new_vec()), span: Span::dummy() });
@@ -392,7 +392,7 @@ impl<'a> Parse<'a> for BadDeclaration {
 		//
 		// Process input:
 		loop {
-			let token = parser.peek::<Token![Any]>().unwrap();
+			let token = parser.peek::<T![Any]>().unwrap();
 			dbg!(parser.at_end(), token);
 			//
 			// <eof-token>
@@ -447,18 +447,18 @@ pub struct Function<'a> {
 // https://drafts.csswg.org/css-syntax-3/#consume-function
 impl<'a> Parse<'a> for Function<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let token = *parser.parse::<Token![Function]>()?;
+		let token = *parser.parse::<T![Function]>()?;
 		let mut values = parser.new_vec();
 		loop {
 			if parser.at_end() {
 				break;
 			}
-			if parser.peek::<Token![RightParen]>().is_some() {
+			if parser.peek::<T![RightParen]>().is_some() {
 				break;
 			}
 			values.push(ComponentValue::parse_spanned(parser)?);
 		}
-		parser.parse::<Token![RightParen]>()?;
+		parser.parse::<T![RightParen]>()?;
 		let name = parser.parse_atom(token);
 		Ok(Self { name, values })
 	}

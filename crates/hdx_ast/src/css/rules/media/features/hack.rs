@@ -1,5 +1,5 @@
 use hdx_atom::atom;
-use hdx_parser::{diagnostics, Parse, Parser, Result as ParserResult, Token};
+use hdx_parser::{diagnostics, Parse, Parser, Result as ParserResult, T};
 use hdx_writer::{write_css, CssWriter, Result as WriterResult, WriteCss};
 
 mod kw {
@@ -16,15 +16,15 @@ pub enum HackMediaFeature {
 impl<'a> Parse<'a> for HackMediaFeature {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		parser.parse::<kw::MinWidth>()?;
-		parser.parse::<Token![:]>()?;
-		if let Some(token) = parser.peek::<Token![Dimension]>() {
+		parser.parse::<T![:]>()?;
+		if let Some(token) = parser.peek::<T![Dimension]>() {
 			let str = parser.parse_raw_str(token);
 			if str == "0\\0" {
 				parser.hop(token);
 				return Ok(Self::IEBackslashZero);
 			}
 		}
-		let token = parser.peek::<Token![Any]>().unwrap();
+		let token = parser.peek::<T![Any]>().unwrap();
 		Err(diagnostics::Unexpected(token, token.span()))?
 	}
 }

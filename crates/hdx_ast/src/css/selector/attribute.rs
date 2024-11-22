@@ -1,6 +1,6 @@
 use hdx_atom::{atom, Atom};
 use hdx_lexer::{Include, QuoteStyle};
-use hdx_parser::{diagnostics, discard, Delim, Parse, Parser, Result as ParserResult, Token};
+use hdx_parser::{diagnostics, discard, Parse, Parser, Result as ParserResult, T};
 use hdx_writer::{write_css, CssWriter, Result as WriterResult, WriteCss};
 
 use super::NSPrefix;
@@ -18,28 +18,28 @@ pub struct Attribute {
 
 impl<'a> Parse<'a> for Attribute {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		parser.parse::<Token![LeftSquare]>()?;
+		parser.parse::<T![LeftSquare]>()?;
 		let mut attr = Self::default();
-		if let Some(token) = parser.peek::<Token![Delim]>() {
+		if let Some(token) = parser.peek::<T![Delim]>() {
 			parser.hop(token);
 			if matches!(token.char(), Some('|')) {
-				let token = *parser.parse_with::<Token![Ident]>(Include::Whitespace)?;
+				let token = *parser.parse_with::<T![Ident]>(Include::Whitespace)?;
 				attr.name = parser.parse_atom(token);
 			} else if matches!(token.char(), Some('*')) {
-				parser.parse_with::<Delim![|]>(Include::Whitespace)?;
-				let token = *parser.parse_with::<Token![Ident]>(Include::Whitespace)?;
+				parser.parse_with::<T![|]>(Include::Whitespace)?;
+				let token = *parser.parse_with::<T![Ident]>(Include::Whitespace)?;
 				attr.ns_prefix = NSPrefix::Wildcard;
 				attr.name = parser.parse_atom(token);
 			} else {
 				Err(diagnostics::UnexpectedDelim(token.char().unwrap(), token.span()))?
 			}
-		} else if let Some(token) = parser.peek::<Token![Ident]>() {
+		} else if let Some(token) = parser.peek::<T![Ident]>() {
 			parser.hop(token);
 			let first = parser.parse_atom(token);
-			if let Some(token) = parser.peek_with::<Delim![|]>(Include::Whitespace) {
+			if let Some(token) = parser.peek_with::<T![|]>(Include::Whitespace) {
 				let checkpoint = parser.checkpoint();
 				parser.hop(token);
-				if let Ok(token) = parser.parse_with::<Token![Ident]>(Include::Whitespace) {
+				if let Ok(token) = parser.parse_with::<T![Ident]>(Include::Whitespace) {
 					attr.ns_prefix = NSPrefix::Named(first);
 					attr.name = parser.parse_atom(*token);
 				} else {
@@ -50,46 +50,46 @@ impl<'a> Parse<'a> for Attribute {
 				attr.name = first;
 			}
 		} else {
-			let token = parser.peek::<Token![Any]>().unwrap();
+			let token = parser.peek::<T![Any]>().unwrap();
 			Err(diagnostics::Unexpected(token, token.span()))?
 		}
 		if discard!(parser, RightSquare) {
 			return Ok(attr);
 		}
-		let token = *parser.parse::<Token![Delim]>()?;
+		let token = *parser.parse::<T![Delim]>()?;
 		match token.char().unwrap() {
 			'=' => attr.matcher = AttributeMatch::Exact,
 			'~' => {
-				parser.parse_with::<Delim![=]>(Include::all_bits())?;
+				parser.parse_with::<T![=]>(Include::all_bits())?;
 				attr.matcher = AttributeMatch::SpaceList
 			}
 			'|' => {
-				parser.parse_with::<Delim![=]>(Include::all_bits())?;
+				parser.parse_with::<T![=]>(Include::all_bits())?;
 				attr.matcher = AttributeMatch::LangPrefix
 			}
 			'^' => {
-				parser.parse_with::<Delim![=]>(Include::all_bits())?;
+				parser.parse_with::<T![=]>(Include::all_bits())?;
 				attr.matcher = AttributeMatch::Prefix
 			}
 			'$' => {
-				parser.parse_with::<Delim![=]>(Include::all_bits())?;
+				parser.parse_with::<T![=]>(Include::all_bits())?;
 				attr.matcher = AttributeMatch::Suffix
 			}
 			'*' => {
-				parser.parse_with::<Delim![=]>(Include::all_bits())?;
+				parser.parse_with::<T![=]>(Include::all_bits())?;
 				attr.matcher = AttributeMatch::Contains
 			}
 			c => Err(diagnostics::UnexpectedDelim(c, token.span()))?,
 		}
-		if let Some(token) = parser.peek::<Token![Ident]>() {
+		if let Some(token) = parser.peek::<T![Ident]>() {
 			parser.hop(token);
 			attr.value = parser.parse_atom(token);
 		} else {
-			let token = *parser.parse::<Token![String]>()?;
+			let token = *parser.parse::<T![String]>()?;
 			attr.quote = token.quote_style();
 			attr.value = parser.parse_atom(token);
 		}
-		if let Some(token) = parser.peek::<Token![Ident]>() {
+		if let Some(token) = parser.peek::<T![Ident]>() {
 			parser.hop(token);
 			attr.modifier = match parser.parse_atom_lower(token) {
 				atom!("i") => AttributeModifier::Insensitive,
@@ -97,7 +97,7 @@ impl<'a> Parse<'a> for Attribute {
 				atom => Err(diagnostics::UnexpectedIdent(atom, token.span()))?,
 			};
 		}
-		parser.parse::<Token![RightSquare]>()?;
+		parser.parse::<T![RightSquare]>()?;
 		Ok(attr)
 	}
 }

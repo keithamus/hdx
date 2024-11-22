@@ -1,6 +1,6 @@
 use hdx_atom::atom;
 use hdx_derive::{Atomizable, Visitable};
-use hdx_parser::{Parse, Parser, Result as ParserResult, Spanned, StyleSheet as StyleSheetTrait, Token, Vec};
+use hdx_parser::{Parse, Parser, Result as ParserResult, Spanned, StyleSheet as StyleSheetTrait, Vec, T};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 
 use crate::{
@@ -99,7 +99,7 @@ apply_rules!(rule);
 impl<'a> Parse<'a> for Rule<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		let checkpoint = parser.checkpoint();
-		if let Some(token) = parser.peek::<Token![AtKeyword]>() {
+		if let Some(token) = parser.peek::<T![AtKeyword]>() {
 			macro_rules! parse_rule {
 				( $(
 					$name: ident$(<$a: lifetime>)?: $atom: pat,

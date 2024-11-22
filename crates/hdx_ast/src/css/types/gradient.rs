@@ -1,7 +1,7 @@
 use bitmask_enum::bitmask;
 use hdx_atom::{atom, Atomizable};
 use hdx_derive::{Atomizable, Writable};
-use hdx_parser::{diagnostics, Parse, Parser, Peek, Result as ParserResult, Token};
+use hdx_parser::{diagnostics, Parse, Parser, Peek, Result as ParserResult, T};
 use hdx_writer::{CssWriter, OutputOption, Result as WriterResult, WriteCss};
 use smallvec::{smallvec, SmallVec};
 
@@ -44,7 +44,7 @@ impl<'a> Gradient {
 			if allow_hint && parser.peek::<LengthPercentage>().is_some() {
 				let hint = parser.parse::<LengthPercentage>()?;
 				stops.push(ColorStopOrHint::Hint(hint));
-				parser.parse::<Token![,]>()?;
+				parser.parse::<T![,]>()?;
 			}
 			let color = parser.parse::<Color>()?;
 			let hint = if parser.peek::<LengthPercentage>().is_some() {
@@ -55,7 +55,7 @@ impl<'a> Gradient {
 				None
 			};
 			stops.push(ColorStopOrHint::Stop(color, hint));
-			if parser.parse_if_peek::<Token![,]>()?.is_none() {
+			if parser.parse_if_peek::<T![,]>()?.is_none() {
 				break;
 			}
 		}
@@ -81,7 +81,7 @@ impl<'a> Parse<'a> for Gradient {
 				.parse_if_peek::<LinearDirection>()
 				.and_then(|f| {
 					if f.is_some() {
-						parser.parse::<Token![,]>()?;
+						parser.parse::<T![,]>()?;
 					}
 					Ok(f)
 				})?
@@ -93,7 +93,7 @@ impl<'a> Parse<'a> for Gradient {
 				.parse_if_peek::<LinearDirection>()
 				.and_then(|f| {
 					if f.is_some() {
-						parser.parse::<Token![Comma]>()?;
+						parser.parse::<T![Comma]>()?;
 					}
 					Ok(f)
 				})?
@@ -113,7 +113,7 @@ impl<'a> Parse<'a> for Gradient {
 				None
 			};
 			if size.is_some() || shape.is_some() {
-				parser.parse::<Token![Comma]>()?;
+				parser.parse::<T![Comma]>()?;
 			}
 			Self::Radial(size.unwrap_or_default(), shape.unwrap_or_default(), position, Self::parse_stops(parser)?)
 		} else {
@@ -130,11 +130,11 @@ impl<'a> Parse<'a> for Gradient {
 				None
 			};
 			if size.is_some() || shape.is_some() {
-				parser.parse::<Token![Comma]>()?;
+				parser.parse::<T![Comma]>()?;
 			}
 			Self::Radial(size.unwrap_or_default(), shape.unwrap_or_default(), position, Self::parse_stops(parser)?)
 		};
-		parser.parse::<Token![RightParen]>()?;
+		parser.parse::<T![RightParen]>()?;
 		Ok(gradient)
 	}
 }
@@ -260,7 +260,7 @@ impl<'a> Parse<'a> for LinearDirection {
 		}
 		parser.parse::<kw::To>()?;
 		let mut dir = NamedDirection::none();
-		let token = parser.parse::<Token![Ident]>()?;
+		let token = parser.parse::<T![Ident]>()?;
 		dir |= match parser.parse_atom_lower(*token) {
 			atom!("top") => NamedDirection::Top,
 			atom!("left") => NamedDirection::Left,
@@ -268,7 +268,7 @@ impl<'a> Parse<'a> for LinearDirection {
 			atom!("bottom") => NamedDirection::Bottom,
 			atom => Err(diagnostics::UnexpectedIdent(atom, token.span()))?,
 		};
-		if let Some(token) = parser.peek::<Token![Ident]>() {
+		if let Some(token) = parser.peek::<T![Ident]>() {
 			parser.hop(token);
 			dir |= match parser.parse_atom_lower(token) {
 				atom @ atom!("top") => {
@@ -349,7 +349,7 @@ pub enum RadialSize {
 impl<'a> Peek<'a> for RadialSize {
 	fn peek(parser: &Parser<'a>) -> Option<hdx_lexer::Token> {
 		parser.peek::<LengthPercentage>().or_else(|| {
-			parser.peek::<Token![Ident]>().filter(|t| {
+			parser.peek::<T![Ident]>().filter(|t| {
 				matches!(
 					parser.parse_atom_lower(*t),
 					atom!("closest-corner") | atom!("closest-side") | atom!("farthest-corner") | atom!("farthest-side")
@@ -361,7 +361,7 @@ impl<'a> Peek<'a> for RadialSize {
 
 impl<'a> Parse<'a> for RadialSize {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		if let Some(token) = parser.peek::<Token![Ident]>() {
+		if let Some(token) = parser.peek::<T![Ident]>() {
 			parser.hop(token);
 			return Ok(match parser.parse_atom_lower(token) {
 				atom!("closest-corner") => RadialSize::ClosestCorner,
@@ -371,20 +371,20 @@ impl<'a> Parse<'a> for RadialSize {
 				atom => Err(diagnostics::UnexpectedIdent(atom, token.span()))?,
 			});
 		}
-		if parser.peek::<Token![Number]>().is_some() {
+		if parser.peek::<T![Number]>().is_some() {
 			let first_len = parser.parse::<LengthPercentage>()?;
-			if parser.peek::<Token![Number]>().is_none() {
+			if parser.peek::<T![Number]>().is_none() {
 				return parser.parse::<Length>().map(Self::Circular);
 			}
 			let second_len = parser.parse::<LengthPercentage>()?;
 			return Ok(Self::Elliptical(first_len, second_len));
 		}
-		if let Some(token) = parser.peek::<Token![Dimension]>() {
+		if let Some(token) = parser.peek::<T![Dimension]>() {
 			let atom = parser.parse_atom(token);
 			if atom == atom!("%") {
 				let first_len = parser.parse::<LengthPercentage>()?;
-				if parser.peek::<Token![Dimension]>().is_none() {
-					let token = parser.peek::<Token![Any]>().unwrap();
+				if parser.peek::<T![Dimension]>().is_none() {
+					let token = parser.peek::<T![Any]>().unwrap();
 					Err(diagnostics::ExpectedDimension(token, token.span()))?
 				}
 				let second_len = parser.parse::<LengthPercentage>()?;
@@ -393,7 +393,7 @@ impl<'a> Parse<'a> for RadialSize {
 				Err(diagnostics::UnexpectedDimension(atom, token.span()))?
 			}
 		}
-		let token = parser.peek::<Token![Any]>().unwrap();
+		let token = parser.peek::<T![Any]>().unwrap();
 		Err(diagnostics::ExpectedDimension(token, token.span()))?
 	}
 }
@@ -410,14 +410,14 @@ pub enum RadialShape {
 impl<'a> Peek<'a> for RadialShape {
 	fn peek(parser: &Parser<'a>) -> Option<hdx_lexer::Token> {
 		parser
-			.peek::<Token![Ident]>()
+			.peek::<T![Ident]>()
 			.filter(|token| matches!(parser.parse_atom_lower(*token), atom!("circle") | atom!("ellipse")))
 	}
 }
 
 impl<'a> Parse<'a> for RadialShape {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let token = parser.parse::<Token![Ident]>()?;
+		let token = parser.parse::<T![Ident]>()?;
 		match parser.parse_atom_lower(*token) {
 			atom!("circle") => Ok(Self::Circle),
 			atom!("ellipse") => Ok(Self::Ellipse),

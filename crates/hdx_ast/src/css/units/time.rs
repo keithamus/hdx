@@ -1,5 +1,5 @@
 use hdx_atom::{atom, Atom};
-use hdx_parser::{Dimension, Parse, Parser, Peek, Result as ParserResult, Token};
+use hdx_parser::{Parse, Parser, Peek, Result as ParserResult, T};
 use hdx_writer::{write_css, CssWriter, Result as WriterResult, WriteCss};
 
 use super::{AbsoluteUnit, CSSFloat};
@@ -55,20 +55,20 @@ impl AbsoluteUnit for Time {
 impl<'a> Peek<'a> for Time {
 	fn peek(parser: &Parser<'a>) -> Option<hdx_lexer::Token> {
 		parser
-			.peek::<Token![Number]>()
+			.peek::<T![Number]>()
 			.filter(|token| token.stored_small_number() == Some(0.0))
-			.or_else(|| parser.peek::<Dimension![Ms]>())
-			.or_else(|| parser.peek::<Dimension![S]>())
+			.or_else(|| parser.peek::<T![Dimension::Ms]>())
+			.or_else(|| parser.peek::<T![Dimension::S]>())
 	}
 }
 
 impl<'a> Parse<'a> for Time {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		if let Some(token) = parser.peek::<Dimension![Ms]>() {
+		if let Some(token) = parser.peek::<T![Dimension::Ms]>() {
 			parser.hop(token);
 			Ok(Self::Ms(parser.parse_number(token).into()))
 		} else {
-			let token = *parser.parse::<Dimension![S]>()?;
+			let token = *parser.parse::<T![Dimension::S]>()?;
 			Ok(Self::S(parser.parse_number(token).into()))
 		}
 	}
@@ -78,8 +78,8 @@ impl<'a> WriteCss<'a> for Time {
 	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
 		match self {
 			Self::Zero => write_css!(sink, '0'),
-			Self::Ms(f) => write_css!(sink, f, <Dimension![Ms]>::atom()),
-			Self::S(f) => write_css!(sink, f, <Dimension![S]>::atom()),
+			Self::Ms(f) => write_css!(sink, f, <T![Dimension::Ms]>::atom()),
+			Self::S(f) => write_css!(sink, f, <T![Dimension::S]>::atom()),
 		};
 		Ok(())
 	}

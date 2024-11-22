@@ -1,5 +1,5 @@
 use hdx_atom::{atom, Atom};
-use hdx_parser::{diagnostics, discard, todo, Parse, Parser, Result as ParserResult, Token, Vec};
+use hdx_parser::{diagnostics, discard, todo, Parse, Parser, Result as ParserResult, Vec, T};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 use smallvec::{smallvec, SmallVec};
 
@@ -18,12 +18,12 @@ pub enum FunctionalPseudoElement<'a> {
 
 impl<'a> Parse<'a> for FunctionalPseudoElement<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let token = *parser.parse::<Token![Function]>()?;
+		let token = *parser.parse::<T![Function]>()?;
 		match parser.parse_atom_lower(token) {
 			atom!("highlight") => {
-				let name_token = *parser.parse::<Token![Ident]>()?;
+				let name_token = *parser.parse::<T![Ident]>()?;
 				let name = parser.parse_atom(name_token);
-				parser.parse::<Token![RightParen]>()?;
+				parser.parse::<T![RightParen]>()?;
 				Ok(Self::Highlight(name))
 			}
 			atom!("part") => {
@@ -32,7 +32,7 @@ impl<'a> Parse<'a> for FunctionalPseudoElement<'a> {
 					if discard!(parser, RightParen) {
 						break;
 					}
-					let name_token = *parser.parse::<Token![Ident]>()?;
+					let name_token = *parser.parse::<T![Ident]>()?;
 					let name = parser.parse_atom(name_token);
 					parts.push(name);
 				}
@@ -61,7 +61,7 @@ impl<'a> Parse<'a> for FunctionalPseudoElement<'a> {
 						| SelectorComponent::PseudoClass(_) => {}
 						_ => {
 							parser.rewind(checkpoint);
-							let token = parser.peek::<Token![Any]>().unwrap();
+							let token = parser.peek::<T![Any]>().unwrap();
 							Err(diagnostics::Unexpected(token, token.span()))?
 						}
 					}

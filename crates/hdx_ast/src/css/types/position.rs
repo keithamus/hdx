@@ -1,5 +1,5 @@
 use hdx_atom::atom;
-use hdx_parser::{diagnostics, Parse, Parser, Peek, Result as ParserResult, Token};
+use hdx_parser::{diagnostics, Parse, Parser, Peek, Result as ParserResult, T};
 use hdx_writer::{write_css, CssWriter, Result as WriterResult, WriteCss};
 
 use crate::{css::units::LengthPercentage, macros::keyword_typedef};
@@ -33,7 +33,7 @@ impl<'a> Parse<'a> for Position {
 			return Ok(Self::SingleValue(first));
 		}
 		let second = dbg!(parser.parse::<PositionSingleValue>())?;
-		let peek_third = parser.peek::<Token![Ident]>();
+		let peek_third = parser.peek::<T![Ident]>();
 		// Two value
 		if peek_third.is_none() {
 			if let Some(horizontal) = first.to_horizontal() {
@@ -55,7 +55,7 @@ impl<'a> Parse<'a> for Position {
 			Err(diagnostics::Unexpected(peek_second.unwrap(), peek_second.unwrap().span()))?
 		}
 		if peek_third.is_none() {
-			let token = parser.peek::<Token![Any]>().unwrap();
+			let token = parser.peek::<T![Any]>().unwrap();
 			Err(diagnostics::Unexpected(token, token.span()))?
 		}
 		let third = parser.parse::<PositionSingleValue>()?;
@@ -152,7 +152,7 @@ impl PositionSingleValue {
 impl<'a> Peek<'a> for PositionSingleValue {
 	fn peek(parser: &Parser<'a>) -> Option<hdx_lexer::Token> {
 		parser
-			.peek::<Token![Ident]>()
+			.peek::<T![Ident]>()
 			.filter(|token| {
 				matches!(
 					parser.parse_atom_lower(*token),
@@ -168,7 +168,7 @@ impl<'a> Parse<'a> for PositionSingleValue {
 		if let Some(length) = parser.parse_if_peek::<LengthPercentage>()? {
 			return Ok(Self::LengthPercentage(length));
 		}
-		let token = *parser.parse::<Token![Ident]>()?;
+		let token = *parser.parse::<T![Ident]>()?;
 		match parser.parse_atom_lower(token) {
 			atom!("center") => Ok(Self::Center),
 			atom!("left") => Ok(Self::Left),

@@ -1,6 +1,6 @@
 use hdx_atom::{atom, Atom};
 use hdx_lexer::{QuoteStyle, Span};
-use hdx_parser::{diagnostics, discard, AtRule, Parse, Parser, Result as ParserResult, Spanned, Token, Vec};
+use hdx_parser::{diagnostics, discard, AtRule, Parse, Parser, Result as ParserResult, Spanned, Vec, T};
 use hdx_writer::{write_css, CssWriter, Result as WriterResult, WriteCss};
 use smallvec::{smallvec, SmallVec};
 
@@ -55,12 +55,12 @@ impl KeyframeName {
 
 impl<'a> Parse<'a> for KeyframeName {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		if let Some(token) = parser.peek::<Token![String]>() {
+		if let Some(token) = parser.peek::<T![String]>() {
 			parser.hop(token);
 			let atom = parser.parse_atom(token);
 			return Ok(Self(atom, token.quote_style()));
 		}
-		let token = *parser.parse::<Token![Ident]>()?;
+		let token = *parser.parse::<T![Ident]>()?;
 		let atom = parser.parse_atom_lower(token);
 		if Self::valid_ident(&atom) {
 			Ok(Self(atom, QuoteStyle::None))
@@ -82,7 +82,7 @@ pub struct KeyframeList<'a>(Vec<'a, Spanned<Keyframe<'a>>>);
 
 impl<'a> Parse<'a> for KeyframeList<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		parser.parse::<Token![LeftCurly]>()?;
+		parser.parse::<T![LeftCurly]>()?;
 		let mut rules = parser.new_vec();
 		loop {
 			if discard!(parser, RightCurly) {
@@ -120,7 +120,7 @@ impl<'a> Parse<'a> for Keyframe<'a> {
 			if parser.at_end() || discard!(parser, LeftCurly) {
 				break;
 			}
-			parser.parse::<Token![,]>()?;
+			parser.parse::<T![,]>()?;
 		}
 		let mut properties = parser.new_vec();
 		loop {
@@ -167,7 +167,7 @@ pub enum KeyframeSelector {
 
 impl<'a> Parse<'a> for KeyframeSelector {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		if let Some(token) = parser.peek::<Token![Ident]>() {
+		if let Some(token) = parser.peek::<T![Ident]>() {
 			parser.hop(token);
 			return match parser.parse_atom_lower(token) {
 				atom!("from") => Ok(KeyframeSelector::From),
@@ -175,7 +175,7 @@ impl<'a> Parse<'a> for KeyframeSelector {
 				atom => Err(diagnostics::UnexpectedIdent(atom, token.span()))?,
 			};
 		}
-		let token = *parser.parse::<Token![Dimension]>()?;
+		let token = *parser.parse::<T![Dimension]>()?;
 		let n = parser.parse_number(token);
 		let unit = parser.parse_atom(token);
 		if unit == atom!("%") && (0.0..=100.0).contains(&n) {

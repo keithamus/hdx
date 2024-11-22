@@ -1,6 +1,6 @@
 use hdx_atom::{atom, Atom, Atomizable};
 use hdx_derive::Atomizable;
-use hdx_parser::{diagnostics, Parse, Parser, Result as ParserResult, Token};
+use hdx_parser::{diagnostics, Parse, Parser, Result as ParserResult, T};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 
 #[derive(PartialEq, Debug, Hash)]
@@ -96,7 +96,7 @@ impl Atomizable for Tag {
 
 impl<'a> Parse<'a> for Tag {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let token = *parser.parse::<Token![Ident]>()?;
+		let token = *parser.parse::<T![Ident]>()?;
 		let atom = parser.parse_atom_lower(token);
 		if let Some(tag) = Tag::from_atom(&atom) {
 			Ok(tag)

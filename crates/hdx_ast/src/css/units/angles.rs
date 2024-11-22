@@ -1,6 +1,6 @@
 use hdx_atom::atom;
 use hdx_derive::Writable;
-use hdx_parser::{diagnostics, Parse, Parser, Peek, Result as ParserResult, Token};
+use hdx_parser::{diagnostics, Parse, Parser, Peek, Result as ParserResult, T};
 
 use super::{AbsoluteUnit, CSSFloat};
 
@@ -24,13 +24,13 @@ pub enum Angle {
 
 impl<'a> Peek<'a> for Angle {
 	fn peek(parser: &Parser<'a>) -> Option<hdx_lexer::Token> {
-		parser.peek::<Token![Dimension]>()
+		parser.peek::<T![Dimension]>()
 	}
 }
 
 impl<'a> Parse<'a> for Angle {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let token = parser.parse::<Token![Dimension]>()?;
+		let token = parser.parse::<T![Dimension]>()?;
 		match parser.parse_atom_lower(*token) {
 			atom!("grad") => Ok(Angle::Grad(parser.parse_number(*token).into())),
 			atom!("rad") => Ok(Angle::Rad(parser.parse_number(*token).into())),

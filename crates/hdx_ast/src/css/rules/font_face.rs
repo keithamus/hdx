@@ -1,5 +1,5 @@
 use hdx_atom::{atom, Atom};
-use hdx_parser::{diagnostics, Declaration, Parse, Parser, Result as ParserResult, RuleList, Spanned, Token, Vec};
+use hdx_parser::{diagnostics, Declaration, Parse, Parser, Result as ParserResult, RuleList, Spanned, Vec, T};
 use hdx_writer::{write_css, CssWriter, Result as WriterResult, WriteCss};
 
 use crate::css::properties::StyleValue;
@@ -11,7 +11,7 @@ pub struct FontFace<'a>(Vec<'a, Spanned<FontProperty<'a>>>);
 
 impl<'a> Parse<'a> for FontFace<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let token = *parser.parse::<Token![AtKeyword]>()?;
+		let token = *parser.parse::<T![AtKeyword]>()?;
 		let atom = parser.parse_atom_lower(token);
 		if atom != atom!("font-face") {
 			Err(diagnostics::UnexpectedAtRule(atom, token.span()))?
@@ -54,7 +54,7 @@ pub struct FontProperty<'a> {
 
 impl<'a> Parse<'a> for FontProperty<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		if let Some(token) = parser.peek::<Token![Ident]>() {
+		if let Some(token) = parser.peek::<T![Ident]>() {
 			let atom = parser.parse_atom_lower(token);
 			if !matches!(
 				atom,
@@ -75,7 +75,7 @@ impl<'a> Parse<'a> for FontProperty<'a> {
 				Err(diagnostics::UnexpectedIdent(atom, token.span()))?
 			}
 		} else {
-			let token = parser.peek::<Token![Any]>().unwrap();
+			let token = parser.peek::<T![Any]>().unwrap();
 			Err(diagnostics::Unexpected(token, token.span()))?
 		}
 		let (name, value, important) = Self::parse_declaration(parser)?;

@@ -78,13 +78,13 @@ macro_rules! custom_delim {
 
 		impl<'a> $crate::Peek<'a> for $iden {
 			fn peek(parser: &$crate::Parser<'a>) -> Option<::hdx_lexer::Token> {
-				parser.peek::<$crate::Token![Delim]>().filter(|token| matches!(token.char(), Some($ch)))
+				parser.peek::<$crate::T![Delim]>().filter(|token| matches!(token.char(), Some($ch)))
 			}
 		}
 
 		impl<'a> $crate::Parse<'a> for $iden {
 			fn parse(parser: &mut $crate::Parser<'a>) -> $crate::Result<Self> {
-				let token = *parser.parse::<$crate::Token![Delim]>()?;
+				let token = *parser.parse::<$crate::T![Delim]>()?;
 				if !matches!(token.char(), Some($ch)) {
 					Err($crate::diagnostics::ExpectedDelim(token, token.span()))?;
 				}
@@ -109,7 +109,7 @@ macro_rules! custom_dimension {
 
 		impl<'a> $crate::Peek<'a> for $ident {
 			fn peek(parser: &$crate::Parser<'a>) -> Option<hdx_lexer::Token> {
-				parser.peek::<$crate::Token![Dimension]>().filter(|token| {
+				parser.peek::<$crate::T![Dimension]>().filter(|token| {
 					matches!(token.dimension_unit(), hdx_lexer::DimensionUnit::$ident)
 						|| parser.parse_atom_lower(*token) == ::hdx_atom::atom!($atom)
 				})
@@ -118,7 +118,7 @@ macro_rules! custom_dimension {
 
 		impl<'a> $crate::Parse<'a> for $ident {
 			fn parse(parser: &mut $crate::Parser<'a>) -> $crate::Result<Self> {
-				let token = *parser.parse::<$crate::Token![Dimension]>()?;
+				let token = *parser.parse::<$crate::T![Dimension]>()?;
 				let atom = parser.parse_atom_lower(token);
 				if atom != ::hdx_atom::atom!($atom) {
 					Err($crate::diagnostics::UnexpectedDimension(atom, token.span()))?
@@ -145,14 +145,14 @@ macro_rules! custom_keyword {
 		impl<'a> $crate::Peek<'a> for $ident {
 			fn peek(parser: &$crate::Parser<'a>) -> Option<hdx_lexer::Token> {
 				parser
-					.peek::<$crate::Token![Ident]>()
+					.peek::<$crate::T![Ident]>()
 					.filter(|token| parser.parse_atom_lower(*token) == ::hdx_atom::atom!($atom))
 			}
 		}
 
 		impl<'a> $crate::Parse<'a> for $ident {
 			fn parse(parser: &mut $crate::Parser<'a>) -> $crate::Result<Self> {
-				let token = *parser.parse::<$crate::Token![Ident]>()?;
+				let token = *parser.parse::<$crate::T![Ident]>()?;
 				let atom = parser.parse_atom_lower(token);
 				if atom != ::hdx_atom::atom!($atom) {
 					Err($crate::diagnostics::UnexpectedIdent(atom, token.span()))?
@@ -178,14 +178,14 @@ macro_rules! custom_function {
 		impl<'a> $crate::Peek<'a> for $ident {
 			fn peek(parser: &$crate::Parser<'a>) -> Option<hdx_lexer::Token> {
 				parser
-					.peek::<$crate::Token![Function]>()
+					.peek::<$crate::T![Function]>()
 					.filter(|token| parser.parse_atom_lower(*token) == ::hdx_atom::atom!($atom))
 			}
 		}
 
 		impl<'a> $crate::Parse<'a> for $ident {
 			fn parse(parser: &mut $crate::Parser<'a>) -> $crate::Result<Self> {
-				let token = *parser.parse::<$crate::Token![Function]>()?;
+				let token = *parser.parse::<$crate::T![Function]>()?;
 				let atom = parser.parse_atom_lower(token);
 				if atom != ::hdx_atom::atom!($atom) {
 					Err($crate::diagnostics::ExpectedFunctionOf(::hdx_atom::atom!($atom), atom, token.span()))?
@@ -336,11 +336,11 @@ impl<'a> Parse<'a> for PairWise {
 }
 
 #[macro_export]
-macro_rules! Token {
+macro_rules! T {
 	[:] => { $crate::token::Colon };
 	[;] => { $crate::token::Semicolon };
 	[,] => { $crate::token::Comma };
-	[ ] => { $crate::token::Whitespace };
+	[' '] => { $crate::token::Whitespace };
 
 	[&] => { $crate::token::delim::And };
 	[@] => { $crate::token::delim::At };
@@ -361,89 +361,83 @@ macro_rules! Token {
 	[*] => { $crate::token::delim::Star };
 	[~] => { $crate::token::delim::Tilde };
 	[_] => { $crate::token::delim::Underscore };
+
+	[:] => { $crate::token::Colon };
+	[;] => { $crate::token::Semicolon };
+	[,] => { $crate::token::Comma };
+
+	[&] => { $crate::token::delim::And };
+	[@] => { $crate::token::delim::At };
+	[^] => { $crate::token::delim::Caret };
+	[-] => { $crate::token::delim::Dash };
+	[$] => { $crate::token::delim::Dollar };
+	[.] => { $crate::token::delim::Dot };
+	[=] => { $crate::token::delim::Eq };
+	[>] => { $crate::token::delim::Gt };
+	[#] => { $crate::token::delim::Hash };
+	[<] => { $crate::token::delim::Lt };
+	[!] => { $crate::token::delim::Not };
+	[|] => { $crate::token::delim::Or };
+	[%] => { $crate::token::delim::Percent };
+	[+] => { $crate::token::delim::Plus };
+	[?] => { $crate::token::delim::Question };
+	[/] => { $crate::token::delim::Slash };
+	[*] => { $crate::token::delim::Star };
+	[~] => { $crate::token::delim::Tilde };
+	[_] => { $crate::token::delim::Underscore };
+
+	[Dimension::Cap] => { $crate::token::dimension::Cap };
+	[Dimension::Ch] => { $crate::token::dimension::Ch };
+	[Dimension::Cm] => { $crate::token::dimension::Cm };
+	[Dimension::Cqb] => { $crate::token::dimension::Cqb };
+	[Dimension::Cqh] => { $crate::token::dimension::Cqh };
+	[Dimension::Cqi] => { $crate::token::dimension::Cqi };
+	[Dimension::Cqmax] => { $crate::token::dimension::Cqmax };
+	[Dimension::Cqmin] => { $crate::token::dimension::Cqmin };
+	[Dimension::Cqw] => { $crate::token::dimension::Cqw };
+	[Dimension::Deg] => { $crate::token::dimension::Deg };
+	[Dimension::Dpcm] => { $crate::token::dimension::Dpcm };
+	[Dimension::Dpi] => { $crate::token::dimension::Dpi };
+	[Dimension::Dppx] => { $crate::token::dimension::Dppx };
+	[Dimension::Dvh] => { $crate::token::dimension::Dvh };
+	[Dimension::Dvw] => { $crate::token::dimension::Dvw };
+	[Dimension::Em] => { $crate::token::dimension::Em };
+	[Dimension::Ex] => { $crate::token::dimension::Ex };
+	[Dimension::Fr] => { $crate::token::dimension::Fr };
+	[Dimension::Grad] => { $crate::token::dimension::Grad };
+	[Dimension::Hz] => { $crate::token::dimension::Hz };
+	[Dimension::Ic] => { $crate::token::dimension::Ic };
+	[Dimension::In] => { $crate::token::dimension::In };
+	[Dimension::KHz] => { $crate::token::dimension::KHz };
+	[Dimension::Lh] => { $crate::token::dimension::Lh };
+	[Dimension::Lvh] => { $crate::token::dimension::Lvh };
+	[Dimension::Lvw] => { $crate::token::dimension::Lvw };
+	[Dimension::Mm] => { $crate::token::dimension::Mm };
+	[Dimension::Ms] => { $crate::token::dimension::Ms };
+	[Dimension::%] => { $crate::token::dimension::Percent };
+	[Dimension::Percent] => { $crate::token::dimension::Percent };
+	[Dimension::Pc] => { $crate::token::dimension::Pc };
+	[Dimension::Pt] => { $crate::token::dimension::Pt };
+	[Dimension::Px] => { $crate::token::dimension::Px };
+	[Dimension::Q] => { $crate::token::dimension::Q };
+	[Dimension::Rad] => { $crate::token::dimension::Rad };
+	[Dimension::Rcap] => { $crate::token::dimension::Rcap };
+	[Dimension::Rch] => { $crate::token::dimension::Rch };
+	[Dimension::Rem] => { $crate::token::dimension::Rem };
+	[Dimension::Rex] => { $crate::token::dimension::Rex };
+	[Dimension::Ric] => { $crate::token::dimension::Ric };
+	[Dimension::Rlh] => { $crate::token::dimension::Rlh };
+	[Dimension::S] => { $crate::token::dimension::S };
+	[Dimension::Svh] => { $crate::token::dimension::Svh };
+	[Dimension::Svw] => { $crate::token::dimension::Svw };
+	[Dimension::Turn] => { $crate::token::dimension::Turn };
+	[Dimension::Vb] => { $crate::token::dimension::Vb };
+	[Dimension::Vh] => { $crate::token::dimension::Vh };
+	[Dimension::Vi] => { $crate::token::dimension::Vi };
+	[Dimension::Vmax] => { $crate::token::dimension::Vmax };
+	[Dimension::Vmin] => { $crate::token::dimension::Vmin };
+	[Dimension::Vw] => { $crate::token::dimension::Vw };
+	[Dimension::X] => { $crate::token::dimension::X };
 
 	[$ident:ident] => { $crate::token::$ident }
-}
-
-#[macro_export]
-macro_rules! Delim {
-	[:] => { $crate::token::Colon };
-	[;] => { $crate::token::Semicolon };
-	[,] => { $crate::token::Comma };
-
-	[&] => { $crate::token::delim::And };
-	[@] => { $crate::token::delim::At };
-	[^] => { $crate::token::delim::Caret };
-	[-] => { $crate::token::delim::Dash };
-	[$] => { $crate::token::delim::Dollar };
-	[.] => { $crate::token::delim::Dot };
-	[=] => { $crate::token::delim::Eq };
-	[>] => { $crate::token::delim::Gt };
-	[#] => { $crate::token::delim::Hash };
-	[<] => { $crate::token::delim::Lt };
-	[!] => { $crate::token::delim::Not };
-	[|] => { $crate::token::delim::Or };
-	[%] => { $crate::token::delim::Percent };
-	[+] => { $crate::token::delim::Plus };
-	[?] => { $crate::token::delim::Question };
-	[/] => { $crate::token::delim::Slash };
-	[*] => { $crate::token::delim::Star };
-	[~] => { $crate::token::delim::Tilde };
-	[_] => { $crate::token::delim::Underscore };
-}
-
-#[macro_export]
-macro_rules! Dimension {
-	[Cap] => { $crate::token::dimension::Cap };
-	[Ch] => { $crate::token::dimension::Ch };
-	[Cm] => { $crate::token::dimension::Cm };
-	[Cqb] => { $crate::token::dimension::Cqb };
-	[Cqh] => { $crate::token::dimension::Cqh };
-	[Cqi] => { $crate::token::dimension::Cqi };
-	[Cqmax] => { $crate::token::dimension::Cqmax };
-	[Cqmin] => { $crate::token::dimension::Cqmin };
-	[Cqw] => { $crate::token::dimension::Cqw };
-	[Deg] => { $crate::token::dimension::Deg };
-	[Dpcm] => { $crate::token::dimension::Dpcm };
-	[Dpi] => { $crate::token::dimension::Dpi };
-	[Dppx] => { $crate::token::dimension::Dppx };
-	[Dvh] => { $crate::token::dimension::Dvh };
-	[Dvw] => { $crate::token::dimension::Dvw };
-	[Em] => { $crate::token::dimension::Em };
-	[Ex] => { $crate::token::dimension::Ex };
-	[Fr] => { $crate::token::dimension::Fr };
-	[Grad] => { $crate::token::dimension::Grad };
-	[Hz] => { $crate::token::dimension::Hz };
-	[Ic] => { $crate::token::dimension::Ic };
-	[In] => { $crate::token::dimension::In };
-	[KHz] => { $crate::token::dimension::KHz };
-	[Lh] => { $crate::token::dimension::Lh };
-	[Lvh] => { $crate::token::dimension::Lvh };
-	[Lvw] => { $crate::token::dimension::Lvw };
-	[Mm] => { $crate::token::dimension::Mm };
-	[Ms] => { $crate::token::dimension::Ms };
-	[%] => { $crate::token::dimension::Percent };
-	[Percent] => { $crate::token::dimension::Percent };
-	[Pc] => { $crate::token::dimension::Pc };
-	[Pt] => { $crate::token::dimension::Pt };
-	[Px] => { $crate::token::dimension::Px };
-	[Q] => { $crate::token::dimension::Q };
-	[Rad] => { $crate::token::dimension::Rad };
-	[Rcap] => { $crate::token::dimension::Rcap };
-	[Rch] => { $crate::token::dimension::Rch };
-	[Rem] => { $crate::token::dimension::Rem };
-	[Rex] => { $crate::token::dimension::Rex };
-	[Ric] => { $crate::token::dimension::Ric };
-	[Rlh] => { $crate::token::dimension::Rlh };
-	[S] => { $crate::token::dimension::S };
-	[Svh] => { $crate::token::dimension::Svh };
-	[Svw] => { $crate::token::dimension::Svw };
-	[Turn] => { $crate::token::dimension::Turn };
-	[Vb] => { $crate::token::dimension::Vb };
-	[Vh] => { $crate::token::dimension::Vh };
-	[Vi] => { $crate::token::dimension::Vi };
-	[Vmax] => { $crate::token::dimension::Vmax };
-	[Vmin] => { $crate::token::dimension::Vmin };
-	[Vw] => { $crate::token::dimension::Vw };
-	[X] => { $crate::token::dimension::X };
 }

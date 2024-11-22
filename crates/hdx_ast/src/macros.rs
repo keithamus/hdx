@@ -23,7 +23,7 @@ macro_rules! keyword_typedef {
 
 		impl<'a> hdx_parser::Peek<'a> for $name {
 			fn peek(parser: &hdx_parser::Parser<'a>) -> Option<hdx_lexer::Token> {
-				parser.peek::<hdx_parser::Token![Ident]>().filter(|token| {
+				parser.peek::<hdx_parser::T![Ident]>().filter(|token| {
 					let atom = parser.parse_atom_lower(*token);
 					matches!(atom, $(hdx_atom::atom!($variant_atom))|+)
 				})
@@ -33,7 +33,7 @@ macro_rules! keyword_typedef {
 		impl<'a> hdx_parser::Parse<'a> for $name {
 			fn parse(parser: &mut hdx_parser::Parser<'a>) -> hdx_parser::Result<Self> {
 				use hdx_atom::Atomizable;
-				let token = *parser.parse::<hdx_parser::Token![Ident]>()?;
+				let token = *parser.parse::<hdx_parser::T![Ident]>()?;
 				let atom = parser.parse_atom_lower(token);
 				Self::from_atom(&atom).ok_or_else(|| {
 					hdx_parser::diagnostics::UnexpectedIdent(atom, token.span()).into()
@@ -71,7 +71,7 @@ macro_rules! discrete_media_feature {
 
 		impl<'a> hdx_parser::DiscreteMediaFeature<'a> for $feat {
 			fn parse_media_feature_value(parser: &mut hdx_parser::Parser<'a>) -> hdx_parser::Result<Self> {
-				let token = *parser.parse::<hdx_parser::Token![Ident]>()?;
+				let token = *parser.parse::<hdx_parser::T![Ident]>()?;
 				match parser.parse_atom_lower(token) {
 					$(
 						hdx_atom::atom!($name_atom) => Ok(Self::$name),
@@ -121,7 +121,7 @@ macro_rules! bool_media_feature {
 
 		impl<'a> hdx_parser::DiscreteMediaFeature<'a> for $feat {
 			fn parse_media_feature_value(parser: &mut hdx_parser::Parser<'a>) -> hdx_parser::Result<Self> {
-				let token = *parser.parse::<hdx_parser::Token![Number]>()?;
+				let token = *parser.parse::<hdx_parser::T![Number]>()?;
 				if token.is_int() {
 					let val = parser.parse_number(token);
 					if val == 1.0 {

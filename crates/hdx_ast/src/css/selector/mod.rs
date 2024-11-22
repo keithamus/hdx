@@ -1,7 +1,7 @@
 use hdx_atom::{Atom, Atomizable};
 use hdx_parser::{
-	Delim, Parse, Parser, Result as ParserResult, SelectorComponent as SelectorComponentTrait,
-	SelectorList as SelectorListTrait, Spanned, Token, Vec,
+	Parse, Parser, Result as ParserResult, SelectorComponent as SelectorComponentTrait,
+	SelectorList as SelectorListTrait, Spanned, Vec, T,
 };
 use hdx_writer::{write_css, CssWriter, Result as WriterResult, WriteCss};
 
@@ -148,13 +148,13 @@ impl<'a> SelectorComponentTrait<'a> for SelectorComponent<'a> {
 	fn ns_type_from_token(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		let prefix = NSPrefix::parse(parser)?;
 		if !matches!(prefix, NSPrefix::None) {
-			parser.parse::<Delim![|]>()?;
+			parser.parse::<T![|]>()?;
 		}
-		if let Some(token) = parser.peek::<Delim![*]>() {
+		if let Some(token) = parser.peek::<T![*]>() {
 			parser.hop(token);
 			return Ok(Self::NSPrefixedWildcard(prefix));
 		}
-		let token = *parser.parse::<Token![Ident]>()?;
+		let token = *parser.parse::<T![Ident]>()?;
 		Ok(Self::NSPrefixedTag((prefix, parser.parse_atom(token))))
 	}
 
@@ -226,15 +226,15 @@ pub enum NSPrefix {
 
 impl<'a> Parse<'a> for NSPrefix {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		if let Some(token) = parser.peek::<Delim![*]>() {
+		if let Some(token) = parser.peek::<T![*]>() {
 			parser.hop(token);
 			return Ok(Self::Wildcard);
 		}
-		if let Some(token) = parser.peek::<Delim![|]>() {
+		if let Some(token) = parser.peek::<T![|]>() {
 			parser.hop(token);
 			return Ok(Self::None);
 		}
-		let token = *parser.parse::<Token![Ident]>()?;
+		let token = *parser.parse::<T![Ident]>()?;
 		Ok(Self::Named(parser.parse_atom(token)))
 	}
 }

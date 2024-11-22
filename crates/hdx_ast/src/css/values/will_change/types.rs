@@ -1,5 +1,5 @@
 use hdx_atom::{atom, Atom};
-use hdx_parser::{Parse, Parser, Peek, Result as ParserResult, Token};
+use hdx_parser::{Parse, Parser, Peek, Result as ParserResult, T};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 
 // https://drafts.csswg.org/css-will-change-1/#typedef-animateable-feature
@@ -62,13 +62,13 @@ pub enum AnimateableFeature {
 
 impl<'a> Peek<'a> for AnimateableFeature {
 	fn peek(parser: &Parser<'a>) -> Option<hdx_lexer::Token> {
-		parser.peek::<Token![Ident]>()
+		parser.peek::<T![Ident]>()
 	}
 }
 
 impl<'a> Parse<'a> for AnimateableFeature {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let token = *parser.parse::<Token![Ident]>()?;
+		let token = *parser.parse::<T![Ident]>()?;
 		Ok(match parser.parse_atom_lower(token) {
 			atom!("-webkit-backdrop-filter") => Self::WebkitBackdropFilter,
 			atom!("-webkit-box-reflex") => Self::WebkitBoxReflect,

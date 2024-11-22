@@ -2,7 +2,7 @@ use std::{fmt::Debug, hash::Hash};
 
 use hdx_atom::{atom, Atom};
 use hdx_derive::Visitable;
-use hdx_parser::{Declaration, DeclarationValue, Parse, Parser, Peek, Result as ParserResult, State, Token};
+use hdx_parser::{Declaration, DeclarationValue, Parse, Parser, Peek, Result as ParserResult, State, T};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 
 use crate::{css::values, syntax::ComponentValues};
@@ -44,7 +44,7 @@ impl<'a> WriteCss<'a> for Computed<'a> {
 
 impl<'a> Peek<'a> for Computed<'a> {
 	fn peek(parser: &Parser<'a>) -> Option<hdx_lexer::Token> {
-		if let Some(token) = parser.peek::<Token![Function]>() {
+		if let Some(token) = parser.peek::<T![Function]>() {
 			if matches!(
 				parser.parse_atom_lower(token),
 				atom!("var")
@@ -215,7 +215,7 @@ impl<'a> DeclarationValue<'a> for StyleValue<'a> {
 		if name.starts_with("--") {
 			return Ok(Self::Custom(Custom::parse(parser)?));
 		}
-		if let Some(token) = parser.peek::<Token![Ident]>() {
+		if let Some(token) = parser.peek::<T![Ident]>() {
 			match parser.parse_atom_lower(token) {
 				atom!("initial") => {
 					parser.hop(token);
@@ -254,7 +254,7 @@ impl<'a> DeclarationValue<'a> for StyleValue<'a> {
 							if let Ok(val) = parser.parse::<values::$name>() {
 								if parser.at_end() {
 									return Ok(Self::$name(val))
-								} else if let Some(token) = parser.peek::<Token![Any]>() {
+								} else if let Some(token) = parser.peek::<T![Any]>() {
 									if matches!(token.char(), Some(';' | '}' | '!')) {
 										return Ok(Self::$name(val))
 									}

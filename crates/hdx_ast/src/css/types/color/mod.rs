@@ -5,7 +5,7 @@ mod system;
 use crate::css::units::{Angle, CSSFloat, Percent};
 use hdx_atom::{atom, Atomizable};
 use hdx_lexer::Span;
-use hdx_parser::{diagnostics, discard, todo, Delim, Parse, Parser, Peek, Result as ParserResult, Token};
+use hdx_parser::{diagnostics, discard, todo, Parse, Parser, Peek, Result as ParserResult, T};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 use std::str::Chars;
 
@@ -41,11 +41,11 @@ impl<'a> Parse<'a> for Channel {
 			parser.hop(token);
 			return Ok(Self::None);
 		}
-		if let Some(token) = parser.peek::<Token![Number]>() {
+		if let Some(token) = parser.peek::<T![Number]>() {
 			parser.hop(token);
 			return Ok(Self::Float(parser.parse_number(token).into()));
 		}
-		if let Some(token) = parser.peek::<Token![Dimension]>() {
+		if let Some(token) = parser.peek::<T![Dimension]>() {
 			if parser.parse_atom(token) == atom!("%") {
 				parser.hop(token);
 				Ok(Self::Percent(parser.parse_number(token).into()))
@@ -53,7 +53,7 @@ impl<'a> Parse<'a> for Channel {
 				Ok(Self::Hue(Angle::parse(parser)?))
 			}
 		} else {
-			let token = parser.peek::<Token![Any]>().unwrap();
+			let token = parser.peek::<T![Any]>().unwrap();
 			Err(diagnostics::ExpectedDimension(token, token.span()))?
 		}
 	}
@@ -76,7 +76,7 @@ pub struct AbsoluteColorFunction(pub ColorFunctionSyntax, pub Channel, pub Chann
 
 impl<'a> Peek<'a> for AbsoluteColorFunction {
 	fn peek(parser: &Parser<'a>) -> Option<hdx_lexer::Token> {
-		if let Some(token) = parser.peek::<Token![Function]>() {
+		if let Some(token) = parser.peek::<T![Function]>() {
 			match parser.parse_atom_lower(token) {
 				atom!("color") => return Some(token),
 				named => {
@@ -94,7 +94,7 @@ impl<'a> Parse<'a> for AbsoluteColorFunction {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		let mut syntax = if let Some(token) = parser.peek::<func::Color>() {
 			parser.hop(token);
-			let token = *parser.parse::<Token![Ident]>()?;
+			let token = *parser.parse::<T![Ident]>()?;
 			let atom = parser.parse_atom_lower(token);
 			if let Some(space) = ColorFunctionSyntax::from_color_space(&atom) {
 				space
@@ -102,7 +102,7 @@ impl<'a> Parse<'a> for AbsoluteColorFunction {
 				Err(diagnostics::UnexpectedIdent(atom, token.span()))?
 			}
 		} else {
-			let token = *parser.parse::<Token![Function]>()?;
+			let token = *parser.parse::<T![Function]>()?;
 			let named = parser.parse_atom_lower(token);
 			if let Some(func) = ColorFunctionSyntax::from_named_function(&named) {
 				func
@@ -143,20 +143,20 @@ impl<'a> Parse<'a> for AbsoluteColorFunction {
 		if matches!(third, Channel::Hue(_)) != syntax.third_is_hue() {
 			Err(diagnostics::ColorMustNotHaveHueInMiddle(Span::new(start, parser.offset())))?
 		}
-		if parser.parse_if_peek::<Token![RightParen]>()?.is_some() {
+		if parser.parse_if_peek::<T![RightParen]>()?.is_some() {
 			return Ok(Self(syntax | ColorFunctionSyntax::OmitAlpha, first, second, third, Channel::None));
 		}
 		if syntax.contains(ColorFunctionSyntax::Legacy) {
-			parser.parse::<Delim![,]>()?;
+			parser.parse::<T![,]>()?;
 		} else {
-			parser.parse::<Delim![/]>()?;
+			parser.parse::<T![/]>()?;
 		}
-		let token = parser.peek::<Token![Any]>().unwrap();
+		let token = parser.peek::<T![Any]>().unwrap();
 		let fourth = parser.parse::<Channel>()?;
 		if matches!(fourth, Channel::None) {
 			Err(diagnostics::ExpectedNumber(token, token.span()))?
 		}
-		parser.parse::<Token![RightParen]>()?;
+		parser.parse::<T![RightParen]>()?;
 		Ok(Self(syntax, first, second, third, fourth))
 	}
 }
@@ -243,9 +243,9 @@ impl<'a> Peek<'a> for Color {
 			.peek::<func::Color>()
 			.or_else(|| parser.peek::<func::ColorMix>())
 			.or_else(|| parser.peek::<AbsoluteColorFunction>())
-			.or_else(|| parser.peek::<Token![Hash]>())
+			.or_else(|| parser.peek::<T![Hash]>())
 			.or_else(|| {
-				parser.peek::<Token![Ident]>().filter(|token| {
+				parser.peek::<T![Ident]>().filter(|token| {
 					let atom = parser.parse_atom_lower(*token);
 					matches!(atom, atom!("currentcolor") | atom!("canvastext") | atom!("transparent"))
 						|| NamedColor::from_atom(&atom).is_some()
@@ -262,7 +262,7 @@ impl<'a> Parse<'a> for Color {
 		} else if let Some(token) = parser.peek::<kw::Transparent>() {
 			parser.hop(token);
 			Ok(Color::Transparent)
-		} else if let Some(token) = parser.peek::<Token![Ident]>() {
+		} else if let Some(token) = parser.peek::<T![Ident]>() {
 			let name = parser.parse_atom_lower(token);
 			if let Some(named) = NamedColor::from_atom(&name) {
 				parser.hop(token);
@@ -273,7 +273,7 @@ impl<'a> Parse<'a> for Color {
 			} else {
 				Err(diagnostics::UnexpectedIdent(name, token.span()))?
 			}
-		} else if let Some(token) = parser.peek::<Token![Hash]>() {
+		} else if let Some(token) = parser.peek::<T![Hash]>() {
 			parser.hop(token);
 			let str = parser.parse_str(token);
 			let mut chars = str.chars();

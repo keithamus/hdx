@@ -1,6 +1,6 @@
 use hdx_derive::Writable;
 use hdx_lexer::QuoteStyle;
-use hdx_parser::{Parse, Parser, Peek, Result as ParserResult, Token};
+use hdx_parser::{Parse, Parser, Peek, Result as ParserResult, T};
 use std::fmt::{Display, Result as DisplayResult};
 
 // Some CSS values include quoted strings. They use this unit to represent that.
@@ -22,13 +22,13 @@ impl<'a> Display for CSSString<'a> {
 
 impl<'a> Peek<'a> for CSSString<'a> {
 	fn peek(parser: &Parser<'a>) -> Option<hdx_lexer::Token> {
-		parser.peek::<Token![String]>().filter(|t| !t.is_float())
+		parser.peek::<T![String]>().filter(|t| !t.is_float())
 	}
 }
 
 impl<'a> Parse<'a> for CSSString<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let token = *parser.parse::<Token![String]>()?;
+		let token = *parser.parse::<T![String]>()?;
 		let str = parser.parse_str(token);
 		Ok(Self(str, token.quote_style()))
 	}

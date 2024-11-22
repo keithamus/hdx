@@ -1,5 +1,5 @@
 use hdx_atom::atom;
-use hdx_parser::{Dimension, Parse, Parser, Peek, Result as ParserResult};
+use hdx_parser::{Parse, Parser, Peek, Result as ParserResult, T};
 use hdx_writer::{write_css, CssWriter, Result as WriterResult, WriteCss};
 
 use super::CSSFloat;
@@ -29,13 +29,13 @@ impl From<CSSFloat> for Flex {
 
 impl<'a> Peek<'a> for Flex {
 	fn peek(parser: &Parser<'a>) -> Option<hdx_lexer::Token> {
-		parser.peek::<Dimension![Fr]>()
+		parser.peek::<T![Dimension::Fr]>()
 	}
 }
 
 impl<'a> Parse<'a> for Flex {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let token = *parser.parse::<Dimension![Fr]>()?;
+		let token = *parser.parse::<T![Dimension::Fr]>()?;
 		Ok(parser.parse_number(token).into())
 	}
 }

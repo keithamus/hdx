@@ -1,6 +1,6 @@
 use hdx_atom::atom;
 use hdx_derive::Writable;
-use hdx_parser::{diagnostics, Parse, Parser, Peek, Result as ParserResult, Token};
+use hdx_parser::{diagnostics, Parse, Parser, Peek, Result as ParserResult, T};
 
 use super::{AbsoluteUnit, CSSFloat};
 
@@ -21,7 +21,7 @@ pub enum Resolution {
 
 impl<'a> Peek<'a> for Resolution {
 	fn peek(parser: &Parser<'a>) -> Option<hdx_lexer::Token> {
-		if let Some(token) = parser.peek::<Token![Dimension]>() {
+		if let Some(token) = parser.peek::<T![Dimension]>() {
 			if matches!(parser.parse_atom_lower(token), atom!("dpi") | atom!("dpcm") | atom!("dppx")) {
 				return Some(token);
 			}
@@ -32,7 +32,7 @@ impl<'a> Peek<'a> for Resolution {
 
 impl<'a> Parse<'a> for Resolution {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let token = *parser.parse::<Token![Dimension]>()?;
+		let token = *parser.parse::<T![Dimension]>()?;
 		return match parser.parse_atom_lower(token) {
 			atom!("dpi") => Ok(Self::Dpi(parser.parse_number(token).into())),
 			atom!("dpcm") => Ok(Self::Dpcm(parser.parse_number(token).into())),

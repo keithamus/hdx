@@ -1,4 +1,4 @@
-use hdx_parser::{diagnostics, Parse, Parser, Peek, Result as ParserResult, Token};
+use hdx_parser::{diagnostics, Parse, Parser, Peek, Result as ParserResult, T};
 use hdx_writer::{write_css, CssWriter, Result as WriterResult, WriteCss};
 
 pub(crate) use crate::css::types::DashedIdent;
@@ -122,7 +122,7 @@ impl<'a> Parse<'a> for PositionArea {
 			};
 			Ok(Self::Physical(second, first))
 		} else {
-			let token = parser.peek::<Token![Any]>().unwrap();
+			let token = parser.peek::<T![Any]>().unwrap();
 			Err(diagnostics::Unexpected(token, token.span()))?
 		}
 	}

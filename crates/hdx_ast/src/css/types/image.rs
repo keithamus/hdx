@@ -1,6 +1,6 @@
 use hdx_atom::atom;
 use hdx_lexer::QuoteStyle;
-use hdx_parser::{Parse, Parser, Peek, Result as ParserResult, Token};
+use hdx_parser::{Parse, Parser, Peek, Result as ParserResult, T};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 
 use super::Gradient;
@@ -20,20 +20,20 @@ pub enum Image<'a> {
 
 impl<'a> Peek<'a> for Image<'a> {
 	fn peek(parser: &Parser<'a>) -> Option<hdx_lexer::Token> {
-		parser.peek::<Token![Url]>().or_else(|| parser.peek::<func::Url>()).or_else(|| parser.peek::<Gradient>())
+		parser.peek::<T![Url]>().or_else(|| parser.peek::<func::Url>()).or_else(|| parser.peek::<Gradient>())
 	}
 }
 
 impl<'a> Parse<'a> for Image<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		if let Some(token) = parser.peek::<Token![Url]>() {
+		if let Some(token) = parser.peek::<T![Url]>() {
 			parser.hop(token);
 			return Ok(Self::Url(parser.parse_str(token), token.quote_style()));
 		}
 		if let Some(token) = parser.peek::<func::Url>() {
 			parser.hop(token);
-			let string_token = parser.parse::<Token![String]>()?;
-			parser.parse::<Token![RightParen]>()?;
+			let string_token = parser.parse::<T![String]>()?;
+			parser.parse::<T![RightParen]>()?;
 			return Ok(Self::Url(parser.parse_str(*string_token), string_token.quote_style()));
 		}
 		parser.parse::<Gradient>().map(Self::Gradient)

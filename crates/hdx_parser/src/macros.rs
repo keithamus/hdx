@@ -27,7 +27,7 @@ macro_rules! todo {
 #[macro_export]
 macro_rules! discard {
 	($parser: ident, Include::$inc:ident, $tok:ident) => {
-		if let Some(token) = $parser.peek_with::<$crate::Token![$tok]>(Include::$inc) {
+		if let Some(token) = $parser.peek_with::<$crate::T![$tok]>(Include::$inc) {
 			$parser.hop(token);
 			true
 		} else {
@@ -35,7 +35,7 @@ macro_rules! discard {
 		}
 	};
 	($parser: ident, $tok:ident) => {
-		if let Some(token) = $parser.peek::<$crate::Token![$tok]>() {
+		if let Some(token) = $parser.peek::<$crate::T![$tok]>() {
 			$parser.hop(token);
 			true
 		} else {

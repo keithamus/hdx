@@ -1,5 +1,5 @@
 use hdx_atom::atom;
-use hdx_parser::{diagnostics, Parse, Parser, Peek, Result as ParserResult, Token};
+use hdx_parser::{diagnostics, Parse, Parser, Peek, Result as ParserResult, T};
 use hdx_writer::{write_css, CssWriter, Result as WriterResult, WriteCss};
 
 use crate::css::units::CSSFloat;
@@ -49,17 +49,17 @@ impl From<OpacityValue> for f32 {
 
 impl<'a> Peek<'a> for OpacityValue {
 	fn peek(parser: &Parser<'a>) -> Option<hdx_lexer::Token> {
-		parser.peek::<Token![Number]>().or_else(|| parser.peek::<Token![Dimension]>())
+		parser.peek::<T![Number]>().or_else(|| parser.peek::<T![Dimension]>())
 	}
 }
 
 impl<'a> Parse<'a> for OpacityValue {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		if let Some(token) = parser.peek::<Token![Number]>() {
+		if let Some(token) = parser.peek::<T![Number]>() {
 			parser.hop(token);
 			return Ok(Self::Number(parser.parse_number(token).into()));
 		}
-		let token = *parser.parse::<Token![Dimension]>()?;
+		let token = *parser.parse::<T![Dimension]>()?;
 		let atom = parser.parse_atom_lower(token);
 		if atom != atom!("%") {
 			Err(diagnostics::UnexpectedDimension(atom, token.span()))?

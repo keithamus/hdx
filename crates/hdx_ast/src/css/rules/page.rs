@@ -1,6 +1,6 @@
 use hdx_lexer::{Include, Span};
 use hdx_parser::{
-	diagnostics, discard, AtRule, DeclarationRuleList, Parse, Parser, Result as ParserResult, Spanned, Token, Vec,
+	diagnostics, discard, AtRule, DeclarationRuleList, Parse, Parser, Result as ParserResult, Spanned, Vec, T,
 };
 use hdx_writer::{write_css, write_list, CssWriter, OutputOption, Result as WriterResult, WriteCss};
 use smallvec::{smallvec, SmallVec};
@@ -89,12 +89,12 @@ impl<'a> Parse<'a> for PageSelector {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		let mut page_type = None;
 		let mut pseudos = smallvec![];
-		if let Some(token) = parser.peek::<Token![Ident]>() {
+		if let Some(token) = parser.peek::<T![Ident]>() {
 			parser.hop(token);
 			page_type = Some(parser.parse_atom(token));
 		}
 		loop {
-			if parser.peek::<Token![:]>().is_some() {
+			if parser.peek::<T![:]>().is_some() {
 				pseudos.push(parser.parse_spanned::<PagePseudoClass>()?);
 			} else {
 				return Ok(Self { page_type, pseudos });
@@ -143,8 +143,8 @@ pub enum PagePseudoClass {
 
 impl<'a> Parse<'a> for PagePseudoClass {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		parser.parse::<Token![:]>()?;
-		let token = *parser.parse_with::<Token![Ident]>(Include::Whitespace)?;
+		parser.parse::<T![:]>()?;
+		let token = *parser.parse_with::<T![Ident]>(Include::Whitespace)?;
 		let atom = parser.parse_atom(token);
 		match Self::from_atom(&atom) {
 			Some(v) => Ok(v),
@@ -229,7 +229,7 @@ pub struct MarginRule<'a> {
 
 impl<'a> Parse<'a> for MarginRule<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		if let Some(token) = parser.peek::<Token![AtKeyword]>() {
+		if let Some(token) = parser.peek::<T![AtKeyword]>() {
 			let atom = parser.parse_atom_lower(token);
 			if let Some(name) = PageMarginBox::from_atom(&atom) {
 				let (_, style) = Self::parse_at_rule(parser, None)?;
@@ -242,7 +242,7 @@ impl<'a> Parse<'a> for MarginRule<'a> {
 				Err(diagnostics::UnexpectedAtRule(atom.clone(), token.span()))?
 			}
 		} else {
-			let token = parser.peek::<Token![Any]>().unwrap();
+			let token = parser.peek::<T![Any]>().unwrap();
 			Err(diagnostics::Unexpected(token, token.span()))?
 		}
 	}

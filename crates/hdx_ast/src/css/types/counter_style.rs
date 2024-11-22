@@ -1,6 +1,6 @@
 use hdx_atom::{atom, Atom};
 use hdx_derive::Writable;
-use hdx_parser::{Parse, Parser, Peek, Result as ParserResult, Spanned, Token};
+use hdx_parser::{Parse, Parser, Peek, Result as ParserResult, Spanned, T};
 
 use super::Symbols;
 
@@ -58,13 +58,13 @@ pub enum CounterStyle<'a> {
 
 impl<'a> Peek<'a> for CounterStyle<'a> {
 	fn peek(parser: &Parser<'a>) -> Option<hdx_lexer::Token> {
-		parser.peek::<Token![Ident]>().or_else(|| parser.peek::<Symbols>())
+		parser.peek::<T![Ident]>().or_else(|| parser.peek::<Symbols>())
 	}
 }
 
 impl<'a> Parse<'a> for CounterStyle<'a> {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		if let Some(token) = parser.peek::<Token![Ident]>() {
+		if let Some(token) = parser.peek::<T![Ident]>() {
 			let atom = parser.parse_atom(token);
 			parser.hop(token);
 			match atom {

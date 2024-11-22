@@ -2,8 +2,7 @@ use hdx_atom::{atom, Atom, Atomizable};
 use hdx_derive::{Atomizable, Parsable};
 use hdx_lexer::Span;
 use hdx_parser::{
-	diagnostics, discard, AtRule, ConditionalAtRule, Parse, Parser, Result as ParserResult, RuleList, Spanned, Token,
-	Vec,
+	diagnostics, discard, AtRule, ConditionalAtRule, Parse, Parser, Result as ParserResult, RuleList, Spanned, Vec, T,
 };
 use hdx_writer::{write_css, write_list, CssWriter, OutputOption, Result as WriterResult, WriteCss};
 use smallvec::{smallvec, SmallVec};
@@ -147,11 +146,11 @@ impl<'a> Parse<'a> for MediaQuery {
 		let mut precondition = None;
 		let mut media_type = None;
 		let mut condition = None;
-		if parser.peek::<Token![LeftParen]>().is_some() {
+		if parser.peek::<T![LeftParen]>().is_some() {
 			condition = Some(parser.parse::<MediaCondition>()?);
 			return Ok(Self { precondition, media_type, condition });
 		}
-		let token = *parser.parse::<Token![Ident]>()?;
+		let token = *parser.parse::<T![Ident]>()?;
 		let atom = parser.parse_atom_lower(token);
 		if let Some(cond) = MediaPreCondition::from_atom(&atom) {
 			precondition = Some(cond);
@@ -160,7 +159,7 @@ impl<'a> Parse<'a> for MediaQuery {
 		} else {
 			Err(diagnostics::UnexpectedIdent(atom, token.span()))?;
 		}
-		if let Some(token) = parser.peek::<Token![Ident]>() {
+		if let Some(token) = parser.peek::<T![Ident]>() {
 			if precondition.is_some() {
 				let atom = parser.parse_atom_lower(token);
 				media_type = MediaType::from_atom(&atom);
@@ -332,9 +331,9 @@ apply_medias!(media_feature);
 
 impl<'a> Parse<'a> for MediaFeature {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		parser.parse::<Token![LeftParen]>()?;
+		parser.parse::<T![LeftParen]>()?;
 		let checkpoint = parser.checkpoint();
-		if let Some(token) = parser.peek::<Token![Ident]>() {
+		if let Some(token) = parser.peek::<T![Ident]>() {
 			macro_rules! match_media {
 				( $($name: ident($typ: ident): atom!($atom: tt)$(| $alts:pat)*,)+) => {
 					// Only peek at the token as the underlying media feature parser needs to parse the leading atom.
@@ -354,10 +353,10 @@ impl<'a> Parse<'a> for MediaFeature {
 					Err(err)
 				}
 			})?;
-			parser.parse::<Token![RightParen]>()?;
+			parser.parse::<T![RightParen]>()?;
 			Ok(value)
 		} else {
-			let token = parser.peek::<Token![Any]>().unwrap();
+			let token = parser.peek::<T![Any]>().unwrap();
 			Err(diagnostics::Unexpected(token, token.span()))?
 		}
 	}

@@ -1,5 +1,5 @@
 use hdx_atom::{atom, Atom};
-use hdx_parser::{diagnostics, token, Parse, Parser, Peek, Result as ParserResult, Token};
+use hdx_parser::{diagnostics, token, Parse, Parser, Peek, Result as ParserResult, T};
 use hdx_writer::{write_css, CssWriter, Result as WriterResult, WriteCss};
 
 use super::{CSSFloat, Flex};
@@ -68,7 +68,7 @@ macro_rules! length {
 
 		impl<'a> Parse<'a> for Length {
 			fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-				if let Some(token) = parser.peek::<Token![Number]>() {
+				if let Some(token) = parser.peek::<T![Number]>() {
 					parser.hop(token);
 					if parser.parse_number(token) == 0.0 {
 						return Ok(Self::Zero);
@@ -76,7 +76,7 @@ macro_rules! length {
 						Err(diagnostics::Unexpected(token, token.span()))?
 					}
 				}
-				let token = *parser.parse::<Token![Dimension]>()?;
+				let token = *parser.parse::<T![Dimension]>()?;
 				if let Some(d) = Self::new(parser.parse_number(token).into(), parser.parse_atom_lower(token)) {
 					Ok(d)
 				} else {
@@ -137,13 +137,13 @@ macro_rules! length {
 
 		impl<'a> Peek<'a> for LengthPercentage {
 			fn peek(parser: &Parser<'a>) -> Option<hdx_lexer::Token> {
-				parser.peek::<Token![Number]>().or_else(|| parser.peek::<Token![Dimension]>())
+				parser.peek::<T![Number]>().or_else(|| parser.peek::<T![Dimension]>())
 			}
 		}
 
 		impl<'a> Parse<'a> for LengthPercentage {
 			fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-				if let Some(token) = parser.peek::<Token![Number]>() {
+				if let Some(token) = parser.peek::<T![Number]>() {
 					parser.hop(token);
 					if parser.parse_number(token) == 0.0 {
 						return Ok(Self::Zero);
@@ -151,7 +151,7 @@ macro_rules! length {
 						Err(diagnostics::Unexpected(token, token.span()))?
 					}
 				}
-				let token = *parser.parse::<Token![Dimension]>()?;
+				let token = *parser.parse::<T![Dimension]>()?;
 				if let Some(d) = Self::new(parser.parse_number(token).into(), parser.parse_atom_lower(token)) {
 					Ok(d)
 				} else {

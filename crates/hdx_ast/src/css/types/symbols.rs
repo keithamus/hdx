@@ -1,7 +1,7 @@
 use hdx_atom::{atom, Atomizable};
 use hdx_derive::{Atomizable, Writable};
 use hdx_lexer::QuoteStyle;
-use hdx_parser::{discard, Parse, Parser, Peek, Result as ParserResult, Token};
+use hdx_parser::{discard, Parse, Parser, Peek, Result as ParserResult, T};
 use hdx_writer::{OutputOption, Result as WriterResult, WriteCss};
 use smallvec::{smallvec, SmallVec};
 
@@ -19,7 +19,7 @@ pub struct Symbols<'a>(pub SymbolsType, SmallVec<[Symbol<'a>; 0]>);
 
 impl<'a> Peek<'a> for Symbols<'a> {
 	fn peek(parser: &Parser<'a>) -> Option<hdx_lexer::Token> {
-		parser.peek::<Token![Function]>()
+		parser.peek::<T![Function]>()
 	}
 }
 
@@ -31,7 +31,7 @@ impl<'a> Parse<'a> for Symbols<'a> {
 		if discard!(parser, RightParen) {
 			return Ok(Self(symbol_type, symbols));
 		}
-		if let Some(token) = parser.peek::<Token![Ident]>() {
+		if let Some(token) = parser.peek::<T![Ident]>() {
 			if let Some(st) = SymbolsType::from_atom(&parser.parse_atom(token)) {
 				parser.hop(token);
 				symbol_type = st;
@@ -41,7 +41,7 @@ impl<'a> Parse<'a> for Symbols<'a> {
 			if discard!(parser, RightParen) {
 				return Ok(Self(symbol_type, symbols));
 			}
-			if let Some(token) = parser.peek::<Token![String]>() {
+			if let Some(token) = parser.peek::<T![String]>() {
 				parser.hop(token);
 				symbols.push(Symbol::String(parser.parse_str(token), token.quote_style()));
 			} else {

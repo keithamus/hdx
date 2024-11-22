@@ -1,6 +1,6 @@
 use hdx_atom::atom;
 use hdx_derive::Atomizable;
-use hdx_parser::{diagnostics, todo, Parse, Parser, Result as ParserResult, Token};
+use hdx_parser::{diagnostics, todo, Parse, Parser, Result as ParserResult, T};
 use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
 
 // https://searchfox.org/wubkat/source/Source/WebCore/css/CSSPseudoSelectors.json
@@ -143,7 +143,7 @@ pub enum WebkitFunctionalPseudoElement {
 
 impl<'a> Parse<'a> for WebkitFunctionalPseudoElement {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let token = *parser.parse::<Token![Function]>()?;
+		let token = *parser.parse::<T![Function]>()?;
 		match parser.parse_atom_lower(token) {
 			atom!("-webkit-distributed") => todo!(parser),
 			atom => Err(diagnostics::UnexpectedFunction(atom, token.span()))?,
@@ -167,7 +167,7 @@ pub enum WebkitFunctionalPseudoClass {
 
 impl<'a> Parse<'a> for WebkitFunctionalPseudoClass {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
-		let token = *parser.parse::<Token![Function]>()?;
+		let token = *parser.parse::<T![Function]>()?;
 		match parser.parse_atom_lower(token) {
 			atom!("-webkit-any") => todo!(parser),
 			atom => Err(diagnostics::UnexpectedFunction(atom, token.span()))?,

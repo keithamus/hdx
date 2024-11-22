@@ -1,5 +1,5 @@
 use hdx_lexer::Include;
-use hdx_parser::{diagnostics, discard, Delim, Parse, Parser, Result as ParserResult, Token};
+use hdx_parser::{diagnostics, discard, Parse, Parser, Result as ParserResult, T};
 use hdx_writer::{write_css, CssWriter, Result as WriterResult, WriteCss};
 
 #[derive(Debug, PartialEq, Hash)]
@@ -17,7 +17,7 @@ pub enum Combinator {
 impl<'a> Parse<'a> for Combinator {
 	fn parse(parser: &mut Parser<'a>) -> ParserResult<Self> {
 		let could_be_descendant_combinator = discard!(parser, Include::Whitespace, Whitespace);
-		if let Some(token) = parser.peek::<Token![Delim]>() {
+		if let Some(token) = parser.peek::<T![Delim]>() {
 			let char = token.char();
 			if could_be_descendant_combinator && !matches!(char, Some('>' | '+' | '~' | '|')) {
 				return Ok(Self::Descendant);
@@ -29,7 +29,7 @@ impl<'a> Parse<'a> for Combinator {
 				Some('&') => Self::Nesting,
 				Some('|') => {
 					parser.hop(token);
-					parser.parse_with::<Delim![|]>(Include::Whitespace)?;
+					parser.parse_with::<T![|]>(Include::Whitespace)?;
 					return Ok(Self::Column);
 				}
 				_ if could_be_descendant_combinator => return Ok(Self::Descendant),
@@ -48,7 +48,7 @@ impl<'a> Parse<'a> for Combinator {
 			}
 			Ok(Self::Descendant)
 		} else {
-			let token = parser.peek::<Token![Any]>().unwrap();
+			let token = parser.peek::<T![Any]>().unwrap();
 			Err(diagnostics::Unexpected(token, token.span()))?
 		}
 	}

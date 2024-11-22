@@ -9,7 +9,7 @@ pub use declarations::*;
 pub use rules::*;
 pub use selectors::*;
 
-use crate::{diagnostics, discard, parser::Parser, Comparison, Delim, Result, State, Token, Vec};
+use crate::{diagnostics, discard, parser::Parser, Comparison, Result, State, Vec, T};
 
 impl<'a, T: Parse<'a>> Parse<'a> for Vec<'a, T> {
 	fn parse(parser: &mut Parser<'a>) -> Result<Vec<'a, T>> {
@@ -63,7 +63,7 @@ pub trait Block<'a>: Sized + Parse<'a> {
 	fn parse_block(
 		parser: &mut Parser<'a>,
 	) -> Result<(Vec<'a, Spanned<Self::Declaration>>, Vec<'a, Spanned<Self::Rule>>)> {
-		parser.parse::<Token![LeftCurly]>()?;
+		parser.parse::<T![LeftCurly]>()?;
 		let mut declarations = parser.new_vec();
 		let mut rules = parser.new_vec();
 		loop {
@@ -75,7 +75,7 @@ pub trait Block<'a>: Sized + Parse<'a> {
 				break;
 			}
 			let old_state = parser.set_state(State::Nested);
-			if parser.peek::<Token![AtKeyword]>().is_some() {
+			if parser.peek::<T![AtKeyword]>().is_some() {
 				rules.push(parser.parse_spanned::<Self::Rule>().inspect_err(|_| {
 					parser.set_state(old_state);
 				})?);
@@ -116,12 +116,12 @@ pub trait DiscreteMediaFeature<'a>: Sized + Default {
 	fn parse_media_feature_value(parser: &mut Parser<'a>) -> Result<Self>;
 
 	fn parse_descrete_media_feature(name: Atom, parser: &mut Parser<'a>) -> Result<Self> {
-		let token = *parser.parse::<Token![Ident]>()?;
+		let token = *parser.parse::<T![Ident]>()?;
 		let atom = parser.parse_atom_lower(token);
 		if atom != name {
 			Err(diagnostics::ExpectedIdentOf(name, atom, token.span()))?
 		}
-		if let Some(token) = parser.peek::<Delim![:]>() {
+		if let Some(token) = parser.peek::<T![:]>() {
 			parser.hop(token);
 			Ok(Self::parse_media_feature_value(parser)?)
 		} else {
@@ -136,12 +136,12 @@ pub trait RangedMediaFeature<'a>: Sized {
 	fn new(left: (Comparison, Self::Type), right: Option<(Comparison, Self::Type)>, legacy: bool) -> Self;
 
 	fn parse_ranged_media_feature(name: Atom, parser: &mut Parser<'a>) -> Result<Self> {
-		let left = if let Some(token) = parser.peek::<Token![Ident]>() {
+		let left = if let Some(token) = parser.peek::<T![Ident]>() {
 			parser.hop(token);
 			let mut legacy = false;
 			let legacy_cmp = match parser.parse_atom_lower(token) {
 				atom if atom == name => {
-					legacy = parser.peek::<Delim![:]>().is_some();
+					legacy = parser.peek::<T![:]>().is_some();
 					Comparison::Equal
 				}
 				atom if atom.strip_prefix("max-").unwrap_or("") == name.as_ref() => {
@@ -155,7 +155,7 @@ pub trait RangedMediaFeature<'a>: Sized {
 				atom => Err(diagnostics::ExpectedIdentOf(name, atom, token.span()))?,
 			};
 			if legacy {
-				parser.parse::<Delim![:]>()?;
+				parser.parse::<T![:]>()?;
 				return Ok(Self::new((legacy_cmp, Self::Type::parse(parser)?), None, true));
 			} else {
 				let cmp = parser.parse::<Comparison>()?;
@@ -166,12 +166,12 @@ pub trait RangedMediaFeature<'a>: Sized {
 		};
 		let offset = parser.offset();
 		let left_cmp = parser.parse::<Comparison>()?;
-		let token = *parser.parse::<Token![Ident]>()?;
+		let token = *parser.parse::<T![Ident]>()?;
 		let atom = parser.parse_atom_lower(token);
 		if atom != name {
 			Err(diagnostics::ExpectedIdentOf(name, atom, token.span()))?
 		}
-		if parser.peek::<Token![Delim]>().is_none() {
+		if parser.peek::<T![Delim]>().is_none() {
 			return Ok(Self::new((left_cmp, left), None, false));
 		}
 		let right_cmp = Comparison::parse(parser)?;
