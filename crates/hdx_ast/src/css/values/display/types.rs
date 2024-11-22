@@ -1,6 +1,6 @@
-use hdx_atom::{atom, Atomizable};
-use hdx_parser::{diagnostics, Parse, Parser, Peek, Result as ParserResult, T};
-use hdx_writer::{write_css, CssWriter, Result as WriterResult, WriteCss};
+use hdx_atom::Atomizable;
+use hdx_parser::{Parse, Peek};
+use hdx_writer::{CssWriter, WriteCss};
 
 pub(crate) use crate::css::units::*;
 use crate::macros::keyword_typedef;

@@ -139,7 +139,7 @@ pub trait QualifiedRule<'a>: Sized + Parse<'a> {
 			}
 		}
 
-		let mut prelude = Self::parse_prelude(p);
+		let prelude = Self::parse_prelude(p);
 
 		// Otherwise, consume a block from input, and let child rules be the result.
 		// If the first item of child rules is a list of declarations,
