@@ -1,7 +1,7 @@
 use hdx_atom::{atom, Atomizable};
 use hdx_derive::{Atomizable, Writable};
 use hdx_lexer::QuoteStyle;
-use hdx_parser::{discard, Parse, Parser, Peek, Result as ParserResult, T};
+use hdx_parser::{Parse, Parser, Peek, Result as ParserResult, T};
 use hdx_writer::{OutputOption, Result as WriterResult, WriteCss};
 use smallvec::{smallvec, SmallVec};
 

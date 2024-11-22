@@ -1,6 +1,6 @@
 use hdx_atom::{atom, Atom};
 use hdx_lexer::{Include, QuoteStyle};
-use hdx_parser::{diagnostics, discard, Parse, Parser, Result as ParserResult, T};
+use hdx_parser::{diagnostics, Parse, Parser, Result as ParserResult, T};
 use hdx_writer::{write_css, CssWriter, Result as WriterResult, WriteCss};
 
 use super::NSPrefix;
