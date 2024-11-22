@@ -1,4 +1,3 @@
-use bumpalo::Bump;
 use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion, Throughput};
 use glob::glob;
 use hdx_lexer::{Include, Kind, Lexer};
@@ -28,15 +27,13 @@ fn popular(c: &mut Criterion) {
 	for file in get_files() {
 		group.throughput(Throughput::Bytes(file.source_text.len() as u64));
 		group.bench_with_input(BenchmarkId::from_parameter(&file.name), &file.source_text, |b, source_text| {
-			b.iter_with_large_drop(|| {
-				let allocator = Bump::default();
-				let mut lexer = Lexer::new(&allocator, source_text, Include::none());
+			b.iter(|| {
+				let mut lexer = Lexer::new(source_text, Include::none());
 				loop {
 					if matches!(lexer.advance().kind(), Kind::Eof) {
 						break;
 					}
 				}
-				allocator
 			});
 		});
 	}
