@@ -16,7 +16,7 @@ use impls::*;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum AnchorName {}
+pub enum AnchorName<'a> {}
 
 // https://drafts.csswg.org/css-anchor-position-1/#anchor-scope
 #[value(" none | all | <dashed-ident># ")]
@@ -26,7 +26,7 @@ pub enum AnchorName {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum AnchorScope {}
+pub enum AnchorScope<'a> {}
 
 // https://drafts.csswg.org/css-anchor-position-1/#position-anchor
 #[value(" auto | <anchor-name> ")]
@@ -36,7 +36,7 @@ pub enum AnchorScope {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum PositionAnchor {}
+pub enum PositionAnchor<'a> {}
 
 // https://drafts.csswg.org/css-anchor-position-1/#position-area
 #[value(" none | <position-area> ")]

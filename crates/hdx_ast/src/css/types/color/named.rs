@@ -1,4 +1,4 @@
-use crate::macros::keyword_typedef;
+use hdx_parser::keyword_typedef;
 
 keyword_typedef!(NamedColor {
 	Aliceblue: atom!("aliceblue"),
@@ -158,6 +158,13 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(NamedColor, 1);
+		assert_size!(NamedColor, 16);
+	}
+
+	#[test]
+	fn test_writes() {
+		assert_parse!(NamedColor, "yellow");
+		assert_parse!(NamedColor, "tomato");
+		assert_parse!(NamedColor, "tan");
 	}
 }

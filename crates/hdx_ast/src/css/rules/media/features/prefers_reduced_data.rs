@@ -1,4 +1,4 @@
-use crate::macros::discrete_media_feature;
+use hdx_parser::discrete_media_feature;
 
 discrete_media_feature!(PrefersReducedDataMediaFeature[atom!("prefers-reduced-data")] {
 	NoPreference: atom!("no-preference"),
@@ -12,24 +12,14 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(PrefersReducedDataMediaFeature, 1);
+		assert_size!(PrefersReducedDataMediaFeature, 36);
 	}
 
 	#[test]
 	fn test_writes() {
 		assert_parse!(PrefersReducedDataMediaFeature, "prefers-reduced-data");
-		assert_parse!(PrefersReducedDataMediaFeature, "prefers-reduced-data: no-preference");
-		assert_parse!(PrefersReducedDataMediaFeature, "prefers-reduced-data: reduce");
-	}
-
-	#[test]
-	fn test_minify() {
-		assert_minify!(
-			PrefersReducedDataMediaFeature,
-			"prefers-reduced-data: no-preference",
-			"prefers-reduced-data:no-preference"
-		);
-		assert_minify!(PrefersReducedDataMediaFeature, "prefers-reduced-data: reduce", "prefers-reduced-data:reduce");
+		assert_parse!(PrefersReducedDataMediaFeature, "prefers-reduced-data:no-preference");
+		assert_parse!(PrefersReducedDataMediaFeature, "prefers-reduced-data:reduce");
 	}
 
 	#[test]

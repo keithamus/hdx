@@ -1,8 +1,7 @@
-use hdx_atom::{atom, Atom};
-use hdx_parser::{diagnostics, token, Parse, Parser, Peek, Result as ParserResult, T};
-use hdx_writer::{write_css, CssWriter, Result as WriterResult, WriteCss};
+use hdx_lexer::{Cursor, Token};
+use hdx_parser::{Build, Is, Parser, T};
 
-use super::{CSSFloat, Flex};
+use super::Flex;
 
 // const PX_CM: f32 = PX_IN / 2.54;
 // const PX_MM: f32 = PX_IN / 25.4;
@@ -14,346 +13,381 @@ use super::{CSSFloat, Flex};
 mod kw {
 	use hdx_parser::custom_keyword;
 	custom_keyword!(Auto, atom!("auto"));
-	custom_keyword!(Thin, atom!("thin"));
-	custom_keyword!(Medium, atom!("medium"));
-	custom_keyword!(Thick, atom!("thick"));
 }
 
-macro_rules! length {
-    ( $(
-        $name: ident: $atom: tt,
-    )+ ) => {
+macro_rules! apply_lengths {
+	($ident: ident) => {
+		$ident! {
+			// https://drafts.csswg.org/css-values/#font-relative-lengths
+			Em,
+			Rem,
+			Ex,
+			Rex,
+			Cap,
+			Rcap,
+			Ch,
+			Rch,
+			Ic,
+			Ric,
+			Lh,
+			Rlh,
 
-		#[derive(Default, Debug, Clone, Copy, PartialEq, Hash)]
+			// https://drafts.csswg.org/css-values/#viewport-relative-units
+			Vw,
+			Svw,
+			Lvw,
+			Dvw,
+			Vh,
+			Svh,
+			Lvh,
+			Dvh,
+			Vi,
+			Svi,
+			Lvi,
+			Dvi,
+			Vb,
+			Svb,
+			Lvb,
+			Dvb,
+			Vmin,
+			Svmin,
+			Lvmin,
+			Dvmin,
+			Vmax,
+			Svmax,
+			Lvmax,
+			Dvmax,
+
+			// https://drafts.csswg.org/css-values/#absolute-lengths
+			Cm,
+			Mm,
+			Q,
+			In,
+			Pc,
+			Pt,
+			Px,
+
+			// https://www.w3.org/TR/css-contain-3/#container-lengths
+			Cqw,
+			Cqh,
+			Cqi,
+			Cqb,
+			Cqmin,
+			Cqmax,
+		}
+	};
+}
+
+macro_rules! define_length {
+	( $($name: ident),+ $(,)* ) => {
+		#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 		#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", content = "value", rename_all = "kebab-case"))]
 		pub enum Length {
-			#[default]
-			#[cfg_attr(feature = "serde", serde())]
-			Zero,
-			$($name(CSSFloat),)+
+			Zero(T![Number]),
+			$($name(T![Dimension::$name]),)+
 		}
+	}
+}
+apply_lengths!(define_length);
 
-		impl Length {
-			pub fn new(val: CSSFloat, atom: Atom) -> Option<Self> {
-				match atom {
-					$(atom!($atom) => Some(Self::$name(val)),)+
-					_ => None
+impl From<Length> for f32 {
+	fn from(val: Length) -> Self {
+		macro_rules! match_length {
+			( $($name: ident),+ $(,)* ) => {
+				match val {
+					Length::Zero(_) => 0.0,
+					$(Length::$name(f) => f.into()),+
 				}
 			}
 		}
-
-		impl Into<CSSFloat> for Length {
-			fn into(self) -> CSSFloat {
-				match self {
-					$(Self::$name(f) => f,)+
-					Self::Zero => 0.0.into(),
-				}
-			}
-		}
-
-		impl Into<f32> for Length {
-			fn into(self) -> f32 {
-				match self {
-					$(Self::$name(f) => f.into(),)+
-					Self::Zero => 0.0,
-				}
-			}
-		}
-
-		impl<'a> Peek<'a> for Length {
-			fn peek(p: &Parser<'a>) -> Option<hdx_lexer::Token> {
-				p.peek::<token::Number>().or_else(|| p.peek::<token::Dimension>())
-			}
-		}
-
-		impl<'a> Parse<'a> for Length {
-			fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
-				if let Some(token) = p.peek::<T![Number]>() {
-					p.hop(token);
-					if p.parse_number(token) == 0.0 {
-						return Ok(Self::Zero);
-					} else {
-						Err(diagnostics::Unexpected(token, token.span()))?
-					}
-				}
-				let token = *p.parse::<T![Dimension]>()?;
-				if let Some(d) = Self::new(p.parse_number(token).into(), p.parse_atom_lower(token)) {
-					Ok(d)
-				} else {
-					Err(diagnostics::Unexpected(token, token.span()))?
-				}
-			}
-		}
-
-		impl<'a> WriteCss<'a> for Length {
-			fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
-				match self {
-					Self::Zero => write_css!(sink, '0'),
-					$(Self::$name(f) => write_css!(sink, f, $atom)),+
-				}
-				Ok(())
-			}
-		}
-
-		#[derive(Default, Debug, Clone, Copy, PartialEq, Hash)]
-		#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", content = "value", rename_all = "kebab-case"))]
-		pub enum LengthPercentage {
-			#[default]
-			Zero,
-			$($name(CSSFloat),)+
-			#[cfg_attr(feature = "serde", serde(rename = "%"))]
-			Percent(CSSFloat),
-		}
-
-		impl LengthPercentage {
-			pub fn new(val: CSSFloat, atom: Atom) -> Option<Self> {
-				match atom {
-					$(atom!($atom) => Some(Self::$name(val)),)+
-					atom!("%") => Some(Self::Percent(val)),
-					_ => None
-				}
-			}
-		}
-
-		impl Into<CSSFloat> for LengthPercentage {
-			fn into(self) -> CSSFloat {
-				match self {
-					$(Self::$name(f) => f,)+
-					Self::Percent(f) => f,
-					Self::Zero => 0.0.into(),
-				}
-			}
-		}
-
-		impl Into<f32> for LengthPercentage {
-			fn into(self) -> f32 {
-				match self {
-					$(Self::$name(f) => f.into(),)+
-					Self::Percent(f) => f.into(),
-					Self::Zero => 0.0,
-				}
-			}
-		}
-
-		impl<'a> Peek<'a> for LengthPercentage {
-			fn peek(p: &Parser<'a>) -> Option<hdx_lexer::Token> {
-				p.peek::<T![Number]>().or_else(|| p.peek::<T![Dimension]>())
-			}
-		}
-
-		impl<'a> Parse<'a> for LengthPercentage {
-			fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
-				if let Some(token) = p.peek::<T![Number]>() {
-					p.hop(token);
-					if p.parse_number(token) == 0.0 {
-						return Ok(Self::Zero);
-					} else {
-						Err(diagnostics::Unexpected(token, token.span()))?
-					}
-				}
-				let token = *p.parse::<T![Dimension]>()?;
-				if let Some(d) = Self::new(p.parse_number(token).into(), p.parse_atom_lower(token)) {
-					Ok(d)
-				} else {
-					Err(diagnostics::Unexpected(token, token.span()))?
-				}
-			}
-		}
-
-		impl<'a> WriteCss<'a> for LengthPercentage {
-			fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
-				match self {
-					Self::Zero => write_css!(sink, '0'),
-					Self::Percent(f) => write_css!(sink, f, '%'),
-					$(Self::$name(f) => write_css!(sink, f, $atom)),+
-				}
-				Ok(())
-			}
-		}
-
+		apply_lengths!(match_length)
 	}
 }
 
-length! {
-	// https://drafts.csswg.org/css-values/#font-relative-lengths
-	Em: "em", // atom!("em")
-	Rem: "rem", // atom!("rem")
-	Ex: "ex", // atom!("ex")
-	Rex: "rex", // atom!("rex")
-	Cap: "cap", // atom!("cap")
-	Rcap: "rcap", // atom!("rcap")
-	Ch: "ch", // atom!("ch")
-	Rch: "rch", // atom!("rch")
-	Ic: "ic", // atom!("ic")
-	Ric: "ric", // atom!("ric")
-	Lh: "lh", // atom!("lh")
-	Rlh: "rlh", // atom!("rlh")
-
-	// https://drafts.csswg.org/css-values/#viewport-relative-units
-	Vw: "vw", // atom!("vw")
-	Svw: "svw", // atom!("svw")
-	Lvw: "lvw", // atom!("lvw")
-	Dvw: "dvw", // atom!("dvw")
-	Vh: "vh", // atom!("vh")
-	Svh: "svh", // atom!("svh")
-	Lvh: "lvh", // atom!("lvh")
-	Dvh: "dvh", // atom!("dvh")
-	Vi: "vi", // atom!("vi")
-	Svi: "svi", // atom!("svi")
-	Lvi: "lvi", // atom!("lvi")
-	Dvi: "dvi", // atom!("dvi")
-	Vb: "vb", // atom!("vb")
-	Svb: "svb", // atom!("svb")
-	Lvb: "lvb", // atom!("lvb")
-	Dvb: "dvb", // atom!("dvb")
-	Vmin: "vmin", // atom!("vmin")
-	Svmin: "svmin", // atom!("svmin")
-	Lvmin: "lvmin", // atom!("lvmin")
-	Dvmin: "dvmin", // atom!("dvmin")
-	Vmax: "vmax", // atom!("vmax")
-	Svmax: "svmax", // atom!("svmax")
-	Lvmax: "lvmax", // atom!("lvmax")
-	Dvmax: "dvmax", // atom!("dvmax")
-
-	// https://drafts.csswg.org/css-values/#absolute-lengths
-	Cm: "cm", // atom!("cm")
-	Mm: "mm", // atom!("mm")
-	Q: "q", // atom!("q")
-	In: "in", // atom!("in")
-	Pc: "pc", // atom!("pc")
-	Pt: "pt", // atom!("pt")
-	Px: "px", // atom!("px")
-
-	// https://www.w3.org/TR/css-contain-3/#container-lengths
-	Cqw: "cqw", // atom!("cqw")
-	Cqh: "cqh", // atom!("cqh")
-	Cqi: "cqi", // atom!("cqi")
-	Cqb: "cqb", // atom!("cqb")
-	Cqmin: "cqmin", // atom!("cqmin")
-	Cqmax: "cqmax", // atom!("cqmax")
+impl From<Length> for Token {
+	fn from(value: Length) -> Self {
+		macro_rules! match_length {
+				( $($name: ident),+ $(,)* ) => {
+					match value {
+						Length::Zero(l) => l.into(),
+						$(Length::$name(l) => l.into(),)+
+					}
+				}
+			}
+		apply_lengths!(match_length)
+	}
 }
 
-#[derive(Default, Debug, Clone, Copy, PartialEq, Hash)]
+impl From<&Length> for Token {
+	fn from(value: &Length) -> Self {
+		macro_rules! match_length {
+				( $($name: ident),+ $(,)* ) => {
+					match value {
+						Length::Zero(l) => l.into(),
+						$(Length::$name(l) => l.into(),)+
+					}
+				}
+			}
+		apply_lengths!(match_length)
+	}
+}
+
+impl<'a> Is<'a> for Length {
+	fn is(p: &Parser<'a>, c: Cursor) -> bool {
+		macro_rules! is_checks {
+			( $($name: ident),+ $(,)* ) => {
+				(<T![Number]>::is(p, c) && c.token().value() == 0.0)
+					$(|| <T![Dimension::$name]>::is(p, c))+
+			}
+		}
+		apply_lengths!(is_checks)
+	}
+}
+
+impl<'a> Build<'a> for Length {
+	fn build(p: &Parser<'a>, c: Cursor) -> Self {
+		macro_rules! build_steps {
+			( $($name: ident),+ $(,)* ) => {
+				$(if <T![Dimension::$name]>::is(p, c) {
+					Self::$name(<T![Dimension::$name]>::build(p, c))
+				} else )+ {
+					Self::Zero(<T![Number]>::build(p, c))
+				}
+			}
+		}
+		apply_lengths!(build_steps)
+	}
+}
+
+impl From<Length> for Cursor {
+	fn from(value: Length) -> Self {
+		macro_rules! from_steps {
+			( $($name: ident),+ $(,)* ) => {
+				match value {
+					$(Length::$name(t) => t.into(),)+
+					Length::Zero(t) => t.into(),
+				}
+			}
+		}
+		apply_lengths!(from_steps)
+	}
+}
+
+impl From<&Length> for Cursor {
+	fn from(value: &Length) -> Self {
+		(*value).into()
+	}
+}
+
+macro_rules! define_length_percentage {
+	( $($name: ident),+ $(,)* ) => {
+		#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+		#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", content = "value", rename_all = "kebab-case"))]
+		pub enum LengthPercentage {
+			Zero(T![Number]),
+			$($name(T![Dimension::$name]),)+
+			Percent(T![Dimension::%]),
+		}
+	}
+}
+apply_lengths!(define_length_percentage);
+
+impl From<LengthPercentage> for f32 {
+	fn from(val: LengthPercentage) -> Self {
+		macro_rules! match_length {
+			( $($name: ident),+ $(,)* ) => {
+				match val {
+					LengthPercentage::Zero(_) => 0.0,
+					LengthPercentage::Percent(f) => f.into(),
+					$(LengthPercentage::$name(f) => f.into()),+
+				}
+			}
+		}
+		apply_lengths!(match_length)
+	}
+}
+
+impl From<LengthPercentage> for Token {
+	fn from(value: LengthPercentage) -> Self {
+		macro_rules! match_length {
+				( $($name: ident),+ $(,)* ) => {
+					match value {
+						LengthPercentage::Zero(l) => l.into(),
+						LengthPercentage::Percent(l) => l.into(),
+						$(LengthPercentage::$name(l) => l.into(),)+
+					}
+				}
+			}
+		apply_lengths!(match_length)
+	}
+}
+
+impl From<&LengthPercentage> for Token {
+	fn from(value: &LengthPercentage) -> Self {
+		macro_rules! match_length {
+				( $($name: ident),+ $(,)* ) => {
+					match value {
+						LengthPercentage::Zero(l) => l.into(),
+						LengthPercentage::Percent(l) => l.into(),
+						$(LengthPercentage::$name(l) => l.into(),)+
+					}
+				}
+			}
+		apply_lengths!(match_length)
+	}
+}
+
+impl From<LengthPercentage> for Cursor {
+	fn from(value: LengthPercentage) -> Self {
+		macro_rules! from_steps {
+			( $($name: ident),+ $(,)* ) => {
+				match value {
+					$(LengthPercentage::$name(t) => t.into(),)+
+					LengthPercentage::Percent(t) => t.into(),
+					LengthPercentage::Zero(t) => t.into(),
+				}
+			}
+		}
+		apply_lengths!(from_steps)
+	}
+}
+
+impl From<&LengthPercentage> for Cursor {
+	fn from(value: &LengthPercentage) -> Self {
+		(*value).into()
+	}
+}
+
+impl<'a> Is<'a> for LengthPercentage {
+	fn is(p: &Parser<'a>, c: Cursor) -> bool {
+		macro_rules! is_checks {
+			( $($name: ident),+ $(,)* ) => {
+				(<T![Number]>::is(p, c) && c.token().value() == 0.0)
+				|| <T![Dimension::%]>::is(p, c)
+					$(|| <T![Dimension::$name]>::is(p, c))+
+			}
+		}
+		apply_lengths!(is_checks)
+	}
+}
+
+impl<'a> Build<'a> for LengthPercentage {
+	fn build(p: &Parser<'a>, c: Cursor) -> Self {
+		macro_rules! build_steps {
+			( $($name: ident),+ $(,)* ) => {
+				$(if <T![Dimension::$name]>::is(p, c) {
+					Self::$name(<T![Dimension::$name]>::build(p, c))
+				} else )+ if <T![Dimension::%]>::is(p, c) {
+					Self::Percent(<T![Dimension::%]>::build(p, c))
+				} else {
+					Self::Zero(<T![Number]>::build(p, c))
+				}
+			}
+		}
+		apply_lengths!(build_steps)
+	}
+}
+
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(rename_all = "kebab-case"))]
 pub enum LengthPercentageOrAuto {
-	#[default]
-	Auto,
+	Auto(kw::Auto),
 	LengthPercentage(LengthPercentage),
 }
 
-impl<'a> Peek<'a> for LengthPercentageOrAuto {
-	fn peek(p: &Parser<'a>) -> Option<hdx_lexer::Token> {
-		p.peek::<kw::Auto>().or_else(|| p.peek::<LengthPercentage>())
+impl<'a> Is<'a> for LengthPercentageOrAuto {
+	fn is(p: &Parser<'a>, c: Cursor) -> bool {
+		<kw::Auto>::is(p, c) || LengthPercentage::is(p, c)
 	}
 }
 
-impl<'a> Parse<'a> for LengthPercentageOrAuto {
-	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
-		if let Some(token) = p.peek::<kw::Auto>() {
-			p.hop(token);
-			Ok(Self::Auto)
+impl<'a> Build<'a> for LengthPercentageOrAuto {
+	fn build(p: &Parser<'a>, c: Cursor) -> Self {
+		if <kw::Auto>::is(p, c) {
+			Self::Auto(<kw::Auto>::build(p, c))
 		} else {
-			Ok(Self::LengthPercentage(p.parse::<LengthPercentage>()?))
+			Self::LengthPercentage(LengthPercentage::build(p, c))
 		}
 	}
 }
 
-impl<'a> WriteCss<'a> for LengthPercentageOrAuto {
-	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
-		match self {
-			Self::Auto => kw::Auto::atom().write_css(sink),
-			Self::LengthPercentage(l) => l.write_css(sink),
+impl From<LengthPercentageOrAuto> for Token {
+	fn from(value: LengthPercentageOrAuto) -> Self {
+		match value {
+			LengthPercentageOrAuto::Auto(l) => l.into(),
+			LengthPercentageOrAuto::LengthPercentage(l) => l.into(),
 		}
 	}
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Hash)]
+impl From<&LengthPercentageOrAuto> for Token {
+	fn from(value: &LengthPercentageOrAuto) -> Self {
+		match value {
+			LengthPercentageOrAuto::Auto(l) => l.into(),
+			LengthPercentageOrAuto::LengthPercentage(l) => l.into(),
+		}
+	}
+}
+
+impl From<LengthPercentageOrAuto> for Cursor {
+	fn from(value: LengthPercentageOrAuto) -> Self {
+		match value {
+			LengthPercentageOrAuto::Auto(t) => t.into(),
+			LengthPercentageOrAuto::LengthPercentage(t) => t.into(),
+		}
+	}
+}
+
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(rename_all = "kebab-case"))]
 pub enum LengthPercentageOrFlex {
 	Flex(Flex),
 	LengthPercentage(LengthPercentage),
 }
 
-impl<'a> Peek<'a> for LengthPercentageOrFlex {
-	fn peek(p: &Parser<'a>) -> Option<hdx_lexer::Token> {
-		p.peek::<Flex>().or_else(|| p.peek::<LengthPercentage>())
+impl<'a> Is<'a> for LengthPercentageOrFlex {
+	fn is(p: &Parser<'a>, c: Cursor) -> bool {
+		Flex::is(p, c) || LengthPercentage::is(p, c)
 	}
 }
 
-impl<'a> Parse<'a> for LengthPercentageOrFlex {
-	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
-		if let Some(flex) = p.parse_if_peek::<Flex>()? {
-			Ok(Self::Flex(flex))
+impl<'a> Build<'a> for LengthPercentageOrFlex {
+	fn build(p: &Parser<'a>, c: Cursor) -> Self {
+		if <kw::Auto>::is(p, c) {
+			Self::Flex(Flex::build(p, c))
 		} else {
-			Ok(Self::LengthPercentage(p.parse::<LengthPercentage>()?))
+			Self::LengthPercentage(LengthPercentage::build(p, c))
 		}
 	}
 }
 
-impl<'a> WriteCss<'a> for LengthPercentageOrFlex {
-	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
-		match self {
-			Self::Flex(f) => f.write_css(sink),
-			Self::LengthPercentage(l) => l.write_css(sink),
-		}
-	}
-}
-
-#[derive(Default, Debug, Clone, Copy, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(rename_all = "kebab-case"))]
-pub enum LineWidth {
-	Thin,
-	#[default]
-	Medium,
-	Thick,
-	Length(Length),
-}
-
-impl<'a> Peek<'a> for LineWidth {
-	fn peek(p: &Parser<'a>) -> Option<hdx_lexer::Token> {
-		p.peek::<kw::Thin>()
-			.or_else(|| p.peek::<kw::Medium>())
-			.or_else(|| p.peek::<kw::Thick>())
-			.or_else(|| p.peek::<Length>())
-	}
-}
-
-impl<'a> Parse<'a> for LineWidth {
-	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
-		if let Some(token) = p.peek::<kw::Thin>() {
-			p.hop(token);
-			Ok(Self::Thin)
-		} else if let Some(token) = p.peek::<kw::Medium>() {
-			p.hop(token);
-			Ok(Self::Medium)
-		} else if let Some(token) = p.peek::<kw::Thick>() {
-			p.hop(token);
-			Ok(Self::Thick)
-		} else {
-			Ok(Self::Length(p.parse::<Length>()?))
-		}
-	}
-}
-
-impl<'a> WriteCss<'a> for LineWidth {
-	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
-		match self {
-			Self::Thin => kw::Thin::atom().write_css(sink),
-			Self::Medium => kw::Medium::atom().write_css(sink),
-			Self::Thick => kw::Thick::atom().write_css(sink),
-			Self::Length(l) => l.write_css(sink),
-		}
-	}
-}
-
-impl From<LineWidth> for Length {
-	fn from(value: LineWidth) -> Self {
+impl From<LengthPercentageOrFlex> for Token {
+	fn from(value: LengthPercentageOrFlex) -> Self {
 		match value {
-			LineWidth::Thin => Length::Px(1.0.into()),
-			LineWidth::Medium => Length::Px(3.0.into()),
-			LineWidth::Thick => Length::Px(3.0.into()),
-			LineWidth::Length(length) => length,
+			LengthPercentageOrFlex::Flex(l) => l.into(),
+			LengthPercentageOrFlex::LengthPercentage(l) => l.into(),
 		}
+	}
+}
+
+impl From<&LengthPercentageOrFlex> for Token {
+	fn from(value: &LengthPercentageOrFlex) -> Self {
+		(*value).into()
+	}
+}
+
+impl From<LengthPercentageOrFlex> for Cursor {
+	fn from(value: LengthPercentageOrFlex) -> Self {
+		match value {
+			LengthPercentageOrFlex::Flex(l) => l.into(),
+			LengthPercentageOrFlex::LengthPercentage(l) => l.into(),
+		}
+	}
+}
+
+impl From<&LengthPercentageOrFlex> for Cursor {
+	fn from(value: &LengthPercentageOrFlex) -> Self {
+		(*value).into()
 	}
 }
 
@@ -364,10 +398,9 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(Length, 8);
-		assert_size!(LengthPercentage, 8);
-		assert_size!(LengthPercentageOrAuto, 8);
-		assert_size!(LineWidth, 8);
+		assert_size!(Length, 12);
+		assert_size!(LengthPercentage, 12);
+		assert_size!(LengthPercentageOrAuto, 16);
 	}
 
 	#[test]
@@ -380,8 +413,5 @@ mod tests {
 		// Percent
 		assert_parse!(LengthPercentage, "1%");
 		assert_parse!(LengthPercentageOrAuto, "auto");
-		// LineWidth
-		assert_parse!(LineWidth, "1px");
-		assert_parse!(LineWidth, "medium");
 	}
 }

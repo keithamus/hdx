@@ -96,7 +96,7 @@ pub enum WordWrap {}
 #[percentages("see individual properties")]
 #[canonical_order("n/a")]
 #[animation_type("discrete")]
-pub enum TextAlign<'a> {}
+pub enum TextAlign {}
 
 // https://drafts.csswg.org/css-text-4/#text-align-all
 #[value(" start | end | left | right | center | <string> | justify | match-parent ")]
@@ -106,7 +106,7 @@ pub enum TextAlign<'a> {}
 #[percentages("n/a")]
 #[canonical_order("n/a")]
 #[animation_type("discrete")]
-pub enum TextAlignAll<'a> {}
+pub enum TextAlignAll {}
 
 // https://drafts.csswg.org/css-text-4/#text-align-last
 #[value(" auto | start | end | left | right | center | justify | match-parent ")]
@@ -266,7 +266,7 @@ pub struct TextWrap;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum HyphenateCharacter<'a> {}
+pub enum HyphenateCharacter {}
 
 // https://drafts.csswg.org/css-text-4/#hyphenate-limit-zone
 #[value(" <length-percentage> ")]

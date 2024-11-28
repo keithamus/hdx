@@ -1,4 +1,4 @@
-use crate::macros::discrete_media_feature;
+use hdx_parser::discrete_media_feature;
 
 discrete_media_feature!(AnyHoverMediaFeature[atom!("any-hover")] {
 	None: atom!("none"),
@@ -12,19 +12,13 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(AnyHoverMediaFeature, 1);
+		assert_size!(AnyHoverMediaFeature, 36);
 	}
 
 	#[test]
 	fn test_writes() {
 		assert_parse!(AnyHoverMediaFeature, "any-hover");
-		assert_parse!(AnyHoverMediaFeature, "any-hover: hover");
-		assert_parse!(AnyHoverMediaFeature, "any-hover: none");
-	}
-
-	#[test]
-	fn test_minify() {
-		assert_minify!(AnyHoverMediaFeature, "any-hover: hover", "any-hover:hover");
-		assert_minify!(AnyHoverMediaFeature, "any-hover: none", "any-hover:none");
+		assert_parse!(AnyHoverMediaFeature, "any-hover:hover");
+		assert_parse!(AnyHoverMediaFeature, "any-hover:none");
 	}
 }

@@ -8,17 +8,17 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(FlexDirection, 1);
-		assert_size!(FlexWrap, 1);
-		assert_size!(FlexFlow, 2);
+		assert_size!(FlexDirection, 16);
+		assert_size!(FlexWrap, 16);
+		assert_size!(FlexFlow, 32);
 		// assert_size!(Flex, 1);
-		assert_size!(FlexGrow, 4);
-		assert_size!(FlexShrink, 4);
-		assert_size!(FlexBasis, 12);
-		assert_size!(JustifyContent, 1);
-		assert_size!(AlignItems, 1);
-		assert_size!(AlignSelf, 1);
-		assert_size!(AlignContent, 1);
+		assert_size!(FlexGrow, 8);
+		assert_size!(FlexShrink, 8);
+		assert_size!(FlexBasis, 36);
+		assert_size!(JustifyContent, 16);
+		assert_size!(AlignItems, 16);
+		assert_size!(AlignSelf, 16);
+		assert_size!(AlignContent, 16);
 	}
 
 	#[test]

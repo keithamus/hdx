@@ -1,4 +1,4 @@
-use crate::macros::discrete_media_feature;
+use hdx_parser::discrete_media_feature;
 
 discrete_media_feature!(ColorGamutMediaFeature[atom!("color-gamut")] {
 	Srgb: atom!("srgb"),
@@ -13,22 +13,15 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(ColorGamutMediaFeature, 1);
+		assert_size!(ColorGamutMediaFeature, 36);
 	}
 
 	#[test]
 	fn test_writes() {
 		assert_parse!(ColorGamutMediaFeature, "color-gamut");
-		assert_parse!(ColorGamutMediaFeature, "color-gamut: srgb");
-		assert_parse!(ColorGamutMediaFeature, "color-gamut: p3");
-		assert_parse!(ColorGamutMediaFeature, "color-gamut: rec2020");
-	}
-
-	#[test]
-	fn test_minify() {
-		assert_minify!(ColorGamutMediaFeature, "color-gamut: srgb", "color-gamut:srgb");
-		assert_minify!(ColorGamutMediaFeature, "color-gamut: p3", "color-gamut:p3");
-		assert_minify!(ColorGamutMediaFeature, "color-gamut: rec2020", "color-gamut:rec2020");
+		assert_parse!(ColorGamutMediaFeature, "color-gamut:srgb");
+		assert_parse!(ColorGamutMediaFeature, "color-gamut:p3");
+		assert_parse!(ColorGamutMediaFeature, "color-gamut:rec2020");
 	}
 
 	#[test]

@@ -1,3 +1,3 @@
-use crate::css::values::Todo;
+use crate::Todo;
 
 pub type ResolutionMediaFeature = Todo;

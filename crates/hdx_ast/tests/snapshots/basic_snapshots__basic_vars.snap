@@ -41,61 +41,42 @@ expression: result.output.unwrap()
                         "name": "linear-gradient",
                         "values": [
                           {
-                            "node": {
-                              "kind": "Ident",
-                              "value": "to"
-                            },
+                            "node": "to",
                             "start": 35,
                             "end": 37
                           },
                           {
-                            "node": {
-                              "kind": "Whitespace"
-                            },
+                            "node": null,
                             "start": 37,
                             "end": 38
                           },
                           {
-                            "node": {
-                              "kind": "Ident",
-                              "value": "right"
-                            },
+                            "node": "right",
                             "start": 38,
                             "end": 43
                           },
                           {
-                            "node": {
-                              "kind": "Comma"
-                            },
+                            "node": null,
                             "start": 43,
                             "end": 44
                           },
                           {
-                            "node": {
-                              "kind": "Whitespace"
-                            },
+                            "node": null,
                             "start": 44,
                             "end": 45
                           },
                           {
-                            "node": {
-                              "kind": "Ident",
-                              "value": "transparent"
-                            },
+                            "node": "transparent",
                             "start": 45,
                             "end": 56
                           },
                           {
-                            "node": {
-                              "kind": "Comma"
-                            },
+                            "node": null,
                             "start": 56,
                             "end": 57
                           },
                           {
-                            "node": {
-                              "kind": "Whitespace"
-                            },
+                            "node": null,
                             "start": 57,
                             "end": 58
                           },
@@ -105,10 +86,7 @@ expression: result.output.unwrap()
                               "name": "var",
                               "values": [
                                 {
-                                  "node": {
-                                    "kind": "Ident",
-                                    "value": "--border-color"
-                                  },
+                                  "node": "--border-color",
                                   "start": 62,
                                   "end": 76
                                 }
@@ -118,37 +96,25 @@ expression: result.output.unwrap()
                             "end": 77
                           },
                           {
-                            "node": {
-                              "kind": "Whitespace"
-                            },
+                            "node": null,
                             "start": 77,
                             "end": 78
                           },
                           {
-                            "node": {
-                              "kind": "Dimension",
-                              "value": [
-                                20.0,
-                                "%",
-                                {
-                                  "bits": 0
-                                }
-                              ]
-                            },
+                            "node": [
+                              20.0,
+                              "%"
+                            ],
                             "start": 78,
                             "end": 81
                           },
                           {
-                            "node": {
-                              "kind": "Comma"
-                            },
+                            "node": null,
                             "start": 81,
                             "end": 82
                           },
                           {
-                            "node": {
-                              "kind": "Whitespace"
-                            },
+                            "node": null,
                             "start": 82,
                             "end": 83
                           },
@@ -158,10 +124,7 @@ expression: result.output.unwrap()
                               "name": "var",
                               "values": [
                                 {
-                                  "node": {
-                                    "kind": "Ident",
-                                    "value": "--border-color"
-                                  },
+                                  "node": "--border-color",
                                   "start": 87,
                                   "end": 101
                                 }
@@ -171,45 +134,30 @@ expression: result.output.unwrap()
                             "end": 102
                           },
                           {
-                            "node": {
-                              "kind": "Whitespace"
-                            },
+                            "node": null,
                             "start": 102,
                             "end": 103
                           },
                           {
-                            "node": {
-                              "kind": "Dimension",
-                              "value": [
-                                80.0,
-                                "%",
-                                {
-                                  "bits": 0
-                                }
-                              ]
-                            },
+                            "node": [
+                              80.0,
+                              "%"
+                            ],
                             "start": 103,
                             "end": 106
                           },
                           {
-                            "node": {
-                              "kind": "Comma"
-                            },
+                            "node": null,
                             "start": 106,
                             "end": 107
                           },
                           {
-                            "node": {
-                              "kind": "Whitespace"
-                            },
+                            "node": null,
                             "start": 107,
                             "end": 108
                           },
                           {
-                            "node": {
-                              "kind": "Ident",
-                              "value": "transparent"
-                            },
+                            "node": "transparent",
                             "start": 108,
                             "end": 119
                           }

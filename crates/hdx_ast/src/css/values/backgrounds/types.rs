@@ -1,6 +1,8 @@
-use crate::macros::keyword_typedef;
-use hdx_parser::{Parse, Parser, Peek, Result as ParserResult};
-use hdx_writer::{write_css, CssWriter, Result as WriterResult, WriteCss};
+use hdx_atom::atom;
+use hdx_lexer::Cursor;
+use hdx_parser::{
+	diagnostics, keyword_typedef, Build, CursorStream, Parse, Parser, Peek, Result as ParserResult, ToCursors, T,
+};
 
 pub(crate) use crate::css::types::*;
 pub(crate) use crate::css::values::r#box::types::VisualBox;
@@ -14,24 +16,23 @@ mod kw {
 
 // https://drafts.csswg.org/css-backgrounds/#typedef-bg-image
 // <bg-image> = <image> | none
-#[derive(Debug, Clone, PartialEq, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(rename_all = "kebab-case"))]
 pub enum BgImage<'a> {
-	None,
+	None(T![Ident]),
 	Image(Image<'a>),
 }
 
 impl<'a> Peek<'a> for BgImage<'a> {
-	fn peek(p: &Parser<'a>) -> Option<hdx_lexer::Token> {
-		p.peek::<kw::None>().or_else(|| p.peek::<Image>())
+	fn peek(p: &Parser<'a>) -> bool {
+		p.peek::<kw::None>() || p.peek::<Image>()
 	}
 }
 
 impl<'a> Parse<'a> for BgImage<'a> {
 	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
-		if let Some(token) = p.peek::<kw::None>() {
-			p.hop(token);
-			Ok(Self::None)
+		if p.peek::<kw::None>() {
+			Ok(Self::None(p.parse::<T![Ident]>()?))
 		} else {
 			let image = p.parse::<Image>()?;
 			Ok(Self::Image(image))
@@ -39,60 +40,51 @@ impl<'a> Parse<'a> for BgImage<'a> {
 	}
 }
 
-impl<'a> WriteCss<'a> for BgImage<'a> {
-	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
-		match self {
-			Self::None => kw::None::atom().write_css(sink),
-			Self::Image(image) => image.write_css(sink),
-		}
-	}
-}
-
 // https://drafts.csswg.org/css-backgrounds-4/#background-repeat
 // <repeat-style> = repeat-x | repeat-y | <repetition>{1,2}
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(rename_all = "kebab-case"))]
 pub enum RepeatStyle {
-	RepeatX,
-	RepeatY,
+	RepeatX(T![Ident]),
+	RepeatY(T![Ident]),
 	Repetition(Repetition, Option<Repetition>),
 }
 
-impl RepeatStyle {
-	#[allow(non_upper_case_globals)]
-	pub const Repeat: RepeatStyle = RepeatStyle::Repetition(Repetition::Repeat, None);
-}
-
 impl<'a> Peek<'a> for RepeatStyle {
-	fn peek(p: &Parser<'a>) -> Option<hdx_lexer::Token> {
-		p.peek::<kw::RepeatX>().or_else(|| p.peek::<kw::RepeatY>()).or_else(|| p.peek::<Repetition>())
+	fn peek(p: &Parser<'a>) -> bool {
+		p.peek::<kw::RepeatX>() || p.peek::<kw::RepeatY>() || p.peek::<Repetition>()
 	}
 }
 
 impl<'a> Parse<'a> for RepeatStyle {
 	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
-		if let Some(token) = p.peek::<kw::RepeatX>() {
-			p.hop(token);
-			Ok(Self::RepeatX)
-		} else if let Some(token) = p.peek::<kw::RepeatY>() {
-			p.hop(token);
-			Ok(Self::RepeatY)
-		} else {
-			let first = p.parse::<Repetition>()?;
-			let second = p.parse_if_peek::<Repetition>()?;
-			Ok(Self::Repetition(first, second))
+		let ident = p.parse::<T![Ident]>()?;
+		let c: Cursor = ident.into();
+		match p.parse_atom_lower(c) {
+			atom!("repeat-x") => Ok(Self::RepeatX(<T![Ident]>::build(p, c))),
+			atom!("repeat-y") => Ok(Self::RepeatY(<T![Ident]>::build(p, c))),
+			atom!("repeat") | atom!("space") | atom!("round") | atom!("no-repeat") => {
+				let first = Repetition::build(p, c);
+				let second = p.parse_if_peek::<Repetition>()?;
+				Ok(Self::Repetition(first, second))
+			}
+			atom => Err(diagnostics::UnexpectedIdent(atom, c.into()))?,
 		}
 	}
 }
 
-impl<'a> WriteCss<'a> for RepeatStyle {
-	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
+impl<'a> ToCursors<'a> for RepeatStyle {
+	fn to_cursors(&self, s: &mut CursorStream<'a>) {
 		match self {
-			Self::RepeatX => write_css!(sink, kw::RepeatX::atom()),
-			Self::RepeatY => write_css!(sink, kw::RepeatY::atom()),
-			Self::Repetition(p1, p2) => write_css!(sink, p1, ' ', p2),
+			Self::RepeatX(c) => s.append(c.into()),
+			Self::RepeatY(c) => s.append(c.into()),
+			Self::Repetition(p1, p2) => {
+				s.append(p1.into());
+				if let Some(p2) = p2 {
+					s.append(p2.into());
+				}
+			}
 		}
-		Ok(())
 	}
 }
 

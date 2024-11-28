@@ -16,7 +16,7 @@ use impls::*;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("see individual properties")]
-pub struct Outline;
+pub struct Outline<'a>;
 
 // https://drafts.csswg.org/css-ui-4/#outline-width
 #[value(" <line-width> ")]
@@ -46,7 +46,7 @@ pub enum OutlineStyle {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value")]
-pub enum OutlineColor {}
+pub enum OutlineColor<'a> {}
 
 // https://drafts.csswg.org/css-ui-4/#outline-offset
 #[value(" <length> ")]

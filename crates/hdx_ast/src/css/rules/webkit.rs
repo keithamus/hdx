@@ -1,41 +1,40 @@
 use hdx_atom::atom;
 use hdx_lexer::Span;
-use hdx_parser::{diagnostics, AtRule, Parse, Parser, Result as ParserResult, Spanned};
-use hdx_writer::{write_css, CssWriter, Result as WriterResult, WriteCss};
+use hdx_parser::{diagnostics, AtRule, CursorStream, Parse, Parser, Result as ParserResult, ToCursors, T};
 
-use super::{KeyframeList, KeyframeName};
+use super::{KeyframeBlock, KeyframeName};
 
 // https://drafts.csswg.org/css-animations/#at-ruledef-keyframes
-#[derive(PartialEq, Debug, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
 pub struct WebkitKeyframes<'a> {
-	name: Spanned<KeyframeName>,
-	rules: Spanned<KeyframeList<'a>>,
+	at_keyword: T![AtKeyword],
+	name: KeyframeName,
+	rules: KeyframeBlock<'a>,
 }
 
 impl<'a> Parse<'a> for WebkitKeyframes<'a> {
 	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
 		let start = p.offset();
 		match Self::parse_at_rule(p, Some(atom!("-webkit-keyframes")))? {
-			(Some(name), Some(rules)) => Ok(Self { name, rules }),
-			(Some(_), None) => Err(diagnostics::MissingAtRuleBlock(Span::new(start, p.offset())))?,
-			(None, Some(_)) => Err(diagnostics::MissingAtRulePrelude(Span::new(start, p.offset())))?,
-			(None, None) => Err(diagnostics::MissingAtRulePrelude(Span::new(start, p.offset())))?,
+			(at_keyword, Some(name), Some(rules)) => Ok(Self { at_keyword, name, rules }),
+			(_, Some(_), None) => Err(diagnostics::MissingAtRuleBlock(Span::new(start, p.offset())))?,
+			(_, None, Some(_)) => Err(diagnostics::MissingAtRulePrelude(Span::new(start, p.offset())))?,
+			(_, None, None) => Err(diagnostics::MissingAtRulePrelude(Span::new(start, p.offset())))?,
 		}
 	}
 }
 
 impl<'a> AtRule<'a> for WebkitKeyframes<'a> {
 	type Prelude = KeyframeName;
-	type Block = KeyframeList<'a>;
+	type Block = KeyframeBlock<'a>;
 }
 
-impl<'a> WriteCss<'a> for WebkitKeyframes<'a> {
-	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
-		sink.indent();
-		write_css!(sink, '@', atom!("-webkit-keyframes"), ' ', self.name, (), self.rules);
-		sink.dedent();
-		Ok(())
+impl<'a> ToCursors<'a> for WebkitKeyframes<'a> {
+	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+		s.append(self.at_keyword.into());
+		s.append(self.name.into());
+		ToCursors::to_cursors(&self.rules, s);
 	}
 }
 
@@ -46,7 +45,7 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(WebkitKeyframes, 64);
+		assert_size!(WebkitKeyframes, 88);
 	}
 
 	#[test]

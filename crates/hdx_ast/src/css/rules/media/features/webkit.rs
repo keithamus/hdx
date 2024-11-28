@@ -1,7 +1,5 @@
-use crate::{
-	css::units::CSSFloat,
-	macros::{discrete_media_feature, ranged_media_feature},
-};
+use crate::css::units::CSSFloat;
+use hdx_parser::{discrete_media_feature, ranged_media_feature};
 
 discrete_media_feature!(WebkitAnimationMediaFeature[atom!("-webkit-animation")] {
 	True: atom!("true"),

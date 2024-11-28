@@ -1,9 +1,9 @@
-use bitmask_enum::bitmask;
-use hdx_atom::{atom, Atomizable};
-use hdx_derive::{Atomizable, Writable};
-use hdx_parser::{diagnostics, Parse, Parser, Peek, Result as ParserResult, T};
-use hdx_writer::{CssWriter, OutputOption, Result as WriterResult, WriteCss};
-use smallvec::{smallvec, SmallVec};
+use bumpalo::collections::Vec;
+use hdx_atom::atom;
+use hdx_lexer::Cursor;
+use hdx_parser::{
+	diagnostics, keyword_typedef, Build, CursorStream, Is, Parse, Parser, Result as ParserResult, ToCursors, T,
+};
 
 use crate::css::{
 	types::Position,
@@ -16,6 +16,10 @@ mod kw {
 	use hdx_parser::custom_keyword;
 	custom_keyword!(To, atom!("to"));
 	custom_keyword!(At, atom!("at"));
+	custom_keyword!(ClosestCorner, atom!("closest-corner"));
+	custom_keyword!(ClosestSide, atom!("closest-side"));
+	custom_keyword!(FarthestCorner, atom!("farthest-corner"));
+	custom_keyword!(FarthestSide, atom!("farthest-side"));
 }
 
 mod func {
@@ -27,35 +31,60 @@ mod func {
 }
 
 // https://drafts.csswg.org/css-images-3/#typedef-gradient
-#[derive(PartialEq, Debug, Clone, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-pub enum Gradient {
-	Linear(LinearDirection, SmallVec<[ColorStopOrHint; 0]>),
-	RepeatingLinear(LinearDirection, SmallVec<[ColorStopOrHint; 0]>),
-	Radial(RadialSize, RadialShape, Option<Position>, SmallVec<[ColorStopOrHint; 0]>),
-	RepeatingRadial(RadialSize, RadialShape, Option<Position>, SmallVec<[ColorStopOrHint; 0]>),
+pub enum Gradient<'a> {
+	Linear(func::LinearGradient, Option<LinearDirection>, Option<T![,]>, Vec<'a, ColorStopOrHint>, Option<T![')']>),
+	RepeatingLinear(
+		func::RepeatingLinearGradient,
+		Option<LinearDirection>,
+		Option<T![,]>,
+		Vec<'a, ColorStopOrHint>,
+		Option<T![')']>,
+	),
+	Radial(
+		func::RadialGradient,
+		Option<RadialSize>,
+		Option<RadialShape>,
+		Option<kw::At>,
+		Option<Position>,
+		Option<T![,]>,
+		Vec<'a, ColorStopOrHint>,
+		Option<T![')']>,
+	),
+	RepeatingRadial(
+		func::RepeatingRadialGradient,
+		Option<RadialSize>,
+		Option<RadialShape>,
+		Option<kw::At>,
+		Option<Position>,
+		Option<T![,]>,
+		Vec<'a, ColorStopOrHint>,
+		Option<T![')']>,
+	),
 }
 
-impl<'a> Gradient {
-	fn parse_stops(p: &mut Parser<'a>) -> ParserResult<SmallVec<[ColorStopOrHint; 0]>> {
-		let mut stops = smallvec![];
+impl<'a> Gradient<'a> {
+	fn parse_stops(p: &mut Parser<'a>) -> ParserResult<Vec<'a, ColorStopOrHint>> {
+		let mut stops = Vec::new_in(p.bump());
 		let mut allow_hint = false;
 		loop {
-			if allow_hint && p.peek::<LengthPercentage>().is_some() {
+			if allow_hint && p.peek::<LengthPercentage>() {
 				let hint = p.parse::<LengthPercentage>()?;
-				stops.push(ColorStopOrHint::Hint(hint));
-				p.parse::<T![,]>()?;
+				let comma = p.parse::<T![,]>()?;
+				stops.push(ColorStopOrHint::Hint(hint, comma));
 			}
 			let color = p.parse::<Color>()?;
-			let hint = if p.peek::<LengthPercentage>().is_some() {
+			let hint = if p.peek::<LengthPercentage>() {
 				let hint = p.parse::<LengthPercentage>()?;
 				allow_hint = true;
 				Some(hint)
 			} else {
 				None
 			};
-			stops.push(ColorStopOrHint::Stop(color, hint));
-			if p.parse_if_peek::<T![,]>()?.is_none() {
+			let comma = p.parse_if_peek::<T![,]>()?;
+			stops.push(ColorStopOrHint::Stop(color, hint, comma));
+			if comma.is_none() {
 				break;
 			}
 		}
@@ -63,384 +92,285 @@ impl<'a> Gradient {
 	}
 }
 
-impl<'a> Peek<'a> for Gradient {
-	fn peek(p: &Parser<'a>) -> Option<hdx_lexer::Token> {
-		p.peek::<func::LinearGradient>()
-			.or_else(|| p.peek::<func::RadialGradient>())
-			.or_else(|| p.peek::<func::RepeatingLinearGradient>())
-			.or_else(|| p.peek::<func::RepeatingRadialGradient>())
+impl<'a> Is<'a> for Gradient<'a> {
+	fn is(p: &Parser<'a>, c: Cursor) -> bool {
+		<T![Function]>::is(p, c)
+			&& matches!(
+				p.parse_atom_lower(c),
+				atom!("linear-gradient")
+					| atom!("radial-gradient")
+					| atom!("repeating-linear-gradient")
+					| atom!("repeating-radial-gradient")
+			)
 	}
 }
 
-impl<'a> Parse<'a> for Gradient {
+impl<'a> Parse<'a> for Gradient<'a> {
 	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
-		let gradient = if let Some(token) = p.peek::<func::LinearGradient>() {
-			p.hop(token);
-			let dir = p
-				.parse_if_peek::<LinearDirection>()
-				.and_then(|f| {
-					if f.is_some() {
-						p.parse::<T![,]>()?;
-					}
-					Ok(f)
-				})?
-				.unwrap_or_default();
-			Self::Linear(dir, Self::parse_stops(p)?)
-		} else if let Some(token) = p.peek::<func::RepeatingLinearGradient>() {
-			p.hop(token);
-			let dir = p
-				.parse_if_peek::<LinearDirection>()
-				.and_then(|f| {
-					if f.is_some() {
-						p.parse::<T![Comma]>()?;
-					}
-					Ok(f)
-				})?
-				.unwrap_or_default();
-			Self::RepeatingLinear(dir, Self::parse_stops(p)?)
-		} else if let Some(token) = p.peek::<func::RadialGradient>() {
-			p.hop(token);
+		if p.peek::<func::LinearGradient>() {
+			let function = p.parse::<func::LinearGradient>()?;
+			let dir = p.parse_if_peek::<LinearDirection>()?;
+			let comma = if dir.is_some() { p.parse_if_peek::<T![,]>()? } else { None };
+			let stops = Self::parse_stops(p)?;
+			Ok(Self::Linear(function, dir, comma, stops, p.parse_if_peek::<T![')']>()?))
+		} else if p.peek::<func::RepeatingLinearGradient>() {
+			let function = p.parse::<func::RepeatingLinearGradient>()?;
+			let dir = p.parse_if_peek::<LinearDirection>()?;
+			let comma = if dir.is_some() { p.parse_if_peek::<T![,]>()? } else { None };
+			let stops = Self::parse_stops(p)?;
+			Ok(Self::RepeatingLinear(function, dir, comma, stops, p.parse_if_peek::<T![')']>()?))
+		} else if p.peek::<func::RadialGradient>() {
+			let function = p.parse::<func::RadialGradient>()?;
 			let mut size = p.parse_if_peek::<RadialSize>()?;
 			let shape = p.parse_if_peek::<RadialShape>()?;
 			if size.is_none() && shape.is_none() {
 				size = Some(p.parse::<RadialSize>()?);
 			}
-			let position = if let Some(token) = p.peek::<kw::At>() {
-				p.hop(token);
-				Some(p.parse::<Position>()?)
-			} else {
-				None
-			};
-			if size.is_some() || shape.is_some() {
-				p.parse::<T![Comma]>()?;
-			}
-			Self::Radial(size.unwrap_or_default(), shape.unwrap_or_default(), position, Self::parse_stops(p)?)
+			let at = p.parse_if_peek::<kw::At>()?;
+			let position = if at.is_some() { p.parse_if_peek::<Position>()? } else { None };
+			let comma = if size.is_some() || shape.is_some() { p.parse_if_peek::<T![,]>()? } else { None };
+			let stops = Self::parse_stops(p)?;
+			Ok(Self::Radial(function, size, shape, at, position, comma, stops, p.parse_if_peek::<T![')']>()?))
 		} else {
-			p.parse::<func::RepeatingRadialGradient>()?;
+			let function = p.parse::<func::RepeatingRadialGradient>()?;
 			let mut size = p.parse_if_peek::<RadialSize>()?;
 			let shape = p.parse_if_peek::<RadialShape>()?;
 			if size.is_none() && shape.is_none() {
 				size = Some(p.parse::<RadialSize>()?);
 			}
-			let position = if let Some(token) = p.peek::<kw::At>() {
-				p.hop(token);
-				Some(p.parse::<Position>()?)
-			} else {
-				None
-			};
-			if size.is_some() || shape.is_some() {
-				p.parse::<T![Comma]>()?;
-			}
-			Self::Radial(size.unwrap_or_default(), shape.unwrap_or_default(), position, Self::parse_stops(p)?)
-		};
-		p.parse::<T![RightParen]>()?;
-		Ok(gradient)
+			let at = p.parse_if_peek::<kw::At>()?;
+			let position = if at.is_some() { p.parse_if_peek::<Position>()? } else { None };
+			let comma = if size.is_some() || shape.is_some() { p.parse_if_peek::<T![,]>()? } else { None };
+			let stops = Self::parse_stops(p)?;
+			Ok(Self::RepeatingRadial(function, size, shape, at, position, comma, stops, p.parse_if_peek::<T![')']>()?))
+		}
 	}
 }
 
-impl<'a> WriteCss<'a> for Gradient {
-	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
+impl<'a> ToCursors<'a> for Gradient<'a> {
+	fn to_cursors(&self, s: &mut CursorStream<'a>) {
 		match self {
-			Self::Linear(dir, hints) => {
-				atom!("linear-gradient").write_css(sink)?;
-				sink.write_char('(')?;
-				if dir != &LinearDirection::default() || sink.can_output(OutputOption::RedundantDefaultValues) {
-					dir.write_css(sink)?;
-					sink.write_char(',')?;
-					sink.write_whitespace()?;
+			Self::Linear(func, direction, comma, stops, close) => {
+				s.append(func.into());
+				if let Some(direction) = direction {
+					ToCursors::to_cursors(direction, s);
 				}
-				hints.write_css(sink)?;
-				sink.write_char(')')
+				if let Some(comma) = comma {
+					s.append(comma.into());
+				}
+				for stop in stops {
+					ToCursors::to_cursors(stop, s);
+				}
+				if let Some(close) = close {
+					s.append(close.into());
+				}
 			}
-			Self::RepeatingLinear(dir, hints) => {
-				atom!("repeating-linear-gradient").write_css(sink)?;
-				sink.write_char('(')?;
-				if dir != &LinearDirection::default() || sink.can_output(OutputOption::RedundantDefaultValues) {
-					dir.write_css(sink)?;
-					sink.write_char(',')?;
-					sink.write_whitespace()?;
+			Self::RepeatingLinear(func, direction, comma, stops, close) => {
+				s.append(func.into());
+				if let Some(direction) = direction {
+					ToCursors::to_cursors(direction, s);
 				}
-				hints.write_css(sink)?;
-				sink.write_char(')')
+				if let Some(comma) = comma {
+					s.append(comma.into());
+				}
+				for stop in stops {
+					ToCursors::to_cursors(stop, s);
+				}
+				if let Some(close) = close {
+					s.append(close.into());
+				}
 			}
-			Self::Radial(size, shape, pos, hints) => {
-				atom!("radial-gradient").write_css(sink)?;
-				sink.write_char('(')?;
-				let mut wrote = false;
-				if size != &RadialSize::default() || sink.can_output(OutputOption::RedundantDefaultValues) {
-					size.write_css(sink)?;
-					sink.write_char(' ')?;
-					wrote = true;
+			Self::Radial(func, size, shape, at, position, comma, stops, close) => {
+				s.append(func.into());
+				if let Some(size) = size {
+					ToCursors::to_cursors(size, s);
 				}
-				if shape != &RadialShape::default() || sink.can_output(OutputOption::RedundantDefaultValues) {
-					shape.to_atom().write_css(sink)?;
-					wrote = true;
+				if let Some(shape) = shape {
+					ToCursors::to_cursors(shape, s);
 				}
-				if pos.is_some() {
-					sink.write_char(' ')?;
-					atom!("at").write_css(sink)?;
-					sink.write_char(' ')?;
-					pos.write_css(sink)?;
-					wrote = true;
+				if let Some(at) = at {
+					s.append(at.into());
 				}
-				if wrote {
-					sink.write_char(',')?;
-					sink.write_whitespace()?;
+				if let Some(position) = position {
+					ToCursors::to_cursors(position, s);
 				}
-				hints.write_css(sink)?;
-				sink.write_char(')')
+				if let Some(comma) = comma {
+					s.append(comma.into());
+				}
+				for stop in stops {
+					ToCursors::to_cursors(stop, s);
+				}
+				if let Some(close) = close {
+					s.append(close.into());
+				}
 			}
-			Self::RepeatingRadial(size, shape, pos, hints) => {
-				atom!("repeating-radial-gradient").write_css(sink)?;
-				sink.write_char('(')?;
-				let mut wrote = false;
-				if size != &RadialSize::default() || sink.can_output(OutputOption::RedundantDefaultValues) {
-					size.write_css(sink)?;
-					sink.write_char(' ')?;
-					wrote = true;
+			Self::RepeatingRadial(func, size, shape, at, position, comma, stops, close) => {
+				s.append(func.into());
+				if let Some(size) = size {
+					ToCursors::to_cursors(size, s);
 				}
-				if shape != &RadialShape::default() || sink.can_output(OutputOption::RedundantDefaultValues) {
-					shape.to_atom().write_css(sink)?;
-					wrote = true;
+				if let Some(shape) = shape {
+					ToCursors::to_cursors(shape, s);
 				}
-				if pos.is_some() {
-					sink.write_char(' ')?;
-					atom!("at").write_css(sink)?;
-					sink.write_char(' ')?;
-					pos.write_css(sink)?;
-					wrote = true;
+				if let Some(at) = at {
+					s.append(at.into());
 				}
-				if wrote {
-					sink.write_char(',')?;
-					sink.write_whitespace()?;
+				if let Some(position) = position {
+					ToCursors::to_cursors(position, s);
 				}
-				hints.write_css(sink)?;
-				sink.write_char(')')
+				if let Some(comma) = comma {
+					s.append(comma.into());
+				}
+				for stop in stops {
+					ToCursors::to_cursors(stop, s);
+				}
+				if let Some(close) = close {
+					s.append(close.into());
+				}
 			}
 		}
 	}
 }
 
-#[derive(Debug, Clone, PartialEq, Hash)]
+keyword_typedef!(NamedDirection {
+	Bottom: atom!("bottom"),
+	Top: atom!("top"),
+	Left: atom!("left"),
+	Right: atom!("right"),
+});
+
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub enum LinearDirection {
 	Angle(Angle),
-	Named(NamedDirection),
+	Named(kw::To, NamedDirection, Option<NamedDirection>),
 }
 
-impl Default for LinearDirection {
-	fn default() -> Self {
-		Self::Named(NamedDirection::Bottom)
-	}
-}
-
-#[bitmask(u8)]
-#[bitmask_config(vec_debug)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-pub enum NamedDirection {
-	Bottom,
-	Top,
-	Left,
-	Right,
-}
-
-impl<'a> Peek<'a> for LinearDirection {
-	fn peek(p: &Parser<'a>) -> Option<hdx_lexer::Token> {
-		p.peek::<Angle>().or_else(|| p.peek::<kw::To>())
+impl<'a> Is<'a> for LinearDirection {
+	fn is(p: &Parser<'a>, c: Cursor) -> bool {
+		Angle::is(p, c) || kw::To::is(p, c)
 	}
 }
 
 impl<'a> Parse<'a> for LinearDirection {
 	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
-		if p.peek::<Angle>().is_some() {
-			if let Ok(angle) = p.try_parse::<Angle>() {
-				return Ok(Self::Angle(angle));
-			}
+		if p.peek::<Angle>() {
+			p.parse::<Angle>().map(Self::Angle)
+		} else {
+			let to = p.parse::<kw::To>()?;
+			let first = p.parse::<NamedDirection>()?;
+			let second = p.parse_if_peek::<NamedDirection>()?;
+			Ok(Self::Named(to, first, second))
 		}
-		p.parse::<kw::To>()?;
-		let mut dir = NamedDirection::none();
-		let token = p.parse::<T![Ident]>()?;
-		dir |= match p.parse_atom_lower(*token) {
-			atom!("top") => NamedDirection::Top,
-			atom!("left") => NamedDirection::Left,
-			atom!("right") => NamedDirection::Right,
-			atom!("bottom") => NamedDirection::Bottom,
-			atom => Err(diagnostics::UnexpectedIdent(atom, token.span()))?,
-		};
-		if let Some(token) = p.peek::<T![Ident]>() {
-			p.hop(token);
-			dir |= match p.parse_atom_lower(token) {
-				atom @ atom!("top") => {
-					if dir.contains(NamedDirection::Top) || dir.contains(NamedDirection::Bottom) {
-						Err(diagnostics::UnexpectedIdent(atom, token.span()))?
-					}
-					NamedDirection::Top
-				}
-				atom @ atom!("left") => {
-					if dir.contains(NamedDirection::Left) || dir.contains(NamedDirection::Right) {
-						Err(diagnostics::UnexpectedIdent(atom, token.span()))?
-					}
-					NamedDirection::Left
-				}
-				atom @ atom!("right") => {
-					if dir.contains(NamedDirection::Right) || dir.contains(NamedDirection::Left) {
-						Err(diagnostics::UnexpectedIdent(atom, token.span()))?
-					}
-					NamedDirection::Right
-				}
-				atom @ atom!("bottom") => {
-					if dir.contains(NamedDirection::Bottom) || dir.contains(NamedDirection::Top) {
-						Err(diagnostics::UnexpectedIdent(atom, token.span()))?
-					}
-					NamedDirection::Bottom
-				}
-				atom => Err(diagnostics::UnexpectedIdent(atom, token.span()))?,
-			};
-		}
-		Ok(Self::Named(dir))
 	}
 }
 
-impl<'a> WriteCss<'a> for LinearDirection {
-	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
+impl<'a> ToCursors<'a> for LinearDirection {
+	fn to_cursors(&self, s: &mut CursorStream<'a>) {
 		match self {
-			Self::Angle(a) => a.write_css(sink),
-			Self::Named(dir) => {
-				atom!("to").write_css(sink)?;
-				sink.write_char(' ')?;
-				if dir.contains(NamedDirection::Top) {
-					atom!("top").write_css(sink)?;
-					if dir != &NamedDirection::Top {
-						sink.write_char(' ')?;
-					}
+			Self::Angle(c) => s.append(c.into()),
+			Self::Named(to, a, b) => {
+				s.append(to.into());
+				s.append(a.into());
+				if let Some(b) = b {
+					s.append(b.into());
 				}
-				if dir.contains(NamedDirection::Bottom) {
-					atom!("bottom").write_css(sink)?;
-					if dir != &NamedDirection::Bottom {
-						sink.write_char(' ')?;
-					}
-				}
-				if dir.contains(NamedDirection::Left) {
-					atom!("left").write_css(sink)?;
-				}
-				if dir.contains(NamedDirection::Right) {
-					atom!("right").write_css(sink)?;
-				}
-				Ok(())
 			}
 		}
 	}
 }
 
 // https://drafts.csswg.org/css-images-3/#typedef-rg-size
-#[derive(Writable, Default, Debug, Clone, PartialEq, Hash)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub enum RadialSize {
-	#[default]
-	ClosestCorner, // atom!("closest-corner")
-	ClosestSide,    // atom!("closest-side")
-	FarthestCorner, // atom!("farthest-corner")
-	FarthestSide,   // atom!("farthest-side")
+	ClosestCorner(kw::ClosestCorner),
+	ClosestSide(kw::ClosestSide),
+	FarthestCorner(kw::FarthestCorner),
+	FarthestSide(kw::FarthestSide),
 	Circular(Length),
 	Elliptical(LengthPercentage, LengthPercentage),
 }
 
-impl<'a> Peek<'a> for RadialSize {
-	fn peek(p: &Parser<'a>) -> Option<hdx_lexer::Token> {
-		p.peek::<LengthPercentage>().or_else(|| {
-			p.peek::<T![Ident]>().filter(|t| {
-				matches!(
-					p.parse_atom_lower(*t),
+impl<'a> Is<'a> for RadialSize {
+	fn is(p: &Parser<'a>, c: Cursor) -> bool {
+		LengthPercentage::is(p, c)
+			|| (<T![Ident]>::is(p, c)
+				&& matches!(
+					p.parse_atom_lower(c),
 					atom!("closest-corner") | atom!("closest-side") | atom!("farthest-corner") | atom!("farthest-side")
-				)
-			})
-		})
+				))
 	}
 }
 
 impl<'a> Parse<'a> for RadialSize {
 	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
-		if let Some(token) = p.peek::<T![Ident]>() {
-			p.hop(token);
-			return Ok(match p.parse_atom_lower(token) {
-				atom!("closest-corner") => RadialSize::ClosestCorner,
-				atom!("closest-side") => RadialSize::ClosestSide,
-				atom!("farthest-corner") => RadialSize::FarthestCorner,
-				atom!("farthest-side") => RadialSize::FarthestSide,
-				atom => Err(diagnostics::UnexpectedIdent(atom, token.span()))?,
+		if p.peek::<T![Ident]>() {
+			let c = p.next();
+			return Ok(match p.parse_atom_lower(c) {
+				atom!("closest-corner") => RadialSize::ClosestCorner(kw::ClosestCorner::build(p, c)),
+				atom!("closest-side") => RadialSize::ClosestSide(kw::ClosestSide::build(p, c)),
+				atom!("farthest-corner") => RadialSize::FarthestCorner(kw::FarthestCorner::build(p, c)),
+				atom!("farthest-side") => RadialSize::FarthestSide(kw::FarthestSide::build(p, c)),
+				atom => Err(diagnostics::UnexpectedIdent(atom, c.span()))?,
 			});
 		}
-		if p.peek::<T![Number]>().is_some() {
+		if p.peek::<T![Number]>() {
 			let first_len = p.parse::<LengthPercentage>()?;
-			if p.peek::<T![Number]>().is_none() {
+			if !p.peek::<T![Number]>() {
 				return p.parse::<Length>().map(Self::Circular);
 			}
 			let second_len = p.parse::<LengthPercentage>()?;
 			return Ok(Self::Elliptical(first_len, second_len));
 		}
-		if let Some(token) = p.peek::<T![Dimension]>() {
-			let atom = p.parse_atom(token);
-			if atom == atom!("%") {
-				let first_len = p.parse::<LengthPercentage>()?;
-				if p.peek::<T![Dimension]>().is_none() {
-					let token = p.peek::<T![Any]>().unwrap();
-					Err(diagnostics::ExpectedDimension(token, token.span()))?
-				}
-				let second_len = p.parse::<LengthPercentage>()?;
-				return Ok(Self::Elliptical(first_len, second_len));
-			} else {
-				Err(diagnostics::UnexpectedDimension(atom, token.span()))?
+		let first = p.parse::<LengthPercentage>()?;
+		let second = p.parse::<LengthPercentage>()?;
+		Ok(Self::Elliptical(first, second))
+	}
+}
+
+impl<'a> ToCursors<'a> for RadialSize {
+	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+		match self {
+			Self::ClosestCorner(c) => s.append(c.into()),
+			Self::ClosestSide(c) => s.append(c.into()),
+			Self::FarthestCorner(c) => s.append(c.into()),
+			Self::FarthestSide(c) => s.append(c.into()),
+			Self::Circular(c) => s.append(c.into()),
+			Self::Elliptical(a, b) => {
+				s.append(a.into());
+				s.append(b.into());
 			}
 		}
-		let token = p.peek::<T![Any]>().unwrap();
-		Err(diagnostics::ExpectedDimension(token, token.span()))?
 	}
 }
 
 // https://drafts.csswg.org/css-images-3/#typedef-radial-shape
-#[derive(Atomizable, Default, Debug, Clone, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", rename_all = "kebab-case"))]
-pub enum RadialShape {
-	#[default]
-	Circle, // atom!("circle")
-	Ellipse, // atom!("ellipse")
-}
+keyword_typedef!(RadialShape { Circle: atom!("circle"), Ellipse: atom!("ellipse") });
 
-impl<'a> Peek<'a> for RadialShape {
-	fn peek(p: &Parser<'a>) -> Option<hdx_lexer::Token> {
-		p.peek::<T![Ident]>().filter(|token| matches!(p.parse_atom_lower(*token), atom!("circle") | atom!("ellipse")))
-	}
-}
-
-impl<'a> Parse<'a> for RadialShape {
-	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
-		let token = p.parse::<T![Ident]>()?;
-		match p.parse_atom_lower(*token) {
-			atom!("circle") => Ok(Self::Circle),
-			atom!("ellipse") => Ok(Self::Ellipse),
-			atom => Err(diagnostics::UnexpectedIdent(atom, token.span()))?,
-		}
-	}
-}
-
-#[derive(Debug, Clone, PartialEq, Hash)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub enum ColorStopOrHint {
-	Stop(Color, Option<LengthPercentage>),
-	Hint(LengthPercentage),
+	Stop(Color, Option<LengthPercentage>, Option<T![,]>),
+	Hint(LengthPercentage, T![,]),
 }
 
-impl<'a> WriteCss<'a> for ColorStopOrHint {
-	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
+impl<'a> ToCursors<'a> for ColorStopOrHint {
+	fn to_cursors(&self, s: &mut CursorStream<'a>) {
 		match self {
-			Self::Stop(col, len) => {
-				col.write_css(sink)?;
-				if len.is_some() {
-					sink.write_char(' ')?;
+			Self::Stop(c, l, comma) => {
+				ToCursors::to_cursors(c, s);
+				if let Some(l) = l {
+					s.append(l.into());
 				}
-				len.write_css(sink)
+				if let Some(comma) = comma {
+					s.append(comma.into());
+				}
 			}
-			Self::Hint(len) => len.write_css(sink),
+			Self::Hint(l, comma) => {
+				s.append(l.into());
+				s.append(comma.into());
+			}
 		}
 	}
 }
@@ -452,25 +382,19 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(Gradient, 64);
-		assert_size!(LinearDirection, 8);
-		assert_size!(RadialSize, 16);
-		assert_size!(ColorStopOrHint, 44);
+		assert_size!(Gradient, 184);
+		assert_size!(LinearDirection, 44);
+		assert_size!(RadialSize, 24);
+		assert_size!(ColorStopOrHint, 164);
 	}
 
 	#[test]
 	fn test_writes() {
-		assert_parse!(Gradient, "linear-gradient(to bottom, yellow, blue)");
-		assert_parse!(Gradient, "linear-gradient(yellow, blue)", "linear-gradient(to bottom, yellow, blue)");
-		assert_parse!(Gradient, "linear-gradient(to bottom, #fff, #fff 85%, #e6e6e6)");
-		assert_parse!(Gradient, "linear-gradient(45deg, #808080 25%, transparent 25%)");
-		assert_parse!(Gradient, "linear-gradient(to right, transparent, red 20%, red 80%, transparent)");
-		assert_parse!(Gradient, "radial-gradient(closest-corner circle, rgba(1, 65, 255, 0.4), rgba(1, 65, 255, 0))");
-	}
-
-	#[test]
-	fn test_minify() {
-		assert_minify!(Gradient, "linear-gradient(to bottom, red, blue)", "linear-gradient(red,blue)");
-		assert_minify!(Gradient, "radial-gradient(closest-corner circle, red, blue)", "radial-gradient(red,blue)");
+		assert_parse!(Gradient, "linear-gradient(to bottom,yellow,blue)");
+		assert_parse!(Gradient, "linear-gradient(yellow,blue)");
+		assert_parse!(Gradient, "linear-gradient(to bottom,#fff,#fff 85%,#e6e6e6)");
+		assert_parse!(Gradient, "linear-gradient(45deg,#808080 25%,transparent 25%)");
+		assert_parse!(Gradient, "linear-gradient(to right,transparent,red 20%,red 80%,transparent)");
+		assert_parse!(Gradient, "radial-gradient(closest-corner circle,rgba(1,65,255,0.4),rgba(1,65,255,0))");
 	}
 }

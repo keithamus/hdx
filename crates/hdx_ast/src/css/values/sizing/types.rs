@@ -1,5 +1,4 @@
-use hdx_parser::{Parse, Parser, Peek, Result as ParserResult};
-use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
+use hdx_parser::{CursorStream, Parse, Parser, Peek, Result as ParserResult, ToCursors};
 
 pub use crate::css::units::*;
 
@@ -9,12 +8,12 @@ mod func {
 	custom_function!(FitContent, atom!("fit-content"));
 }
 
-#[derive(Debug, PartialEq, Hash, Clone, Copy)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct CalcSize;
 
 impl<'a> Peek<'a> for CalcSize {
-	fn peek(p: &Parser<'a>) -> Option<hdx_lexer::Token> {
+	fn peek(p: &Parser<'a>) -> bool {
 		p.peek::<func::CalcSize>()
 	}
 }
@@ -26,8 +25,8 @@ impl<'a> Parse<'a> for CalcSize {
 	}
 }
 
-impl<'a> WriteCss<'a> for CalcSize {
-	fn write_css<W: CssWriter>(&self, _sink: &mut W) -> WriterResult {
+impl<'a> ToCursors<'a> for CalcSize {
+	fn to_cursors(&self, _: &mut CursorStream<'a>) {
 		todo!();
 	}
 }

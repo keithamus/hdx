@@ -16,7 +16,7 @@ use impls::*;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub enum FontFamily {}
+// pub enum FontFamily<'a> {}
 
 // // https://drafts.csswg.org/css-fonts-5/#font-weight
 // #[value(" <font-weight-absolute> | bolder | lighter ")]
@@ -216,7 +216,7 @@ pub enum FontVariantCaps {}
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub enum FontFeatureSettings {}
+// pub enum FontFeatureSettings<'a> {}
 
 // https://drafts.csswg.org/css-fonts-5/#font-language-override
 #[value(" normal | <string> ")]
@@ -226,7 +226,7 @@ pub enum FontVariantCaps {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum FontLanguageOverride<'a> {}
+pub enum FontLanguageOverride {}
 
 // https://drafts.csswg.org/css-fonts-5/#font-optical-sizing
 #[value(" auto | none ")]
@@ -246,7 +246,7 @@ pub enum FontOpticalSizing {}
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("(see prose)")]
-// pub enum FontVariationSettings {}
+// pub enum FontVariationSettings<'a> {}
 
 // https://drafts.csswg.org/css-fonts-5/#font-palette
 // #[value(" normal | light | dark | <palette-identifier> | <palette-mix()> ")]

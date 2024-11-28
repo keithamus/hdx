@@ -9,9 +9,9 @@ mod test {
 	#[test]
 	fn test_writes() {
 		assert_parse!(WillChange, "auto");
-		assert_parse!(WillChange, "foo, bar, baz");
+		assert_parse!(WillChange, "foo,bar,baz");
 		assert_parse!(WillChange, "-webkit-perspective");
-		assert_parse!(WillChange, "transform, filter, mask");
+		assert_parse!(WillChange, "transform,filter,mask");
 	}
 
 	#[test]

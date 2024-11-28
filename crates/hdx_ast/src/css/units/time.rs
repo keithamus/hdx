@@ -1,86 +1,60 @@
-use hdx_atom::{atom, Atom};
-use hdx_parser::{Parse, Parser, Peek, Result as ParserResult, T};
-use hdx_writer::{write_css, CssWriter, Result as WriterResult, WriteCss};
-
-use super::{AbsoluteUnit, CSSFloat};
+use hdx_atom::atom;
+use hdx_lexer::Cursor;
+use hdx_parser::{Build, Is, Parser, T};
 
 // https://drafts.csswg.org/css-values/#resolution
-#[derive(Debug, Clone, Copy, PartialEq, Hash)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub enum Time {
-	Zero,
-	Ms(CSSFloat),
-	S(CSSFloat),
+	Zero(T![Number]),
+	Ms(T![Dimension::Ms]),
+	S(T![Dimension::S]),
 }
 
-impl Time {
-	pub fn new(val: CSSFloat, unit: Atom) -> Option<Self> {
-		match unit {
-			atom!("ms") => Some(Self::Ms(val)),
-			atom!("s") => Some(Self::S(val)),
-			_ => None,
-		}
+impl Default for Time {
+	fn default() -> Self {
+		Self::Zero(Default::default())
 	}
 }
 
 impl From<Time> for f32 {
 	fn from(val: Time) -> Self {
 		match val {
-			Time::Zero => 0.0,
+			Time::Zero(_) => 0.0,
 			Time::Ms(f) => f.into(),
 			Time::S(f) => f.into(),
 		}
 	}
 }
 
-impl From<Time> for CSSFloat {
-	fn from(val: Time) -> Self {
-		match val {
-			Time::Zero => 0.0.into(),
-			Time::Ms(f) | Time::S(f) => f,
-		}
+impl<'a> Is<'a> for Time {
+	fn is(p: &Parser<'a>, c: Cursor) -> bool {
+		(<T![Number]>::is(p, c) && c.token().value() == 0.0)
+			|| <T![Dimension]>::is(p, c) && matches!(p.parse_atom_lower(c), atom!("s") | atom!("ms"))
 	}
 }
 
-impl AbsoluteUnit for Time {
-	fn to_base(&self) -> Self {
-		Self::S(match self {
-			Self::Zero => 0.0.into(),
-			Self::Ms(f) => *f / 1000.0,
-			Self::S(f) => *f,
-		})
-	}
-}
-
-impl<'a> Peek<'a> for Time {
-	fn peek(p: &Parser<'a>) -> Option<hdx_lexer::Token> {
-		p.peek::<T![Number]>()
-			.filter(|token| token.stored_small_number() == Some(0.0))
-			.or_else(|| p.peek::<T![Dimension::Ms]>())
-			.or_else(|| p.peek::<T![Dimension::S]>())
-	}
-}
-
-impl<'a> Parse<'a> for Time {
-	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
-		if let Some(token) = p.peek::<T![Dimension::Ms]>() {
-			p.hop(token);
-			Ok(Self::Ms(p.parse_number(token).into()))
+impl<'a> Build<'a> for Time {
+	fn build(p: &Parser<'a>, c: Cursor) -> Self {
+		if <T![Number]>::is(p, c) && c.token().value() == 0.0 {
+			Self::Zero(<T![Number]>::build(p, c))
 		} else {
-			let token = *p.parse::<T![Dimension::S]>()?;
-			Ok(Self::S(p.parse_number(token).into()))
+			match p.parse_atom_lower(c) {
+				atom!("s") => Self::S(<T![Dimension::S]>::build(p, c)),
+				atom!("ms") => Self::Ms(<T![Dimension::Ms]>::build(p, c)),
+				_ => unreachable!(),
+			}
 		}
 	}
 }
 
-impl<'a> WriteCss<'a> for Time {
-	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
-		match self {
-			Self::Zero => write_css!(sink, '0'),
-			Self::Ms(f) => write_css!(sink, f, <T![Dimension::Ms]>::atom()),
-			Self::S(f) => write_css!(sink, f, <T![Dimension::S]>::atom()),
-		};
-		Ok(())
+impl From<Time> for Cursor {
+	fn from(value: Time) -> Self {
+		match value {
+			Time::Zero(t) => t.into(),
+			Time::Ms(t) => t.into(),
+			Time::S(t) => t.into(),
+		}
 	}
 }
 
@@ -91,15 +65,11 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(Time, 8);
+		assert_size!(Time, 12);
 	}
 
 	#[test]
 	fn test_writes() {
 		assert_parse!(Time, "0s");
-		// Truncates to 7dp
-		assert_parse!(Time, "1.2345678901234s", "1.2345679s");
-		// Removes redundant dp
-		assert_parse!(Time, "-1.0s", "-1s");
 	}
 }

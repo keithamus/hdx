@@ -1,20 +1,17 @@
-use hdx_derive::{Atomizable, Parsable, Peekable, Writable};
+use hdx_parser::keyword_typedef;
 
-#[derive(Atomizable, Peekable, Parsable, Writable, Default, Debug, Clone, Copy, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(rename_all = "kebab-case"))]
-pub enum LineStyle {
-	#[default]
-	None, // atom!("none")
-	Hidden, // atom!("hidden")
-	Dotted, // atom!("dotted")
-	Dashed, // atom!("dashed")
-	Solid,  // atom!("solid")
-	Double, // atom!("double")
-	Groove, // atom!("groove")
-	Ridge,  // atom!("ridge")
-	Inset,  // atom!("inset")
-	Outset, // atom!("outset")
-}
+keyword_typedef!(LineStyle {
+	None: atom!("none"),
+	Hidden: atom!("hidden"),
+	Dotted: atom!("dotted"),
+	Dashed: atom!("dashed"),
+	Solid: atom!("solid"),
+	Double: atom!("double"),
+	Groove: atom!("groove"),
+	Ridge: atom!("ridge"),
+	Inset: atom!("inset"),
+	Outset: atom!("outset"),
+});
 
 #[cfg(test)]
 mod tests {
@@ -23,7 +20,7 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(LineStyle, 1);
+		assert_size!(LineStyle, 16);
 	}
 
 	#[test]
@@ -34,6 +31,7 @@ mod tests {
 
 	#[test]
 	fn test_errors() {
+		assert_parse_error!(LineStyle, "florp");
 		// Empty!
 		assert_parse_error!(LineStyle, "");
 	}

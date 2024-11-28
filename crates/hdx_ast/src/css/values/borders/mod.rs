@@ -16,7 +16,7 @@ use impls::*;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("see prose")]
-pub enum BorderTopColor {}
+pub enum BorderTopColor<'a> {}
 
 // https://drafts.csswg.org/css-borders-4/#border-right-color
 #[value(" <color> | <image-1D> ")]
@@ -26,7 +26,7 @@ pub enum BorderTopColor {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("see prose")]
-pub enum BorderRightColor {}
+pub enum BorderRightColor<'a> {}
 
 // https://drafts.csswg.org/css-borders-4/#border-bottom-color
 #[value(" <color> | <image-1D> ")]
@@ -36,7 +36,7 @@ pub enum BorderRightColor {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("see prose")]
-pub enum BorderBottomColor {}
+pub enum BorderBottomColor<'a> {}
 
 // https://drafts.csswg.org/css-borders-4/#border-left-color
 #[value(" <color> | <image-1D> ")]
@@ -46,7 +46,7 @@ pub enum BorderBottomColor {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("see prose")]
-pub enum BorderLeftColor {}
+pub enum BorderLeftColor<'a> {}
 
 // https://drafts.csswg.org/css-borders-4/#border-block-start-color
 #[value(" <color> | <image-1D> ")]
@@ -56,7 +56,7 @@ pub enum BorderLeftColor {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("see prose")]
-pub enum BorderBlockStartColor {}
+pub enum BorderBlockStartColor<'a> {}
 
 // https://drafts.csswg.org/css-borders-4/#border-block-end-color
 #[value(" <color> | <image-1D> ")]
@@ -66,7 +66,7 @@ pub enum BorderBlockStartColor {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("see prose")]
-pub enum BorderBlockEndColor {}
+pub enum BorderBlockEndColor<'a> {}
 
 // https://drafts.csswg.org/css-borders-4/#border-inline-start-color
 #[value(" <color> | <image-1D> ")]
@@ -76,7 +76,7 @@ pub enum BorderBlockEndColor {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("see prose")]
-pub enum BorderInlineStartColor {}
+pub enum BorderInlineStartColor<'a> {}
 
 // https://drafts.csswg.org/css-borders-4/#border-inline-end-color
 #[value(" <color> | <image-1D> ")]
@@ -86,7 +86,7 @@ pub enum BorderInlineStartColor {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("see prose")]
-pub enum BorderInlineEndColor {}
+pub enum BorderInlineEndColor<'a> {}
 
 // // https://drafts.csswg.org/css-borders-4/#border-color
 // #[value(" [ <color> | <image-1D> ]{1,4} ")]
@@ -96,7 +96,7 @@ pub enum BorderInlineEndColor {}
 // #[percentages("see individual properties")]
 // #[canonical_order("per grammar")]
 // #[animation_type("see individual properties")]
-// pub enum BorderColor {}
+// pub enum BorderColor<'a> {}
 
 // https://drafts.csswg.org/css-borders-4/#border-block-color
 #[value(" <'border-top-color'>{1,2} ")]
@@ -106,7 +106,7 @@ pub enum BorderInlineEndColor {}
 #[percentages("see individual properties")]
 #[canonical_order("per grammar")]
 #[animation_type("see individual properties")]
-pub struct BorderBlockColor;
+pub struct BorderBlockColor<'a>;
 
 // https://drafts.csswg.org/css-borders-4/#border-inline-color
 #[value(" <'border-top-color'>{1,2} ")]
@@ -116,7 +116,7 @@ pub struct BorderBlockColor;
 #[percentages("see individual properties")]
 #[canonical_order("per grammar")]
 #[animation_type("see individual properties")]
-pub struct BorderInlineColor;
+pub struct BorderInlineColor<'a>;
 
 // https://drafts.csswg.org/css-borders-4/#border-top-style
 #[value(" <line-style> ")]
@@ -697,7 +697,7 @@ pub struct BorderEndEndRadius;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value")]
-pub struct BoxShadowBlur;
+pub struct BoxShadowBlur<'a>;
 
 // https://drafts.csswg.org/css-borders-4/#box-shadow-spread
 #[value(" <length># ")]
@@ -707,7 +707,7 @@ pub struct BoxShadowBlur;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value")]
-pub struct BoxShadowSpread;
+pub struct BoxShadowSpread<'a>;
 
 // // https://drafts.csswg.org/css-borders-4/#box-shadow-position
 // #[value(" [ outset | inset ]# ")]

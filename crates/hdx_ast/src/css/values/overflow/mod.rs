@@ -206,7 +206,7 @@ pub struct OverflowClipMarginBlock;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum BlockEllipsis<'a> {}
+pub enum BlockEllipsis {}
 
 // // https://drafts.csswg.org/css-overflow-5/#line-clamp
 // #[value(" none | <integer [1,∞]> || <'block-ellipsis'> ")]

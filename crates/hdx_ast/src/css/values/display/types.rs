@@ -1,9 +1,5 @@
-use hdx_atom::Atomizable;
-use hdx_parser::{Parse, Peek};
-use hdx_writer::{CssWriter, WriteCss};
-
 pub(crate) use crate::css::units::*;
-use crate::macros::keyword_typedef;
+use hdx_parser::keyword_typedef;
 
 // https://drafts.csswg.org/css-display-4/#typedef-display-outside
 // <display-outside>  = block | inline | run-in

@@ -16,7 +16,7 @@ use impls::*;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("not animatable")]
-// pub enum TransitionProperty {}
+// pub enum TransitionProperty<'a> {}
 
 // https://drafts.csswg.org/css-transitions-2/#transition-duration
 #[value(" <time [0s,∞]># ")]
@@ -26,7 +26,7 @@ use impls::*;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("not animatable")]
-pub struct TransitionDuration;
+pub struct TransitionDuration<'a>;
 
 // // https://drafts.csswg.org/css-transitions-2/#transition-timing-function
 // #[value(" <easing-function># ")]
@@ -36,7 +36,7 @@ pub struct TransitionDuration;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("not animatable")]
-// pub struct TransitionTimingFunction;
+// pub struct TransitionTimingFunction<'a>;
 
 // https://drafts.csswg.org/css-transitions-2/#transition-delay
 #[value(" <time># ")]
@@ -46,7 +46,7 @@ pub struct TransitionDuration;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("not animatable")]
-pub struct TransitionDelay;
+pub struct TransitionDelay<'a>;
 
 // // https://drafts.csswg.org/css-transitions-2/#transition
 // #[value(" <single-transition># ")]
@@ -56,7 +56,7 @@ pub struct TransitionDelay;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("not animatable")]
-// pub struct Transition;
+// pub struct Transition<'a>;
 
 // https://drafts.csswg.org/css-transitions-2/#transition-behavior
 #[value(" <transition-behavior-value># ")]
@@ -66,4 +66,4 @@ pub struct TransitionDelay;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("not animatable")]
-pub struct TransitionBehavior;
+pub struct TransitionBehavior<'a>;

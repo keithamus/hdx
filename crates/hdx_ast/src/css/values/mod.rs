@@ -1,7 +1,3 @@
-use hdx_derive::Value;
-use hdx_parser::{todo, Parse, Parser, Result as ParserResult};
-use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
-
 /// Values
 pub mod align;
 pub mod anchor_position;
@@ -120,23 +116,3 @@ pub use view_transitions::*;
 pub use viewport::*;
 pub use will_change::*;
 pub use writing_modes::*;
-
-// TODO!
-#[derive(Value, Default, Debug, PartialEq, Clone, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(untagged))]
-pub enum Todo {
-	#[default]
-	Todo,
-}
-
-impl<'a> Parse<'a> for Todo {
-	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
-		todo!(p)
-	}
-}
-
-impl<'a> WriteCss<'a> for Todo {
-	fn write_css<W: CssWriter>(&self, _sink: &mut W) -> WriterResult {
-		Err(std::fmt::Error)
-	}
-}

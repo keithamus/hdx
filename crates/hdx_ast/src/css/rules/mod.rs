@@ -1,5 +1,3 @@
-use hdx_parser::{diagnostics, Parse, Parser, Result as ParserResult, T};
-
 pub mod charset;
 pub mod color_profile;
 pub mod container;
@@ -41,27 +39,3 @@ pub use scope::*;
 pub use starting_style::*;
 pub use supports::*;
 pub use webkit::*;
-
-pub struct NoPreludeAllowed;
-impl<'a> Parse<'a> for NoPreludeAllowed {
-	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
-		if p.peek::<T![LeftCurly]>().is_some() || p.peek::<T![;]>().is_some() {
-			Ok(Self {})
-		} else {
-			let token = p.peek::<T![Any]>().unwrap();
-			Err(diagnostics::Unexpected(token, token.span()))?
-		}
-	}
-}
-
-pub struct NoBlockAllowed;
-impl<'a> Parse<'a> for NoBlockAllowed {
-	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
-		if p.at_end() || p.peek::<T![;]>().is_some() {
-			Ok(Self {})
-		} else {
-			let token = p.peek::<T![Any]>().unwrap();
-			Err(diagnostics::Unexpected(token, token.span()))?
-		}
-	}
-}

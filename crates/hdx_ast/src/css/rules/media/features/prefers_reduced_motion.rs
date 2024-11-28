@@ -1,4 +1,4 @@
-use crate::macros::discrete_media_feature;
+use hdx_parser::discrete_media_feature;
 
 discrete_media_feature!(PrefersReducedMotionMediaFeature[atom!("prefers-reduced-motion")] {
 	NoPreference: atom!("no-preference"),
@@ -12,28 +12,14 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(PrefersReducedMotionMediaFeature, 1);
+		assert_size!(PrefersReducedMotionMediaFeature, 36);
 	}
 
 	#[test]
 	fn test_writes() {
 		assert_parse!(PrefersReducedMotionMediaFeature, "prefers-reduced-motion");
-		assert_parse!(PrefersReducedMotionMediaFeature, "prefers-reduced-motion: no-preference");
-		assert_parse!(PrefersReducedMotionMediaFeature, "prefers-reduced-motion: reduce");
-	}
-
-	#[test]
-	fn test_minify() {
-		assert_minify!(
-			PrefersReducedMotionMediaFeature,
-			"prefers-reduced-motion: no-preference",
-			"prefers-reduced-motion:no-preference"
-		);
-		assert_minify!(
-			PrefersReducedMotionMediaFeature,
-			"prefers-reduced-motion: reduce",
-			"prefers-reduced-motion:reduce"
-		);
+		assert_parse!(PrefersReducedMotionMediaFeature, "prefers-reduced-motion:no-preference");
+		assert_parse!(PrefersReducedMotionMediaFeature, "prefers-reduced-motion:reduce");
 	}
 
 	#[test]

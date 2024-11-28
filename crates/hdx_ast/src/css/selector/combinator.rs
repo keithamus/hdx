@@ -1,70 +1,45 @@
-use hdx_lexer::Include;
-use hdx_parser::{diagnostics, Parse, Parser, Result as ParserResult, T};
-use hdx_writer::{write_css, CssWriter, Result as WriterResult, WriteCss};
+use hdx_parser::{CursorStream, Parse, Parser, Result as ParserResult, ToCursors, T};
 
-#[derive(Debug, PartialEq, Hash)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(rename_all = "kebab-case"))]
 // https://drafts.csswg.org/selectors/#combinators
 pub enum Combinator {
-	Descendant,        // (Space)
-	Child,             // >
-	NextSibling,       // +
-	SubsequentSibling, // ~
-	Column,            // ||
-	Nesting,           // &
+	Child(T![>]),
+	NextSibling(T![+]),
+	SubsequentSibling(T![~]),
+	Column(T![||]),
+	Nesting(T![&]),
+	Descendant(T![' ']),
 }
 
 impl<'a> Parse<'a> for Combinator {
 	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
-		let could_be_descendant_combinator = p.parse_with::<T![' ']>(Include::Whitespace).is_ok();
-		if let Some(token) = p.peek::<T![Delim]>() {
-			let char = token.char();
-			if could_be_descendant_combinator && !matches!(char, Some('>' | '+' | '~' | '|')) {
-				return Ok(Self::Descendant);
-			}
-			let val = match char {
-				Some('>') => Self::Child,
-				Some('+') => Self::NextSibling,
-				Some('~') => Self::SubsequentSibling,
-				Some('&') => Self::Nesting,
-				Some('|') => {
-					p.hop(token);
-					p.parse_with::<T![|]>(Include::Whitespace)?;
-					return Ok(Self::Column);
-				}
-				_ if could_be_descendant_combinator => return Ok(Self::Descendant),
-				_ => Err(diagnostics::Unexpected(token, token.span()))?,
-			};
-			p.hop(token);
-			if val != Self::Nesting {
-				p.parse_with::<T![' ']>(Include::Whitespace).ok();
-			}
-			Ok(val)
-		} else if could_be_descendant_combinator {
-			loop {
-				if !p.parse_with::<T![' ']>(Include::Whitespace).is_ok() {
-					break;
-				}
-			}
-			Ok(Self::Descendant)
+		if p.peek::<T![>]>() {
+			Ok(Self::Child(p.parse::<T![>]>()?))
+		} else if p.peek::<T![+]>() {
+			Ok(Self::NextSibling(p.parse::<T![+]>()?))
+		} else if p.peek::<T![~]>() {
+			Ok(Self::SubsequentSibling(p.parse::<T![~]>()?))
+		} else if p.peek::<T![&]>() {
+			Ok(Self::Nesting(p.parse::<T![&]>()?))
+		} else if p.peek::<T![||]>() {
+			Ok(Self::Column(p.parse::<T![||]>()?))
 		} else {
-			let token = p.peek::<T![Any]>().unwrap();
-			Err(diagnostics::Unexpected(token, token.span()))?
+			Ok(Self::Descendant(p.parse::<T![' ']>()?))
 		}
 	}
 }
 
-impl<'a> WriteCss<'a> for Combinator {
-	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
+impl<'a> ToCursors<'a> for Combinator {
+	fn to_cursors(&self, s: &mut CursorStream<'a>) {
 		match self {
-			Self::Descendant => sink.write_char(' ')?,
-			Self::Nesting => write_css!(sink, '&'),
-			Self::Child => write_css!(sink, (), '>', ()),
-			Self::NextSibling => write_css!(sink, (), '+', ()),
-			Self::SubsequentSibling => write_css!(sink, (), '~', ()),
-			Self::Column => write_css!(sink, (), '|', '|', ()),
+			Self::Descendant(c) => s.append(c.into()),
+			Self::Child(c) => s.append(c.into()),
+			Self::NextSibling(c) => s.append(c.into()),
+			Self::SubsequentSibling(c) => s.append(c.into()),
+			Self::Column(c) => ToCursors::to_cursors(c, s),
+			Self::Nesting(c) => s.append(c.into()),
 		}
-		Ok(())
 	}
 }
 
@@ -75,21 +50,20 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(Combinator, 1);
+		assert_size!(Combinator, 20);
 	}
 
 	#[test]
 	fn test_writes() {
-		assert_parse!(Combinator, ">", " > ");
-		assert_parse!(Combinator, "+", " + ");
-		assert_parse!(Combinator, "~", " ~ ");
-		assert_parse!(Combinator, "&", "&");
+		assert_parse!(Combinator, ">");
+		assert_parse!(Combinator, "+");
+		assert_parse!(Combinator, "~");
+		assert_parse!(Combinator, "&");
 		// Descendent combinator
-		assert_parse!(Combinator, "     ", " ");
-		assert_parse!(Combinator, "     ", " ");
-		assert_parse!(Combinator, "  /**/   /**/   /**/ ", " ");
+		assert_parse!(Combinator, "     ");
+		assert_parse!(Combinator, "     ");
+		assert_parse!(Combinator, "  /**/   /**/   /**/ ", "  ");
 		// Column
-		assert_parse!(Combinator, "||", " || ");
-		assert_parse!(Combinator, " || ", " || ");
+		assert_parse!(Combinator, "||");
 	}
 }

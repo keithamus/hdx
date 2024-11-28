@@ -1,0 +1,152 @@
+use hdx_lexer::{Cursor, KindSet};
+use hdx_parser::{Build, CursorStream, Is, Parse, Parser, Result as ParserResult, ToCursors, T};
+
+use super::Tag;
+
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(rename_all = "kebab-case"))]
+// https://drafts.csswg.org/selectors/#combinators
+pub struct Namespace {
+	pub prefix: Option<NamespacePrefix>,
+	pub tag: NamespaceTag,
+}
+
+impl<'a> Parse<'a> for Namespace {
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		if p.peek::<T![*|]>() {
+			let prefix = p.parse::<NamespacePrefix>()?;
+			let tag = p.parse::<NamespaceTag>()?;
+			return Ok(Self { prefix: Some(prefix), tag });
+		}
+		if p.peek::<T![|]>() {
+			let prefix = p.parse::<NamespacePrefix>()?;
+			let tag = p.parse::<NamespaceTag>()?;
+			return Ok(Self { prefix: Some(prefix), tag });
+		}
+
+		let ident = p.parse::<T![Ident]>()?;
+		let skip = p.set_skip(KindSet::NONE);
+		if p.peek::<T![|]>() && !p.peek::<T![|=]>() {
+			let pipe = p.parse::<T![|]>();
+			let tag = p.parse::<NamespaceTag>();
+			p.set_skip(skip);
+			let prefix = NamespacePrefix::Name(ident, pipe?);
+			return Ok(Self { prefix: Some(prefix), tag: tag? });
+		}
+		let tag = p.parse::<NamespaceTag>()?;
+		Ok(Self { prefix: None, tag })
+	}
+}
+
+impl<'a> ToCursors<'a> for Namespace {
+	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+		if let Some(prefix) = &self.prefix {
+			ToCursors::to_cursors(prefix, s);
+		}
+		s.append(self.tag.into());
+	}
+}
+
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+pub enum NamespacePrefix {
+	None(T![|]),
+	Name(T![Ident], T![|]),
+	Wildcard(T![*], T![|]),
+}
+
+impl<'a> Parse<'a> for NamespacePrefix {
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		if p.peek::<T![|]>() {
+			let pipe = p.parse::<T![|]>()?;
+			Ok(Self::None(pipe))
+		} else if p.peek::<T![*]>() {
+			let star = p.parse::<T![*]>()?;
+			let skip = p.set_skip(KindSet::NONE);
+			let pipe = p.parse::<T![|]>();
+			p.set_skip(skip);
+			let pipe = pipe?;
+			Ok(Self::Wildcard(star, pipe))
+		} else {
+			let star = p.parse::<T![Ident]>()?;
+			let skip = p.set_skip(KindSet::NONE);
+			let pipe = p.parse::<T![|]>();
+			p.set_skip(skip);
+			let pipe = pipe?;
+			Ok(Self::Name(star, pipe))
+		}
+	}
+}
+
+impl<'a> ToCursors<'a> for NamespacePrefix {
+	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+		match self {
+			NamespacePrefix::None(pipe) => {
+				s.append(pipe.into());
+			}
+			NamespacePrefix::Name(ident, pipe) => {
+				s.append(ident.into());
+				s.append(pipe.into());
+			}
+			NamespacePrefix::Wildcard(star, pipe) => {
+				s.append(star.into());
+				s.append(pipe.into());
+			}
+		}
+	}
+}
+
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+pub enum NamespaceTag {
+	Tag(Tag),
+	Wildcard(T![*]),
+}
+
+impl<'a> Is<'a> for NamespaceTag {
+	fn is(p: &Parser<'a>, c: Cursor) -> bool {
+		<T![*]>::is(p, c) || Tag::is(p, c)
+	}
+}
+
+impl<'a> Build<'a> for NamespaceTag {
+	fn build(p: &Parser<'a>, c: Cursor) -> Self {
+		if <T![*]>::is(p, c) {
+			Self::Wildcard(<T![*]>::build(p, c))
+		} else {
+			Self::Tag(Tag::build(p, c))
+		}
+	}
+}
+
+impl From<NamespaceTag> for Cursor {
+	fn from(value: NamespaceTag) -> Self {
+		match value {
+			NamespaceTag::Tag(c) => c.into(),
+			NamespaceTag::Wildcard(c) => c.into(),
+		}
+	}
+}
+
+#[cfg(test)]
+mod tests {
+	use super::*;
+	use crate::test_helpers::*;
+
+	#[test]
+	fn size_test() {
+		assert_size!(Namespace, 44);
+	}
+
+	#[test]
+	fn test_writes() {
+		assert_parse!(Namespace, "*|a");
+		assert_parse!(Namespace, "html|div");
+		assert_parse!(Namespace, "|span");
+	}
+
+	#[test]
+	fn test_errors() {
+		assert_parse_error!(Namespace, "* | a");
+	}
+}

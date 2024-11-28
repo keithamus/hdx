@@ -1,4 +1,4 @@
-use crate::css::values::Todo;
+use crate::Todo;
 
 // https://drafts.css-houdini.org/css-properties-values-api/#at-ruledef-property
 pub type Property = Todo;

@@ -1,6 +1,5 @@
 mod color;
 mod counter_style;
-mod dashed_ident;
 mod gradient;
 mod image;
 mod image_1d;
@@ -11,7 +10,6 @@ mod ratio;
 mod symbols;
 pub use color::*;
 pub use counter_style::*;
-pub use dashed_ident::*;
 pub use gradient::*;
 pub use image::*;
 pub use image_1d::*;

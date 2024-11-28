@@ -1,4 +1,4 @@
-use crate::macros::keyword_typedef;
+use hdx_parser::keyword_typedef;
 
 pub(crate) use crate::css::units::*;
 

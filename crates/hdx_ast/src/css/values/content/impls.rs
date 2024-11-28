@@ -11,9 +11,9 @@ mod tests {
 		// assert_size!(Content, 1);
 		// assert_size!(Quotes, 1);
 		// assert_size!(StringSet, 1);
-		assert_size!(BookmarkLevel, 8);
+		assert_size!(BookmarkLevel, 16);
 		// assert_size!(BookmarkLabel, 1);
-		assert_size!(BookmarkState, 1);
+		assert_size!(BookmarkState, 16);
 	}
 
 	#[test]

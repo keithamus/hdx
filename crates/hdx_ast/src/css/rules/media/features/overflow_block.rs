@@ -1,4 +1,4 @@
-use crate::macros::discrete_media_feature;
+use hdx_parser::discrete_media_feature;
 
 discrete_media_feature!(OverflowBlockMediaFeature[atom!("overflow-block")] {
 	None: atom!("none"),
@@ -13,22 +13,15 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(OverflowBlockMediaFeature, 1);
+		assert_size!(OverflowBlockMediaFeature, 36);
 	}
 
 	#[test]
 	fn test_writes() {
 		assert_parse!(OverflowBlockMediaFeature, "overflow-block");
-		assert_parse!(OverflowBlockMediaFeature, "overflow-block: none");
-		assert_parse!(OverflowBlockMediaFeature, "overflow-block: scroll");
-		assert_parse!(OverflowBlockMediaFeature, "overflow-block: paged");
-	}
-
-	#[test]
-	fn test_minify() {
-		assert_minify!(OverflowBlockMediaFeature, "overflow-block: none", "overflow-block:none");
-		assert_minify!(OverflowBlockMediaFeature, "overflow-block: scroll", "overflow-block:scroll");
-		assert_minify!(OverflowBlockMediaFeature, "overflow-block: paged", "overflow-block:paged");
+		assert_parse!(OverflowBlockMediaFeature, "overflow-block:none");
+		assert_parse!(OverflowBlockMediaFeature, "overflow-block:scroll");
+		assert_parse!(OverflowBlockMediaFeature, "overflow-block:paged");
 	}
 
 	#[test]

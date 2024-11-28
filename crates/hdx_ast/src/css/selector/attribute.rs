@@ -1,166 +1,181 @@
-use hdx_atom::{atom, Atom};
-use hdx_lexer::{Include, QuoteStyle};
-use hdx_parser::{diagnostics, Parse, Parser, Result as ParserResult, T};
-use hdx_writer::{write_css, CssWriter, Result as WriterResult, WriteCss};
+use hdx_atom::atom;
+use hdx_lexer::{Cursor, KindSet};
+use hdx_parser::{Build, CursorStream, Is, Parse, Parser, Peek, Result as ParserResult, ToCursors, T};
 
-use super::NSPrefix;
+use super::NamespacePrefix;
 
-#[derive(Default, Debug, PartialEq, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
 pub struct Attribute {
-	pub ns_prefix: NSPrefix,
-	pub name: Atom,
-	pub value: Atom,
-	pub quote: QuoteStyle,
-	pub matcher: AttributeMatch,
-	pub modifier: AttributeModifier,
+	pub open: T!['['],
+	pub namespace_prefix: Option<NamespacePrefix>,
+	pub attribute: T![Ident],
+	pub operator: Option<AttributeOperator>,
+	pub value: Option<AttributeValue>,
+	pub modifier: Option<AttributeModifier>,
+	pub close: Option<T![']']>,
 }
 
 impl<'a> Parse<'a> for Attribute {
 	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
-		p.parse::<T![LeftSquare]>()?;
-		let mut attr = Self::default();
-		if let Some(token) = p.peek::<T![Delim]>() {
-			p.hop(token);
-			if matches!(token.char(), Some('|')) {
-				let token = *p.parse_with::<T![Ident]>(Include::Whitespace)?;
-				attr.name = p.parse_atom(token);
-			} else if matches!(token.char(), Some('*')) {
-				p.parse_with::<T![|]>(Include::Whitespace)?;
-				let token = *p.parse_with::<T![Ident]>(Include::Whitespace)?;
-				attr.ns_prefix = NSPrefix::Wildcard;
-				attr.name = p.parse_atom(token);
-			} else {
-				Err(diagnostics::UnexpectedDelim(token.char().unwrap(), token.span()))?
-			}
-		} else if let Some(token) = p.peek::<T![Ident]>() {
-			p.hop(token);
-			let first = p.parse_atom(token);
-			if let Some(token) = p.peek_with::<T![|]>(Include::Whitespace) {
-				let checkpoint = p.checkpoint();
-				p.hop(token);
-				if let Ok(token) = p.parse_with::<T![Ident]>(Include::Whitespace) {
-					attr.ns_prefix = NSPrefix::Named(first);
-					attr.name = p.parse_atom(*token);
-				} else {
-					p.rewind(checkpoint);
-					attr.name = first
-				}
-			} else {
-				attr.name = first;
-			}
-		} else {
-			let token = p.peek::<T![Any]>().unwrap();
-			Err(diagnostics::Unexpected(token, token.span()))?
+		let open = p.parse::<T!['[']>()?;
+		let mut namespace_prefix = if p.peek::<T![*|]>() { Some(p.parse::<NamespacePrefix>()?) } else { None };
+		let mut attribute = p.parse::<T![Ident]>()?;
+		let skip = p.set_skip(KindSet::NONE);
+		// namespace_prefix might be `<Ident> '|' <Ident>`
+		if namespace_prefix.is_none() && p.peek::<T![|]>() && !p.peek::<T![|=]>() {
+			let pipe = p.parse::<T![|]>();
+			let ident = p.parse::<T![Ident]>();
+			p.set_skip(skip);
+			namespace_prefix = Some(NamespacePrefix::Name(attribute, pipe?));
+			attribute = ident?;
 		}
-		if p.parse::<T![RightSquare]>().is_ok() {
-			return Ok(attr);
-		}
-		let token = *p.parse::<T![Delim]>()?;
-		match token.char().unwrap() {
-			'=' => attr.matcher = AttributeMatch::Exact,
-			'~' => {
-				p.parse_with::<T![=]>(Include::all_bits())?;
-				attr.matcher = AttributeMatch::SpaceList
-			}
-			'|' => {
-				p.parse_with::<T![=]>(Include::all_bits())?;
-				attr.matcher = AttributeMatch::LangPrefix
-			}
-			'^' => {
-				p.parse_with::<T![=]>(Include::all_bits())?;
-				attr.matcher = AttributeMatch::Prefix
-			}
-			'$' => {
-				p.parse_with::<T![=]>(Include::all_bits())?;
-				attr.matcher = AttributeMatch::Suffix
-			}
-			'*' => {
-				p.parse_with::<T![=]>(Include::all_bits())?;
-				attr.matcher = AttributeMatch::Contains
-			}
-			c => Err(diagnostics::UnexpectedDelim(c, token.span()))?,
-		}
-		if let Some(token) = p.peek::<T![Ident]>() {
-			p.hop(token);
-			attr.value = p.parse_atom(token);
-		} else {
-			let token = *p.parse::<T![String]>()?;
-			attr.quote = token.quote_style();
-			attr.value = p.parse_atom(token);
-		}
-		if let Some(token) = p.peek::<T![Ident]>() {
-			p.hop(token);
-			attr.modifier = match p.parse_atom_lower(token) {
-				atom!("i") => AttributeModifier::Insensitive,
-				atom!("s") => AttributeModifier::Sensitive,
-				atom => Err(diagnostics::UnexpectedIdent(atom, token.span()))?,
-			};
-		}
-		p.parse::<T![RightSquare]>()?;
-		Ok(attr)
+		p.set_skip(skip);
+		let operator = p.parse_if_peek::<AttributeOperator>()?;
+		let value = if operator.is_some() { Some(p.parse::<AttributeValue>()?) } else { None };
+		let modifier =
+			if value.is_some() && p.peek::<AttributeModifier>() { Some(p.parse::<AttributeModifier>()?) } else { None };
+		let close = p.parse_if_peek::<T![']']>()?;
+		Ok(Self { open, namespace_prefix, attribute, operator, value, modifier, close })
 	}
 }
 
-impl<'a> WriteCss<'a> for Attribute {
-	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
-		write_css!(sink, '[', self.ns_prefix, self.name, self.matcher);
-		if self.matcher != AttributeMatch::Any {
-			sink.write_with_quotes(self.value.as_ref(), self.quote, true)?;
+impl<'a> ToCursors<'a> for Attribute {
+	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+		s.append(self.open.into());
+		if let Some(namespace_prefix) = &self.namespace_prefix {
+			ToCursors::to_cursors(namespace_prefix, s);
 		}
-		if self.modifier != AttributeModifier::None {
-			write_css!(sink, ' ', self.modifier);
+		s.append(self.attribute.into());
+		if let Some(operator) = &self.operator {
+			ToCursors::to_cursors(operator, s);
 		}
-		write_css!(sink, ']');
-		Ok(())
+		if let Some(value) = self.value {
+			s.append(value.into());
+		}
+		if let Some(modifier) = self.modifier {
+			s.append(modifier.into());
+		}
+		if let Some(close) = self.close {
+			s.append(close.into());
+		}
 	}
 }
 
-#[derive(Default, Debug, PartialEq, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", content = "value"))]
-pub enum AttributeMatch {
-	#[default]
-	Any, // [attr]
-	Exact,      // [attr=val]
-	SpaceList,  // [attr~=val]
-	LangPrefix, // [attr|=val]
-	Prefix,     // [attr^=val]
-	Suffix,     // [attr$=val]
-	Contains,   // [attr*=val]
+pub enum AttributeOperator {
+	Exact(T![=]),
+	SpaceList(T![~=]),
+	LangPrefix(T![|=]),
+	Prefix(T![^=]),
+	Suffix(T!["$="]),
+	Contains(T![*=]),
 }
 
-impl<'a> WriteCss<'a> for AttributeMatch {
-	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
-		match self {
-			AttributeMatch::Any => {}
-			AttributeMatch::Exact => write_css!(sink, '='),
-			AttributeMatch::SpaceList => write_css!(sink, '~', '='),
-			AttributeMatch::LangPrefix => write_css!(sink, '|', '='),
-			AttributeMatch::Prefix => write_css!(sink, '^', '='),
-			AttributeMatch::Suffix => write_css!(sink, '$', '='),
-			AttributeMatch::Contains => write_css!(sink, '*', '='),
-		}
-		Ok(())
+impl<'a> Peek<'a> for AttributeOperator {
+	fn peek(p: &Parser<'a>) -> bool {
+		p.peek::<T![=]>()
+			|| p.peek::<T![~=]>()
+			|| p.peek::<T![|=]>()
+			|| p.peek::<T![^=]>()
+			|| p.peek::<T!["$="]>()
+			|| p.peek::<T![*=]>()
 	}
 }
 
-#[derive(Default, Debug, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
-pub enum AttributeModifier {
-	#[default]
-	None,
-	Sensitive,
-	Insensitive,
+impl<'a> Parse<'a> for AttributeOperator {
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		if p.peek::<T![=]>() {
+			p.parse::<T![=]>().map(AttributeOperator::Exact)
+		} else if p.peek::<T![~=]>() {
+			p.parse::<T![~=]>().map(AttributeOperator::SpaceList)
+		} else if p.peek::<T![|=]>() {
+			p.parse::<T![|=]>().map(AttributeOperator::LangPrefix)
+		} else if p.peek::<T![^=]>() {
+			p.parse::<T![^=]>().map(AttributeOperator::Prefix)
+		} else if p.peek::<T!["$="]>() {
+			p.parse::<T!["$="]>().map(AttributeOperator::Suffix)
+		} else {
+			p.parse::<T![*=]>().map(AttributeOperator::Contains)
+		}
+	}
 }
 
-impl<'a> WriteCss<'a> for AttributeModifier {
-	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
+impl<'a> ToCursors<'a> for AttributeOperator {
+	fn to_cursors(&self, s: &mut CursorStream<'a>) {
 		match self {
-			Self::Sensitive => write_css!(sink, 's'),
-			Self::Insensitive => write_css!(sink, 'i'),
-			Self::None => {}
+			Self::Exact(c) => s.append(c.into()),
+			Self::SpaceList(c) => ToCursors::to_cursors(c, s),
+			Self::LangPrefix(c) => ToCursors::to_cursors(c, s),
+			Self::Prefix(c) => ToCursors::to_cursors(c, s),
+			Self::Suffix(c) => ToCursors::to_cursors(c, s),
+			Self::Contains(c) => ToCursors::to_cursors(c, s),
 		}
-		Ok(())
+	}
+}
+
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", content = "value"))]
+pub enum AttributeValue {
+	String(T![String]),
+	Ident(T![Ident]),
+}
+
+impl<'a> Is<'a> for AttributeValue {
+	fn is(p: &Parser<'a>, c: Cursor) -> bool {
+		<T![Ident]>::is(p, c) || <T![String]>::is(p, c)
+	}
+}
+
+impl<'a> Build<'a> for AttributeValue {
+	fn build(p: &Parser<'a>, c: Cursor) -> Self {
+		if <T![Ident]>::is(p, c) {
+			Self::Ident(<T![Ident]>::build(p, c))
+		} else {
+			Self::String(<T![String]>::build(p, c))
+		}
+	}
+}
+
+impl From<AttributeValue> for Cursor {
+	fn from(value: AttributeValue) -> Cursor {
+		match value {
+			AttributeValue::Ident(c) => c.into(),
+			AttributeValue::String(c) => c.into(),
+		}
+	}
+}
+
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+pub enum AttributeModifier {
+	Sensitive(T![Ident]),
+	Insensitive(T![Ident]),
+}
+
+impl<'a> Is<'a> for AttributeModifier {
+	fn is(p: &Parser<'a>, c: Cursor) -> bool {
+		<T![Ident]>::is(p, c) && matches!(p.parse_atom_lower(c), atom!("i") | atom!("s"))
+	}
+}
+
+impl<'a> Build<'a> for AttributeModifier {
+	fn build(p: &Parser<'a>, c: Cursor) -> Self {
+		if p.parse_atom_lower(c) == atom!("s") {
+			Self::Sensitive(<T![Ident]>::build(p, c))
+		} else {
+			Self::Insensitive(<T![Ident]>::build(p, c))
+		}
+	}
+}
+
+impl From<AttributeModifier> for Cursor {
+	fn from(value: AttributeModifier) -> Self {
+		match value {
+			AttributeModifier::Sensitive(c) => c.into(),
+			AttributeModifier::Insensitive(c) => c.into(),
+		}
 	}
 }
 
@@ -171,9 +186,9 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(Attribute, 40);
-		assert_size!(AttributeMatch, 1);
-		assert_size!(AttributeMatch, 1);
+		assert_size!(Attribute, 108);
+		assert_size!(AttributeOperator, 20);
+		assert_size!(AttributeOperator, 20);
 	}
 
 	#[test]
@@ -187,17 +202,9 @@ mod tests {
 		assert_parse!(Attribute, "[*|attr='foo']");
 		assert_parse!(Attribute, "[x|attr='foo']");
 		assert_parse!(Attribute, "[attr|='foo']");
-		assert_parse!(Attribute, "[attr|='foo' i]");
-		assert_parse!(Attribute, "[attr|='foo' s]");
-	}
-
-	#[test]
-	fn test_minify() {
-		assert_minify!(Attribute, "[ foo ]", "[foo]");
-		assert_minify!(Attribute, "[foo='bar']", "[foo=bar]");
-		assert_minify!(Attribute, "[foo|='bar']", "[foo|=bar]");
-		assert_minify!(Attribute, "[foo|='bar' s]", "[foo|=bar s]");
-		assert_minify!(Attribute, "[foo='value with spaces']", "[foo=\"value with spaces\"]");
-		assert_minify!(Attribute, "[attr|='foo' s]", "[attr|=foo s]");
+		assert_parse!(Attribute, "[attr|=foo i]");
+		assert_parse!(Attribute, "[attr|=foo s]");
+		assert_parse!(Attribute, "[attr|='foo'i]");
+		assert_parse!(Attribute, "[attr|='foo's]");
 	}
 }

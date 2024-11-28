@@ -1,4 +1,4 @@
-use crate::macros::discrete_media_feature;
+use hdx_parser::discrete_media_feature;
 
 discrete_media_feature!(DisplayModeMediaFeature[atom!("display-mode")] {
 	Fullscreen: atom!("fullscreen"),
@@ -15,23 +15,14 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(DisplayModeMediaFeature, 1);
+		assert_size!(DisplayModeMediaFeature, 36);
 	}
 
 	#[test]
 	fn test_writes() {
 		assert_parse!(DisplayModeMediaFeature, "display-mode");
-		assert_parse!(DisplayModeMediaFeature, "display-mode: fullscreen");
-		assert_parse!(DisplayModeMediaFeature, "display-mode: minimal-ui");
-	}
-
-	#[test]
-	fn test_minify() {
-		assert_minify!(DisplayModeMediaFeature, "display-mode: fullscreen", "display-mode:fullscreen");
-		assert_minify!(DisplayModeMediaFeature, "display-mode: standalone", "display-mode:standalone");
-		assert_minify!(DisplayModeMediaFeature, "display-mode: minimal-ui", "display-mode:minimal-ui");
-		assert_minify!(DisplayModeMediaFeature, "display-mode: browser", "display-mode:browser");
-		assert_minify!(DisplayModeMediaFeature, "display-mode: picture-in-picture", "display-mode:picture-in-picture");
+		assert_parse!(DisplayModeMediaFeature, "display-mode:fullscreen");
+		assert_parse!(DisplayModeMediaFeature, "display-mode:minimal-ui");
 	}
 
 	#[test]

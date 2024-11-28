@@ -1,9 +1,5 @@
-use hdx_atom::{atom, Atomizable};
-use hdx_derive::{Atomizable, Writable};
-use hdx_lexer::QuoteStyle;
-use hdx_parser::{Parse, Parser, Peek, Result as ParserResult, T};
-use hdx_writer::{OutputOption, Result as WriterResult, WriteCss};
-use smallvec::{smallvec, SmallVec};
+use bumpalo::collections::Vec;
+use hdx_parser::{keyword_typedef, CursorStream, Parse, Parser, Peek, Result as ParserResult, ToCursors, T};
 
 use crate::css::types::Image;
 
@@ -13,37 +9,38 @@ mod func {
 }
 
 // https://drafts.csswg.org/css-counter-styles-3/#funcdef-symbols
-#[derive(Debug, Clone, PartialEq, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-pub struct Symbols<'a>(pub SymbolsType, SmallVec<[Symbol<'a>; 0]>);
+pub struct Symbols<'a> {
+	pub function: func::Symbols,
+	pub symbols_type: Option<SymbolsType>,
+	pub symbols: Vec<'a, Symbol<'a>>,
+	pub close: Option<T![')']>,
+}
 
 impl<'a> Peek<'a> for Symbols<'a> {
-	fn peek(p: &Parser<'a>) -> Option<hdx_lexer::Token> {
-		p.peek::<T![Function]>()
+	fn peek(p: &Parser<'a>) -> bool {
+		p.peek::<func::Symbols>()
 	}
 }
 
 impl<'a> Parse<'a> for Symbols<'a> {
 	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
-		p.parse::<func::Symbols>()?;
-		let mut symbol_type = SymbolsType::default();
-		let mut symbols = smallvec![];
-		if p.parse::<T![RightParen]>().is_ok() {
-			return Ok(Self(symbol_type, symbols));
+		let function = p.parse::<func::Symbols>()?;
+		let mut symbols = Vec::new_in(p.bump());
+		if let Some(close) = p.parse_if_peek::<T![')']>()? {
+			return Ok(Self { function, symbols_type: None, symbols, close: Some(close) });
 		}
-		if let Some(token) = p.peek::<T![Ident]>() {
-			if let Some(st) = SymbolsType::from_atom(&p.parse_atom(token)) {
-				p.hop(token);
-				symbol_type = st;
-			}
-		}
+		let symbols_type = p.parse_if_peek::<SymbolsType>()?;
 		loop {
-			if p.parse::<T![RightParen]>().is_ok() {
-				return Ok(Self(symbol_type, symbols));
+			if p.at_end() {
+				return Ok(Self { function, symbols_type, symbols, close: None });
 			}
-			if let Some(token) = p.peek::<T![String]>() {
-				p.hop(token);
-				symbols.push(Symbol::String(p.parse_str(token), token.quote_style()));
+			if let Some(close) = p.parse_if_peek::<T![')']>()? {
+				return Ok(Self { function, symbols_type, symbols, close: Some(close) });
+			}
+			if p.peek::<T![String]>() {
+				symbols.push(Symbol::String(p.parse::<T![String]>()?));
 			} else {
 				symbols.push(Symbol::Image(p.parse::<Image>()?));
 			}
@@ -51,45 +48,46 @@ impl<'a> Parse<'a> for Symbols<'a> {
 	}
 }
 
-impl<'a> WriteCss<'a> for Symbols<'a> {
-	fn write_css<W: hdx_writer::CssWriter>(&self, sink: &mut W) -> WriterResult {
-		atom!("symbols").write_css(sink)?;
-		sink.write_char('(')?;
-		if self.0 != SymbolsType::default() || sink.can_output(OutputOption::RedundantDefaultValues) {
-			self.0.to_atom().write_css(sink)?;
-			sink.write_char(' ')?;
+impl<'a> ToCursors<'a> for Symbols<'a> {
+	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+		s.append(self.function.into());
+		if let Some(symbols_type) = self.symbols_type {
+			s.append(symbols_type.into());
 		}
-		let mut iter = self.1.iter().peekable();
-		while let Some(w) = iter.next() {
-			w.write_css(sink)?;
-			if iter.peek().is_some() {
-				sink.write_char(' ')?;
-			}
+		for symbol in &self.symbols {
+			ToCursors::to_cursors(symbol, s);
 		}
-		sink.write_char(')')
+		if let Some(close) = self.close {
+			s.append(close.into());
+		}
 	}
 }
 
 // https://drafts.csswg.org/css-counter-styles-3/#funcdef-symbols
-#[derive(Writable, Debug, Clone, PartialEq, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub enum Symbol<'a> {
-	#[writable(String)]
-	String(&'a str, QuoteStyle),
+	String(T![String]),
 	Image(Image<'a>),
 }
 
-// https://drafts.csswg.org/css-counter-styles-3/#typedef-symbols-type
-#[derive(Atomizable, Default, Debug, Clone, PartialEq, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", rename_all = "kebab-case"))]
-pub enum SymbolsType {
-	Cyclic,     // atom!("cyclic")
-	Numeric,    // atom!("numeric")
-	Alphabetic, // atom!("alphabetic")
-	#[default]
-	Symbolic, // atom!("symbolic")
-	Fixed,      // atom!("fixed")
+impl<'a> ToCursors<'a> for Symbol<'a> {
+	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+		match self {
+			Self::String(c) => s.append(c.into()),
+			Self::Image(c) => ToCursors::to_cursors(c, s),
+		}
+	}
 }
+
+// https://drafts.csswg.org/css-counter-styles-3/#typedef-symbols-type
+keyword_typedef!(SymbolsType {
+	Cyclic: atom!("cyclic"),
+	Numeric: atom!("numeric"),
+	Alphabetic: atom!("alphabetic"),
+	Symbolic: atom!("symbolic"),
+	Fixed: atom!("fixed"),
+});
 
 #[cfg(test)]
 mod tests {
@@ -98,26 +96,14 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(Symbols, 32);
-		assert_size!(Symbol, 64);
-		assert_size!(SymbolsType, 1);
+		assert_size!(Symbols, 72);
+		assert_size!(Symbol, 184);
+		assert_size!(SymbolsType, 16);
 	}
 
 	#[test]
 	fn test_writes() {
-		assert_parse!(Symbols, "symbols(symbolic '+')");
-		assert_parse!(Symbols, "symbols(symbolic '*' '†' '‡')");
-	}
-
-	#[test]
-	fn test_minify() {
-		// Drops reundant "symbolic" default
-		assert_minify!(Symbols, "symbols(symbolic '+')", "symbols(\"+\")");
-		// Minifies UTF-8 escapes
-		assert_minify!(
-			Symbols,
-			"symbols(cyclic '*' '\\2020' '\\2021' '\\A7')",
-			"symbols(cyclic \"*\" \"†\" \"‡\" \"§\")"
-		);
+		assert_parse!(Symbols, "symbols(symbolic'+')");
+		assert_parse!(Symbols, "symbols(symbolic'*''†''‡')");
 	}
 }

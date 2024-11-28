@@ -1,4 +1,4 @@
-use crate::css::values::Todo;
+use crate::Todo;
 
 // https://www.w3.org/TR/2012/WD-css3-conditional-20120911/#at-document
 pub type Document = Todo;

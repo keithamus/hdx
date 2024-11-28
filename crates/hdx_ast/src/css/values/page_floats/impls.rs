@@ -8,16 +8,17 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(FloatReference, 1);
-		assert_size!(Float, 16);
-		assert_size!(Clear, 1);
-		assert_size!(FloatDefer, 8);
-		assert_size!(FloatOffset, 8);
+		assert_size!(FloatReference, 16);
+		assert_size!(Float, 68);
+		assert_size!(Clear, 16);
+		assert_size!(FloatDefer, 16);
+		assert_size!(FloatOffset, 12);
 	}
 
 	#[test]
 	fn test_writes() {
-		assert_parse!(Float, "snap-block(1px, near)");
-		assert_parse!(Float, "snap-inline(1px, near)");
+		assert_parse!(Float, "left");
+		assert_parse!(Float, "snap-block(1px,near)");
+		assert_parse!(Float, "snap-inline(1px,near)");
 	}
 }

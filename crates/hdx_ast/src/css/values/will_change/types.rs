@@ -1,15 +1,15 @@
-use hdx_atom::{atom, Atom};
-use hdx_parser::{Parse, Parser, Peek, Result as ParserResult, T};
-use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
+use hdx_atom::atom;
+use hdx_lexer::Cursor;
+use hdx_parser::{Build, Is, Parser, T};
 
 // https://drafts.csswg.org/css-will-change-1/#typedef-animateable-feature
 // <animateable-feature> = scroll-position | contents | <custom-ident>
-#[derive(Debug, Clone, PartialEq, Hash)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(rename_all = "kebab-case"))]
 pub enum AnimateableFeature {
-	ScrollPosition,
-	Contents,
-	CustomIdent(Atom),
+	ScrollPosition(T![Ident]),
+	Contents(T![Ident]),
+	CustomIdent(T![Ident]),
 
 	// These are known "custom idents" that Firefox, Safari and WebKit support.
 	// See https://searchfox.org/mozilla-central/source/servo/components/style/values/specified/box.rs#1001-1025
@@ -23,118 +23,118 @@ pub enum AnimateableFeature {
 	// for Chromium
 
 	// Shared
-	BackdropFilter,
-	ClipPath,
-	Contain,
-	Filter,
-	Isolation,
-	MixBlendMode,
-	OffsetPath,
-	Opacity,
-	Perspective,
-	Position,
-	Rotate,
-	Scale,
-	Transform,
-	TransformStyle,
-	Translate,
-	ZIndex,
+	BackdropFilter(T![Ident]),
+	ClipPath(T![Ident]),
+	Contain(T![Ident]),
+	Filter(T![Ident]),
+	Isolation(T![Ident]),
+	MixBlendMode(T![Ident]),
+	OffsetPath(T![Ident]),
+	Opacity(T![Ident]),
+	Perspective(T![Ident]),
+	Position(T![Ident]),
+	Rotate(T![Ident]),
+	Scale(T![Ident]),
+	Transform(T![Ident]),
+	TransformStyle(T![Ident]),
+	Translate(T![Ident]),
+	ZIndex(T![Ident]),
 
 	// Chrome also supports
-	ViewTransitionName,
+	ViewTransitionName(T![Ident]),
 
 	// Chrome & Safari (but not Firefox) support
-	Mask,
-	OffsetPosition,
-	WebkitBoxReflect,
-	WebkitMaskBoxImage,
+	Mask(T![Ident]),
+	OffsetPosition(T![Ident]),
+	WebkitBoxReflect(T![Ident]),
+	WebkitMaskBoxImage(T![Ident]),
 
 	// Safari also supports
-	MaskBorder,
-	WebkitMask,
-	WebkitPerspective,
-	WebkitBackdropFilter,
-	WebkitOverflowScrolling,
+	MaskBorder(T![Ident]),
+	WebkitMask(T![Ident]),
+	WebkitPerspective(T![Ident]),
+	WebkitBackdropFilter(T![Ident]),
+	WebkitOverflowScrolling(T![Ident]),
 
 	// Firefox & Safari also supports:
-	MaskImage,
+	MaskImage(T![Ident]),
 }
 
-impl<'a> Peek<'a> for AnimateableFeature {
-	fn peek(p: &Parser<'a>) -> Option<hdx_lexer::Token> {
-		p.peek::<T![Ident]>()
+impl<'a> Is<'a> for AnimateableFeature {
+	fn is(p: &Parser<'a>, c: Cursor) -> bool {
+		<T![Ident]>::is(p, c)
 	}
 }
 
-impl<'a> Parse<'a> for AnimateableFeature {
-	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
-		let token = *p.parse::<T![Ident]>()?;
-		Ok(match p.parse_atom_lower(token) {
-			atom!("-webkit-backdrop-filter") => Self::WebkitBackdropFilter,
-			atom!("-webkit-box-reflex") => Self::WebkitBoxReflect,
-			atom!("-webkit-mask") => Self::WebkitMask,
-			atom!("-webkit-mask-box-image") => Self::WebkitMaskBoxImage,
-			atom!("-webkit-overflow-scrolling") => Self::WebkitOverflowScrolling,
-			atom!("-webkit-perspective") => Self::WebkitPerspective,
-			atom!("backdrop-filter") => Self::BackdropFilter,
-			atom!("clip-path") => Self::ClipPath,
-			atom!("contain") => Self::Contain,
-			atom!("filter") => Self::Filter,
-			atom!("isolation") => Self::Isolation,
-			atom!("mask") => Self::Mask,
-			atom!("mask-border") => Self::MaskBorder,
-			atom!("mask-image") => Self::MaskImage,
-			atom!("mix-blend-mode") => Self::MixBlendMode,
-			atom!("offset-path") => Self::OffsetPath,
-			atom!("offset-position") => Self::OffsetPosition,
-			atom!("opacity") => Self::Opacity,
-			atom!("perspective") => Self::Perspective,
-			atom!("position") => Self::Position,
-			atom!("rotate") => Self::Rotate,
-			atom!("scale") => Self::Scale,
-			atom!("transform") => Self::Transform,
-			atom!("transform-style") => Self::TransformStyle,
-			atom!("translate") => Self::Translate,
-			atom!("view-transition-name") => Self::ViewTransitionName,
-			atom!("z-index") => Self::ZIndex,
-			atom => Self::CustomIdent(atom),
-		})
+impl<'a> Build<'a> for AnimateableFeature {
+	fn build(p: &Parser<'a>, c: Cursor) -> Self {
+		let ident = <T![Ident]>::build(p, c);
+		match p.parse_atom_lower(c) {
+			atom!("-webkit-backdrop-filter") => Self::WebkitBackdropFilter(ident),
+			atom!("-webkit-box-reflex") => Self::WebkitBoxReflect(ident),
+			atom!("-webkit-mask") => Self::WebkitMask(ident),
+			atom!("-webkit-mask-box-image") => Self::WebkitMaskBoxImage(ident),
+			atom!("-webkit-overflow-scrolling") => Self::WebkitOverflowScrolling(ident),
+			atom!("-webkit-perspective") => Self::WebkitPerspective(ident),
+			atom!("backdrop-filter") => Self::BackdropFilter(ident),
+			atom!("clip-path") => Self::ClipPath(ident),
+			atom!("contain") => Self::Contain(ident),
+			atom!("filter") => Self::Filter(ident),
+			atom!("isolation") => Self::Isolation(ident),
+			atom!("mask") => Self::Mask(ident),
+			atom!("mask-border") => Self::MaskBorder(ident),
+			atom!("mask-image") => Self::MaskImage(ident),
+			atom!("mix-blend-mode") => Self::MixBlendMode(ident),
+			atom!("offset-path") => Self::OffsetPath(ident),
+			atom!("offset-position") => Self::OffsetPosition(ident),
+			atom!("opacity") => Self::Opacity(ident),
+			atom!("perspective") => Self::Perspective(ident),
+			atom!("position") => Self::Position(ident),
+			atom!("rotate") => Self::Rotate(ident),
+			atom!("scale") => Self::Scale(ident),
+			atom!("transform") => Self::Transform(ident),
+			atom!("transform-style") => Self::TransformStyle(ident),
+			atom!("translate") => Self::Translate(ident),
+			atom!("view-transition-name") => Self::ViewTransitionName(ident),
+			atom!("z-index") => Self::ZIndex(ident),
+			_ => Self::CustomIdent(ident),
+		}
 	}
 }
 
-impl<'a> WriteCss<'a> for AnimateableFeature {
-	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
-		match self {
-			Self::CustomIdent(a) => a.write_css(sink),
-			Self::ScrollPosition => atom!("scroll-position").write_css(sink),
-			Self::Contents => atom!("contents").write_css(sink),
-			Self::BackdropFilter => atom!("backdrop-filter").write_css(sink),
-			Self::ClipPath => atom!("clip-path").write_css(sink),
-			Self::Contain => atom!("contain").write_css(sink),
-			Self::Filter => atom!("filter").write_css(sink),
-			Self::Isolation => atom!("isolation").write_css(sink),
-			Self::Mask => atom!("mask").write_css(sink),
-			Self::MaskBorder => atom!("mask-border").write_css(sink),
-			Self::MaskImage => atom!("mask-image").write_css(sink),
-			Self::MixBlendMode => atom!("mix-blend-mode").write_css(sink),
-			Self::OffsetPath => atom!("offset-path").write_css(sink),
-			Self::OffsetPosition => atom!("offset-position").write_css(sink),
-			Self::Opacity => atom!("opacity").write_css(sink),
-			Self::Perspective => atom!("perspective").write_css(sink),
-			Self::Position => atom!("position").write_css(sink),
-			Self::Rotate => atom!("rotate").write_css(sink),
-			Self::Scale => atom!("scale").write_css(sink),
-			Self::Transform => atom!("transform").write_css(sink),
-			Self::TransformStyle => atom!("transform-style").write_css(sink),
-			Self::Translate => atom!("translate").write_css(sink),
-			Self::ViewTransitionName => atom!("view-transition-name").write_css(sink),
-			Self::WebkitBackdropFilter => atom!("-webkit-backdrop-filter").write_css(sink),
-			Self::WebkitBoxReflect => atom!("-webkit-box-reflect").write_css(sink),
-			Self::WebkitMask => atom!("-webkit-mask").write_css(sink),
-			Self::WebkitMaskBoxImage => atom!("-webkit-mask-box-image").write_css(sink),
-			Self::WebkitOverflowScrolling => atom!("-webkit-overflow-scrolling").write_css(sink),
-			Self::WebkitPerspective => atom!("-webkit-perspective").write_css(sink),
-			Self::ZIndex => atom!("z-index").write_css(sink),
+impl From<AnimateableFeature> for Cursor {
+	fn from(value: AnimateableFeature) -> Self {
+		match value {
+			AnimateableFeature::ScrollPosition(c) => c.into(),
+			AnimateableFeature::Contents(c) => c.into(),
+			AnimateableFeature::CustomIdent(c) => c.into(),
+			AnimateableFeature::BackdropFilter(c) => c.into(),
+			AnimateableFeature::ClipPath(c) => c.into(),
+			AnimateableFeature::Contain(c) => c.into(),
+			AnimateableFeature::Filter(c) => c.into(),
+			AnimateableFeature::Isolation(c) => c.into(),
+			AnimateableFeature::MixBlendMode(c) => c.into(),
+			AnimateableFeature::OffsetPath(c) => c.into(),
+			AnimateableFeature::Opacity(c) => c.into(),
+			AnimateableFeature::Perspective(c) => c.into(),
+			AnimateableFeature::Position(c) => c.into(),
+			AnimateableFeature::Rotate(c) => c.into(),
+			AnimateableFeature::Scale(c) => c.into(),
+			AnimateableFeature::Transform(c) => c.into(),
+			AnimateableFeature::TransformStyle(c) => c.into(),
+			AnimateableFeature::Translate(c) => c.into(),
+			AnimateableFeature::ZIndex(c) => c.into(),
+			AnimateableFeature::ViewTransitionName(c) => c.into(),
+			AnimateableFeature::Mask(c) => c.into(),
+			AnimateableFeature::OffsetPosition(c) => c.into(),
+			AnimateableFeature::WebkitBoxReflect(c) => c.into(),
+			AnimateableFeature::WebkitMaskBoxImage(c) => c.into(),
+			AnimateableFeature::MaskBorder(c) => c.into(),
+			AnimateableFeature::WebkitMask(c) => c.into(),
+			AnimateableFeature::WebkitPerspective(c) => c.into(),
+			AnimateableFeature::WebkitBackdropFilter(c) => c.into(),
+			AnimateableFeature::WebkitOverflowScrolling(c) => c.into(),
+			AnimateableFeature::MaskImage(c) => c.into(),
 		}
 	}
 }

@@ -1,4 +1,4 @@
-use crate::macros::discrete_media_feature;
+use hdx_parser::discrete_media_feature;
 
 discrete_media_feature!(EnvironmentBlendingMediaFeature[atom!("environment-blending")] {
 	Opaque: atom!("opaque"),
@@ -13,30 +13,15 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(EnvironmentBlendingMediaFeature, 1);
+		assert_size!(EnvironmentBlendingMediaFeature, 36);
 	}
 
 	#[test]
 	fn test_writes() {
 		assert_parse!(EnvironmentBlendingMediaFeature, "environment-blending");
-		assert_parse!(EnvironmentBlendingMediaFeature, "environment-blending: opaque");
-		assert_parse!(EnvironmentBlendingMediaFeature, "environment-blending: additive");
-		assert_parse!(EnvironmentBlendingMediaFeature, "environment-blending: subtractive");
-	}
-
-	#[test]
-	fn test_minify() {
-		assert_minify!(EnvironmentBlendingMediaFeature, "environment-blending: opaque", "environment-blending:opaque");
-		assert_minify!(
-			EnvironmentBlendingMediaFeature,
-			"environment-blending: additive",
-			"environment-blending:additive"
-		);
-		assert_minify!(
-			EnvironmentBlendingMediaFeature,
-			"environment-blending: subtractive",
-			"environment-blending:subtractive"
-		);
+		assert_parse!(EnvironmentBlendingMediaFeature, "environment-blending:opaque");
+		assert_parse!(EnvironmentBlendingMediaFeature, "environment-blending:additive");
+		assert_parse!(EnvironmentBlendingMediaFeature, "environment-blending:subtractive");
 	}
 
 	#[test]

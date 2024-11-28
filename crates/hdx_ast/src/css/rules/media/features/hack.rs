@@ -1,40 +1,40 @@
-use hdx_atom::atom;
-use hdx_parser::{diagnostics, Parse, Parser, Result as ParserResult, T};
-use hdx_writer::{write_css, CssWriter, Result as WriterResult, WriteCss};
+use hdx_lexer::Cursor;
+use hdx_parser::{diagnostics, CursorStream, Parse, Parser, Result as ParserResult, ToCursors, T};
 
 mod kw {
 	use hdx_parser::custom_keyword;
 	custom_keyword!(MinWidth, atom!("min-width"));
 }
 
-#[derive(PartialEq, Debug, Hash)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", content = "value"))]
 pub enum HackMediaFeature {
-	IEBackslashZero,
+	IEBackslashZero(kw::MinWidth, T![:], T![Dimension]),
 }
 
 impl<'a> Parse<'a> for HackMediaFeature {
 	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
-		p.parse::<kw::MinWidth>()?;
-		p.parse::<T![:]>()?;
-		if let Some(token) = p.peek::<T![Dimension]>() {
-			let str = p.parse_raw_str(token);
-			if str == "0\\0" {
-				p.hop(token);
-				return Ok(Self::IEBackslashZero);
-			}
+		let keyword = p.parse::<kw::MinWidth>()?;
+		let colon = p.parse::<T![:]>()?;
+		let dimension = p.parse::<T![Dimension]>()?;
+		let c: Cursor = dimension.into();
+		let str = p.parse_raw_str(c);
+		if str != "0\\0" {
+			Err(diagnostics::Unexpected(c.into(), c.into()))?
 		}
-		let token = p.peek::<T![Any]>().unwrap();
-		Err(diagnostics::Unexpected(token, token.span()))?
+		Ok(Self::IEBackslashZero(keyword, colon, dimension))
 	}
 }
 
-impl<'a> WriteCss<'a> for HackMediaFeature {
-	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
+impl<'a> ToCursors<'a> for HackMediaFeature {
+	fn to_cursors(&self, s: &mut CursorStream<'a>) {
 		match self {
-			Self::IEBackslashZero => write_css!(sink, atom!("min-width"), ':', (), '0', '\\', '0'),
+			Self::IEBackslashZero(keyword, colon, dimension) => {
+				s.append(keyword.into());
+				s.append(colon.into());
+				s.append(dimension.into());
+			}
 		}
-		Ok(())
 	}
 }
 
@@ -45,12 +45,11 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(HackMediaFeature, 0);
+		assert_size!(HackMediaFeature, 32);
 	}
 
 	#[test]
 	fn test_writes() {
-		assert_parse!(HackMediaFeature, "min-width: 0\\0");
-		assert_parse!(HackMediaFeature, "min-width:0\\0", "min-width: 0\\0");
+		assert_parse!(HackMediaFeature, "min-width:0\\0");
 	}
 }

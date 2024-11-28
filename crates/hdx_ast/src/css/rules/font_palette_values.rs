@@ -1,4 +1,4 @@
-use crate::css::values::Todo;
+use crate::Todo;
 
 // https://drafts.csswg.org/css-fonts/#at-ruledef-font-palette-values
 pub type FontPaletteValues = Todo;

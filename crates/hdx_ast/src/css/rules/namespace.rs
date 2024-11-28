@@ -1,4 +1,4 @@
-use crate::css::values::Todo;
+use crate::Todo;
 
 // https://drafts.csswg.org/css-namespaces/#at-ruledef-namespace
 pub type Namespace = Todo;

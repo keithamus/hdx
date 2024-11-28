@@ -17,9 +17,9 @@ mod tests {
 		// assert_size!(JustifyItems, 1);
 		// assert_size!(AlignItems, 1);
 		// assert_size!(PlaceItems, 1);
-		assert_size!(RowGap, 8);
-		assert_size!(ColumnGap, 8);
-		assert_size!(Gap, 16);
+		assert_size!(RowGap, 16);
+		assert_size!(ColumnGap, 16);
+		assert_size!(Gap, 32);
 	}
 
 	#[test]

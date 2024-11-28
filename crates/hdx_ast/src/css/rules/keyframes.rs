@@ -1,48 +1,54 @@
 use hdx_atom::{atom, Atom};
-use hdx_lexer::{QuoteStyle, Span};
-use hdx_parser::{diagnostics, AtRule, Parse, Parser, Result as ParserResult, Spanned, Vec, T};
-use hdx_writer::{write_css, CssWriter, Result as WriterResult, WriteCss};
-use smallvec::{smallvec, SmallVec};
+use hdx_lexer::Cursor;
+use hdx_parser::{diagnostics, AtRule, Is, Parse, Parser, Result as ParserResult, ToCursors, Vec, T};
 
-use crate::css::{properties::Property, units::Percent};
+use crate::css::properties::Property;
+
+pub mod kw {
+	use hdx_parser::custom_keyword;
+	custom_keyword!(From, atom!("from"));
+	custom_keyword!(To, atom!("to"));
+}
 
 // https://drafts.csswg.org/css-animations/#at-ruledef-keyframes
-#[derive(PartialEq, Debug, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
 pub struct Keyframes<'a> {
-	name: Spanned<KeyframeName>,
-	rules: Spanned<KeyframeList<'a>>,
+	at_keyword: T![AtKeyword],
+	name: Option<KeyframeName>,
+	rules: Option<KeyframeBlock<'a>>,
 }
 
 impl<'a> Parse<'a> for Keyframes<'a> {
 	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
-		let start = p.offset();
-		match Self::parse_at_rule(p, Some(atom!("keyframes")))? {
-			(Some(name), Some(rules)) => Ok(Self { name, rules }),
-			(Some(_), None) => Err(diagnostics::MissingAtRuleBlock(Span::new(start, p.offset())))?,
-			(None, Some(_)) => Err(diagnostics::MissingAtRulePrelude(Span::new(start, p.offset())))?,
-			(None, None) => Err(diagnostics::MissingAtRulePrelude(Span::new(start, p.offset())))?,
-		}
+		let (at_keyword, name, rules) = Self::parse_at_rule(p, Some(atom!("keyframes")))?;
+		Ok(Self { at_keyword, name, rules })
 	}
 }
 
 impl<'a> AtRule<'a> for Keyframes<'a> {
 	type Prelude = KeyframeName;
-	type Block = KeyframeList<'a>;
+	type Block = KeyframeBlock<'a>;
 }
 
-impl<'a> WriteCss<'a> for Keyframes<'a> {
-	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
-		sink.indent();
-		write_css!(sink, '@', atom!("keyframes"), ' ', self.name, (), self.rules);
-		sink.dedent();
-		Ok(())
+impl<'a> ToCursors<'a> for Keyframes<'a> {
+	fn to_cursors(&self, s: &mut hdx_parser::CursorStream<'a>) {
+		s.append(self.at_keyword.into());
+		if let Some(name) = self.name {
+			s.append(name.into());
+		}
+		if let Some(rules) = &self.rules {
+			ToCursors::to_cursors(rules, s);
+		}
 	}
 }
 
-#[derive(PartialEq, Debug, Hash)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-pub struct KeyframeName(pub Atom, pub QuoteStyle);
+pub enum KeyframeName {
+	Ident(T![Ident]),
+	String(T![String]),
+}
 
 impl KeyframeName {
 	fn valid_ident(atom: &Atom) -> bool {
@@ -53,145 +59,158 @@ impl KeyframeName {
 	}
 }
 
+impl<'a> Is<'a> for KeyframeName {
+	fn is(p: &Parser<'a>, c: hdx_lexer::Cursor) -> bool {
+		<T![Ident]>::is(p, c) || <T![String]>::is(p, c)
+	}
+}
+
 impl<'a> Parse<'a> for KeyframeName {
 	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
-		if let Some(token) = p.peek::<T![String]>() {
-			p.hop(token);
-			let atom = p.parse_atom(token);
-			return Ok(Self(atom, token.quote_style()));
+		if let Ok(str) = p.parse::<T![String]>() {
+			return Ok(Self::String(str));
 		}
-		let token = *p.parse::<T![Ident]>()?;
-		let atom = p.parse_atom_lower(token);
-		if Self::valid_ident(&atom) {
-			Ok(Self(atom, QuoteStyle::None))
-		} else {
-			Err(diagnostics::UnexpectedIdent(atom, token.span()))?
+		let ident = p.parse::<T![Ident]>()?;
+		let c: Cursor = ident.into();
+		let atom = p.parse_atom(c);
+		if !KeyframeName::valid_ident(&atom) {
+			Err(diagnostics::ReservedKeyframeName(atom, c.into()))?
+		}
+		Ok(Self::Ident(ident))
+	}
+}
+
+impl From<KeyframeName> for Cursor {
+	fn from(value: KeyframeName) -> Self {
+		match value {
+			KeyframeName::String(c) => c.into(),
+			KeyframeName::Ident(c) => c.into(),
 		}
 	}
 }
 
-impl<'a> WriteCss<'a> for KeyframeName {
-	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
-		sink.write_with_quotes(self.0.as_ref(), self.1, Self::valid_ident(&self.0))
-	}
-}
-
-#[derive(PartialEq, Debug, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-pub struct KeyframeList<'a>(Vec<'a, Spanned<Keyframe<'a>>>);
+pub struct KeyframeBlock<'a> {
+	pub open: T!['{'],
+	pub keyframes: Vec<'a, Keyframe<'a>>,
+	pub close: Option<T!['}']>,
+}
 
-impl<'a> Parse<'a> for KeyframeList<'a> {
+impl<'a> Parse<'a> for KeyframeBlock<'a> {
 	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
-		p.parse::<T![LeftCurly]>()?;
-		let mut rules = p.new_vec();
+		let open = p.parse::<T!['{']>()?;
+		let mut keyframes = Vec::new_in(p.bump());
 		loop {
-			if p.parse::<T![RightCurly]>().is_ok() {
-				return Ok(Self(rules));
+			if p.at_end() || p.peek::<T!['{']>() {
+				break;
 			}
-			rules.push(p.parse_spanned::<Keyframe>()?);
+			keyframes.push(p.parse::<Keyframe>()?);
+		}
+		let close = p.parse_if_peek::<T!['}']>()?;
+		Ok(Self { open, keyframes, close })
+	}
+}
+
+impl<'a> ToCursors<'a> for KeyframeBlock<'a> {
+	fn to_cursors(&self, s: &mut hdx_parser::CursorStream<'a>) {
+		s.append(self.open.into());
+		for keyframe in &self.keyframes {
+			ToCursors::to_cursors(keyframe, s);
+		}
+		if let Some(close) = self.close {
+			s.append(close.into());
 		}
 	}
 }
 
-impl<'a> WriteCss<'a> for KeyframeList<'a> {
-	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
-		sink.write_char('{')?;
-		for rule in self.0.iter() {
-			sink.write_newline()?;
-			rule.write_css(sink)?;
-			sink.write_newline()?;
-		}
-		sink.write_char('}')
-	}
-}
-
-#[derive(PartialEq, Debug, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct Keyframe<'a> {
-	selector: SmallVec<[KeyframeSelector; 1]>,
-	properties: Vec<'a, Spanned<Property<'a>>>,
+	selectors: Vec<'a, KeyframeSelector>,
+	open: T!['{'],
+	properties: Vec<'a, Property<'a>>,
+	close: Option<T!['}']>,
 }
 
 impl<'a> Parse<'a> for Keyframe<'a> {
 	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
-		let mut selector = smallvec![];
+		let mut selectors = Vec::new_in(p.bump());
 		loop {
-			selector.push(p.parse::<KeyframeSelector>()?);
-			if p.at_end() || p.parse::<T![LeftCurly]>().is_ok() {
+			selectors.push(p.parse::<KeyframeSelector>()?);
+			if p.at_end() || p.peek::<T!['{']>() {
 				break;
 			}
-			p.parse::<T![,]>()?;
 		}
-		let mut properties = p.new_vec();
+		let open = p.parse::<T!['{']>()?;
+		let mut properties = Vec::new_in(p.bump());
 		loop {
-			p.parse::<T![;]>().ok();
-			if p.at_end() || p.parse::<T![RightCurly]>().is_ok() {
+			if p.at_end() || p.peek::<T!['}']>() {
 				break;
 			}
-			properties.push(p.parse_spanned::<Property>()?);
+			properties.push(p.parse::<Property>()?);
 		}
-		Ok(Self { selector, properties })
+		let close = p.parse_if_peek::<T!['}']>()?;
+		Ok(Self { selectors, open, properties, close })
 	}
 }
 
-impl<'a> WriteCss<'a> for Keyframe<'a> {
-	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
-		sink.write_indent()?;
-		write_css!(sink, self.selector, (), '{');
-		sink.indent();
-		let mut iter = self.properties.iter().peekable();
-		while let Some(prop) = iter.next() {
-			sink.write_newline()?;
-			sink.write_indent()?;
-			prop.write_css(sink)?;
-			if iter.peek().is_some() {
-				sink.write_char(';')?;
-			} else {
-				sink.write_trailing_char(';')?;
-			}
+impl<'a> ToCursors<'a> for Keyframe<'a> {
+	fn to_cursors(&self, s: &mut hdx_parser::CursorStream<'a>) {
+		for selector in &self.selectors {
+			s.append((*selector).into());
 		}
-		sink.dedent();
-		sink.write_newline()?;
-		sink.write_indent()?;
-		sink.write_char('}')
+		s.append(self.open.into());
+		for property in &self.properties {
+			ToCursors::to_cursors(property, s);
+		}
+		if let Some(close) = self.close {
+			s.append(close.into());
+		}
 	}
 }
 
-#[derive(PartialEq, Debug, Hash)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub enum KeyframeSelector {
-	From,
-	To,
-	Percent(Percent),
+	From(T![Ident]),
+	To(T![Ident]),
+	Percent(T![Dimension::%]),
+}
+
+impl<'a> Is<'a> for KeyframeSelector {
+	fn is(p: &Parser<'a>, c: Cursor) -> bool {
+		kw::From::is(p, c) || kw::To::is(p, c) || <T![Dimension::%]>::is(p, c)
+	}
 }
 
 impl<'a> Parse<'a> for KeyframeSelector {
 	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
-		if let Some(token) = p.peek::<T![Ident]>() {
-			p.hop(token);
-			return match p.parse_atom_lower(token) {
-				atom!("from") => Ok(KeyframeSelector::From),
-				atom!("to") => Ok(KeyframeSelector::To),
-				atom => Err(diagnostics::UnexpectedIdent(atom, token.span()))?,
+		if let Some(ident) = p.parse_if_peek::<T![Ident]>()? {
+			let c: Cursor = ident.into();
+			return match p.parse_atom_lower(c) {
+				atom!("from") => Ok(Self::From(ident)),
+				atom!("to") => Ok(Self::To(ident)),
+				atom => Err(diagnostics::UnexpectedIdent(atom, c.into()))?,
 			};
 		}
-		let token = *p.parse::<T![Dimension]>()?;
-		let n = p.parse_number(token);
-		let unit = p.parse_atom(token);
-		if unit == atom!("%") && (0.0..=100.0).contains(&n) {
-			Ok(Self::Percent(n.into()))
+		let percent = p.parse::<T![Dimension::%]>()?;
+		let c: Cursor = percent.into();
+		let f: f32 = c.token().value();
+		if (0.0..=100.0).contains(&f) {
+			Ok(Self::Percent(percent))
 		} else {
-			Err(diagnostics::UnexpectedDimension(unit, token.span()))?
+			Err(diagnostics::NumberOutOfBounds(f, format!("{:?}", 0.0..=100.0), c.into()))?
 		}
 	}
 }
 
-impl<'a> WriteCss<'a> for KeyframeSelector {
-	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
-		match self {
-			Self::To => atom!("to").write_css(sink),
-			Self::From => atom!("from").write_css(sink),
-			Self::Percent(pc) => pc.write_css(sink),
+impl From<KeyframeSelector> for Cursor {
+	fn from(value: KeyframeSelector) -> Self {
+		match value {
+			KeyframeSelector::From(c) => c.into(),
+			KeyframeSelector::To(c) => c.into(),
+			KeyframeSelector::Percent(c) => c.into(),
 		}
 	}
 }
@@ -203,7 +222,7 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(Keyframes, 64);
+		assert_size!(Keyframes, 88);
 	}
 
 	#[test]

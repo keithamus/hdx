@@ -5,15 +5,15 @@ use super::types::LengthPercentage;
 use super::{MinWidth, Width};
 
 // shortcuts for logical properties to resolve to 0
-impl Width {
-	#[allow(non_upper_case_globals)]
-	pub const Zero: Width = Width::LengthPercentage(LengthPercentage::Zero);
-}
-
-impl MinWidth {
-	#[allow(non_upper_case_globals)]
-	pub const Zero: MinWidth = MinWidth::LengthPercentage(LengthPercentage::Zero);
-}
+// impl Width {
+// 	#[allow(non_upper_case_globals)]
+// 	pub const Zero: Width = Width::LengthPercentage(LengthPercentage::Zero();
+// }
+//
+// impl MinWidth {
+// 	#[allow(non_upper_case_globals)]
+// 	pub const Zero: MinWidth = MinWidth::LengthPercentage(LengthPercentage::Zero);
+// }
 
 #[cfg(test)]
 mod tests {
@@ -22,13 +22,13 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(Width, 12);
-		assert_size!(Height, 12);
-		assert_size!(MinWidth, 12);
-		assert_size!(MinHeight, 12);
-		assert_size!(MaxWidth, 12);
-		assert_size!(MaxHeight, 12);
-		assert_size!(BoxSizing, 1);
+		assert_size!(Width, 36);
+		assert_size!(Height, 36);
+		assert_size!(MinWidth, 36);
+		assert_size!(MinHeight, 36);
+		assert_size!(MaxWidth, 36);
+		assert_size!(MaxHeight, 36);
+		assert_size!(BoxSizing, 16);
 	}
 
 	#[test]

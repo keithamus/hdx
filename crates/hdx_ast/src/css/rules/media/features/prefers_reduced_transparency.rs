@@ -1,4 +1,4 @@
-use crate::macros::discrete_media_feature;
+use hdx_parser::discrete_media_feature;
 
 discrete_media_feature!(PrefersReducedTransparencyMediaFeature[atom!("prefers-reduced-transparency")] {
 	NoPreference: atom!("no-preference"),
@@ -12,28 +12,14 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(PrefersReducedTransparencyMediaFeature, 1);
+		assert_size!(PrefersReducedTransparencyMediaFeature, 36);
 	}
 
 	#[test]
 	fn test_writes() {
 		assert_parse!(PrefersReducedTransparencyMediaFeature, "prefers-reduced-transparency");
-		assert_parse!(PrefersReducedTransparencyMediaFeature, "prefers-reduced-transparency: no-preference");
-		assert_parse!(PrefersReducedTransparencyMediaFeature, "prefers-reduced-transparency: reduce");
-	}
-
-	#[test]
-	fn test_minify() {
-		assert_minify!(
-			PrefersReducedTransparencyMediaFeature,
-			"prefers-reduced-transparency: no-preference",
-			"prefers-reduced-transparency:no-preference"
-		);
-		assert_minify!(
-			PrefersReducedTransparencyMediaFeature,
-			"prefers-reduced-transparency: reduce",
-			"prefers-reduced-transparency:reduce"
-		);
+		assert_parse!(PrefersReducedTransparencyMediaFeature, "prefers-reduced-transparency:no-preference");
+		assert_parse!(PrefersReducedTransparencyMediaFeature, "prefers-reduced-transparency:reduce");
 	}
 
 	#[test]

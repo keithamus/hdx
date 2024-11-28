@@ -8,23 +8,23 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(BlockSize, 12);
-		assert_size!(InlineSize, 12);
-		assert_size!(MinBlockSize, 12);
-		assert_size!(MinInlineSize, 12);
-		assert_size!(MaxBlockSize, 12);
-		assert_size!(MaxInlineSize, 12);
-		assert_size!(MarginBlockStart, 8);
-		assert_size!(MarginBlockEnd, 8);
-		assert_size!(MarginInlineStart, 8);
-		assert_size!(MarginInlineEnd, 8);
-		assert_size!(MarginBlock, 16);
-		assert_size!(MarginInline, 16);
-		assert_size!(PaddingBlockStart, 8);
-		assert_size!(PaddingBlockEnd, 8);
-		assert_size!(PaddingInlineStart, 8);
-		assert_size!(PaddingInlineEnd, 8);
-		assert_size!(PaddingBlock, 16);
-		assert_size!(PaddingInline, 16);
+		assert_size!(BlockSize, 36);
+		assert_size!(InlineSize, 36);
+		assert_size!(MinBlockSize, 36);
+		assert_size!(MinInlineSize, 36);
+		assert_size!(MaxBlockSize, 36);
+		assert_size!(MaxInlineSize, 36);
+		assert_size!(MarginBlockStart, 16);
+		assert_size!(MarginBlockEnd, 16);
+		assert_size!(MarginInlineStart, 16);
+		assert_size!(MarginInlineEnd, 16);
+		assert_size!(MarginBlock, 32);
+		assert_size!(MarginInline, 32);
+		assert_size!(PaddingBlockStart, 12);
+		assert_size!(PaddingBlockEnd, 12);
+		assert_size!(PaddingInlineStart, 12);
+		assert_size!(PaddingInlineEnd, 12);
+		assert_size!(PaddingBlock, 24);
+		assert_size!(PaddingInline, 24);
 	}
 }
