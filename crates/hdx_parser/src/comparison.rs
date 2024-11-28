@@ -1,40 +1,48 @@
-use crate::{diagnostics, Parse, Parser, Result, T};
-use hdx_lexer::Include;
+use crate::{diagnostics, Parse, Parser, Result, ToCursors, T};
 
-#[derive(Debug, PartialEq, Hash)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
 pub enum Comparison {
-	LessThan,         // '<'
-	GreaterThan,      // '>'
-	GreaterThanEqual, // '>='
-	LessThanEqual,    // '<='
-	Equal,            // '='
+	LessThan(T![<]),
+	GreaterThan(T![>]),
+	GreaterThanEqual(T![>=]),
+	LessThanEqual(T![<=]),
+	Equal(T![=]),
 }
 
 impl<'a> Parse<'a> for Comparison {
 	fn parse(p: &mut Parser<'a>) -> Result<Comparison> {
-		let token = *p.parse::<T![Delim]>()?;
-		match token.char().unwrap() {
-			'=' => Ok(Comparison::Equal),
-			'>' => {
-				if let Some(token) = p.peek_with::<T![Delim]>(Include::Whitespace) {
-					if let Some('=') = token.char() {
-						p.hop(token);
-						return Ok(Comparison::GreaterThanEqual);
-					}
+		let c = p.peek_next();
+		match c.token().char() {
+			Some('=') => p.parse::<T![=]>().map(Comparison::Equal),
+			Some('>') => {
+				if p.peek::<T![>=]>() {
+					p.parse::<T![>=]>().map(Comparison::GreaterThanEqual)
+				} else {
+					p.parse::<T![>]>().map(Comparison::GreaterThan)
 				}
-				Ok(Comparison::GreaterThan)
 			}
-			'<' => {
-				if let Some(token) = p.peek_with::<T![Delim]>(Include::Whitespace) {
-					if let Some('=') = token.char() {
-						p.hop(token);
-						return Ok(Comparison::LessThanEqual);
-					}
+			Some('<') => {
+				if p.peek::<T![<=]>() {
+					p.parse::<T![<=]>().map(Comparison::LessThanEqual)
+				} else {
+					p.parse::<T![<]>().map(Comparison::LessThan)
 				}
-				Ok(Comparison::LessThan)
 			}
-			char => Err(diagnostics::UnexpectedDelim(char, token.span()))?,
+			Some(char) => Err(diagnostics::UnexpectedDelim(char, c.into()))?,
+			_ => Err(diagnostics::Unexpected(c.into(), c.into()))?,
+		}
+	}
+}
+
+impl<'a> ToCursors<'a> for Comparison {
+	fn to_cursors(&self, s: &mut crate::CursorStream<'a>) {
+		match self {
+			Self::LessThan(c) => s.append(c.into()),
+			Self::GreaterThan(c) => s.append(c.into()),
+			Self::GreaterThanEqual(c) => ToCursors::to_cursors(c, s),
+			Self::LessThanEqual(c) => ToCursors::to_cursors(c, s),
+			Self::Equal(c) => s.append(c.into()),
 		}
 	}
 }
