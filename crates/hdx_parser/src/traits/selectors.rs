@@ -1,9 +1,9 @@
 use hdx_atom::Atom;
-use hdx_lexer::{Include, Kind, Span, Spanned};
+use hdx_lexer::{Kind, KindSet};
 
 use crate::{diagnostics, parser::Parser, Result, Vec, T};
 
-use super::Parse;
+use super::{Build, Is, Parse};
 
 // Parses various "Selector Lists" into their units
 // https://drafts.csswg.org/selectors-4/#typedef-selector-list
@@ -11,142 +11,169 @@ use super::Parse;
 // https://drafts.csswg.org/selectors-4/#typedef-complex-real-selector-list
 // https://drafts.csswg.org/selectors-4/#typedef-relative-real-selector-list
 pub trait SelectorList<'a>: Sized + Parse<'a> {
-	// SelectorComponent represents a Selector, or Combinator.
-	// https://drafts.csswg.org/selectors-4/#typedef-combinator
-	// https://drafts.csswg.org/selectors-4/#typedef-type-selector
-	// https://drafts.csswg.org/selectors-4/#typedef-subclass-selector
-	// https://drafts.csswg.org/selectors-4/#typedef-pseudo-element-selector
-	type SelectorComponent: Parse<'a>;
+	type CompoundSelector: Parse<'a> + CompoundSelector<'a>;
 
-	fn parse_compound_selector(p: &mut Parser<'a>) -> Result<Spanned<Vec<'a, Self::SelectorComponent>>> {
-		let start = p.offset();
-		let mut selector = p.new_vec();
+	fn parse_selector_list(p: &mut Parser<'a>) -> Result<Vec<'a, Self::CompoundSelector>> {
+		let mut selectors = Vec::new_in(p.bump());
 		loop {
-			let peeked_kind = p.peek_n_with(1, Include::Whitespace).kind();
-			// If a stop token has been reached, break the loop
-			if p.at_end() || matches!(peeked_kind, Kind::LeftCurly | Kind::RightParen | Kind::Comma) {
+			if p.at_end() || p.peek_n(1) == KindSet::LEFT_CURLY_RIGHT_PAREN_OR_SEMICOLON {
 				break;
 			}
-			// Handle whitespace carefully; it could be a descendant combinator or just whitespace next to a stop token
-			if peeked_kind == Kind::Whitespace
-				&& matches!(p.peek_n(1).kind(), Kind::LeftCurly | Kind::RightParen | Kind::Comma)
-			{
-				break;
-			}
-			selector.push(p.parse::<Self::SelectorComponent>()?);
-		}
-		Ok(Spanned { node: selector, span: Span::new(start, p.offset()) })
-	}
-
-	fn parse_selector_list(p: &mut Parser<'a>) -> Result<Vec<'a, Spanned<Vec<'a, Self::SelectorComponent>>>> {
-		let mut selectors = p.new_vec();
-		loop {
-			if p.at_end() {
-				break;
-			}
-			// Discard all leading whitespace
-			while p.parse_with::<T![' ']>(Include::Whitespace).is_ok() {}
-			let next_token_kind = p.peek::<T![Any]>().map(|t| t.kind()).unwrap_or(Kind::Eof);
-			if matches!(next_token_kind, Kind::LeftCurly | Kind::RightParen) {
-				break;
-			}
-			selectors.push(Self::parse_compound_selector(p)?);
-			if p.parse::<T![,]>().is_ok() {
-				break;
-			}
+			let selector = p.parse::<Self::CompoundSelector>()?;
+			selectors.push(selector);
 		}
 		Ok(selectors)
 	}
 }
 
+pub trait CompoundSelector<'a>: Sized + Parse<'a> {
+	// SelectorComponent represents a Selector, or Combinator.
+	// https://drafts.csswg.org/selectors-4/#typedef-combinator
+	// https://drafts.csswg.org/selectors-4/#typedef-type-selector
+	// https://drafts.csswg.org/selectors-4/#typedef-subclass-selector
+	// https://drafts.csswg.org/selectors-4/#typedef-pseudo-element-selector
+	type SelectorComponent: Parse<'a> + SelectorComponent<'a>;
+
+	fn parse_compound_selector(p: &mut Parser<'a>) -> Result<(Vec<'a, Self::SelectorComponent>, Option<T![,]>)> {
+		let mut components = Vec::new_in(p.bump());
+		// Trim leading whitespace
+		p.consume_trivia();
+		loop {
+			// If a stop token has been reached, break the loop
+			if p.at_end() || p.peek_n(1) == KindSet::LEFT_CURLY_RIGHT_PAREN_COMMA_OR_SEMICOLON {
+				break;
+			}
+			components.push(p.parse::<Self::SelectorComponent>()?);
+		}
+		let comma = p.parse_if_peek::<T![,]>()?;
+		Ok((components, comma))
+	}
+}
+
 pub trait SelectorComponent<'a>: Sized {
-	fn wildcard() -> Self;
+	type Wildcard: Is<'a> + Build<'a>;
+	type Id: Is<'a> + Build<'a>;
+	type Type: Is<'a> + Build<'a>;
+	type PseudoClass: Parse<'a>;
+	type PseudoElement: Parse<'a>;
+	type LegacyPseudoElement: Parse<'a>;
+	type Class: Parse<'a>;
+	type NsType: Parse<'a>;
+	type Combinator: Parse<'a>;
+	type Attribute: Parse<'a>;
+	type FunctionalPseudoClass: Parse<'a>;
+	type FunctionalPseudoElement: Parse<'a>;
 
-	fn id_from_atom(atom: &Atom) -> Option<Self>;
-	fn class_from_atom(atom: &Atom) -> Option<Self>;
-	fn type_from_atom(atom: &Atom) -> Option<Self>;
-	fn pseudo_class_from_atom(atom: &Atom) -> Option<Self>;
-	fn legacy_pseudo_element_from_token(atom: &Atom) -> Option<Self>;
-	fn pseudo_element_from_atom(atom: &Atom) -> Option<Self>;
+	fn is_legacy_pseudo_element(name: &Atom) -> bool;
 
-	fn ns_type_from_token(p: &mut Parser<'a>) -> Result<Self>;
-
-	fn parse_combinator(p: &mut Parser<'a>) -> Result<Self>;
-	fn parse_attribute(p: &mut Parser<'a>) -> Result<Self>;
-	fn parse_functional_pseudo_class(p: &mut Parser<'a>) -> Result<Self>;
-	fn parse_functional_pseudo_element(p: &mut Parser<'a>) -> Result<Self>;
+	fn build_wildcard(node: Self::Wildcard) -> Self;
+	fn build_id(node: Self::Id) -> Self;
+	fn build_class(node: Self::Class) -> Self;
+	fn build_type(node: Self::Type) -> Self;
+	fn build_pseudo_class(node: Self::PseudoClass) -> Self;
+	fn build_pseudo_element(node: Self::PseudoElement) -> Self;
+	fn build_legacy_pseudo_element(node: Self::LegacyPseudoElement) -> Self;
+	fn build_ns_type(node: Self::NsType) -> Self;
+	fn build_combinator(node: Self::Combinator) -> Self;
+	fn build_attribute(node: Self::Attribute) -> Self;
+	fn build_functional_pseudo_class(node: Self::FunctionalPseudoClass) -> Self;
+	fn build_functional_pseudo_element(node: Self::FunctionalPseudoElement) -> Self;
 
 	fn parse_selector_component(p: &mut Parser<'a>) -> Result<Self> {
-		let token = p.peek_n_with(1, Include::Whitespace);
-		match token.kind() {
-			Kind::Ident => match p.peek_n_with(2, Include::Whitespace) {
-				t if t.kind() == Kind::Delim && matches!(t.char(), Some('|')) => {
-					p.next_with(Include::Whitespace);
-					Self::ns_type_from_token(p)
+		let skip = p.set_skip(KindSet::NONE);
+		let c = p.peek_n(1);
+		let t = c.token();
+		match t.kind() {
+			Kind::Ident => match p.peek_n(2) {
+				t if t == '|' => {
+					p.set_skip(skip);
+					p.parse::<Self::NsType>().map(Self::build_ns_type)
 				}
 				_ => {
-					p.next();
-					let atom = p.parse_atom(token);
-					Self::type_from_atom(&atom).ok_or_else(|| diagnostics::UnexpectedTag(atom, token.span()).into())
+					let c = p.next();
+					p.set_skip(skip);
+					if Self::Type::is(p, c) {
+						Ok(Self::build_type(Self::Type::build(p, c)))
+					} else {
+						Err(diagnostics::UnexpectedTag(p.parse_atom_lower(c), c.into()))?
+					}
 				}
 			},
-			Kind::Hash if token.hash_is_id_like() => {
-				p.next();
-				let atom = p.parse_atom(token);
-				Self::type_from_atom(&atom).ok_or_else(|| diagnostics::UnexpectedId(atom.clone(), token.span()).into())
+			Kind::Hash if t.hash_is_id_like() => {
+				let c = p.next();
+				p.set_skip(skip);
+				if Self::Id::is(p, c) {
+					Ok(Self::build_id(Self::Id::build(p, c)))
+				} else {
+					Err(diagnostics::UnexpectedId(p.parse_atom_lower(c), c.into()))?
+				}
 			}
-			Kind::LeftSquare => Ok(Self::parse_attribute(p)?),
-			Kind::Delim => match token.char().unwrap() {
+			Kind::LeftSquare => {
+				p.set_skip(skip);
+				p.parse::<Self::Attribute>().map(Self::build_attribute)
+			}
+			Kind::Delim => match t.char().unwrap() {
 				'.' => {
-					p.next();
-					match p.next_with(Include::Whitespace) {
-						t if t.kind() == Kind::Ident => {
-							let atom = p.parse_atom(t);
-							Self::class_from_atom(&atom)
-								.ok_or_else(|| diagnostics::UnexpectedIdent(atom, token.span()).into())
-						}
-						token => Err(diagnostics::ExpectedIdent(token, token.span()))?,
+					let c = p.peek_n(2);
+					p.set_skip(skip);
+					match c.token().kind() {
+						Kind::Ident => p.parse::<Self::Class>().map(Self::build_class),
+						k => Err(diagnostics::ExpectedIdent(k, c.into()))?,
 					}
 				}
-				'*' => match p.peek_n_with(2, Include::Whitespace) {
-					t if t.kind() == Kind::Delim && matches!(t.char(), Some('|')) => Self::ns_type_from_token(p),
-					_ => {
-						p.next();
-						Ok(Self::wildcard())
+				'*' => {
+					let t = p.peek_n(2);
+					p.set_skip(skip);
+					if t == '|' {
+						p.parse::<Self::NsType>().map(Self::build_ns_type)
+					} else {
+						let c = p.next();
+						Ok(Self::build_wildcard(Self::Wildcard::build(p, c)))
 					}
-				},
-				_ => Self::parse_combinator(p),
+				}
+				_ => {
+					p.set_skip(skip);
+					p.parse::<Self::Combinator>().map(Self::build_combinator)
+				}
 			},
 			Kind::Colon => {
-				p.next();
-				let token = p.peek_with::<T![Any]>(Include::Whitespace).unwrap();
-				match token.kind() {
+				let c = p.peek_n(2);
+				match c.token().kind() {
 					Kind::Colon => {
-						p.next_with(Include::Whitespace);
-						let next = p.next_with(Include::Whitespace);
-						match next.kind() {
-							Kind::Ident => {
-								let atom = p.parse_atom(next);
-								Self::pseudo_element_from_atom(&atom).ok_or_else(|| {
-									diagnostics::UnexpectedPseudoElement(atom.clone(), token.span()).into()
-								})
+						let c = p.peek_n(3);
+						p.set_skip(skip);
+						match c.token().kind() {
+							Kind::Ident => p.parse::<Self::PseudoElement>().map(Self::build_pseudo_element),
+							Kind::Function => {
+								p.parse::<Self::FunctionalPseudoElement>().map(Self::build_functional_pseudo_element)
 							}
-							Kind::Function => Self::parse_functional_pseudo_element(p),
-							_ => Err(diagnostics::Unexpected(next, next.span()))?,
+							_ => Err(diagnostics::Unexpected(c.into(), c.into()))?,
 						}
 					}
 					Kind::Ident => {
-						let atom = p.parse_atom(token);
-						p.next_with(Include::Whitespace);
-						Self::legacy_pseudo_element_from_token(&atom)
-							.or_else(|| Self::pseudo_class_from_atom(&atom))
-							.ok_or_else(|| diagnostics::UnexpectedPseudoClass(atom.clone(), token.span()).into())
+						p.set_skip(skip);
+						if Self::is_legacy_pseudo_element(&p.parse_atom_lower(c)) {
+							p.parse::<Self::LegacyPseudoElement>().map(Self::build_legacy_pseudo_element)
+						} else {
+							p.parse::<Self::PseudoClass>().map(Self::build_pseudo_class)
+						}
 					}
-					Kind::Function => Self::parse_functional_pseudo_class(p),
-					_ => Err(diagnostics::Unexpected(token, token.span()))?,
+					Kind::Function => {
+						p.set_skip(skip);
+						p.parse::<Self::FunctionalPseudoClass>().map(Self::build_functional_pseudo_class)
+					}
+					_ => Err(diagnostics::Unexpected(t.kind(), c.into()))?,
 				}
 			}
-			_ => Self::parse_combinator(p),
+			_ => {
+				let value = p.parse::<Self::Combinator>().map(Self::build_combinator);
+				// Given descendant combinators cannot appear in sequence with other combinators, we can safely eat trivia here
+				// in order to remove unecessary conjoined descendant combinators
+				p.set_skip(KindSet::WHITESPACE);
+				p.consume_trivia();
+				p.set_skip(skip);
+				value
+			}
 		}
 	}
 }

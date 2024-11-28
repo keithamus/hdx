@@ -1,5 +1,5 @@
 use hdx_atom::Atom;
-use hdx_lexer::{Span, Token};
+use hdx_lexer::{Cursor, Kind, Span};
 use miette::{self, Diagnostic};
 use thiserror::{self, Error};
 
@@ -42,7 +42,7 @@ pub struct BadDeclaration(#[label("This is not valid syntax for a declaration.")
 #[derive(Debug, Error, Diagnostic)]
 #[error("Unexpected `{0}`")]
 #[diagnostic(help("This is not correct CSS syntax."), code(hdx_parser::Unexpected))]
-pub struct Unexpected(pub Token, #[label("This wasn't expected here")] pub Span);
+pub struct Unexpected(pub Kind, #[label("This wasn't expected here")] pub Span);
 
 #[derive(Debug, Error, Diagnostic)]
 #[error("Unexpected charset '{0}'. '{0}' isn't allowed here. This must be a valid IANA language code.")]
@@ -175,17 +175,17 @@ pub struct UnexpectedCloseCurly(pub Span);
 #[derive(Debug, Error, Diagnostic)]
 #[error("Expected `{0}` but found `{1}` {2}")]
 #[diagnostic(help("This is not correct CSS syntax."), code(hdx_parser::ExpectedToken))]
-pub struct ExpectedToken(pub Token, pub Token, #[label("`{0}` expected")] pub Span);
+pub struct ExpectedKind(pub Kind, pub Kind, #[label("`{0}` expected")] pub Span);
 
 #[derive(Debug, Error, Diagnostic)]
 #[error("Expected a dimension but found `{1}`")]
 #[diagnostic(help("This is not correct CSS syntax."), code(hdx_parser::ExpectedDimension))]
-pub struct ExpectedDimension(pub Token, #[label("dimension expected")] pub Span);
+pub struct ExpectedDimension(pub Cursor, #[label("dimension expected")] pub Span);
 
 #[derive(Debug, Error, Diagnostic)]
 #[error("Expected an identifier but found `{0}`")]
 #[diagnostic(help("This is not correct CSS syntax."), code(hdx_parser::ExpectedIdent))]
-pub struct ExpectedIdent(pub Token, #[label("This should be `{0}`")] pub Span);
+pub struct ExpectedIdent(pub Kind, #[label("This should be `{0}`")] pub Span);
 
 #[derive(Debug, Error, Diagnostic)]
 #[error("Expected an identifier but not `{0}`")]
@@ -200,7 +200,7 @@ pub struct ExpectedIdentOf(pub Atom, pub Atom, #[label("This should be `{0}`")] 
 #[derive(Debug, Error, Diagnostic)]
 #[error("Expected a function but found `{0}`")]
 #[diagnostic(help("This is not correct CSS syntax."), code(hdx_parser::ExpectedFunction))]
-pub struct ExpectedFunction(pub Token, #[label("This token")] pub Span);
+pub struct ExpectedFunction(pub Kind, #[label("This token")] pub Span);
 
 #[derive(Debug, Error, Diagnostic)]
 #[error("Expected to see {0}() but saw {1}()")]
@@ -210,7 +210,7 @@ pub struct ExpectedFunctionOf(pub Atom, pub Atom, #[label("This function")] pub 
 #[derive(Debug, Error, Diagnostic)]
 #[error("Expected an @ keyword but saw `{0}`")]
 #[diagnostic(help("This is not correct CSS syntax."), code(hdx_parser::ExpectedAtKeyword))]
-pub struct ExpectedAtKeyword(pub Token, #[label("This at-keyword")] pub Span);
+pub struct ExpectedAtKeyword(pub Kind, #[label("This at-keyword")] pub Span);
 
 #[derive(Debug, Error, Diagnostic)]
 #[error("Expected to see @{0} but saw @{1}")]
@@ -220,17 +220,12 @@ pub struct ExpectedAtKeywordOf(pub Atom, pub Atom, #[label("This at-keyword")] p
 #[derive(Debug, Error, Diagnostic)]
 #[error("Expected a delimiter but saw `{0}`")]
 #[diagnostic(help("This is not correct CSS syntax."), code(hdx_parser::ExpectedDelim))]
-pub struct ExpectedDelim(pub Token, #[label("This at-keyword")] pub Span);
+pub struct ExpectedDelim(pub Kind, #[label("This at-keyword")] pub Span);
 
 #[derive(Debug, Error, Diagnostic)]
 #[error("Expected to see {0} but saw {1}")]
 #[diagnostic(help("Try changing the {1} to {0}"), code(hdx_parser::ExpectedDelimOf))]
 pub struct ExpectedDelimOf(pub char, pub char, #[label("This delimiter")] pub Span);
-
-#[derive(Debug, Error, Diagnostic)]
-#[error("Unexpected trailing `{0}`")]
-#[diagnostic(help("Try removing the trailing {0} which will remove this warning."), code(hdx_parser::WarnTrailing))]
-pub struct WarnTrailing(pub Token, #[label("This can be removed")] pub Span);
 
 #[derive(Debug, Error, Diagnostic)]
 #[error("Invalid hexidecimal value for color: '{0}'")]
@@ -277,12 +272,12 @@ pub struct DisallowedMathFunction(pub Atom, #[label("This value")] pub Span);
 #[derive(Debug, Error, Diagnostic)]
 #[error("Expected an opening curly brace but saw `{0}`")]
 #[diagnostic(help("This is not correct CSS syntax."), code(hdx_parser::ExpectedOpenCurly))]
-pub struct ExpectedOpenCurly(pub Token, #[label("This value")] pub Span);
+pub struct ExpectedOpenCurly(pub Kind, #[label("This value")] pub Span);
 
 #[derive(Debug, Error, Diagnostic)]
 #[error("Expected a number but saw `{0}`")]
 #[diagnostic(help("This is not correct CSS syntax."), code(hdx_parser::ExpectedNumber))]
-pub struct ExpectedNumber(pub Token, #[label("This value")] pub Span);
+pub struct ExpectedNumber(pub Kind, #[label("This value")] pub Span);
 
 #[derive(Debug, Error, Diagnostic)]
 #[error("Expected a signed number but saw `{0}`")]
@@ -371,3 +366,8 @@ pub struct ColorLegacyMustNotUsePercent(#[label("This should not be a percentage
 #[error("Hex colors can be 3, 4, 6, or 8 characters in length. This one is {0}")]
 #[diagnostic(help("Try rewriting this to be 3, 4, 6 or 8 characters"), code(hdx_parser::ColorLegacyMustNotUsePercent))]
 pub struct ColorHexWrongLength(pub usize, #[label("This is not the right number of characters")] pub Span);
+
+#[derive(Debug, Error, Diagnostic)]
+#[error("{0} cannot be used as a keyframe name, as it's a reserved word.")]
+#[diagnostic(help(""), code(hdx_parser::ReservedKeyframeName))]
+pub struct ReservedKeyframeName(pub Atom, #[label("Rename it, or try wrapping it in quotes")] pub Span);

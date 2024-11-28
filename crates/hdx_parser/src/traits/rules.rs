@@ -1,84 +1,79 @@
 use hdx_atom::Atom;
-use hdx_lexer::{Kind, Span, Spanned};
-use smallvec::{smallvec, SmallVec};
+use hdx_lexer::{Cursor, Kind, KindSet};
 
 use crate::{diagnostics, parser::Parser, Result, State, Vec, T};
 
-use super::Parse;
+use super::{Declaration, Parse};
+
+pub struct NoPreludeAllowed;
+impl<'a> Parse<'a> for NoPreludeAllowed {
+	fn parse(p: &mut Parser<'a>) -> Result<Self> {
+		if p.peek::<T![LeftCurly]>() || p.peek::<T![;]>() {
+			Ok(Self {})
+		} else {
+			let c = p.peek_next();
+			Err(diagnostics::Unexpected(c.into(), c.into()))?
+		}
+	}
+}
+
+pub struct NoBlockAllowed;
+impl<'a> Parse<'a> for NoBlockAllowed {
+	fn parse(p: &mut Parser<'a>) -> Result<Self> {
+		if p.at_end() || p.peek::<T![;]>() {
+			Ok(Self {})
+		} else {
+			let c = p.peek_next();
+			Err(diagnostics::Unexpected(c.into(), c.into()))?
+		}
+	}
+}
 
 // An AtRule represents a block or statement with an @keyword in the leading
 // position, such as @media, @charset, @import and so-on.
 pub trait AtRule<'a>: Sized + Parse<'a> {
 	type Prelude: Parse<'a>;
+	// Ideally Block would either implement QualifiedRuleList/DeclarationList/RuleList/DeclarationRuleList; but there is
+	// no way to enforce that with Rust so it just has to implement Parse.
 	type Block: Parse<'a>;
-
-	// AtRules can have an optional prelude (e.g. @supoports requires one,
-	// @starting-style must not have one, and in @page it is optional). Consequently
-	// parse_prelude returns an Option, and rules that either require can check
-	// in parse() or override parse_prelude() to err.
-	fn parse_prelude(p: &mut Parser<'a>) -> Result<Option<Spanned<Self::Prelude>>> {
-		let next_token_kind = p.peek::<T![Any]>().map(|t| t.kind()).unwrap_or(Kind::Eof);
-		if p.at_end() || matches!(next_token_kind, Kind::LeftCurly | Kind::Semicolon) {
-			return Ok(None);
-		}
-		Ok(Some(Self::Prelude::parse_spanned(p)?))
-	}
-
-	// AtRules can have an optional block (e.g. @charset, @import must not have
-	// one). The default parse_prelude returns an Option, and rules that either
-	// require can check in parse() or override parse_prelude() to err.
-	fn parse_block(p: &mut Parser<'a>) -> Result<Option<Spanned<Self::Block>>> {
-		let token = p.peek_next();
-		match token.kind() {
-			Kind::Semicolon | Kind::Eof => {
-				p.next();
-				Ok(None)
-			}
-			Kind::LeftCurly => Ok(Some(Self::Block::parse_spanned(p)?)),
-			_ => Err(diagnostics::Unexpected(token, token.span()))?,
-		}
-	}
 
 	// https://drafts.csswg.org/css-syntax-3/#consume-an-at-rule
 	fn parse_at_rule(
 		p: &mut Parser<'a>,
 		name: Option<Atom>,
-	) -> Result<(Option<Spanned<Self::Prelude>>, Option<Spanned<Self::Block>>)> {
-		let token = *p.parse::<T![AtKeyword]>()?;
-		let span = token.span();
+	) -> Result<(T![AtKeyword], Option<Self::Prelude>, Self::Block)> {
+		let at = p.parse::<T![AtKeyword]>()?;
 		if let Some(name) = name {
-			let atom = p.parse_atom_lower(token);
+			let atom = p.parse_atom_lower(at.into());
+			let cursor: Cursor = at.into();
 			if atom != name {
-				Err(diagnostics::UnexpectedAtRule(atom, span))?;
+				Err(diagnostics::UnexpectedAtRule(atom, cursor.into()))?;
 			}
 		}
-		let prelude = Self::parse_prelude(p)?;
-		let block = Self::parse_block(p)?;
-		Ok((prelude, block))
+		// AtRules can have an optional prelude (e.g. @supoports requires one,
+		// @starting-style must not have one, and in @page it is optional). Consequently
+		// parse_prelude returns an Option, and rules that either require can check
+		// in parse() or override parse_prelude() to err.
+		let c = p.peek_next();
+		let prelude =
+			if p.at_end() || c == KindSet::LEFT_CURLY_OR_SEMICOLON { None } else { Some(p.parse::<Self::Prelude>()?) };
+
+		Ok((at, prelude, p.parse::<Self::Block>()?))
 	}
 }
 
+// A QualifiedRule represents a block with a prelude which may contain other rules.
+// Examples of QualifiedRules are StyleRule, KeyframeRule (no s!).
 pub trait QualifiedRule<'a>: Sized + Parse<'a> {
+	// Prelude MAY implement PreludeList if it accepts multiple values.
 	type Prelude: Parse<'a>;
+	// Ideally Block would either implement QualifiedRuleList/DeclarationList/RuleList/DeclarationRuleList; but there is
+	// no way to enforce that with Rust so it just has to implement Parse.
 	type Block: Parse<'a>;
 
 	// QualifiedRules must be able to consume a bad declaration, for when
 	// a custom property like declaration is encountered.
 	type BadDeclaration: Parse<'a>;
-
-	// QualifiedRules must have a prelude, consequently parse_prelude must be
-	// implemented.
-	// parse_prelude is called right away, so could start with any token.
-	fn parse_prelude(p: &mut Parser<'a>) -> Result<Spanned<Self::Prelude>> {
-		p.parse_spanned::<Self::Prelude>()
-	}
-
-	// QualifiedRules must have a block, consequently parse_prelude must be
-	// implemented.
-	// parse_block will always start with a {-token.
-	fn parse_block(p: &mut Parser<'a>) -> Result<Spanned<Self::Block>> {
-		p.parse_spanned::<Self::Block>()
-	}
 
 	// QualifiedRules must be able to consume a block from their input when encountering
 	// a custom property like declaration that doesn't end but opens a `{` block. This
@@ -90,7 +85,7 @@ pub trait QualifiedRule<'a>: Sized + Parse<'a> {
 	}
 
 	// https://drafts.csswg.org/css-syntax-3/#consume-a-qualified-rule
-	fn parse_qualified_rule(p: &mut Parser<'a>) -> Result<(Spanned<Self::Prelude>, Spanned<Self::Block>)> {
+	fn parse_qualified_rule(p: &mut Parser<'a>) -> Result<(Self::Prelude, Self::Block)> {
 		// Let rule be a new qualified rule with its prelude, declarations, and child rules all initially set to empty lists.
 
 		// Process input:
@@ -103,43 +98,35 @@ pub trait QualifiedRule<'a>: Sized + Parse<'a> {
 		}
 		// <}-token>
 		//   This is a parse error. If nested is true, return nothing. Otherwise, consume a token and append the result to rule’s prelude.
-		if p.is(State::Nested) {
-			if let Some(token) = p.peek::<T![RightCurly]>() {
-				Err(diagnostics::UnexpectedCloseCurly(token.span()))?;
-			}
+		if p.is(State::Nested) && p.peek::<T!['}']>() {
+			Err(diagnostics::UnexpectedCloseCurly(p.peek_n(1).into()))?;
 		}
 
 		// <{-token>
 		//	If the first two non-<whitespace-token> values of rule’s prelude are an <ident-token> whose value starts with "--" followed by a <colon-token>, then:
 		let checkpoint = p.checkpoint();
-		if let Some(token) = p.peek::<T![Ident]>() {
-			if token.is_dashed_ident() {
-				p.hop(token);
-				if p.peek::<T![:]>().is_some() {
-					// If nested is true, consume the remnants of a bad declaration from input, with nested set to true, and return nothing.
-					if p.is(State::Nested) {
-						p.rewind(checkpoint);
-						p.parse::<Self::BadDeclaration>()?;
-						let token = p.peek::<T![Any]>().unwrap();
-						Err(diagnostics::BadDeclaration(Span {
-							start: checkpoint.span().start,
-							end: token.span().end,
-						}))?;
-					// If nested is false, consume a block from input, and return nothing.
-					} else {
-						Self::consume_block(p);
-						let token = p.peek::<T![Any]>().unwrap();
-						Err(diagnostics::BadDeclaration(Span {
-							start: checkpoint.span().start,
-							end: token.span().end,
-						}))?;
-					}
+		if p.peek::<T![DashedIdent]>() {
+			p.parse::<T![DashedIdent]>().ok();
+			if p.peek::<T![:]>() {
+				// If nested is true, consume the remnants of a bad declaration from input, with nested set to true, and return nothing.
+				if p.is(State::Nested) {
+					p.rewind(checkpoint);
+					p.parse::<Self::BadDeclaration>()?;
+					Err(diagnostics::BadDeclaration(checkpoint.span()))?
+				// If nested is false, consume a block from input, and return nothing.
+				} else {
+					Self::consume_block(p);
+					Err(diagnostics::BadDeclaration(checkpoint.span()))?
 				}
-				p.rewind(checkpoint);
 			}
+			p.rewind(checkpoint);
 		}
 
-		let prelude = Self::parse_prelude(p);
+		// Set the StopOn Curly to signify to prelude parsers that they shouldn't consume beyond the curly
+		let old_stop = p.stop;
+		p.set_stop(old_stop.add(Kind::LeftCurly).add(Kind::RightCurly));
+		let prelude = p.parse::<Self::Prelude>();
+		p.set_stop(old_stop);
 
 		// Otherwise, consume a block from input, and let child rules be the result.
 		// If the first item of child rules is a list of declarations,
@@ -148,54 +135,157 @@ pub trait QualifiedRule<'a>: Sized + Parse<'a> {
 		// replace them with nested declarations rules containing the list as its sole child.
 		// Assign child rules to rule’s child rules.
 		if let Ok(prelude) = prelude {
-			Ok((prelude, Self::parse_block(p)?))
+			Ok((prelude, p.parse::<Self::Block>()?))
 		} else {
-			let token = p.peek::<T![Any]>().unwrap();
-			Err(diagnostics::Unexpected(token, token.span()))?
+			Err(diagnostics::Unexpected(checkpoint.into(), checkpoint.span()))?
 		}
 	}
 }
 
-// https://drafts.csswg.org/css-syntax-3/#typedef-rule-list
-pub trait RuleList<'a>: Sized + Parse<'a> {
-	type Rule: Parse<'a>;
+pub trait PreludeList<'a>: Sized + Parse<'a> {
+	type PreludeItem: Parse<'a>;
 
-	fn parse_rule_list(p: &mut Parser<'a>) -> Result<Vec<'a, Spanned<Self::Rule>>> {
-		p.parse::<T![LeftCurly]>()?;
-		let mut rules = p.new_vec();
+	fn parse_prelude_list(p: &mut Parser<'a>) -> Result<Vec<'a, Self::PreludeItem>> {
+		let mut items = Vec::new_in(p.bump());
 		loop {
-			p.parse::<T![;]>().ok();
-			if p.parse::<T![RightCurly]>().is_ok() {
-				return Ok(rules);
+			items.push(p.parse::<Self::PreludeItem>()?);
+			if p.peek_next() == KindSet::LEFT_CURLY_OR_SEMICOLON {
+				return Ok(items);
 			}
-			rules.push(Self::Rule::parse_spanned(p)?);
+		}
+	}
+}
+
+pub trait PreludeCommaList<'a>: Sized + Parse<'a> {
+	type PreludeItem: Parse<'a>;
+
+	fn parse_prelude_list(p: &mut Parser<'a>) -> Result<Vec<'a, (Self::PreludeItem, Option<T![,]>)>> {
+		let mut items = Vec::new_in(p.bump());
+		loop {
+			let item = p.parse::<Self::PreludeItem>()?;
+			let comma = p.parse_if_peek::<T![,]>()?;
+			items.push((item, comma));
+			if p.peek_next() == KindSet::LEFT_CURLY_OR_SEMICOLON {
+				return Ok(items);
+			}
+		}
+	}
+}
+
+// https://drafts.csswg.org/css-syntax-3/#typedef-declaration-list
+// <declaration-list>: only declarations are allowed; at-rules and qualified rules are automatically invalid.
+pub trait DeclarationList<'a>: Sized + Parse<'a> {
+	type Declaration: Declaration<'a>;
+
+	fn parse_declaration_list(p: &mut Parser<'a>) -> Result<(T!['{'], Vec<'a, Self::Declaration>, Option<T!['}']>)> {
+		let left = p.parse::<T!['{']>()?;
+		let mut rules = Vec::new_in(p.bump());
+		loop {
+			p.parse_if_peek::<T![;]>().ok();
+			if p.at_end() {
+				return Ok((left, rules, None));
+			}
+			if p.peek::<T!['}']>() {
+				return Ok((left, rules, Some(p.parse::<T!['}']>()?)));
+			}
+			rules.push(p.parse::<Self::Declaration>()?);
+		}
+	}
+}
+
+// https://drafts.csswg.org/css-syntax-3/#typedef-qualified-rule-list
+// <qualified-rule-list>: only qualified rules are allowed; declarations and at-rules are automatically invalid.
+pub trait QualifiedRuleList<'a>: Sized + Parse<'a> {
+	type QualifiedRule: QualifiedRule<'a>;
+
+	fn parse_qualified_rule_list(
+		p: &mut Parser<'a>,
+	) -> Result<(T!['{'], Vec<'a, Self::QualifiedRule>, Option<T!['}']>)> {
+		let left = p.parse::<T!['{']>()?;
+		let mut rules = Vec::new_in(p.bump());
+		loop {
+			p.parse_if_peek::<T![;]>().ok();
+			if p.at_end() {
+				return Ok((left, rules, None));
+			}
+			if p.peek::<T!['}']>() {
+				return Ok((left, rules, Some(p.parse::<T!['}']>()?)));
+			}
+			rules.push(p.parse::<Self::QualifiedRule>()?);
+		}
+	}
+}
+
+// https://drafts.csswg.org/css-syntax-3/#typedef-at-rule-list
+// <at-rule-list>: only at-rules are allowed; declarations and qualified rules are automatically invalid.
+pub trait AtRuleList<'a>: Sized + Parse<'a> {
+	type AtRule: AtRule<'a>;
+
+	fn parse_at_rule_list(p: &mut Parser<'a>) -> Result<(T!['{'], Vec<'a, Self::AtRule>, Option<T!['}']>)> {
+		let left = p.parse::<T!['{']>()?;
+		let mut rules = Vec::new_in(p.bump());
+		loop {
+			p.parse_if_peek::<T![;]>().ok();
+			if p.at_end() {
+				return Ok((left, rules, None));
+			}
+			if p.peek::<T!['}']>() {
+				return Ok((left, rules, Some(p.parse::<T!['}']>()?)));
+			}
+			rules.push(p.parse::<Self::AtRule>()?);
 		}
 	}
 }
 
 // https://drafts.csswg.org/css-syntax-3/#typedef-declaration-rule-list
+// <declaration-rule-list>: declarations and at-rules are allowed; qualified rules are automatically invalid.
 pub trait DeclarationRuleList<'a>: Sized + Parse<'a> {
-	type Declaration: Parse<'a>;
-	type AtRule: AtRule<'a> + Parse<'a>;
+	type Declaration: Declaration<'a>;
+	type AtRule: AtRule<'a>;
 
 	fn parse_declaration_rule_list(
 		p: &mut Parser<'a>,
-	) -> Result<(Vec<'a, Spanned<Self::Declaration>>, Vec<'a, Spanned<Self::AtRule>>)> {
-		p.parse::<T![LeftCurly]>()?;
-		let mut declarations = p.new_vec();
-		let mut rules = p.new_vec();
+	) -> Result<(T!['{'], Vec<'a, Self::Declaration>, Vec<'a, Self::AtRule>, Option<T!['}']>)> {
+		let left = p.parse::<T!['{']>()?;
+		let mut declarations = Vec::new_in(p.bump());
+		let mut rules = Vec::new_in(p.bump());
 		loop {
-			if p.at_end() || p.parse::<T![RightCurly]>().is_ok() {
-				return Ok((declarations, rules));
+			if p.at_end() {
+				return Ok((left, declarations, rules, None));
 			}
-			if p.peek::<T![AtKeyword]>().is_some() {
-				rules.push(p.parse_spanned::<Self::AtRule>()?);
-			} else if p.peek::<T![Ident]>().is_some() {
-				declarations.push(p.parse_spanned::<Self::Declaration>()?);
+			if p.peek::<T!['}']>() {
+				return Ok((left, declarations, rules, Some(p.parse::<T!['}']>()?)));
+			}
+			if p.peek::<T![AtKeyword]>() {
+				rules.push(p.parse::<Self::AtRule>()?);
+			} else if p.peek::<T![Ident]>() {
+				declarations.push(p.parse::<Self::Declaration>()?);
 			} else {
-				let token = p.peek::<T![Any]>().unwrap();
-				Err(diagnostics::Unexpected(token, token.span()))?;
+				let c = p.peek_n(1);
+				Err(diagnostics::Unexpected(c.into(), c.into()))?;
 			}
+		}
+	}
+}
+
+// https://drafts.csswg.org/css-syntax-3/#typedef-rule-list
+// <rule-list>: qualified rules and at-rules are allowed; declarations are automatically invalid.
+pub trait RuleList<'a>: Sized + Parse<'a> {
+	// To simplify typings and orderings, a generic "Rule" type houses both At/Qualified rules
+	type Rule: Parse<'a>;
+
+	fn parse_rule_list(p: &mut Parser<'a>) -> Result<(T!['{'], Vec<'a, Self::Rule>, Option<T!['}']>)> {
+		let left = p.parse::<T!['{']>()?;
+		let mut rules = Vec::new_in(p.bump());
+		loop {
+			p.parse_if_peek::<T![;]>().ok();
+			if p.at_end() {
+				return Ok((left, rules, None));
+			}
+			if p.peek::<T!['}']>() {
+				return Ok((left, rules, Some(p.parse::<T!['}']>()?)));
+			}
+			rules.push(p.parse::<Self::Rule>()?);
 		}
 	}
 }
@@ -207,21 +297,24 @@ mod kw {
 	custom_keyword!(Not, atom!("not"));
 }
 
-pub trait ConditionalAtRule<'a>: Sized + Parse<'a> {
+pub trait ConditionalAtRule<'a>: Sized + Parse<'a>
+where
+	Self: 'a,
+{
 	type Feature: Sized + Parse<'a>;
 
-	fn create_is(feature: Self::Feature) -> Self;
-	fn create_not(features: Self) -> Self;
-	fn create_and(features: SmallVec<[Self::Feature; 2]>) -> Self;
-	fn create_or(features: SmallVec<[Self::Feature; 2]>) -> Self;
+	fn new_is(feature: Self::Feature) -> Self;
+	fn new_not(features: Self) -> Self;
+	fn new_and(features: Vec<'a, Self::Feature>) -> Self;
+	fn new_or(features: Vec<'a, Self::Feature>) -> Self;
 
 	fn parse_condition(p: &mut Parser<'a>) -> Result<Self> {
 		// handle double parens
 		let mut wrapped = true;
-		let feature = if let Some(token) = p.peek::<T![LeftParen]>() {
+		let feature = if p.peek::<T!['(']>() {
 			let checkpoint = p.checkpoint();
-			p.hop(token);
-			if p.peek::<T![LeftParen]>().is_none() {
+			p.parse::<T!['(']>()?;
+			if !p.peek::<T!['(']>() {
 				wrapped = false;
 				p.rewind(checkpoint);
 			}
@@ -229,38 +322,38 @@ pub trait ConditionalAtRule<'a>: Sized + Parse<'a> {
 		} else {
 			None
 		};
-		let mut features = smallvec![];
+		let mut features = Vec::new_in(p.bump());
 		if let Some(feature) = feature {
-			if p.peek::<T![Ident]>().is_none() {
-				return Ok(Self::create_is(feature));
+			if !p.peek::<T![Ident]>() {
+				return Ok(Self::new_is(feature));
 			}
 			features.push(feature);
 		}
-		if p.peek::<kw::And>().is_some() {
+		if p.peek::<kw::And>() {
 			loop {
 				p.parse::<kw::And>()?;
 				features.push(p.parse::<Self::Feature>()?);
-				if p.peek::<kw::And>().is_none() {
+				if !p.peek::<kw::And>() {
 					if wrapped {
-						p.parse::<T![RightParen]>()?;
+						p.parse::<T![')']>()?;
 					}
-					return Ok(Self::create_and(features));
+					return Ok(Self::new_and(features));
 				}
 			}
-		} else if p.peek::<kw::Or>().is_some() {
+		} else if p.peek::<kw::Or>() {
 			loop {
 				p.parse::<kw::Or>()?;
 				features.push(p.parse::<Self::Feature>()?);
-				if p.peek::<kw::Or>().is_none() {
+				if !p.peek::<kw::Or>() {
 					if wrapped {
-						p.parse::<T![RightParen]>()?;
+						p.parse::<T![')']>()?;
 					}
-					return Ok(Self::create_or(features));
+					return Ok(Self::new_or(features));
 				}
 			}
 		} else {
 			p.parse::<kw::Not>()?;
-			Ok(Self::create_not(p.parse::<Self>()?))
+			Ok(Self::new_not(p.parse::<Self>()?))
 		}
 	}
 }
