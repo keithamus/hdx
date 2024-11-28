@@ -36,7 +36,7 @@ pub struct BackgroundColor;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub struct BackgroundRepeat;
+pub struct BackgroundRepeat<'a>;
 
 // https://drafts.csswg.org/css-backgrounds-4/#background-attachment
 #[value(" <attachment># ")]
@@ -46,7 +46,7 @@ pub struct BackgroundRepeat;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub struct BackgroundAttachment;
+pub struct BackgroundAttachment<'a>;
 
 // // https://drafts.csswg.org/css-backgrounds-4/#background-position
 // #[value(" <bg-position># ")]
@@ -66,7 +66,7 @@ pub struct BackgroundAttachment;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("repeatable list")]
-pub struct BackgroundClip;
+pub struct BackgroundClip<'a>;
 
 // https://drafts.csswg.org/css-backgrounds-4/#background-origin
 #[value(" <visual-box># ")]
@@ -76,7 +76,7 @@ pub struct BackgroundClip;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("repeatable list")]
-pub struct BackgroundOrigin;
+pub struct BackgroundOrigin<'a>;
 
 // // https://drafts.csswg.org/css-backgrounds-4/#background-size
 // #[value(" <bg-size># ")]
@@ -167,7 +167,7 @@ pub enum BorderImageSource<'a> {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub struct BackgroundRepeatX;
+pub struct BackgroundRepeatX<'a>;
 
 // https://drafts.csswg.org/css-backgrounds-4/#background-repeat-y
 #[value(" <repetition># ")]
@@ -177,7 +177,7 @@ pub struct BackgroundRepeatX;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub struct BackgroundRepeatY;
+pub struct BackgroundRepeatY<'a>;
 
 // https://drafts.csswg.org/css-backgrounds-4/#background-repeat-block
 #[value(" <repetition># ")]
@@ -187,7 +187,7 @@ pub struct BackgroundRepeatY;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub struct BackgroundRepeatBlock;
+pub struct BackgroundRepeatBlock<'a>;
 
 // https://drafts.csswg.org/css-backgrounds-4/#background-repeat-inline
 #[value(" <repetition># ")]
@@ -197,7 +197,7 @@ pub struct BackgroundRepeatBlock;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub struct BackgroundRepeatInline;
+pub struct BackgroundRepeatInline<'a>;
 
 // // https://drafts.csswg.org/css-backgrounds-4/#background-position-x
 // #[value(" [ center | [ [ left | right | x-start | x-end ]? <length-percentage>? ]! ]# ")]

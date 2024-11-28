@@ -35,9 +35,10 @@ expression: result.output.unwrap()
                   "type": "property",
                   "name": "min-width",
                   "value": {
-                    "type": "length-percentage",
-                    "type": "px",
-                    "value": 960.0
+                    "LengthPercentage": {
+                      "type": "px",
+                      "value": 960.0
+                    }
                   },
                   "important": false
                 },

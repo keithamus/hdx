@@ -1,45 +1,52 @@
 use hdx_atom::atom;
-use hdx_derive::Parsable;
-use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
-
-use super::{AbsoluteUnit, CSSFloat};
+use hdx_lexer::Cursor;
+use hdx_parser::{Build, Is, Parser, T};
 
 // https://drafts.csswg.org/css-values/#resolution
-#[derive(Parsable, Debug, Clone, Copy, PartialEq, Hash)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub enum Frequency {
-	#[parsable(Dimension)]
-	Hz(CSSFloat),
-	#[parsable(Dimension)]
-	Khz(CSSFloat),
+	Hz(T![Dimension::Hz]),
+	Khz(T![Dimension::Khz]),
 }
 
-impl Into<CSSFloat> for Frequency {
-	fn into(self) -> CSSFloat {
-		match self {
-			Self::Hz(f) | Self::Khz(f) => f,
+impl Default for Frequency {
+	fn default() -> Self {
+		Self::Hz(Default::default())
+	}
+}
+
+impl From<Frequency> for f32 {
+	fn from(frequency: Frequency) -> Self {
+		match frequency {
+			Frequency::Hz(f) => f.into(),
+			Frequency::Khz(f) => f.into(),
 		}
 	}
 }
 
-impl AbsoluteUnit for Frequency {
-	fn to_base(&self) -> Self {
-		Self::Hz(match self {
-			Self::Khz(f) => *f * 1000.0,
-			Self::Hz(f) => *f,
-		})
+impl<'a> Is<'a> for Frequency {
+	fn is(p: &Parser<'a>, c: Cursor) -> bool {
+		<T![Dimension]>::is(p, c) && matches!(p.parse_atom_lower(c), atom!("hz") | atom!("khz"))
 	}
 }
 
-impl<'a> WriteCss<'a> for Frequency {
-	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
-		let (f, unit) = match self {
-			Self::Khz(f) => (f, atom!("khz")),
-			Self::Hz(f) => (f, atom!("hz")),
-		};
-		f.write_css(sink)?;
-		unit.write_css(sink)?;
-		Ok(())
+impl<'a> Build<'a> for Frequency {
+	fn build(p: &Parser<'a>, c: Cursor) -> Self {
+		match p.parse_atom_lower(c) {
+			atom!("hz") => Self::Hz(<T![Dimension::Hz]>::build(p, c)),
+			atom!("khz") => Self::Khz(<T![Dimension::Khz]>::build(p, c)),
+			_ => unreachable!(),
+		}
+	}
+}
+
+impl From<Frequency> for Cursor {
+	fn from(value: Frequency) -> Self {
+		match value {
+			Frequency::Hz(t) => t.into(),
+			Frequency::Khz(t) => t.into(),
+		}
 	}
 }
 
@@ -50,15 +57,18 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(Frequency, 8);
+		assert_size!(Frequency, 12);
 	}
 
 	#[test]
 	fn test_writes() {
 		assert_parse!(Frequency, "40hz");
-		// Truncates to 7dp
-		assert_parse!(Frequency, "1.2345678901234hz", "1.2345679hz");
-		// Removes redundant dp
-		assert_parse!(Frequency, "-1.0hz", "-1hz");
+		assert_parse!(Frequency, "40khz");
+	}
+
+	#[test]
+	fn test_errors() {
+		assert_parse_error!(Frequency, "40w");
+		assert_parse_error!(Frequency, "40kw");
 	}
 }

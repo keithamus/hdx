@@ -1,134 +1,126 @@
-use hdx_atom::{atom, Atom};
-use hdx_parser::{diagnostics, Declaration, Parse, Parser, Result as ParserResult, RuleList, Spanned, Vec, T};
-use hdx_writer::{write_css, CssWriter, Result as WriterResult, WriteCss};
+use bumpalo::collections::Vec;
+use hdx_atom::atom;
+use hdx_lexer::Cursor;
+use hdx_parser::{
+	AtRule, CursorStream, Declaration, Important, NoPreludeAllowed, Parse, Parser, Result as ParserResult, RuleList,
+	ToCursors, T,
+};
 
 use crate::css::properties::StyleValue;
 
 // https://drafts.csswg.org/css-fonts/#font-face-rule
-#[derive(PartialEq, Debug, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-pub struct FontFace<'a>(Vec<'a, Spanned<FontProperty<'a>>>);
+pub struct FontFace<'a> {
+	pub at_keyword: T![AtKeyword],
+	pub block: FontFaceDeclaration<'a>,
+}
+
+impl<'a> AtRule<'a> for FontFace<'a> {
+	type Prelude = NoPreludeAllowed;
+	type Block = FontFaceDeclaration<'a>;
+}
 
 impl<'a> Parse<'a> for FontFace<'a> {
 	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
-		let token = *p.parse::<T![AtKeyword]>()?;
-		let atom = p.parse_atom_lower(token);
-		if atom != atom!("font-face") {
-			Err(diagnostics::UnexpectedAtRule(atom, token.span()))?
-		}
-		Ok(Self(Self::parse_rule_list(p)?))
+		let (at_keyword, _, block) = Self::parse_at_rule(p, Some(atom!("font-face")))?;
+		Ok(Self { at_keyword, block })
 	}
 }
 
-impl<'a> RuleList<'a> for FontFace<'a> {
+impl<'a> ToCursors<'a> for FontFace<'a> {
+	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+		s.append(self.at_keyword.into());
+		ToCursors::to_cursors(&self.block, s);
+	}
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+pub struct FontFaceDeclaration<'a> {
+	pub open: T!['{'],
+	pub properties: Vec<'a, FontProperty<'a>>,
+	pub close: Option<T!['}']>,
+}
+
+impl<'a> RuleList<'a> for FontFaceDeclaration<'a> {
 	type Rule = FontProperty<'a>;
 }
 
-impl<'a> WriteCss<'a> for FontFace<'a> {
-	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
-		write_css!(sink, '@', atom!("font-face"), (), '{');
-		sink.indent();
-		sink.write_newline()?;
-		let mut rules = self.0.iter().peekable();
-		while let Some(rule) = rules.next() {
-			sink.write_indent()?;
-			rule.write_css(sink)?;
-			if rules.peek().is_some() {
-				sink.write_char(';')?;
-			} else {
-				sink.write_trailing_char(';')?;
-			}
-			sink.write_newline()?;
-		}
-		sink.write_char('}')
+impl<'a> Parse<'a> for FontFaceDeclaration<'a> {
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		let (open, properties, close) = Self::parse_rule_list(p)?;
+		Ok(Self { open, properties, close })
 	}
 }
 
-#[derive(PartialEq, Debug, Hash)]
+impl<'a> ToCursors<'a> for FontFaceDeclaration<'a> {
+	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+		s.append(self.open.into());
+		for property in &self.properties {
+			ToCursors::to_cursors(property, s);
+		}
+		if let Some(close) = &self.close {
+			s.append(close.into());
+		}
+	}
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", rename = "property"))]
 pub struct FontProperty<'a> {
-	name: Atom,
-	value: StyleValue<'a>,
-	important: bool,
-}
-
-impl<'a> Parse<'a> for FontProperty<'a> {
-	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
-		if let Some(token) = p.peek::<T![Ident]>() {
-			let atom = p.parse_atom_lower(token);
-			if !matches!(
-				atom,
-				atom!("ascent-override")
-					| atom!("descent-override")
-					| atom!("font-display")
-					| atom!("font-family")
-					| atom!("font-feature-settings")
-					| atom!("font-language-override")
-					| atom!("font-named-instance")
-					| atom!("font-style")
-					| atom!("font-variation-settings")
-					| atom!("font-weight")
-					| atom!("font-width")
-					| atom!("line-gap-override")
-					| atom!("src") | atom!("unicode-range"),
-			) {
-				Err(diagnostics::UnexpectedIdent(atom, token.span()))?
-			}
-		} else {
-			let token = p.peek::<T![Any]>().unwrap();
-			Err(diagnostics::Unexpected(token, token.span()))?
-		}
-		let (name, value, important) = Self::parse_declaration(p)?;
-		Ok(Self { name, value, important })
-	}
+	pub name: T![Ident],
+	pub colon: Option<T![:]>,
+	pub value: StyleValue<'a>,
+	pub important: Option<Important>,
+	pub semicolon: Option<T![;]>,
 }
 
 impl<'a> Declaration<'a> for FontProperty<'a> {
 	type DeclarationValue = StyleValue<'a>;
-}
-
-impl<'a> WriteCss<'a> for FontProperty<'a> {
-	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
-		sink.write_str(self.name.as_ref())?;
-		sink.write_char(':')?;
-		sink.write_whitespace()?;
-		self.value.write_css(sink)?;
-		if self.important {
-			sink.write_whitespace()?;
-			sink.write_char('!')?;
-			atom!("important").write_css(sink)?;
-		}
-		Ok(())
+	fn valid_property(p: &Parser, c: Cursor) -> bool {
+		matches!(
+			p.parse_atom_lower(c),
+			atom!("ascent-override")
+				| atom!("descent-override")
+				| atom!("font-display")
+				| atom!("font-family")
+				| atom!("font-feature-settings")
+				| atom!("font-language-override")
+				| atom!("font-named-instance")
+				| atom!("font-style")
+				| atom!("font-variation-settings")
+				| atom!("font-weight")
+				| atom!("font-width")
+				| atom!("line-gap-override")
+				| atom!("src")
+				| atom!("unicode-range")
+		)
 	}
 }
 
-// macro_rules! font_value {
-//     ( $(
-//         $name: ident$(<$a: lifetime>)?: $atom: pat,
-//     )+ ) => {
-// 		#[derive(PartialEq, Debug, Hash)]
-// 		#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", rename_all = "kebab-case"))]
-// 		pub enum StyleValue<'a> {
-// 			Initial,
-// 			Inherit,
-// 			Unset,
-// 			Revert,
-// 			RevertLayer,
-// 			#[cfg_attr(feature = "serde", serde(untagged))]
-// 			Custom(Custom<'a>),
-// 			#[cfg_attr(feature = "serde", serde(untagged))]
-// 			Computed(Computed<'a>),
-// 			#[cfg_attr(feature = "serde", serde(untagged))]
-// 			Unknown(Unknown<'a>),
-// 			$(
-// 				#[cfg_attr(feature = "serde", serde(untagged))]
-// 				$name(values::$name$(<$a>)?),
-// 			)+
-// 		}
-// 	}
-// }
-//
-// apply_properties!(style_value);
+impl<'a> Parse<'a> for FontProperty<'a> {
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		let (name, colon, value, important, semicolon) = Self::parse_declaration(p)?;
+		Ok(Self { name, colon, value, important, semicolon })
+	}
+}
+
+impl<'a> ToCursors<'a> for FontProperty<'a> {
+	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+		s.append(self.name.into());
+		if let Some(colon) = self.colon {
+			s.append(colon.into());
+		}
+		ToCursors::to_cursors(&self.value, s);
+		if let Some(important) = &self.important {
+			ToCursors::to_cursors(important, s);
+		}
+		if let Some(semicolon) = &self.semicolon {
+			ToCursors::to_cursors(semicolon, s);
+		}
+	}
+}
 
 #[cfg(test)]
 mod tests {
@@ -137,7 +129,7 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(FontFace, 32);
+		assert_size!(FontFace, 72);
 	}
 
 	#[test]

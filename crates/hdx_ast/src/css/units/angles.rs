@@ -1,61 +1,87 @@
 use hdx_atom::atom;
-use hdx_derive::Writable;
-use hdx_parser::{diagnostics, Parse, Parser, Peek, Result as ParserResult, T};
-
-use super::{AbsoluteUnit, CSSFloat};
+use hdx_lexer::Cursor;
+use hdx_parser::{Build, Is, Parser, T};
 
 const DEG_GRAD: f32 = 0.9;
 const DEG_RAD: f32 = 57.295_78;
 const DEG_TURN: f32 = 360.0;
 
 // https://drafts.csswg.org/css-values/#angles
-#[derive(Writable, Debug, Clone, Copy, PartialEq, Hash)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub enum Angle {
-	#[writable(suffix = "grad")]
-	Grad(CSSFloat),
-	#[writable(suffix = "rad")]
-	Rad(CSSFloat),
-	#[writable(suffix = "turn")]
-	Turn(CSSFloat),
-	#[writable(suffix = "deg")]
-	Deg(CSSFloat),
+	Grad(T![Dimension::Grad]),
+	Rad(T![Dimension::Rad]),
+	Turn(T![Dimension::Turn]),
+	Deg(T![Dimension::Deg]),
 }
 
-impl<'a> Peek<'a> for Angle {
-	fn peek(p: &Parser<'a>) -> Option<hdx_lexer::Token> {
-		p.peek::<T![Dimension]>()
+impl Default for Angle {
+	fn default() -> Self {
+		Self::Deg(Default::default())
 	}
 }
 
-impl<'a> Parse<'a> for Angle {
-	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
-		let token = p.parse::<T![Dimension]>()?;
-		match p.parse_atom_lower(*token) {
-			atom!("grad") => Ok(Angle::Grad(p.parse_number(*token).into())),
-			atom!("rad") => Ok(Angle::Rad(p.parse_number(*token).into())),
-			atom!("turn") => Ok(Angle::Turn(p.parse_number(*token).into())),
-			atom!("deg") => Ok(Angle::Deg(p.parse_number(*token).into())),
-			atom => Err(diagnostics::UnexpectedDimension(atom, token.span()))?,
-		}
-	}
-}
-
-impl From<Angle> for CSSFloat {
+impl From<Angle> for f32 {
 	fn from(val: Angle) -> Self {
 		match val {
-			Angle::Grad(f) | Angle::Rad(f) | Angle::Turn(f) | Angle::Deg(f) => f,
+			Angle::Grad(f) => f.into(),
+			Angle::Rad(f) => f.into(),
+			Angle::Turn(f) => f.into(),
+			Angle::Deg(f) => f.into(),
 		}
 	}
 }
 
-impl AbsoluteUnit for Angle {
-	fn to_base(&self) -> Self {
-		Self::Deg(match self {
-			Self::Grad(f) => *f * DEG_GRAD,
-			Self::Rad(f) => *f * DEG_RAD,
-			Self::Turn(f) => *f * DEG_TURN,
-			Self::Deg(f) => *f,
-		})
+impl<'a> Is<'a> for Angle {
+	fn is(p: &Parser<'a>, c: Cursor) -> bool {
+		<T![Dimension]>::is(p, c)
+			&& matches!(p.parse_atom_lower(c), atom!("grad") | atom!("rad") | atom!("turn") | atom!("deg"))
+	}
+}
+
+impl<'a> Build<'a> for Angle {
+	fn build(p: &Parser<'a>, c: Cursor) -> Self {
+		match p.parse_atom_lower(c) {
+			atom!("grad") => Self::Grad(<T![Dimension::Grad]>::build(p, c)),
+			atom!("rad") => Self::Rad(<T![Dimension::Rad]>::build(p, c)),
+			atom!("turn") => Self::Turn(<T![Dimension::Turn]>::build(p, c)),
+			atom!("deg") => Self::Deg(<T![Dimension::Deg]>::build(p, c)),
+			_ => unreachable!(),
+		}
+	}
+}
+
+impl From<Angle> for Cursor {
+	fn from(value: Angle) -> Self {
+		match value {
+			Angle::Grad(t) => t.into(),
+			Angle::Rad(t) => t.into(),
+			Angle::Turn(t) => t.into(),
+			Angle::Deg(t) => t.into(),
+		}
+	}
+}
+
+impl From<&Angle> for Cursor {
+	fn from(value: &Angle) -> Self {
+		(*value).into()
+	}
+}
+
+#[cfg(test)]
+mod tests {
+	use super::*;
+	use crate::test_helpers::*;
+
+	#[test]
+	fn size_test() {
+		assert_size!(Angle, 12);
+	}
+
+	#[test]
+	fn test_writes() {
+		assert_parse!(Angle, "0grad");
+		assert_parse!(Angle, "0deg");
 	}
 }

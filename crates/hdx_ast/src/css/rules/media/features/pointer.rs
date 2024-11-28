@@ -1,4 +1,4 @@
-use crate::macros::discrete_media_feature;
+use hdx_parser::discrete_media_feature;
 
 discrete_media_feature!(PointerMediaFeature[atom!("pointer")] {
 	None: atom!("none"),
@@ -13,22 +13,15 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(PointerMediaFeature, 1);
+		assert_size!(PointerMediaFeature, 36);
 	}
 
 	#[test]
 	fn test_writes() {
 		assert_parse!(PointerMediaFeature, "pointer");
-		assert_parse!(PointerMediaFeature, "pointer: none");
-		assert_parse!(PointerMediaFeature, "pointer: coarse");
-		assert_parse!(PointerMediaFeature, "pointer: fine");
-	}
-
-	#[test]
-	fn test_minify() {
-		assert_minify!(PointerMediaFeature, "pointer: none", "pointer:none");
-		assert_minify!(PointerMediaFeature, "pointer: coarse", "pointer:coarse");
-		assert_minify!(PointerMediaFeature, "pointer: fine", "pointer:fine");
+		assert_parse!(PointerMediaFeature, "pointer:none");
+		assert_parse!(PointerMediaFeature, "pointer:coarse");
+		assert_parse!(PointerMediaFeature, "pointer:fine");
 	}
 
 	#[test]

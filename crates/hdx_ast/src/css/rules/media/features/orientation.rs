@@ -1,4 +1,4 @@
-use crate::macros::discrete_media_feature;
+use hdx_parser::discrete_media_feature;
 
 discrete_media_feature!(OrientationMediaFeature[atom!("orientation")] {
 	Portrait: atom!("portrait"),
@@ -12,20 +12,14 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(OrientationMediaFeature, 1);
+		assert_size!(OrientationMediaFeature, 36);
 	}
 
 	#[test]
 	fn test_writes() {
 		assert_parse!(OrientationMediaFeature, "orientation");
-		assert_parse!(OrientationMediaFeature, "orientation: portrait");
-		assert_parse!(OrientationMediaFeature, "orientation: landscape");
-	}
-
-	#[test]
-	fn test_minify() {
-		assert_minify!(OrientationMediaFeature, "orientation: portrait", "orientation:portrait");
-		assert_minify!(OrientationMediaFeature, "orientation: landscape", "orientation:landscape");
+		assert_parse!(OrientationMediaFeature, "orientation:portrait");
+		assert_parse!(OrientationMediaFeature, "orientation:landscape");
 	}
 
 	#[test]

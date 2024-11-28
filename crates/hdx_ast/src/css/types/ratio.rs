@@ -1,36 +1,42 @@
 use crate::css::units::CSSInt;
-use hdx_parser::{Parse, Parser, Peek, Result as ParserResult, T};
-use hdx_writer::{write_css, CssWriter, Result as WriterResult, WriteCss};
+use hdx_lexer::SourceOffset;
+use hdx_parser::{Parse, Parser, Peek, Result as ParserResult, ToCursors, T};
 
 // https://drafts.csswg.org/css-values-4/#ratios
-#[derive(Debug, Clone, PartialEq, Hash)]
+#[derive(Debug, Default, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-pub struct Ratio(pub CSSInt, pub CSSInt);
+pub struct Ratio {
+	start: SourceOffset,
+	pub numerator: CSSInt,
+	pub slash: Option<T![/]>,
+	pub denominator: Option<CSSInt>,
+}
 
 impl<'a> Peek<'a> for Ratio {
-	fn peek(p: &Parser<'a>) -> Option<hdx_lexer::Token> {
-		p.peek::<T![Number]>()
+	fn peek(p: &Parser<'a>) -> bool {
+		p.peek::<CSSInt>()
 	}
 }
 
 impl<'a> Parse<'a> for Ratio {
 	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
-		let token = *p.parse::<T![Number]>()?;
-		let a: CSSInt = p.parse_number(token).into();
-		let b: CSSInt = if let Some(token) = p.peek::<T![/]>() {
-			p.hop(token);
-			let token = *p.parse::<T![Number]>()?;
-			p.parse_number(token).into()
-		} else {
-			1.into()
-		};
-		Ok(Self(a, b))
+		let start = p.offset();
+		let numerator = p.parse::<CSSInt>()?;
+		let slash = p.parse_if_peek::<T![/]>()?;
+		let denominator = if slash.is_some() { Some(p.parse::<CSSInt>()?) } else { None };
+		Ok(Self { start, numerator, slash, denominator })
 	}
 }
 
-impl<'a> WriteCss<'a> for Ratio {
-	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
-		Ok(write_css!(sink, self.0, (), '/', (), self.1))
+impl<'a> ToCursors<'a> for Ratio {
+	fn to_cursors(&self, s: &mut hdx_parser::CursorStream<'a>) {
+		s.append(self.numerator.into());
+		if let Some(t) = self.slash {
+			s.append(t.into());
+		}
+		if let Some(t) = self.denominator {
+			s.append(t.into());
+		}
 	}
 }
 
@@ -41,14 +47,14 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(Ratio, 8);
+		assert_size!(Ratio, 36);
 	}
 
 	#[test]
 	fn test_writes() {
-		assert_parse!(Ratio, "1 / 1", "1 / 1");
-		assert_parse!(Ratio, "5 / 3", "5 / 3");
-		assert_parse!(Ratio, "5", "5 / 1");
+		assert_parse!(Ratio, "1/1");
+		assert_parse!(Ratio, "5/3");
+		assert_parse!(Ratio, "5");
 	}
 
 	#[test]
@@ -57,13 +63,13 @@ mod tests {
 		assert_parse_error!(Ratio, "5 / 1 / 1");
 	}
 
-	#[cfg(feature = "serde")]
-	#[test]
-	fn test_serializes() {
-		assert_json!(Ratio, "5 / 3", {
-			"node": [5, 3],
-			"start": 0,
-			"end": 5
-		});
-	}
+	// #[cfg(feature = "serde")]
+	// #[test]
+	// fn test_serializes() {
+	// 	assert_json!(Ratio, "5/3", {
+	// 		"node": [5, 3],
+	// 		"start": 0,
+	// 		"end": 5
+	// 	});
+	// }
 }

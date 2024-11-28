@@ -599,8 +599,6 @@ dependencies = [
  "hdx_lexer",
  "hdx_parser",
  "hdx_proc_macro",
- "hdx_syntax",
- "hdx_writer",
  "insta",
  "miette",
  "pprof",

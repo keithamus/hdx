@@ -1,4 +1,4 @@
-use crate::macros::discrete_media_feature;
+use hdx_parser::discrete_media_feature;
 
 discrete_media_feature!(PrefersContrastMediaFeature[atom!("prefers-contrast")] {
 	NoPreference: atom!("no-preference"),
@@ -14,28 +14,16 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(PrefersContrastMediaFeature, 1);
+		assert_size!(PrefersContrastMediaFeature, 36);
 	}
 
 	#[test]
 	fn test_writes() {
 		assert_parse!(PrefersContrastMediaFeature, "prefers-contrast");
-		assert_parse!(PrefersContrastMediaFeature, "prefers-contrast: no-preference");
-		assert_parse!(PrefersContrastMediaFeature, "prefers-contrast: less");
-		assert_parse!(PrefersContrastMediaFeature, "prefers-contrast: more");
-		assert_parse!(PrefersContrastMediaFeature, "prefers-contrast: custom");
-	}
-
-	#[test]
-	fn test_minify() {
-		assert_minify!(
-			PrefersContrastMediaFeature,
-			"prefers-contrast: no-preference",
-			"prefers-contrast:no-preference"
-		);
-		assert_minify!(PrefersContrastMediaFeature, "prefers-contrast: less", "prefers-contrast:less");
-		assert_minify!(PrefersContrastMediaFeature, "prefers-contrast: more", "prefers-contrast:more");
-		assert_minify!(PrefersContrastMediaFeature, "prefers-contrast: custom", "prefers-contrast:custom");
+		assert_parse!(PrefersContrastMediaFeature, "prefers-contrast:no-preference");
+		assert_parse!(PrefersContrastMediaFeature, "prefers-contrast:less");
+		assert_parse!(PrefersContrastMediaFeature, "prefers-contrast:more");
+		assert_parse!(PrefersContrastMediaFeature, "prefers-contrast:custom");
 	}
 
 	#[test]

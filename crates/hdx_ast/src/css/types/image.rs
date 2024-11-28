@@ -1,7 +1,4 @@
-use hdx_atom::atom;
-use hdx_lexer::QuoteStyle;
-use hdx_parser::{Parse, Parser, Peek, Result as ParserResult, T};
-use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
+use hdx_parser::{CursorStream, Parse, Parser, Peek, Result as ParserResult, ToCursors, T};
 
 use super::Gradient;
 
@@ -11,45 +8,45 @@ mod func {
 }
 
 // https://drafts.csswg.org/css-images-3/#typedef-image
-#[derive(Debug, Clone, PartialEq, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub enum Image<'a> {
-	Url(&'a str, QuoteStyle),
-	Gradient(Gradient),
+	Url(T![Url]),
+	UrlFunction(func::Url, T![String], T![')']),
+	Gradient(Gradient<'a>),
 }
 
 impl<'a> Peek<'a> for Image<'a> {
-	fn peek(p: &Parser<'a>) -> Option<hdx_lexer::Token> {
-		p.peek::<T![Url]>().or_else(|| p.peek::<func::Url>()).or_else(|| p.peek::<Gradient>())
+	fn peek(p: &Parser<'a>) -> bool {
+		p.peek::<T![Url]>() || p.peek::<func::Url>() || p.peek::<Gradient>()
 	}
 }
 
 impl<'a> Parse<'a> for Image<'a> {
 	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
-		if let Some(token) = p.peek::<T![Url]>() {
-			p.hop(token);
-			return Ok(Self::Url(p.parse_str(token), token.quote_style()));
+		if p.peek::<T![Url]>() {
+			return Ok(Self::Url(p.parse::<T![Url]>()?));
 		}
-		if let Some(token) = p.peek::<func::Url>() {
-			p.hop(token);
-			let string_token = p.parse::<T![String]>()?;
-			p.parse::<T![RightParen]>()?;
-			return Ok(Self::Url(p.parse_str(*string_token), string_token.quote_style()));
+		if p.peek::<func::Url>() {
+			let func = p.parse::<func::Url>()?;
+			let string = p.parse::<T![String]>()?;
+			let close = p.parse::<T![')']>()?;
+			return Ok(Self::UrlFunction(func, string, close));
 		}
 		p.parse::<Gradient>().map(Self::Gradient)
 	}
 }
 
-impl<'a> WriteCss<'a> for Image<'a> {
-	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
+impl<'a> ToCursors<'a> for Image<'a> {
+	fn to_cursors(&self, s: &mut CursorStream<'a>) {
 		match self {
-			Self::Url(str, style) => {
-				atom!("url").write_css(sink)?;
-				sink.write_char('(')?;
-				sink.write_with_quotes(str, *style, true)?;
-				sink.write_char(')')
+			Self::Url(c) => s.append(c.into()),
+			Self::UrlFunction(func, string, close) => {
+				s.append(func.into());
+				s.append(string.into());
+				s.append(close.into());
 			}
-			Self::Gradient(g) => g.write_css(sink),
+			Self::Gradient(c) => ToCursors::to_cursors(c, s),
 		}
 	}
 }
@@ -61,7 +58,7 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(Image, 64);
+		assert_size!(Image, 184);
 	}
 
 	#[test]
@@ -69,10 +66,5 @@ mod tests {
 		assert_parse!(Image, "url('foo')");
 		assert_parse!(Image, "url(\"foo\")");
 		assert_parse!(Image, "url(foo)");
-	}
-
-	#[test]
-	fn test_minify() {
-		assert_minify!(Image, "url('foo')", "url(foo)");
 	}
 }

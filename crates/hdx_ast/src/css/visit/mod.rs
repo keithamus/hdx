@@ -1,5 +1,3 @@
-use hdx_parser::Spanned;
-
 use crate::{
 	css::{properties::Property, stylerule::StyleRule, StyleSheet},
 	syntax::{AtRule, QualifiedRule},
@@ -49,18 +47,6 @@ pub trait VisitableMut<'a>: Sized {
 
 pub trait Visitable<'a>: Sized {
 	fn accept<V: Visit<'a>>(&self, visitor: &mut V);
-}
-
-impl<'a, T: VisitableMut<'a>> VisitableMut<'a> for Spanned<T> {
-	fn accept_mut<V: VisitMut<'a>>(&mut self, visitor: &mut V) {
-		self.node.accept_mut(visitor)
-	}
-}
-
-impl<'a, T: Visitable<'a>> Visitable<'a> for Spanned<T> {
-	fn accept<V: Visit<'a>>(&self, visitor: &mut V) {
-		self.node.accept(visitor)
-	}
 }
 
 impl<'a, T: VisitableMut<'a>> VisitableMut<'a> for bumpalo::collections::Vec<'a, T> {

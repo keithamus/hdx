@@ -1,7 +1,5 @@
-use crate::{
-	css::units::{CSSFloat, CSSInt},
-	macros::{discrete_media_feature, ranged_media_feature},
-};
+use crate::css::units::{CSSFloat, CSSInt};
+use hdx_parser::{discrete_media_feature, ranged_media_feature};
 
 discrete_media_feature!(MsHighContrastMediaFeature[atom!("-ms-high-contrast")] {
 	None: atom!("none"),

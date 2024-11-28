@@ -9,11 +9,11 @@ mod tests {
 	#[test]
 	fn size_test() {
 		// assert_size!(TransitionProperty, 1);
-		assert_size!(TransitionDuration, 24);
+		assert_size!(TransitionDuration, 32);
 		// assert_size!(TransitionTimingFunction, 1);
-		assert_size!(TransitionDelay, 24);
+		assert_size!(TransitionDelay, 32);
 		// assert_size!(Transition, 1);
-		assert_size!(TransitionBehavior, 24);
+		assert_size!(TransitionBehavior, 32);
 	}
 
 	#[test]

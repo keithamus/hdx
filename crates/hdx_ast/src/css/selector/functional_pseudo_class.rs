@@ -1,168 +1,527 @@
-use hdx_atom::{atom, Atom};
-use hdx_derive::{Atomizable, Parsable, Writable};
-use hdx_parser::{diagnostics, Parse, Parser, Result as ParserResult, T};
-use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
-use smallvec::{smallvec, SmallVec};
+use bumpalo::collections::Vec;
+use hdx_atom::atom;
+use hdx_lexer::{Cursor, KindSet};
+use hdx_parser::{diagnostics, Build, CursorStream, Is, Parse, Parser, Result as ParserResult, ToCursors, T};
 
 use super::{ForgivingSelector, Nth, RelativeSelector, SelectorList};
 
-#[derive(PartialEq, Debug, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(
 	feature = "serde",
 	derive(serde::Serialize),
 	serde(tag = "type", content = "value", rename_all = "kebab-case")
 )]
 pub enum FunctionalPseudoClass<'a> {
-	Dir(DirValue),                 // atom!("dir")
-	Has(RelativeSelector<'a>),     // atom!("has")
-	Host(SelectorList<'a>),        // atom!("host")
-	HostContext(SelectorList<'a>), // atom!("host-context")
-	Is(ForgivingSelector<'a>),     // atom!("is")
-	Lang(SmallVec<[Atom; 1]>),     // atom!("lang")
-	Not(SelectorList<'a>),         // atom!("not")
-	NthChild(Nth),                 // atom!("nth-child")
-	NthCol(Nth),                   // atom!("nth-col")
-	NthLastChild(Nth),             // atom!("nth-last-child")
-	NthLastCol(Nth),               // atom!("nth-last-col")
-	NthLastOfType(Nth),            // atom!("nth-last-of-type")
-	NthOfType(Nth),                // atom!("nth-of-type")
-	Where(ForgivingSelector<'a>),  // atom!("where")
-	State(Atom),                   // atom!("state")
+	Dir(DirPseudoFunction),
+	Has(HasPseudoFunction<'a>),
+	Host(HostPseudoFunction<'a>),
+	HostContext(HostContextPseudoFunction<'a>),
+	Is(IsPseudoFunction<'a>),
+	Lang(LangPseudoFunction<'a>),
+	Not(NotPseudoFunction<'a>),
+	NthChild(NthChildPseudoFunction<'a>),
+	NthCol(NthColPseudoFunction<'a>),
+	NthLastChild(NthLastChildPseudoFunction<'a>),
+	NthLastCol(NthLastColPseudoFunction<'a>),
+	NthLastOfType(NthLastOfTypePseudoFunction<'a>),
+	NthOfType(NthOfTypePseudoFunction<'a>),
+	State(StatePseudoFunction),
+	Where(WherePseudoFunction<'a>),
 }
 
 impl<'a> Parse<'a> for FunctionalPseudoClass<'a> {
 	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
-		let token = *p.parse::<T![Function]>()?;
-		let value = match p.parse_atom_lower(token) {
-			atom!("dir") => p.parse::<DirValue>().map(Self::Dir)?,
-			atom!("has") => p.parse::<RelativeSelector>().map(Self::Has)?,
-			atom!("host") => p.parse::<SelectorList>().map(Self::Host)?,
-			atom!("host-context") => p.parse::<SelectorList>().map(Self::HostContext)?,
-			atom!("is") => p.parse::<ForgivingSelector>().map(Self::Is)?,
+		let skip = p.set_skip(KindSet::NONE);
+		let colon = p.parse::<T![:]>();
+		let function = p.parse::<T![Function]>();
+		p.set_skip(skip);
+		let colon = colon?;
+		let function = function?;
+		let c: Cursor = function.into();
+		Ok(match p.parse_atom_lower(c) {
+			atom!("dir") => {
+				let value = p.parse::<DirValue>()?;
+				let close = p.parse_if_peek::<T![')']>()?;
+				Self::Dir(DirPseudoFunction { colon, function, value, close })
+			}
+			atom!("has") => {
+				let value = p.parse::<RelativeSelector>()?;
+				let close = p.parse_if_peek::<T![')']>()?;
+				Self::Has(HasPseudoFunction { colon, function, value, close })
+			}
+			atom!("host") => {
+				let value = p.parse::<SelectorList>()?;
+				let close = p.parse_if_peek::<T![')']>()?;
+				Self::Host(HostPseudoFunction { colon, function, value, close })
+			}
+			atom!("host-context") => {
+				let value = p.parse::<SelectorList>()?;
+				let close = p.parse_if_peek::<T![')']>()?;
+				Self::HostContext(HostContextPseudoFunction { colon, function, value, close })
+			}
+			atom!("is") => {
+				let value = p.parse::<ForgivingSelector>()?;
+				let close = p.parse_if_peek::<T![')']>()?;
+				Self::HostContext(HostContextPseudoFunction { colon, function, value, close })
+			}
 			atom!("lang") => {
-				let mut langs = smallvec![];
+				let mut value = Vec::new_in(p.bump());
 				loop {
-					if let Some(token) = p.peek::<T![Ident]>() {
-						p.hop(token);
-						langs.push(p.parse_atom(token));
-					} else {
-						let token = *p.parse::<T![String]>()?;
-						p.hop(token);
-						langs.push(p.parse_atom(token));
-					}
-					if !p.parse::<T![,]>().is_ok() {
+					value.push(p.parse::<LangValue>()?);
+					if p.peek::<T![')']>() {
 						break;
 					}
 				}
-				Self::Lang(langs)
+				let close = p.parse_if_peek::<T![')']>()?;
+				Self::Lang(LangPseudoFunction { colon, function, value, close })
 			}
-			atom!("not") => p.parse::<SelectorList>().map(Self::Not)?,
-			atom!("nth-child") => p.parse::<Nth>().map(Self::NthChild)?,
-			atom!("nth-col") => p.parse::<Nth>().map(Self::NthCol)?,
-			atom!("nth-last-child") => p.parse::<Nth>().map(Self::NthLastCol)?,
-			atom!("nth-last-col") => p.parse::<Nth>().map(Self::NthLastCol)?,
-			atom!("nth-last-of-type") => p.parse::<Nth>().map(Self::NthLastOfType)?,
-			atom!("nth-of-type") => p.parse::<Nth>().map(Self::NthOfType)?,
-			atom!("where") => p.parse::<ForgivingSelector>().map(Self::Where)?,
+			atom!("not") => {
+				let value = p.parse::<SelectorList>()?;
+				let close = p.parse_if_peek::<T![')']>()?;
+				Self::Not(NotPseudoFunction { colon, function, value, close })
+			}
+			atom!("nth-child") => {
+				let value = p.parse::<Nth>()?;
+				let close = p.parse_if_peek::<T![')']>()?;
+				Self::NthChild(NthChildPseudoFunction { colon, function, value, close })
+			}
+			atom!("nth-col") => {
+				let value = p.parse::<Nth>()?;
+				let close = p.parse_if_peek::<T![')']>()?;
+				Self::NthCol(NthColPseudoFunction { colon, function, value, close })
+			}
+			atom!("nth-last-child") => {
+				let value = p.parse::<Nth>()?;
+				let close = p.parse_if_peek::<T![')']>()?;
+				Self::NthLastChild(NthLastChildPseudoFunction { colon, function, value, close })
+			}
+			atom!("nth-last-col") => {
+				let value = p.parse::<Nth>()?;
+				let close = p.parse_if_peek::<T![')']>()?;
+				Self::NthLastCol(NthLastColPseudoFunction { colon, function, value, close })
+			}
+			atom!("nth-last-of-type") => {
+				let value = p.parse::<Nth>()?;
+				let close = p.parse_if_peek::<T![')']>()?;
+				Self::NthLastOfType(NthLastOfTypePseudoFunction { colon, function, value, close })
+			}
+			atom!("nth-of-type") => {
+				let value = p.parse::<Nth>()?;
+				let close = p.parse_if_peek::<T![')']>()?;
+				Self::NthOfType(NthOfTypePseudoFunction { colon, function, value, close })
+			}
+			atom!("where") => {
+				let value = p.parse::<ForgivingSelector>()?;
+				let close = p.parse_if_peek::<T![')']>()?;
+				Self::Where(WherePseudoFunction { colon, function, value, close })
+			}
 			atom!("state") => {
-				let token = *p.parse::<T![Ident]>()?;
-				Self::State(p.parse_atom(token))
+				let value = p.parse::<T![Ident]>()?;
+				let close = p.parse_if_peek::<T![')']>()?;
+				Self::State(StatePseudoFunction { colon, function, value, close })
 			}
-			ident => Err(diagnostics::UnexpectedFunction(ident, token.span()))?,
-		};
-		p.parse::<T![RightParen]>()?;
-		Ok(value)
+			ident => Err(diagnostics::UnexpectedFunction(ident, c.into()))?,
+		})
 	}
 }
 
-impl<'a> WriteCss<'a> for FunctionalPseudoClass<'a> {
-	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
+impl<'a> ToCursors<'a> for FunctionalPseudoClass<'a> {
+	fn to_cursors(&self, s: &mut CursorStream<'a>) {
 		match self {
-			Self::Dir(dir) => {
-				atom!("dir").write_css(sink)?;
-				sink.write_char('(')?;
-				dir.write_css(sink)?;
-			}
-			Self::Has(sel) => {
-				atom!("has").write_css(sink)?;
-				sink.write_char('(')?;
-				sel.write_css(sink)?;
-			}
-			Self::Host(sel) => {
-				atom!("host").write_css(sink)?;
-				sink.write_char('(')?;
-				sel.write_css(sink)?;
-			}
-			Self::HostContext(sel) => {
-				atom!("host-context").write_css(sink)?;
-				sink.write_char('(')?;
-				sel.write_css(sink)?;
-			}
-			Self::Is(sel) => {
-				atom!("is").write_css(sink)?;
-				sink.write_char('(')?;
-				sel.write_css(sink)?;
-			}
-			Self::Lang(langs) => {
-				atom!("lang").write_css(sink)?;
-				sink.write_char('(')?;
-				langs.write_css(sink)?;
-			}
-			Self::Not(sel) => {
-				atom!("not").write_css(sink)?;
-				sink.write_char('(')?;
-				sel.write_css(sink)?;
-			}
-			Self::NthChild(nth) => {
-				atom!("nth-child").write_css(sink)?;
-				sink.write_char('(')?;
-				nth.write_css(sink)?;
-			}
-			Self::NthCol(nth) => {
-				atom!("nth-col").write_css(sink)?;
-				sink.write_char('(')?;
-				nth.write_css(sink)?;
-			}
-			Self::NthLastChild(nth) => {
-				atom!("nth-last-child").write_css(sink)?;
-				sink.write_char('(')?;
-				nth.write_css(sink)?;
-			}
-			Self::NthLastCol(nth) => {
-				atom!("nth-last-col").write_css(sink)?;
-				sink.write_char('(')?;
-				nth.write_css(sink)?;
-			}
-			Self::NthLastOfType(nth) => {
-				atom!("nth-last-of-type").write_css(sink)?;
-				sink.write_char('(')?;
-				nth.write_css(sink)?;
-			}
-			Self::NthOfType(nth) => {
-				atom!("nth-of-type").write_css(sink)?;
-				sink.write_char('(')?;
-				nth.write_css(sink)?;
-			}
-			Self::Where(sel) => {
-				atom!("where").write_css(sink)?;
-				sink.write_char('(')?;
-				sel.write_css(sink)?;
-			}
-			Self::State(atom) => {
-				atom!("state").write_css(sink)?;
-				sink.write_char('(')?;
-				atom.write_css(sink)?;
-			}
+			Self::Dir(c) => ToCursors::to_cursors(c, s),
+			Self::Has(c) => ToCursors::to_cursors(c, s),
+			Self::Host(c) => ToCursors::to_cursors(c, s),
+			Self::HostContext(c) => ToCursors::to_cursors(c, s),
+			Self::Is(c) => ToCursors::to_cursors(c, s),
+			Self::Lang(c) => ToCursors::to_cursors(c, s),
+			Self::Not(c) => ToCursors::to_cursors(c, s),
+			Self::NthChild(c) => ToCursors::to_cursors(c, s),
+			Self::NthCol(c) => ToCursors::to_cursors(c, s),
+			Self::NthLastChild(c) => ToCursors::to_cursors(c, s),
+			Self::NthLastCol(c) => ToCursors::to_cursors(c, s),
+			Self::NthLastOfType(c) => ToCursors::to_cursors(c, s),
+			Self::NthOfType(c) => ToCursors::to_cursors(c, s),
+			Self::State(c) => ToCursors::to_cursors(c, s),
+			Self::Where(c) => ToCursors::to_cursors(c, s),
 		}
-		sink.write_char(')')
 	}
 }
 
-#[derive(Writable, Parsable, Atomizable, Debug, PartialEq, Hash)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+pub struct DirPseudoFunction {
+	pub colon: T![:],
+	pub function: T![Function],
+	pub value: DirValue,
+	pub close: Option<T![')']>,
+}
+
+impl<'a> ToCursors<'a> for DirPseudoFunction {
+	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+		s.append(self.colon.into());
+		s.append(self.function.into());
+		match self.value {
+			DirValue::Rtl(c) => s.append(c.into()),
+			DirValue::Ltr(c) => s.append(c.into()),
+		}
+		if let Some(close) = self.close {
+			s.append(close.into());
+		}
+	}
+}
+
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", rename_all = "kebab-case"))]
 pub enum DirValue {
-	Rtl, // atom!("rtl")
-	Ltr, // atom!("ltr")
+	Rtl(T![Ident]),
+	Ltr(T![Ident]),
+}
+
+impl<'a> Is<'a> for DirValue {
+	fn is(p: &Parser<'a>, c: hdx_lexer::Cursor) -> bool {
+		<T![Ident]>::is(p, c) && matches!(p.parse_atom_lower(c), atom!("rtl") | atom!("ltr"))
+	}
+}
+
+impl<'a> Build<'a> for DirValue {
+	fn build(p: &Parser<'a>, c: hdx_lexer::Cursor) -> Self {
+		match p.parse_atom_lower(c) {
+			atom!("rtl") => Self::Rtl(<T![Ident]>::build(p, c)),
+			atom!("ltr") => Self::Ltr(<T![Ident]>::build(p, c)),
+			_ => unreachable!(),
+		}
+	}
+}
+
+impl From<DirValue> for Cursor {
+	fn from(value: DirValue) -> Cursor {
+		match value {
+			DirValue::Rtl(c) => c.into(),
+			DirValue::Ltr(c) => c.into(),
+		}
+	}
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+pub struct HasPseudoFunction<'a> {
+	pub colon: T![:],
+	pub function: T![Function],
+	pub value: RelativeSelector<'a>,
+	pub close: Option<T![')']>,
+}
+
+impl<'a> ToCursors<'a> for HasPseudoFunction<'a> {
+	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+		s.append(self.colon.into());
+		s.append(self.function.into());
+		ToCursors::to_cursors(&self.value, s);
+		if let Some(close) = self.close {
+			s.append(close.into());
+		}
+	}
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+pub struct HostPseudoFunction<'a> {
+	pub colon: T![:],
+	pub function: T![Function],
+	pub value: SelectorList<'a>,
+	pub close: Option<T![')']>,
+}
+
+impl<'a> ToCursors<'a> for HostPseudoFunction<'a> {
+	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+		s.append(self.colon.into());
+		s.append(self.function.into());
+		ToCursors::to_cursors(&self.value, s);
+		if let Some(close) = self.close {
+			s.append(close.into());
+		}
+	}
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+pub struct HostContextPseudoFunction<'a> {
+	pub colon: T![:],
+	pub function: T![Function],
+	pub value: SelectorList<'a>,
+	pub close: Option<T![')']>,
+}
+
+impl<'a> ToCursors<'a> for HostContextPseudoFunction<'a> {
+	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+		s.append(self.colon.into());
+		s.append(self.function.into());
+		ToCursors::to_cursors(&self.value, s);
+		if let Some(close) = self.close {
+			s.append(close.into());
+		}
+	}
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+pub struct IsPseudoFunction<'a> {
+	pub colon: T![:],
+	pub function: T![Function],
+	pub value: ForgivingSelector<'a>,
+	pub close: Option<T![')']>,
+}
+
+impl<'a> ToCursors<'a> for IsPseudoFunction<'a> {
+	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+		s.append(self.colon.into());
+		s.append(self.function.into());
+		ToCursors::to_cursors(&self.value, s);
+		if let Some(close) = self.close {
+			s.append(close.into());
+		}
+	}
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+pub struct LangPseudoFunction<'a> {
+	pub colon: T![:],
+	pub function: T![Function],
+	pub value: Vec<'a, LangValue>,
+	pub close: Option<T![')']>,
+}
+
+impl<'a> ToCursors<'a> for LangPseudoFunction<'a> {
+	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+		s.append(self.colon.into());
+		s.append(self.function.into());
+		for value in &self.value {
+			ToCursors::to_cursors(value, s);
+		}
+		if let Some(close) = self.close {
+			s.append(close.into());
+		}
+	}
+}
+
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+pub enum LangValue {
+	Ident(T![Ident], Option<T![,]>),
+	String(T![String], Option<T![,]>),
+}
+
+impl<'a> Parse<'a> for LangValue {
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		if p.peek::<T![Ident]>() {
+			let value = p.parse::<T![Ident]>()?;
+			let comma = p.parse_if_peek::<T![,]>()?;
+			Ok(Self::Ident(value, comma))
+		} else {
+			let value = p.parse::<T![String]>()?;
+			let comma = p.parse_if_peek::<T![,]>()?;
+			Ok(Self::String(value, comma))
+		}
+	}
+}
+
+impl<'a> ToCursors<'a> for LangValue {
+	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+		match self {
+			Self::Ident(value, comma) => {
+				s.append(value.into());
+				if let Some(comma) = comma {
+					s.append(comma.into());
+				}
+			}
+			Self::String(value, comma) => {
+				s.append(value.into());
+				if let Some(comma) = comma {
+					s.append(comma.into());
+				}
+			}
+		}
+	}
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+pub struct NotPseudoFunction<'a> {
+	pub colon: T![:],
+	pub function: T![Function],
+	pub value: SelectorList<'a>,
+	pub close: Option<T![')']>,
+}
+
+impl<'a> ToCursors<'a> for NotPseudoFunction<'a> {
+	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+		s.append(self.colon.into());
+		s.append(self.function.into());
+		ToCursors::to_cursors(&self.value, s);
+		if let Some(close) = self.close {
+			s.append(close.into());
+		}
+	}
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+pub struct NthChildPseudoFunction<'a> {
+	pub colon: T![:],
+	pub function: T![Function],
+	pub value: Nth<'a>,
+	pub close: Option<T![')']>,
+}
+
+impl<'a> ToCursors<'a> for NthChildPseudoFunction<'a> {
+	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+		s.append(self.colon.into());
+		s.append(self.function.into());
+		ToCursors::to_cursors(&self.value, s);
+		if let Some(close) = self.close {
+			s.append(close.into());
+		}
+	}
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+pub struct NthColPseudoFunction<'a> {
+	pub colon: T![:],
+	pub function: T![Function],
+	pub value: Nth<'a>,
+	pub close: Option<T![')']>,
+}
+
+impl<'a> ToCursors<'a> for NthColPseudoFunction<'a> {
+	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+		s.append(self.colon.into());
+		s.append(self.function.into());
+		ToCursors::to_cursors(&self.value, s);
+		if let Some(close) = self.close {
+			s.append(close.into());
+		}
+	}
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+pub struct NthLastChildPseudoFunction<'a> {
+	pub colon: T![:],
+	pub function: T![Function],
+	pub value: Nth<'a>,
+	pub close: Option<T![')']>,
+}
+
+impl<'a> ToCursors<'a> for NthLastChildPseudoFunction<'a> {
+	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+		s.append(self.colon.into());
+		s.append(self.function.into());
+		ToCursors::to_cursors(&self.value, s);
+		if let Some(close) = self.close {
+			s.append(close.into());
+		}
+	}
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+pub struct NthLastColPseudoFunction<'a> {
+	pub colon: T![:],
+	pub function: T![Function],
+	pub value: Nth<'a>,
+	pub close: Option<T![')']>,
+}
+
+impl<'a> ToCursors<'a> for NthLastColPseudoFunction<'a> {
+	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+		s.append(self.colon.into());
+		s.append(self.function.into());
+		ToCursors::to_cursors(&self.value, s);
+		if let Some(close) = self.close {
+			s.append(close.into());
+		}
+	}
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+pub struct NthLastOfTypePseudoFunction<'a> {
+	pub colon: T![:],
+	pub function: T![Function],
+	pub value: Nth<'a>,
+	pub close: Option<T![')']>,
+}
+
+impl<'a> ToCursors<'a> for NthLastOfTypePseudoFunction<'a> {
+	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+		s.append(self.colon.into());
+		s.append(self.function.into());
+		ToCursors::to_cursors(&self.value, s);
+		if let Some(close) = self.close {
+			s.append(close.into());
+		}
+	}
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+pub struct NthOfTypePseudoFunction<'a> {
+	pub colon: T![:],
+	pub function: T![Function],
+	pub value: Nth<'a>,
+	pub close: Option<T![')']>,
+}
+
+impl<'a> ToCursors<'a> for NthOfTypePseudoFunction<'a> {
+	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+		s.append(self.colon.into());
+		s.append(self.function.into());
+		ToCursors::to_cursors(&self.value, s);
+		if let Some(close) = self.close {
+			s.append(close.into());
+		}
+	}
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+pub struct WherePseudoFunction<'a> {
+	pub colon: T![:],
+	pub function: T![Function],
+	pub value: ForgivingSelector<'a>,
+	pub close: Option<T![')']>,
+}
+
+impl<'a> ToCursors<'a> for WherePseudoFunction<'a> {
+	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+		s.append(self.colon.into());
+		s.append(self.function.into());
+		ToCursors::to_cursors(&self.value, s);
+		if let Some(close) = self.close {
+			s.append(close.into());
+		}
+	}
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+pub struct StatePseudoFunction {
+	pub colon: T![:],
+	pub function: T![Function],
+	pub value: T![Ident],
+	pub close: Option<T![')']>,
+}
+
+impl<'a> ToCursors<'a> for StatePseudoFunction {
+	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+		s.append(self.colon.into());
+		s.append(self.function.into());
+		s.append(self.value.into());
+		if let Some(close) = self.close {
+			s.append(close.into());
+		}
+	}
 }
 
 #[cfg(test)]
@@ -172,7 +531,7 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(FunctionalPseudoClass, 40);
-		assert_size!(DirValue, 1);
+		assert_size!(FunctionalPseudoClass, 88);
+		assert_size!(DirValue, 16);
 	}
 }

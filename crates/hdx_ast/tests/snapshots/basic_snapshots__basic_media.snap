@@ -57,9 +57,7 @@ expression: result.output.unwrap()
                           "type": "property",
                           "name": "color",
                           "value": {
-                            "Named": {
-                              "type": "black"
-                            }
+                            "Named": "black"
                           },
                           "important": false
                         },

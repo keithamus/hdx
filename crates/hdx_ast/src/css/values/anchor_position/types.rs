@@ -1,10 +1,10 @@
-use hdx_parser::{diagnostics, Parse, Parser, Peek, Result as ParserResult, T};
-use hdx_writer::{write_css, CssWriter, Result as WriterResult, WriteCss};
+use hdx_lexer::Cursor;
+use hdx_parser::{
+	diagnostics, keyword_typedef, CursorStream, Parse, Parser, Peek, Result as ParserResult, ToCursors, T,
+};
 
-pub(crate) use crate::css::types::DashedIdent;
-use crate::macros::keyword_typedef;
-
-pub type AnchorName = DashedIdent;
+// Re-expose stylevalues for shorthands
+pub(crate) use super::AnchorName;
 
 // https://drafts.csswg.org/css-anchor-position-1/#typedef-try-size
 // <try-size> = most-width | most-height | most-block-size | most-inline-size
@@ -42,98 +42,94 @@ keyword_typedef!(TrySize {
 // |
 //   [ self-start | center | self-end | span-self-start | span-self-end | span-all ]{1,2}
 // ]
-#[derive(Debug, Eq, PartialEq, Hash, Clone, Copy)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(rename_all = "kebab-case"))]
 pub enum PositionArea {
-	Physical(PositionAreaPhsyicalHorizontal, PositionAreaPhsyicalVertical),
-	Logical(PositionAreaBlock, PositionAreaInline),
-	SelfLogical(PositionAreaSelfBlock, PositionAreaSelfInline),
-	Position(PositionAreaPosition, PositionAreaPosition),
-	SelfPosition(PositionAreaSelfPosition, PositionAreaSelfPosition),
+	Physical(Option<PositionAreaPhsyicalHorizontal>, Option<PositionAreaPhsyicalVertical>),
+	Logical(Option<PositionAreaBlock>, Option<PositionAreaInline>),
+	SelfLogical(Option<PositionAreaSelfBlock>, Option<PositionAreaSelfInline>),
+	Position(PositionAreaPosition, Option<PositionAreaPosition>),
+	SelfPosition(PositionAreaSelfPosition, Option<PositionAreaSelfPosition>),
 }
 
 impl<'a> Peek<'a> for PositionArea {
-	fn peek(p: &Parser<'a>) -> Option<hdx_lexer::Token> {
+	fn peek(p: &Parser<'a>) -> bool {
 		p.peek::<PositionAreaPhsyicalVertical>()
-			.or_else(|| p.peek::<PositionAreaPhsyicalHorizontal>())
-			.or_else(|| p.peek::<PositionAreaBlock>())
-			.or_else(|| p.peek::<PositionAreaInline>())
-			.or_else(|| p.peek::<PositionAreaSelfBlock>())
-			.or_else(|| p.peek::<PositionAreaSelfInline>())
-			.or_else(|| p.peek::<PositionAreaPosition>())
-			.or_else(|| p.peek::<PositionAreaSelfPosition>())
+			|| p.peek::<PositionAreaPhsyicalHorizontal>()
+			|| p.peek::<PositionAreaBlock>()
+			|| p.peek::<PositionAreaInline>()
+			|| p.peek::<PositionAreaSelfBlock>()
+			|| p.peek::<PositionAreaSelfInline>()
+			|| p.peek::<PositionAreaPosition>()
+			|| p.peek::<PositionAreaSelfPosition>()
 	}
 }
 
 impl<'a> Parse<'a> for PositionArea {
 	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
 		if let Some(first) = p.parse_if_peek::<PositionAreaPosition>()? {
-			let second =
-				if let Some(token) = p.parse_if_peek::<PositionAreaPosition>()? { token } else { first.clone() };
-			Ok(Self::Position(first, second))
+			Ok(Self::Position(first, p.parse_if_peek::<PositionAreaPosition>()?))
 		} else if let Some(first) = p.parse_if_peek::<PositionAreaSelfPosition>()? {
-			let second =
-				if let Some(token) = p.parse_if_peek::<PositionAreaSelfPosition>()? { token } else { first.clone() };
-			Ok(Self::SelfPosition(first, second))
-		} else if let Some(first) = p.parse_if_peek::<PositionAreaBlock>()? {
-			let second = if let Some(token) = p.parse_if_peek::<PositionAreaInline>()? {
-				token
-			} else {
-				PositionAreaInline::SpanAll
-			};
-			Ok(Self::Logical(first, second))
-		} else if let Some(first) = p.parse_if_peek::<PositionAreaInline>()? {
-			let second = if let Some(token) = p.parse_if_peek::<PositionAreaBlock>()? {
-				token
-			} else {
-				PositionAreaBlock::SpanAll
-			};
-			Ok(Self::Logical(second, first))
-		} else if let Some(first) = p.parse_if_peek::<PositionAreaSelfBlock>()? {
-			let second = if let Some(token) = p.parse_if_peek::<PositionAreaSelfInline>()? {
-				token
-			} else {
-				PositionAreaSelfInline::SpanAll
-			};
-			Ok(Self::SelfLogical(first, second))
-		} else if let Some(first) = p.parse_if_peek::<PositionAreaSelfInline>()? {
-			let second = if let Some(token) = p.parse_if_peek::<PositionAreaSelfBlock>()? {
-				token
-			} else {
-				PositionAreaSelfBlock::SpanAll
-			};
-			Ok(Self::SelfLogical(second, first))
-		} else if let Some(first) = p.parse_if_peek::<PositionAreaPhsyicalHorizontal>()? {
-			let second = if let Some(token) = p.parse_if_peek::<PositionAreaPhsyicalVertical>()? {
-				token
-			} else {
-				PositionAreaPhsyicalVertical::SpanAll
-			};
-			Ok(Self::Physical(first, second))
-		} else if let Some(first) = p.parse_if_peek::<PositionAreaPhsyicalVertical>()? {
-			let second = if let Some(token) = p.parse_if_peek::<PositionAreaPhsyicalHorizontal>()? {
-				token
-			} else {
-				PositionAreaPhsyicalHorizontal::SpanAll
-			};
-			Ok(Self::Physical(second, first))
+			Ok(Self::SelfPosition(first, p.parse_if_peek::<PositionAreaSelfPosition>()?))
+		} else if let Some(block) = p.parse_if_peek::<PositionAreaBlock>()? {
+			Ok(Self::Logical(Some(block), p.parse_if_peek::<PositionAreaInline>()?))
+		} else if let Some(inline) = p.parse_if_peek::<PositionAreaInline>()? {
+			Ok(Self::Logical(p.parse_if_peek::<PositionAreaBlock>()?, Some(inline)))
+		} else if let Some(block) = p.parse_if_peek::<PositionAreaSelfBlock>()? {
+			Ok(Self::SelfLogical(Some(block), p.parse_if_peek::<PositionAreaSelfInline>()?))
+		} else if let Some(inline) = p.parse_if_peek::<PositionAreaSelfInline>()? {
+			Ok(Self::SelfLogical(p.parse_if_peek::<PositionAreaSelfBlock>()?, Some(inline)))
+		} else if let Some(horizontal) = p.parse_if_peek::<PositionAreaPhsyicalHorizontal>()? {
+			Ok(Self::Physical(Some(horizontal), p.parse_if_peek::<PositionAreaPhsyicalVertical>()?))
+		} else if let Some(vertical) = p.parse_if_peek::<PositionAreaPhsyicalVertical>()? {
+			Ok(Self::Physical(p.parse_if_peek::<PositionAreaPhsyicalHorizontal>()?, Some(vertical)))
 		} else {
-			let token = p.peek::<T![Any]>().unwrap();
-			Err(diagnostics::Unexpected(token, token.span()))?
+			let c: Cursor = p.parse::<T![Any]>()?.into();
+			Err(diagnostics::Unexpected(c.into(), c.into()))?
 		}
 	}
 }
 
-impl<'a> WriteCss<'a> for PositionArea {
-	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
+impl<'a> ToCursors<'a> for PositionArea {
+	fn to_cursors(&self, s: &mut CursorStream<'a>) {
 		match self {
-			Self::Physical(h, v) => write_css!(sink, h, ' ', v),
-			Self::Logical(b, i) => write_css!(sink, b, ' ', i),
-			Self::SelfLogical(b, i) => write_css!(sink, b, ' ', i),
-			Self::Position(p1, p2) => write_css!(sink, p1, ' ', p2),
-			Self::SelfPosition(p1, p2) => write_css!(sink, p1, ' ', p2),
+			Self::Physical(horizontal, vertical) => {
+				if let Some(horizontal) = horizontal {
+					ToCursors::to_cursors(horizontal, s);
+				}
+				if let Some(vertical) = vertical {
+					ToCursors::to_cursors(vertical, s);
+				}
+			}
+			Self::Logical(block, inline) => {
+				if let Some(block) = block {
+					ToCursors::to_cursors(block, s);
+				}
+				if let Some(inline) = inline {
+					ToCursors::to_cursors(inline, s);
+				}
+			}
+			Self::SelfLogical(block, inline) => {
+				if let Some(block) = block {
+					ToCursors::to_cursors(block, s);
+				}
+				if let Some(inline) = inline {
+					ToCursors::to_cursors(inline, s);
+				}
+			}
+			Self::Position(first, second) => {
+				ToCursors::to_cursors(first, s);
+				if let Some(second) = second {
+					ToCursors::to_cursors(second, s);
+				}
+			}
+			Self::SelfPosition(first, second) => {
+				ToCursors::to_cursors(first, s);
+				if let Some(second) = second {
+					ToCursors::to_cursors(second, s);
+				}
+			}
 		}
-		Ok(())
 	}
 }
 

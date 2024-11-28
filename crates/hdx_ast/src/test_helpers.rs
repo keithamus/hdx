@@ -1,6 +1,5 @@
 use bumpalo::Bump;
-use hdx_parser::{Features, Parse, Parser};
-use hdx_writer::{BaseCssWriter, OutputOption, WriteCss};
+use hdx_parser::{Features, Parse, Parser, ToCursors};
 
 #[cfg(test)]
 macro_rules! assert_size {
@@ -11,24 +10,22 @@ macro_rules! assert_size {
 pub(crate) use assert_size;
 
 #[cfg(test)]
-pub fn test_write_with_options<'a, T: Parse<'a> + WriteCss<'a>>(
+pub fn test_write_with_options<'a, T: Parse<'a> + ToCursors<'a>>(
 	allocator: &'a Bump,
 	source_text: &'a str,
 	expected: &'a str,
-	opts: OutputOption,
 	file: &str,
 	line: u32,
 ) {
-	let mut string = String::new();
-	let mut writer = BaseCssWriter::new(&mut string, opts);
 	let mut parser = Parser::new(allocator, source_text, Features::default());
 	let result = parser.parse_entirely::<T>();
 	if !result.errors.is_empty() {
 		panic!("\n\nParse on {}:{} failed. ({:?}) saw error {:?}", file, line, source_text, result.errors[0]);
 	}
-	result.output.unwrap().write_css(&mut writer).unwrap();
-	if expected != string {
-		panic!("\n\nParse on {}:{} failed: did not match expected format:\n\n   parser input: {:?}\n  parser output: {:?}\n       expected: {:?}\n", file, line, source_text, string, expected);
+	let mut actual = bumpalo::collections::String::new_in(allocator);
+	result.write(allocator, &mut actual).unwrap();
+	if expected != actual {
+		panic!("\n\nParse on {}:{} failed: did not match expected format:\n\n   parser input: {:?}\n  parser output: {:?}\n       expected: {:?}\n", file, line, source_text, actual, expected);
 	}
 }
 
@@ -36,56 +33,24 @@ pub fn test_write_with_options<'a, T: Parse<'a> + WriteCss<'a>>(
 macro_rules! assert_parse {
 	($ty: ty, $str: literal, $str2: literal) => {
 		let allocator = bumpalo::Bump::default();
-		$crate::test_helpers::test_write_with_options::<$ty>(
-			&allocator,
-			$str,
-			$str2,
-			hdx_writer::OutputOption::all_bits(),
-			file!(),
-			line!(),
-		);
+		$crate::test_helpers::test_write_with_options::<$ty>(&allocator, $str, $str2, file!(), line!());
 	};
 	($ty: ty, $str: literal) => {
 		let allocator = bumpalo::Bump::default();
-		$crate::test_helpers::test_write_with_options::<$ty>(
-			&allocator,
-			$str,
-			$str,
-			hdx_writer::OutputOption::all_bits(),
-			file!(),
-			line!(),
-		);
+		$crate::test_helpers::test_write_with_options::<$ty>(&allocator, $str, $str, file!(), line!());
 	};
 }
 #[cfg(test)]
 pub(crate) use assert_parse;
 
 #[cfg(test)]
-macro_rules! assert_minify {
-	($ty: ty, $str: literal, $str2: literal) => {
-		let allocator = bumpalo::Bump::default();
-		$crate::test_helpers::test_write_with_options::<$ty>(
-			&allocator,
-			$str,
-			$str2,
-			hdx_writer::OutputOption::none(),
-			file!(),
-			line!(),
-		);
-	};
-}
-#[cfg(test)]
-pub(crate) use assert_minify;
-
-#[cfg(test)]
-pub fn test_error<'a, T: Parse<'a> + WriteCss<'a>>(allocator: &'a Bump, source_text: &'a str, file: &str, line: u32) {
+pub fn test_error<'a, T: Parse<'a> + ToCursors<'a>>(allocator: &'a Bump, source_text: &'a str, file: &str, line: u32) {
 	let mut parser = Parser::new(allocator, source_text, Features::default());
 	let result = parser.parse_entirely::<T>();
 	if result.errors.is_empty() {
-		let mut string = String::new();
-		let mut writer = BaseCssWriter::new(&mut string, OutputOption::all_bits());
-		result.output.unwrap().write_css(&mut writer).unwrap();
-		panic!("\n\nParse on {}:{} passed. Expected errors but it passed without error.\n\n   parser input: {:?}\n  parser output: {:?}\n       expected: (Error)", file, line, source_text, string);
+		let mut actual = bumpalo::collections::String::new_in(allocator);
+		result.write(allocator, &mut actual).unwrap();
+		panic!("\n\nParse on {}:{} passed. Expected errors but it passed without error.\n\n   parser input: {:?}\n  parser output: {:?}\n       expected: (Error)", file, line, source_text, actual);
 	}
 	assert!(!result.errors.is_empty());
 }
@@ -101,7 +66,7 @@ macro_rules! assert_parse_error {
 pub(crate) use assert_parse_error;
 
 #[cfg(feature = "serde")]
-pub fn test_serialize<'a, T: Parse<'a> + WriteCss<'a> + serde::Serialize>(
+pub fn test_serialize<'a, T: Parse<'a> + ToCursors<'a> + serde::Serialize>(
 	allocator: &'a Bump,
 	source_text: &'a str,
 	expected: serde_json::Value,

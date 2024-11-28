@@ -1,14 +1,47 @@
-use hdx_atom::Atom;
-use hdx_derive::Writable;
+use hdx_lexer::{Cursor, DimensionUnit};
+use hdx_parser::{Build, Is, Parser, T};
 
-use super::CSSFloat;
-
-#[derive(Writable, Debug, Clone, PartialEq, Hash)]
+// https://www.w3.org/TR/css-grid-2/#typedef-flex
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-pub struct Custom(CSSFloat, Atom);
+pub struct Custom(T![Dimension]);
 
-impl Into<CSSFloat> for Custom {
-	fn into(self) -> CSSFloat {
-		self.0
+impl From<Custom> for f32 {
+	fn from(custom: Custom) -> Self {
+		custom.0.into()
+	}
+}
+
+impl<'a> Is<'a> for Custom {
+	fn is(p: &Parser<'a>, c: Cursor) -> bool {
+		<T![Dimension]>::is(p, c) && c == DimensionUnit::Unknown && p.parse_atom(c).starts_with("--")
+	}
+}
+
+impl<'a> Build<'a> for Custom {
+	fn build(p: &Parser<'a>, c: Cursor) -> Self {
+		Self(<T![Dimension]>::build(p, c))
+	}
+}
+
+impl From<Custom> for Cursor {
+	fn from(value: Custom) -> Self {
+		value.0.into()
+	}
+}
+
+#[cfg(test)]
+mod tests {
+	use super::*;
+	use crate::test_helpers::*;
+
+	#[test]
+	fn size_test() {
+		assert_size!(Custom, 12);
+	}
+
+	#[test]
+	fn test_writes() {
+		assert_parse!(Custom, "1--foo");
 	}
 }

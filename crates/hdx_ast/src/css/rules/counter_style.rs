@@ -1,4 +1,4 @@
-use crate::css::values::Todo;
+use crate::Todo;
 
 // https://drafts.csswg.org/css-counter-styles-3/#the-counter-style-rule
 pub type CounterStyle = Todo;

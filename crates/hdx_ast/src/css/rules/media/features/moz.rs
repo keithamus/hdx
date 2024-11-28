@@ -1,7 +1,5 @@
-use crate::{
-	css::units::CSSFloat,
-	macros::{bool_media_feature, discrete_media_feature, ranged_media_feature},
-};
+use crate::css::units::CSSFloat;
+use hdx_parser::{bool_media_feature, discrete_media_feature, ranged_media_feature};
 
 // https://developer.mozilla.org/en-US/docs/Web/CSS/Mozilla_Extensions#media_features
 

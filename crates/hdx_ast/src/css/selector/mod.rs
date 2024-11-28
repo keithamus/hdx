@@ -1,16 +1,17 @@
-use hdx_atom::{Atom, Atomizable};
+use hdx_atom::Atom;
 use hdx_parser::{
-	Parse, Parser, Result as ParserResult, SelectorComponent as SelectorComponentTrait,
-	SelectorList as SelectorListTrait, Spanned, Vec, T,
+	CompoundSelector as CompoundSelectorTrait, CursorStream, Parse, Parser, Result as ParserResult,
+	SelectorComponent as SelectorComponentTrait, SelectorList as SelectorListTrait, ToCursors, Vec, T,
 };
-use hdx_writer::{write_css, CssWriter, Result as WriterResult, WriteCss};
 
 mod attribute;
+mod class;
 mod combinator;
 mod functional_pseudo_class;
 mod functional_pseudo_element;
 mod moz;
 mod ms;
+mod namespace;
 mod nth;
 mod o;
 mod pseudo_class;
@@ -19,21 +20,23 @@ mod tag;
 mod webkit;
 
 use attribute::*;
+use class::*;
 use combinator::*;
 use functional_pseudo_class::*;
 use functional_pseudo_element::*;
-use moz::*;
-use ms::*;
+use namespace::*;
 use nth::*;
-use o::*;
 use pseudo_class::*;
 use pseudo_element::*;
 use tag::*;
-use webkit::*;
 
-#[derive(PartialEq, Debug, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-pub struct SelectorList<'a>(pub Vec<'a, Spanned<Vec<'a, SelectorComponent<'a>>>>);
+pub struct SelectorList<'a>(pub Vec<'a, CompoundSelector<'a>>);
+
+impl<'a> SelectorListTrait<'a> for SelectorList<'a> {
+	type CompoundSelector = CompoundSelector<'a>;
+}
 
 impl<'a> Parse<'a> for SelectorList<'a> {
 	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
@@ -41,21 +44,40 @@ impl<'a> Parse<'a> for SelectorList<'a> {
 	}
 }
 
-impl<'a> SelectorListTrait<'a> for SelectorList<'a> {
+impl<'a> ToCursors<'a> for SelectorList<'a> {
+	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+		for selector in &self.0 {
+			ToCursors::to_cursors(selector, s);
+		}
+	}
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+pub struct CompoundSelector<'a> {
+	pub components: Vec<'a, SelectorComponent<'a>>,
+	pub comma: Option<T![,]>,
+}
+
+impl<'a> CompoundSelectorTrait<'a> for CompoundSelector<'a> {
 	type SelectorComponent = SelectorComponent<'a>;
 }
 
-impl<'a> WriteCss<'a> for SelectorList<'a> {
-	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
-		let mut selectors = self.0.iter().peekable();
-		while let Some(selector) = selectors.next() {
-			selector.write_css(sink)?;
-			if selectors.peek().is_some() {
-				sink.write_char(',')?;
-				sink.write_whitespace()?;
-			}
+impl<'a> Parse<'a> for CompoundSelector<'a> {
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		let (components, comma) = Self::parse_compound_selector(p)?;
+		Ok(Self { components, comma })
+	}
+}
+
+impl<'a> ToCursors<'a> for CompoundSelector<'a> {
+	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+		for component in &self.components {
+			ToCursors::to_cursors(component, s);
 		}
-		Ok(())
+		if let Some(comma) = self.comma {
+			s.append(comma.into())
+		}
 	}
 }
 
@@ -66,38 +88,25 @@ pub type RelativeSelector<'a> = SelectorList<'a>;
 // This encapsulates all `simple-selector` subtypes (e.g. `wq-name`,
 // `id-selector`) into one enum, as it makes parsing and visiting much more
 // practical.
-#[derive(PartialEq, Debug, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(
 	feature = "serde",
 	derive(serde::Serialize),
 	serde(tag = "type", content = "value", rename_all = "kebab-case")
 )]
 pub enum SelectorComponent<'a> {
-	Id(Atom),
-	Class(Atom),
+	Id(T![Hash]),
+	Class(Class),
 	Tag(Tag),
-	Wildcard,
+	Wildcard(T![*]),
 	Combinator(Combinator),
 	Attribute(Attribute),
 	PseudoClass(PseudoClass),
-	MozPseudoClass(MozPseudoClass),
-	MsPseudoClass(MsPseudoClass),
-	OPseudoClass(OPseudoClass),
-	WebkitPseudoClass(WebkitPseudoClass),
 	PseudoElement(PseudoElement),
-	MozPseudoElement(MozPseudoElement),
-	MsPseudoElement(MsPseudoElement),
-	OPseudoElement(OPseudoElement),
-	WebkitPseudoElement(WebkitPseudoElement),
+	FunctionalPseudoElement(FunctionalPseudoElement<'a>),
 	LegacyPseudoElement(LegacyPseudoElement),
 	FunctionalPseudoClass(FunctionalPseudoClass<'a>),
-	MozFunctionalPseudoClass(MozFunctionalPseudoClass),
-	WebkitFunctionalPseudoClass(WebkitFunctionalPseudoClass),
-	FunctionalPseudoElement(FunctionalPseudoElement<'a>),
-	MozFunctionalPseudoElement(MozFunctionalPseudoElement),
-	WebkitFunctionalPseudoElement(WebkitFunctionalPseudoElement),
-	NSPrefixedTag((NSPrefix, Atom)),
-	NSPrefixedWildcard(NSPrefix),
+	Namespace(Namespace),
 }
 
 impl<'a> Parse<'a> for SelectorComponent<'a> {
@@ -106,147 +115,89 @@ impl<'a> Parse<'a> for SelectorComponent<'a> {
 	}
 }
 
+impl<'a> ToCursors<'a> for SelectorComponent<'a> {
+	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+		match self {
+			Self::Id(c) => s.append(c.into()),
+			Self::Class(c) => ToCursors::to_cursors(c, s),
+			Self::Tag(c) => s.append((*c).into()),
+			Self::Wildcard(c) => s.append(c.into()),
+			Self::Combinator(c) => ToCursors::to_cursors(c, s),
+			Self::Attribute(c) => ToCursors::to_cursors(c, s),
+			Self::PseudoClass(c) => ToCursors::to_cursors(c, s),
+			Self::PseudoElement(c) => ToCursors::to_cursors(c, s),
+			Self::FunctionalPseudoElement(c) => ToCursors::to_cursors(c, s),
+			Self::LegacyPseudoElement(c) => ToCursors::to_cursors(c, s),
+			Self::FunctionalPseudoClass(c) => ToCursors::to_cursors(c, s),
+			Self::Namespace(c) => ToCursors::to_cursors(c, s),
+		}
+	}
+}
+
 impl<'a> SelectorComponentTrait<'a> for SelectorComponent<'a> {
-	fn wildcard() -> Self {
-		Self::Wildcard
+	type Wildcard = T![*];
+	type Id = T![Hash];
+	type Type = Tag;
+	type PseudoClass = PseudoClass;
+	type PseudoElement = PseudoElement;
+	type LegacyPseudoElement = LegacyPseudoElement;
+	type Class = Class;
+	type NsType = Namespace;
+	type Combinator = Combinator;
+	type Attribute = Attribute;
+	type FunctionalPseudoClass = FunctionalPseudoClass<'a>;
+	type FunctionalPseudoElement = FunctionalPseudoElement<'a>;
+
+	fn is_legacy_pseudo_element(name: &Atom) -> bool {
+		LegacyPseudoElement::matches_name(name)
 	}
 
-	fn id_from_atom(atom: &Atom) -> Option<Self> {
-		Some(Self::Id(atom.clone()))
+	fn build_wildcard(node: T![*]) -> Self {
+		Self::Wildcard(node)
 	}
 
-	fn class_from_atom(atom: &Atom) -> Option<Self> {
-		Some(Self::Class(atom.clone()))
+	fn build_id(node: T![Hash]) -> Self {
+		Self::Id(node)
 	}
 
-	fn type_from_atom(atom: &Atom) -> Option<Self> {
-		Tag::from_atom(atom).map(Self::Tag)
+	fn build_class(node: Class) -> Self {
+		Self::Class(node)
 	}
 
-	fn pseudo_class_from_atom(atom: &Atom) -> Option<Self> {
-		PseudoClass::from_atom(atom)
-			.map(Self::PseudoClass)
-			.or_else(|| MozPseudoClass::from_atom(atom).map(Self::MozPseudoClass))
-			.or_else(|| WebkitPseudoClass::from_atom(atom).map(Self::WebkitPseudoClass))
-			.or_else(|| MsPseudoClass::from_atom(atom).map(Self::MsPseudoClass))
-			.or_else(|| OPseudoClass::from_atom(atom).map(Self::OPseudoClass))
+	fn build_type(node: Tag) -> Self {
+		Self::Tag(node)
 	}
 
-	fn legacy_pseudo_element_from_token(atom: &Atom) -> Option<Self> {
-		LegacyPseudoElement::from_atom(atom).map(Self::LegacyPseudoElement)
+	fn build_pseudo_class(node: PseudoClass) -> Self {
+		Self::PseudoClass(node)
 	}
 
-	fn pseudo_element_from_atom(atom: &Atom) -> Option<Self> {
-		PseudoElement::from_atom(atom)
-			.map(Self::PseudoElement)
-			.or_else(|| MozPseudoElement::from_atom(atom).map(Self::MozPseudoElement))
-			.or_else(|| WebkitPseudoElement::from_atom(atom).map(Self::WebkitPseudoElement))
-			.or_else(|| MsPseudoElement::from_atom(atom).map(Self::MsPseudoElement))
-			.or_else(|| OPseudoElement::from_atom(atom).map(Self::OPseudoElement))
+	fn build_pseudo_element(node: PseudoElement) -> Self {
+		Self::PseudoElement(node)
 	}
 
-	fn ns_type_from_token(p: &mut Parser<'a>) -> ParserResult<Self> {
-		let prefix = p.parse::<NSPrefix>()?;
-		if !matches!(prefix, NSPrefix::None) {
-			p.parse::<T![|]>()?;
-		}
-		if let Some(token) = p.peek::<T![*]>() {
-			p.hop(token);
-			return Ok(Self::NSPrefixedWildcard(prefix));
-		}
-		let token = *p.parse::<T![Ident]>()?;
-		Ok(Self::NSPrefixedTag((prefix, p.parse_atom(token))))
+	fn build_legacy_pseudo_element(node: LegacyPseudoElement) -> Self {
+		Self::LegacyPseudoElement(node)
 	}
 
-	fn parse_combinator(p: &mut Parser<'a>) -> ParserResult<Self> {
-		Ok(Self::Combinator(p.parse::<Combinator>()?))
+	fn build_ns_type(node: Namespace) -> Self {
+		Self::Namespace(node)
 	}
 
-	fn parse_attribute(p: &mut Parser<'a>) -> ParserResult<Self> {
-		Ok(Self::Attribute(p.parse::<Attribute>()?))
+	fn build_combinator(node: Combinator) -> Self {
+		Self::Combinator(node)
 	}
 
-	fn parse_functional_pseudo_class(p: &mut Parser<'a>) -> ParserResult<Self> {
-		p.parse::<FunctionalPseudoClass>()
-			.map(Self::FunctionalPseudoClass)
-			.or_else(|_| p.parse::<MozFunctionalPseudoClass>().map(Self::MozFunctionalPseudoClass))
-			.or_else(|_| p.parse::<WebkitFunctionalPseudoClass>().map(Self::WebkitFunctionalPseudoClass))
+	fn build_attribute(node: Attribute) -> Self {
+		Self::Attribute(node)
 	}
 
-	fn parse_functional_pseudo_element(p: &mut Parser<'a>) -> ParserResult<Self> {
-		Ok(Self::FunctionalPseudoElement(p.parse::<FunctionalPseudoElement>()?))
+	fn build_functional_pseudo_class(node: FunctionalPseudoClass<'a>) -> Self {
+		Self::FunctionalPseudoClass(node)
 	}
-}
 
-impl<'a> WriteCss<'a> for SelectorComponent<'a> {
-	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
-		match self {
-			Self::Tag(ty) => write_css!(sink, ty),
-			Self::Id(id) => write_css!(sink, '#', id),
-			Self::Class(class) => write_css!(sink, '.', class),
-			Self::PseudoClass(pseudo) => write_css!(sink, ':', pseudo.to_atom()),
-			Self::MozPseudoClass(pseudo) => write_css!(sink, ':', pseudo.to_atom()),
-			Self::MsPseudoClass(pseudo) => write_css!(sink, ':', pseudo.to_atom()),
-			Self::OPseudoClass(pseudo) => write_css!(sink, ':', pseudo.to_atom()),
-			Self::WebkitPseudoClass(pseudo) => write_css!(sink, ':', pseudo.to_atom()),
-			Self::MozFunctionalPseudoClass(pseudo) => write_css!(sink, ':', pseudo),
-			Self::WebkitFunctionalPseudoClass(pseudo) => write_css!(sink, ':', pseudo),
-			Self::LegacyPseudoElement(pseudo) => write_css!(sink, ':', pseudo.to_atom()),
-			Self::PseudoElement(pseudo) => write_css!(sink, ':', ':', pseudo.to_atom()),
-			Self::MozPseudoElement(pseudo) => write_css!(sink, ':', ':', pseudo.to_atom()),
-			Self::MsPseudoElement(pseudo) => write_css!(sink, ':', ':', pseudo.to_atom()),
-			Self::OPseudoElement(pseudo) => write_css!(sink, ':', ':', pseudo.to_atom()),
-			Self::WebkitPseudoElement(pseudo) => write_css!(sink, ':', ':', pseudo.to_atom()),
-			Self::MozFunctionalPseudoElement(pseudo) => write_css!(sink, ':', ':', pseudo),
-			Self::WebkitFunctionalPseudoElement(pseudo) => write_css!(sink, ':', ':', pseudo),
-			Self::Attribute(attr) => write_css!(sink, attr),
-			Self::Combinator(combinator) => write_css!(sink, combinator),
-			Self::Wildcard => write_css!(sink, '*'),
-			Self::FunctionalPseudoClass(pseudo) => write_css!(sink, ':', pseudo),
-			Self::FunctionalPseudoElement(pseudo) => write_css!(sink, ':', ':', pseudo),
-			Self::NSPrefixedTag((prefix, ty)) => write_css!(sink, prefix, ty),
-			Self::NSPrefixedWildcard(prefix) => write_css!(sink, prefix, '*'),
-		}
-		Ok(())
-	}
-}
-
-#[derive(Default, Debug, PartialEq, Hash)]
-#[cfg_attr(
-	feature = "serde",
-	derive(serde::Serialize),
-	serde(tag = "type", content = "value", rename_all = "kebab-case")
-)]
-pub enum NSPrefix {
-	#[default]
-	None,
-	Wildcard,
-	Named(Atom),
-}
-
-impl<'a> Parse<'a> for NSPrefix {
-	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
-		if let Some(token) = p.peek::<T![*]>() {
-			p.hop(token);
-			return Ok(Self::Wildcard);
-		}
-		if let Some(token) = p.peek::<T![|]>() {
-			p.hop(token);
-			return Ok(Self::None);
-		}
-		let token = *p.parse::<T![Ident]>()?;
-		Ok(Self::Named(p.parse_atom(token)))
-	}
-}
-
-impl<'a> WriteCss<'a> for NSPrefix {
-	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
-		match self {
-			Self::None => {}
-			Self::Wildcard => write_css!(sink, '*', '|'),
-			Self::Named(atom) => write_css!(sink, atom, '|'),
-		}
-		Ok(())
+	fn build_functional_pseudo_element(node: FunctionalPseudoElement<'a>) -> Self {
+		Self::FunctionalPseudoElement(node)
 	}
 }
 
@@ -261,15 +212,15 @@ mod tests {
 		assert_size!(ComplexSelector, 32);
 		assert_size!(ForgivingSelector, 32);
 		assert_size!(RelativeSelector, 32);
-		assert_size!(SelectorComponent, 48);
-		assert_size!(LegacyPseudoElement, 1);
-		assert_size!(Combinator, 1);
+		assert_size!(SelectorComponent, 112);
+		assert_size!(LegacyPseudoElement, 24);
+		assert_size!(Combinator, 20);
 	}
 
 	#[test]
 	fn test_writes() {
 		assert_parse!(SelectorList, ":root");
-		assert_parse!(SelectorList, "body, body");
+		assert_parse!(SelectorList, "body,body");
 		assert_parse!(SelectorList, ".body .body");
 		assert_parse!(SelectorList, "*");
 		assert_parse!(SelectorList, "[attr|='foo']");
@@ -291,14 +242,14 @@ mod tests {
 		assert_parse!(SelectorList, ":dir(ltr)");
 		assert_parse!(SelectorList, "tr:nth-child(n-1):state(foo)");
 		assert_parse!(SelectorList, " /**/ .foo", ".foo");
-		assert_parse!(SelectorList, ":lang(en-gb, en-us)");
-		assert_parse!(SelectorList, "& .foo", "& .foo");
-		assert_parse!(SelectorList, "&:hover", "&:hover");
-		assert_parse!(SelectorList, ".foo &:hover", ".foo &:hover");
+		assert_parse!(SelectorList, ":lang(en-gb,en-us)");
+		assert_parse!(SelectorList, "& .foo");
+		assert_parse!(SelectorList, "&:hover");
+		assert_parse!(SelectorList, ".foo &:hover");
 		assert_parse!(SelectorList, ".foo & & &", ".foo & & &");
-		assert_parse!(SelectorList, ".class&", ".class&");
-		assert_parse!(SelectorList, "&&", "&&");
-		assert_parse!(SelectorList, "& + .foo, &.bar", "& + .foo, &.bar");
+		assert_parse!(SelectorList, ".class&");
+		assert_parse!(SelectorList, "&&");
+		assert_parse!(SelectorList, "& + .foo,&.bar");
 		assert_parse!(SelectorList, ":state(foo)&", ":state(foo)&");
 		// Non Standard
 		assert_parse!(SelectorList, "::-moz-focus-inner");
@@ -307,12 +258,5 @@ mod tests {
 			"::-moz-list-bullet::-webkit-scrollbar::-ms-clear:-ms-input-placeholder::-o-scrollbar:-o-prefocus"
 		);
 		assert_parse!(SelectorList, "button:-moz-focusring");
-	}
-
-	#[test]
-	fn test_minify() {
-		assert_minify!(SelectorList, "[attr|='foo']", "[attr|=foo]");
-		assert_minify!(SelectorList, "a   b", "a b");
-		assert_minify!(SelectorList, ".foo[attr*='foo'] > * + *", ".foo[attr*=foo]>*+*");
 	}
 }

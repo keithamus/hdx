@@ -1,7 +1,8 @@
 use hdx_atom::atom;
-use hdx_derive::{Atomizable, Visitable};
-use hdx_parser::{Parse, Parser, Result as ParserResult, Spanned, StyleSheet as StyleSheetTrait, Vec, T};
-use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
+use hdx_lexer::Cursor;
+use hdx_parser::{
+	CursorStream, Parse, Parser, Result as ParserResult, StyleSheet as StyleSheetTrait, ToCursors, Vec, T,
+};
 
 use crate::{
 	css::{rules, stylerule::StyleRule},
@@ -9,11 +10,10 @@ use crate::{
 };
 
 // https://drafts.csswg.org/cssom-1/#the-cssstylesheet-interface
-#[derive(Visitable, Debug, PartialEq, Hash)]
-#[visitable(call)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", rename = "stylesheet"))]
 pub struct StyleSheet<'a> {
-	pub rules: Vec<'a, Spanned<Rule<'a>>>,
+	pub rules: Vec<'a, Rule<'a>>,
 }
 
 // A StyleSheet represents the root node of a CSS-like language.
@@ -30,13 +30,11 @@ impl<'a> StyleSheetTrait<'a> for StyleSheet<'a> {
 	type Rule = Rule<'a>;
 }
 
-impl<'a> WriteCss<'a> for StyleSheet<'a> {
-	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
+impl<'a> ToCursors<'a> for StyleSheet<'a> {
+	fn to_cursors(&self, s: &mut CursorStream<'a>) {
 		for rule in &self.rules {
-			rule.write_css(sink)?;
-			sink.write_newline()?;
+			ToCursors::to_cursors(rule, s);
 		}
-		Ok(())
 	}
 }
 
@@ -78,17 +76,14 @@ macro_rules! rule {
         $name: ident$(<$a: lifetime>)?: $atom: pat,
     )+ ) => {
 		// https://drafts.csswg.org/cssom-1/#the-cssrule-interface
-		#[derive(Visitable, PartialEq, Debug, Hash)]
+		#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 		#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(untagged))]
 		pub enum Rule<'a> {
 			$(
-				#[visitable(skip)]
 				$name(rules::$name$(<$a>)?),
 			)+
-			#[visitable(skip, call = visit_unknown_at_rule)]
 			UnknownAt(AtRule<'a>),
 			Style(StyleRule<'a>),
-			#[visitable(skip, call = visit_unknown_rule)]
 			Unknown(QualifiedRule<'a>)
 		}
 	}
@@ -99,16 +94,17 @@ apply_rules!(rule);
 impl<'a> Parse<'a> for Rule<'a> {
 	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
 		let checkpoint = p.checkpoint();
-		if let Some(token) = p.peek::<T![AtKeyword]>() {
+		if p.peek::<T![AtKeyword]>() {
+			let c: Cursor = p.peek_n(1);
 			macro_rules! parse_rule {
 				( $(
 					$name: ident$(<$a: lifetime>)?: $atom: pat,
 				)+ ) => {
-					match p.parse_atom_lower(token) {
+					match p.parse_atom_lower(c) {
 						$($atom => p.parse::<rules::$name>().map(Self::$name),)+
 						_ => {
-							let rule = p.parse_spanned::<AtRule>()?;
-							Ok(Self::UnknownAt(rule.node))
+							let rule = p.parse::<AtRule>()?;
+							Ok(Self::UnknownAt(rule))
 						}
 					}
 				}
@@ -128,31 +124,29 @@ impl<'a> Parse<'a> for Rule<'a> {
 	}
 }
 
-impl<'a> WriteCss<'a> for Rule<'a> {
-	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
-		macro_rules! write_css {
+impl<'a> ToCursors<'a> for Rule<'a> {
+	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+		macro_rules! match_rule {
 			( $(
 				$name: ident$(<$a: lifetime>)?: $atom: pat,
 			)+ ) => {
 				match self {
-					Self::Unknown(v) => v.write_css(sink),
-					Self::UnknownAt(v) => v.write_css(sink),
-					Self::Style(v) => v.write_css(sink),
-					$(
-						Self::$name(v) => v.write_css(sink),
-					)+
+					$(Self::$name(r) => ToCursors::to_cursors(r, s),)+
+					Self::UnknownAt(r) => ToCursors::to_cursors(r, s),
+					Self::Style(r) => ToCursors::to_cursors(r, s),
+					Self::Unknown(r) => ToCursors::to_cursors(r, s),
 				}
 			}
 		}
-		apply_rules!(write_css)
+		apply_rules!(match_rule);
 	}
 }
 
-#[derive(Atomizable, PartialEq, Debug, Hash)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(untagged))]
 pub enum AtRuleId {
-	Charset, // atom!("charset")
-	Page,    // atom!("page")
+	Charset(T![AtKeyword]), // atom!("charset")
+	Page(T![AtKeyword]),    // atom!("page")
 }
 
 #[cfg(test)]
@@ -163,20 +157,15 @@ mod tests {
 	#[test]
 	fn size_test() {
 		assert_size!(StyleSheet, 32);
-		assert_size!(Rule, 344);
-		assert_size!(AtRuleId, 1);
+		assert_size!(Rule, 456);
+		assert_size!(AtRuleId, 16);
 	}
 
 	#[test]
 	fn test_writes() {
-		assert_parse!(StyleSheet, "body {\n}\n");
-		assert_parse!(StyleSheet, "body, tr:nth-child(n-1) {\n}\n");
-		assert_parse!(StyleSheet, "body {\n\twidth: 1px;\n}\n");
-		assert_parse!(StyleSheet, "body {\n\twidth: 1px;\n}\n.a {\n\twidth: 2px;\n}\n");
-	}
-
-	#[test]
-	fn test_minify() {
-		assert_minify!(StyleSheet, "body {\n\twidth: 1px;\n}\n", "body{width:1px}");
+		assert_parse!(StyleSheet, "body{}");
+		assert_parse!(StyleSheet, "body,tr:nth-child(n-1){}");
+		assert_parse!(StyleSheet, "body{width:1px;}");
+		assert_parse!(StyleSheet, "body{width:1px;}.a{width:2px;}");
 	}
 }

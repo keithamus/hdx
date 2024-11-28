@@ -1,108 +1,122 @@
-use hdx_atom::{atom, Atom};
-use hdx_parser::{diagnostics, todo, Parse, Parser, Result as ParserResult, Vec, T};
-use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
-use smallvec::{smallvec, SmallVec};
+use hdx_atom::atom;
+use hdx_lexer::Cursor;
+use hdx_parser::{diagnostics, CursorStream, Parse, Parser, Result as ParserResult, ToCursors, Vec, T};
 
-use super::SelectorComponent;
+use super::CompoundSelector;
 
-#[derive(Debug, PartialEq, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", rename_all = "kebab-case"))]
 pub enum FunctionalPseudoElement<'a> {
 	// https://drafts.csswg.org/css-highlight-api/#custom-highlight-pseudo
-	Highlight(Atom),
+	Highlight(HighlightPseudoElement),
 	// https://drafts.csswg.org/css-shadow-parts/#part
-	Part(SmallVec<[Atom; 1]>),
+	Part(PartPseudoElement<'a>),
 	// https://drafts.csswg.org/css-scoping/#slotted-pseudo
-	Slotted(Vec<'a, SelectorComponent<'a>>),
+	Slotted(SlottedPseudoElement<'a>),
 }
 
 impl<'a> Parse<'a> for FunctionalPseudoElement<'a> {
 	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
-		let token = *p.parse::<T![Function]>()?;
-		match p.parse_atom_lower(token) {
+		let colons = p.parse::<T![::]>()?;
+		let function = p.parse::<T![Function]>()?;
+		match p.parse_atom_lower(function.into()) {
 			atom!("highlight") => {
-				let name_token = *p.parse::<T![Ident]>()?;
-				let name = p.parse_atom(name_token);
-				p.parse::<T![RightParen]>()?;
-				Ok(Self::Highlight(name))
+				let value = p.parse::<T![Ident]>()?;
+				let close = p.parse_if_peek::<T![')']>()?;
+				Ok(Self::Highlight(HighlightPseudoElement { colons, function, value, close }))
 			}
 			atom!("part") => {
-				let mut parts = smallvec![];
+				let mut value = Vec::new_in(p.bump());
 				loop {
-					if p.parse::<T![RightParen]>().is_ok() {
+					if p.peek::<T![')']>() {
 						break;
 					}
-					let name_token = *p.parse::<T![Ident]>()?;
-					let name = p.parse_atom(name_token);
-					parts.push(name);
+					value.push(p.parse::<T![Ident]>()?);
 				}
-				Ok(Self::Part(parts))
+				let close = p.parse_if_peek::<T![')']>()?;
+				Ok(Self::Part(PartPseudoElement { colons, function, value, close }))
 			}
 			atom!("slotted") => {
-				let selector = p.new_vec();
-				loop {
-					if p.parse::<T![RightParen]>().is_ok() {
-						break;
-					}
-					let checkpoint = p.checkpoint();
-					let component = p.parse::<SelectorComponent>()?;
-					match component {
-						SelectorComponent::Tag(_)
-						| SelectorComponent::NSPrefixedTag(_)
-						| SelectorComponent::NSPrefixedWildcard(_)
-						| SelectorComponent::Wildcard
-							if selector.is_empty() =>
-						{
-							todo!(p);
-						}
-						SelectorComponent::Id(_)
-						| SelectorComponent::Class(_)
-						| SelectorComponent::Attribute(_)
-						| SelectorComponent::PseudoClass(_) => {}
-						_ => {
-							p.rewind(checkpoint);
-							let token = p.peek::<T![Any]>().unwrap();
-							Err(diagnostics::Unexpected(token, token.span()))?
-						}
-					}
-				}
-				Ok(Self::Slotted(selector))
+				let value = p.parse::<CompoundSelector>()?;
+				let close = p.parse_if_peek::<T![')']>()?;
+				Ok(Self::Slotted(SlottedPseudoElement { colons, function, value, close }))
 			}
-			ident => Err(diagnostics::UnexpectedFunction(ident, token.span()))?,
+			ident => {
+				let c: Cursor = function.into();
+				Err(diagnostics::UnexpectedFunction(ident, c.into()))?
+			}
 		}
 	}
 }
 
-impl<'a> WriteCss<'a> for FunctionalPseudoElement<'a> {
-	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
+impl<'a> ToCursors<'a> for FunctionalPseudoElement<'a> {
+	fn to_cursors(&self, s: &mut CursorStream<'a>) {
 		match self {
-			Self::Highlight(atom) => {
-				atom!("highlight").write_css(sink)?;
-				sink.write_char('(')?;
-				atom.write_css(sink)?;
-				sink.write_char(')')?;
-			}
-			Self::Part(parts) => {
-				atom!("part").write_css(sink)?;
-				sink.write_char('(')?;
-				let mut iter = parts.iter().peekable();
-				while let Some(part) = iter.next() {
-					part.write_css(sink)?;
-					if iter.peek().is_some() {
-						sink.write_char(' ')?;
-					}
-				}
-				sink.write_char(')')?;
-			}
-			Self::Slotted(selectors) => {
-				atom!("slotted").write_css(sink)?;
-				sink.write_char('(')?;
-				for selector in selectors {
-					selector.write_css(sink)?;
-				}
-				sink.write_char(')')?;
-			}
+			Self::Highlight(c) => ToCursors::to_cursors(c, s),
+			Self::Slotted(c) => ToCursors::to_cursors(c, s),
+			Self::Part(c) => ToCursors::to_cursors(c, s),
 		}
-		Ok(())
+	}
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+pub struct HighlightPseudoElement {
+	pub colons: T![::],
+	pub function: T![Function],
+	pub value: T![Ident],
+	pub close: Option<T![')']>,
+}
+
+impl<'a> ToCursors<'a> for HighlightPseudoElement {
+	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+		ToCursors::to_cursors(&self.colons, s);
+		s.append(self.function.into());
+		s.append(self.value.into());
+		if let Some(close) = self.close {
+			s.append(close.into());
+		}
+	}
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+pub struct SlottedPseudoElement<'a> {
+	pub colons: T![::],
+	pub function: T![Function],
+	pub value: CompoundSelector<'a>,
+	pub close: Option<T![')']>,
+}
+
+impl<'a> ToCursors<'a> for SlottedPseudoElement<'a> {
+	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+		ToCursors::to_cursors(&self.colons, s);
+		s.append(self.function.into());
+		ToCursors::to_cursors(&self.value, s);
+		if let Some(close) = self.close {
+			s.append(close.into());
+		}
+	}
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+pub struct PartPseudoElement<'a> {
+	pub colons: T![::],
+	pub function: T![Function],
+	pub value: Vec<'a, T![Ident]>,
+	pub close: Option<T![')']>,
+}
+
+impl<'a> ToCursors<'a> for PartPseudoElement<'a> {
+	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+		ToCursors::to_cursors(&self.colons, s);
+		s.append(self.function.into());
+		for value in &self.value {
+			s.append(value.into());
+		}
+		if let Some(close) = self.close {
+			s.append(close.into());
+		}
 	}
 }

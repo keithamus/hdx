@@ -1,4 +1,4 @@
-use crate::css::values::Todo;
+use crate::Todo;
 
 // https://drafts.csswg.org/css-color-5/#at-profile
 pub type ColorProfile = Todo;

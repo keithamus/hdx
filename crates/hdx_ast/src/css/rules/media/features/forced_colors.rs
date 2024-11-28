@@ -1,4 +1,4 @@
-use crate::macros::discrete_media_feature;
+use hdx_parser::discrete_media_feature;
 
 discrete_media_feature!(ForcedColorsMediaFeature[atom!("forced-colors")] {
 	None: atom!("none"),
@@ -12,20 +12,14 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(ForcedColorsMediaFeature, 1);
+		assert_size!(ForcedColorsMediaFeature, 36);
 	}
 
 	#[test]
 	fn test_writes() {
 		assert_parse!(ForcedColorsMediaFeature, "forced-colors");
-		assert_parse!(ForcedColorsMediaFeature, "forced-colors: none");
-		assert_parse!(ForcedColorsMediaFeature, "forced-colors: active");
-	}
-
-	#[test]
-	fn test_minify() {
-		assert_minify!(ForcedColorsMediaFeature, "forced-colors: none", "forced-colors:none");
-		assert_minify!(ForcedColorsMediaFeature, "forced-colors: active", "forced-colors:active");
+		assert_parse!(ForcedColorsMediaFeature, "forced-colors:none");
+		assert_parse!(ForcedColorsMediaFeature, "forced-colors:active");
 	}
 
 	#[test]

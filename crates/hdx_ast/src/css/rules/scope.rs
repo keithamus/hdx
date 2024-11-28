@@ -1,4 +1,4 @@
-use crate::css::values::Todo;
+use crate::Todo;
 
 // https://drafts.csswg.org/css-cascade-6/#at-ruledef-scope
 pub type Scope = Todo;

@@ -1,34 +1,32 @@
 extern crate hdx_derive;
 
 pub mod css;
-pub mod macros;
+pub mod specificity;
 pub mod syntax;
 pub mod traits;
 
 #[cfg(test)]
 pub mod test_helpers;
 
-extern crate self as hdx_ast;
-use hdx_parser::Spanned;
+use hdx_parser::{CursorStream, Parse, Parser, Result as ParserResult, ToCursors};
 pub use traits::StyleValue;
 
-pub trait ToSpecificity: Sized {
-	fn specificity(&self) -> Specificity;
+// TODO! - delete this when we're done ;)
+#[derive(Default, Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(untagged))]
+pub enum Todo {
+	#[default]
+	Todo,
 }
 
-impl<T: ToSpecificity> ToSpecificity for Spanned<T> {
-	fn specificity(&self) -> Specificity {
-		self.node.specificity()
+impl<'a> Parse<'a> for Todo {
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		todo!("{p:?}")
 	}
 }
 
-#[derive(Debug, PartialEq, Hash)]
-pub struct Specificity(u8, u8, u8);
-
-impl std::ops::AddAssign for Specificity {
-	fn add_assign(&mut self, other: Self) {
-		self.0 |= other.0;
-		self.1 |= other.1;
-		self.2 |= other.2;
+impl<'a> ToCursors<'a> for Todo {
+	fn to_cursors(&self, _: &mut CursorStream<'a>) {
+		todo!();
 	}
 }

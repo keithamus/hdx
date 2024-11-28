@@ -1,8 +1,6 @@
-use hdx_parser::{Parse, Parser, Peek, Result as ParserResult, T};
-use hdx_writer::{write_css, CssWriter, Result as WriterResult, WriteCss};
+use hdx_parser::{keyword_typedef, CursorStream, Parse, Parser, Peek, Result as ParserResult, ToCursors, T};
 
 pub(crate) use crate::css::units::*;
-use crate::macros::keyword_typedef;
 
 mod func {
 	use hdx_parser::custom_function;
@@ -13,38 +11,46 @@ mod func {
 
 // https://drafts.csswg.org/css-page-floats-3/#funcdef-float-snap-block
 // snap-block() = snap-block( <length> , [ start | end | near ]? )
-#[derive(Debug, Clone, PartialEq, Hash)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(rename_all = "kebab-case"))]
-pub struct SnapBlock(LengthPercentage, Option<SnapBlockKeyword>);
+pub struct SnapBlock {
+	pub function: func::SnapBlock,
+	pub length: LengthPercentage,
+	pub comma: Option<T![,]>,
+	pub keyword: Option<SnapBlockKeyword>,
+	pub close: Option<T![')']>,
+}
 
 impl<'a> Peek<'a> for SnapBlock {
-	fn peek(p: &Parser<'a>) -> Option<hdx_lexer::Token> {
+	fn peek(p: &Parser<'a>) -> bool {
 		p.peek::<func::SnapBlock>()
 	}
 }
 
 impl<'a> Parse<'a> for SnapBlock {
 	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
-		p.parse::<func::SnapBlock>()?;
+		let function = p.parse::<func::SnapBlock>()?;
 		let length = p.parse::<LengthPercentage>()?;
-		let keyword = if let Some(token) = p.peek::<T![,]>() {
-			p.hop(token);
-			Some(p.parse::<SnapBlockKeyword>()?)
-		} else {
-			None
-		};
-		p.parse::<T![RightParen]>()?;
-		Ok(Self(length, keyword))
+		let comma = p.parse_if_peek::<T![,]>()?;
+		let keyword = p.parse_if_peek::<SnapBlockKeyword>()?;
+		let close = p.parse_if_peek::<T![')']>()?;
+		Ok(Self { function, length, comma, keyword, close })
 	}
 }
 
-impl<'a> WriteCss<'a> for SnapBlock {
-	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
-		write_css!(sink, func::SnapBlock::atom(), '(', self.0);
-		if let Some(keyword) = self.1 {
-			write_css!(sink, ',', (), keyword);
+impl<'a> ToCursors<'a> for SnapBlock {
+	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+		s.append(self.function.into());
+		s.append(self.length.into());
+		if let Some(comma) = self.comma {
+			s.append(comma.into());
 		}
-		')'.write_css(sink)
+		if let Some(keyword) = self.keyword {
+			s.append(keyword.into());
+		}
+		if let Some(close) = self.close {
+			s.append(close.into());
+		}
 	}
 }
 
@@ -52,39 +58,46 @@ keyword_typedef!(SnapBlockKeyword { Start: atom!("start"), End: atom!("end"), Ne
 
 // https://drafts.csswg.org/css-page-floats-3/#funcdef-float-snap-inline
 // snap-inline() = snap-inline( <length> , [ left | right | near ]? )
-#[derive(Debug, Clone, PartialEq, Hash)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(rename_all = "kebab-case"))]
-pub struct SnapInline(LengthPercentage, Option<SnapInlineKeyword>);
+pub struct SnapInline {
+	pub function: func::SnapInline,
+	pub length: LengthPercentage,
+	pub comma: Option<T![,]>,
+	pub keyword: Option<SnapInlineKeyword>,
+	pub close: Option<T![')']>,
+}
 
 impl<'a> Peek<'a> for SnapInline {
-	fn peek(p: &Parser<'a>) -> Option<hdx_lexer::Token> {
+	fn peek(p: &Parser<'a>) -> bool {
 		p.peek::<func::SnapInline>()
 	}
 }
 
 impl<'a> Parse<'a> for SnapInline {
 	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
-		p.parse::<func::SnapInline>()?;
+		let function = p.parse::<func::SnapInline>()?;
 		let length = p.parse::<LengthPercentage>()?;
-		let keyword = if let Some(token) = p.peek::<T![,]>() {
-			p.hop(token);
-			Some(p.parse::<SnapInlineKeyword>()?)
-		} else {
-			None
-		};
-		p.parse::<T![RightParen]>()?;
-		Ok(Self(length, keyword))
+		let comma = p.parse_if_peek::<T![,]>()?;
+		let keyword = p.parse_if_peek::<SnapInlineKeyword>()?;
+		let close = p.parse_if_peek::<T![')']>()?;
+		Ok(Self { function, length, comma, keyword, close })
 	}
 }
 
-impl<'a> WriteCss<'a> for SnapInline {
-	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
-		write_css!(sink, func::SnapInline::atom(), '(', self.0);
-		if let Some(keyword) = self.1 {
-			write_css!(sink, ',', (), keyword);
+impl<'a> ToCursors<'a> for SnapInline {
+	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+		s.append(self.function.into());
+		s.append(self.length.into());
+		if let Some(comma) = self.comma {
+			s.append(comma.into());
 		}
-		')'.write_css(sink)
+		if let Some(keyword) = self.keyword {
+			s.append(keyword.into());
+		}
+		if let Some(close) = self.close {
+			s.append(close.into());
+		}
 	}
 }
-
 keyword_typedef!(SnapInlineKeyword { Left: atom!("left"), Right: atom!("right"), Near: atom!("near") });

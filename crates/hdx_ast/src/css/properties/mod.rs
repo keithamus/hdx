@@ -1,51 +1,47 @@
 use std::{fmt::Debug, hash::Hash};
 
 use hdx_atom::{atom, Atom};
-use hdx_derive::Visitable;
-use hdx_parser::{Declaration, DeclarationValue, Parse, Parser, Peek, Result as ParserResult, State, T};
-use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
+use hdx_lexer::{Cursor, KindSet};
+use hdx_parser::{
+	CursorStream, Declaration, DeclarationValue, Important, Is, Parse, Parser, Result as ParserResult, State,
+	ToCursors, T,
+};
 
 use crate::{css::values, syntax::ComponentValues};
 
 // The build.rs generates a list of CSS properties from the value mods
 include!(concat!(env!("OUT_DIR"), "/css_apply_properties.rs"));
 
-#[derive(PartialEq, Debug, Clone, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct Custom<'a>(pub ComponentValues<'a>);
 
-impl<'a> WriteCss<'a> for Custom<'a> {
-	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
-		self.0.write_css(sink)
-	}
-}
-
 impl<'a> Parse<'a> for Custom<'a> {
 	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
-		let old_state = p.set_state(State::StopOnSemicolon | State::Nested);
-		p.parse::<ComponentValues>()
-			.inspect_err(|_| {
-				p.set_state(old_state);
-			})
-			.map(Self)
+		let state = p.set_state(State::Nested);
+		let stop = p.set_stop(KindSet::RIGHT_CURLY_OR_SEMICOLON);
+		let value = p.parse::<ComponentValues>();
+		p.set_state(state);
+		p.set_stop(stop);
+		Ok(Self(value?))
 	}
 }
 
-#[derive(PartialEq, Debug, Clone, Hash)]
+impl<'a> ToCursors<'a> for Custom<'a> {
+	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+		ToCursors::to_cursors(&self.0, s);
+	}
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct Computed<'a>(pub ComponentValues<'a>);
 
-impl<'a> WriteCss<'a> for Computed<'a> {
-	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
-		self.0.write_css(sink)
-	}
-}
-
-impl<'a> Peek<'a> for Computed<'a> {
-	fn peek(p: &Parser<'a>) -> Option<hdx_lexer::Token> {
-		if let Some(token) = p.peek::<T![Function]>() {
-			if matches!(
-				p.parse_atom_lower(token),
+impl<'a> Is<'a> for Computed<'a> {
+	fn is(p: &Parser<'a>, c: Cursor) -> bool {
+		<T![Function]>::is(p, c)
+			&& matches!(
+				p.parse_atom_lower(c),
 				atom!("var")
 					| atom!("calc") | atom!("min")
 					| atom!("max") | atom!("clamp")
@@ -58,62 +54,62 @@ impl<'a> Peek<'a> for Computed<'a> {
 					| atom!("hypot")
 					| atom!("log") | atom!("exp")
 					| atom!("abs") | atom!("sign")
-			) {
-				return Some(token);
-			}
-		}
-		None
+			)
 	}
 }
 
 impl<'a> Parse<'a> for Computed<'a> {
 	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
-		let old_state = p.set_state(State::StopOnSemicolon | State::Nested);
-		p.parse::<ComponentValues>()
-			.inspect_err(|_| {
-				p.set_state(old_state);
-			})
-			.map(Self)
+		let state = p.set_state(State::Nested);
+		let stop = p.set_stop(KindSet::RIGHT_CURLY_OR_SEMICOLON);
+		let values = p.parse::<ComponentValues>();
+		p.set_state(state);
+		p.set_stop(stop);
+		Ok(Self(values?))
 	}
 }
 
-#[derive(PartialEq, Debug, Clone, Hash)]
+impl<'a> ToCursors<'a> for Computed<'a> {
+	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+		ToCursors::to_cursors(&self.0, s);
+	}
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct Unknown<'a>(pub ComponentValues<'a>);
 
 impl<'a> Parse<'a> for Unknown<'a> {
 	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
-		let old_state = p.set_state(State::StopOnSemicolon | State::Nested);
-		p.parse::<ComponentValues>()
-			.inspect_err(|_| {
-				p.set_state(old_state);
-			})
-			.map(Self)
+		let state = p.set_state(State::Nested);
+		let stop = p.set_stop(KindSet::RIGHT_CURLY_OR_SEMICOLON);
+		let values = p.parse::<ComponentValues>();
+		p.set_state(state);
+		p.set_stop(stop);
+		Ok(Self(values?))
 	}
 }
 
-impl<'a> WriteCss<'a> for Unknown<'a> {
-	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
-		self.0.write_css(sink)
+impl<'a> ToCursors<'a> for Unknown<'a> {
+	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+		ToCursors::to_cursors(&self.0, s);
 	}
 }
 
-#[derive(Visitable, PartialEq, Debug, Hash)]
-#[visitable(call)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", rename = "property"))]
 pub struct Property<'a> {
-	#[visitable(skip)]
-	pub name: Atom,
-	#[visitable(skip)]
+	pub name: T![Ident],
+	pub colon: Option<T![:]>,
 	pub value: StyleValue<'a>,
-	#[visitable(skip)]
-	pub important: bool,
+	pub important: Option<Important>,
+	pub semicolon: Option<T![;]>,
 }
 
 impl<'a> Parse<'a> for Property<'a> {
 	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
-		let (name, value, important) = Self::parse_declaration(p)?;
-		Ok(Self { name, value, important })
+		let (name, colon, value, important, semicolon) = Self::parse_declaration(p)?;
+		Ok(Self { name, colon, value, important, semicolon })
 	}
 }
 
@@ -121,18 +117,19 @@ impl<'a> Declaration<'a> for Property<'a> {
 	type DeclarationValue = StyleValue<'a>;
 }
 
-impl<'a> WriteCss<'a> for Property<'a> {
-	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
-		sink.write_str(self.name.as_ref())?;
-		sink.write_char(':')?;
-		sink.write_whitespace()?;
-		self.value.write_css(sink)?;
-		if self.important {
-			sink.write_whitespace()?;
-			sink.write_char('!')?;
-			atom!("important").write_css(sink)?;
+impl<'a> ToCursors<'a> for Property<'a> {
+	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+		s.append(self.name.into());
+		if let Some(colon) = self.colon {
+			s.append(colon.into());
 		}
-		Ok(())
+		ToCursors::to_cursors(&self.value, s);
+		if let Some(important) = &self.important {
+			ToCursors::to_cursors(important, s);
+		}
+		if let Some(semicolon) = self.semicolon {
+			s.append(semicolon.into());
+		}
 	}
 }
 
@@ -140,14 +137,14 @@ macro_rules! style_value {
     ( $(
         $name: ident$(<$a: lifetime>)?: $atom: pat,
     )+ ) => {
-		#[derive(PartialEq, Debug, Clone, Hash)]
+		#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 		#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", rename_all = "kebab-case"))]
 		pub enum StyleValue<'a> {
-			Initial,
-			Inherit,
-			Unset,
-			Revert,
-			RevertLayer,
+			Initial(T![Ident]),
+			Inherit(T![Ident]),
+			Unset(T![Ident]),
+			Revert(T![Ident]),
+			RevertLayer(T![Ident]),
 			#[cfg_attr(feature = "serde", serde(untagged))]
 			Custom(Custom<'a>),
 			#[cfg_attr(feature = "serde", serde(untagged))]
@@ -164,80 +161,23 @@ macro_rules! style_value {
 
 apply_properties!(style_value);
 
-impl<'a> StyleValue<'a> {
-	pub fn default_for(name: &Atom) -> Option<Self> {
-		macro_rules! default_value {
-			( $(
-				$name: ident$(<$a: lifetime>)?: $atom: pat,
-			)+ ) => {
-				match name {
-					$(
-						&$atom => Some(Self::$name(values::$name::default())),
-					)+
-					_ => None,
-				}
-			}
-		}
-		apply_properties!(default_value)
-	}
-}
-
-impl<'a> WriteCss<'a> for StyleValue<'a> {
-	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
-		macro_rules! write_css {
-			( $(
-				$name: ident$(<$a: lifetime>)?: $atom: pat,
-			)+ ) => {
-				match self {
-					Self::Initial => atom!("initial").write_css(sink),
-					Self::Inherit => atom!("inherit").write_css(sink),
-					Self::Unset => atom!("unset").write_css(sink),
-					Self::Revert => atom!("revert").write_css(sink),
-					Self::RevertLayer => atom!("revert-layer").write_css(sink),
-					Self::Custom(v) => v.write_css(sink),
-					Self::Unknown(v) => v.write_css(sink),
-					Self::Computed(v) => v.write_css(sink),
-					$(
-						Self::$name(v) => v.write_css(sink),
-					)+
-				}
-			}
-		}
-		apply_properties!(write_css)
-	}
-}
-
 impl<'a> DeclarationValue<'a> for StyleValue<'a> {
-	fn parse_declaration_value(name: &Atom, p: &mut Parser<'a>) -> ParserResult<Self> {
-		if name.starts_with("--") {
+	fn parse_declaration_value(name: Cursor, p: &mut Parser<'a>) -> ParserResult<Self> {
+		if name.token().is_dashed_ident() {
 			return Ok(Self::Custom(p.parse::<Custom>()?));
 		}
-		if let Some(token) = p.peek::<T![Ident]>() {
-			match p.parse_atom_lower(token) {
-				atom!("initial") => {
-					p.hop(token);
-					return Ok(Self::Initial);
-				}
-				atom!("inherit") => {
-					p.hop(token);
-					return Ok(Self::Inherit);
-				}
-				atom!("unset") => {
-					p.hop(token);
-					return Ok(Self::Unset);
-				}
-				atom!("revert") => {
-					p.hop(token);
-					return Ok(Self::Revert);
-				}
-				atom!("revert-layer") => {
-					p.hop(token);
-					return Ok(Self::RevertLayer);
-				}
+		if p.peek::<T![Ident]>() {
+			let c = p.peek_n(1);
+			match p.parse_atom_lower(c) {
+				atom!("initial") => return Ok(Self::Initial(p.parse::<T![Ident]>()?)),
+				atom!("inherit") => return Ok(Self::Inherit(p.parse::<T![Ident]>()?)),
+				atom!("unset") => return Ok(Self::Unset(p.parse::<T![Ident]>()?)),
+				atom!("revert") => return Ok(Self::Revert(p.parse::<T![Ident]>()?)),
+				atom!("revert-layer") => return Ok(Self::RevertLayer(p.parse::<T![Ident]>()?)),
 				_ => {}
 			}
 		}
-		if p.peek::<Computed>().is_some() {
+		if p.peek::<Computed>() {
 			return p.parse::<Computed>().map(Self::Computed);
 		}
 		let checkpoint = p.checkpoint();
@@ -245,16 +185,14 @@ impl<'a> DeclarationValue<'a> for StyleValue<'a> {
 			( $(
 				$name: ident$(<$a: lifetime>)?: $atom: pat,
 			)+ ) => {
-				match name {
+				match p.parse_atom_lower(name) {
 					$(
-						&$atom => {
+						$atom => {
 							if let Ok(val) = p.parse::<values::$name>() {
 								if p.at_end() {
 									return Ok(Self::$name(val))
-								} else if let Some(token) = p.peek::<T![Any]>() {
-									if matches!(token.char(), Some(';' | '}' | '!')) {
-										return Ok(Self::$name(val))
-									}
+								} else if p.peek_n(1) == KindSet::RIGHT_CURLY_OR_SEMICOLON || p.peek::<T![!]>() {
+									return Ok(Self::$name(val))
 								}
 							}
 						},
@@ -264,13 +202,36 @@ impl<'a> DeclarationValue<'a> for StyleValue<'a> {
 			}
 		}
 		apply_properties!(parse_declaration_value);
-		if p.peek::<Computed>().is_some() {
+		if p.peek::<Computed>() {
 			p.rewind(checkpoint);
 			Ok(Self::Computed(p.parse::<Computed>()?))
 		} else {
 			p.rewind(checkpoint);
 			Ok(Self::Unknown(p.parse::<Unknown>()?))
 		}
+	}
+}
+
+impl<'a> ToCursors<'a> for StyleValue<'a> {
+	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+		macro_rules! match_value {
+			( $(
+				$name: ident$(<$a: lifetime>)?: $atom: pat,
+			)+ ) => {
+				match self {
+					Self::Initial(ident) => s.append(ident.into()),
+					Self::Inherit(ident) => s.append(ident.into()),
+					Self::Unset(ident) => s.append(ident.into()),
+					Self::Revert(ident) => s.append(ident.into()),
+					Self::RevertLayer(ident) => s.append(ident.into()),
+					Self::Custom(custom) => ToCursors::to_cursors(custom, s),
+					Self::Computed(computed) => ToCursors::to_cursors(computed, s),
+					Self::Unknown(unknown) => ToCursors::to_cursors(unknown, s),
+					$( Self::$name(value) => ToCursors::to_cursors(value, s),)+
+				}
+			}
+		}
+		apply_properties!(match_value);
 	}
 }
 
@@ -281,22 +242,18 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(Property, 136);
-		assert_size!(StyleValue, 120);
+		assert_size!(Property, 360);
+		assert_size!(StyleValue, 296);
 	}
 
 	#[test]
 	fn test_writes() {
-		assert_parse!(Property, "float: none !important");
-		assert_parse!(Property, "width: 1px");
-		assert_parse!(Property, "width: min(1px, 2px)");
-		assert_parse!(Property, "border: 1px solid var(--red)");
-	}
-
-	#[test]
-	fn test_minify() {
-		assert_minify!(Property, "float: none !important", "float:none!important");
-		assert_minify!(Property, "width: 1px", "width:1px");
-		assert_minify!(Property, "width: min(1px, 2px)", "width:min(1px, 2px)");
+		assert_parse!(Property, "float:none!important");
+		assert_parse!(Property, "width:1px");
+		assert_parse!(Property, "width:min(1px, 2px)");
+		assert_parse!(Property, "border:1px solid var(--red)");
+		// Should still parse unknown properties
+		assert_parse!(Property, "dunno:like whatever");
+		assert_parse!(Property, "rotate:1.21gw");
 	}
 }

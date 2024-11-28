@@ -1,4 +1,4 @@
-use crate::macros::keyword_typedef;
+use hdx_parser::keyword_typedef;
 
 keyword_typedef!(SystemColor {
 	AccentColor: atom!("accentcolor"),
@@ -29,6 +29,13 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(SystemColor, 1);
+		assert_size!(SystemColor, 16);
+	}
+
+	#[test]
+	fn test_writes() {
+		assert_parse!(SystemColor, "marktext");
+		assert_parse!(SystemColor, "visitedtext");
+		assert_parse!(SystemColor, "graytext");
 	}
 }

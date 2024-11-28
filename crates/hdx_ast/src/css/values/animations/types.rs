@@ -1,7 +1,5 @@
-use crate::macros::keyword_typedef;
-use hdx_lexer::Span;
-use hdx_parser::{diagnostics, Parse, Parser, Peek, Result as ParserResult};
-use hdx_writer::{CssWriter, Result as WriterResult, WriteCss};
+use hdx_lexer::Cursor;
+use hdx_parser::{diagnostics, keyword_typedef, Parse, Parser, Peek, Result as ParserResult};
 
 pub use crate::css::units::*;
 
@@ -12,49 +10,43 @@ mod kw {
 
 // https://drafts.csswg.org/css-animations/#typedef-single-animation-iteration-count
 // <single-animation-iteration-count> = infinite | <number [0,∞]>
-#[derive(Debug, PartialEq, Hash, Clone, Copy)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(
 	feature = "serde",
 	derive(serde::Serialize),
 	serde(tag = "type", content = "value", rename_all = "kebab-case")
 )]
 pub enum SingleAnimationIterationCount {
-	Infinite,
+	Infinite(kw::Infinite),
 	Number(CSSFloat),
 }
 
-impl From<f32> for SingleAnimationIterationCount {
-	fn from(f: f32) -> Self {
-		Self::Number(f.into())
-	}
-}
-
 impl<'a> Peek<'a> for SingleAnimationIterationCount {
-	fn peek(p: &Parser<'a>) -> Option<hdx_lexer::Token> {
-		p.peek::<kw::Infinite>().or_else(|| p.peek::<CSSFloat>())
+	fn peek(p: &Parser<'a>) -> bool {
+		p.peek::<kw::Infinite>() || p.peek::<CSSFloat>()
 	}
 }
 
 impl<'a> Parse<'a> for SingleAnimationIterationCount {
 	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
-		if let Some(token) = p.peek::<kw::Infinite>() {
-			p.hop(token);
-			return Ok(Self::Infinite);
+		if p.peek::<kw::Infinite>() {
+			return Ok(Self::Infinite(p.parse::<kw::Infinite>()?));
 		}
-		let start = p.offset();
-		let f = p.parse::<CSSFloat>()?;
+		let int = p.parse::<CSSFloat>()?;
+		let f: f32 = int.into();
 		if f < 0.0 {
-			Err(diagnostics::NumberTooSmall(f.into(), Span::new(start, p.offset())))?
+			let c: Cursor = int.into();
+			Err(diagnostics::NumberTooSmall(f, c.into()))?
 		}
-		Ok(Self::Number(f))
+		Ok(Self::Number(int))
 	}
 }
 
-impl<'a> WriteCss<'a> for SingleAnimationIterationCount {
-	fn write_css<W: CssWriter>(&self, sink: &mut W) -> WriterResult {
-		match self {
-			Self::Infinite => kw::Infinite::atom().write_css(sink),
-			Self::Number(f) => f.write_css(sink),
+impl From<SingleAnimationIterationCount> for Cursor {
+	fn from(value: SingleAnimationIterationCount) -> Self {
+		match value {
+			SingleAnimationIterationCount::Infinite(c) => c.into(),
+			SingleAnimationIterationCount::Number(c) => c.into(),
 		}
 	}
 }
