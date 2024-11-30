@@ -14,7 +14,6 @@ hdx_lexer = { workspace = true }
 hdx_syntax = { workspace = true }
 hdx_ast = { workspace = true }
 hdx_parser = { workspace = true }
-hdx_writer = { workspace = true }
 hdx_atom = { workspace = true }
 hdx_derive = { workspace = true }
 

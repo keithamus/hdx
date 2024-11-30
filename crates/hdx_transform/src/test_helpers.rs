@@ -5,7 +5,6 @@ macro_rules! assert_transform {
 			use bumpalo::Bump;
 			use hdx_ast::css::{StyleSheet, visit::VisitableMut};
 			use hdx_parser::{Features, Parser};
-			use hdx_writer::{BaseCssWriter, OutputOption, WriteCss};
 
 			let allocator = Bump::default();
 			let mut parser = Parser::new(&allocator, $str, Features::default());
@@ -23,8 +22,7 @@ macro_rules! assert_transform {
 			let mut enode = eresult.output.unwrap();
 
 			let mut string = String::new();
-			let mut writer = BaseCssWriter::new(&mut string, OutputOption::all_bits());
-			node.write_css(&mut writer).unwrap();
+			node.(&mut writer).unwrap();
 
 			let mut expected = String::new();
 			let mut ewriter = BaseCssWriter::new(&mut expected, OutputOption::all_bits());

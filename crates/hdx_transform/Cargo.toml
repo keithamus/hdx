@@ -16,7 +16,6 @@ bench = false
 hdx_ast = { workspace = true }
 
 [dev-dependencies]
-hdx_writer = { workspace = true }
 hdx_parser = { workspace = true }
 glob = { workspace = true }
 serde = { workspace = true, features = ["derive"] }
