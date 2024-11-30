@@ -2,7 +2,6 @@ use bumpalo::Bump;
 use hdx_ast::css::StyleSheet;
 use hdx_lexer::{Include, Kind, Lexer};
 use hdx_parser::{Features, Parser};
-use hdx_writer::{BaseCssWriter, OutputOption, WriteCss};
 #[cfg(not(feature = "fancy"))]
 use miette::JSONReportHandler;
 use miette::NamedSource;
@@ -68,8 +67,7 @@ pub fn minify(source_text: String) -> Result<String, serde_wasm_bindgen::Error> 
 		return Err(serde_wasm_bindgen::Error::new("Parse error"));
 	}
 	let mut string = String::new();
-	let mut writer = BaseCssWriter::new(&mut string, OutputOption::none());
-	result.output.unwrap().write_css(&mut writer).unwrap();
+	result.write(allocator, string);
 	Ok(string)
 }
 

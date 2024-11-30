@@ -4,7 +4,6 @@ use glob::glob;
 use hdx_ast::css::{visit::VisitableMut, StyleSheet};
 use hdx_parser::{Features, Parser};
 use hdx_transform::ReduceInitial;
-use hdx_writer::{BaseCssWriter, OutputOption, WriteCss};
 use pprof::criterion::{Output, PProfProfiler};
 use std::fs::read_to_string;
 
@@ -37,7 +36,6 @@ fn popular(c: &mut Criterion) {
 					let mut result = Parser::new(&allocator, source_text.as_str(), Features::default())
 						.parse_entirely::<StyleSheet>();
 					let mut string = String::new();
-					let mut writer = BaseCssWriter::new(&mut string, OutputOption::none());
 					if let Some(stylesheet) = result.output.as_mut() {
 						let mut transformer = ReduceInitial::default();
 						stylesheet.accept_mut(&mut transformer);

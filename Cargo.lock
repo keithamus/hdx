@@ -576,7 +576,6 @@ dependencies = [
  "hdx_lexer",
  "hdx_parser",
  "hdx_syntax",
- "hdx_writer",
  "miette",
  "serde",
  "serde_json",
@@ -699,7 +698,6 @@ dependencies = [
  "glob",
  "hdx_ast",
  "hdx_parser",
- "hdx_writer",
  "pprof",
  "serde",
  "serde_json",
@@ -714,25 +712,11 @@ dependencies = [
  "hdx_ast",
  "hdx_lexer",
  "hdx_parser",
- "hdx_writer",
  "miette",
  "serde",
  "serde-wasm-bindgen",
  "wasm-bindgen",
  "wasm-bindgen-test",
-]
-
-[[package]]
-name = "hdx_writer"
-version = "0.0.0"
-dependencies = [
- "bitmask-enum",
- "bumpalo",
- "hdx_atom",
- "hdx_lexer",
- "hdx_parser",
- "hdx_syntax",
- "smallvec",
 ]
 
 [[package]]

@@ -20,7 +20,6 @@ hdx_parser = { version = "0.0.1", path = "crates/hdx_parser" }
 hdx_lexer = { version = "0.0.1", path = "crates/hdx_lexer" }
 hdx_syntax = { version = "0.0.0", path = "crates/hdx_syntax" }
 hdx_ast = { version = "0.0.0", path = "crates/hdx_ast" }
-hdx_writer = { version = "0.0.0", path = "crates/hdx_writer" }
 hdx_transform = { version = "0.0.0", path = "crates/hdx_transform" }
 
 bumpalo = { version = "3.16.0" }
