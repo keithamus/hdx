@@ -1,5 +1,10 @@
 pub mod identifier;
+pub mod parse_escape;
 pub mod url;
+
+pub use parse_escape::*;
+
+pub const SURROGATE_RANGE: std::ops::RangeInclusive<u32> = 0xd800..=0xdfff;
 
 pub const EOF: char = '\0';
 
@@ -11,9 +16,11 @@ pub const LF: char = '\u{a}';
 
 pub const TAB: char = '\u{9}';
 
+pub const SPACE: char = ' ';
+
 #[inline(always)]
 pub fn is_whitespace(c: char) -> bool {
-	c == ' ' || c == TAB || is_newline(c)
+	c == SPACE || c == TAB || is_newline(c)
 }
 
 #[inline(always)]
