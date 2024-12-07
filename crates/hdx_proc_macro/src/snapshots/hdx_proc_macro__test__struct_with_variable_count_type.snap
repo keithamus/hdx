@@ -1,0 +1,47 @@
+---
+source: crates/hdx_proc_macro/src/test.rs
+expression: pretty
+---
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+struct Foo<'a>(
+    pub ::bumpalo::collections::Vec<
+        'a,
+        (types::AnimateableFeature, Option<::hdx_parser::T![,]>),
+    >,
+);
+#[automatically_derived]
+impl<'a> ::hdx_parser::Peek<'a> for Foo<'a> {
+    fn peek(p: &::hdx_parser::Parser<'a>) -> bool {
+        use ::hdx_parser::Peek;
+        p.peek::<types::AnimateableFeature>()
+    }
+}
+#[automatically_derived]
+impl<'a> ::hdx_parser::Parse<'a> for Foo<'a> {
+    fn parse(p: &mut ::hdx_parser::Parser<'a>) -> ::hdx_parser::Result<Self> {
+        use ::hdx_parser::Parse;
+        let mut items = ::bumpalo::collections::Vec::new_in(p.bump());
+        loop {
+            let item = p.parse::<types::AnimateableFeature>()?;
+            let comma = p.parse_if_peek::<::hdx_parser::T![,]>()?;
+            items.push((item, comma));
+            if comma.is_none() {
+                break;
+            }
+        }
+        return Ok(Self(items));
+    }
+}
+#[automatically_derived]
+impl<'a> ::hdx_parser::ToCursors<'a> for Foo<'a> {
+    fn to_cursors(&self, s: &mut ::hdx_parser::CursorStream<'a>) {
+        for item in &self.0 {
+            let (item, comma) = item;
+            ::hdx_parser::ToCursors::to_cursors(item, s);
+            if let Some(comma) = comma {
+                s.append(comma.into());
+            }
+        }
+    }
+}

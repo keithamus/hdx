@@ -2,54 +2,42 @@
 source: crates/hdx_proc_macro/src/test.rs
 expression: pretty
 ---
-#[derive(Debug, PartialEq, Clone, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-struct Foo(pub ::smallvec::SmallVec<[types::Length; 2usize]>);
+struct Foo(
+    pub types::Length,
+    pub types::Length,
+    pub Option<types::Length>,
+    pub Option<types::Length>,
+);
 #[automatically_derived]
 impl<'a> ::hdx_parser::Peek<'a> for Foo {
-    fn peek(parser: &::hdx_parser::Parser<'a>) -> Option<::hdx_lexer::Token> {
+    fn peek(p: &::hdx_parser::Parser<'a>) -> bool {
         use ::hdx_parser::Peek;
-        parser.peek::<types::Length>()
+        p.peek::<types::Length>()
     }
 }
 #[automatically_derived]
 impl<'a> ::hdx_parser::Parse<'a> for Foo {
-    fn parse(parser: &mut ::hdx_parser::Parser<'a>) -> ::hdx_parser::Result<Self> {
+    fn parse(p: &mut ::hdx_parser::Parser<'a>) -> ::hdx_parser::Result<Self> {
         use ::hdx_parser::Parse;
-        let mut i = 0;
-        let mut items = ::smallvec::smallvec![];
-        loop {
-            if i > 4usize {
-                break;
-            } else if parser.peek::<types::Length>().is_some() {
-                let item = parser.parse::<types::Length>()?;
-                i += 1;
-                items.push(item)
-            } else {
-                break;
-            }
-        }
-        if i < 2usize {
-            let token = parser.peek::<::hdx_parser::token::Any>().unwrap();
-            return Err(::hdx_parser::diagnostics::Unexpected(token, token.span()))?;
-        }
-        return Ok(Self(items));
+        let val0 = p.parse::<types::Length>()?;
+        let val1 = p.parse::<types::Length>()?;
+        let val2 = p.parse_if_peek::<types::Length>()?;
+        let val3 = p.parse_if_peek::<types::Length>()?;
+        Ok(Self(val0, val1, val2, val3))
     }
 }
 #[automatically_derived]
-impl<'a> ::hdx_writer::WriteCss<'a> for Foo {
-    fn write_css<W: ::hdx_writer::CssWriter>(
-        &self,
-        sink: &mut W,
-    ) -> ::hdx_writer::Result {
-        use ::hdx_writer::WriteCss;
-        let mut iter = self.0.iter().peekable();
-        while let Some(item) = iter.next() {
-            item.write_css(sink)?;
-            if iter.peek().is_some() {
-                sink.write_char(' ')?;
-            }
+impl<'a> ::hdx_parser::ToCursors<'a> for Foo {
+    fn to_cursors(&self, s: &mut ::hdx_parser::CursorStream<'a>) {
+        ::hdx_parser::ToCursors::to_cursors(&self.0, s);
+        ::hdx_parser::ToCursors::to_cursors(&self.1, s);
+        if let Some(inner) = &self.2 {
+            ::hdx_parser::ToCursors::to_cursors(inner, s);
         }
-        Ok(())
+        if let Some(inner) = &self.3 {
+            ::hdx_parser::ToCursors::to_cursors(inner, s);
+        }
     }
 }

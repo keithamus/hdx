@@ -2,7 +2,7 @@
 source: crates/hdx_proc_macro/src/test.rs
 expression: pretty
 ---
-#[derive(Debug, PartialEq, Clone, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 struct Foo(
     pub Option<types::CaretColor>,
@@ -11,37 +11,35 @@ struct Foo(
 );
 #[automatically_derived]
 impl<'a> ::hdx_parser::Peek<'a> for Foo {
-    fn peek(parser: &::hdx_parser::Parser<'a>) -> Option<::hdx_lexer::Token> {
+    fn peek(p: &::hdx_parser::Parser<'a>) -> bool {
         use ::hdx_parser::Peek;
-        parser
-            .peek::<types::CaretColor>()
-            .or_else(|| parser.peek::<types::CaretAnimation>())
-            .or_else(|| parser.peek::<types::CaretShape>())
+        p.peek::<types::CaretColor>() || p.peek::<types::CaretAnimation>()
+            || p.peek::<types::CaretShape>()
     }
 }
 #[automatically_derived]
 impl<'a> ::hdx_parser::Parse<'a> for Foo {
-    fn parse(parser: &mut ::hdx_parser::Parser<'a>) -> ::hdx_parser::Result<Self> {
+    fn parse(p: &mut ::hdx_parser::Parser<'a>) -> ::hdx_parser::Result<Self> {
         use ::hdx_parser::Parse;
         let mut val0 = None;
         let mut val1 = None;
         let mut val2 = None;
         loop {
-            if val0.is_none() && parser.peek::<types::CaretColor>().is_some() {
-                val0 = Some(parser.parse::<types::CaretColor>()?);
+            if val0.is_none() && p.peek::<types::CaretColor>() {
+                val0 = Some(p.parse::<types::CaretColor>()?);
                 continue;
             }
-            if val1.is_none() && parser.peek::<types::CaretAnimation>().is_some() {
-                val1 = Some(parser.parse::<types::CaretAnimation>()?);
+            if val1.is_none() && p.peek::<types::CaretAnimation>() {
+                val1 = Some(p.parse::<types::CaretAnimation>()?);
                 continue;
             }
-            if val2.is_none() && parser.peek::<types::CaretShape>().is_some() {
-                val2 = Some(parser.parse::<types::CaretShape>()?);
+            if val2.is_none() && p.peek::<types::CaretShape>() {
+                val2 = Some(p.parse::<types::CaretShape>()?);
                 continue;
             }
             if val0.is_none() && val1.is_none() && val2.is_none() {
-                let token = parser.peek::<::hdx_parser::token::Any>().unwrap();
-                Err(::hdx_parser::diagnostics::Unexpected(token, token.span()))?
+                let c: ::hdx_lexer::Cursor = p.parse::<::hdx_parser::T![Any]>()?.into();
+                Err(::hdx_parser::diagnostics::Unexpected(c.into(), c.into()))?
             } else {
                 return Ok(Self(val0, val1, val2));
             }
@@ -49,34 +47,16 @@ impl<'a> ::hdx_parser::Parse<'a> for Foo {
     }
 }
 #[automatically_derived]
-impl<'a> ::hdx_writer::WriteCss<'a> for Foo {
-    fn write_css<W: ::hdx_writer::CssWriter>(
-        &self,
-        sink: &mut W,
-    ) -> ::hdx_writer::Result {
-        use ::hdx_writer::WriteCss;
-        let mut written = false;
+impl<'a> ::hdx_parser::ToCursors<'a> for Foo {
+    fn to_cursors(&self, s: &mut ::hdx_parser::CursorStream<'a>) {
         if let Some(inner) = &self.0 {
-            if written {
-                sink.write_char(' ')?;
-            }
-            written = true;
-            inner.write_css(sink)?;
+            ::hdx_parser::ToCursors::to_cursors(inner, s);
         }
         if let Some(inner) = &self.1 {
-            if written {
-                sink.write_char(' ')?;
-            }
-            written = true;
-            inner.write_css(sink)?;
+            ::hdx_parser::ToCursors::to_cursors(inner, s);
         }
         if let Some(inner) = &self.2 {
-            if written {
-                sink.write_char(' ')?;
-            }
-            written = true;
-            inner.write_css(sink)?;
+            ::hdx_parser::ToCursors::to_cursors(inner, s);
         }
-        Ok(())
     }
 }

@@ -267,9 +267,16 @@ fn value_lone_type() {
 
 #[test]
 fn value_lone_type_errors_with_lifetime_when_necessary() {
-	let syntax = to_valuedef! { <string> }; // <string> needs 'a lifetime
-	let data = to_deriveinput! { struct Foo; };
+	let syntax = to_valuedef! { <image> }; // <image> needs lifetime
+	let data = to_deriveinput! { struct Foo; }; // Foo has no lifetime
 	assert_snapshot!(syntax, data, "value_lone_type_errors_with_lifetime_when_necessary");
+}
+
+#[test]
+fn value_lone_type_with_lifetime_2() {
+	let syntax = to_valuedef! { <image> }; // <image> needs lifetime
+	let data = to_deriveinput! { struct Foo<'a>; }; // Foo specifies lifetime
+	assert_snapshot!(syntax, data, "value_lone_type_with_lifetime");
 }
 
 #[test]
@@ -277,6 +284,13 @@ fn value_lone_custom_type() {
 	let syntax = to_valuedef! { <custom-ident> };
 	let data = to_deriveinput! { struct Foo; };
 	assert_snapshot!(syntax, data, "value_lone_custom_type");
+}
+
+#[test]
+fn enum_type_with_lifetime() {
+	let syntax = to_valuedef! { <color> | <image-1D> }; // <image-1D> needs lifetime
+	let data = to_deriveinput! { enum Foo<'a> {} }; // Foo specifies lifetime
+	assert_snapshot!(syntax, data, "enum_type_with_lifetime");
 }
 
 #[test]
@@ -329,6 +343,13 @@ fn custom_function_variant_with_args() {
 }
 
 #[test]
+fn custom_function_variant_with_multiplier_args() {
+	let syntax = to_valuedef!(" normal | styleset(<feature-value-name>#) ");
+	let data = to_deriveinput! { enum Foo<'a> {} };
+	assert_snapshot!(syntax, data, "custom_function_variant_with_multiplier_args");
+}
+
+#[test]
 fn custom_function_all_optionals() {
 	let syntax = to_valuedef!(" <'caret-color'> || <'caret-animation'> || <'caret-shape'> ");
 	let data = to_deriveinput! { struct Foo; };
@@ -343,9 +364,16 @@ fn ordered_custom_function_last_option() {
 }
 
 #[test]
+fn struct_with_variable_count_type() {
+	let syntax = to_valuedef!(" <animateable-feature># ");
+	let data = to_deriveinput! { struct Foo<'a>; };
+	assert_snapshot!(syntax, data, "struct_with_variable_count_type");
+}
+
+#[test]
 fn enum_with_variable_count_type() {
 	let syntax = to_valuedef!(" auto | <animateable-feature># ");
-	let data = to_deriveinput! { enum Foo {} };
+	let data = to_deriveinput! { enum Foo<'a> {} };
 	assert_snapshot!(syntax, data, "enum_with_variable_count_type");
 }
 
@@ -354,4 +382,11 @@ fn bounded_range_multiplier_is_optimized_to_options() {
 	let syntax = to_valuedef!(" <animateable-feature>{1,3} ");
 	let data = to_deriveinput! { struct Foo; };
 	assert_snapshot!(syntax, data, "bounded_range_multiplier_is_optimized_to_options");
+}
+
+#[test]
+fn bounded_range_multiplier_is_optimized_to_options_with_lifetimes_when_necessary() {
+	let syntax = to_valuedef! { <border-top-color>{1,2} };
+	let data = to_deriveinput! { struct Foo<'a> {} }; // Foo specifies lifetime
+	assert_snapshot!(syntax, data, "bounded_range_multiplier_is_optimized_to_options_with_lifetimes_when_necessary");
 }

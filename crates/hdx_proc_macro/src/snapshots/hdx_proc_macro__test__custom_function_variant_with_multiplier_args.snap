@@ -5,19 +5,21 @@ expression: pretty
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 enum Foo<'a> {
-    Auto(::hdx_parser::T![Ident]),
-    AnimateableFeatures(
+    Normal(::hdx_parser::T![Ident]),
+    StylesetFunction(
+        ::hdx_parser::T![Function],
         ::bumpalo::collections::Vec<
             'a,
-            (types::AnimateableFeature, Option<::hdx_parser::T![,]>),
+            (types::FeatureValueName, Option<::hdx_parser::T![,]>),
         >,
+        Option<::hdx_parser::T![')']>,
     ),
 }
 #[automatically_derived]
 impl<'a> ::hdx_parser::Peek<'a> for Foo<'a> {
     fn peek(p: &::hdx_parser::Parser<'a>) -> bool {
         use ::hdx_parser::Peek;
-        p.peek::<::hdx_parser::T![Ident]>() || p.peek::<types::AnimateableFeature>()
+        p.peek::<::hdx_parser::T![Ident]>() || p.peek::<::hdx_parser::T![Function]>()
     }
 }
 #[automatically_derived]
@@ -28,38 +30,49 @@ impl<'a> ::hdx_parser::Parse<'a> for Foo<'a> {
             let ident = p.parse::<::hdx_parser::T![Ident]>()?;
             let c: ::hdx_lexer::Cursor = ident.into();
             match p.parse_atom_lower(c) {
-                ::hdx_atom::atom!("auto") => {
-                    return Ok(Self::Auto(ident));
+                ::hdx_atom::atom!("normal") => {
+                    return Ok(Self::Normal(ident));
                 }
                 atom => {}
             }
         }
+        let function = p.parse::<::hdx_parser::T![Function]>()?;
+        let c: hdx_lexer::Cursor = function.into();
+        let atom = p.parse_atom_lower(c.into());
+        if atom != ::hdx_atom::atom!("styleset") {
+            return Err(::hdx_parser::diagnostics::UnexpectedFunction(atom, c.into()))?;
+        }
         let mut val = ::bumpalo::collections::Vec::new_in(p.bump());
         loop {
-            let item = p.parse::<types::AnimateableFeature>()?;
+            let item = p.parse::<types::FeatureValueName>()?;
             let comma = p.parse_if_peek::<::hdx_parser::T![,]>()?;
             val.push((item, comma));
             if comma.is_none() {
                 break;
             }
-        };
-        Ok(Self::AnimateableFeatures(val))
+        }
+        let close = p.parse_if_peek::<::hdx_parser::T![')']>()?;
+        Ok(Self::StylesetFunction(function, val, close))
     }
 }
 #[automatically_derived]
 impl<'a> ::hdx_parser::ToCursors<'a> for Foo<'a> {
     fn to_cursors(&self, s: &mut ::hdx_parser::CursorStream<'a>) {
         match self {
-            Self::Auto(inner) => {
+            Self::Normal(inner) => {
                 s.append(inner.into());
             }
-            Self::AnimateableFeatures(inner) => {
-                for item in inner {
+            Self::StylesetFunction(function, val, close) => {
+                s.append(function.into());
+                for item in val {
                     let (item, comma) = item;
                     ::hdx_parser::ToCursors::to_cursors(item, s);
                     if let Some(comma) = comma {
                         s.append(comma.into());
                     }
+                }
+                if let Some(close) = close {
+                    s.append(close.into());
                 }
             }
         }

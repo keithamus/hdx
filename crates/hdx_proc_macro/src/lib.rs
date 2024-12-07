@@ -26,22 +26,23 @@ pub fn value(args: TokenStream, input: TokenStream) -> TokenStream {
 
 #[proc_macro_attribute]
 pub fn initial(args: TokenStream, input: TokenStream) -> TokenStream {
-	let args_string = args.to_string();
-	// CSS specs have a variety of "see individual properties" styles
-	let args = if args_string == "\"see individual properties\""
-		// https://github.com/w3c/csswg-drafts/pull/11108/files
-		|| args_string == "\"(see individual properties)\""
-		|| args_string == "\"See individual properties\""
-		// https://github.com/w3c/csswg-drafts/pull/11108/files
-		|| args_string == "\"N/A (see individual properties)\""
-		|| args_string.starts_with("\"Same as")
-	{
-		StrWrapped(initial::Args::Individual)
-	} else {
-		parse_macro_input!(args as StrWrapped<initial::Args>)
-	};
-	let ast = parse_macro_input!(input as DeriveInput);
-	initial::generate(args.0, ast).into()
+	input
+	// let args_string = args.to_string();
+	// // CSS specs have a variety of "see individual properties" styles
+	// let args = if args_string == "\"see individual properties\""
+	// 	// https://github.com/w3c/csswg-drafts/pull/11108/files
+	// 	|| args_string == "\"(see individual properties)\""
+	// 	|| args_string == "\"See individual properties\""
+	// 	// https://github.com/w3c/csswg-drafts/pull/11108/files
+	// 	|| args_string == "\"N/A (see individual properties)\""
+	// 	|| args_string.starts_with("\"Same as")
+	// {
+	// 	StrWrapped(initial::Args::Individual)
+	// } else {
+	// 	parse_macro_input!(args as StrWrapped<initial::Args>)
+	// };
+	// let ast = parse_macro_input!(input as DeriveInput);
+	// initial::generate(args.0, ast).into()
 }
 
 #[proc_macro_attribute]

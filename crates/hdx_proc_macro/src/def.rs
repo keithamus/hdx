@@ -11,7 +11,8 @@ use syn::{
 	ext::IdentExt,
 	parenthesized,
 	parse::{Parse, ParseStream},
-	parse2, token, Error, Ident, Index, LitFloat, LitInt, LitStr, Result, Token, Visibility,
+	parse2, token, Error, GenericParam, Generics, Ident, Index, Lifetime, LifetimeParam, LitFloat, LitInt, LitStr,
+	Result, Token, Visibility,
 };
 
 use crate::{kebab, pascal};
@@ -26,7 +27,7 @@ impl<T: Parse> Parse for StrWrapped<T> {
 }
 
 pub trait GenerateDefinition {
-	fn generate_definition(&self, vis: &Visibility, ident: &Ident) -> TokenStream;
+	fn generate_definition(&self, vis: &Visibility, ident: &Ident, generics: &mut Generics) -> TokenStream;
 }
 
 pub trait GeneratePeekImpl {
@@ -37,8 +38,8 @@ pub trait GenerateParseImpl: GeneratePeekImpl {
 	fn parse_steps(&self, capture: Option<Ident>) -> TokenStream;
 }
 
-pub trait GenerateWriteImpl {
-	fn write_steps(&self, capture: TokenStream) -> TokenStream;
+pub trait GenerateToCursorsImpl {
+	fn to_cursors_steps(&self, capture: TokenStream) -> TokenStream;
 	fn will_write_cond_steps(&self, _capture: TokenStream) -> Option<TokenStream> {
 		None
 	}
@@ -104,6 +105,8 @@ pub(crate) enum DefType {
 	Color,
 	String,
 	Image,
+	Image1D,
+	DashedIdent,
 	CustomIdent,
 	Custom(DefIdent, DefIdent),
 }
@@ -277,6 +280,8 @@ impl Parse for DefType {
 			atom!("string") => Self::String,
 			atom!("color") => Self::Color,
 			atom!("image") => Self::Image,
+			atom!("image-1D") => Self::Image1D,
+			atom!("dashed-ident") => Self::DashedIdent,
 			atom!("custom-ident") => Self::CustomIdent,
 			atom => {
 				let iden = DefIdent(Atom::from(pascal(atom.to_string())));
@@ -348,7 +353,7 @@ impl Def {
 				let ident = format_ident!("{}Function", variant_str);
 				quote! { #ident }
 			}
-			Self::Multiplier(v, style) => v.deref().to_variant_name(style.smallvec_size_hint()),
+			Self::Multiplier(v, _) => v.deref().to_variant_name(2),
 			Self::Group(def, _) => def.deref().to_variant_name(size_hint),
 			_ => {
 				dbg!("TODO variant name", self);
@@ -357,30 +362,51 @@ impl Def {
 		}
 	}
 
-	pub fn has_inner_type(&self) -> bool {
-		!matches!(self, Self::Ident(_))
-	}
-
-	pub fn to_variant_type(&self, size_hint: usize) -> TokenStream {
+	pub fn to_variant_type(&self, size_hint: usize, extra: Option<TokenStream>) -> TokenStream {
 		let name = self.to_variant_name(size_hint);
 		match self {
-			Self::Ident(_) => name,
-			Self::Type(v) => v.to_variant_type(size_hint),
-			Self::Function(_, ty) => match ty.deref() {
-				Def::Type(ty) => {
-					let inner = ty.to_type_name();
-					quote! { #name(#inner) }
+			Self::Ident(_) => quote! { #name(::hdx_parser::T![Ident]) },
+			Self::Type(v) => v.to_variant_type(size_hint, extra),
+			Self::Function(_, ty) => {
+				let life = if self.requires_allocator_lifetime() { Some(quote! { <'a> }) } else { None };
+				match ty.deref() {
+					Def::Type(ty) => {
+						let inner = ty.to_type_name();
+						quote! { #name(::hdx_parser::T![Function], #inner #life, Option<::hdx_parser::T![')']>) }
+					}
+					Def::Multiplier(def, style) => {
+						let extra = if matches!(style, DefMultiplierStyle::OneOrMoreCommaSeparated(_)) {
+							Some(quote! { Option<::hdx_parser::T![,]> })
+						} else {
+							None
+						};
+						let inner = match def.deref() {
+							Def::Type(v) => v.to_inner_variant_type(2, extra),
+							_ => {
+								dbg!("TODO function multiplier inner variant", self);
+								todo!("function multiplier inner variant")
+							}
+						};
+						quote! { #name(::hdx_parser::T![Function], #inner, Option<::hdx_parser::T![')']>) }
+					}
+					_ => {
+						dbg!("TODO function variant", self);
+						todo!("function variant")
+					}
 				}
-				_ => {
-					dbg!("TODO function variant", self);
-					todo!("function variant")
-				}
-			},
+			}
 			Self::Combinator(_def, _) => {
 				dbg!("TODO variant name", self);
 				todo!("variant name")
 			}
-			Self::Multiplier(def, style) => def.deref().to_variant_type(style.smallvec_size_hint()),
+			Self::Multiplier(def, style) => {
+				let extra = if matches!(style, DefMultiplierStyle::OneOrMoreCommaSeparated(_)) {
+					Some(quote! { Option<::hdx_parser::T![,]> })
+				} else {
+					None
+				};
+				def.deref().to_variant_type(2, extra)
+			}
 			_ => {
 				dbg!("TODO variant name", self);
 				todo!("variant name")
@@ -396,7 +422,14 @@ impl Def {
 			Self::Optional(d) => d.requires_allocator_lifetime(),
 			Self::Combinator(ds, _) => ds.iter().any(|d| d.requires_allocator_lifetime()),
 			Self::Group(d, _) => d.requires_allocator_lifetime(),
-			Self::Multiplier(d, _) => d.requires_allocator_lifetime(),
+			Self::Multiplier(_, style) => {
+				// Bounded multipliers get optimized into struct of options
+				if let DefMultiplierStyle::Range(range) = style {
+					matches!(range, DefRange::RangeFrom(_))
+				} else {
+					true
+				}
+			}
 			Self::Punct(_) => false,
 		}
 	}
@@ -408,13 +441,17 @@ impl Def {
 		}
 	}
 
-	pub fn generate_peek_trait_implementation(&self, ident: &Ident) -> TokenStream {
+	pub fn generate_peek_trait_implementation(&self, ident: &Ident, generics: &mut Generics) -> TokenStream {
+		if self.requires_allocator_lifetime() && !generics.lifetimes().any(|l| l.lifetime.ident == "a") {
+			let lt = Lifetime::new("'a", Span::call_site());
+			generics.params.push(GenericParam::from(LifetimeParam::new(lt)));
+		}
+		let (gen, _, _) = generics.split_for_impl();
 		let steps = self.peek_steps();
-		let life = if self.requires_allocator_lifetime() { Some(quote! { <'a> }) } else { None };
 		quote! {
 			#[automatically_derived]
-			impl<'a> ::hdx_parser::Peek<'a> for #ident #life {
-				fn peek(parser: &::hdx_parser::Parser<'a>) -> Option<::hdx_lexer::Token> {
+			impl<'a> ::hdx_parser::Peek<'a> for #ident #gen {
+				fn peek(p: &::hdx_parser::Parser<'a>) -> bool {
 					use ::hdx_parser::Peek;
 					#steps
 				}
@@ -422,7 +459,7 @@ impl Def {
 		}
 	}
 
-	pub fn generate_parse_trait_implementation(&self, ident: &Ident) -> TokenStream {
+	pub fn generate_parse_trait_implementation(&self, ident: &Ident, generics: &mut Generics) -> TokenStream {
 		let steps = match self {
 			Self::Ident(_) => quote! { compile_error!("cannot generate top level singular keyword") },
 			Self::Type(ty) => {
@@ -435,8 +472,9 @@ impl Def {
 			Self::Function(_, _) => quote! { compile_error!("cannot generate top level function") },
 			Self::Optional(_) => quote! { compile_error!("cannot generate top level optional") },
 			Self::Combinator(opts, DefCombinatorStyle::Alternatives) => {
-				let (keywords, others): (Vec<&Def>, Vec<&Def>) =
-					opts.iter().partition(|def| matches!(def, Def::Ident(_) | Def::Type(DefType::CustomIdent)));
+				let (keywords, others): (Vec<&Def>, Vec<&Def>) = opts.iter().partition(|def| {
+					matches!(def, Def::Ident(_) | Def::Type(DefType::CustomIdent) | Def::Type(DefType::DashedIdent))
+				});
 				let other_if: Vec<TokenStream> = others
 					.into_iter()
 					.with_position()
@@ -453,13 +491,14 @@ impl Def {
 								}
 								_ => quote! { val },
 							},
+							Def::Function(_, _) => quote! { function, val, close },
 							_ => quote! { val },
 						};
 						// If it's the only parse block we don't need to peek, just return it.
 						if p == Position::Only {
 							quote! { #parse; Ok(Self::#var(#val)) }
 						} else {
-							quote! { if #peek.is_some() { #parse; return Ok(Self::#var(#val)); } }
+							quote! { if #peek { #parse; return Ok(Self::#var(#val)); } }
 						}
 					})
 					.collect();
@@ -468,7 +507,7 @@ impl Def {
 				} else {
 					let mut last_arm = if other_if.is_empty() {
 						quote! {
-							atom => Err(::hdx_parser::diagnostics::UnexpectedIdent(atom, token.span()))?
+							atom => Err(::hdx_parser::diagnostics::UnexpectedIdent(atom, c.into()))?
 						}
 					} else {
 						// likely cant Err as other Alternatives might use idents
@@ -479,15 +518,11 @@ impl Def {
 							let atom = ident.to_atom_macro();
 							let variant_name = ident.to_variant_name(0);
 							quote! { #atom => {
-								parser.hop(token);
-								return Ok(Self::#variant_name);
+								return Ok(Self::#variant_name(p.parse::<::hdx_parser::T![Ident]>()?));
 							} }
 						} else if def == &Def::Type(DefType::CustomIdent) {
 							last_arm = quote! {
-								atom => {
-									parser.hop(token);
-									return Ok(Self::CustomIdent(atom));
-								}
+								_ => { return Ok(Self::CustomIdent(p.parse::<::hdx_parser::T![Ident]>()?)); }
 							};
 							quote! {}
 						} else {
@@ -496,15 +531,16 @@ impl Def {
 					});
 					let error = if other_if.is_empty() {
 						Some(quote! {
-							let token = parser.peek::<::hdx_parser::token::Any>().unwrap();
-							Err(::hdx_parser::diagnostics::Unexpected(token, token.span()))?
+							let c: ::hdx_lexer::Cursor = p.parse::<::hdx_parser::T![Any]>()?.into();
+							Err(::hdx_parser::diagnostics::Unexpected(c.into(), c.into()))?
 						})
 					} else {
 						None
 					};
 					Some(quote! {
-						if let Some(token) = parser.peek::<::hdx_parser::token::Ident>() {
-							match parser.parse_atom_lower(token) {
+						if p.peek::<::hdx_parser::T![Ident]>() {
+							let c = p.peek_n(1);
+							match p.parse_atom_lower(c) {
 								#(#keyword_arms)*
 								#last_arm
 							}
@@ -523,8 +559,8 @@ impl Def {
 					quote! {
 						#keyword_if
 						#(#other_if)*;
-						let token = parser.peek::<::hdx_parser::token::Any>().unwrap();
-						Err(::hdx_parser::diagnostics::Unexpected(token, token.span()))?
+							let c: ::hdx_lexer::Cursor = p.parse::<::hdx_parser::T![Any]>()?.into();
+							Err(::hdx_parser::diagnostics::Unexpected(c.into(), c.into()))?
 					}
 				}
 			}
@@ -543,8 +579,8 @@ impl Def {
 							}
 						};
 						quote! {
-							if #ident.is_none() && parser.peek::<#ty>().is_some() {
-								#ident = Some(parser.parse::<#ty>()?);
+							if #ident.is_none() && p.peek::<#ty>() {
+								#ident = Some(p.parse::<#ty>()?);
 								continue;
 							}
 						}
@@ -555,8 +591,8 @@ impl Def {
 					loop {
 						#(#steps)*
 						if #(#idents.is_none())&&* {
-							let token = parser.peek::<::hdx_parser::token::Any>().unwrap();
-							Err(::hdx_parser::diagnostics::Unexpected(token, token.span()))?
+							let c: ::hdx_lexer::Cursor = p.parse::<::hdx_parser::T![Any]>()?.into();
+							Err(::hdx_parser::diagnostics::Unexpected(c.into(), c.into()))?
 						} else {
 							return Ok(Self(#(#idents),*));
 						}
@@ -583,12 +619,13 @@ impl Def {
 			Self::Multiplier(_, DefMultiplierStyle::ZeroOrMore) => {
 				quote! { compile_error!("cannot generate top level multiplier of zero-or-more") }
 			}
-			Self::Multiplier(def, DefMultiplierStyle::Range(DefRange::Range(Range { start: 1.0, end }))) => {
+			Self::Multiplier(def, DefMultiplierStyle::Range(DefRange::Range(Range { start, end }))) => {
 				// Optimize for bounded ranges like `<foo>{1,2}` which could be expressed as `Foo, Option<Foo>`
 				let opts: Vec<Def> = (1..=*end as i32)
-					.map(|i| if i == 1 { def.deref().clone() } else { Self::Optional(def.clone()) })
+					.map(|i| if i <= (*start as i32) { def.deref().clone() } else { Self::Optional(def.clone()) })
 					.collect();
-				return Self::Combinator(opts, DefCombinatorStyle::Ordered).generate_parse_trait_implementation(ident);
+				return Self::Combinator(opts, DefCombinatorStyle::Ordered)
+					.generate_parse_trait_implementation(ident, generics);
 			}
 			Self::Multiplier(_, _) => {
 				let parse_steps = self.parse_steps(Some(format_ident!("items")));
@@ -599,11 +636,15 @@ impl Def {
 			}
 			Self::Punct(_) => todo!(),
 		};
-		let life = if self.requires_allocator_lifetime() { Some(quote! { <'a> }) } else { None };
+		if self.requires_allocator_lifetime() && !generics.lifetimes().any(|l| l.lifetime.ident == "a") {
+			let lt = Lifetime::new("'a", Span::call_site());
+			generics.params.push(GenericParam::from(LifetimeParam::new(lt)));
+		}
+		let (gen, _, _) = generics.split_for_impl();
 		quote! {
 			#[automatically_derived]
-			impl<'a> ::hdx_parser::Parse<'a> for #ident #life {
-				fn parse(parser: &mut ::hdx_parser::Parser<'a>) -> ::hdx_parser::Result<Self> {
+			impl<'a> ::hdx_parser::Parse<'a> for #ident #gen {
+				fn parse(p: &mut ::hdx_parser::Parser<'a>) -> ::hdx_parser::Result<Self> {
 					use ::hdx_parser::Parse;
 					#steps
 				}
@@ -611,63 +652,67 @@ impl Def {
 		}
 	}
 
-	pub fn generate_writecss_trait_implementation(&self, ident: &Ident) -> TokenStream {
+	pub fn generate_tocursors_trait_implementation(&self, ident: &Ident, generics: &mut Generics) -> TokenStream {
+		if self.requires_allocator_lifetime() && !generics.lifetimes().any(|l| l.lifetime.ident == "a") {
+			let lt = Lifetime::new("'a", Span::call_site());
+			generics.params.push(GenericParam::from(LifetimeParam::new(lt)));
+		}
+		let (gen, _, _) = generics.split_for_impl();
 		let steps = match self {
 			Self::Ident(_) => quote! { compile_error!("cannot generate top level singular keyword") },
-			Self::Type(w) => w.write_steps(quote! { self.0 }),
-			Self::Optional(_) => self.write_steps(quote! { self.0 }),
+			Self::Type(_) => quote! { ::hdx_parser::ToCursors::to_cursors(&self.0, s); },
+			Self::Optional(_) => {
+				let steps = self.to_cursors_steps(quote! { inner });
+				quote! {
+					if let Some(inner) = &self.0 {
+						#steps
+					}
+				}
+			}
 			Self::Function(_, _) => quote! { compile_error!("cannot generate top level singular keyword") },
 			Self::Combinator(opts, DefCombinatorStyle::Ordered) => {
-				let writes: Vec<TokenStream> = opts
+				let steps: Vec<TokenStream> = opts
 					.iter()
 					.enumerate()
 					.map(|(i, def)| {
 						let index = Index { index: i as u32, span: Span::call_site() };
-						let space = if i > 0 { Some(quote! { sink.write_char(' ')?; }) } else { None };
 						match def {
 							Def::Optional(_) => {
 								quote! {
 									if let Some(inner) = &self.#index {
-										#space
-										inner.write_css(sink)?;
+										::hdx_parser::ToCursors::to_cursors(inner, s);
 									}
 								}
 							}
 							_ => {
 								quote! {
-									#space
-									self.#index.write_css(sink)?;
+									::hdx_parser::ToCursors::to_cursors(&self.#index, s);
 								}
 							}
 						}
 					})
 					.collect();
-				quote! { #(#writes)* }
+				quote! { #(#steps)* }
 			}
 			Self::Combinator(_, DefCombinatorStyle::AllMustOccur) => {
-				dbg!("generate_writecss_trait_implementation AllMustOccur TODO", self);
-				todo!("generate_writecss_trait_implementation AllMustOccur TODO")
+				dbg!("generate_tocursors_trait_implementation AllMustOccur TODO", self);
+				todo!("generate_tocursors_trait_implementation AllMustOccur TODO")
 			}
 			Self::Combinator(opts, DefCombinatorStyle::Options) => {
-				let writes: Vec<TokenStream> = opts
+				let steps: Vec<TokenStream> = opts
 					.iter()
 					.enumerate()
 					.map(|(i, _)| {
 						let index = Index { index: i as u32, span: Span::call_site() };
 						quote! {
 							if let Some(inner) = &self.#index {
-								if written {
-									sink.write_char(' ')?;
-								}
-								written = true;
-								inner.write_css(sink)?;
+								::hdx_parser::ToCursors::to_cursors(inner, s);
 							}
 						}
 					})
 					.collect();
 				quote! {
-					let mut written = false;
-					#(#writes)*
+					#(#steps)*
 				}
 			}
 			Self::Combinator(opts, DefCombinatorStyle::Alternatives) => {
@@ -686,18 +731,19 @@ impl Def {
 									quote! { #ident }
 								}
 							},
+							Self::Function(_, _) => quote! { function, val, close },
 							_ => {
 								let ident = format_ident!("inner");
 								quote! { #ident }
 							}
 						};
 						let var = def.to_variant_name(0);
-						let write = def.write_steps(quote! { #name });
-						if def.has_inner_type() {
-							quote! { Self::#var(#name) => { #write } }
+						let step = if matches!(def, Self::Function(_, _)) {
+							def.to_cursors_steps(quote! { val })
 						} else {
-							quote! { Self::#var => { #write } }
-						}
+							def.to_cursors_steps(quote! { #name })
+						};
+						quote! { Self::#var(#name) => { #step } }
 					})
 					.collect();
 				quote! {
@@ -707,31 +753,28 @@ impl Def {
 				}
 			}
 			Self::Group(_, _) => {
-				dbg!("generate_writecss_trait_implementation Group TODO", self);
-				todo!("generate_writecss_trait_implementation Group TODO")
+				dbg!("generate_tocursors_trait_implementation Group TODO", self);
+				todo!("generate_tocursors_trait_implementation Group TODO")
 			}
 			Self::Multiplier(_, DefMultiplierStyle::ZeroOrMore) => {
 				quote! { compile_error!("cannot generate top level multiplier of zero-or-more") }
 			}
-			Self::Multiplier(def, DefMultiplierStyle::Range(DefRange::Range(Range { start: 1.0, end }))) => {
+			Self::Multiplier(def, DefMultiplierStyle::Range(DefRange::Range(Range { start, end }))) => {
 				// Optimize for bounded ranges like `<foo>{1,2}` which could be expressed as `Foo, Option<Foo>`
 				let opts: Vec<Def> = (1..=*end as i32)
-					.map(|i| if i == 1 { def.deref().clone() } else { Self::Optional(def.clone()) })
+					.map(|i| if i <= (*start as i32) { def.deref().clone() } else { Self::Optional(def.clone()) })
 					.collect();
 				return Self::Combinator(opts, DefCombinatorStyle::Ordered)
-					.generate_writecss_trait_implementation(ident);
+					.generate_tocursors_trait_implementation(ident, generics);
 			}
-			Self::Multiplier(_, _) => self.write_steps(quote! { self.0 }),
+			Self::Multiplier(_, _) => self.to_cursors_steps(quote! { &self.0 }),
 			Self::Punct(_) => todo!(),
 		};
-		let life = if self.requires_allocator_lifetime() { Some(quote! { <'a> }) } else { None };
 		quote! {
 			#[automatically_derived]
-			impl<'a> ::hdx_writer::WriteCss<'a> for #ident #life {
-				fn write_css<W: ::hdx_writer::CssWriter>(&self, sink: &mut W) -> ::hdx_writer::Result {
-		  use ::hdx_writer::WriteCss;
+			impl<'a> ::hdx_parser::ToCursors<'a> for #ident #gen {
+				fn to_cursors(&self, s: &mut ::hdx_parser::CursorStream<'a>) {
 					#steps
-					Ok(())
 				}
 			}
 		}
@@ -739,13 +782,18 @@ impl Def {
 }
 
 impl GenerateDefinition for Def {
-	fn generate_definition(&self, vis: &Visibility, ident: &Ident) -> TokenStream {
+	fn generate_definition(&self, vis: &Visibility, ident: &Ident, generics: &mut Generics) -> TokenStream {
 		let life = if self.requires_allocator_lifetime() { Some(quote! { <'a> }) } else { None };
+		if self.requires_allocator_lifetime() && !generics.lifetimes().any(|l| l.lifetime.ident == "a") {
+			let lt = Lifetime::new("'a", Span::call_site());
+			generics.params.push(GenericParam::from(LifetimeParam::new(lt)));
+		}
+		let (_, gen, _) = generics.split_for_impl();
 		match self.generated_data_type() {
 			DataType::SingleUnnamedStruct => match self {
 				Self::Type(ty) => {
 					let modname = ty.to_type_name();
-					quote! { #vis struct #ident #life(pub #modname); }
+					quote! { #vis struct #ident #gen(pub #modname #life); }
 				}
 				Self::Ident(_) => {
 					Error::new(ident.span(), "cannot generate top level singular keyword").into_compile_error()
@@ -759,13 +807,20 @@ impl GenerateDefinition for Def {
 						.map(|def| match def {
 							Self::Type(deftype) => {
 								let ty = deftype.to_type_name();
-								quote! { pub Option<#ty> }
+								let life =
+									if deftype.requires_allocator_lifetime() { Some(quote! { <'a> }) } else { None };
+								quote! { pub Option<#ty #life> }
 							}
 							Self::Multiplier(x, style) => match x.as_ref() {
 								Def::Type(ty) => {
-									let modname = ty.to_type_name();
-									let n = style.smallvec_size_hint();
-									quote! { pub ::smallvec::SmallVec<[#modname; #n]> }
+									let modname = if matches!(style, DefMultiplierStyle::OneOrMoreCommaSeparated(_)) {
+										let modname = ty.to_type_name();
+										quote! { (#modname, Option<::hdx_parser::T![,]>) }
+									} else {
+										ty.to_type_name()
+									};
+
+									quote! { pub ::bumpalo::collections::Vec<'a, #modname> }
 								}
 								_ => {
 									dbg!("TODO Multiplier() variant", self);
@@ -775,7 +830,12 @@ impl GenerateDefinition for Def {
 							Self::Optional(b) => match b.deref() {
 								Def::Type(def_type) => {
 									let ty = def_type.to_type_name();
-									quote! { pub Option<#ty> }
+									let life = if def_type.requires_allocator_lifetime() {
+										Some(quote! { <'a> })
+									} else {
+										None
+									};
+									quote! { pub Option<#ty #life> }
 								}
 								_ => {
 									dbg!("todo combinator() optional field", self);
@@ -788,7 +848,7 @@ impl GenerateDefinition for Def {
 							}
 						})
 						.collect();
-					quote! { #vis struct #ident #life(#(#members),*); }
+					quote! { #vis struct #ident #gen(#(#members),*); }
 				}
 				Self::Combinator(opts, _) => {
 					let members: Vec<TokenStream> = opts
@@ -796,13 +856,19 @@ impl GenerateDefinition for Def {
 						.map(|def| match def {
 							Self::Type(deftype) => {
 								let ty = deftype.to_type_name();
-								quote! { pub #ty }
+								let life =
+									if deftype.requires_allocator_lifetime() { Some(quote! { <'a> }) } else { None };
+								quote! { pub #ty #life }
 							}
 							Self::Multiplier(x, style) => match x.as_ref() {
 								Def::Type(ty) => {
-									let modname = ty.to_type_name();
-									let n = style.smallvec_size_hint();
-									quote! { pub ::smallvec::SmallVec<[#modname; #n]> }
+									let modname = if matches!(style, DefMultiplierStyle::OneOrMoreCommaSeparated(_)) {
+										let modname = ty.to_type_name();
+										quote! { (#modname, Option<::hdx_parser::T![,]>) }
+									} else {
+										ty.to_type_name()
+									};
+									quote! { pub ::bumpalo::collections::Vec<'a, #modname> }
 								}
 								_ => {
 									dbg!("TODO Multiplier() variant", self);
@@ -812,7 +878,12 @@ impl GenerateDefinition for Def {
 							Self::Optional(b) => match b.deref() {
 								Def::Type(def_type) => {
 									let ty = def_type.to_type_name();
-									quote! { pub Option<#ty> }
+									let life = if def_type.requires_allocator_lifetime() {
+										Some(quote! { <'a> })
+									} else {
+										None
+									};
+									quote! { pub Option<#ty #life> }
 								}
 								_ => {
 									dbg!("todo combinator() optional field", self);
@@ -825,21 +896,34 @@ impl GenerateDefinition for Def {
 							}
 						})
 						.collect();
-					quote! { #vis struct #ident #life(#(#members),*); }
+					quote! { #vis struct #ident #gen(#(#members),*); }
 				}
-				Self::Multiplier(def, DefMultiplierStyle::Range(DefRange::Range(Range { start: 1.0, end }))) => {
+				Self::Multiplier(def, DefMultiplierStyle::Range(DefRange::Range(Range { start, end }))) => {
 					// Optimize for bounded ranges like `<foo>{1,2}` which could be expressed as `Foo, Option<Foo>`
 					let opts: Vec<Def> = (1..=*end as i32)
-						.map(|i| if i == 1 { def.deref().clone() } else { Self::Optional(def.clone()) })
+						.map(|i| if i <= (*start as i32) { def.deref().clone() } else { Self::Optional(def.clone()) })
 						.collect();
-					dbg!(*end as i32, &opts);
-					Self::Combinator(opts, DefCombinatorStyle::Ordered).generate_definition(vis, ident)
+					Self::Combinator(opts, DefCombinatorStyle::Ordered).generate_definition(vis, ident, generics)
+				}
+				Self::Multiplier(
+					def,
+					DefMultiplierStyle::OneOrMoreCommaSeparated(DefRange::Range(Range { start, end })),
+				) => {
+					// Optimize for bounded ranges like `<foo>{1,2}` which could be expressed as `Foo, Option<Foo>`
+					let opts: Vec<Def> = (1..=*end as i32)
+						.map(|i| if i <= (*start as i32) { def.deref().clone() } else { Self::Optional(def.clone()) })
+						.collect();
+					Self::Combinator(opts, DefCombinatorStyle::Ordered).generate_definition(vis, ident, generics)
 				}
 				Self::Multiplier(x, style) => match x.as_ref() {
 					Def::Type(ty) => {
-						let modname = ty.to_type_name();
-						let n = style.smallvec_size_hint();
-						quote! { #vis struct #ident #life(pub ::smallvec::SmallVec<[#modname; #n]>); }
+						let modname = if matches!(style, DefMultiplierStyle::OneOrMoreCommaSeparated(_)) {
+							let modname = ty.to_type_name();
+							quote! { (#modname, Option<::hdx_parser::T![,]>) }
+						} else {
+							ty.to_type_name()
+						};
+						quote! { #vis struct #ident #gen(pub ::bumpalo::collections::Vec<'a, #modname>); }
 					}
 					_ => {
 						dbg!("TODO Multiplier() variant", self);
@@ -853,8 +937,8 @@ impl GenerateDefinition for Def {
 			},
 			DataType::Enum => match self {
 				Self::Combinator(children, DefCombinatorStyle::Alternatives) => {
-					let variants: Vec<TokenStream> = children.iter().map(|d| d.to_variant_type(0)).collect();
-					quote! { #vis enum #ident #life { #(#variants),* } }
+					let variants: Vec<TokenStream> = children.iter().map(|d| d.to_variant_type(0, None)).collect();
+					quote! { #vis enum #ident #gen { #(#variants),* } }
 				}
 				Self::Combinator(_, _) => {
 					Error::new(ident.span(), "cannot generate non-Alternatives combinators in enum")
@@ -869,24 +953,25 @@ impl GenerateDefinition for Def {
 	}
 }
 
-impl GenerateWriteImpl for Def {
-	fn write_steps(&self, capture: TokenStream) -> TokenStream {
+impl GenerateToCursorsImpl for Def {
+	fn to_cursors_steps(&self, capture: TokenStream) -> TokenStream {
 		match self {
-			Self::Type(ty) => ty.write_steps(capture),
-			Self::Ident(ident) => ident.write_steps(capture),
-			Self::Function(ident, def) => {
-				let step = ident.write_steps(capture.clone());
-				let def_steps = def.write_steps(capture);
+			Self::Type(ty) => ty.to_cursors_steps(capture),
+			Self::Ident(ident) => ident.to_cursors_steps(capture),
+			Self::Function(_, def) => {
+				let steps = def.to_cursors_steps(capture);
 				quote! {
-					#step
-					sink.write_char('(')?;
-					#def_steps
-					sink.write_char(')')?;
+					// let function, arg, close = #capture
+					s.append(function.into());
+					#steps
+					if let Some(close) = close {
+						s.append(close.into());
+					}
 				}
 			}
 			Self::Optional(option) => {
 				let name = quote! { inner };
-				let w = option.write_steps(name.clone());
+				let w = option.to_cursors_steps(name.clone());
 				quote! {
 					if let Some(#name) = #capture {
 						#w
@@ -897,7 +982,7 @@ impl GenerateWriteImpl for Def {
 				let exprs: Vec<TokenStream> = (0..opts.len())
 					.map(|i| {
 						let index = Index { index: i as u32, span: Span::call_site() };
-						quote! { sink.write_css(Self::#index); }
+						quote! { ::hdx_parser::ToCursors::to_cursors(&self::#index, s); }
 					})
 					.collect();
 				quote! {
@@ -906,8 +991,8 @@ impl GenerateWriteImpl for Def {
 				}
 			}
 			Self::Combinator(_, DefCombinatorStyle::AllMustOccur) => {
-				dbg!("generate_writecss_trait_implementation AllMustOccur TODO", self);
-				todo!("generate_writecss_trait_implementation AllMustOccur TODO")
+				dbg!("generate_tocursors_trait_implementation AllMustOccur TODO", self);
+				todo!("generate_tocursors_trait_implementation AllMustOccur TODO")
 			}
 			Self::Combinator(opts, DefCombinatorStyle::Options) => {
 				let arms: Vec<TokenStream> = opts
@@ -916,10 +1001,10 @@ impl GenerateWriteImpl for Def {
 					.map(|(i, def)| {
 						let name = format_ident!("inner{}", i);
 						if i == 0 {
-							def.write_steps(quote! { #name })
+							def.to_cursors_steps(quote! { #name })
 						} else {
-							def.write_steps(quote! {
-								sink.write_char(' ')?;
+							def.to_cursors_steps(quote! {
+								s.write_char(' ')?;
 								#name
 							})
 						}
@@ -935,7 +1020,7 @@ impl GenerateWriteImpl for Def {
 					.map(|def| {
 						let name = format_ident!("inner");
 						let var = def.to_variant_name(0);
-						let write = def.write_steps(quote! { #name });
+						let write = def.to_cursors_steps(quote! { #name });
 						quote! { Self::#var(#name) => { #write } }
 					})
 					.collect();
@@ -945,43 +1030,41 @@ impl GenerateWriteImpl for Def {
 					}
 				}
 			}
-			Self::Group(def, DefGroupStyle::None) => def.write_steps(capture),
+			Self::Group(def, DefGroupStyle::None) => def.to_cursors_steps(capture),
 			Self::Group(_, _) => {
-				dbg!("generate_writecss_trait_implementation Group TODO", self);
-				todo!("generate_writecss_trait_implementation Group TODO")
+				dbg!("generate_tocursors_trait_implementation Group TODO", self);
+				todo!("generate_tocursors_trait_implementation Group TODO")
 			}
 			Self::Multiplier(def, style) => {
 				let name = format_ident!("item");
-				let post_write = match style {
-					DefMultiplierStyle::OneOrMoreCommaSeparated(_) => quote! {
-						::hdx_writer::write_css!(sink, ',', ());
-					},
-					_ => quote! { sink.write_char(' ')?; },
+				let step = if matches!(style, DefMultiplierStyle::OneOrMoreCommaSeparated(_)) {
+					let step = def.to_cursors_steps(quote! { item });
+					quote! {
+						let (item, comma) = #name;
+						#step
+						if let Some(comma) = comma {
+							s.append(comma.into());
+						}
+					}
+				} else {
+					def.to_cursors_steps(quote! { #name })
 				};
-				let write = def.write_steps(quote! { #name });
-				let do_write = def
+				let do_step = def
 					.will_write_cond_steps(quote! { #name })
 					.map(|cond| {
 						quote! {
 							if #cond {
-								#write
-								if iter.peek().is_some() {
-									#post_write
-								}
+								#step
 							}
 						}
 					})
 					.or_else(|| {
 						Some(quote! {
-							#write
-							if iter.peek().is_some() {
-								#post_write
-							}
+							#step
 						})
 					});
 				quote! {
-					let mut iter = #capture.iter().peekable();
-					while let Some(#name) = iter.next() { #do_write }
+					for #name in #capture { #do_step }
 				}
 			}
 			Self::Punct(_) => todo!(),
@@ -994,7 +1077,7 @@ impl GeneratePeekImpl for Def {
 		match self {
 			Self::Type(p) => p.peek_steps(),
 			Self::Ident(p) => p.peek_steps(),
-			Self::Function(_, _) => quote! { parser.peek::<::hdx_parser::token::Function>() },
+			Self::Function(_, _) => quote! { p.peek::<::hdx_parser::T![Function]>() },
 			Self::Optional(p) => p.peek_steps(),
 			Self::Combinator(p, DefCombinatorStyle::Ordered) => p[0].peek_steps(),
 			Self::Combinator(p, _) => {
@@ -1007,7 +1090,7 @@ impl GeneratePeekImpl for Def {
 						if i == Position::First || i == Position::Only {
 							quote! { #steps }
 						} else {
-							quote! { .or_else(|| #steps ) }
+							quote! { || #steps }
 						}
 					})
 					.collect();
@@ -1029,13 +1112,14 @@ impl GenerateParseImpl for Def {
 				let atom = p.to_atom_macro();
 				let inner = ty.parse_steps(capture);
 				quote! {
-					let token = *parser.parse::<::hdx_parser::token::Function>()?;
-					let atom = parser.parse_atom_lower(token);
+					let function = p.parse::<::hdx_parser::T![Function]>()?;
+					let c: hdx_lexer::Cursor = function.into();
+					let atom = p.parse_atom_lower(c.into());
 					if atom != #atom {
-						return Err(::hdx_parser::diagnostics::UnexpectedFunction(atom, token.span()))?
+						return Err(::hdx_parser::diagnostics::UnexpectedFunction(atom, c.into()))?
 					}
 					#inner
-					parser.parse::<::hdx_parser::token::RightParen>()?;
+					let close = p.parse_if_peek::<::hdx_parser::T![')']>()?;
 				}
 			}
 			Self::Multiplier(
@@ -1063,8 +1147,8 @@ impl GenerateParseImpl for Def {
 						let n = *start as usize;
 						quote! {
 							if i < #n {
-								let token = parser.peek::<::hdx_parser::token::Any>().unwrap();
-								return Err(::hdx_parser::diagnostics::Unexpected(token, token.span()))?
+								let c: ::hdx_lexer::Cursor = p.parse::<::hdx_parser::T![Any]>()?.into();
+								Err(::hdx_parser::diagnostics::Unexpected(c.into(), c.into()))?
 							}
 						}
 					}
@@ -1076,17 +1160,16 @@ impl GenerateParseImpl for Def {
 				let inloop = if matches!(self, Self::Multiplier(_, DefMultiplierStyle::OneOrMoreCommaSeparated(_))) {
 					quote! {
 						#steps
-						#capture_name.push(item);
+						let comma = p.parse_if_peek::<::hdx_parser::T![,]>()?;
+						#capture_name.push((item, comma));
 						#increment_i
-						if let Some(token) = parser.peek::<::hdx_parser::T![,]>() {
-							parser.hop(token);
-						} else {
+						if comma.is_none() {
 							break;
 						}
 					}
 				} else {
 					quote! {
-						if #peek_steps.is_some() {
+						if #peek_steps {
 							#steps
 							#increment_i
 							#capture_name.push(item)
@@ -1097,7 +1180,7 @@ impl GenerateParseImpl for Def {
 				};
 				quote! {
 					#instantiate_i
-					let mut #capture_name = ::smallvec::smallvec![];
+					let mut #capture_name = ::bumpalo::collections::Vec::new_in(p.bump());
 					loop {
 						#max_check
 						#inloop
@@ -1108,7 +1191,7 @@ impl GenerateParseImpl for Def {
 			Self::Optional(def) => match def.deref() {
 				Def::Type(ty) => {
 					let ty = ty.to_type_name();
-					let step = quote! { parser.parse_if_peek::<#ty>()?; };
+					let step = quote! { p.parse_if_peek::<#ty>()?; };
 					if let Some(capture_name) = capture {
 						quote! { let #capture_name = #step; }
 					} else {
@@ -1136,8 +1219,8 @@ impl GenerateParseImpl for Def {
 							}
 						};
 						quote! {
-							if #ident.is_none() && parser.peek::<#ty>().is_some() {
-								#ident = Some(parser.parse::<#ty>()?);
+							if #ident.is_none() && p.peek::<#ty>() {
+								#ident = Some(p.parse::<#ty>()?);
 								continue;
 							}
 						}
@@ -1148,8 +1231,8 @@ impl GenerateParseImpl for Def {
 					loop {
 						#(#steps)*
 						if #(#idents.is_none())&&* {
-							let token = parser.peek::<::hdx_parser::token::Any>().unwrap();
-							Err(::hdx_parser::diagnostics::Unexpected(token, token.span()))?
+							let c: ::hdx_lexer::Cursor = p.parse::<::hdx_parser::T![Any]>()?.into();
+							Err(::hdx_parser::diagnostics::Unexpected(c.into(), c.into()))?
 						} else {
 							break;
 						}
@@ -1180,6 +1263,8 @@ impl DefType {
 				Self::String => quote! { Strings },
 				Self::Color => quote! { Colors },
 				Self::Image => quote! { Images },
+				Self::Image1D => quote! { Images },
+				Self::DashedIdent => quote! { DashedIdents },
 				Self::CustomIdent => quote! { CustomIdents },
 				Self::Custom(_, ident) => {
 					let ident = ident.pluralize();
@@ -1199,47 +1284,33 @@ impl DefType {
 				Self::String => quote! { String },
 				Self::Color => quote! { Color },
 				Self::Image => quote! { Image },
+				Self::Image1D => quote! { Image },
+				Self::DashedIdent => quote! { DashedIdent },
 				Self::CustomIdent => quote! { CustomIdent },
 				Self::Custom(_, ident) => quote! { #ident },
 			}
 		}
 	}
 
-	pub fn to_variant_type(&self, size_hint: usize) -> TokenStream {
-		let inner = self.to_type_name();
+	pub fn to_variant_type(&self, size_hint: usize, extra: Option<TokenStream>) -> TokenStream {
+		let inner = self.to_inner_variant_type(size_hint, extra);
 		let name = self.to_variant_name(size_hint);
+		quote! { #name(#inner) }
+	}
+
+	pub fn to_inner_variant_type(&self, size_hint: usize, extra: Option<TokenStream>) -> TokenStream {
+		let type_name = self.to_type_name();
+		let life = if self.requires_allocator_lifetime() { Some(quote! { <'a> }) } else { None };
 		if size_hint > 0 {
-			match self {
-				Self::Length(_) => quote! { #name(smallvec::SmallVec::<[#inner; #size_hint]>) },
-				Self::LengthPercentage(_) => quote! { #name(smallvec::SmallVec::<[#inner; #size_hint]>) },
-				Self::Percentage(_) => quote! { #name(smallvec::SmallVec::<[#inner; #size_hint]>) },
-				Self::Angle(_) => quote! { #name(smallvec::SmallVec::<[#inner; #size_hint]>) },
-				Self::Time(_) => quote! { #name(smallvec::SmallVec::<[#inner; #size_hint]>) },
-				Self::Resolution(_) => quote! { #name(smallvec::SmallVec::<[#inner; #size_hint]>) },
-				Self::Integer(_) => quote! { #name(smallvec::SmallVec::<[#inner; #size_hint]>) },
-				Self::Number(_) => quote! { #name(smallvec::SmallVec::<[#inner; #size_hint]>) },
-				Self::String => quote! { #name(smallvec::SmallVec::<[#inner; #size_hint]>) },
-				Self::Color => quote! { #name(smallvec::SmallVec::<[#inner; #size_hint]>) },
-				Self::Image => quote! { #name(smallvec::SmallVec::<[#inner; #size_hint]>) },
-				Self::CustomIdent => quote! { #name(smallvec::SmallVec::<[#inner; #size_hint]>) },
-				Self::Custom(_, _) => quote! { #name(smallvec::SmallVec::<[#inner; #size_hint]>) },
+			if let Some(extra) = extra {
+				quote! { ::bumpalo::collections::Vec::<'a, (#type_name #life, #extra)> }
+			} else {
+				quote! { ::bumpalo::collections::Vec::<'a, #type_name #life> }
 			}
+		} else if let Some(extra) = extra {
+			quote! { (#type_name #life, #extra) }
 		} else {
-			match self {
-				Self::Length(_) => quote! { #name(#inner) },
-				Self::LengthPercentage(_) => quote! { #name(#inner) },
-				Self::Percentage(_) => quote! { #name(#inner) },
-				Self::Angle(_) => quote! { #name(#inner) },
-				Self::Time(_) => quote! { #name(#inner) },
-				Self::Resolution(_) => quote! { #name(#inner) },
-				Self::Integer(_) => quote! { #name(#inner) },
-				Self::Number(_) => quote! { #name(#inner) },
-				Self::String => quote! { #name(#inner) },
-				Self::Color => quote! { #name(#inner) },
-				Self::Image => quote! { #name(#inner) },
-				Self::CustomIdent => quote! { #name(#inner) },
-				Self::Custom(_, _) => quote! { #name(#inner) },
-			}
+			quote! { #type_name #life }
 		}
 	}
 
@@ -1254,9 +1325,11 @@ impl DefType {
 			Self::Integer(_) => quote! { types::CSSInt },
 			Self::Number(_) => quote! { types::CSSFloat },
 			Self::Color => quote! { types::Color },
-			Self::Image => quote! { types::Image<'a> },
-			Self::CustomIdent => quote! { ::hdx_atom::Atom },
-			Self::String => quote! { types::CSSString<'a> },
+			Self::Image => quote! { types::Image },
+			Self::Image1D => quote! { types::Image1D },
+			Self::DashedIdent => quote! { ::hdx_parser::T![DashedIdent] },
+			Self::CustomIdent => quote! { ::hdx_parser::T![Ident] },
+			Self::String => quote! { ::hdx_parser::T![Ident] },
 			Self::Custom(ty, _) => quote! { types::#ty },
 		}
 	}
@@ -1276,23 +1349,26 @@ impl DefType {
 	}
 
 	pub fn requires_allocator_lifetime(&self) -> bool {
-		matches!(self, Self::String | Self::Image)
+		if let Self::Custom(DefIdent(ident), _) = self {
+			return matches!(ident, &atom!("OutlineColor") | &atom!("BorderTopColor") | &atom!("AnchorName"));
+		}
+		matches!(self, Self::Image | Self::Image1D)
 	}
 }
 
-impl GenerateWriteImpl for DefType {
-	fn write_steps(&self, capture: TokenStream) -> TokenStream {
-		quote! { #capture.write_css(sink)?; }
+impl GenerateToCursorsImpl for DefType {
+	fn to_cursors_steps(&self, capture: TokenStream) -> TokenStream {
+		quote! { ::hdx_parser::ToCursors::to_cursors(#capture, s); }
 	}
 }
 
 impl GeneratePeekImpl for DefType {
 	fn peek_steps(&self) -> TokenStream {
 		match self {
-			Self::CustomIdent => quote! { parser.peek::<::hdx_parser::token::Ident>() },
+			Self::CustomIdent => quote! { p.peek::<::hdx_parser::T![Ident]>() },
 			_ => {
 				let name = self.to_type_name();
-				quote! { parser.peek::<#name>() }
+				quote! { p.peek::<#name>() }
 			}
 		}
 	}
@@ -1303,8 +1379,7 @@ impl GenerateParseImpl for DefType {
 		let capture_name = capture.unwrap_or_else(|| format_ident!("val"));
 		if self == &Self::CustomIdent {
 			return quote! {
-				let token = *parser.parse::<::hdx_parser::token::Ident>()?;
-				let #capture_name = parser.parse_atom_lower(token);
+				let #capture_name = p.parse::<::hdx_parser::T![Ident]>()?;
 			};
 		}
 
@@ -1314,27 +1389,27 @@ impl GenerateParseImpl for DefType {
 			DefRange::RangeTo(RangeTo { end }) => Some(quote! {
 			let valf32: f32 = #capture_name.into();
 					if #end < valf32 {
-						return Err(::hdx_parser::diagnostics::NumberTooLarge(#end, ::hdx_lexer::Span::new(start, parser.offset())))?
+						return Err(::hdx_parser::diagnostics::NumberTooLarge(#end, ::hdx_lexer::Span::new(start, p.offset())))?
 					}
 				}),
 			DefRange::Range(Range { start, end }) => Some(quote! {
 			let valf32: f32 = #capture_name.into();
 					if !(#start..#end).contains(valf32) {
-						return Err(::hdx_parser::diagnostics::NumberOutOfBounds(#capture_name, "#start..#end", ::hdx_lexer::Span::new(start, parser.offset())))?
+						return Err(::hdx_parser::diagnostics::NumberOutOfBounds(#capture_name, "#start..#end", ::hdx_lexer::Span::new(start, p.offset())))?
 					}
 				}),
 			DefRange::RangeFrom(RangeFrom { start }) => Some(quote! {
 			let valf32: f32 = #capture_name.into();
 					if #start > valf32 {
-						return Err(::hdx_parser::diagnostics::NumberTooSmall(#start, ::hdx_lexer::Span::new(start, parser.offset())))?
+						return Err(::hdx_parser::diagnostics::NumberTooSmall(#start, ::hdx_lexer::Span::new(start, p.offset())))?
 					}
 				}),
 			DefRange::None => None,
 		};
-		let start_offset = if check_code.is_some() { Some(quote! { let start = parser.offset(); }) } else { None };
+		let start_offset = if check_code.is_some() { Some(quote! { let start = p.offset(); }) } else { None };
 		quote! {
 			#start_offset
-			let #capture_name = parser.parse::<#name>()?;
+			let #capture_name = p.parse::<#name>()?;
 			#check_code
 		}
 	}
@@ -1373,16 +1448,15 @@ impl DefIdent {
 	}
 }
 
-impl GenerateWriteImpl for DefIdent {
-	fn write_steps(&self, _: TokenStream) -> TokenStream {
-		let atom = self.to_atom_macro();
-		quote! { #atom.write_css(sink)?; }
+impl GenerateToCursorsImpl for DefIdent {
+	fn to_cursors_steps(&self, inner: TokenStream) -> TokenStream {
+		quote! { s.append(#inner.into()); }
 	}
 }
 
 impl GeneratePeekImpl for DefIdent {
 	fn peek_steps(&self) -> TokenStream {
-		quote! { parser.peek::<::hdx_parser::token::Ident>() }
+		quote! { p.peek::<::hdx_parser::T![Ident]>() }
 	}
 }
 
@@ -1390,21 +1464,12 @@ impl GenerateParseImpl for DefIdent {
 	fn parse_steps(&self, capture: Option<Ident>) -> TokenStream {
 		let atom = self.to_atom_macro();
 		quote! {
-			let #capture = parser.parse::<Token![Ident]>().map_or(false, |t| parser.parse_atom_lower(t) == #atom);
-		}
-	}
-}
-
-impl DefMultiplierStyle {
-	fn smallvec_size_hint(&self) -> usize {
-		match self {
-			Self::ZeroOrMore => 0,
-			Self::OneOrMore => 1,
-			Self::OneOrMoreCommaSeparated(_) => 1,
-			Self::Range(DefRange::None) => 0,
-			Self::Range(DefRange::Range(Range { start, .. }))
-			| Self::Range(DefRange::RangeFrom(RangeFrom { start, .. })) => *start as usize,
-			Self::Range(DefRange::RangeTo(RangeTo { end, .. })) => *end as usize,
+			let #capture = p.parse::<::hdx_parser::T![Ident]>()?;
+			let c: ::hdx_lexer::Cursor = #capture.into();
+			let atom = p.parse_atom_lower(t);
+			if atom != #atom {
+				Err(::hdx_parser::diagnostics::UnexpectedIdent(atom, c.into()))?
+			}
 		}
 	}
 }
