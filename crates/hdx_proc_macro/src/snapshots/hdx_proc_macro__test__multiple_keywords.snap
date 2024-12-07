@@ -2,73 +2,64 @@
 source: crates/hdx_proc_macro/src/test.rs
 expression: pretty
 ---
-#[derive(Debug, PartialEq, Clone, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 enum Foo {
-    Black,
-    White,
-    LineThrough,
-    Pink,
+    Black(::hdx_parser::T![Ident]),
+    White(::hdx_parser::T![Ident]),
+    LineThrough(::hdx_parser::T![Ident]),
+    Pink(::hdx_parser::T![Ident]),
 }
 #[automatically_derived]
 impl<'a> ::hdx_parser::Peek<'a> for Foo {
-    fn peek(parser: &::hdx_parser::Parser<'a>) -> Option<::hdx_lexer::Token> {
+    fn peek(p: &::hdx_parser::Parser<'a>) -> bool {
         use ::hdx_parser::Peek;
-        parser.peek::<::hdx_parser::token::Ident>()
+        p.peek::<::hdx_parser::T![Ident]>()
     }
 }
 #[automatically_derived]
 impl<'a> ::hdx_parser::Parse<'a> for Foo {
-    fn parse(parser: &mut ::hdx_parser::Parser<'a>) -> ::hdx_parser::Result<Self> {
+    fn parse(p: &mut ::hdx_parser::Parser<'a>) -> ::hdx_parser::Result<Self> {
         use ::hdx_parser::Parse;
-        if let Some(token) = parser.peek::<::hdx_parser::token::Ident>() {
-            match parser.parse_atom_lower(token) {
+        if p.peek::<::hdx_parser::T![Ident]>() {
+            let ident = p.parse::<::hdx_parser::T![Ident]>()?;
+            let c: ::hdx_lexer::Cursor = ident.into();
+            match p.parse_atom_lower(c) {
                 ::hdx_atom::atom!("black") => {
-                    parser.hop(token);
-                    return Ok(Self::Black);
+                    return Ok(Self::Black(ident));
                 }
                 ::hdx_atom::atom!("white") => {
-                    parser.hop(token);
-                    return Ok(Self::White);
+                    return Ok(Self::White(ident));
                 }
                 ::hdx_atom::atom!("line-through") => {
-                    parser.hop(token);
-                    return Ok(Self::LineThrough);
+                    return Ok(Self::LineThrough(ident));
                 }
                 ::hdx_atom::atom!("pink") => {
-                    parser.hop(token);
-                    return Ok(Self::Pink);
+                    return Ok(Self::Pink(ident));
                 }
-                atom => {
-                    Err(::hdx_parser::diagnostics::UnexpectedIdent(atom, token.span()))?
-                }
+                atom => Err(::hdx_parser::diagnostics::UnexpectedIdent(atom, c.into()))?,
             }
         }
-        let token = parser.peek::<::hdx_parser::token::Any>().unwrap();
-        Err(::hdx_parser::diagnostics::Unexpected(token, token.span()))?
+        let c: ::hdx_lexer::Cursor = p.parse::<::hdx_parser::T![Any]>()?.into();
+        Err(::hdx_parser::diagnostics::Unexpected(c.into(), c.into()))?
     }
 }
 #[automatically_derived]
-impl<'a> ::hdx_writer::WriteCss<'a> for Foo {
-    fn write_css<W: ::hdx_writer::CssWriter>(
-        &self,
-        sink: &mut W,
-    ) -> ::hdx_writer::Result {
-        use ::hdx_writer::WriteCss;
+impl<'a> ::hdx_parser::ToCursors<'a> for Foo {
+    fn to_cursors(&self, s: &mut ::hdx_parser::CursorStream<'a>) {
         match self {
-            Self::Black => {
-                ::hdx_atom::atom!("black").write_css(sink)?;
+            Self::Black(inner) => {
+                s.append(inner.into());
             }
-            Self::White => {
-                ::hdx_atom::atom!("white").write_css(sink)?;
+            Self::White(inner) => {
+                s.append(inner.into());
             }
-            Self::LineThrough => {
-                ::hdx_atom::atom!("line-through").write_css(sink)?;
+            Self::LineThrough(inner) => {
+                s.append(inner.into());
             }
-            Self::Pink => {
-                ::hdx_atom::atom!("pink").write_css(sink)?;
+            Self::Pink(inner) => {
+                s.append(inner.into());
             }
         }
-        Ok(())
     }
 }

@@ -2,74 +2,72 @@
 source: crates/hdx_proc_macro/src/test.rs
 expression: pretty
 ---
-#[derive(Debug, PartialEq, Clone, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 enum Foo {
-    FitContent,
-    FitContentFunction(types::LengthPercentage),
+    FitContent(::hdx_parser::T![Ident]),
+    FitContentFunction(
+        ::hdx_parser::T![Function],
+        types::LengthPercentage,
+        Option<::hdx_parser::T![')']>,
+    ),
 }
 #[automatically_derived]
 impl<'a> ::hdx_parser::Peek<'a> for Foo {
-    fn peek(parser: &::hdx_parser::Parser<'a>) -> Option<::hdx_lexer::Token> {
+    fn peek(p: &::hdx_parser::Parser<'a>) -> bool {
         use ::hdx_parser::Peek;
-        parser
-            .peek::<::hdx_parser::token::Ident>()
-            .or_else(|| parser.peek::<::hdx_parser::token::Function>())
+        p.peek::<::hdx_parser::T![Ident]>() || p.peek::<::hdx_parser::T![Function]>()
     }
 }
 #[automatically_derived]
 impl<'a> ::hdx_parser::Parse<'a> for Foo {
-    fn parse(parser: &mut ::hdx_parser::Parser<'a>) -> ::hdx_parser::Result<Self> {
+    fn parse(p: &mut ::hdx_parser::Parser<'a>) -> ::hdx_parser::Result<Self> {
         use ::hdx_parser::Parse;
-        if let Some(token) = parser.peek::<::hdx_parser::token::Ident>() {
-            match parser.parse_atom_lower(token) {
+        if p.peek::<::hdx_parser::T![Ident]>() {
+            let ident = p.parse::<::hdx_parser::T![Ident]>()?;
+            let c: ::hdx_lexer::Cursor = ident.into();
+            match p.parse_atom_lower(c) {
                 ::hdx_atom::atom!("fit-content") => {
-                    parser.hop(token);
-                    return Ok(Self::FitContent);
+                    return Ok(Self::FitContent(ident));
                 }
                 atom => {}
             }
         }
-        let token = *parser.parse::<::hdx_parser::token::Function>()?;
-        let atom = parser.parse_atom_lower(token);
+        let function = p.parse::<::hdx_parser::T![Function]>()?;
+        let c: hdx_lexer::Cursor = function.into();
+        let atom = p.parse_atom_lower(c.into());
         if atom != ::hdx_atom::atom!("fit-content") {
-            return Err(
-                ::hdx_parser::diagnostics::UnexpectedFunction(atom, token.span()),
-            )?;
+            return Err(::hdx_parser::diagnostics::UnexpectedFunction(atom, c.into()))?;
         }
-        let start = parser.offset();
-        let val = parser.parse::<types::LengthPercentage>()?;
+        let start = p.offset();
+        let val = p.parse::<types::LengthPercentage>()?;
         let valf32: f32 = val.into();
         if 0f32 > valf32 {
             return Err(
                 ::hdx_parser::diagnostics::NumberTooSmall(
                     0f32,
-                    ::hdx_lexer::Span::new(start, parser.offset()),
+                    ::hdx_lexer::Span::new(start, p.offset()),
                 ),
             )?;
         }
-        parser.parse::<::hdx_parser::token::RightParen>()?;
-        Ok(Self::FitContentFunction(val))
+        let close = p.parse_if_peek::<::hdx_parser::T![')']>()?;
+        Ok(Self::FitContentFunction(function, val, close))
     }
 }
 #[automatically_derived]
-impl<'a> ::hdx_writer::WriteCss<'a> for Foo {
-    fn write_css<W: ::hdx_writer::CssWriter>(
-        &self,
-        sink: &mut W,
-    ) -> ::hdx_writer::Result {
-        use ::hdx_writer::WriteCss;
+impl<'a> ::hdx_parser::ToCursors<'a> for Foo {
+    fn to_cursors(&self, s: &mut ::hdx_parser::CursorStream<'a>) {
         match self {
-            Self::FitContent => {
-                ::hdx_atom::atom!("fit-content").write_css(sink)?;
+            Self::FitContent(inner) => {
+                s.append(inner.into());
             }
-            Self::FitContentFunction(inner) => {
-                ::hdx_atom::atom!("fit-content").write_css(sink)?;
-                sink.write_char('(')?;
-                inner.write_css(sink)?;
-                sink.write_char(')')?;
+            Self::FitContentFunction(function, val, close) => {
+                s.append(function.into());
+                ::hdx_parser::ToCursors::to_cursors(val, s);
+                if let Some(close) = close {
+                    s.append(close.into());
+                }
             }
         }
-        Ok(())
     }
 }

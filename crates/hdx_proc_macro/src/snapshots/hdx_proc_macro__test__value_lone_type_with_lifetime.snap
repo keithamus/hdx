@@ -4,24 +4,24 @@ expression: pretty
 ---
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-struct Foo(pub ::hdx_parser::T![Ident]);
+struct Foo<'a>(pub types::Image<'a>);
 #[automatically_derived]
-impl<'a> ::hdx_parser::Peek<'a> for Foo {
+impl<'a> ::hdx_parser::Peek<'a> for Foo<'a> {
     fn peek(p: &::hdx_parser::Parser<'a>) -> bool {
         use ::hdx_parser::Peek;
-        p.peek::<::hdx_parser::T![Ident]>()
+        p.peek::<types::Image>()
     }
 }
 #[automatically_derived]
-impl<'a> ::hdx_parser::Parse<'a> for Foo {
+impl<'a> ::hdx_parser::Parse<'a> for Foo<'a> {
     fn parse(p: &mut ::hdx_parser::Parser<'a>) -> ::hdx_parser::Result<Self> {
         use ::hdx_parser::Parse;
-        let val = p.parse::<::hdx_parser::T![Ident]>()?;
+        let val = p.parse::<types::Image>()?;
         Ok(Self(val))
     }
 }
 #[automatically_derived]
-impl<'a> ::hdx_parser::ToCursors<'a> for Foo {
+impl<'a> ::hdx_parser::ToCursors<'a> for Foo<'a> {
     fn to_cursors(&self, s: &mut ::hdx_parser::CursorStream<'a>) {
         ::hdx_parser::ToCursors::to_cursors(&self.0, s);
     }
