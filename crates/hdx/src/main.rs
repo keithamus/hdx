@@ -28,13 +28,15 @@ fn main() {
 	let file_name = args.input.first().unwrap();
 	let source_text = std::fs::read_to_string(file_name).unwrap();
 	let allocator = Bump::default();
+	let start = std::time::Instant::now();
 	let result = hdx_parser::Parser::new(&allocator, source_text.as_str(), hdx_parser::Features::default())
 		.parse_entirely::<StyleSheet>();
 	{
-		let start = std::time::Instant::now();
-		let mut str = String::new();
 		if let Some(stylesheet) = &result.output {
-			stylesheet.write_css(&mut writer).unwrap();
+			let mut str = String::new();
+			if let Err(e) = result.write(&allocator, &mut str) {
+				println!("{}", e);
+			}
 			if let Some(file) = args.output {
 				std::fs::write(file, str.as_bytes()).unwrap();
 			} else {
