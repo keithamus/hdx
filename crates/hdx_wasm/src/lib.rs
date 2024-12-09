@@ -1,6 +1,6 @@
 use bumpalo::Bump;
 use hdx_ast::css::StyleSheet;
-use hdx_lexer::{Include, Kind, Lexer};
+use hdx_lexer::{Kind, Lexer};
 use hdx_parser::{Features, Parser};
 #[cfg(not(feature = "fancy"))]
 use miette::JSONReportHandler;
@@ -18,7 +18,7 @@ pub fn main() {
 
 #[wasm_bindgen]
 pub fn lex(source_text: String) -> Result<JsValue, serde_wasm_bindgen::Error> {
-	let mut lex = Lexer::new(source_text.as_str(), Include::all_bits());
+	let mut lex = Lexer::new(source_text.as_str());
 	let serializer = serde_wasm_bindgen::Serializer::json_compatible();
 	let mut tokens = vec![];
 	loop {
@@ -66,9 +66,11 @@ pub fn minify(source_text: String) -> Result<String, serde_wasm_bindgen::Error> 
 	if !result.errors.is_empty() {
 		return Err(serde_wasm_bindgen::Error::new("Parse error"));
 	}
-	let mut string = String::new();
-	result.write(allocator, string);
-	Ok(string)
+	let mut output_string = String::new();
+	if let Err(e) = result.write(&allocator, &mut output_string) {
+		return Err(serde_wasm_bindgen::Error::new("Write error"));
+	}
+	Ok(output_string)
 }
 
 #[wasm_bindgen]
