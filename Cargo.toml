@@ -25,16 +25,16 @@ hdx_transform = { version = "0.0.0", path = "crates/hdx_transform" }
 
 bumpalo = { version = "3.16.0" }
 
-clap = { version = "4.5.20" }
+clap = { version = "4.5.23" }
 
 closestmatch = { version = "0.1.2" }
-miette = { version = "7.2.0", default-features = false }
-thiserror = { version = "2.0.0" }
-serde = { version = "1.0.213" }
-serde_json = { version = "1.0.132" }
-syn = { version = "2.0.87" }
+miette = { version = "7.4.0", default-features = false }
+thiserror = { version = "2.0.6" }
+serde = { version = "1.0.215" }
+serde_json = { version = "1.0.133" }
+syn = { version = "2.0.90" }
 quote = { version = "1.0.37" }
-proc-macro2 = { version = "1.0.89" }
+proc-macro2 = { version = "1.0.92" }
 bitmask-enum = { version = "2.2.5" }
 smallvec = { version = "1.13.2" }
 itertools = { version = "0.13.0" }
@@ -45,7 +45,7 @@ project-root = { version = "0.2.2" }
 similar = { version = "2.6.0" }
 criterion = { version = "0.5.1" }
 pprof = { version = "0.14.0" }
-flate2 = { version = "1.0.34" }
+flate2 = { version = "1.0.35" }
 insta = { version = "1.41.1" }
 console = { version = "0.15.8" }
 prettyplease = { version = "0.2.25" }
@@ -57,7 +57,7 @@ grep-regex = { version = "0.1.13" }
 grep-matcher = { version = "0.1.7" }
 grep-searcher = { version = "0.1.14" }
 
-wasm-bindgen = { version = "0.2.95" }
+wasm-bindgen = { version = "0.2.99" }
 serde-wasm-bindgen = { version = "0.6.5" }
 console_error_panic_hook = { version = "0.1.7" }
 
