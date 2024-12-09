@@ -8,7 +8,7 @@ pub struct ReduceInitial();
 
 impl<'a> VisitMut<'a> for ReduceInitial {
 	fn visit_property(&mut self, property: &mut Property<'a>) {
-		if matches!(&property.value, StyleValue::Initial) {
+		if matches!(&property.value, StyleValue::Initial(_)) {
 			if let Some(def) = StyleValue::default_for(&property.name) {
 				property.value = def;
 			}
