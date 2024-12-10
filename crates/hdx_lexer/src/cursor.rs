@@ -85,9 +85,6 @@ impl Cursor {
 			if end - start != other.len() {
 				return false;
 			}
-			if self.token().is_lower_case() {
-				return &source[start..end] == other;
-			}
 			return source[start..end].eq_ignore_ascii_case(other);
 		}
 		let mut chars = source[start..end].chars().peekable();
