@@ -1,5 +1,3 @@
-extern crate hdx_derive;
-
 pub mod css;
 pub mod specificity;
 pub mod syntax;

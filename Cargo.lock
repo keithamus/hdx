@@ -572,7 +572,6 @@ dependencies = [
  "clap",
  "hdx_ast",
  "hdx_atom",
- "hdx_derive",
  "hdx_lexer",
  "hdx_parser",
  "hdx_syntax",
@@ -594,7 +593,6 @@ dependencies = [
  "grep-regex",
  "grep-searcher",
  "hdx_atom",
- "hdx_derive",
  "hdx_lexer",
  "hdx_parser",
  "hdx_proc_macro",
@@ -620,17 +618,6 @@ dependencies = [
  "serde_json",
  "string_cache",
  "string_cache_codegen",
-]
-
-[[package]]
-name = "hdx_derive"
-version = "0.0.0"
-dependencies = [
- "hdx_atom",
- "hdx_lexer",
- "proc-macro2",
- "quote",
- "syn",
 ]
 
 [[package]]
