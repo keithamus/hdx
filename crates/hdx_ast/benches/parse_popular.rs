@@ -3,6 +3,7 @@ use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion, Through
 use glob::glob;
 use hdx_ast::css::StyleSheet;
 use hdx_parser::{Features, Parser};
+#[cfg(target_family = "unix")]
 use pprof::criterion::{Output, PProfProfiler};
 use std::fs::read_to_string;
 
@@ -40,10 +41,18 @@ fn popular(c: &mut Criterion) {
 	group.finish();
 }
 
+#[cfg(target_family = "unix")]
 criterion_group! {
 	name = benches;
 	config = Criterion::default()
 		.with_profiler(PProfProfiler::new(100, Output::Flamegraph(None)));
+	targets = popular
+}
+
+#[cfg(not(target_family = "unix"))]
+criterion_group! {
+	name = benches;
+	config = Criterion::default()
 	targets = popular
 }
 

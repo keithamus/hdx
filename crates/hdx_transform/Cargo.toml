@@ -21,6 +21,8 @@ glob = { workspace = true }
 serde = { workspace = true, features = ["derive"] }
 serde_json = { workspace = true }
 criterion = { workspace = true, features = ["html_reports"] }
+
+[target.'cfg(target_family = "unix")'.dev-dependencies]
 pprof = { workspace = true, features = ["flamegraph", "criterion"] }
 
 bumpalo = { workspace = true }
