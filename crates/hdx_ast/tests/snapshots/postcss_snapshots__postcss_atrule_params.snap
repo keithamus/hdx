@@ -3,94 +3,50 @@ source: crates/hdx_ast/tests/postcss_snapshots.rs
 expression: result.output.unwrap()
 ---
 {
-  "node": {
-    "type": "stylesheet",
-    "rules": [
-      {
-        "node": {
-          "type": "AtRule",
-          "name": "-moz-document",
-          "prelude": {
-            "node": [
+  "type": "stylesheet",
+  "rules": [
+    {
+      "type": "MozDocument",
+      "at_keyword": {
+        "kind": "AtKeyword",
+        "offset": 0,
+        "len": 14
+      },
+      "matchers": [
+        [
+          {
+            "UrlFunction": [
               {
-                "node": {
-                  "kind": "Whitespace"
-                },
-                "start": 25,
-                "end": 38
+                "kind": "Function",
+                "offset": 38,
+                "len": 4
               },
               {
-                "node": {
-                  "type": "Function",
-                  "name": "url",
-                  "values": [
-                    {
-                      "node": {
-                        "kind": "String",
-                        "value": [
-                          "example.com/{",
-                          {
-                            "kind": "Double"
-                          }
-                        ]
-                      },
-                      "start": 42,
-                      "end": 57
-                    }
-                  ]
-                },
-                "start": 38,
-                "end": 58
+                "kind": "String",
+                "offset": 42,
+                "len": 15
               },
               {
-                "node": {
-                  "kind": "Whitespace"
-                },
-                "start": 58,
-                "end": 59
-              },
-              {
-                "node": {
-                  "kind": "Whitespace"
-                },
-                "start": 59,
-                "end": 67
-              },
-              {
-                "node": {
-                  "type": "SimpleBlock",
-                  "pairwise": "Curly",
-                  "values": []
-                },
-                "start": 67,
-                "end": 69
-              },
-              {
-                "node": {
-                  "kind": "Whitespace"
-                },
-                "start": 69,
-                "end": 70
+                "kind": "RightParen",
+                "len": 1
               }
-            ],
-            "start": 14,
-            "end": 70
+            ]
           },
-          "block": {
-            "node": {
-              "type": "Block",
-              "declarations": [],
-              "rules": []
-            },
-            "start": 0,
-            "end": 0
-          }
+          null
+        ]
+      ],
+      "block": {
+        "type": "DocumentBlock",
+        "open": {
+          "kind": "LeftCurly",
+          "len": 1
         },
-        "start": 0,
-        "end": 70
+        "rules": [],
+        "close": {
+          "kind": "RightCurly",
+          "len": 1
+        }
       }
-    ]
-  },
-  "start": 0,
-  "end": 70
+    }
+  ]
 }

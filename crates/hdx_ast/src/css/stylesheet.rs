@@ -60,13 +60,13 @@ macro_rules! apply_rules {
 			Supports<'a>: atom!("supports"),
 
 			// Deprecated Rules
-			Document: atom!("document"),
+			Document<'a>: atom!("document"),
 
 			// Vendor Prefixed
 			WebkitKeyframes<'a>: atom!("-webkit-keyframes"),
 
 			// https://developer.mozilla.org/en-US/docs/Web/CSS/Mozilla_Extensions#at-rules
-			MozDocument: atom!("-moz-document"),
+			MozDocument<'a>: atom!("-moz-document"),
 		}
 	};
 }

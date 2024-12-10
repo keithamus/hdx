@@ -72,11 +72,21 @@ impl<'a> CursorStream<'a> {
 					}
 					f.write_str(c.str_slice(str))?;
 				}
-				Kind::Function => f.write_str(c.str_slice(str))?,
+				Kind::Function => {
+					if last_kind.ambiguous_without_whitespace() {
+						f.write_char(' ')?;
+					}
+					f.write_str(c.str_slice(str))?;
+				}
 				Kind::AtKeyword => f.write_str(c.str_slice(str))?,
 				Kind::Hash => f.write_str(c.str_slice(str))?,
 				Kind::String => f.write_str(c.str_slice(str))?,
-				Kind::Url => f.write_str(c.str_slice(str))?,
+				Kind::Url => {
+					if last_kind.ambiguous_without_whitespace() {
+						f.write_char(' ')?;
+					}
+					f.write_str(c.str_slice(str))?;
+				}
 				Kind::Delim
 				| Kind::Colon
 				| Kind::Semicolon
