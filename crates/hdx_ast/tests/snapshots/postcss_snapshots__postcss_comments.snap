@@ -3,275 +3,303 @@ source: crates/hdx_ast/tests/postcss_snapshots.rs
 expression: result.output.unwrap()
 ---
 {
-  "node": {
-    "type": "stylesheet",
-    "rules": [
-      {
-        "node": {
-          "type": "stylerule",
-          "selectors": {
-            "node": [
-              {
-                "node": [
-                  {
-                    "type": "tag",
-                    "value": {
-                      "Html": "Div"
-                    }
+  "type": "stylesheet",
+  "rules": [
+    {
+      "type": "stylerule",
+      "selectors": [
+        {
+          "components": [
+            {
+              "type": "tag",
+              "value": {
+                "Html": {
+                  "Div": {
+                    "kind": "Ident",
+                    "offset": 36,
+                    "len": 3
                   }
-                ],
-                "start": 36,
-                "end": 39
+                }
               }
-            ],
-            "start": 0,
-            "end": 39
+            }
+          ],
+          "comma": null
+        }
+      ],
+      "type": "style-declaration",
+      "open": {
+        "kind": "LeftCurly",
+        "len": 1
+      },
+      "declarations": [
+        {
+          "type": "property",
+          "name": {
+            "kind": "Ident",
+            "offset": 63,
+            "len": 5
           },
-          "node": {
-            "type": "style-declaration",
-            "declarations": [
+          "colon": {
+            "kind": "Colon",
+            "len": 1
+          },
+          "value": {
+            "Named": {
+              "black": {
+                "kind": "Ident",
+                "offset": 70,
+                "len": 5
+              }
+            }
+          },
+          "important": null,
+          "semicolon": {
+            "kind": "Semicolon",
+            "len": 1
+          }
+        },
+        {
+          "type": "property",
+          "name": {
+            "kind": "Ident",
+            "offset": 99,
+            "len": 13
+          },
+          "colon": {
+            "kind": "Colon",
+            "len": 1
+          },
+          "value": {
+            "values": [
               {
-                "node": {
-                  "type": "property",
-                  "name": "color",
-                  "value": {
-                    "Named": {
-                      "type": "black"
-                    }
-                  },
-                  "important": false
-                },
-                "start": 41,
-                "end": 76
+                "kind": "Whitespace",
+                "len": 1
               },
               {
-                "node": {
-                  "type": "property",
-                  "name": "border-radius",
-                  "value": [
-                    {
-                      "node": {
-                        "kind": "Dimension",
-                        "value": [
-                          3.0,
-                          "px",
-                          {
-                            "bits": 0
-                          }
-                        ]
-                      },
-                      "start": 114,
-                      "end": 117
-                    },
-                    {
-                      "node": {
-                        "kind": "Whitespace"
-                      },
-                      "start": 117,
-                      "end": 118
-                    },
-                    {
-                      "node": {
-                        "kind": "Delim",
-                        "value": "/"
-                      },
-                      "start": 118,
-                      "end": 119
-                    },
-                    {
-                      "node": {
-                        "kind": "Whitespace"
-                      },
-                      "start": 119,
-                      "end": 120
-                    },
-                    {
-                      "node": {
-                        "kind": "Dimension",
-                        "value": [
-                          7.0,
-                          "px",
-                          {
-                            "bits": 0
-                          }
-                        ]
-                      },
-                      "start": 120,
-                      "end": 123
-                    },
-                    {
-                      "node": {
-                        "kind": "Whitespace"
-                      },
-                      "start": 123,
-                      "end": 128
-                    },
-                    {
-                      "node": {
-                        "kind": "Whitespace"
-                      },
-                      "start": 128,
-                      "end": 138
-                    }
-                  ],
-                  "important": false
-                },
-                "start": 76,
-                "end": 138
-              }
-            ],
-            "rules": []
-          },
-          "start": 39,
-          "end": 139
-        },
-        "start": 0,
-        "end": 139
-      },
-      {
-        "node": {
-          "type": "stylerule",
-          "selectors": {
-            "node": [
-              {
-                "node": [
-                  {
-                    "type": "tag",
-                    "value": {
-                      "Html": "A"
-                    }
-                  }
-                ],
-                "start": 149,
-                "end": 150
-              }
-            ],
-            "start": 139,
-            "end": 150
-          },
-          "node": {
-            "type": "style-declaration",
-            "declarations": [
-              {
-                "node": {
-                  "type": "property",
-                  "name": "color",
-                  "value": {
-                    "Named": {
-                      "type": "black"
-                    }
-                  },
-                  "important": false
-                },
-                "start": 152,
-                "end": 170
-              }
-            ],
-            "rules": []
-          },
-          "start": 150,
-          "end": 184
-        },
-        "start": 139,
-        "end": 184
-      },
-      {
-        "node": {
-          "type": "stylerule",
-          "selectors": {
-            "node": [
-              {
-                "node": [
-                  {
-                    "type": "class",
-                    "value": "in"
-                  },
-                  {
-                    "type": "tag",
-                    "value": {
-                      "Unknown": "side"
-                    }
-                  }
-                ],
-                "start": 186,
-                "end": 197
-              }
-            ],
-            "start": 184,
-            "end": 197
-          },
-          "node": {
-            "type": "style-declaration",
-            "declarations": [
-              {
-                "node": {
-                  "type": "property",
-                  "name": "color",
-                  "value": [
-                    {
-                      "node": {
-                        "kind": "Ident",
-                        "value": "var"
-                      },
-                      "start": 209,
-                      "end": 212
-                    },
-                    {
-                      "node": {
-                        "type": "SimpleBlock",
-                        "pairwise": "Paren",
-                        "values": [
-                          {
-                            "node": {
-                              "kind": "Ident",
-                              "value": "--broken"
-                            },
-                            "start": 217,
-                            "end": 225
-                          }
-                        ]
-                      },
-                      "start": 212,
-                      "end": 226
-                    }
-                  ],
-                  "important": false
-                },
-                "start": 199,
-                "end": 227
+                "kind": "Dimension",
+                "offset": 114,
+                "len": 3,
+                "unit": "px"
               },
               {
-                "node": {
-                  "type": "property",
-                  "name": "font-family",
-                  "value": [
-                    {
-                      "node": "SansSerif",
-                      "start": 242,
-                      "end": 253
-                    },
-                    {
-                      "node": "Serif",
-                      "start": 254,
-                      "end": 263
-                    }
-                  ],
-                  "important": false
-                },
-                "start": 227,
-                "end": 264
+                "kind": "Whitespace",
+                "len": 1
+              },
+              {
+                "kind": "Delim",
+                "len": 1
+              },
+              {
+                "kind": "Whitespace",
+                "len": 1
+              },
+              {
+                "kind": "Dimension",
+                "offset": 120,
+                "len": 3,
+                "unit": "px"
               }
-            ],
-            "rules": []
+            ]
           },
-          "start": 197,
-          "end": 266
-        },
-        "start": 184,
-        "end": 266
+          "important": null,
+          "semicolon": null
+        }
+      ],
+      "rules": [],
+      "close": {
+        "kind": "RightCurly",
+        "len": 1
       }
-    ]
-  },
-  "start": 0,
-  "end": 266
+    },
+    {
+      "type": "stylerule",
+      "selectors": [
+        {
+          "components": [
+            {
+              "type": "tag",
+              "value": {
+                "Html": {
+                  "A": {
+                    "kind": "Ident",
+                    "offset": 149,
+                    "len": 1
+                  }
+                }
+              }
+            }
+          ],
+          "comma": null
+        }
+      ],
+      "type": "style-declaration",
+      "open": {
+        "kind": "LeftCurly",
+        "len": 1
+      },
+      "declarations": [
+        {
+          "type": "property",
+          "name": {
+            "kind": "Ident",
+            "offset": 157,
+            "len": 5
+          },
+          "colon": {
+            "kind": "Colon",
+            "len": 1
+          },
+          "value": {
+            "Named": {
+              "black": {
+                "kind": "Ident",
+                "offset": 164,
+                "len": 5
+              }
+            }
+          },
+          "important": null,
+          "semicolon": {
+            "kind": "Semicolon",
+            "len": 1
+          }
+        }
+      ],
+      "rules": [],
+      "close": {
+        "kind": "RightCurly",
+        "len": 1
+      }
+    },
+    {
+      "type": "QualifiedRule",
+      "prelude": {
+        "values": [
+          {
+            "kind": "Whitespace",
+            "len": 2
+          },
+          {
+            "kind": "Delim",
+            "len": 1
+          },
+          {
+            "kind": "Ident",
+            "offset": 187,
+            "len": 2
+          },
+          {
+            "kind": "Ident",
+            "offset": 193,
+            "len": 4
+          }
+        ]
+      },
+      "block": {
+        "type": "Block",
+        "start": 197,
+        "open_curly": {
+          "kind": "LeftCurly",
+          "len": 1
+        },
+        "declarations": [
+          {
+            "type": "Declaration",
+            "name": {
+              "kind": "Ident",
+              "offset": 202,
+              "len": 5
+            },
+            "colon": {
+              "kind": "Colon",
+              "len": 1
+            },
+            "value": {
+              "values": [
+                {
+                  "kind": "Whitespace",
+                  "len": 1
+                },
+                {
+                  "kind": "Ident",
+                  "offset": 209,
+                  "len": 3
+                },
+                {
+                  "type": "SimpleBlock",
+                  "start": 212,
+                  "open": {
+                    "kind": "LeftParen",
+                    "len": 1
+                  },
+                  "values": {
+                    "values": [
+                      {
+                        "kind": "Ident",
+                        "offset": 217,
+                        "len": 8
+                      }
+                    ]
+                  },
+                  "close": {
+                    "kind": "RightParen",
+                    "len": 1
+                  }
+                }
+              ]
+            },
+            "important": null,
+            "semicolon": {
+              "kind": "Semicolon",
+              "len": 1
+            }
+          },
+          {
+            "type": "Declaration",
+            "name": {
+              "kind": "Ident",
+              "offset": 230,
+              "len": 11
+            },
+            "colon": {
+              "kind": "Colon",
+              "len": 1
+            },
+            "value": {
+              "values": [
+                {
+                  "kind": "Whitespace",
+                  "len": 1
+                },
+                {
+                  "kind": "Ident",
+                  "offset": 243,
+                  "len": 10
+                },
+                {
+                  "kind": "Comma",
+                  "len": 1
+                },
+                {
+                  "kind": "Ident",
+                  "offset": 258,
+                  "len": 5
+                }
+              ]
+            },
+            "important": null,
+            "semicolon": {
+              "kind": "Semicolon",
+              "len": 1
+            }
+          }
+        ],
+        "rules": [],
+        "close_curly": {
+          "kind": "RightCurly",
+          "len": 1
+        }
+      }
+    }
+  ]
 }

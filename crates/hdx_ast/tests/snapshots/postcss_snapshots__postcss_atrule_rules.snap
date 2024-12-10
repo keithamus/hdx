@@ -3,487 +3,334 @@ source: crates/hdx_ast/tests/postcss_snapshots.rs
 expression: result.output.unwrap()
 ---
 {
-  "node": {
-    "type": "stylesheet",
-    "rules": [
-      {
-        "node": {
-          "type": "AtRule",
-          "name": "supports",
-          "prelude": {
-            "node": [
+  "type": "stylesheet",
+  "rules": [
+    {
+      "type": "Supports",
+      "at_keyword": {
+        "kind": "AtKeyword",
+        "offset": 0,
+        "len": 9
+      },
+      "condition": {
+        "type": "Is",
+        "value": {
+          "Property": [
+            {
+              "kind": "LeftParen",
+              "len": 1
+            },
+            {
+              "type": "property",
+              "name": {
+                "kind": "Ident",
+                "offset": 11,
+                "len": 14
+              },
+              "colon": {
+                "kind": "Colon",
+                "len": 1
+              },
+              "value": {
+                "values": [
+                  {
+                    "kind": "Whitespace",
+                    "len": 1
+                  },
+                  {
+                    "kind": "Ident",
+                    "offset": 27,
+                    "len": 4
+                  }
+                ]
+              },
+              "important": null,
+              "semicolon": null
+            },
+            {
+              "kind": "RightParen",
+              "len": 1
+            }
+          ]
+        }
+      },
+      "block": {
+        "open": {
+          "kind": "LeftCurly",
+          "len": 1
+        },
+        "rules": [
+          {
+            "type": "AtRule",
+            "name": {
+              "kind": "AtKeyword",
+              "offset": 39,
+              "len": 17
+            },
+            "prelude": {
+              "values": [
+                {
+                  "kind": "Whitespace",
+                  "len": 1
+                },
+                {
+                  "kind": "Ident",
+                  "offset": 57,
+                  "len": 4
+                }
+              ]
+            },
+            "block": {
+              "type": "Block",
+              "start": 61,
+              "open_curly": {
+                "kind": "LeftCurly",
+                "len": 1
+              },
+              "declarations": [
+                {
+                  "type": "Declaration",
+                  "name": {
+                    "kind": "Ident",
+                    "offset": 72,
+                    "len": 4
+                  },
+                  "colon": null,
+                  "value": {
+                    "values": [
+                      {
+                        "kind": "Whitespace",
+                        "len": 1
+                      },
+                      {
+                        "kind": "Whitespace",
+                        "len": 12
+                      },
+                      {
+                        "kind": "Ident",
+                        "offset": 91,
+                        "len": 5
+                      },
+                      {
+                        "kind": "Colon",
+                        "len": 1
+                      },
+                      {
+                        "kind": "Whitespace",
+                        "len": 1
+                      },
+                      {
+                        "kind": "Ident",
+                        "offset": 98,
+                        "len": 5
+                      }
+                    ]
+                  },
+                  "important": null,
+                  "semicolon": {
+                    "kind": "Semicolon",
+                    "len": 1
+                  }
+                }
+              ],
+              "rules": [],
+              "close_curly": {
+                "kind": "RightCurly",
+                "len": 1
+              }
+            }
+          },
+          {
+            "type": "stylerule",
+            "selectors": [
               {
-                "node": {
-                  "type": "SimpleBlock",
-                  "pairwise": "Paren",
-                  "values": [
-                    {
-                      "node": {
+                "components": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Unknown": {
                         "kind": "Ident",
-                        "value": "animation-name"
-                      },
-                      "start": 11,
-                      "end": 25
-                    },
-                    {
-                      "node": {
-                        "kind": "Colon"
-                      },
-                      "start": 25,
-                      "end": 26
-                    },
-                    {
-                      "node": {
-                        "kind": "Whitespace"
-                      },
-                      "start": 26,
-                      "end": 27
-                    },
-                    {
-                      "node": {
-                        "kind": "Ident",
-                        "value": "test"
-                      },
-                      "start": 27,
-                      "end": 31
+                        "offset": 123,
+                        "len": 2
+                      }
                     }
-                  ]
-                },
-                "start": 10,
-                "end": 32
-              },
-              {
-                "node": {
-                  "kind": "Whitespace"
-                },
-                "start": 32,
-                "end": 33
-              },
-              {
-                "node": {
-                  "type": "SimpleBlock",
-                  "pairwise": "Curly",
-                  "values": [
-                    {
-                      "node": {
-                        "kind": "Whitespace"
-                      },
-                      "start": 34,
-                      "end": 39
-                    },
-                    {
-                      "node": {
-                        "kind": "AtKeyword",
-                        "value": "-custom-keyframe"
-                      },
-                      "start": 39,
-                      "end": 56
-                    },
-                    {
-                      "node": {
-                        "kind": "Whitespace"
-                      },
-                      "start": 56,
-                      "end": 57
-                    },
-                    {
-                      "node": {
-                        "kind": "Ident",
-                        "value": "anim"
-                      },
-                      "start": 57,
-                      "end": 61
-                    },
-                    {
-                      "node": {
-                        "kind": "Whitespace"
-                      },
-                      "start": 61,
-                      "end": 62
-                    },
-                    {
-                      "node": {
-                        "type": "SimpleBlock",
-                        "pairwise": "Curly",
-                        "values": [
-                          {
-                            "node": {
-                              "kind": "Whitespace"
-                            },
-                            "start": 63,
-                            "end": 72
-                          },
-                          {
-                            "node": {
-                              "kind": "Ident",
-                              "value": "from"
-                            },
-                            "start": 72,
-                            "end": 76
-                          },
-                          {
-                            "node": {
-                              "kind": "Whitespace"
-                            },
-                            "start": 76,
-                            "end": 77
-                          },
-                          {
-                            "node": {
-                              "type": "SimpleBlock",
-                              "pairwise": "Curly",
-                              "values": [
-                                {
-                                  "node": {
-                                    "kind": "Whitespace"
-                                  },
-                                  "start": 78,
-                                  "end": 91
-                                },
-                                {
-                                  "node": {
-                                    "kind": "Ident",
-                                    "value": "color"
-                                  },
-                                  "start": 91,
-                                  "end": 96
-                                },
-                                {
-                                  "node": {
-                                    "kind": "Colon"
-                                  },
-                                  "start": 96,
-                                  "end": 97
-                                },
-                                {
-                                  "node": {
-                                    "kind": "Whitespace"
-                                  },
-                                  "start": 97,
-                                  "end": 98
-                                },
-                                {
-                                  "node": {
-                                    "kind": "Ident",
-                                    "value": "black"
-                                  },
-                                  "start": 98,
-                                  "end": 103
-                                },
-                                {
-                                  "node": {
-                                    "kind": "Semicolon"
-                                  },
-                                  "start": 103,
-                                  "end": 104
-                                },
-                                {
-                                  "node": {
-                                    "kind": "Whitespace"
-                                  },
-                                  "start": 104,
-                                  "end": 113
-                                }
-                              ]
-                            },
-                            "start": 77,
-                            "end": 114
-                          },
-                          {
-                            "node": {
-                              "kind": "Whitespace"
-                            },
-                            "start": 114,
-                            "end": 123
-                          },
-                          {
-                            "node": {
-                              "kind": "Ident",
-                              "value": "to"
-                            },
-                            "start": 123,
-                            "end": 125
-                          },
-                          {
-                            "node": {
-                              "kind": "Whitespace"
-                            },
-                            "start": 125,
-                            "end": 126
-                          },
-                          {
-                            "node": {
-                              "type": "SimpleBlock",
-                              "pairwise": "Curly",
-                              "values": [
-                                {
-                                  "node": {
-                                    "kind": "Whitespace"
-                                  },
-                                  "start": 127,
-                                  "end": 140
-                                },
-                                {
-                                  "node": {
-                                    "kind": "Ident",
-                                    "value": "color"
-                                  },
-                                  "start": 140,
-                                  "end": 145
-                                },
-                                {
-                                  "node": {
-                                    "kind": "Colon"
-                                  },
-                                  "start": 145,
-                                  "end": 146
-                                },
-                                {
-                                  "node": {
-                                    "kind": "Whitespace"
-                                  },
-                                  "start": 146,
-                                  "end": 147
-                                },
-                                {
-                                  "node": {
-                                    "kind": "Ident",
-                                    "value": "white"
-                                  },
-                                  "start": 147,
-                                  "end": 152
-                                },
-                                {
-                                  "node": {
-                                    "kind": "Whitespace"
-                                  },
-                                  "start": 152,
-                                  "end": 161
-                                }
-                              ]
-                            },
-                            "start": 126,
-                            "end": 162
-                          },
-                          {
-                            "node": {
-                              "kind": "Whitespace"
-                            },
-                            "start": 162,
-                            "end": 167
-                          }
-                        ]
-                      },
-                      "start": 62,
-                      "end": 168
-                    },
-                    {
-                      "node": {
-                        "kind": "Whitespace"
-                      },
-                      "start": 168,
-                      "end": 169
-                    }
-                  ]
-                },
-                "start": 33,
-                "end": 170
-              },
-              {
-                "node": {
-                  "kind": "Whitespace"
-                },
-                "start": 170,
-                "end": 172
-              },
-              {
-                "node": {
-                  "kind": "AtKeyword",
-                  "value": "support"
-                },
-                "start": 172,
-                "end": 180
-              },
-              {
-                "node": {
-                  "kind": "Whitespace"
-                },
-                "start": 180,
-                "end": 181
-              },
-              {
-                "node": {
-                  "type": "Function",
-                  "name": "selector",
-                  "values": [
-                    {
-                      "node": {
-                        "kind": "Colon"
-                      },
-                      "start": 190,
-                      "end": 191
-                    },
-                    {
-                      "node": {
-                        "kind": "Ident",
-                        "value": "focus-visible"
-                      },
-                      "start": 191,
-                      "end": 204
-                    }
-                  ]
-                },
-                "start": 181,
-                "end": 205
-              },
-              {
-                "node": {
-                  "kind": "Whitespace"
-                },
-                "start": 205,
-                "end": 206
-              },
-              {
-                "node": {
-                  "type": "SimpleBlock",
-                  "pairwise": "Curly",
-                  "values": [
-                    {
-                      "node": {
-                        "kind": "Whitespace"
-                      },
-                      "start": 207,
-                      "end": 210
-                    },
-                    {
-                      "node": {
-                        "kind": "Ident",
-                        "value": "a"
-                      },
-                      "start": 210,
-                      "end": 211
-                    },
-                    {
-                      "node": {
-                        "kind": "Colon"
-                      },
-                      "start": 211,
-                      "end": 212
-                    },
-                    {
-                      "node": {
-                        "kind": "Ident",
-                        "value": "focus-visible"
-                      },
-                      "start": 212,
-                      "end": 225
-                    },
-                    {
-                      "node": {
-                        "kind": "Whitespace"
-                      },
-                      "start": 225,
-                      "end": 226
-                    },
-                    {
-                      "node": {
-                        "type": "SimpleBlock",
-                        "pairwise": "Curly",
-                        "values": [
-                          {
-                            "node": {
-                              "kind": "Whitespace"
-                            },
-                            "start": 227,
-                            "end": 232
-                          },
-                          {
-                            "node": {
-                              "kind": "Ident",
-                              "value": "background"
-                            },
-                            "start": 232,
-                            "end": 242
-                          },
-                          {
-                            "node": {
-                              "kind": "Colon"
-                            },
-                            "start": 242,
-                            "end": 243
-                          },
-                          {
-                            "node": {
-                              "kind": "Whitespace"
-                            },
-                            "start": 243,
-                            "end": 244
-                          },
-                          {
-                            "node": {
-                              "kind": "Ident",
-                              "value": "yellow"
-                            },
-                            "start": 244,
-                            "end": 250
-                          },
-                          {
-                            "node": {
-                              "kind": "Semicolon"
-                            },
-                            "start": 250,
-                            "end": 251
-                          },
-                          {
-                            "node": {
-                              "kind": "Whitespace"
-                            },
-                            "start": 251,
-                            "end": 254
-                          }
-                        ]
-                      },
-                      "start": 226,
-                      "end": 255
-                    },
-                    {
-                      "node": {
-                        "kind": "Whitespace"
-                      },
-                      "start": 255,
-                      "end": 256
-                    }
-                  ]
-                },
-                "start": 206,
-                "end": 257
-              },
-              {
-                "node": {
-                  "kind": "Whitespace"
-                },
-                "start": 257,
-                "end": 258
+                  }
+                ],
+                "comma": null
               }
             ],
-            "start": 9,
-            "end": 258
-          },
-          "block": {
-            "node": {
-              "type": "Block",
-              "declarations": [],
-              "rules": []
+            "type": "style-declaration",
+            "open": {
+              "kind": "LeftCurly",
+              "len": 1
             },
-            "start": 0,
-            "end": 0
+            "declarations": [
+              {
+                "type": "property",
+                "name": {
+                  "kind": "Ident",
+                  "offset": 140,
+                  "len": 5
+                },
+                "colon": {
+                  "kind": "Colon",
+                  "len": 1
+                },
+                "value": {
+                  "Named": {
+                    "white": {
+                      "kind": "Ident",
+                      "offset": 147,
+                      "len": 5
+                    }
+                  }
+                },
+                "important": null,
+                "semicolon": null
+              }
+            ],
+            "rules": [],
+            "close": {
+              "kind": "RightCurly",
+              "len": 1
+            }
           }
-        },
-        "start": 0,
-        "end": 258
+        ],
+        "close": {
+          "kind": "RightCurly",
+          "len": 1
+        }
       }
-    ]
-  },
-  "start": 0,
-  "end": 258
+    },
+    {
+      "type": "AtRule",
+      "name": {
+        "kind": "AtKeyword",
+        "offset": 172,
+        "len": 8
+      },
+      "prelude": {
+        "values": [
+          {
+            "kind": "Whitespace",
+            "len": 1
+          },
+          {
+            "type": "Function",
+            "name": {
+              "kind": "Function",
+              "offset": 181,
+              "len": 9
+            },
+            "values": [
+              {
+                "kind": "Colon",
+                "len": 1
+              },
+              {
+                "kind": "Ident",
+                "offset": 191,
+                "len": 13
+              }
+            ],
+            "close_paren": {
+              "kind": "RightParen",
+              "len": 1
+            }
+          }
+        ]
+      },
+      "block": {
+        "type": "Block",
+        "start": 205,
+        "open_curly": {
+          "kind": "LeftCurly",
+          "len": 1
+        },
+        "declarations": [
+          {
+            "type": "Declaration",
+            "name": {
+              "kind": "Ident",
+              "offset": 210,
+              "len": 1
+            },
+            "colon": {
+              "kind": "Colon",
+              "len": 1
+            },
+            "value": {
+              "values": [
+                {
+                  "kind": "Ident",
+                  "offset": 212,
+                  "len": 13
+                }
+              ]
+            },
+            "important": null,
+            "semicolon": null
+          }
+        ],
+        "rules": [
+          {
+            "type": "QualifiedRule",
+            "type": "QualifiedRule",
+            "prelude": {
+              "values": []
+            },
+            "block": {
+              "type": "Block",
+              "start": 225,
+              "open_curly": {
+                "kind": "LeftCurly",
+                "len": 1
+              },
+              "declarations": [
+                {
+                  "type": "Declaration",
+                  "name": {
+                    "kind": "Ident",
+                    "offset": 232,
+                    "len": 10
+                  },
+                  "colon": {
+                    "kind": "Colon",
+                    "len": 1
+                  },
+                  "value": {
+                    "values": [
+                      {
+                        "kind": "Whitespace",
+                        "len": 1
+                      },
+                      {
+                        "kind": "Ident",
+                        "offset": 244,
+                        "len": 6
+                      }
+                    ]
+                  },
+                  "important": null,
+                  "semicolon": {
+                    "kind": "Semicolon",
+                    "len": 1
+                  }
+                }
+              ],
+              "rules": [],
+              "close_curly": {
+                "kind": "RightCurly",
+                "len": 1
+              }
+            }
+          }
+        ],
+        "close_curly": {
+          "kind": "RightCurly",
+          "len": 1
+        }
+      }
+    }
+  ]
 }

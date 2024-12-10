@@ -3,82 +3,123 @@ source: crates/hdx_ast/tests/postcss_snapshots.rs
 expression: result.output.unwrap()
 ---
 {
-  "node": {
-    "type": "stylesheet",
-    "rules": [
-      {
-        "node": {
-          "type": "stylerule",
-          "selectors": {
-            "node": [
-              {
-                "node": [
-                  {
-                    "type": "tag",
-                    "value": {
-                      "Html": "A"
-                    }
-                  },
-                  {
-                    "type": "pseudo-element",
-                    "value": "before"
+  "type": "stylesheet",
+  "rules": [
+    {
+      "type": "stylerule",
+      "selectors": [
+        {
+          "components": [
+            {
+              "type": "tag",
+              "value": {
+                "Html": {
+                  "A": {
+                    "kind": "Ident",
+                    "offset": 0,
+                    "len": 1
                   }
-                ],
-                "start": 0,
-                "end": 9
+                }
               }
-            ],
-            "start": 0,
-            "end": 9
+            },
+            {
+              "type": "pseudo-element",
+              "value": {
+                "before": [
+                  [
+                    {
+                      "kind": "Colon",
+                      "len": 1
+                    },
+                    {
+                      "kind": "Colon",
+                      "len": 1
+                    }
+                  ],
+                  {
+                    "kind": "Ident",
+                    "offset": 3,
+                    "len": 6
+                  }
+                ]
+              }
+            }
+          ],
+          "comma": null
+        }
+      ],
+      "type": "style-declaration",
+      "open": {
+        "kind": "LeftCurly",
+        "len": 1
+      },
+      "declarations": [
+        {
+          "type": "property",
+          "name": {
+            "kind": "Ident",
+            "offset": 16,
+            "len": 7
           },
-          "node": {
-            "type": "style-declaration",
-            "declarations": [
+          "colon": {
+            "kind": "Colon",
+            "len": 1
+          },
+          "value": {
+            "values": [
               {
-                "node": {
-                  "type": "property",
-                  "name": "content",
-                  "value": {
-                    "String": [
-                      ";'@ /**/\"",
-                      {
-                        "kind": "Double"
-                      }
-                    ]
-                  },
-                  "important": false
-                },
-                "start": 11,
-                "end": 38
+                "kind": "Whitespace",
+                "len": 1
               },
               {
-                "node": {
-                  "type": "property",
-                  "name": "content",
-                  "value": {
-                    "String": [
-                      "'\"\\",
-                      {
-                        "kind": "Single"
-                      }
-                    ]
-                  },
-                  "important": false
-                },
-                "start": 38,
-                "end": 60
+                "kind": "String",
+                "offset": 25,
+                "len": 12
               }
-            ],
-            "rules": []
+            ]
           },
-          "start": 9,
-          "end": 62
+          "important": null,
+          "semicolon": {
+            "kind": "Semicolon",
+            "len": 1
+          }
         },
-        "start": 0,
-        "end": 62
+        {
+          "type": "property",
+          "name": {
+            "kind": "Ident",
+            "offset": 43,
+            "len": 7
+          },
+          "colon": {
+            "kind": "Colon",
+            "len": 1
+          },
+          "value": {
+            "values": [
+              {
+                "kind": "Whitespace",
+                "len": 1
+              },
+              {
+                "kind": "String",
+                "offset": 52,
+                "len": 7
+              }
+            ]
+          },
+          "important": null,
+          "semicolon": {
+            "kind": "Semicolon",
+            "len": 1
+          }
+        }
+      ],
+      "rules": [],
+      "close": {
+        "kind": "RightCurly",
+        "len": 1
       }
-    ]
-  },
-  "start": 0,
-  "end": 62
+    }
+  ]
 }

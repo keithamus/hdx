@@ -3,477 +3,80 @@ source: crates/hdx_ast/tests/postcss_snapshots.rs
 expression: result.output.unwrap()
 ---
 {
-  "node": {
-    "type": "stylesheet",
-    "rules": [
-      {
-        "node": {
-          "type": "Page",
-          "selectors": {
-            "node": [
-              {
-                "node": {
-                  "type": "PageSelector",
-                  "page_type": null,
-                  "pseudos": [
-                    {
-                      "node": "left",
-                      "start": 5,
-                      "end": 11
-                    }
-                  ]
-                },
-                "start": 5,
-                "end": 11
-              }
-            ],
-            "start": 5,
-            "end": 11
-          },
-          "style": {
-            "node": {
-              "type": "PageDeclaration",
-              "properties": [
-                {
-                  "node": {
-                    "type": "property",
-                    "name": "background",
-                    "value": [
-                      {
-                        "node": {
-                          "kind": "Ident",
-                          "value": "black"
-                        },
-                        "start": 30,
-                        "end": 35
-                      },
-                      {
-                        "node": {
-                          "kind": "Whitespace"
-                        },
-                        "start": 35,
-                        "end": 36
-                      }
-                    ],
-                    "important": false
-                  },
-                  "start": 13,
-                  "end": 36
-                }
-              ],
-              "rules": []
-            },
-            "start": 11,
-            "end": 37
-          }
-        },
-        "start": 0,
-        "end": 37
+  "type": "stylesheet",
+  "rules": [
+    {
+      "type": "Page",
+      "at_keyword": {
+        "kind": "AtKeyword",
+        "offset": 0,
+        "len": 5
       },
-      {
-        "node": {
-          "type": "AtRule",
-          "name": "media",
-          "prelude": {
-            "node": [
+      "selectors": [
+        [
+          {
+            "type": "PageSelector",
+            "page_type": null,
+            "pseudos": [
               {
-                "node": {
-                  "type": "SimpleBlock",
-                  "pairwise": "Paren",
-                  "values": [
-                    {
-                      "node": {
-                        "kind": "Ident",
-                        "value": "min-width"
-                      },
-                      "start": 46,
-                      "end": 55
-                    },
-                    {
-                      "node": {
-                        "kind": "Colon"
-                      },
-                      "start": 55,
-                      "end": 56
-                    },
-                    {
-                      "node": {
-                        "kind": "Whitespace"
-                      },
-                      "start": 56,
-                      "end": 57
-                    },
-                    {
-                      "node": {
-                        "kind": "Number",
-                        "value": [
-                          0.0,
-                          {
-                            "bits": 0
-                          }
-                        ]
-                      },
-                      "start": 57,
-                      "end": 58
-                    }
-                  ]
-                },
-                "start": 45,
-                "end": 59
-              },
-              {
-                "node": {
-                  "kind": "Whitespace"
-                },
-                "start": 59,
-                "end": 60
-              },
-              {
-                "node": {
-                  "type": "SimpleBlock",
-                  "pairwise": "Curly",
-                  "values": [
-                    {
-                      "node": {
-                        "kind": "Whitespace"
-                      },
-                      "start": 61,
-                      "end": 66
-                    },
-                    {
-                      "node": {
-                        "kind": "Ident",
-                        "value": "background"
-                      },
-                      "start": 66,
-                      "end": 76
-                    },
-                    {
-                      "node": {
-                        "kind": "Colon"
-                      },
-                      "start": 76,
-                      "end": 77
-                    },
-                    {
-                      "node": {
-                        "kind": "Whitespace"
-                      },
-                      "start": 77,
-                      "end": 78
-                    },
-                    {
-                      "node": {
-                        "kind": "Ident",
-                        "value": "white"
-                      },
-                      "start": 78,
-                      "end": 83
-                    },
-                    {
-                      "node": {
-                        "kind": "Whitespace"
-                      },
-                      "start": 83,
-                      "end": 84
-                    }
-                  ]
-                },
-                "start": 60,
-                "end": 85
-              },
-              {
-                "node": {
-                  "kind": "Whitespace"
-                },
-                "start": 85,
-                "end": 87
-              },
-              {
-                "node": {
-                  "kind": "AtKeyword",
-                  "value": "font-face"
-                },
-                "start": 87,
-                "end": 97
-              },
-              {
-                "node": {
-                  "kind": "Whitespace"
-                },
-                "start": 97,
-                "end": 98
-              },
-              {
-                "node": {
-                  "type": "SimpleBlock",
-                  "pairwise": "Curly",
-                  "values": [
-                    {
-                      "node": {
-                        "kind": "Whitespace"
-                      },
-                      "start": 99,
-                      "end": 104
-                    },
-                    {
-                      "node": {
-                        "kind": "Ident",
-                        "value": "family-name"
-                      },
-                      "start": 104,
-                      "end": 115
-                    },
-                    {
-                      "node": {
-                        "kind": "Colon"
-                      },
-                      "start": 115,
-                      "end": 116
-                    },
-                    {
-                      "node": {
-                        "kind": "Whitespace"
-                      },
-                      "start": 116,
-                      "end": 117
-                    },
-                    {
-                      "node": {
-                        "kind": "String",
-                        "value": [
-                          "A;' /**/",
-                          {
-                            "kind": "Double"
-                          }
-                        ]
-                      },
-                      "start": 117,
-                      "end": 127
-                    },
-                    {
-                      "node": {
-                        "kind": "Semicolon"
-                      },
-                      "start": 127,
-                      "end": 128
-                    },
-                    {
-                      "node": {
-                        "kind": "Whitespace"
-                      },
-                      "start": 128,
-                      "end": 129
-                    }
-                  ]
-                },
-                "start": 98,
-                "end": 130
-              },
-              {
-                "node": {
-                  "kind": "Whitespace"
-                },
-                "start": 130,
-                "end": 132
-              },
-              {
-                "node": {
-                  "kind": "AtKeyword",
-                  "value": "viewport"
-                },
-                "start": 132,
-                "end": 141
-              },
-              {
-                "node": {
-                  "kind": "Whitespace"
-                },
-                "start": 141,
-                "end": 142
-              },
-              {
-                "node": {
-                  "type": "SimpleBlock",
-                  "pairwise": "Curly",
-                  "values": [
-                    {
-                      "node": {
-                        "kind": "Whitespace"
-                      },
-                      "start": 143,
-                      "end": 148
-                    },
-                    {
-                      "node": {
-                        "kind": "Ident",
-                        "value": "width"
-                      },
-                      "start": 148,
-                      "end": 153
-                    },
-                    {
-                      "node": {
-                        "kind": "Colon"
-                      },
-                      "start": 153,
-                      "end": 154
-                    },
-                    {
-                      "node": {
-                        "kind": "Whitespace"
-                      },
-                      "start": 154,
-                      "end": 155
-                    },
-                    {
-                      "node": {
-                        "kind": "Dimension",
-                        "value": [
-                          110.0,
-                          "px",
-                          {
-                            "bits": 0
-                          }
-                        ]
-                      },
-                      "start": 155,
-                      "end": 160
-                    },
-                    {
-                      "node": {
-                        "kind": "Semicolon"
-                      },
-                      "start": 160,
-                      "end": 161
-                    },
-                    {
-                      "node": {
-                        "kind": "Whitespace"
-                      },
-                      "start": 161,
-                      "end": 162
-                    }
-                  ]
-                },
-                "start": 142,
-                "end": 163
-              },
-              {
-                "node": {
-                  "kind": "Whitespace"
-                },
-                "start": 163,
-                "end": 165
-              },
-              {
-                "node": {
-                  "kind": "AtKeyword",
-                  "value": "-ms-viewport"
-                },
-                "start": 165,
-                "end": 178
-              },
-              {
-                "node": {
-                  "kind": "Whitespace"
-                },
-                "start": 178,
-                "end": 179
-              },
-              {
-                "node": {
-                  "type": "SimpleBlock",
-                  "pairwise": "Curly",
-                  "values": [
-                    {
-                      "node": {
-                        "kind": "Whitespace"
-                      },
-                      "start": 180,
-                      "end": 185
-                    },
-                    {
-                      "node": {
-                        "kind": "Ident",
-                        "value": "width"
-                      },
-                      "start": 185,
-                      "end": 190
-                    },
-                    {
-                      "node": {
-                        "kind": "Colon"
-                      },
-                      "start": 190,
-                      "end": 191
-                    },
-                    {
-                      "node": {
-                        "kind": "Whitespace"
-                      },
-                      "start": 191,
-                      "end": 192
-                    },
-                    {
-                      "node": {
-                        "kind": "Dimension",
-                        "value": [
-                          100.0,
-                          "px",
-                          {
-                            "bits": 0
-                          }
-                        ]
-                      },
-                      "start": 192,
-                      "end": 197
-                    },
-                    {
-                      "node": {
-                        "kind": "Semicolon"
-                      },
-                      "start": 197,
-                      "end": 198
-                    },
-                    {
-                      "node": {
-                        "kind": "Whitespace"
-                      },
-                      "start": 198,
-                      "end": 199
-                    }
-                  ]
-                },
-                "start": 179,
-                "end": 200
-              },
-              {
-                "node": {
-                  "kind": "Whitespace"
-                },
-                "start": 200,
-                "end": 201
+                "left": [
+                  {
+                    "kind": "Colon",
+                    "len": 1
+                  },
+                  {
+                    "kind": "Ident",
+                    "offset": 7,
+                    "len": 4
+                  }
+                ]
               }
-            ],
-            "start": 45,
-            "end": 201
+            ]
           },
-          "block": {
-            "node": {
-              "type": "Block",
-              "declarations": [],
-              "rules": []
-            },
-            "start": 0,
-            "end": 0
-          }
+          null
+        ]
+      ],
+      "block": {
+        "type": "PageBlock",
+        "open": {
+          "kind": "LeftCurly",
+          "len": 1
         },
-        "start": 37,
-        "end": 201
+        "properties": [
+          {
+            "type": "property",
+            "name": {
+              "kind": "Ident",
+              "offset": 18,
+              "len": 10
+            },
+            "colon": {
+              "kind": "Colon",
+              "len": 1
+            },
+            "value": {
+              "values": [
+                {
+                  "kind": "Whitespace",
+                  "len": 1
+                },
+                {
+                  "kind": "Ident",
+                  "offset": 30,
+                  "len": 5
+                }
+              ]
+            },
+            "important": null,
+            "semicolon": null
+          }
+        ],
+        "rules": [],
+        "close": {
+          "kind": "RightCurly",
+          "len": 1
+        }
       }
-    ]
-  },
-  "start": 0,
-  "end": 201
+    }
+  ]
 }

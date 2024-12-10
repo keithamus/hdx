@@ -3,28 +3,29 @@ source: crates/hdx_ast/tests/postcss_snapshots.rs
 expression: result.output.unwrap()
 ---
 {
-  "node": {
-    "type": "stylesheet",
-    "rules": [
-      {
-        "node": {
-          "type": "Page",
-          "selectors": null,
-          "style": {
-            "node": {
-              "type": "PageDeclaration",
-              "properties": [],
-              "rules": []
-            },
-            "start": 5,
-            "end": 8
-          }
+  "type": "stylesheet",
+  "rules": [
+    {
+      "type": "Page",
+      "at_keyword": {
+        "kind": "AtKeyword",
+        "offset": 0,
+        "len": 5
+      },
+      "selectors": null,
+      "block": {
+        "type": "PageBlock",
+        "open": {
+          "kind": "LeftCurly",
+          "len": 1
         },
-        "start": 0,
-        "end": 8
+        "properties": [],
+        "rules": [],
+        "close": {
+          "kind": "RightCurly",
+          "len": 1
+        }
       }
-    ]
-  },
-  "start": 0,
-  "end": 8
+    }
+  ]
 }

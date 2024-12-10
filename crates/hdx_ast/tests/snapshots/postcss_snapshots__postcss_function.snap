@@ -3,119 +3,163 @@ source: crates/hdx_ast/tests/postcss_snapshots.rs
 expression: result.output.unwrap()
 ---
 {
-  "node": {
-    "type": "stylesheet",
-    "rules": [
-      {
-        "node": {
-          "type": "stylerule",
-          "selectors": {
-            "node": [
+  "type": "stylesheet",
+  "rules": [
+    {
+      "type": "stylerule",
+      "selectors": [
+        {
+          "components": [
+            {
+              "type": "tag",
+              "value": {
+                "Html": {
+                  "A": {
+                    "kind": "Ident",
+                    "offset": 0,
+                    "len": 1
+                  }
+                }
+              }
+            }
+          ],
+          "comma": null
+        }
+      ],
+      "type": "style-declaration",
+      "open": {
+        "kind": "LeftCurly",
+        "len": 1
+      },
+      "declarations": [
+        {
+          "type": "property",
+          "name": {
+            "kind": "Ident",
+            "offset": 8,
+            "len": 16
+          },
+          "colon": {
+            "kind": "Colon",
+            "len": 1
+          },
+          "value": {
+            "values": [
               {
-                "node": [
+                "kind": "Whitespace",
+                "len": 1
+              },
+              {
+                "kind": "Url",
+                "offset": 26,
+                "len": 83
+              }
+            ]
+          },
+          "important": null,
+          "semicolon": {
+            "kind": "Semicolon",
+            "len": 1
+          }
+        },
+        {
+          "type": "property",
+          "name": {
+            "kind": "Ident",
+            "offset": 115,
+            "len": 16
+          },
+          "colon": {
+            "kind": "Colon",
+            "len": 1
+          },
+          "value": {
+            "values": [
+              {
+                "kind": "Whitespace",
+                "len": 1
+              },
+              {
+                "type": "Function",
+                "name": {
+                  "kind": "Function",
+                  "offset": 133,
+                  "len": 4
+                },
+                "values": [
                   {
-                    "type": "tag",
-                    "value": {
-                      "Html": "A"
-                    }
+                    "kind": "String",
+                    "offset": 137,
+                    "len": 17
                   }
                 ],
-                "start": 0,
-                "end": 1
+                "close_paren": {
+                  "kind": "RightParen",
+                  "len": 1
+                }
               }
-            ],
-            "start": 0,
-            "end": 1
+            ]
           },
-          "node": {
-            "type": "style-declaration",
-            "declarations": [
-              {
-                "node": {
-                  "type": "property",
-                  "name": "background-image",
-                  "value": [
-                    {
-                      "node": {
-                        "Image": {
-                          "Url": [
-                            "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7",
-                            {
-                              "kind": "None"
-                            }
-                          ]
-                        }
-                      },
-                      "start": 25,
-                      "end": 109
-                    }
-                  ],
-                  "important": false
-                },
-                "start": 3,
-                "end": 110
-              },
-              {
-                "node": {
-                  "type": "property",
-                  "name": "background-image",
-                  "value": [
-                    {
-                      "node": {
-                        "Image": {
-                          "Url": [
-                            "./image (1).jpg",
-                            {
-                              "kind": "Double"
-                            }
-                          ]
-                        }
-                      },
-                      "start": 132,
-                      "end": 155
-                    }
-                  ],
-                  "important": false
-                },
-                "start": 110,
-                "end": 156
-              },
-              {
-                "node": {
-                  "type": "property",
-                  "name": "background-image",
-                  "value": [
-                    {
-                      "node": {
-                        "Image": {
-                          "Url": [
-                            "./image (1).jpg",
-                            {
-                              "kind": "Single"
-                            }
-                          ]
-                        }
-                      },
-                      "start": 178,
-                      "end": 203
-                    }
-                  ],
-                  "important": false
-                },
-                "start": 156,
-                "end": 204
-              }
-            ],
-            "rules": []
-          },
-          "start": 1,
-          "end": 206
+          "important": null,
+          "semicolon": {
+            "kind": "Semicolon",
+            "len": 1
+          }
         },
-        "start": 0,
-        "end": 206
+        {
+          "type": "property",
+          "name": {
+            "kind": "Ident",
+            "offset": 161,
+            "len": 16
+          },
+          "colon": {
+            "kind": "Colon",
+            "len": 1
+          },
+          "value": {
+            "values": [
+              {
+                "kind": "Whitespace",
+                "len": 1
+              },
+              {
+                "type": "Function",
+                "name": {
+                  "kind": "Function",
+                  "offset": 179,
+                  "len": 4
+                },
+                "values": [
+                  {
+                    "kind": "Whitespace",
+                    "len": 1
+                  },
+                  {
+                    "kind": "String",
+                    "offset": 184,
+                    "len": 17
+                  }
+                ],
+                "close_paren": {
+                  "kind": "RightParen",
+                  "len": 1
+                }
+              }
+            ]
+          },
+          "important": null,
+          "semicolon": {
+            "kind": "Semicolon",
+            "len": 1
+          }
+        }
+      ],
+      "rules": [],
+      "close": {
+        "kind": "RightCurly",
+        "len": 1
       }
-    ]
-  },
-  "start": 0,
-  "end": 206
+    }
+  ]
 }

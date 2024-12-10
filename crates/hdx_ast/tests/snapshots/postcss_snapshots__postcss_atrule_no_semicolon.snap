@@ -3,109 +3,24 @@ source: crates/hdx_ast/tests/postcss_snapshots.rs
 expression: result.output.unwrap()
 ---
 {
-  "node": {
-    "type": "stylesheet",
-    "rules": [
-      {
-        "node": {
-          "type": "AtRule",
-          "name": "media",
-          "prelude": {
-            "node": [
-              {
-                "node": {
-                  "kind": "Ident",
-                  "value": "screen"
-                },
-                "start": 7,
-                "end": 13
-              },
-              {
-                "node": {
-                  "kind": "Whitespace"
-                },
-                "start": 13,
-                "end": 14
-              },
-              {
-                "node": {
-                  "type": "SimpleBlock",
-                  "pairwise": "Curly",
-                  "values": [
-                    {
-                      "node": {
-                        "kind": "AtKeyword",
-                        "value": "content"
-                      },
-                      "start": 15,
-                      "end": 23
-                    }
-                  ]
-                },
-                "start": 14,
-                "end": 24
-              },
-              {
-                "node": {
-                  "kind": "Whitespace"
-                },
-                "start": 24,
-                "end": 26
-              },
-              {
-                "node": {
-                  "kind": "AtKeyword",
-                  "value": "charset"
-                },
-                "start": 26,
-                "end": 34
-              },
-              {
-                "node": {
-                  "kind": "Whitespace"
-                },
-                "start": 34,
-                "end": 35
-              },
-              {
-                "node": {
-                  "kind": "String",
-                  "value": [
-                    "UTF-8",
-                    {
-                      "kind": "Double"
-                    }
-                  ]
-                },
-                "start": 35,
-                "end": 42
-              },
-              {
-                "node": {
-                  "kind": "Whitespace"
-                },
-                "start": 42,
-                "end": 43
-              }
-            ],
-            "start": 6,
-            "end": 43
-          },
-          "block": {
-            "node": {
-              "type": "Block",
-              "declarations": [],
-              "rules": []
-            },
-            "start": 0,
-            "end": 0
-          }
-        },
-        "start": 0,
-        "end": 43
-      }
-    ]
-  },
-  "start": 0,
-  "end": 43
+  "type": "stylesheet",
+  "rules": [
+    {
+      "at_keyword": {
+        "kind": "AtKeyword",
+        "offset": 26,
+        "len": 8
+      },
+      "space": {
+        "kind": "Whitespace",
+        "len": 1
+      },
+      "string": {
+        "kind": "String",
+        "offset": 35,
+        "len": 7
+      },
+      "semicolon": null
+    }
+  ]
 }

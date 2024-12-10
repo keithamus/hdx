@@ -3,18 +3,27 @@ source: crates/hdx_ast/tests/postcss_snapshots.rs
 expression: result.output.unwrap()
 ---
 {
-  "node": {
-    "type": "stylesheet",
-    "rules": [
-      {
-        "node": {
-          "type": "Utf8"
-        },
-        "start": 0,
-        "end": 17
+  "type": "stylesheet",
+  "rules": [
+    {
+      "at_keyword": {
+        "kind": "AtKeyword",
+        "offset": 0,
+        "len": 8
+      },
+      "space": {
+        "kind": "Whitespace",
+        "len": 1
+      },
+      "string": {
+        "kind": "String",
+        "offset": 9,
+        "len": 7
+      },
+      "semicolon": {
+        "kind": "Semicolon",
+        "len": 1
       }
-    ]
-  },
-  "start": 0,
-  "end": 17
+    }
+  ]
 }

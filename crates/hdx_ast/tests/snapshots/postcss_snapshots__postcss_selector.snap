@@ -3,91 +3,96 @@ source: crates/hdx_ast/tests/postcss_snapshots.rs
 expression: result.output.unwrap()
 ---
 {
-  "node": {
-    "type": "stylesheet",
-    "rules": [
-      {
-        "node": {
-          "type": "stylerule",
-          "selectors": {
-            "node": [
-              {
-                "node": [
-                  {
-                    "type": "tag",
-                    "value": {
-                      "Html": "A"
-                    }
-                  },
-                  {
-                    "type": "combinator",
-                    "value": "descendant"
-                  },
-                  {
-                    "type": "tag",
-                    "value": {
-                      "Html": "B"
-                    }
+  "type": "stylesheet",
+  "rules": [
+    {
+      "type": "stylerule",
+      "selectors": [
+        {
+          "components": [
+            {
+              "type": "tag",
+              "value": {
+                "Html": {
+                  "A": {
+                    "kind": "Ident",
+                    "offset": 1,
+                    "len": 1
                   }
-                ],
-                "start": 1,
-                "end": 13
+                }
               }
-            ],
-            "start": 0,
-            "end": 13
-          },
-          "node": {
-            "type": "style-declaration",
-            "declarations": [],
-            "rules": []
-          },
-          "start": 13,
-          "end": 16
-        },
-        "start": 0,
-        "end": 16
+            },
+            {
+              "type": "combinator",
+              "value": {
+                "descendant": {
+                  "kind": "Whitespace",
+                  "len": 1
+                }
+              }
+            },
+            {
+              "type": "tag",
+              "value": {
+                "Html": {
+                  "B": {
+                    "kind": "Ident",
+                    "offset": 12,
+                    "len": 1
+                  }
+                }
+              }
+            }
+          ],
+          "comma": null
+        }
+      ],
+      "type": "style-declaration",
+      "open": {
+        "kind": "LeftCurly",
+        "len": 1
       },
-      {
-        "node": {
-          "type": "stylerule",
-          "selectors": {
-            "node": [
-              {
-                "node": [
-                  {
-                    "type": "tag",
-                    "value": {
-                      "Html": "A"
-                    }
-                  },
-                  {
-                    "type": "tag",
-                    "value": {
-                      "Html": "B"
-                    }
-                  }
-                ],
-                "start": 18,
-                "end": 30
-              }
-            ],
-            "start": 16,
-            "end": 30
-          },
-          "node": {
-            "type": "style-declaration",
-            "declarations": [],
-            "rules": []
-          },
-          "start": 30,
-          "end": 33
-        },
-        "start": 16,
-        "end": 33
+      "declarations": [],
+      "rules": [],
+      "close": {
+        "kind": "RightCurly",
+        "len": 1
       }
-    ]
-  },
-  "start": 0,
-  "end": 33
+    },
+    {
+      "type": "QualifiedRule",
+      "prelude": {
+        "values": [
+          {
+            "kind": "Whitespace",
+            "len": 2
+          },
+          {
+            "kind": "Ident",
+            "offset": 18,
+            "len": 1
+          },
+          {
+            "kind": "Ident",
+            "offset": 29,
+            "len": 1
+          }
+        ]
+      },
+      "block": {
+        "type": "Block",
+        "start": 30,
+        "open_curly": {
+          "kind": "LeftCurly",
+          "len": 1
+        },
+        "declarations": [],
+        "rules": [],
+        "close_curly": {
+          "kind": "RightCurly",
+          "len": 1
+        }
+      }
+    }
+  ]
 }

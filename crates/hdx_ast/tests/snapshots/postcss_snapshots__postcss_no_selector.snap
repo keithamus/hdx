@@ -3,36 +3,22 @@ source: crates/hdx_ast/tests/postcss_snapshots.rs
 expression: result.output.unwrap()
 ---
 {
-  "node": {
-    "type": "stylesheet",
-    "rules": [
-      {
-        "node": {
-          "type": "stylerule",
-          "selectors": {
-            "node": [
-              {
-                "node": [],
-                "start": 0,
-                "end": 0
-              }
-            ],
-            "start": 0,
-            "end": 0
-          },
-          "node": {
-            "type": "style-declaration",
-            "declarations": [],
-            "rules": []
-          },
-          "start": 0,
-          "end": 2
-        },
-        "start": 0,
-        "end": 2
+  "type": "stylesheet",
+  "rules": [
+    {
+      "type": "stylerule",
+      "selectors": [],
+      "type": "style-declaration",
+      "open": {
+        "kind": "LeftCurly",
+        "len": 1
+      },
+      "declarations": [],
+      "rules": [],
+      "close": {
+        "kind": "RightCurly",
+        "len": 1
       }
-    ]
-  },
-  "start": 0,
-  "end": 2
+    }
+  ]
 }
