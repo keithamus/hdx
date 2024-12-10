@@ -20,11 +20,10 @@ impl<'a> ::hdx_parser::Parse<'a> for Foo {
     fn parse(p: &mut ::hdx_parser::Parser<'a>) -> ::hdx_parser::Result<Self> {
         use ::hdx_parser::Parse;
         if p.peek::<::hdx_parser::T![Ident]>() {
-            let ident = p.parse::<::hdx_parser::T![Ident]>()?;
-            let c: ::hdx_lexer::Cursor = ident.into();
+            let c = p.peek_n(1);
             match p.parse_atom_lower(c) {
                 ::hdx_atom::atom!("none") => {
-                    return Ok(Self::None(ident));
+                    return Ok(Self::None(p.parse::<::hdx_parser::T![Ident]>()?));
                 }
                 atom => {}
             }

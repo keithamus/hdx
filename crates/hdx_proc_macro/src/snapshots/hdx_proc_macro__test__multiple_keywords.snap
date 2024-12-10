@@ -22,20 +22,19 @@ impl<'a> ::hdx_parser::Parse<'a> for Foo {
     fn parse(p: &mut ::hdx_parser::Parser<'a>) -> ::hdx_parser::Result<Self> {
         use ::hdx_parser::Parse;
         if p.peek::<::hdx_parser::T![Ident]>() {
-            let ident = p.parse::<::hdx_parser::T![Ident]>()?;
-            let c: ::hdx_lexer::Cursor = ident.into();
+            let c = p.peek_n(1);
             match p.parse_atom_lower(c) {
                 ::hdx_atom::atom!("black") => {
-                    return Ok(Self::Black(ident));
+                    return Ok(Self::Black(p.parse::<::hdx_parser::T![Ident]>()?));
                 }
                 ::hdx_atom::atom!("white") => {
-                    return Ok(Self::White(ident));
+                    return Ok(Self::White(p.parse::<::hdx_parser::T![Ident]>()?));
                 }
                 ::hdx_atom::atom!("line-through") => {
-                    return Ok(Self::LineThrough(ident));
+                    return Ok(Self::LineThrough(p.parse::<::hdx_parser::T![Ident]>()?));
                 }
                 ::hdx_atom::atom!("pink") => {
-                    return Ok(Self::Pink(ident));
+                    return Ok(Self::Pink(p.parse::<::hdx_parser::T![Ident]>()?));
                 }
                 atom => Err(::hdx_parser::diagnostics::UnexpectedIdent(atom, c.into()))?,
             }
