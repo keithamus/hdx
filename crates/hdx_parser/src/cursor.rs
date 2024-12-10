@@ -53,7 +53,10 @@ impl<'a> Parser<'a> {
 		self.lexer.rewind(checkpoint);
 		self.errors.truncate(errors_pos as usize);
 		self.trivia.truncate(trivia_pos as usize);
-		self.last_cursor = None;
+		#[cfg(debug_assertions)]
+		{
+			self.last_cursor = None;
+		}
 	}
 
 	#[inline]
