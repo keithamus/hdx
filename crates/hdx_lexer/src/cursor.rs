@@ -85,6 +85,10 @@ impl Cursor {
 			if end - start != other.len() {
 				return false;
 			}
+			if self.token().is_lower_case() {
+				debug_assert!(&source[start..end].to_ascii_lowercase() == &source[start..end]);
+				return &source[start..end] == other;
+			}
 			return source[start..end].eq_ignore_ascii_case(other);
 		}
 		let mut chars = source[start..end].chars().peekable();
@@ -467,11 +471,17 @@ fn size_test() {
 fn eq_ignore_ascii_case() {
 	let c = Cursor::new(SourceOffset(0), Token::new_ident(false, false, false, 3));
 	assert!(c.eq_ignore_ascii_case("foo", "foo"));
+	assert!(!c.eq_ignore_ascii_case("foo", "bar"));
+	assert!(!c.eq_ignore_ascii_case("fo ", "foo"));
+	assert!(!c.eq_ignore_ascii_case("foo", "fooo"));
+	assert!(!c.eq_ignore_ascii_case("foo", "ғоо"));
+
+	let c = Cursor::new(SourceOffset(0), Token::new_ident(true, false, false, 3));
 	assert!(c.eq_ignore_ascii_case("FoO", "foo"));
 	assert!(c.eq_ignore_ascii_case("FOO", "foo"));
 	assert!(!c.eq_ignore_ascii_case("foo", "bar"));
-	assert!(!c.eq_ignore_ascii_case("foo", "fooo"));
 	assert!(!c.eq_ignore_ascii_case("fo ", "foo"));
+	assert!(!c.eq_ignore_ascii_case("foo", "fooo"));
 	assert!(!c.eq_ignore_ascii_case("foo", "ғоо"));
 
 	let c = Cursor::new(SourceOffset(3), Token::new_ident(false, false, false, 3));
