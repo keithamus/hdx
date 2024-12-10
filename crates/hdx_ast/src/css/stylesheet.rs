@@ -50,7 +50,7 @@ macro_rules! apply_rules {
 			FontPaletteValues: atom!("font-palette-values"),
 			Import: atom!("import"),
 			Keyframes<'a>: atom!("keyframes"),
-			Layer: atom!("layer"),
+			Layer<'a>: atom!("layer"),
 			Media<'a>: atom!("media"),
 			Namespace: atom!("namespace"),
 			Page<'a>: atom!("page"),

@@ -116,7 +116,7 @@ pub struct UnexpectedId(pub Atom, #[label("This ID")] pub Span);
 pub struct UnexpectedDimension(pub Atom, #[label("This isn't recognised")] pub Span);
 
 #[derive(Debug, Error, Diagnostic)]
-#[error("Unexpected at rule ':{0}'")]
+#[error("Unexpected at rule '@{0}'")]
 #[diagnostic(
 	help("This isn't a recognisable at-rule here. If the rule is valid, it might not be allowed here."),
 	code(hdx_parser::UnexpectedAtRule)
@@ -371,3 +371,8 @@ pub struct ColorHexWrongLength(pub usize, #[label("This is not the right number 
 #[error("{0} cannot be used as a keyframe name, as it's a reserved word.")]
 #[diagnostic(help(""), code(hdx_parser::ReservedKeyframeName))]
 pub struct ReservedKeyframeName(pub Atom, #[label("Rename it, or try wrapping it in quotes")] pub Span);
+
+#[derive(Debug, Error, Diagnostic)]
+#[error("An @layer {{}} (block) rule cannot have multiple names.")]
+#[diagnostic(help(""), code(hdx_parser::DiallowedLayerBlockWithMultipleNames))]
+pub struct DiallowedLayerBlockWithMultipleNames(#[label("Remove most (or all) of these names.")] pub Span);
