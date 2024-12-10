@@ -70,12 +70,6 @@ impl<'a> ToCursors<'a> for StyleDeclaration<'a> {
 	}
 }
 
-impl<'a> StyleDeclaration<'a> {
-	fn is_empty(&self) -> bool {
-		self.declarations.is_empty() && self.rules.is_empty()
-	}
-}
-
 #[cfg(test)]
 mod tests {
 	use super::*;

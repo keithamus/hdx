@@ -1,8 +1,8 @@
 pub(crate) use crate::traits::StyleValue;
 pub(crate) use hdx_proc_macro::*;
 
-use super::types::LengthPercentage;
-use super::{MinWidth, Width};
+// use super::types::LengthPercentage;
+// use super::{MinWidth, Width};
 
 // shortcuts for logical properties to resolve to 0
 // impl Width {

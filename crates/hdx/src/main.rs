@@ -35,7 +35,7 @@ fn main() {
 		if let Some(stylesheet) = &result.output {
 			let mut str = String::new();
 			if let Err(e) = result.write(&allocator, &mut str) {
-				println!("{}", e);
+				println!("{:?}", e);
 			}
 			if let Some(file) = args.output {
 				std::fs::write(file, str.as_bytes()).unwrap();

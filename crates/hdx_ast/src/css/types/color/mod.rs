@@ -6,7 +6,7 @@ mod system;
 use std::str::Chars;
 
 use hdx_atom::atom;
-use hdx_parser::{diagnostics, todo, Build, Is, Parse, Parser, Peek, Result as ParserResult, ToCursors, T};
+use hdx_parser::{diagnostics, todo, Is, Parse, Parser, Peek, Result as ParserResult, ToCursors, T};
 
 pub use color_function::*;
 pub use named::*;
@@ -47,27 +47,6 @@ impl<'a> ToCursors<'a> for Color {
 			Self::Hex(t) => s.append((*t).into()),
 			Self::Named(t) => s.append((*t).into()),
 			Self::Function(func) => ToCursors::to_cursors(func, s),
-		}
-	}
-}
-
-trait HexableChars {
-	fn next_as_hex(&mut self) -> Option<u32>;
-}
-
-impl<'a> HexableChars for Chars<'a> {
-	fn next_as_hex(&mut self) -> Option<u32> {
-		match self.next() {
-			Some(ch) => {
-				let b = ch as u8;
-				match b {
-					b'A'..=b'F' => Some((b - b'A' + 10) as u32),
-					b'a'..=b'f' => Some((b - b'a' + 10) as u32),
-					b'0'..=b'9' => Some((b - b'0') as u32),
-					_ => None,
-				}
-			}
-			_ => None,
 		}
 	}
 }

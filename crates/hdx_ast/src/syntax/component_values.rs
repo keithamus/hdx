@@ -1,5 +1,5 @@
 use bumpalo::collections::Vec;
-use hdx_parser::{CursorStream, Parse, Parser, Result as ParserResult, State, ToCursors, T};
+use hdx_parser::{CursorStream, Parse, Parser, Result as ParserResult, ToCursors};
 
 use super::ComponentValue;
 
