@@ -1350,8 +1350,8 @@ impl DefType {
 
 	pub fn requires_allocator_lifetime(&self) -> bool {
 		if let Self::Custom(DefIdent(ident), _) = self {
-			return matches!(ident, &atom!("OutlineColor") | &atom!("BorderTopColor") | &atom!("AnchorName"));
-		}
+			return matches!(ident, &atom!("OutlineColor") | &atom!("BorderTopColor") | &atom!("AnchorName") | &atom!("DynamicRangeLimitMix"));
+		} 
 		matches!(self, Self::Image | Self::Image1D)
 	}
 }
