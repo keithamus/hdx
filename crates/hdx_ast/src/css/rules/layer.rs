@@ -10,14 +10,14 @@ use crate::css::stylesheet::Rule;
 // https://drafts.csswg.org/css-cascade-5/#layering
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-pub struct Layer<'a> {
+pub struct LayerRule<'a> {
 	pub at_keyword: T![AtKeyword],
 	pub names: Option<LayerNameList<'a>>,
 	pub block: OptionalLayerBlock<'a>,
 }
 
 // https://drafts.csswg.org/css-page-3/#syntax-page-selector
-impl<'a> Parse<'a> for Layer<'a> {
+impl<'a> Parse<'a> for LayerRule<'a> {
 	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
 		let (at_keyword, names, block) = Self::parse_at_rule(p, Some(atom!("layer")))?;
 		if let Some(ref names) = names {
@@ -30,12 +30,12 @@ impl<'a> Parse<'a> for Layer<'a> {
 	}
 }
 
-impl<'a> AtRule<'a> for Layer<'a> {
+impl<'a> AtRule<'a> for LayerRule<'a> {
 	type Prelude = LayerNameList<'a>;
 	type Block = OptionalLayerBlock<'a>;
 }
 
-impl<'a> ToCursors<'a> for Layer<'a> {
+impl<'a> ToCursors<'a> for LayerRule<'a> {
 	fn to_cursors(&self, s: &mut CursorStream<'a>) {
 		s.append(self.at_keyword.into());
 		if let Some(names) = &self.names {
@@ -167,7 +167,7 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(Layer, 104);
+		assert_size!(LayerRule, 104);
 		assert_size!(LayerNameList, 32);
 		assert_size!(LayerName, 48);
 		assert_size!(OptionalLayerBlock, 56);
@@ -176,10 +176,10 @@ mod tests {
 
 	#[test]
 	fn test_writes() {
-		assert_parse!(Layer, "@layer foo{}");
-		assert_parse!(Layer, "@layer foo;");
-		assert_parse!(Layer, "@layer foo,bar;");
-		assert_parse!(Layer, "@layer foo.bar,baz.bing.baz;");
-		assert_parse!(Layer, "@layer foo.bar{body{color:black}}");
+		assert_parse!(LayerRule, "@layer foo{}");
+		assert_parse!(LayerRule, "@layer foo;");
+		assert_parse!(LayerRule, "@layer foo,bar;");
+		assert_parse!(LayerRule, "@layer foo.bar,baz.bing.baz;");
+		assert_parse!(LayerRule, "@layer foo.bar{body{color:black}}");
 	}
 }

@@ -1,7 +1,7 @@
 use crate::Todo;
 
 // https://drafts.csswg.org/css-counter-styles-3/#the-counter-style-rule
-pub type CounterStyle = Todo;
+pub type CounterStyleRule = Todo;
 
 #[cfg(test)]
 mod tests {
@@ -10,11 +10,11 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(CounterStyle, 0);
+		assert_size!(CounterStyleRule, 0);
 	}
 
 	#[test]
 	fn test_writes() {
-		//assert_parse!(CounterStyle, "@counter-style thumbs {}");
+		//assert_parse!(CounterStyleRule, "@counter-style thumbs {}");
 	}
 }

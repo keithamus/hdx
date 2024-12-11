@@ -1,7 +1,7 @@
 use crate::Todo;
 
 // https://drafts.csswg.org/css-namespaces/#at-ruledef-namespace
-pub type Namespace = Todo;
+pub type NamespaceRule = Todo;
 
 #[cfg(test)]
 mod tests {
@@ -10,11 +10,11 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(Namespace, 0);
+		assert_size!(NamespaceRule, 0);
 	}
 
 	#[test]
 	fn test_writes() {
-		//assert_parse!(Namespace, "@namespace");
+		//assert_parse!(NamespaceRule, "@namespace");
 	}
 }

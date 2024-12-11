@@ -21,14 +21,14 @@ mod kw {
 // https://drafts.csswg.org/mediaqueries-4/
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
-pub struct Media<'a> {
+pub struct MediaRule<'a> {
 	pub at_keyword: T![AtKeyword],
 	pub query: MediaQueryList<'a>,
 	pub block: MediaRules<'a>,
 }
 
 // https://drafts.csswg.org/css-conditional-3/#at-ruledef-media
-impl<'a> Parse<'a> for Media<'a> {
+impl<'a> Parse<'a> for MediaRule<'a> {
 	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
 		let start = p.offset();
 		let (at_keyword, query, block) = Self::parse_at_rule(p, Some(atom!("media")))?;
@@ -40,12 +40,12 @@ impl<'a> Parse<'a> for Media<'a> {
 	}
 }
 
-impl<'a> AtRule<'a> for Media<'a> {
+impl<'a> AtRule<'a> for MediaRule<'a> {
 	type Prelude = MediaQueryList<'a>;
 	type Block = MediaRules<'a>;
 }
 
-impl<'a> ToCursors<'a> for Media<'a> {
+impl<'a> ToCursors<'a> for MediaRule<'a> {
 	fn to_cursors(&self, s: &mut CursorStream<'a>) {
 		s.append(self.at_keyword.into());
 		ToCursors::to_cursors(&self.query, s);
@@ -400,7 +400,7 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(Media, 104);
+		assert_size!(MediaRule, 104);
 		assert_size!(MediaQueryList, 32);
 		assert_size!(MediaQuery, 112);
 		assert_size!(MediaCondition, 80);
@@ -420,22 +420,22 @@ mod tests {
 		// assert_parse!(MediaQuery, "not ((width: 2px) or (width: 3px))");
 		// assert_parse!(MediaQuery, "not ((hover) or (pointer))");
 		// assert_parse!(MediaQuery, "only (hover) or (pointer)");
-		// assert_parse!(Media, "@media print {\n\n}");
-		// assert_parse!(Media, "@media print, (prefers-reduced-motion: reduce) {\n\n}");
-		// assert_parse!(Media, "@media (min-width: 1200px) {\n\n}");
-		// assert_parse!(Media, "@media (min-width: 1200px) {\n\tbody {\n\t\tcolor: red;\n\t}\n}");
-		// assert_parse!(Media, "@media (min-width: 1200px) {\n@page {\n}\n}");
-		// assert_parse!(Media, "@media (max-width: 575.98px) and (prefers-reduced-motion: reduce) {\n\n}");
-		// assert_parse!(Media, "@media only screen and (max-device-width: 800px), only screen and (device-width: 1024px) and (device-height: 600px), only screen and (width: 1280px) and (orientation: landscape), only screen and (device-width: 800px), only screen and (max-width: 767px) {\n\n}");
-		// assert_parse!(Media, "@media(grid){a{padding:4px}}", "@media (grid: 0) {\n\ta {\n\t\tpadding: 4px;\n\t}\n}");
+		// assert_parse!(MediaRule, "@media print {\n\n}");
+		// assert_parse!(MediaRule, "@media print, (prefers-reduced-motion: reduce) {\n\n}");
+		// assert_parse!(MediaRule, "@media (min-width: 1200px) {\n\n}");
+		// assert_parse!(MediaRule, "@media (min-width: 1200px) {\n\tbody {\n\t\tcolor: red;\n\t}\n}");
+		// assert_parse!(MediaRule, "@media (min-width: 1200px) {\n@page {\n}\n}");
+		// assert_parse!(MediaRule, "@media (max-width: 575.98px) and (prefers-reduced-motion: reduce) {\n\n}");
+		// assert_parse!(MediaRule, "@media only screen and (max-device-width: 800px), only screen and (device-width: 1024px) and (device-height: 600px), only screen and (width: 1280px) and (orientation: landscape), only screen and (device-width: 800px), only screen and (max-width: 767px) {\n\n}");
+		// assert_parse!(MediaRule, "@media(grid){a{padding:4px}}", "@media (grid: 0) {\n\ta {\n\t\tpadding: 4px;\n\t}\n}");
 		// assert_parse!(
-		// 	Media,
+		// 	MediaRule,
 		// 	"@media(grid){a{color-scheme:light}}",
 		// 	"@media (grid: 0) {\n\ta {\n\t\tcolor-scheme: light;\n\t}\n}"
 		// );
 
 		// IE media hack
-		// assert_parse!(Media, "@media (min-width: 0\\0) {\n\n}");
+		// assert_parse!(MediaRule, "@media (min-width: 0\\0) {\n\n}");
 	}
 
 	// #[test]

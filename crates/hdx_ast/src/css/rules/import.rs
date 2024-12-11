@@ -1,7 +1,7 @@
 use crate::Todo;
 
 // https://drafts.csswg.org/css-cascade-5/#at-ruledef-import
-pub type Import = Todo;
+pub type ImportRule = Todo;
 
 #[cfg(test)]
 mod tests {
@@ -10,11 +10,11 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(Import, 0);
+		assert_size!(ImportRule, 0);
 	}
 
 	#[test]
 	fn test_writes() {
-		//assert_parse!(Import, "@import \"foo.css\"");
+		//assert_parse!(ImportRule, "@import \"foo.css\"");
 	}
 }

@@ -1,7 +1,7 @@
 use crate::Todo;
 
 // https://drafts.csswg.org/css-fonts/#at-ruledef-font-feature-values
-pub type FontFeatureValues = Todo;
+pub type FontFeatureValuesRule = Todo;
 
 #[cfg(test)]
 mod tests {
@@ -10,11 +10,11 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(FontFeatureValues, 0);
+		assert_size!(FontFeatureValuesRule, 0);
 	}
 
 	#[test]
 	fn test_writes() {
-		//assert_parse!(FontFeatureValues, "@font-feature-values Taisho Gothic {}");
+		//assert_parse!(FontFeatureValuesRule, "@font-feature-values Taisho Gothic {}");
 	}
 }

@@ -1,7 +1,7 @@
 use crate::Todo;
 
 // https://drafts.csswg.org/css-color-5/#at-profile
-pub type ColorProfile = Todo;
+pub type ColorProfileRule = Todo;
 
 #[cfg(test)]
 mod tests {
@@ -10,11 +10,11 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(ColorProfile, 0);
+		assert_size!(ColorProfileRule, 0);
 	}
 
 	#[test]
 	fn test_writes() {
-		//assert_parse!(ColorProfile, "@color-profile --swop5c {\n\tsrc: url(\"https://example.org/SWOP2006_Coated5v2.icc\");}");
+		//assert_parse!(ColorProfileRule, "@color-profile --swop5c {\n\tsrc: url(\"https://example.org/SWOP2006_Coated5v2.icc\");}");
 	}
 }
