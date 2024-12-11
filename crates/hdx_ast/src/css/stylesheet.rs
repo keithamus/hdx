@@ -54,7 +54,7 @@ macro_rules! apply_rules {
 			Media<'a>: atom!("media"),
 			Namespace: atom!("namespace"),
 			Page<'a>: atom!("page"),
-			Property: atom!("property"),
+			PropertyRule<'a>: atom!("property"),
 			Scope: atom!("scope"),
 			StartingStyle: atom!("starting-style"),
 			Supports<'a>: atom!("supports"),
