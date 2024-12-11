@@ -54,7 +54,6 @@ fn main() {
 								}
 							}
 						} else if capture.chars().all(|c| c == '-' || c == '_' || char::is_alphanumeric(c)) {
-							println!("cargo::warning={}", capture);
 							matches.insert(capture.to_owned());
 						}
 						true
