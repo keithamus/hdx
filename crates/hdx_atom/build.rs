@@ -27,7 +27,6 @@ fn main() {
 					let mut captures = matcher.new_captures()?;
 					matcher.captures_iter(line.as_bytes(), &mut captures, |captures| -> bool {
 						dbg!(&line, &line[captures.get(0).unwrap()]);
-						println!("cargo::warning={}  {}", &line, &line[captures.get(0).unwrap()]);
 						let start = &line[captures.get(1).unwrap()];
 						let capture = &line[captures.get(2).unwrap()];
 						dbg!(&start, &capture);
