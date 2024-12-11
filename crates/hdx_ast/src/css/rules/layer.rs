@@ -23,7 +23,7 @@ impl<'a> Parse<'a> for Layer<'a> {
 		if let Some(ref names) = names {
 			if matches!(block, OptionalLayerBlock::Block(_)) && names.0.len() > 1 {
 				let c: Cursor = names.0[0].0.0.into();
-				Err(diagnostics::DiallowedLayerBlockWithMultipleNames(c.into()))?
+				Err(diagnostics::DisallowedLayerBlockWithMultipleNames(c.into()))?
 			}
 		}
 		Ok(Self { at_keyword, names, block })
