@@ -49,7 +49,7 @@ criterion_group! {
 	targets = popular
 }
 
-#[cfg(target_family != "unix")]
+#[cfg(not(target_family = "unix"))]
 criterion_group! {
 	name = benches;
 	config = Criterion::default()

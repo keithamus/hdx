@@ -17,6 +17,7 @@ fn main() {
 	for entry in glob("../**/*.rs").unwrap() {
 		// for entry in glob("../**/values/ui/mod.rs").unwrap() {
 		let str = &entry.as_ref().unwrap().display();
+		println!("cargo::warning={}", str);
 		println!("cargo::rerun-if-changed={}", str);
 		let mut searcher = Searcher::new();
 		searcher
