@@ -49,7 +49,6 @@ fn main() {
 								.collect::<Vec<&str>>();
 							for keyword in keywords {
 								if keyword.chars().all(|c| c == '-' || char::is_alphanumeric(c)) {
-									println!("cargo::warning={}", keyword);
 									matches.insert(keyword.to_owned());
 								}
 							}
