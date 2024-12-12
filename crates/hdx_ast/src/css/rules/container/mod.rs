@@ -143,7 +143,7 @@ impl<'a> ToCursors<'a> for ContainerCondition<'a> {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", content = "value"))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub enum ContainerQuery<'a> {
 	Is(ContainerFeature<'a>),
 	Not(Box<ContainerQuery<'a>>),
@@ -200,9 +200,8 @@ impl<'a> ToCursors<'a> for ContainerQuery<'a> {
 
 macro_rules! container_feature {
 	( $($name: ident($typ: ident): atom!($atom: tt),)+) => {
-		// https://drafts.csswg.org/mediaqueries-5/#media-descriptor-table
 		#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
-		#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
+		#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 		pub enum ContainerFeature<'a> {
 			$($name(T!['('], $typ, T![')']),)+
 			Style(StyleQuery<'a>),
