@@ -1,6 +1,6 @@
-use hdx_parser::discrete_media_feature;
+use hdx_parser::discrete_feature;
 
-discrete_media_feature!(VideoColorGamutMediaFeature[atom!("video-color-gamut")] {
+discrete_feature!(VideoColorGamutMediaFeature[atom!("video-color-gamut")] {
 	Srgb: atom!("srgb"),
 	P3: atom!("p3"),
 	Rec2020: atom!("rec2020"),

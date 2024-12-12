@@ -3,8 +3,8 @@ use hdx_lexer::Cursor;
 
 use crate::{diagnostics, Parser, Result, T};
 
-pub trait DiscreteMediaFeature<'a>: Sized {
-	fn parse_descrete_media_feature(name: Atom, p: &mut Parser<'a>) -> Result<(T![Ident], Option<(T![:], T![Ident])>)> {
+pub trait DiscreteFeature<'a>: Sized {
+	fn parse_descrete_feature(name: Atom, p: &mut Parser<'a>) -> Result<(T![Ident], Option<(T![:], T![Ident])>)> {
 		let ident = p.parse::<T![Ident]>()?;
 		let c: Cursor = ident.into();
 		let atom = p.parse_atom_lower(c);
@@ -22,7 +22,7 @@ pub trait DiscreteMediaFeature<'a>: Sized {
 }
 
 #[macro_export]
-macro_rules! discrete_media_feature {
+macro_rules! discrete_feature {
 	($feat: tt[atom!($atom: tt)] { $( $name: ident: atom!($name_atom: tt),)+ }) => {
 		#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 		#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
@@ -33,8 +33,8 @@ macro_rules! discrete_media_feature {
 
 		impl<'a> $crate::Parse<'a> for $feat {
 			fn parse(p: &mut $crate::Parser<'a>) -> $crate::Result<Self> {
-				use $crate::DiscreteMediaFeature;
-				let (ident, opt) = Self::parse_descrete_media_feature(hdx_atom::atom!($atom), p)?;
+				use $crate::DiscreteFeature;
+				let (ident, opt) = Self::parse_descrete_feature(hdx_atom::atom!($atom), p)?;
 				if let Some((colon, value)) = opt {
 					let c: ::hdx_lexer::Cursor = value.into();
 					match p.parse_atom_lower(c) {
@@ -49,7 +49,7 @@ macro_rules! discrete_media_feature {
 			}
 		}
 
-		impl<'a> $crate::DiscreteMediaFeature<'a> for $feat {}
+		impl<'a> $crate::DiscreteFeature<'a> for $feat {}
 
 		impl<'a> $crate::ToCursors<'a> for $feat {
 			fn to_cursors(&self, s: &mut $crate::CursorStream<'a>) {

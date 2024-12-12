@@ -4,7 +4,8 @@ use hdx_lexer::Cursor;
 use crate::{diagnostics, Comparison, Parse, Parser, Result, T};
 
 // https://drafts.csswg.org/mediaqueries/#mq-range-context
-pub trait RangedMediaFeature<'a>: Sized {
+// https://drafts.csswg.org/css-conditional-5/#container-features
+pub trait RangedFeature<'a>: Sized {
 	type Type: Parse<'a>;
 
 	fn new_legacy(atom: Atom, ident: T![Ident], colon: T![:], value: Self::Type) -> Self;
@@ -18,7 +19,7 @@ pub trait RangedMediaFeature<'a>: Sized {
 		value: Self::Type,
 	) -> Self;
 
-	fn parse_ranged_media_feature(p: &mut Parser<'a>, name: Atom) -> Result<Self> {
+	fn parse_ranged_feature(p: &mut Parser<'a>, name: Atom) -> Result<Self> {
 		if p.peek::<T![Ident]>() {
 			let ident = p.parse::<T![Ident]>()?;
 			let c: Cursor = ident.into();
@@ -65,7 +66,7 @@ pub trait RangedMediaFeature<'a>: Sized {
 }
 
 #[macro_export]
-macro_rules! ranged_media_feature {
+macro_rules! ranged_feature {
 	($feat: tt[atom!($atom: tt)], $ty: ty) => {
 		#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 		#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
@@ -73,19 +74,19 @@ macro_rules! ranged_media_feature {
 			Left($crate::T![Ident], $crate::Comparison, $ty),
 			Right($ty, $crate::Comparison, $crate::T![Ident]),
 			Range($ty, $crate::Comparison, $crate::T![Ident], $crate::Comparison, $ty),
-	LegacyMax($crate::T![Ident], $crate::T![:], $ty),
-	LegacyMin($crate::T![Ident], $crate::T![:], $ty),
-	Legacy($crate::T![Ident], $crate::T![:], $ty),
+			LegacyMax($crate::T![Ident], $crate::T![:], $ty),
+			LegacyMin($crate::T![Ident], $crate::T![:], $ty),
+			Legacy($crate::T![Ident], $crate::T![:], $ty),
 		}
 
 		impl<'a> $crate::Parse<'a> for $feat {
 			fn parse(p: &mut $crate::Parser<'a>) -> $crate::Result<Self> {
-				use $crate::RangedMediaFeature;
-				Self::parse_ranged_media_feature(p, hdx_atom::atom!($atom))
+				use $crate::RangedFeature;
+				Self::parse_ranged_feature(p, hdx_atom::atom!($atom))
 			}
 		}
 
-		impl<'a> $crate::RangedMediaFeature<'a> for $feat {
+		impl<'a> $crate::RangedFeature<'a> for $feat {
 			type Type = $ty;
 
 			fn new_legacy(

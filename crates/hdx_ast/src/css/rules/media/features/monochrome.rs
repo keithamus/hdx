@@ -1,7 +1,7 @@
 use crate::css::units::CSSInt;
-use hdx_parser::ranged_media_feature;
+use hdx_parser::ranged_feature;
 
-ranged_media_feature!(MonochromeMediaFeature[atom!("monochrome")], CSSInt);
+ranged_feature!(MonochromeMediaFeature[atom!("monochrome")], CSSInt);
 
 #[cfg(test)]
 mod tests {

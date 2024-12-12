@@ -1,6 +1,6 @@
-use hdx_parser::discrete_media_feature;
+use hdx_parser::discrete_feature;
 
-discrete_media_feature!(PrefersReducedTransparencyMediaFeature[atom!("prefers-reduced-transparency")] {
+discrete_feature!(PrefersReducedTransparencyMediaFeature[atom!("prefers-reduced-transparency")] {
 	NoPreference: atom!("no-preference"),
 	Reduce: atom!("reduce"),
 });

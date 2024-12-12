@@ -1,7 +1,7 @@
 use crate::css::units::CSSInt;
-use hdx_parser::ranged_media_feature;
+use hdx_parser::ranged_feature;
 
-ranged_media_feature!(ColorIndexMediaFeature[atom!("color-index")], CSSInt);
+ranged_feature!(ColorIndexMediaFeature[atom!("color-index")], CSSInt);
 
 #[cfg(test)]
 mod tests {

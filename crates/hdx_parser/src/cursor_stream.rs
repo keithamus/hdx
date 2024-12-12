@@ -87,13 +87,20 @@ impl<'a> CursorStream<'a> {
 					}
 					f.write_str(c.str_slice(str))?;
 				}
+				Kind::LeftParen => {
+					// An ident with a trailing `(` is a Function token, always separate these with whitespace to ensure they're not
+					// accidentally combined into a single function token.
+					if last_kind == Kind::Ident {
+						f.write_char(' ')?;
+					}
+					f.write_char(t.char().unwrap())?;
+				}
 				Kind::Delim
 				| Kind::Colon
 				| Kind::Semicolon
 				| Kind::Comma
 				| Kind::LeftSquare
 				| Kind::RightSquare
-				| Kind::LeftParen
 				| Kind::RightParen
 				| Kind::LeftCurly
 				| Kind::RightCurly => f.write_char(t.char().unwrap())?,

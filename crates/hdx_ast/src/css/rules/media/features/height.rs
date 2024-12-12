@@ -1,7 +1,7 @@
 use crate::css::units::Length;
-use hdx_parser::ranged_media_feature;
+use hdx_parser::ranged_feature;
 
-ranged_media_feature!(HeightMediaFeature[atom!("height")], Length);
+ranged_feature!(HeightMediaFeature[atom!("height")], Length);
 
 #[cfg(test)]
 mod tests {

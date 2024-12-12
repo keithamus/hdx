@@ -1,7 +1,7 @@
 use crate::css::units::Length;
-use hdx_parser::ranged_media_feature;
+use hdx_parser::ranged_feature;
 
-ranged_media_feature!(DeviceHeightMediaFeature[atom!("device-height")], Length);
+ranged_feature!(DeviceHeightMediaFeature[atom!("device-height")], Length);
 
 #[cfg(test)]
 mod tests {

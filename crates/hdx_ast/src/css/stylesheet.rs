@@ -43,7 +43,7 @@ macro_rules! apply_rules {
 		$macro! {
 			CharsetRule: atom!("charset"),
 			ColorProfileRule: atom!("color-profile"),
-			ContainerRule: atom!("container"),
+			ContainerRule<'a>: atom!("container"),
 			CounterStyleRule: atom!("counter-style"),
 			FontFaceRule<'a>: atom!("font-face"),
 			FontFeatureValuesRule: atom!("font-feature-values"),

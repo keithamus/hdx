@@ -1,6 +1,6 @@
-use hdx_parser::discrete_media_feature;
+use hdx_parser::discrete_feature;
 
-discrete_media_feature!(DisplayModeMediaFeature[atom!("display-mode")] {
+discrete_feature!(DisplayModeMediaFeature[atom!("display-mode")] {
 	Fullscreen: atom!("fullscreen"),
 	Standalone: atom!("standalone"),
 	MinimalUi: atom!("minimal-ui"),

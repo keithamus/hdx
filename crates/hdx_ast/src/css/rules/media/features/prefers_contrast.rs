@@ -1,6 +1,6 @@
-use hdx_parser::discrete_media_feature;
+use hdx_parser::discrete_feature;
 
-discrete_media_feature!(PrefersContrastMediaFeature[atom!("prefers-contrast")] {
+discrete_feature!(PrefersContrastMediaFeature[atom!("prefers-contrast")] {
 	NoPreference: atom!("no-preference"),
 	Less: atom!("less"),
 	More: atom!("more"),

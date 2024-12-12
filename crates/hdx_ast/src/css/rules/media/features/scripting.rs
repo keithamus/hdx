@@ -1,6 +1,6 @@
-use hdx_parser::discrete_media_feature;
+use hdx_parser::discrete_feature;
 
-discrete_media_feature!(ScriptingMediaFeature[atom!("scripting")] {
+discrete_feature!(ScriptingMediaFeature[atom!("scripting")] {
 	None: atom!("none"),
 	InitialOnly: atom!("initial-only"),
 	Enabled: atom!("enabled"),
