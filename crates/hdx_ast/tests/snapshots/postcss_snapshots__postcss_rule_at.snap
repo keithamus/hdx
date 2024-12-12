@@ -1,0 +1,174 @@
+---
+source: crates/hdx_ast/tests/postcss_snapshots.rs
+expression: result.output.unwrap()
+---
+{
+  "type": "stylesheet",
+  "rules": [
+    {
+      "type": "QualifiedRule",
+      "prelude": {
+        "values": [
+          {
+            "kind": "Ident",
+            "offset": 0,
+            "len": 1
+          }
+        ]
+      },
+      "block": {
+        "type": "Block",
+        "start": 1,
+        "open_curly": {
+          "kind": "LeftCurly",
+          "len": 1
+        },
+        "declarations": [
+          {
+            "type": "Declaration",
+            "name": {
+              "kind": "Ident",
+              "offset": 8,
+              "len": 5
+            },
+            "colon": {
+              "kind": "Colon",
+              "len": 1
+            },
+            "value": {
+              "values": [
+                {
+                  "kind": "Whitespace",
+                  "len": 1
+                },
+                {
+                  "kind": "Dimension",
+                  "offset": 15,
+                  "len": 4,
+                  "unit": "px"
+                }
+              ]
+            },
+            "important": null,
+            "semicolon": {
+              "kind": "Semicolon",
+              "len": 1
+            }
+          },
+          {
+            "type": "Declaration",
+            "name": {
+              "kind": "Ident",
+              "offset": 25,
+              "len": 6
+            },
+            "colon": {
+              "kind": "Colon",
+              "len": 1
+            },
+            "value": {
+              "values": [
+                {
+                  "kind": "Whitespace",
+                  "len": 1
+                },
+                {
+                  "kind": "Number",
+                  "len": 1
+                },
+                {
+                  "kind": "Whitespace",
+                  "len": 1
+                },
+                {
+                  "kind": "AtKeyword",
+                  "offset": 35,
+                  "len": 6
+                }
+              ]
+            },
+            "important": null,
+            "semicolon": {
+              "kind": "Semicolon",
+              "len": 1
+            }
+          }
+        ],
+        "rules": [
+          {
+            "type": "AtRule",
+            "type": "AtRule",
+            "name": {
+              "kind": "AtKeyword",
+              "offset": 47,
+              "len": 6
+            },
+            "prelude": {
+              "values": [
+                {
+                  "kind": "Whitespace",
+                  "len": 1
+                },
+                {
+                  "kind": "Ident",
+                  "offset": 54,
+                  "len": 6
+                }
+              ]
+            },
+            "block": {
+              "type": "Block",
+              "start": 60,
+              "open_curly": {
+                "kind": "LeftCurly",
+                "len": 1
+              },
+              "declarations": [
+                {
+                  "type": "Declaration",
+                  "name": {
+                    "kind": "Ident",
+                    "offset": 71,
+                    "len": 6
+                  },
+                  "colon": {
+                    "kind": "Colon",
+                    "len": 1
+                  },
+                  "value": {
+                    "values": [
+                      {
+                        "kind": "Whitespace",
+                        "len": 1
+                      },
+                      {
+                        "kind": "Dimension",
+                        "offset": 79,
+                        "len": 5,
+                        "unit": "px"
+                      }
+                    ]
+                  },
+                  "important": null,
+                  "semicolon": {
+                    "kind": "Semicolon",
+                    "len": 1
+                  }
+                }
+              ],
+              "rules": [],
+              "close_curly": {
+                "kind": "RightCurly",
+                "len": 1
+              }
+            }
+          }
+        ],
+        "close_curly": {
+          "kind": "RightCurly",
+          "len": 1
+        }
+      }
+    }
+  ]
+}

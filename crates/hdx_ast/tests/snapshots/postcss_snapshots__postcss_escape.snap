@@ -1,0 +1,872 @@
+---
+source: crates/hdx_ast/tests/postcss_snapshots.rs
+expression: result.output.unwrap()
+---
+{
+  "type": "stylesheet",
+  "rules": [
+    {
+      "type": "stylerule",
+      "selectors": [
+        {
+          "components": [
+            {
+              "type": "tag",
+              "value": {
+                "Html": {
+                  "A": {
+                    "kind": "Ident",
+                    "offset": 0,
+                    "len": 1
+                  }
+                }
+              }
+            }
+          ],
+          "comma": null
+        }
+      ],
+      "type": "style-declaration",
+      "open": {
+        "kind": "LeftCurly",
+        "len": 1
+      },
+      "declarations": [
+        {
+          "type": "property",
+          "name": {
+            "kind": "Ident",
+            "offset": 8,
+            "len": 10
+          },
+          "colon": {
+            "kind": "Colon",
+            "len": 1
+          },
+          "value": {
+            "values": [
+              {
+                "kind": "Whitespace",
+                "len": 1
+              },
+              {
+                "type": "Function",
+                "name": {
+                  "kind": "Function",
+                  "offset": 20,
+                  "len": 4
+                },
+                "values": [
+                  {
+                    "kind": "String",
+                    "offset": 24,
+                    "len": 8
+                  }
+                ],
+                "close_paren": {
+                  "kind": "RightParen",
+                  "len": 1
+                }
+              }
+            ]
+          },
+          "important": null,
+          "semicolon": {
+            "kind": "Semicolon",
+            "len": 1
+          }
+        },
+        {
+          "type": "property",
+          "name": {
+            "kind": "Ident",
+            "offset": 39,
+            "len": 10
+          },
+          "colon": {
+            "kind": "Colon",
+            "len": 1
+          },
+          "value": {
+            "values": [
+              {
+                "kind": "Whitespace",
+                "len": 1
+              },
+              {
+                "kind": "Url",
+                "offset": 51,
+                "len": 8
+              }
+            ]
+          },
+          "important": null,
+          "semicolon": {
+            "kind": "Semicolon",
+            "len": 1
+          }
+        },
+        {
+          "type": "property",
+          "name": {
+            "kind": "Ident",
+            "offset": 65,
+            "len": 10
+          },
+          "colon": {
+            "kind": "Colon",
+            "len": 1
+          },
+          "value": {
+            "values": [
+              {
+                "kind": "Whitespace",
+                "len": 1
+              },
+              {
+                "kind": "Url",
+                "offset": 77,
+                "len": 8
+              }
+            ]
+          },
+          "important": null,
+          "semicolon": {
+            "kind": "Semicolon",
+            "len": 1
+          }
+        },
+        {
+          "type": "property",
+          "name": {
+            "kind": "Ident",
+            "offset": 91,
+            "len": 10
+          },
+          "colon": {
+            "kind": "Colon",
+            "len": 1
+          },
+          "value": {
+            "values": [
+              {
+                "kind": "Whitespace",
+                "len": 1
+              },
+              {
+                "kind": "Ident",
+                "offset": 103,
+                "len": 3
+              }
+            ]
+          },
+          "important": null,
+          "semicolon": {
+            "kind": "Semicolon",
+            "len": 1
+          }
+        }
+      ],
+      "rules": [],
+      "close": {
+        "kind": "RightCurly",
+        "len": 1
+      }
+    },
+    {
+      "type": "stylerule",
+      "selectors": [
+        {
+          "components": [
+            {
+              "type": "functional-pseudo-class",
+              "value": {
+                "type": "not",
+                "value": {
+                  "colon": {
+                    "kind": "Colon",
+                    "len": 1
+                  },
+                  "function": {
+                    "kind": "Function",
+                    "offset": 112,
+                    "len": 4
+                  },
+                  "value": [
+                    {
+                      "components": [
+                        {
+                          "type": "attribute",
+                          "value": {
+                            "type": "Attribute",
+                            "open": {
+                              "kind": "LeftSquare",
+                              "len": 1
+                            },
+                            "namespace_prefix": null,
+                            "attribute": {
+                              "kind": "Ident",
+                              "offset": 117,
+                              "len": 3
+                            },
+                            "operator": {
+                              "type": "Exact",
+                              "value": {
+                                "kind": "Delim",
+                                "len": 1
+                              }
+                            },
+                            "value": {
+                              "type": "String",
+                              "value": {
+                                "kind": "String",
+                                "offset": 121,
+                                "len": 3
+                              }
+                            },
+                            "modifier": null,
+                            "close": {
+                              "kind": "RightSquare",
+                              "len": 1
+                            }
+                          }
+                        }
+                      ],
+                      "comma": null
+                    }
+                  ],
+                  "close": {
+                    "kind": "RightParen",
+                    "len": 1
+                  }
+                }
+              }
+            }
+          ],
+          "comma": null
+        }
+      ],
+      "type": "style-declaration",
+      "open": {
+        "kind": "LeftCurly",
+        "len": 1
+      },
+      "declarations": [],
+      "rules": [],
+      "close": {
+        "kind": "RightCurly",
+        "len": 1
+      }
+    },
+    {
+      "type": "stylerule",
+      "selectors": [
+        {
+          "components": [
+            {
+              "type": "functional-pseudo-class",
+              "value": {
+                "type": "not",
+                "value": {
+                  "colon": {
+                    "kind": "Colon",
+                    "len": 1
+                  },
+                  "function": {
+                    "kind": "Function",
+                    "offset": 132,
+                    "len": 4
+                  },
+                  "value": [
+                    {
+                      "components": [
+                        {
+                          "type": "tag",
+                          "value": {
+                            "Html": {
+                              "Div": {
+                                "kind": "Ident",
+                                "offset": 136,
+                                "len": 3
+                              }
+                            }
+                          }
+                        }
+                      ],
+                      "comma": null
+                    }
+                  ],
+                  "close": {
+                    "kind": "RightParen",
+                    "len": 1
+                  }
+                }
+              }
+            }
+          ],
+          "comma": null
+        }
+      ],
+      "type": "style-declaration",
+      "open": {
+        "kind": "LeftCurly",
+        "len": 1
+      },
+      "declarations": [],
+      "rules": [],
+      "close": {
+        "kind": "RightCurly",
+        "len": 1
+      }
+    },
+    {
+      "type": "QualifiedRule",
+      "prelude": {
+        "values": [
+          {
+            "kind": "Whitespace",
+            "len": 1
+          },
+          {
+            "kind": "Colon",
+            "len": 1
+          },
+          {
+            "type": "Function",
+            "name": {
+              "kind": "Function",
+              "offset": 151,
+              "len": 4
+            },
+            "values": [
+              {
+                "kind": "Colon",
+                "len": 1
+              },
+              {
+                "type": "Function",
+                "name": {
+                  "kind": "Function",
+                  "offset": 156,
+                  "len": 10
+                },
+                "values": [
+                  {
+                    "kind": "Dimension",
+                    "offset": 166,
+                    "len": 2,
+                    "unit": "unknown"
+                  },
+                  {
+                    "kind": "Whitespace",
+                    "len": 1
+                  },
+                  {
+                    "kind": "Ident",
+                    "offset": 169,
+                    "len": 2
+                  },
+                  {
+                    "kind": "Whitespace",
+                    "len": 1
+                  },
+                  {
+                    "type": "SimpleBlock",
+                    "start": 172,
+                    "open": {
+                      "kind": "LeftSquare",
+                      "len": 1
+                    },
+                    "values": {
+                      "values": [
+                        {
+                          "kind": "Ident",
+                          "offset": 173,
+                          "len": 3
+                        },
+                        {
+                          "kind": "Delim",
+                          "len": 1
+                        },
+                        {
+                          "kind": "String",
+                          "offset": 177,
+                          "len": 3
+                        }
+                      ]
+                    },
+                    "close": {
+                      "kind": "RightSquare",
+                      "len": 1
+                    }
+                  }
+                ],
+                "close_paren": {
+                  "kind": "RightParen",
+                  "len": 1
+                }
+              }
+            ],
+            "close_paren": {
+              "kind": "RightParen",
+              "len": 1
+            }
+          }
+        ]
+      },
+      "block": {
+        "type": "Block",
+        "start": 183,
+        "open_curly": {
+          "kind": "LeftCurly",
+          "len": 1
+        },
+        "declarations": [],
+        "rules": [],
+        "close_curly": {
+          "kind": "RightCurly",
+          "len": 1
+        }
+      }
+    },
+    {
+      "type": "stylerule",
+      "selectors": [
+        {
+          "components": [
+            {
+              "type": "attribute",
+              "value": {
+                "type": "Attribute",
+                "open": {
+                  "kind": "LeftSquare",
+                  "len": 1
+                },
+                "namespace_prefix": null,
+                "attribute": {
+                  "kind": "Ident",
+                  "offset": 189,
+                  "len": 3
+                },
+                "operator": {
+                  "type": "Exact",
+                  "value": {
+                    "kind": "Delim",
+                    "len": 1
+                  }
+                },
+                "value": {
+                  "type": "Ident",
+                  "value": {
+                    "kind": "Ident",
+                    "offset": 193,
+                    "len": 2
+                  }
+                },
+                "modifier": null,
+                "close": {
+                  "kind": "RightSquare",
+                  "len": 1
+                }
+              }
+            }
+          ],
+          "comma": null
+        }
+      ],
+      "type": "style-declaration",
+      "open": {
+        "kind": "LeftCurly",
+        "len": 1
+      },
+      "declarations": [],
+      "rules": [],
+      "close": {
+        "kind": "RightCurly",
+        "len": 1
+      }
+    },
+    {
+      "type": "stylerule",
+      "selectors": [
+        {
+          "components": [
+            {
+              "type": "attribute",
+              "value": {
+                "type": "Attribute",
+                "open": {
+                  "kind": "LeftSquare",
+                  "len": 1
+                },
+                "namespace_prefix": null,
+                "attribute": {
+                  "kind": "Ident",
+                  "offset": 202,
+                  "len": 3
+                },
+                "operator": {
+                  "type": "Exact",
+                  "value": {
+                    "kind": "Delim",
+                    "len": 1
+                  }
+                },
+                "value": {
+                  "type": "Ident",
+                  "value": {
+                    "kind": "Ident",
+                    "offset": 206,
+                    "len": 2
+                  }
+                },
+                "modifier": null,
+                "close": {
+                  "kind": "RightSquare",
+                  "len": 1
+                }
+              }
+            }
+          ],
+          "comma": null
+        }
+      ],
+      "type": "style-declaration",
+      "open": {
+        "kind": "LeftCurly",
+        "len": 1
+      },
+      "declarations": [],
+      "rules": [],
+      "close": {
+        "kind": "RightCurly",
+        "len": 1
+      }
+    },
+    {
+      "type": "stylerule",
+      "selectors": [
+        {
+          "components": [
+            {
+              "type": "attribute",
+              "value": {
+                "type": "Attribute",
+                "open": {
+                  "kind": "LeftSquare",
+                  "len": 1
+                },
+                "namespace_prefix": null,
+                "attribute": {
+                  "kind": "Ident",
+                  "offset": 215,
+                  "len": 3
+                },
+                "operator": {
+                  "type": "Exact",
+                  "value": {
+                    "kind": "Delim",
+                    "len": 1
+                  }
+                },
+                "value": {
+                  "type": "Ident",
+                  "value": {
+                    "kind": "Ident",
+                    "offset": 219,
+                    "len": 2
+                  }
+                },
+                "modifier": null,
+                "close": {
+                  "kind": "RightSquare",
+                  "len": 1
+                }
+              }
+            }
+          ],
+          "comma": null
+        }
+      ],
+      "type": "style-declaration",
+      "open": {
+        "kind": "LeftCurly",
+        "len": 1
+      },
+      "declarations": [],
+      "rules": [],
+      "close": {
+        "kind": "RightCurly",
+        "len": 1
+      }
+    },
+    {
+      "type": "stylerule",
+      "selectors": [
+        {
+          "components": [
+            {
+              "type": "attribute",
+              "value": {
+                "type": "Attribute",
+                "open": {
+                  "kind": "LeftSquare",
+                  "len": 1
+                },
+                "namespace_prefix": null,
+                "attribute": {
+                  "kind": "Ident",
+                  "offset": 228,
+                  "len": 3
+                },
+                "operator": {
+                  "type": "Exact",
+                  "value": {
+                    "kind": "Delim",
+                    "len": 1
+                  }
+                },
+                "value": {
+                  "type": "Ident",
+                  "value": {
+                    "kind": "Ident",
+                    "offset": 232,
+                    "len": 20
+                  }
+                },
+                "modifier": null,
+                "close": {
+                  "kind": "RightSquare",
+                  "len": 1
+                }
+              }
+            }
+          ],
+          "comma": null
+        }
+      ],
+      "type": "style-declaration",
+      "open": {
+        "kind": "LeftCurly",
+        "len": 1
+      },
+      "declarations": [],
+      "rules": [],
+      "close": {
+        "kind": "RightCurly",
+        "len": 1
+      }
+    },
+    {
+      "type": "stylerule",
+      "selectors": [
+        {
+          "components": [
+            {
+              "type": "tag",
+              "value": {
+                "Unknown": {
+                  "kind": "Ident",
+                  "offset": 259,
+                  "len": 6
+                }
+              }
+            }
+          ],
+          "comma": null
+        }
+      ],
+      "type": "style-declaration",
+      "open": {
+        "kind": "LeftCurly",
+        "len": 1
+      },
+      "declarations": [],
+      "rules": [],
+      "close": {
+        "kind": "RightCurly",
+        "len": 1
+      }
+    },
+    {
+      "type": "stylerule",
+      "selectors": [
+        {
+          "components": [
+            {
+              "type": "tag",
+              "value": {
+                "Unknown": {
+                  "kind": "Ident",
+                  "offset": 271,
+                  "len": 4
+                }
+              }
+            }
+          ],
+          "comma": null
+        }
+      ],
+      "type": "style-declaration",
+      "open": {
+        "kind": "LeftCurly",
+        "len": 1
+      },
+      "declarations": [
+        {
+          "type": "property",
+          "name": {
+            "kind": "Ident",
+            "offset": 281,
+            "len": 5
+          },
+          "colon": {
+            "kind": "Colon",
+            "len": 1
+          },
+          "value": {
+            "values": [
+              {
+                "kind": "Whitespace",
+                "len": 1
+              },
+              {
+                "kind": "Ident",
+                "offset": 288,
+                "len": 2
+              }
+            ]
+          },
+          "important": null,
+          "semicolon": {
+            "kind": "Semicolon",
+            "len": 1
+          }
+        }
+      ],
+      "rules": [],
+      "close": {
+        "kind": "RightCurly",
+        "len": 1
+      }
+    },
+    {
+      "type": "QualifiedRule",
+      "prelude": {
+        "values": [
+          {
+            "kind": "Whitespace",
+            "len": 2
+          },
+          {
+            "type": "SimpleBlock",
+            "start": 295,
+            "open": {
+              "kind": "LeftSquare",
+              "len": 1
+            },
+            "values": {
+              "values": [
+                {
+                  "kind": "Ident",
+                  "offset": 296,
+                  "len": 4
+                },
+                {
+                  "kind": "Delim",
+                  "len": 1
+                },
+                {
+                  "kind": "Semicolon",
+                  "len": 1
+                }
+              ]
+            },
+            "close": {
+              "kind": "RightSquare",
+              "len": 1
+            }
+          }
+        ]
+      },
+      "block": {
+        "type": "Block",
+        "start": 303,
+        "open_curly": {
+          "kind": "LeftCurly",
+          "len": 1
+        },
+        "declarations": [],
+        "rules": [],
+        "close_curly": {
+          "kind": "RightCurly",
+          "len": 1
+        }
+      }
+    },
+    {
+      "type": "stylerule",
+      "selectors": [
+        {
+          "components": [
+            {
+              "type": "class",
+              "value": {
+                "type": "Class",
+                "dot": {
+                  "kind": "Delim",
+                  "len": 1
+                },
+                "name": {
+                  "kind": "Ident",
+                  "offset": 310,
+                  "len": 4
+                }
+              }
+            }
+          ],
+          "comma": null
+        }
+      ],
+      "type": "style-declaration",
+      "open": {
+        "kind": "LeftCurly",
+        "len": 1
+      },
+      "declarations": [
+        {
+          "type": "property",
+          "name": {
+            "kind": "Ident",
+            "offset": 321,
+            "len": 8
+          },
+          "colon": {
+            "kind": "Colon",
+            "len": 1
+          },
+          "value": {
+            "values": [
+              {
+                "kind": "Whitespace",
+                "len": 1
+              },
+              {
+                "kind": "Ident",
+                "offset": 331,
+                "len": 3
+              }
+            ]
+          },
+          "important": null,
+          "semicolon": null
+        }
+      ],
+      "rules": [],
+      "close": {
+        "kind": "RightCurly",
+        "len": 1
+      }
+    }
+  ]
+}
