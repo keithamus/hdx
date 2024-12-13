@@ -374,5 +374,10 @@ pub struct ReservedKeyframeName(pub Atom, #[label("Rename it, or try wrapping it
 
 #[derive(Debug, Error, Diagnostic)]
 #[error("An @layer {{}} (block) rule cannot have multiple names.")]
-#[diagnostic(help(""), code(hdx_parser::DiallowedLayerBlockWithMultipleNames))]
-pub struct DiallowedLayerBlockWithMultipleNames(#[label("Remove most (or all) of these names.")] pub Span);
+#[diagnostic(help(""), code(hdx_parser::DisallowedLayerBlockWithMultipleNames))]
+pub struct DisallowedLayerBlockWithMultipleNames(#[label("Remove most (or all) of these names.")] pub Span);
+
+#[derive(Debug, Error, Diagnostic)]
+#[error("!important cannot be used for this property")]
+#[diagnostic(help(""), code(hdx_parser::DisallowedImportant))]
+pub struct DisallowedImportant(#[label("Remove this.")] pub Span);

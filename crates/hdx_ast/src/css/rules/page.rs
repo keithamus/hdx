@@ -23,26 +23,26 @@ mod kw {
 // https://drafts.csswg.org/css-page-3/#at-page-rule
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
-pub struct Page<'a> {
+pub struct PageRule<'a> {
 	pub at_keyword: T![AtKeyword],
 	pub selectors: Option<PageSelectorList<'a>>,
 	pub block: PageBlock<'a>,
 }
 
 // https://drafts.csswg.org/css-page-3/#syntax-page-selector
-impl<'a> Parse<'a> for Page<'a> {
+impl<'a> Parse<'a> for PageRule<'a> {
 	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
 		let (at_keyword, selectors, block) = Self::parse_at_rule(p, Some(atom!("page")))?;
 		Ok(Self { at_keyword, selectors, block })
 	}
 }
 
-impl<'a> AtRule<'a> for Page<'a> {
+impl<'a> AtRule<'a> for PageRule<'a> {
 	type Prelude = PageSelectorList<'a>;
 	type Block = PageBlock<'a>;
 }
 
-impl<'a> ToCursors<'a> for Page<'a> {
+impl<'a> ToCursors<'a> for PageRule<'a> {
 	fn to_cursors(&self, s: &mut CursorStream<'a>) {
 		s.append(self.at_keyword.into());
 		if let Some(selectors) = &self.selectors {
@@ -312,7 +312,7 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(Page, 136);
+		assert_size!(PageRule, 136);
 		assert_size!(PageSelectorList, 32);
 		assert_size!(PageSelector, 48);
 		assert_size!(PagePseudoClass, 24);
@@ -323,10 +323,10 @@ mod tests {
 
 	#[test]
 	fn test_writes() {
-		assert_parse!(Page, "@page{margin-top:4in;}");
-		assert_parse!(Page, "@page wide{}");
-		assert_parse!(Page, "@page wide:left{}");
+		assert_parse!(PageRule, "@page{margin-top:4in;}");
+		assert_parse!(PageRule, "@page wide{}");
+		assert_parse!(PageRule, "@page wide:left{}");
 		assert_parse!(MarginRule, "@top-right{}");
-		assert_parse!(Page, "@page wide:left{@top-right{}}");
+		assert_parse!(PageRule, "@page wide:left{@top-right{}}");
 	}
 }

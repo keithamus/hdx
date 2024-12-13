@@ -1,6 +1,6 @@
-use hdx_parser::discrete_media_feature;
+use hdx_parser::discrete_feature;
 
-discrete_media_feature!(PrefersReducedMotionMediaFeature[atom!("prefers-reduced-motion")] {
+discrete_feature!(PrefersReducedMotionMediaFeature[atom!("prefers-reduced-motion")] {
 	NoPreference: atom!("no-preference"),
 	Reduce: atom!("reduce"),
 });

@@ -1,7 +1,7 @@
 use crate::css::units::CSSInt;
-use hdx_parser::ranged_media_feature;
+use hdx_parser::ranged_feature;
 
-ranged_media_feature!(VerticalViewportSegmentsMediaFeature[atom!("vertical-viewport-segments")], CSSInt);
+ranged_feature!(VerticalViewportSegmentsMediaFeature[atom!("vertical-viewport-segments")], CSSInt);
 
 #[cfg(test)]
 mod tests {

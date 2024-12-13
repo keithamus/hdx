@@ -1,6 +1,6 @@
-use hdx_parser::discrete_media_feature;
+use hdx_parser::discrete_feature;
 
-discrete_media_feature!(InvertedColorsMediaFeature[atom!("inverted-colors")] {
+discrete_feature!(InvertedColorsMediaFeature[atom!("inverted-colors")] {
 	None: atom!("none"),
 	Inverted: atom!("inverted"),
 });

@@ -3,59 +3,68 @@ source: crates/hdx_ast/tests/basic_snapshots.rs
 expression: result.output.unwrap()
 ---
 {
-  "node": {
-    "type": "stylesheet",
-    "rules": [
-      {
-        "node": {
-          "type": "stylerule",
-          "selectors": {
-            "node": [
-              {
-                "node": [
-                  {
-                    "type": "tag",
-                    "value": {
-                      "Html": "Body"
-                    }
+  "type": "stylesheet",
+  "rules": [
+    {
+      "type": "stylerule",
+      "selectors": [
+        {
+          "components": [
+            {
+              "type": "tag",
+              "value": {
+                "Html": {
+                  "Body": {
+                    "kind": "Ident",
+                    "offset": 0,
+                    "len": 4
                   }
-                ],
-                "start": 0,
-                "end": 4
+                }
               }
-            ],
-            "start": 0,
-            "end": 4
+            }
+          ],
+          "comma": null
+        }
+      ],
+      "type": "style-declaration",
+      "open": {
+        "kind": "LeftCurly",
+        "len": 1
+      },
+      "declarations": [
+        {
+          "type": "property",
+          "name": {
+            "kind": "Ident",
+            "offset": 9,
+            "len": 9
           },
-          "node": {
-            "type": "style-declaration",
-            "declarations": [
-              {
-                "node": {
-                  "type": "property",
-                  "name": "min-width",
-                  "value": {
-                    "LengthPercentage": {
-                      "type": "px",
-                      "value": 960.0
-                    }
-                  },
-                  "important": false
-                },
-                "start": 6,
-                "end": 26
+          "colon": {
+            "kind": "Colon",
+            "len": 1
+          },
+          "value": {
+            "LengthPercentage": {
+              "type": "px",
+              "value": {
+                "kind": "Dimension",
+                "len": 5,
+                "unit": "px"
               }
-            ],
-            "rules": []
+            }
           },
-          "start": 4,
-          "end": 28
-        },
-        "start": 0,
-        "end": 28
+          "important": null,
+          "semicolon": {
+            "kind": "Semicolon",
+            "len": 1
+          }
+        }
+      ],
+      "rules": [],
+      "close": {
+        "kind": "RightCurly",
+        "len": 1
       }
-    ]
-  },
-  "start": 0,
-  "end": 28
+    }
+  ]
 }

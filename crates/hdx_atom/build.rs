@@ -60,12 +60,10 @@ fn main() {
 								.collect::<Vec<&str>>();
 							for keyword in keywords {
 								if keyword.chars().all(|c| c == '-' || char::is_alphanumeric(c)) {
-									// println!("cargo::warning={}", keyword);
 									matches.insert(keyword.to_owned());
 								}
 							}
 						} else if capture.chars().all(|c| c == '-' || c == '_' || char::is_alphanumeric(c)) {
-							// println!("cargo::warning={}", capture);
 							matches.insert(capture.to_owned());
 						}
 						true

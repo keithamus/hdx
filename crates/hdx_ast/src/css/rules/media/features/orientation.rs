@@ -1,6 +1,6 @@
-use hdx_parser::discrete_media_feature;
+use hdx_parser::discrete_feature;
 
-discrete_media_feature!(OrientationMediaFeature[atom!("orientation")] {
+discrete_feature!(OrientationMediaFeature[atom!("orientation")] {
 	Portrait: atom!("portrait"),
 	Landscape: atom!("landscape"),
 });

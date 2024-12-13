@@ -1,6 +1,6 @@
-use hdx_parser::discrete_media_feature;
+use hdx_parser::discrete_feature;
 
-discrete_media_feature!(EnvironmentBlendingMediaFeature[atom!("environment-blending")] {
+discrete_feature!(EnvironmentBlendingMediaFeature[atom!("environment-blending")] {
 	Opaque: atom!("opaque"),
 	Additive: atom!("additive"),
 	Subtractive: atom!("subtractive"),

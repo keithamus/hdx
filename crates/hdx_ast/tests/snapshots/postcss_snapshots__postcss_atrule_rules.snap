@@ -6,7 +6,7 @@ expression: result.output.unwrap()
   "type": "stylesheet",
   "rules": [
     {
-      "type": "Supports",
+      "type": "SupportsRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 0,

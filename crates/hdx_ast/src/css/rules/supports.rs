@@ -19,14 +19,14 @@ mod kw {
 // https://drafts.csswg.org/css-conditional-3/#at-supports
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
-pub struct Supports<'a> {
+pub struct SupportsRule<'a> {
 	pub at_keyword: T![AtKeyword],
 	pub condition: SupportsCondition<'a>,
 	pub block: SupportsBlock<'a>,
 }
 
 // https://drafts.csswg.org/css-conditional-3/#at-ruledef-supports
-impl<'a> Parse<'a> for Supports<'a> {
+impl<'a> Parse<'a> for SupportsRule<'a> {
 	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
 		let start = p.offset();
 		let (at_keyword, condition, block) = Self::parse_at_rule(p, Some(atom!("supports")))?;
@@ -38,12 +38,12 @@ impl<'a> Parse<'a> for Supports<'a> {
 	}
 }
 
-impl<'a> AtRule<'a> for Supports<'a> {
+impl<'a> AtRule<'a> for SupportsRule<'a> {
 	type Prelude = SupportsCondition<'a>;
 	type Block = SupportsBlock<'a>;
 }
 
-impl<'a> ToCursors<'a> for Supports<'a> {
+impl<'a> ToCursors<'a> for SupportsRule<'a> {
 	fn to_cursors(&self, s: &mut CursorStream<'a>) {
 		s.append(self.at_keyword.into());
 		ToCursors::to_cursors(&self.condition, s);
@@ -231,24 +231,24 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(Supports, 456);
+		assert_size!(SupportsRule, 456);
 		assert_size!(SupportsCondition, 384);
 		assert_size!(SupportsBlock, 56);
 	}
 
 	#[test]
 	fn test_writes() {
-		assert_parse!(Supports, "@supports(color:black){}");
-		assert_parse!(Supports, "@supports(width:1px){body{width:1px}}");
-		// assert_parse!(Supports, "@supports not (width:1--foo){}");
-		// assert_parse!(Supports, "@supports(width: 1--foo) or (width: 1foo) {\n\n}");
-		// assert_parse!(Supports, "@supports(width: 1--foo) and (width: 1foo) {\n\n}");
-		// assert_parse!(Supports, "@supports(width: 100vw) {\n\tbody {\n\t\twidth: 100vw;\n\t}\n}");
-		// assert_parse!(Supports, "@supports not ((text-align-last: justify) or (-moz-text-align-last: justify)) {\n\n}");
-		// assert_parse!(Supports, "@supports((position:-webkit-sticky)or (position:sticky)) {}");
-		// assert_parse!(Supports, "@supports selector(h2 > p) {\n\n}");
-		// assert_parse!(Supports, "@supports(selector(h2 > p)) {}", "@supports selector(h2 > p) {\n\n}");
-		// assert_parse!(Supports, "@supports not selector(h2 > p) {\n\n}");
-		// assert_parse!(Supports, "@supports not (selector(h2 > p)) {}", "@supports not selector(h2 > p) {\n\n}");
+		assert_parse!(SupportsRule, "@supports(color:black){}");
+		assert_parse!(SupportsRule, "@supports(width:1px){body{width:1px}}");
+		// assert_parse!(SupportsRule, "@supports not (width:1--foo){}");
+		// assert_parse!(SupportsRule, "@supports(width: 1--foo) or (width: 1foo) {\n\n}");
+		// assert_parse!(SupportsRule, "@supports(width: 1--foo) and (width: 1foo) {\n\n}");
+		// assert_parse!(SupportsRule, "@supports(width: 100vw) {\n\tbody {\n\t\twidth: 100vw;\n\t}\n}");
+		// assert_parse!(SupportsRule, "@supports not ((text-align-last: justify) or (-moz-text-align-last: justify)) {\n\n}");
+		// assert_parse!(SupportsRule, "@supports((position:-webkit-sticky)or (position:sticky)) {}");
+		// assert_parse!(SupportsRule, "@supports selector(h2 > p) {\n\n}");
+		// assert_parse!(SupportsRule, "@supports(selector(h2 > p)) {}", "@supports selector(h2 > p) {\n\n}");
+		// assert_parse!(SupportsRule, "@supports not selector(h2 > p) {\n\n}");
+		// assert_parse!(SupportsRule, "@supports not (selector(h2 > p)) {}", "@supports not selector(h2 > p) {\n\n}");
 	}
 }

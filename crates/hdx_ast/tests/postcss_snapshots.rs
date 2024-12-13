@@ -88,15 +88,13 @@ fn postcss_empty() {
 #[test]
 #[cfg(feature = "serde")]
 fn postcss_escape() {
-	// FIXME: this fails we need CI green for now.
-	// assert_snap_ast!("../../tasks/coverage/postcss-parser-tests/cases/escape.css");
+	assert_snap_ast!("../../tasks/coverage/postcss-parser-tests/cases/escape.css");
 }
 
 #[test]
 #[cfg(feature = "serde")]
 fn postcss_extends() {
-	// FIXME: this fails we need CI green for now.
-	// assert_snap_ast!("../../tasks/coverage/postcss-parser-tests/cases/extends.css");
+	assert_snap_ast!("../../tasks/coverage/postcss-parser-tests/cases/extends.css");
 }
 
 #[test]
@@ -114,15 +112,13 @@ fn postcss_ie_prodid() {
 #[test]
 #[cfg(feature = "serde")]
 fn postcss_important() {
-	// FIXME: this fails we need CI green for now.
-	// assert_snap_ast!("../../tasks/coverage/postcss-parser-tests/cases/important.css");
+	assert_snap_ast!("../../tasks/coverage/postcss-parser-tests/cases/important.css");
 }
 
 #[test]
 #[cfg(feature = "serde")]
 fn postcss_inside() {
-	// FIXME: this fails we need CI green for now.
-	// assert_snap_ast!("../../tasks/coverage/postcss-parser-tests/cases/inside.css");
+	assert_snap_ast!("../../tasks/coverage/postcss-parser-tests/cases/inside.css");
 }
 
 #[test]
@@ -134,8 +130,7 @@ fn postcss_no_selector() {
 #[test]
 #[cfg(feature = "serde")]
 fn postcss_prop() {
-	// FIXME: this fails we need CI green for now.
-	// assert_snap_ast!("../../tasks/coverage/postcss-parser-tests/cases/prop.css");
+	assert_snap_ast!("../../tasks/coverage/postcss-parser-tests/cases/prop.css");
 }
 
 #[test]
@@ -153,8 +148,7 @@ fn postcss_raw_decl() {
 #[test]
 #[cfg(feature = "serde")]
 fn postcss_rule_at() {
-	// FIXME: this fails we need CI green for now.
-	// assert_snap_ast!("../../tasks/coverage/postcss-parser-tests/cases/rule-at.css");
+	assert_snap_ast!("../../tasks/coverage/postcss-parser-tests/cases/rule-at.css");
 }
 
 #[test]

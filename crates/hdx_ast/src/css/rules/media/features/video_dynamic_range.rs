@@ -1,6 +1,6 @@
-use hdx_parser::discrete_media_feature;
+use hdx_parser::discrete_feature;
 
-discrete_media_feature!(VideoDynamicRangeMediaFeature[atom!("video-dynamic-range")] {
+discrete_feature!(VideoDynamicRangeMediaFeature[atom!("video-dynamic-range")] {
 	Standard: atom!("standard"),
 	Hight: atom!("high"),
 });

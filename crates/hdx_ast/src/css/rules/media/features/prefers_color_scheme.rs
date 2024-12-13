@@ -1,6 +1,6 @@
-use hdx_parser::discrete_media_feature;
+use hdx_parser::discrete_feature;
 
-discrete_media_feature!(PrefersColorSchemeMediaFeature[atom!("prefers-color-scheme")] {
+discrete_feature!(PrefersColorSchemeMediaFeature[atom!("prefers-color-scheme")] {
 	Light: atom!("light"),
 	Dark: atom!("dark"),
 });

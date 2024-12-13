@@ -6,7 +6,7 @@ expression: result.output.unwrap()
   "type": "stylesheet",
   "rules": [
     {
-      "type": "Page",
+      "type": "PageRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 0,

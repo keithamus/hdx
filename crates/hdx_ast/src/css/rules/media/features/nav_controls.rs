@@ -1,6 +1,6 @@
-use hdx_parser::discrete_media_feature;
+use hdx_parser::discrete_feature;
 
-discrete_media_feature!(NavControlsMediaFeature[atom!("nav-controls")] {
+discrete_feature!(NavControlsMediaFeature[atom!("nav-controls")] {
 	None: atom!("none"),
 	Back: atom!("back"),
 });

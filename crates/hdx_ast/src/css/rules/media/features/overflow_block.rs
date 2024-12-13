@@ -1,6 +1,6 @@
-use hdx_parser::discrete_media_feature;
+use hdx_parser::discrete_feature;
 
-discrete_media_feature!(OverflowBlockMediaFeature[atom!("overflow-block")] {
+discrete_feature!(OverflowBlockMediaFeature[atom!("overflow-block")] {
 	None: atom!("none"),
 	Scroll: atom!("scroll"),
 	Paged: atom!("paged"),

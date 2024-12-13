@@ -1,7 +1,7 @@
 use crate::Todo;
 
 // https://drafts.csswg.org/css-transitions-2/#at-ruledef-starting-style
-pub type StartingStyle = Todo;
+pub type StartingStyleRule = Todo;
 
 #[cfg(test)]
 mod tests {
@@ -10,11 +10,11 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(StartingStyle, 0);
+		assert_size!(StartingStyleRule, 0);
 	}
 
 	#[test]
 	fn test_writes() {
-		//assert_parse!(StartingStyle, "@starting-style");
+		//assert_parse!(StartingStyleRule, "@starting-style");
 	}
 }

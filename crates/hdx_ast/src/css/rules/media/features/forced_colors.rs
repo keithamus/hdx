@@ -1,6 +1,6 @@
-use hdx_parser::discrete_media_feature;
+use hdx_parser::discrete_feature;
 
-discrete_media_feature!(ForcedColorsMediaFeature[atom!("forced-colors")] {
+discrete_feature!(ForcedColorsMediaFeature[atom!("forced-colors")] {
 	None: atom!("none"),
 	Active: atom!("active"),
 });

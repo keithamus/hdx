@@ -1,6 +1,6 @@
-use hdx_parser::discrete_media_feature;
+use hdx_parser::discrete_feature;
 
-discrete_media_feature!(AnyPointerMediaFeature[atom!("any-pointer")] {
+discrete_feature!(AnyPointerMediaFeature[atom!("any-pointer")] {
 	None: atom!("none"),
 	Coarse: atom!("coarse"),
 	Fine: atom!("fine"),

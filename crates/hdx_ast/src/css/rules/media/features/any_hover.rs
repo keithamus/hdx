@@ -1,6 +1,6 @@
-use hdx_parser::discrete_media_feature;
+use hdx_parser::discrete_feature;
 
-discrete_media_feature!(AnyHoverMediaFeature[atom!("any-hover")] {
+discrete_feature!(AnyHoverMediaFeature[atom!("any-hover")] {
 	None: atom!("none"),
 	Hover: atom!("hover"),
 });

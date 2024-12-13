@@ -84,14 +84,3 @@ pub fn test_serialize<'a, T: Parse<'a> + ToCursors<'a> + serde::Serialize>(
 		panic!("Failed to parse ({:?})", source_text);
 	}
 }
-
-#[cfg(test)]
-macro_rules! assert_json {
-	($ty: ty, $str: literal, $($json:tt)+) => {
-		let allocator = bumpalo::Bump::default();
-		$crate::test_helpers::assert_parse!($ty, $str);
-		$crate::test_helpers::test_serialize::<$ty>(&allocator, $str, ::serde_json::json!($($json)+));
-	}
-}
-#[cfg(test)]
-pub(crate) use assert_json;

@@ -1,6 +1,6 @@
-use hdx_parser::discrete_media_feature;
+use hdx_parser::discrete_feature;
 
-discrete_media_feature!(OverflowInlineMediaFeature[atom!("overflow-inline")] {
+discrete_feature!(OverflowInlineMediaFeature[atom!("overflow-inline")] {
 	None: atom!("none"),
 	Scroll: atom!("scroll"),
 });

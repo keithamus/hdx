@@ -3,86 +3,96 @@ source: crates/hdx_ast/tests/basic_snapshots.rs
 expression: result.output.unwrap()
 ---
 {
-  "node": {
-    "type": "stylesheet",
-    "rules": [
-      {
-        "node": {
-          "type": "Media",
-          "query": {
-            "node": [
-              {
-                "node": {
-                  "precondition": null,
-                  "media_type": {
-                    "type": "Screen"
-                  },
-                  "condition": null
-                },
-                "start": 6,
-                "end": 13
-              }
-            ],
-            "start": 6,
-            "end": 13
+  "type": "stylesheet",
+  "rules": [
+    {
+      "type": "MediaRule",
+      "at_keyword": {
+        "kind": "AtKeyword",
+        "offset": 0,
+        "len": 6
+      },
+      "query": [
+        {
+          "precondition": null,
+          "media_type": {
+            "type": "All",
+            "kind": "Ident",
+            "offset": 7,
+            "len": 6
           },
-          "rules": {
-            "node": [
+          "condition": null
+        }
+      ],
+      "block": {
+        "open": {
+          "kind": "LeftCurly",
+          "len": 1
+        },
+        "rules": [
+          {
+            "type": "stylerule",
+            "selectors": [
               {
-                "node": {
-                  "type": "stylerule",
-                  "selectors": {
-                    "node": [
-                      {
-                        "node": [
-                          {
-                            "type": "tag",
-                            "value": {
-                              "Html": "Body"
-                            }
-                          }
-                        ],
-                        "start": 17,
-                        "end": 21
+                "components": [
+                  {
+                    "type": "tag",
+                    "value": {
+                      "Html": {
+                        "Body": {
+                          "kind": "Ident",
+                          "offset": 17,
+                          "len": 4
+                        }
                       }
-                    ],
-                    "start": 15,
-                    "end": 21
-                  },
-                  "node": {
-                    "type": "style-declaration",
-                    "declarations": [
-                      {
-                        "node": {
-                          "type": "property",
-                          "name": "color",
-                          "value": {
-                            "Named": "black"
-                          },
-                          "important": false
-                        },
-                        "start": 23,
-                        "end": 38
-                      }
-                    ],
-                    "rules": []
-                  },
-                  "start": 21,
-                  "end": 41
-                },
-                "start": 15,
-                "end": 41
+                    }
+                  }
+                ],
+                "comma": null
               }
             ],
-            "start": 13,
-            "end": 43
+            "type": "style-declaration",
+            "open": {
+              "kind": "LeftCurly",
+              "len": 1
+            },
+            "declarations": [
+              {
+                "type": "property",
+                "name": {
+                  "kind": "Ident",
+                  "offset": 26,
+                  "len": 5
+                },
+                "colon": {
+                  "kind": "Colon",
+                  "len": 1
+                },
+                "value": {
+                  "Named": {
+                    "black": {
+                      "kind": "Ident",
+                      "offset": 33,
+                      "len": 5
+                    }
+                  }
+                },
+                "important": null,
+                "semicolon": null
+              }
+            ],
+            "rules": [],
+            "close": {
+              "kind": "RightCurly",
+              "len": 1
+            }
           }
-        },
-        "start": 0,
-        "end": 43
+        ],
+        "close": {
+          "kind": "RightCurly",
+          "len": 1
+        }
       }
-    ]
-  },
-  "start": 0,
-  "end": 43
+    }
+  ]
 }

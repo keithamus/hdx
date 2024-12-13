@@ -5,20 +5,20 @@ use hdx_parser::{diagnostics, Parse, Parser, Result as ParserResult, ToCursors, 
 // https://drafts.csswg.org/css-syntax-3/#charset-rule
 #[derive(Debug, Default, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-pub struct Charset {
+pub struct CharsetRule {
 	at_keyword: T![AtKeyword],
 	space: T![' '],
 	string: T![String],
 	semicolon: Option<T![;]>,
 }
 
-// Charset is a special rule which means it cannot use standard AtRule parsing... comments below
+// CharsetRule is a special rule which means it cannot use standard AtRule parsing... comments below
 // https://drafts.csswg.org/css-syntax-3/#determine-the-fallback-encoding
-impl<'a> Parse<'a> for Charset {
+impl<'a> Parse<'a> for CharsetRule {
 	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
 		let at_keyword = p.parse::<T![AtKeyword]>()?;
 		let c: Cursor = at_keyword.into();
-		// Charset MUST be all lowercase, alt cases such as CHARSET or charSet aren't
+		// CharsetRule MUST be all lowercase, alt cases such as CHARSET or charSet aren't
 		// valid here, compares to other at-rules which are case insensitive.
 		let atom = p.parse_atom(c);
 		if atom != atom!("charset") {
@@ -35,7 +35,7 @@ impl<'a> Parse<'a> for Charset {
 	}
 }
 
-impl<'a> ToCursors<'a> for Charset {
+impl<'a> ToCursors<'a> for CharsetRule {
 	fn to_cursors(&self, s: &mut hdx_parser::CursorStream<'a>) {
 		s.append(self.at_keyword.into());
 		s.append(self.space.into());
@@ -53,12 +53,12 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(Charset, 44);
+		assert_size!(CharsetRule, 44);
 	}
 
 	#[test]
 	fn test_writes() {
-		assert_parse!(Charset, "@charset \"utf-8\";", "@charset \"utf-8\";");
-		assert_parse!(Charset, "@charset \"UTF-8\";", "@charset \"UTF-8\";");
+		assert_parse!(CharsetRule, "@charset \"utf-8\";", "@charset \"utf-8\";");
+		assert_parse!(CharsetRule, "@charset \"UTF-8\";", "@charset \"UTF-8\";");
 	}
 }

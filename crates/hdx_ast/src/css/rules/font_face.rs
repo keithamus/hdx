@@ -11,24 +11,24 @@ use crate::css::properties::StyleValue;
 // https://drafts.csswg.org/css-fonts/#font-face-rule
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-pub struct FontFace<'a> {
+pub struct FontFaceRule<'a> {
 	pub at_keyword: T![AtKeyword],
 	pub block: FontFaceDeclaration<'a>,
 }
 
-impl<'a> AtRule<'a> for FontFace<'a> {
+impl<'a> AtRule<'a> for FontFaceRule<'a> {
 	type Prelude = NoPreludeAllowed;
 	type Block = FontFaceDeclaration<'a>;
 }
 
-impl<'a> Parse<'a> for FontFace<'a> {
+impl<'a> Parse<'a> for FontFaceRule<'a> {
 	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
 		let (at_keyword, _, block) = Self::parse_at_rule(p, Some(atom!("font-face")))?;
 		Ok(Self { at_keyword, block })
 	}
 }
 
-impl<'a> ToCursors<'a> for FontFace<'a> {
+impl<'a> ToCursors<'a> for FontFaceRule<'a> {
 	fn to_cursors(&self, s: &mut CursorStream<'a>) {
 		s.append(self.at_keyword.into());
 		ToCursors::to_cursors(&self.block, s);
@@ -129,11 +129,11 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(FontFace, 72);
+		assert_size!(FontFaceRule, 72);
 	}
 
 	#[test]
 	fn test_writes() {
-		//assert_parse!(FontFace, "@font-face {}");
+		//assert_parse!(FontFaceRule, "@font-face {}");
 	}
 }

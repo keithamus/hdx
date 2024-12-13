@@ -16,25 +16,25 @@ pub mod kw {
 // https://drafts.csswg.org/css-animations/#at-ruledef-keyframes
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
-pub struct Keyframes<'a> {
+pub struct KeyframesRule<'a> {
 	at_keyword: T![AtKeyword],
 	name: Option<KeyframesName>,
 	rules: KeyframesBlock<'a>,
 }
 
-impl<'a> AtRule<'a> for Keyframes<'a> {
+impl<'a> AtRule<'a> for KeyframesRule<'a> {
 	type Prelude = KeyframesName;
 	type Block = KeyframesBlock<'a>;
 }
 
-impl<'a> Parse<'a> for Keyframes<'a> {
+impl<'a> Parse<'a> for KeyframesRule<'a> {
 	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
 		let (at_keyword, name, rules) = Self::parse_at_rule(p, Some(atom!("keyframes")))?;
 		Ok(Self { at_keyword, name, rules })
 	}
 }
 
-impl<'a> ToCursors<'a> for Keyframes<'a> {
+impl<'a> ToCursors<'a> for KeyframesRule<'a> {
 	fn to_cursors(&self, s: &mut CursorStream<'a>) {
 		s.append(self.at_keyword.into());
 		if let Some(name) = self.name {
@@ -263,16 +263,16 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(Keyframes, 88);
+		assert_size!(KeyframesRule, 88);
 	}
 
 	#[test]
 	fn test_writes() {
-		assert_parse!(Keyframes, "@keyframes foo{}");
-		assert_parse!(Keyframes, "@keyframes\"include\"{}");
-		assert_parse!(Keyframes, "@keyframes spin{0%{rotate:0deg}100%{rotate:360deg}}");
-		assert_parse!(Keyframes, "@keyframes spin{from,0%{rotate:0deg}to,100%{rotate:360deg}}");
-		assert_parse!(Keyframes, "@keyframes spin{to{transform:rotate(360deg)}}");
-		assert_parse!(Keyframes, "@keyframes x{to{animation-timing-function:cubic-bezier(0,0,0.2,1)}}");
+		assert_parse!(KeyframesRule, "@keyframes foo{}");
+		assert_parse!(KeyframesRule, "@keyframes\"include\"{}");
+		assert_parse!(KeyframesRule, "@keyframes spin{0%{rotate:0deg}100%{rotate:360deg}}");
+		assert_parse!(KeyframesRule, "@keyframes spin{from,0%{rotate:0deg}to,100%{rotate:360deg}}");
+		assert_parse!(KeyframesRule, "@keyframes spin{to{transform:rotate(360deg)}}");
+		assert_parse!(KeyframesRule, "@keyframes x{to{animation-timing-function:cubic-bezier(0,0,0.2,1)}}");
 	}
 }

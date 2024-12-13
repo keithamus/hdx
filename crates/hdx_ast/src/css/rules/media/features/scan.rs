@@ -1,6 +1,6 @@
-use hdx_parser::discrete_media_feature;
+use hdx_parser::discrete_feature;
 
-discrete_media_feature!(ScanMediaFeature[atom!("scan")] {
+discrete_feature!(ScanMediaFeature[atom!("scan")] {
 	Interlace: atom!("interlace"),
 	Progressive: atom!("progressive"),
 });

@@ -3,47 +3,67 @@ source: crates/hdx_ast/tests/basic_snapshots.rs
 expression: result.output.unwrap()
 ---
 {
-  "node": {
-    "type": "stylesheet",
-    "rules": [
-      {
-        "node": {
-          "type": "stylerule",
-          "selectors": {
-            "node": [
-              {
-                "node": [
-                  {
-                    "type": "functional-pseudo-class",
-                    "value": {
-                      "type": "nth-child",
-                      "value": [
-                        1,
-                        1
+  "type": "stylesheet",
+  "rules": [
+    {
+      "type": "stylerule",
+      "selectors": [
+        {
+          "components": [
+            {
+              "type": "functional-pseudo-class",
+              "value": {
+                "type": "nth-child",
+                "value": {
+                  "colon": {
+                    "kind": "Colon",
+                    "len": 1
+                  },
+                  "function": {
+                    "kind": "Function",
+                    "offset": 1,
+                    "len": 10
+                  },
+                  "value": {
+                    "Anb": [
+                      1,
+                      1,
+                      [
+                        {
+                          "kind": "Ident",
+                          "offset": 11,
+                          "len": 1
+                        },
+                        {
+                          "kind": "Number",
+                          "offset": 4294967295,
+                          "len": 2
+                        }
                       ]
-                    }
+                    ]
+                  },
+                  "close": {
+                    "kind": "RightParen",
+                    "len": 1
                   }
-                ],
-                "start": 0,
-                "end": 15
+                }
               }
-            ],
-            "start": 0,
-            "end": 15
-          },
-          "node": {
-            "type": "style-declaration",
-            "declarations": [],
-            "rules": []
-          },
-          "start": 15,
-          "end": 18
-        },
-        "start": 0,
-        "end": 18
+            }
+          ],
+          "comma": null
+        }
+      ],
+      "type": "style-declaration",
+      "open": {
+        "kind": "LeftCurly",
+        "len": 1
+      },
+      "declarations": [],
+      "rules": [],
+      "close": {
+        "kind": "RightCurly",
+        "len": 1
       }
-    ]
-  },
-  "start": 0,
-  "end": 18
+    }
+  ]
 }

@@ -1,6 +1,6 @@
-use hdx_parser::bool_media_feature;
+use hdx_parser::bool_feature;
 
-bool_media_feature!(GridMediaFeature[atom!("grid")]);
+bool_feature!(GridMediaFeature[atom!("grid")]);
 
 #[cfg(test)]
 mod tests {

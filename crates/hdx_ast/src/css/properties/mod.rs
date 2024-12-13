@@ -1,6 +1,6 @@
 use std::{fmt::Debug, hash::Hash};
 
-use hdx_atom::{atom, Atom};
+use hdx_atom::atom;
 use hdx_lexer::{Cursor, KindSet};
 use hdx_parser::{
 	CursorStream, Declaration, DeclarationValue, Important, Is, Parse, Parser, Result as ParserResult, State,

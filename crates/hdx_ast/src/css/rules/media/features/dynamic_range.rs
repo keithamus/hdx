@@ -1,6 +1,6 @@
-use hdx_parser::discrete_media_feature;
+use hdx_parser::discrete_feature;
 
-discrete_media_feature!(DynamicRangeMediaFeature[atom!("dynamic-range")] {
+discrete_feature!(DynamicRangeMediaFeature[atom!("dynamic-range")] {
 	Standard: atom!("standard"),
 	High: atom!("high"),
 });
