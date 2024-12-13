@@ -232,6 +232,17 @@ fn def_builds_multiplier_of_types_with_range() {
 }
 
 #[test]
+fn def_builds_multiplier_of_type_fixed_range() {
+	assert_eq!(
+		to_valuedef! { <length>{5} },
+		Def::Multiplier(
+			Box::new(Def::Type(DefType::Length(DefRange::None))),
+			DefMultiplierStyle::Range(DefRange::Fixed(5f32))
+		)
+	)
+}
+
+#[test]
 fn def_builds_complex_combination_1() {
 	assert_eq!(
 		to_valuedef! { [ inset? && <length>{2,4} && <color>? ]# | none },
@@ -389,4 +400,18 @@ fn bounded_range_multiplier_is_optimized_to_options_with_lifetimes_when_necessar
 	let syntax = to_valuedef! { <border-top-color>{1,2} };
 	let data = to_deriveinput! { struct Foo<'a> {} }; // Foo specifies lifetime
 	assert_snapshot!(syntax, data, "bounded_range_multiplier_is_optimized_to_options_with_lifetimes_when_necessary");
+}
+
+#[test]
+fn value_fixed_range_color2_optimized() {
+	let syntax = to_valuedef! { <color>{2} };
+	let data = to_deriveinput! { struct Foo {} };
+	assert_snapshot!(syntax, data, "value_fixed_range_color2_optimized");
+}
+
+#[test]
+fn value_fixed_range_auto_color2_optimized() {
+	let syntax = to_valuedef! { auto | <color>{2} };
+	let data = to_deriveinput! { enum Foo {} };
+	assert_snapshot!(syntax, data, "value_fixed_range_auto_color2_optimized");
 }
