@@ -1,0 +1,241 @@
+---
+source: crates/hdx_ast/tests/postcss_snapshots.rs
+expression: result.output.unwrap()
+---
+{
+  "type": "stylesheet",
+  "rules": [
+    {
+      "type": "stylerule",
+      "selectors": [
+        {
+          "components": [
+            {
+              "type": "pseudo-class",
+              "value": {
+                "active": [
+                  {
+                    "kind": "Colon",
+                    "len": 1
+                  },
+                  {
+                    "kind": "Ident",
+                    "offset": 1,
+                    "len": 4
+                  }
+                ]
+              }
+            }
+          ],
+          "comma": null
+        }
+      ],
+      "type": "style-declaration",
+      "open": {
+        "kind": "LeftCurly",
+        "len": 1
+      },
+      "declarations": [
+        {
+          "type": "property",
+          "name": {
+            "kind": "Ident",
+            "offset": 10,
+            "len": 11
+          },
+          "colon": {
+            "kind": "Colon",
+            "len": 1
+          },
+          "value": {
+            "values": [
+              {
+                "kind": "Whitespace",
+                "len": 1
+              },
+              {
+                "type": "SimpleBlock",
+                "start": 23,
+                "open": {
+                  "kind": "LeftCurly",
+                  "len": 1
+                },
+                "values": {
+                  "values": [
+                    {
+                      "kind": "Whitespace",
+                      "len": 1
+                    },
+                    {
+                      "kind": "Whitespace",
+                      "len": 4
+                    },
+                    {
+                      "kind": "Ident",
+                      "offset": 29,
+                      "len": 5
+                    },
+                    {
+                      "kind": "Colon",
+                      "len": 1
+                    },
+                    {
+                      "kind": "Whitespace",
+                      "len": 1
+                    },
+                    {
+                      "kind": "Number",
+                      "len": 1
+                    }
+                  ]
+                },
+                "close": null
+              }
+            ]
+          },
+          "important": null,
+          "semicolon": {
+            "kind": "Semicolon",
+            "len": 1
+          }
+        },
+        {
+          "type": "property",
+          "name": {
+            "kind": "Ident",
+            "offset": 43,
+            "len": 6
+          },
+          "colon": {
+            "kind": "Colon",
+            "len": 1
+          },
+          "value": {
+            "LengthPercentage": {
+              "type": "zero",
+              "value": {
+                "kind": "Number",
+                "len": 1
+              }
+            }
+          },
+          "important": null,
+          "semicolon": {
+            "kind": "Semicolon",
+            "len": 1
+          }
+        }
+      ],
+      "rules": [],
+      "close": {
+        "kind": "RightCurly",
+        "len": 1
+      }
+    },
+    {
+      "type": "QualifiedRule",
+      "prelude": {
+        "values": [
+          {
+            "kind": "Semicolon",
+            "len": 1
+          },
+          {
+            "kind": "Whitespace",
+            "len": 1
+          },
+          {
+            "kind": "Whitespace",
+            "len": 2
+          },
+          {
+            "kind": "Ident",
+            "offset": 61,
+            "len": 12
+          },
+          {
+            "kind": "Colon",
+            "len": 1
+          }
+        ]
+      },
+      "block": {
+        "type": "Block",
+        "start": 74,
+        "open_curly": {
+          "kind": "LeftCurly",
+          "len": 1
+        },
+        "declarations": [
+          {
+            "type": "Declaration",
+            "name": {
+              "kind": "Ident",
+              "offset": 81,
+              "len": 5
+            },
+            "colon": {
+              "kind": "Colon",
+              "len": 1
+            },
+            "value": {
+              "values": [
+                {
+                  "kind": "Whitespace",
+                  "len": 1
+                },
+                {
+                  "kind": "Dimension",
+                  "offset": 88,
+                  "len": 4,
+                  "unit": "px"
+                }
+              ]
+            },
+            "important": null,
+            "semicolon": {
+              "kind": "Semicolon",
+              "len": 1
+            }
+          },
+          {
+            "type": "Declaration",
+            "name": {
+              "kind": "Ident",
+              "offset": 98,
+              "len": 6
+            },
+            "colon": {
+              "kind": "Colon",
+              "len": 1
+            },
+            "value": {
+              "values": [
+                {
+                  "kind": "Whitespace",
+                  "len": 1
+                },
+                {
+                  "kind": "Dimension",
+                  "offset": 106,
+                  "len": 4,
+                  "unit": "px"
+                }
+              ]
+            },
+            "important": null,
+            "semicolon": {
+              "kind": "Semicolon",
+              "len": 1
+            }
+          }
+        ],
+        "rules": [],
+        "close_curly": {
+          "kind": "RightCurly",
+          "len": 1
+        }
+      }
+    }
+  ]
+}

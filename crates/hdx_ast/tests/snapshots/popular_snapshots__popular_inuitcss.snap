@@ -999,19 +999,18 @@ expression: result.output.unwrap()
             "kind": "Colon",
             "len": 1
           },
-          "value": [
-            {
-              "length": {
-                "type": "zero",
-                "value": {
-                  "kind": "Number",
-                  "len": 1
-                }
+          "value": {
+            "values": [
+              {
+                "kind": "Whitespace",
+                "len": 1
+              },
+              {
+                "kind": "Number",
+                "len": 1
               }
-            },
-            null,
-            null
-          ],
+            ]
+          },
           "important": null,
           "semicolon": {
             "kind": "Semicolon",
@@ -5861,19 +5860,19 @@ expression: result.output.unwrap()
             "kind": "Colon",
             "len": 1
           },
-          "value": [
-            null,
-            {
-              "OutlineLineStyle": {
-                "none": {
-                  "kind": "Ident",
-                  "offset": 19054,
-                  "len": 4
-                }
+          "value": {
+            "values": [
+              {
+                "kind": "Whitespace",
+                "len": 1
+              },
+              {
+                "kind": "Ident",
+                "offset": 19054,
+                "len": 4
               }
-            },
-            null
-          ],
+            ]
+          },
           "important": null,
           "semicolon": {
             "kind": "Semicolon",

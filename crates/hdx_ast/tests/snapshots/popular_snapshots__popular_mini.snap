@@ -7805,7 +7805,7 @@ expression: result.output.unwrap()
             "len": 1
           },
           "value": {
-            "Width": {
+            "WidthStyleValue": {
               "LengthPercentage": {
                 "type": "zero",
                 "value": {
@@ -7969,7 +7969,7 @@ expression: result.output.unwrap()
             "len": 1
           },
           "value": {
-            "Width": {
+            "WidthStyleValue": {
               "LengthPercentage": {
                 "type": "percent",
                 "value": {
@@ -8197,7 +8197,7 @@ expression: result.output.unwrap()
             "len": 1
           },
           "value": {
-            "Width": {
+            "WidthStyleValue": {
               "LengthPercentage": {
                 "type": "percent",
                 "value": {
@@ -8426,7 +8426,7 @@ expression: result.output.unwrap()
             "len": 1
           },
           "value": {
-            "Width": {
+            "WidthStyleValue": {
               "LengthPercentage": {
                 "type": "percent",
                 "value": {
@@ -8655,7 +8655,7 @@ expression: result.output.unwrap()
             "len": 1
           },
           "value": {
-            "Width": {
+            "WidthStyleValue": {
               "LengthPercentage": {
                 "type": "percent",
                 "value": {
@@ -8884,7 +8884,7 @@ expression: result.output.unwrap()
             "len": 1
           },
           "value": {
-            "Width": {
+            "WidthStyleValue": {
               "LengthPercentage": {
                 "type": "percent",
                 "value": {
@@ -9113,7 +9113,7 @@ expression: result.output.unwrap()
             "len": 1
           },
           "value": {
-            "Width": {
+            "WidthStyleValue": {
               "LengthPercentage": {
                 "type": "percent",
                 "value": {
@@ -9342,7 +9342,7 @@ expression: result.output.unwrap()
             "len": 1
           },
           "value": {
-            "Width": {
+            "WidthStyleValue": {
               "LengthPercentage": {
                 "type": "percent",
                 "value": {
@@ -9571,7 +9571,7 @@ expression: result.output.unwrap()
             "len": 1
           },
           "value": {
-            "Width": {
+            "WidthStyleValue": {
               "LengthPercentage": {
                 "type": "percent",
                 "value": {
@@ -9800,7 +9800,7 @@ expression: result.output.unwrap()
             "len": 1
           },
           "value": {
-            "Width": {
+            "WidthStyleValue": {
               "LengthPercentage": {
                 "type": "percent",
                 "value": {
@@ -10029,7 +10029,7 @@ expression: result.output.unwrap()
             "len": 1
           },
           "value": {
-            "Width": {
+            "WidthStyleValue": {
               "LengthPercentage": {
                 "type": "percent",
                 "value": {
@@ -10258,7 +10258,7 @@ expression: result.output.unwrap()
             "len": 1
           },
           "value": {
-            "Width": {
+            "WidthStyleValue": {
               "LengthPercentage": {
                 "type": "percent",
                 "value": {
@@ -10487,7 +10487,7 @@ expression: result.output.unwrap()
             "len": 1
           },
           "value": {
-            "Width": {
+            "WidthStyleValue": {
               "LengthPercentage": {
                 "type": "percent",
                 "value": {
@@ -21988,7 +21988,7 @@ expression: result.output.unwrap()
             "len": 1
           },
           "value": {
-            "Width": {
+            "WidthStyleValue": {
               "LengthPercentage": {
                 "type": "px",
                 "value": {
@@ -22487,7 +22487,7 @@ expression: result.output.unwrap()
             "len": 1
           },
           "value": {
-            "Width": {
+            "WidthStyleValue": {
               "LengthPercentage": {
                 "type": "px",
                 "value": {
@@ -25819,11 +25819,17 @@ expression: result.output.unwrap()
             "len": 1
           },
           "value": {
-            "Ellipsis": {
-              "kind": "Ident",
-              "offset": 16011,
-              "len": 8
-            }
+            "values": [
+              {
+                "kind": "Whitespace",
+                "len": 1
+              },
+              {
+                "kind": "Ident",
+                "offset": 16011,
+                "len": 8
+              }
+            ]
           },
           "important": null,
           "semicolon": {
@@ -50258,11 +50264,17 @@ expression: result.output.unwrap()
             "len": 1
           },
           "value": {
-            "Ellipsis": {
-              "kind": "Ident",
-              "offset": 29967,
-              "len": 8
-            }
+            "values": [
+              {
+                "kind": "Whitespace",
+                "len": 1
+              },
+              {
+                "kind": "Ident",
+                "offset": 29967,
+                "len": 8
+              }
+            ]
           },
           "important": null,
           "semicolon": {
@@ -65009,7 +65021,7 @@ expression: result.output.unwrap()
             "len": 1
           },
           "value": {
-            "Width": {
+            "WidthStyleValue": {
               "Auto": {
                 "kind": "Ident",
                 "offset": 38756,

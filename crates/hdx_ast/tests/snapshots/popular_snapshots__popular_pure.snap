@@ -10693,19 +10693,18 @@ expression: result.output.unwrap()
             "kind": "Colon",
             "len": 1
           },
-          "value": [
-            {
-              "length": {
-                "type": "zero",
-                "value": {
-                  "kind": "Number",
-                  "len": 1
-                }
+          "value": {
+            "values": [
+              {
+                "kind": "Whitespace",
+                "len": 1
+              },
+              {
+                "kind": "Number",
+                "len": 1
               }
-            },
-            null,
-            null
-          ],
+            ]
+          },
           "important": null,
           "semicolon": {
             "kind": "Semicolon",
@@ -16057,19 +16056,18 @@ expression: result.output.unwrap()
             "kind": "Colon",
             "len": 1
           },
-          "value": [
-            {
-              "length": {
-                "type": "zero",
-                "value": {
-                  "kind": "Number",
-                  "len": 1
-                }
+          "value": {
+            "values": [
+              {
+                "kind": "Whitespace",
+                "len": 1
+              },
+              {
+                "kind": "Number",
+                "len": 1
               }
-            },
-            null,
-            null
-          ],
+            ]
+          },
           "important": null,
           "semicolon": {
             "kind": "Semicolon",
@@ -16242,19 +16240,18 @@ expression: result.output.unwrap()
             "kind": "Colon",
             "len": 1
           },
-          "value": [
-            {
-              "length": {
-                "type": "zero",
-                "value": {
-                  "kind": "Number",
-                  "len": 1
-                }
+          "value": {
+            "values": [
+              {
+                "kind": "Whitespace",
+                "len": 1
+              },
+              {
+                "kind": "Number",
+                "len": 1
               }
-            },
-            null,
-            null
-          ],
+            ]
+          },
           "important": null,
           "semicolon": {
             "kind": "Semicolon",
@@ -16604,33 +16601,37 @@ expression: result.output.unwrap()
             "kind": "Colon",
             "len": 1
           },
-          "value": [
-            {
-              "thin": {
+          "value": {
+            "values": [
+              {
+                "kind": "Whitespace",
+                "len": 1
+              },
+              {
                 "kind": "Ident",
                 "offset": 17002,
                 "len": 4
+              },
+              {
+                "kind": "Whitespace",
+                "len": 1
+              },
+              {
+                "kind": "Ident",
+                "offset": 17007,
+                "len": 5
+              },
+              {
+                "kind": "Whitespace",
+                "len": 1
+              },
+              {
+                "kind": "Hash",
+                "offset": 17013,
+                "len": 7
               }
-            },
-            {
-              "OutlineLineStyle": {
-                "solid": {
-                  "kind": "Ident",
-                  "offset": 17007,
-                  "len": 5
-                }
-              }
-            },
-            {
-              "Color": {
-                "Hex": {
-                  "kind": "Hash",
-                  "offset": 17013,
-                  "len": 7
-                }
-              }
-            }
-          ],
+            ]
+          },
           "important": null,
           "semicolon": {
             "kind": "Semicolon",
@@ -16648,34 +16649,38 @@ expression: result.output.unwrap()
             "kind": "Colon",
             "len": 1
           },
-          "value": [
-            {
-              "length": {
-                "type": "px",
-                "value": {
-                  "kind": "Dimension",
-                  "len": 3,
-                  "unit": "px"
-                }
-              }
-            },
-            {
-              "Auto": {
+          "value": {
+            "values": [
+              {
+                "kind": "Whitespace",
+                "len": 1
+              },
+              {
+                "kind": "Dimension",
+                "offset": 17035,
+                "len": 3,
+                "unit": "px"
+              },
+              {
+                "kind": "Whitespace",
+                "len": 1
+              },
+              {
                 "kind": "Ident",
                 "offset": 17039,
                 "len": 4
+              },
+              {
+                "kind": "Whitespace",
+                "len": 1
+              },
+              {
+                "kind": "Hash",
+                "offset": 17044,
+                "len": 7
               }
-            },
-            {
-              "Color": {
-                "Hex": {
-                  "kind": "Hash",
-                  "offset": 17044,
-                  "len": 7
-                }
-              }
-            }
-          ],
+            ]
+          },
           "important": null,
           "semicolon": {
             "kind": "Semicolon",

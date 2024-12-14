@@ -6,7 +6,7 @@ expression: result.output.unwrap()
   "type": "stylesheet",
   "rules": [
     {
-      "type": "MozDocument",
+      "type": "MozDocumentRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 0,

@@ -2459,19 +2459,18 @@ expression: result.output.unwrap()
             "kind": "Colon",
             "len": 1
           },
-          "value": [
-            {
-              "length": {
-                "type": "zero",
-                "value": {
-                  "kind": "Number",
-                  "len": 1
-                }
+          "value": {
+            "values": [
+              {
+                "kind": "Whitespace",
+                "len": 1
+              },
+              {
+                "kind": "Number",
+                "len": 1
               }
-            },
-            null,
-            null
-          ],
+            ]
+          },
           "important": null,
           "semicolon": {
             "kind": "Semicolon",

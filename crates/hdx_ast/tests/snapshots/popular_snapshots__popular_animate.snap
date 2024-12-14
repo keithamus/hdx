@@ -4604,7 +4604,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 3900,
@@ -8177,7 +8177,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 6543,
@@ -8602,7 +8602,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 6906,
@@ -9773,7 +9773,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 7682,
@@ -12164,7 +12164,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 9171,
@@ -13499,7 +13499,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 10012,
@@ -14834,7 +14834,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 10853,
@@ -16805,7 +16805,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 12347,
@@ -18914,7 +18914,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 13569,
@@ -21541,7 +21541,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 15091,
@@ -25172,7 +25172,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 17092,
@@ -28051,7 +28051,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 19266,
@@ -29652,7 +29652,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 20459,
@@ -30805,7 +30805,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 21300,
@@ -31958,7 +31958,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 22141,
@@ -33111,7 +33111,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 22983,
@@ -34264,7 +34264,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 23827,
@@ -35417,7 +35417,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 24665,
@@ -36570,7 +36570,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 25511,
@@ -37723,7 +37723,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 26358,
@@ -38876,7 +38876,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 27216,
@@ -41853,7 +41853,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 29235,
@@ -44552,7 +44552,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 31032,
@@ -47251,7 +47251,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 32821,
@@ -49950,7 +49950,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 34619,
@@ -52649,7 +52649,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 36432,
@@ -54148,7 +54148,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 37462,
@@ -55665,7 +55665,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 38466,
@@ -56740,7 +56740,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 39198,
@@ -57815,7 +57815,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 39935,
@@ -59332,7 +59332,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 40957,
@@ -59679,7 +59679,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 41204,
@@ -60570,7 +60570,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 41815,
@@ -61461,7 +61461,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 42449,
@@ -62352,7 +62352,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 43060,
@@ -63243,7 +63243,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 43694,
@@ -64134,7 +64134,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 44306,
@@ -65025,7 +65025,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 44941,
@@ -65916,7 +65916,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 45538,
@@ -66807,7 +66807,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 46158,
@@ -67706,7 +67706,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 46798,
@@ -68605,7 +68605,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 47439,
@@ -69504,7 +69504,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 48090,
@@ -70403,7 +70403,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 48761,
@@ -70750,7 +70750,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 49013,
@@ -71373,7 +71373,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 49461,
@@ -71996,7 +71996,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 49932,
@@ -72619,7 +72619,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 50384,
@@ -73242,7 +73242,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 50859,
@@ -73865,7 +73865,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 51312,
@@ -74488,7 +74488,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 51788,
@@ -75111,7 +75111,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 52230,
@@ -75734,7 +75734,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 52695,
@@ -76633,7 +76633,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 53340,
@@ -77532,7 +77532,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 53986,
@@ -78431,7 +78431,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 54643,
@@ -79330,7 +79330,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 55314,
@@ -84446,7 +84446,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 58787,
@@ -87126,7 +87126,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 60747,
@@ -89806,7 +89806,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 62707,
@@ -91572,7 +91572,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 63970,
@@ -93338,7 +93338,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 65250,
@@ -94849,7 +94849,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 66350,
@@ -96360,7 +96360,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 67445,
@@ -97139,7 +97139,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 68064,
@@ -97918,7 +97918,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 68711,
@@ -98917,7 +98917,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 69384,
@@ -99934,7 +99934,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 70103,
@@ -100951,7 +100951,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 70825,
@@ -101968,7 +101968,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 71530,
@@ -102985,7 +102985,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 72267,
@@ -103716,7 +103716,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 72777,
@@ -104465,7 +104465,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 73333,
@@ -105214,7 +105214,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 73900,
@@ -105963,7 +105963,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 74450,
@@ -106712,7 +106712,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 75018,
@@ -108847,7 +108847,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 76722,
@@ -110254,7 +110254,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 77862,
@@ -111385,7 +111385,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 78640,
@@ -112248,7 +112248,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 79196,
@@ -112863,7 +112863,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 79617,
@@ -114762,7 +114762,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 81046,
@@ -116661,7 +116661,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 82475,
@@ -118560,7 +118560,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 83909,
@@ -120459,7 +120459,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 85348,
@@ -121172,7 +121172,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 85830,
@@ -123149,7 +123149,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 87338,
@@ -124398,7 +124398,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 88206,
@@ -125647,7 +125647,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 89081,
@@ -127624,7 +127624,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 90603,
@@ -128471,7 +128471,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 91205,
@@ -129318,7 +129318,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 91807,
@@ -130165,7 +130165,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 92410,
@@ -131012,7 +131012,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 93018,
@@ -131859,7 +131859,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 93619,
@@ -132706,7 +132706,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 94224,
@@ -133553,7 +133553,7 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "WebkitKeyframes",
+      "type": "WebkitKeyframesRule",
       "at_keyword": {
         "kind": "AtKeyword",
         "offset": 94830,
