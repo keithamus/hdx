@@ -4,8 +4,12 @@ use hdx_parser::{
 	diagnostics, AtRule, CursorSink, DeclarationList, Is, Parse, Parser, PreludeCommaList, QualifiedRule,
 	QualifiedRuleList, Result as ParserResult, ToCursors, Vec, T,
 };
+use hdx_proc_macro::visit;
 
-use crate::{css::properties::Property, syntax::BadDeclaration};
+use crate::{
+	css::{properties::Property, Visit, Visitable},
+	syntax::BadDeclaration,
+};
 
 pub mod kw {
 	use hdx_parser::custom_keyword;
@@ -16,6 +20,7 @@ pub mod kw {
 // https://drafts.csswg.org/css-animations/#at-ruledef-keyframes
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
+#[visit]
 pub struct KeyframesRule<'a> {
 	at_keyword: T![AtKeyword],
 	name: Option<KeyframesName>,
@@ -41,6 +46,12 @@ impl<'a> ToCursors for KeyframesRule<'a> {
 			s.append(name.into());
 		}
 		ToCursors::to_cursors(&self.rules, s);
+	}
+}
+
+impl<'a> Visitable<'a> for KeyframesRule<'a> {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		todo!();
 	}
 }
 

@@ -16,7 +16,7 @@ use impls::*;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub enum AlignContent {}
+// pub enum AlignContentStyleValue {}
 
 // // https://drafts.csswg.org/css-align-3/#justify-content
 // #[value(" normal | <content-distribution> | <overflow-position>? [ <content-position> | left | right ] ")]
@@ -26,7 +26,7 @@ use impls::*;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub enum JustifyContent {}
+// pub enum JustifyContentStyleValue {}
 
 // // https://drafts.csswg.org/css-align-3/#place-content
 // #[value(" <'align-content'> <'justify-content'>? ")]
@@ -36,7 +36,7 @@ use impls::*;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub struct PlaceContent;
+// pub struct PlaceContentStyleValue;
 
 // // https://drafts.csswg.org/css-align-3/#justify-self
 // #[value(" auto | normal | stretch | <baseline-position> | <overflow-position>? [ <self-position> | left | right ] ")]
@@ -46,7 +46,7 @@ use impls::*;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub enum JustifySelf {}
+// pub enum JustifySelfStyleValue {}
 
 // // https://drafts.csswg.org/css-align-3/#align-self
 // #[value(" auto | normal | stretch | <baseline-position> | <overflow-position>? <self-position> ")]
@@ -56,7 +56,7 @@ use impls::*;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub enum AlignSelf {}
+// pub enum AlignSelfStyleValue {}
 
 // // https://drafts.csswg.org/css-align-3/#place-self
 // #[value(" <'align-self'> <'justify-self'>? ")]
@@ -66,7 +66,7 @@ use impls::*;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub struct PlaceSelf;
+// pub struct PlaceSelfStyleValue;
 
 // // https://drafts.csswg.org/css-align-3/#justify-items
 // #[value(" normal | stretch | <baseline-position> | <overflow-position>? [ <self-position> | left | right ] | legacy | legacy && [ left | right | center ] ")]
@@ -76,7 +76,7 @@ use impls::*;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub enum JustifyItems {}
+// pub enum JustifyItemsStyleValue {}
 
 // // https://drafts.csswg.org/css-align-3/#align-items
 // #[value(" normal | stretch | <baseline-position> | [ <overflow-position>? <self-position> ] ")]
@@ -86,7 +86,7 @@ use impls::*;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub enum AlignItems {}
+// pub enum AlignItemsStyleValue {}
 
 // // https://drafts.csswg.org/css-align-3/#place-items
 // #[value(" <'align-items'> <'justify-items'>? ")]
@@ -96,7 +96,7 @@ use impls::*;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub struct PlaceItems;
+// pub struct PlaceItemsStyleValue;
 
 // https://drafts.csswg.org/css-align-3/#row-gap
 #[value(" normal | <length-percentage [0,∞]> ")]
@@ -106,7 +106,7 @@ use impls::*;
 #[percentages("see § 8.3 percentages in gap properties")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub enum RowGap {}
+pub enum RowGapStyleValue {}
 
 // https://drafts.csswg.org/css-align-3/#column-gap
 #[value(" normal | <length-percentage [0,∞]> ")]
@@ -116,7 +116,7 @@ pub enum RowGap {}
 #[percentages("see § 8.3 percentages in gap properties")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub enum ColumnGap {}
+pub enum ColumnGapStyleValue {}
 
 // https://drafts.csswg.org/css-align-3/#gap
 #[value(" <'row-gap'> <'column-gap'>? ")]
@@ -126,4 +126,4 @@ pub enum ColumnGap {}
 #[percentages("refer to corresponding dimension of the content area")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub struct Gap;
+pub struct GapStyleValue;

@@ -12,8 +12,8 @@ use impls::*;
 #[value(" standard | high | constrained-high | <dynamic-range-limit-mix()> ")]
 #[initial("high")]
 #[applies_to("all elements")]
-#[inherited("no")]
+#[inherited("yes")]
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("by dynamic-range-limit-mix()")]
-pub enum DynamicRangeLimit<'a> {}
+pub enum DynamicRangeLimitStyleValue<'a> {}

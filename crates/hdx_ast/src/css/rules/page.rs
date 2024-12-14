@@ -5,9 +5,10 @@ use hdx_parser::{
 	diagnostics, AtRule, Build, CursorSink, DeclarationList, DeclarationRuleList, NoPreludeAllowed, Parse, Parser,
 	PreludeCommaList, Result as ParserResult, ToCursors, T,
 };
+use hdx_proc_macro::visit;
 
 use crate::{
-	css::properties::Property,
+	css::{properties::Property, Visit, Visitable},
 	specificity::{Specificity, ToSpecificity},
 };
 
@@ -23,6 +24,7 @@ mod kw {
 // https://drafts.csswg.org/css-page-3/#at-page-rule
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
+#[visit]
 pub struct PageRule<'a> {
 	pub at_keyword: T![AtKeyword],
 	pub selectors: Option<PageSelectorList<'a>>,
@@ -50,6 +52,12 @@ impl<'a> ToCursors for PageRule<'a> {
 		}
 		ToCursors::to_cursors(&self.block, s);
 	}
+}
+
+impl<'a> Visitable<'a> for PageRule<'a> {
+    fn accept<V: Visit<'a>>(&self, v: &mut V) {
+			todo!();
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]

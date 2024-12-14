@@ -5,12 +5,14 @@ use hdx_parser::{
 	AtRule, CursorSink, Declaration, Important, NoPreludeAllowed, Parse, Parser, Result as ParserResult, RuleList,
 	ToCursors, T,
 };
+use hdx_proc_macro::visit;
 
-use crate::css::properties::StyleValue;
+use crate::css::{properties::StyleValue, Visit, Visitable};
 
 // https://drafts.csswg.org/css-fonts/#font-face-rule
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+#[visit]
 pub struct FontFaceRule<'a> {
 	pub at_keyword: T![AtKeyword],
 	pub block: FontFaceDeclaration<'a>,
@@ -32,6 +34,12 @@ impl<'a> ToCursors for FontFaceRule<'a> {
 	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.at_keyword.into());
 		ToCursors::to_cursors(&self.block, s);
+	}
+}
+
+impl<'a> Visitable<'a> for FontFaceRule<'a> {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		todo!();
 	}
 }
 

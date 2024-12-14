@@ -3,6 +3,8 @@ use hdx_atom::atom;
 use hdx_lexer::{Cursor, KindSet};
 use hdx_parser::{diagnostics, Build, CursorSink, Is, Parse, Parser, Result as ParserResult, ToCursors, T};
 
+use crate::css::{Visit, Visitable};
+
 use super::{ForgivingSelector, Nth, RelativeSelector, SelectorList};
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -144,6 +146,12 @@ impl<'a> ToCursors for FunctionalPseudoClass<'a> {
 			Self::State(c) => ToCursors::to_cursors(c, s),
 			Self::Where(c) => ToCursors::to_cursors(c, s),
 		}
+	}
+}
+
+impl<'a> Visitable<'a> for FunctionalPseudoClass<'a> {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		todo!();
 	}
 }
 

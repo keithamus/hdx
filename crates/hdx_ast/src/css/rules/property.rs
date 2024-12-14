@@ -1,4 +1,3 @@
-// https://drafts.css-houdini.org/css-properties-values-api/#at-ruledef-property
 use bumpalo::collections::Vec;
 use hdx_atom::atom;
 use hdx_lexer::Cursor;
@@ -6,13 +5,18 @@ use hdx_parser::{
 	diagnostics, AtRule, CursorSink, Declaration, DeclarationList, DeclarationValue, Parse, Parser,
 	Result as ParserResult, ToCursors, T,
 };
+use hdx_proc_macro::visit;
 
-use crate::syntax::ComponentValues;
+use crate::{
+	css::{Visit, Visitable},
+	syntax::ComponentValues,
+};
 
 // https://drafts.csswg.org/cssom-1/#csspagerule
 // https://drafts.csswg.org/css-page-3/#at-page-rule
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+#[visit]
 pub struct PropertyRule<'a> {
 	pub at_keyword: T![AtKeyword],
 	pub name: T![DashedIdent],
@@ -42,6 +46,12 @@ impl<'a> ToCursors for PropertyRule<'a> {
 		s.append(self.at_keyword.into());
 		s.append(self.name.into());
 		ToCursors::to_cursors(&self.block, s);
+	}
+}
+
+impl<'a> Visitable<'a> for PropertyRule<'a> {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		todo!();
 	}
 }
 

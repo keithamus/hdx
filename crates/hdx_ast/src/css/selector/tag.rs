@@ -1,9 +1,13 @@
 use hdx_atom::atom;
-use hdx_lexer::Cursor;
+use hdx_lexer::{Cursor, Span};
 use hdx_parser::{Build, Is, Parser, T};
+use hdx_proc_macro::visit;
+
+use crate::css::{Visit, Visitable};
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+#[visit]
 pub enum Tag {
 	Html(HtmlTag),
 	HtmlNonConforming(HtmlNonConformingTag),
@@ -11,7 +15,7 @@ pub enum Tag {
 	Svg(SvgTag),
 	Mathml(MathmlTag),
 	CustomElement(CustomElementTag),
-	Unknown(T![Ident]),
+	Unknown(UnknownTag),
 }
 
 impl<'a> Is<'a> for Tag {
@@ -35,7 +39,7 @@ impl<'a> Build<'a> for Tag {
 		} else if HtmlNonStandardTag::is(p, c) {
 			Self::HtmlNonStandard(HtmlNonStandardTag::build(p, c))
 		} else {
-			Self::Unknown(<T![Ident]>::build(p, c))
+			Self::Unknown(UnknownTag::build(p, c))
 		}
 	}
 }
@@ -54,8 +58,31 @@ impl From<Tag> for Cursor {
 	}
 }
 
+impl From<Tag> for Span {
+	fn from(value: Tag) -> Self {
+		let c: Cursor = value.into();
+		c.into()
+	}
+}
+
+impl<'a> Visitable<'a> for Tag {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		v.visit_tag(self);
+		match self {
+			Self::Html(c) => Visitable::accept(c, v),
+			Self::HtmlNonConforming(c) => Visitable::accept(c, v),
+			Self::HtmlNonStandard(c) => Visitable::accept(c, v),
+			Self::Svg(c) => Visitable::accept(c, v),
+			Self::Mathml(c) => Visitable::accept(c, v),
+			Self::CustomElement(c) => Visitable::accept(c, v),
+			Self::Unknown(c) => Visitable::accept(c, v),
+		}
+	}
+}
+
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+#[visit]
 pub struct CustomElementTag(T![Ident]);
 
 impl<'a> Is<'a> for CustomElementTag {
@@ -122,9 +149,23 @@ impl From<CustomElementTag> for Cursor {
 	}
 }
 
+impl From<CustomElementTag> for Span {
+	fn from(value: CustomElementTag) -> Self {
+		let c: Cursor = value.into();
+		c.into()
+	}
+}
+
+impl<'a> Visitable<'a> for CustomElementTag {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		v.visit_custom_element_tag(self);
+	}
+}
+
 // https://html.spec.whatwg.org/multipage/indices.html#elements-3
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+#[visit]
 pub enum HtmlTag {
 	A(T![Ident]),
 	Abbr(T![Ident]),
@@ -634,9 +675,23 @@ impl From<HtmlTag> for Cursor {
 	}
 }
 
+impl From<HtmlTag> for Span {
+	fn from(value: HtmlTag) -> Self {
+		let c: Cursor = value.into();
+		c.into()
+	}
+}
+
+impl<'a> Visitable<'a> for HtmlTag {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		v.visit_html_tag(self);
+	}
+}
+
 // https://html.spec.whatwg.org/multipage/obsolete.html#non-conforming-features
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+#[visit]
 pub enum HtmlNonConformingTag {
 	Acronym(T![Ident]),
 	Applet(T![Ident]),
@@ -759,8 +814,22 @@ impl From<HtmlNonConformingTag> for Cursor {
 	}
 }
 
+impl From<HtmlNonConformingTag> for Span {
+	fn from(value: HtmlNonConformingTag) -> Self {
+		let c: Cursor = value.into();
+		c.into()
+	}
+}
+
+impl<'a> Visitable<'a> for HtmlNonConformingTag {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		v.visit_html_non_conforming_tag(self);
+	}
+}
+
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+#[visit]
 pub enum HtmlNonStandardTag {
 	// https://wicg.github.io/fenced-frame/#the-fencedframe-element
 	Fencedframe(T![Ident]),
@@ -804,9 +873,23 @@ impl From<HtmlNonStandardTag> for Cursor {
 	}
 }
 
+impl From<HtmlNonStandardTag> for Span {
+	fn from(value: HtmlNonStandardTag) -> Self {
+		let c: Cursor = value.into();
+		c.into()
+	}
+}
+
+impl<'a> Visitable<'a> for HtmlNonStandardTag {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		v.visit_html_non_standard_tag(self);
+	}
+}
+
 // https://svgwg.org/svg2-draft/eltindex.html
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+#[visit]
 pub enum SvgTag {
 	A(T![Ident]),
 	Animate(T![Ident]),
@@ -1088,9 +1171,23 @@ impl From<SvgTag> for Cursor {
 	}
 }
 
+impl From<SvgTag> for Span {
+	fn from(value: SvgTag) -> Self {
+		let c: Cursor = value.into();
+		c.into()
+	}
+}
+
+impl<'a> Visitable<'a> for SvgTag {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		v.visit_svg_tag(self);
+	}
+}
+
 // https://w3c.github.io/mathml/#mmlindex_elements
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+#[visit]
 pub enum MathmlTag {
 	Abs(T![Ident]),
 	And(T![Ident]),
@@ -1746,6 +1843,55 @@ impl From<MathmlTag> for Cursor {
 			MathmlTag::Vectorproduct(c) => c.into(),
 			MathmlTag::Xo(c) => c.into(),
 		}
+	}
+}
+
+impl From<MathmlTag> for Span {
+	fn from(value: MathmlTag) -> Self {
+		let c: Cursor = value.into();
+		c.into()
+	}
+}
+
+impl<'a> Visitable<'a> for MathmlTag {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		v.visit_mathml_tag(self);
+	}
+}
+
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+#[visit]
+pub struct UnknownTag(T![Ident]);
+
+impl<'a> Is<'a> for UnknownTag {
+	fn is(p: &Parser<'a>, c: Cursor) -> bool {
+		<T![Ident]>::is(p, c)
+	}
+}
+
+impl<'a> Build<'a> for UnknownTag {
+	fn build(p: &Parser<'a>, c: Cursor) -> Self {
+		Self(<T![Ident]>::build(p, c))
+	}
+}
+
+impl From<UnknownTag> for Span {
+	fn from(value: UnknownTag) -> Self {
+		let c: Cursor = value.into();
+		c.into()
+	}
+}
+
+impl From<UnknownTag> for Cursor {
+	fn from(value: UnknownTag) -> Self {
+		value.0.into()
+	}
+}
+
+impl<'a> Visitable<'a> for UnknownTag {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		v.visit_unknown_tag(self);
 	}
 }
 

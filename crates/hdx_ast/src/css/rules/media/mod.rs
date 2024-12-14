@@ -6,7 +6,7 @@ use hdx_parser::{
 	Result as ParserResult, RuleList, ToCursors, T,
 };
 
-use crate::css::stylesheet::Rule;
+use crate::css::{stylesheet::Rule, Visit, Visitable};
 
 mod features;
 use features::*;
@@ -50,6 +50,12 @@ impl<'a> ToCursors for MediaRule<'a> {
 		s.append(self.at_keyword.into());
 		ToCursors::to_cursors(&self.query, s);
 		ToCursors::to_cursors(&self.block, s);
+	}
+}
+
+impl<'a> Visitable<'a> for MediaRule<'a> {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		todo!();
 	}
 }
 

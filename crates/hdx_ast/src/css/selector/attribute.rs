@@ -1,11 +1,15 @@
 use hdx_atom::atom;
 use hdx_lexer::{Cursor, KindSet};
 use hdx_parser::{Build, CursorSink, Is, Parse, Parser, Peek, Result as ParserResult, ToCursors, T};
+use hdx_proc_macro::visit;
+
+use crate::css::{Visit, Visitable};
 
 use super::NamespacePrefix;
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
+#[visit]
 pub struct Attribute {
 	pub open: T!['['],
 	pub namespace_prefix: Option<NamespacePrefix>,
@@ -59,6 +63,12 @@ impl<'a> ToCursors for Attribute {
 		if let Some(close) = self.close {
 			s.append(close.into());
 		}
+	}
+}
+
+impl<'a> Visitable<'a> for Attribute {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		v.visit_attribute(self);
 	}
 }
 

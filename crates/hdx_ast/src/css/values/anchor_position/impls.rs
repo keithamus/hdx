@@ -8,22 +8,22 @@ mod tests {
 
 	#[test]
 	pub fn size_test() {
-		assert_size!(AnchorName, 32);
-		assert_size!(AnchorScope, 40);
-		assert_size!(PositionAnchor, 40);
-		assert_size!(PositionArea, 36);
-		// assert_size!(PositionVisibility, 1);
-		// assert_size!(PositionTryFallbacks, 1);
-		assert_size!(PositionTryOrder, 16);
-		// assert_size!(PositionTry, 1);
+		assert_size!(AnchorNameStyleValue, 32);
+		assert_size!(AnchorScopeStyleValue, 40);
+		assert_size!(PositionAnchorStyleValue, 16);
+		assert_size!(PositionAreaStyleValue, 36);
+		// assert_size!(PositionVisibilityStyleValue, 1);
+		// assert_size!(PositionTryFallbacksStyleValue, 1);
+		assert_size!(PositionTryOrderStyleValue, 16);
+		// assert_size!(PositionTryStyleValue, 1);
 	}
 
 	#[test]
 	fn test_writes() {
-		assert_parse!(AnchorName, "none");
-		assert_parse!(AnchorName, "--foo,--bar");
-		assert_parse!(AnchorScope, "all");
-		assert_parse!(AnchorScope, "--foo,--bar");
-		assert_parse!(PositionTryOrder, "normal");
+		assert_parse!(AnchorNameStyleValue, "none");
+		assert_parse!(AnchorNameStyleValue, "--foo,--bar");
+		assert_parse!(AnchorScopeStyleValue, "all");
+		assert_parse!(AnchorScopeStyleValue, "--foo,--bar");
+		assert_parse!(PositionTryOrderStyleValue, "normal");
 	}
 }

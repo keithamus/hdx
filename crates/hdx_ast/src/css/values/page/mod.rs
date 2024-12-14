@@ -16,4 +16,4 @@ use impls::*;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum Page {}
+pub enum PageStyleValue {}

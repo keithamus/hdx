@@ -16,7 +16,7 @@ use impls::*;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("as defined for <basic-shape>, otherwise discrete")]
-// pub enum ShapeOutside {}
+// pub enum ShapeOutsideStyleValue<'a> {}
 
 // https://drafts.csswg.org/css-shapes-2/#shape-image-threshold
 #[value(" <opacity-value> ")]
@@ -26,7 +26,7 @@ use impls::*;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value")]
-pub struct ShapeImageThreshold;
+pub struct ShapeImageThresholdStyleValue;
 
 // https://drafts.csswg.org/css-shapes-2/#shape-margin
 #[value(" <length-percentage [0,∞]> ")]
@@ -36,7 +36,7 @@ pub struct ShapeImageThreshold;
 #[percentages("refer to the inline size of the containing block")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value")]
-pub struct ShapeMargin;
+pub struct ShapeMarginStyleValue;
 
 // // https://drafts.csswg.org/css-shapes-2/#shape-inside
 // #[value(" auto | outside-shape | [ <basic-shape> || shape-box ] | <image> | display ")]
@@ -46,7 +46,7 @@ pub struct ShapeMargin;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("as defined for <basic-shape>, otherwise discrete")]
-// pub enum ShapeInside {}
+// pub enum ShapeInsideStyleValue<'a> {}
 
 // https://drafts.csswg.org/css-shapes-2/#shape-padding
 #[value(" <length-percentage [0,∞]> ")]
@@ -56,4 +56,4 @@ pub struct ShapeMargin;
 #[percentages("refer to the inline size of the containing block")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value")]
-pub struct ShapePadding;
+pub struct ShapePaddingStyleValue;

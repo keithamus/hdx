@@ -2,6 +2,8 @@ use hdx_atom::{atom, Atom};
 use hdx_lexer::{Cursor, KindSet};
 use hdx_parser::{diagnostics, CursorSink, Parse, Parser, Result as ParserResult, ToCursors, T};
 
+use crate::css::{Visit, Visitable};
+
 use super::{moz::MozPseudoElement, ms::MsPseudoElement, o::OPseudoElement, webkit::WebkitPseudoElement};
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -145,6 +147,12 @@ impl<'a> ToCursors for PseudoElement {
 	}
 }
 
+impl<'a> Visitable<'a> for PseudoElement {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		todo!();
+	}
+}
+
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(rename_all = "kebab-case"))]
 pub enum LegacyPseudoElement {
@@ -199,6 +207,12 @@ impl<'a> ToCursors for LegacyPseudoElement {
 				s.append(ident.into());
 			}
 		}
+	}
+}
+
+impl<'a> Visitable<'a> for LegacyPseudoElement {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		todo!();
 	}
 }
 

@@ -8,13 +8,13 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(Color, 140);
-		assert_size!(Opacity, 12);
+		assert_size!(ColorStyleValue, 140);
+		assert_size!(OpacityStyleValue, 12);
 	}
 
 	#[test]
 	fn test_writes() {
-		assert_parse!(Color, "red");
-		assert_parse!(Opacity, "1");
+		assert_parse!(ColorStyleValue, "red");
+		assert_parse!(OpacityStyleValue, "1");
 	}
 }

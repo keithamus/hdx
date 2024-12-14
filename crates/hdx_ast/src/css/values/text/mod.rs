@@ -16,7 +16,7 @@ use impls::*;
 // #[percentages("n/a")]
 // #[canonical_order("n/a")]
 // #[animation_type("discrete")]
-// pub enum TextTransform {}
+// pub enum TextTransformStyleValue {}
 
 // // https://drafts.csswg.org/css-text-4/#white-space
 // #[value(" normal | pre | pre-wrap | pre-line | <'white-space-collapse'> || <'text-wrap-mode'> || <'white-space-trim'> ")]
@@ -26,7 +26,7 @@ use impls::*;
 // #[percentages("n/a")]
 // #[canonical_order("n/a")]
 // #[animation_type("discrete")]
-// pub enum WhiteSpace {}
+// pub enum WhiteSpaceStyleValue {}
 
 // // https://drafts.csswg.org/css-text-4/#tab-size
 // #[value(" <number [0,∞]> | <length [0,∞]> ")]
@@ -36,7 +36,7 @@ use impls::*;
 // #[percentages("n/a")]
 // #[canonical_order("n/a")]
 // #[animation_type("by computed value type")]
-// pub enum TabSize {}
+// pub enum TabSizeStyleValue {}
 
 // https://drafts.csswg.org/css-text-4/#word-break
 #[value(" normal | break-all | keep-all | manual | auto-phrase | break-word ")]
@@ -46,7 +46,7 @@ use impls::*;
 #[percentages("n/a")]
 #[canonical_order("n/a")]
 #[animation_type("discrete")]
-pub enum WordBreak {}
+pub enum WordBreakStyleValue {}
 
 // https://drafts.csswg.org/css-text-4/#line-break
 #[value(" auto | loose | normal | strict | anywhere ")]
@@ -56,7 +56,7 @@ pub enum WordBreak {}
 #[percentages("n/a")]
 #[canonical_order("n/a")]
 #[animation_type("discrete")]
-pub enum LineBreak {}
+pub enum LineBreakStyleValue {}
 
 // https://drafts.csswg.org/css-text-4/#hyphens
 #[value(" none | manual | auto ")]
@@ -66,7 +66,7 @@ pub enum LineBreak {}
 #[percentages("n/a")]
 #[canonical_order("n/a")]
 #[animation_type("discrete")]
-pub enum Hyphens {}
+pub enum HyphensStyleValue {}
 
 // https://drafts.csswg.org/css-text-4/#overflow-wrap
 #[value(" normal | break-word | anywhere ")]
@@ -76,7 +76,7 @@ pub enum Hyphens {}
 #[percentages("n/a")]
 #[canonical_order("n/a")]
 #[animation_type("discrete")]
-pub enum OverflowWrap {}
+pub enum OverflowWrapStyleValue {}
 
 // https://drafts.csswg.org/css-text-4/#word-wrap
 #[value(" normal | break-word | anywhere ")]
@@ -86,7 +86,7 @@ pub enum OverflowWrap {}
 #[percentages("n/a")]
 #[canonical_order("n/a")]
 #[animation_type("discrete")]
-pub enum WordWrap {}
+pub enum WordWrapStyleValue {}
 
 // https://drafts.csswg.org/css-text-4/#text-align
 #[value(" start | end | left | right | center | <string> | justify | match-parent | justify-all ")]
@@ -96,7 +96,7 @@ pub enum WordWrap {}
 #[percentages("see individual properties")]
 #[canonical_order("n/a")]
 #[animation_type("discrete")]
-pub enum TextAlign {}
+pub enum TextAlignStyleValue {}
 
 // https://drafts.csswg.org/css-text-4/#text-align-all
 #[value(" start | end | left | right | center | <string> | justify | match-parent ")]
@@ -106,7 +106,7 @@ pub enum TextAlign {}
 #[percentages("n/a")]
 #[canonical_order("n/a")]
 #[animation_type("discrete")]
-pub enum TextAlignAll {}
+pub enum TextAlignAllStyleValue {}
 
 // https://drafts.csswg.org/css-text-4/#text-align-last
 #[value(" auto | start | end | left | right | center | justify | match-parent ")]
@@ -116,7 +116,7 @@ pub enum TextAlignAll {}
 #[percentages("n/a")]
 #[canonical_order("n/a")]
 #[animation_type("discrete")]
-pub enum TextAlignLast {}
+pub enum TextAlignLastStyleValue {}
 
 // // https://drafts.csswg.org/css-text-4/#text-justify
 // #[value(" [ auto | none | inter-word | inter-character | ruby ] || no-compress ")]
@@ -126,7 +126,7 @@ pub enum TextAlignLast {}
 // #[percentages("n/a")]
 // #[canonical_order("n/a")]
 // #[animation_type("discrete")]
-// pub enum TextJustify {}
+// pub enum TextJustifyStyleValue {}
 
 // https://drafts.csswg.org/css-text-4/#word-spacing
 #[value(" normal | <length-percentage> ")]
@@ -136,7 +136,7 @@ pub enum TextAlignLast {}
 #[percentages("relative to computed font-size, i.e. 1em")]
 #[canonical_order("n/a")]
 #[animation_type("by computed value type")]
-pub enum WordSpacing {}
+pub enum WordSpacingStyleValue {}
 
 // https://drafts.csswg.org/css-text-4/#letter-spacing
 #[value(" normal | <length-percentage> ")]
@@ -146,7 +146,7 @@ pub enum WordSpacing {}
 #[percentages("relative to computed font-size, i.e. 1em")]
 #[canonical_order("n/a")]
 #[animation_type("by computed value type")]
-pub enum LetterSpacing {}
+pub enum LetterSpacingStyleValue {}
 
 // // https://drafts.csswg.org/css-text-4/#text-indent
 // #[value(" [ <length-percentage> ] && hanging? && each-line? ")]
@@ -156,7 +156,7 @@ pub enum LetterSpacing {}
 // #[percentages("refers to block container’s own inline-axis inner size")]
 // #[canonical_order("per grammar")]
 // #[animation_type("by computed value type")]
-// pub struct TextIndent;
+// pub struct TextIndentStyleValue;
 
 // // https://drafts.csswg.org/css-text-4/#hanging-punctuation
 // #[value(" none | [ first || [ force-end | allow-end ] || last ] ")]
@@ -166,7 +166,7 @@ pub enum LetterSpacing {}
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub enum HangingPunctuation {}
+// pub enum HangingPunctuationStyleValue {}
 
 // // https://drafts.csswg.org/css-text-4/#word-space-transform
 // #[value(" none | [ space | ideographic-space ] && auto-phrase? ")]
@@ -176,7 +176,7 @@ pub enum LetterSpacing {}
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub enum WordSpaceTransform {}
+// pub enum WordSpaceTransformStyleValue {}
 
 // https://drafts.csswg.org/css-text-4/#white-space-collapse
 #[value(" collapse | discard | preserve | preserve-breaks | preserve-spaces | break-spaces ")]
@@ -186,7 +186,7 @@ pub enum LetterSpacing {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum WhiteSpaceCollapse {}
+pub enum WhiteSpaceCollapseStyleValue {}
 
 // // https://drafts.csswg.org/css-text-4/#white-space-trim
 // #[value(" none | discard-before || discard-after || discard-inner ")]
@@ -196,7 +196,7 @@ pub enum WhiteSpaceCollapse {}
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub enum WhiteSpaceTrim {}
+// pub enum WhiteSpaceTrimStyleValue {}
 
 // https://drafts.csswg.org/css-text-4/#text-wrap-mode
 #[value(" wrap | nowrap ")]
@@ -206,7 +206,7 @@ pub enum WhiteSpaceCollapse {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum TextWrapMode {}
+pub enum TextWrapModeStyleValue {}
 
 // https://drafts.csswg.org/css-text-4/#wrap-inside
 #[value(" auto | avoid ")]
@@ -216,7 +216,7 @@ pub enum TextWrapMode {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum WrapInside {}
+pub enum WrapInsideStyleValue {}
 
 // https://drafts.csswg.org/css-text-4/#wrap-before
 #[value(" auto | avoid | avoid-line | avoid-flex | line | flex ")]
@@ -226,7 +226,7 @@ pub enum WrapInside {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum WrapBefore {}
+pub enum WrapBeforeStyleValue {}
 
 // https://drafts.csswg.org/css-text-4/#wrap-after
 #[value(" auto | avoid | avoid-line | avoid-flex | line | flex ")]
@@ -236,7 +236,7 @@ pub enum WrapBefore {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum WrapAfter {}
+pub enum WrapAfterStyleValue {}
 
 // https://drafts.csswg.org/css-text-4/#text-wrap-style
 #[value(" auto | balance | stable | pretty | avoid-orphans ")]
@@ -246,7 +246,7 @@ pub enum WrapAfter {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum TextWrapStyle {}
+pub enum TextWrapStyleStyleValue {}
 
 // https://drafts.csswg.org/css-text-4/#text-wrap
 #[value(" <'text-wrap-mode'> || <'text-wrap-style'> ")]
@@ -256,7 +256,7 @@ pub enum TextWrapStyle {}
 #[percentages("see individual properties")]
 #[canonical_order("per grammar")]
 #[animation_type("see individual properties")]
-pub struct TextWrap;
+pub struct TextWrapStyleValue;
 
 // https://drafts.csswg.org/css-text-4/#hyphenate-character
 #[value(" auto | <string> ")]
@@ -266,7 +266,7 @@ pub struct TextWrap;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum HyphenateCharacter {}
+pub enum HyphenateCharacterStyleValue {}
 
 // https://drafts.csswg.org/css-text-4/#hyphenate-limit-zone
 #[value(" <length-percentage> ")]
@@ -276,7 +276,7 @@ pub enum HyphenateCharacter {}
 #[percentages("refers to length of the line box")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub struct HyphenateLimitZone;
+pub struct HyphenateLimitZoneStyleValue;
 
 // // https://drafts.csswg.org/css-text-4/#hyphenate-limit-chars
 // #[value(" [ auto | <integer> ]{1,3} ")]
@@ -286,7 +286,7 @@ pub struct HyphenateLimitZone;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("by computed value type")]
-// pub enum HyphenateLimitChars {}
+// pub enum HyphenateLimitCharsStyleValue {}
 
 // https://drafts.csswg.org/css-text-4/#hyphenate-limit-lines
 #[value(" no-limit | <integer> ")]
@@ -296,7 +296,7 @@ pub struct HyphenateLimitZone;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub enum HyphenateLimitLines {}
+pub enum HyphenateLimitLinesStyleValue {}
 
 // https://drafts.csswg.org/css-text-4/#hyphenate-limit-last
 #[value(" none | always | column | page | spread ")]
@@ -306,7 +306,7 @@ pub enum HyphenateLimitLines {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum HyphenateLimitLast {}
+pub enum HyphenateLimitLastStyleValue {}
 
 // https://drafts.csswg.org/css-text-4/#text-group-align
 #[value(" none | start | end | left | right | center ")]
@@ -316,7 +316,7 @@ pub enum HyphenateLimitLast {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum TextGroupAlign {}
+pub enum TextGroupAlignStyleValue {}
 
 // https://drafts.csswg.org/css-text-4/#line-padding
 #[value(" <length> ")]
@@ -326,7 +326,7 @@ pub enum TextGroupAlign {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub struct LinePadding;
+pub struct LinePaddingStyleValue;
 
 // // https://drafts.csswg.org/css-text-4/#text-autospace
 // #[value(" normal | <autospace> | auto ")]
@@ -336,7 +336,7 @@ pub struct LinePadding;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub enum TextAutospace {}
+// pub enum TextAutospaceStyleValue {}
 
 // // https://drafts.csswg.org/css-text-4/#text-spacing-trim
 // #[value(" <spacing-trim> | auto ")]
@@ -346,7 +346,7 @@ pub struct LinePadding;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub enum TextSpacingTrim {}
+// pub enum TextSpacingTrimStyleValue {}
 
 // // https://drafts.csswg.org/css-text-4/#text-spacing
 // #[value(" none | auto | <spacing-trim> || <autospace> ")]
@@ -356,4 +356,4 @@ pub struct LinePadding;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub enum TextSpacing {}
+// pub enum TextSpacingStyleValue {}

@@ -4,12 +4,14 @@ use hdx_lexer::Cursor;
 use hdx_parser::{
 	diagnostics, AtRule, CursorSink, Parse, Parser, PreludeCommaList, Result as ParserResult, RuleList, ToCursors, T,
 };
+use hdx_proc_macro::visit;
 
-use crate::css::stylesheet::Rule;
+use crate::css::{stylesheet::Rule, Visit, Visitable};
 
 // https://drafts.csswg.org/css-cascade-5/#layering
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+#[visit]
 pub struct LayerRule<'a> {
 	pub at_keyword: T![AtKeyword],
 	pub names: Option<LayerNameList<'a>>,
@@ -22,7 +24,7 @@ impl<'a> Parse<'a> for LayerRule<'a> {
 		let (at_keyword, names, block) = Self::parse_at_rule(p, Some(atom!("layer")))?;
 		if let Some(ref names) = names {
 			if matches!(block, OptionalLayerBlock::Block(_)) && names.0.len() > 1 {
-				let c: Cursor = names.0[0].0.0.into();
+				let c: Cursor = names.0[0].0 .0.into();
 				Err(diagnostics::DisallowedLayerBlockWithMultipleNames(c.into()))?
 			}
 		}
@@ -42,6 +44,12 @@ impl<'a> ToCursors for LayerRule<'a> {
 			ToCursors::to_cursors(names, s);
 		}
 		ToCursors::to_cursors(&self.block, s);
+	}
+}
+
+impl<'a> Visitable<'a> for LayerRule<'a> {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		todo!();
 	}
 }
 

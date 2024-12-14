@@ -16,4 +16,4 @@ use impls::*;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub struct Custom;
+// pub struct CustomStyleValue;

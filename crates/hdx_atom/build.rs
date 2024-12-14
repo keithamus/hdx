@@ -83,7 +83,7 @@ fn main() {
 					matcher.captures_iter(line.as_bytes(), &mut captures, |captures| -> bool {
 						let capture = &line[captures.get(1).unwrap()];
 						if !capture.is_empty() {
-							let mut atom_name = kebab(capture.to_string());
+							let mut atom_name = kebab(capture.trim_end_matches("StyleValue").into());
 							if atom_name.starts_with("webkit") {
 								atom_name = format!("-{}", atom_name);
 							}

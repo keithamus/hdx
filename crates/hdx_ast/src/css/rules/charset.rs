@@ -1,10 +1,14 @@
 use hdx_atom::atom;
 use hdx_lexer::Cursor;
 use hdx_parser::{diagnostics, Parse, Parser, Result as ParserResult, ToCursors, T};
+use hdx_proc_macro::visit;
+
+use crate::css::{Visit, Visitable};
 
 // https://drafts.csswg.org/css-syntax-3/#charset-rule
 #[derive(Debug, Default, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+#[visit]
 pub struct CharsetRule {
 	at_keyword: T![AtKeyword],
 	space: T![' '],
@@ -43,6 +47,12 @@ impl<'a> ToCursors for CharsetRule {
 		if let Some(semicolon) = self.semicolon {
 			s.append(semicolon.into());
 		}
+	}
+}
+
+impl<'a> Visitable<'a> for CharsetRule {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		todo!();
 	}
 }
 

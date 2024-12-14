@@ -16,4 +16,4 @@ use impls::*;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum OverflowAnchor {}
+pub enum OverflowAnchorStyleValue {}

@@ -16,7 +16,7 @@ use impls::*;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum ListStyleImage<'a> {}
+pub enum ListStyleImageStyleValue<'a> {}
 
 // // https://drafts.csswg.org/css-lists-3/#list-style-type
 // #[value(" <counter-style> | <string> | none ")]
@@ -26,7 +26,7 @@ pub enum ListStyleImage<'a> {}
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub enum ListStyleType {}
+// pub enum ListStyleTypeStyleValue<'a> {}
 
 // https://drafts.csswg.org/css-lists-3/#list-style-position
 #[value(" inside | outside ")]
@@ -36,7 +36,7 @@ pub enum ListStyleImage<'a> {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum ListStylePosition {}
+pub enum ListStylePositionStyleValue {}
 
 // // https://drafts.csswg.org/css-lists-3/#list-style
 // #[value(" <'list-style-position'> || <'list-style-image'> || <'list-style-type'> ")]
@@ -46,7 +46,7 @@ pub enum ListStylePosition {}
 // #[percentages("see individual properties")]
 // #[canonical_order("per grammar")]
 // #[animation_type("see individual properties")]
-// pub struct ListStyle;
+// pub struct ListStyleStyleValue;
 
 // https://drafts.csswg.org/css-lists-3/#marker-side
 #[value(" match-self | match-parent ")]
@@ -56,7 +56,7 @@ pub enum ListStylePosition {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum MarkerSide {}
+pub enum MarkerSideStyleValue {}
 
 // // https://drafts.csswg.org/css-lists-3/#counter-reset
 // #[value(" [ <counter-name> <integer>? | <reversed-counter-name> <integer>? ]+ | none ")]
@@ -66,7 +66,7 @@ pub enum MarkerSide {}
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("by computed value type")]
-// pub enum CounterReset {}
+// pub enum CounterResetStyleValue {}
 
 // // https://drafts.csswg.org/css-lists-3/#counter-increment
 // #[value(" [ <counter-name> <integer>? ]+ | none ")]
@@ -76,7 +76,7 @@ pub enum MarkerSide {}
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("by computed value type")]
-// pub enum CounterIncrement {}
+// pub enum CounterIncrementStyleValue {}
 
 // // https://drafts.csswg.org/css-lists-3/#counter-set
 // #[value(" [ <counter-name> <integer>? ]+ | none ")]
@@ -86,4 +86,4 @@ pub enum MarkerSide {}
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("by computed value type")]
-// pub enum CounterSet {}
+// pub enum CounterSetStyleValue {}

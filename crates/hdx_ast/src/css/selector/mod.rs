@@ -1,8 +1,10 @@
 use hdx_atom::Atom;
+use hdx_lexer::Cursor;
 use hdx_parser::{
-	CompoundSelector as CompoundSelectorTrait, CursorSink, Parse, Parser, Result as ParserResult,
+	Build, CompoundSelector as CompoundSelectorTrait, CursorSink, Is, Parse, Parser, Result as ParserResult,
 	SelectorComponent as SelectorComponentTrait, SelectorList as SelectorListTrait, ToCursors, Vec, T,
 };
+use hdx_proc_macro::visit;
 
 mod attribute;
 mod class;
@@ -19,19 +21,22 @@ mod pseudo_element;
 mod tag;
 mod webkit;
 
-use attribute::*;
-use class::*;
-use combinator::*;
-use functional_pseudo_class::*;
-use functional_pseudo_element::*;
-use namespace::*;
-use nth::*;
-use pseudo_class::*;
-use pseudo_element::*;
-use tag::*;
+pub use attribute::*;
+pub use class::*;
+pub use combinator::*;
+pub use functional_pseudo_class::*;
+pub use functional_pseudo_element::*;
+pub use namespace::*;
+pub use nth::*;
+pub use pseudo_class::*;
+pub use pseudo_element::*;
+pub use tag::*;
+
+use super::{Visit, Visitable};
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+#[visit]
 pub struct SelectorList<'a>(pub Vec<'a, CompoundSelector<'a>>);
 
 impl<'a> SelectorListTrait<'a> for SelectorList<'a> {
@@ -52,8 +57,18 @@ impl<'a> ToCursors for SelectorList<'a> {
 	}
 }
 
+impl<'a> Visitable<'a> for SelectorList<'a> {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		v.visit_selector_list(&self);
+		for selector in &self.0 {
+			Visitable::accept(selector, v);
+		}
+	}
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+#[visit]
 pub struct CompoundSelector<'a> {
 	pub components: Vec<'a, SelectorComponent<'a>>,
 	pub comma: Option<T![,]>,
@@ -81,9 +96,76 @@ impl<'a> ToCursors for CompoundSelector<'a> {
 	}
 }
 
+impl<'a> Visitable<'a> for CompoundSelector<'a> {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		v.visit_compound_selector(&self);
+		for component in &self.components {
+			Visitable::accept(component, v);
+		}
+	}
+}
+
 pub type ComplexSelector<'a> = SelectorList<'a>;
 pub type ForgivingSelector<'a> = SelectorList<'a>;
 pub type RelativeSelector<'a> = SelectorList<'a>;
+
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+#[visit]
+pub struct Id(T![Hash]);
+
+impl<'a> Is<'a> for Id {
+	fn is(p: &Parser<'a>, c: hdx_lexer::Cursor) -> bool {
+		<T![Hash]>::is(p, c)
+	}
+}
+
+impl<'a> Build<'a> for Id {
+	fn build(p: &Parser<'a>, c: hdx_lexer::Cursor) -> Self {
+		Self(<T![Hash]>::build(p, c))
+	}
+}
+
+impl From<Id> for Cursor {
+	fn from(value: Id) -> Self {
+		value.0.into()
+	}
+}
+
+impl<'a> Visitable<'a> for Id {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		v.visit_id(self);
+	}
+}
+
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+#[visit]
+pub struct Wildcard(T![*]);
+
+impl<'a> Is<'a> for Wildcard {
+	fn is(p: &Parser<'a>, c: hdx_lexer::Cursor) -> bool {
+		<T![*]>::is(p, c)
+	}
+}
+
+impl<'a> Build<'a> for Wildcard {
+	fn build(p: &Parser<'a>, c: hdx_lexer::Cursor) -> Self {
+		Self(<T![*]>::build(p, c))
+	}
+}
+
+impl From<Wildcard> for Cursor {
+	fn from(value: Wildcard) -> Self {
+		value.0.into()
+	}
+}
+
+impl<'a> Visitable<'a> for Wildcard {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		v.visit_wildcard(self);
+	}
+}
 
 // This encapsulates all `simple-selector` subtypes (e.g. `wq-name`,
 // `id-selector`) into one enum, as it makes parsing and visiting much more
@@ -95,10 +177,10 @@ pub type RelativeSelector<'a> = SelectorList<'a>;
 	serde(tag = "type", content = "value", rename_all = "kebab-case")
 )]
 pub enum SelectorComponent<'a> {
-	Id(T![Hash]),
+	Id(Id),
 	Class(Class),
 	Tag(Tag),
-	Wildcard(T![*]),
+	Wildcard(Wildcard),
 	Combinator(Combinator),
 	Attribute(Attribute),
 	PseudoClass(PseudoClass),
@@ -118,10 +200,10 @@ impl<'a> Parse<'a> for SelectorComponent<'a> {
 impl<'a> ToCursors for SelectorComponent<'a> {
 	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match self {
-			Self::Id(c) => s.append(c.into()),
+			Self::Id(c) => s.append((*c).into()),
 			Self::Class(c) => ToCursors::to_cursors(c, s),
 			Self::Tag(c) => s.append((*c).into()),
-			Self::Wildcard(c) => s.append(c.into()),
+			Self::Wildcard(c) => s.append((*c).into()),
 			Self::Combinator(c) => ToCursors::to_cursors(c, s),
 			Self::Attribute(c) => ToCursors::to_cursors(c, s),
 			Self::PseudoClass(c) => ToCursors::to_cursors(c, s),
@@ -134,9 +216,28 @@ impl<'a> ToCursors for SelectorComponent<'a> {
 	}
 }
 
+impl<'a> Visitable<'a> for SelectorComponent<'a> {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		match self {
+			Self::Id(c) => Visitable::accept(c, v),
+			Self::Class(c) => Visitable::accept(c, v),
+			Self::Tag(c) => Visitable::accept(c, v),
+			Self::Wildcard(c) => Visitable::accept(c, v),
+			Self::Combinator(c) => Visitable::accept(c, v),
+			Self::Attribute(c) => Visitable::accept(c, v),
+			Self::PseudoClass(c) => Visitable::accept(c, v),
+			Self::PseudoElement(c) => Visitable::accept(c, v),
+			Self::FunctionalPseudoElement(c) => Visitable::accept(c, v),
+			Self::LegacyPseudoElement(c) => Visitable::accept(c, v),
+			Self::FunctionalPseudoClass(c) => Visitable::accept(c, v),
+			Self::Namespace(c) => Visitable::accept(c, v),
+		}
+	}
+}
+
 impl<'a> SelectorComponentTrait<'a> for SelectorComponent<'a> {
-	type Wildcard = T![*];
-	type Id = T![Hash];
+	type Wildcard = Wildcard;
+	type Id = Id;
 	type Type = Tag;
 	type PseudoClass = PseudoClass;
 	type PseudoElement = PseudoElement;
@@ -152,11 +253,11 @@ impl<'a> SelectorComponentTrait<'a> for SelectorComponent<'a> {
 		LegacyPseudoElement::matches_name(name)
 	}
 
-	fn build_wildcard(node: T![*]) -> Self {
+	fn build_wildcard(node: Wildcard) -> Self {
 		Self::Wildcard(node)
 	}
 
-	fn build_id(node: T![Hash]) -> Self {
+	fn build_id(node: Id) -> Self {
 		Self::Id(node)
 	}
 

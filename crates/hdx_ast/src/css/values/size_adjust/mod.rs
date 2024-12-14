@@ -16,4 +16,4 @@ use impls::*;
 #[percentages("see below")]
 #[canonical_order("n/a")]
 #[animation_type("by computed value")]
-pub enum TextSizeAdjust {}
+pub enum TextSizeAdjustStyleValue {}

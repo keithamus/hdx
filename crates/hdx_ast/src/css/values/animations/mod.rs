@@ -16,7 +16,7 @@ use impls::*;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("not animatable")]
-// pub struct AnimationName {}
+// pub enum AnimationNameStyleValue<'a> {}
 
 // // https://drafts.csswg.org/css-animations-2/#animation-duration
 // #[value(" [ auto | <time [0s,∞]> ]# ")]
@@ -26,7 +26,7 @@ use impls::*;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("not animatable")]
-// pub enum AnimationDuration {}
+// pub enum AnimationDurationStyleValue<'a> {}
 
 // // https://drafts.csswg.org/css-animations-2/#animation-timing-function
 // #[value(" <easing-function># ")]
@@ -36,7 +36,7 @@ use impls::*;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("not animatable")]
-// pub struct AnimationTimingFunction;
+// pub struct AnimationTimingFunctionStyleValue<'a>;
 
 // https://drafts.csswg.org/css-animations-2/#animation-iteration-count
 #[value(" <single-animation-iteration-count># ")]
@@ -46,7 +46,7 @@ use impls::*;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("not animatable")]
-pub struct AnimationIterationCount<'a>;
+pub struct AnimationIterationCountStyleValue<'a>;
 
 // https://drafts.csswg.org/css-animations-2/#animation-direction
 #[value(" <single-animation-direction># ")]
@@ -56,7 +56,7 @@ pub struct AnimationIterationCount<'a>;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("not animatable")]
-pub struct AnimationDirection<'a>;
+pub struct AnimationDirectionStyleValue<'a>;
 
 // https://drafts.csswg.org/css-animations-2/#animation-play-state
 #[value(" <single-animation-play-state># ")]
@@ -66,7 +66,7 @@ pub struct AnimationDirection<'a>;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("not animatable")]
-pub struct AnimationPlayState<'a>;
+pub struct AnimationPlayStateStyleValue<'a>;
 
 // https://drafts.csswg.org/css-animations-2/#animation-delay
 #[value(" <time># ")]
@@ -76,7 +76,7 @@ pub struct AnimationPlayState<'a>;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("not animatable")]
-pub struct AnimationDelay<'a>;
+pub struct AnimationDelayStyleValue<'a>;
 
 // https://drafts.csswg.org/css-animations-2/#animation-fill-mode
 #[value(" <single-animation-fill-mode># ")]
@@ -86,7 +86,7 @@ pub struct AnimationDelay<'a>;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("not animatable")]
-pub struct AnimationFillMode<'a>;
+pub struct AnimationFillModeStyleValue<'a>;
 
 // // https://drafts.csswg.org/css-animations-2/#animation
 // #[value(" <single-animation># ")]
@@ -96,7 +96,7 @@ pub struct AnimationFillMode<'a>;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("not animatable")]
-// pub struct Animation;
+// pub struct AnimationStyleValue<'a>;
 
 // https://drafts.csswg.org/css-animations-2/#animation-composition
 #[value(" <single-animation-composition># ")]
@@ -106,7 +106,7 @@ pub struct AnimationFillMode<'a>;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("not animatable")]
-pub struct AnimationComposition<'a>;
+pub struct AnimationCompositionStyleValue<'a>;
 
 // // https://drafts.csswg.org/css-animations-2/#animation-timeline
 // #[value(" <single-animation-timeline># ")]
@@ -116,4 +116,4 @@ pub struct AnimationComposition<'a>;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("not animatable")]
-// pub struct AnimationTimeline;
+// pub struct AnimationTimelineStyleValue<'a>;

@@ -3,7 +3,7 @@ use hdx_lexer::SourceOffset;
 use hdx_parser::{Parse, Parser, Peek, Result as ParserResult, ToCursors, T};
 
 // https://drafts.csswg.org/css-values-4/#ratios
-#[derive(Debug, Default, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct Ratio {
 	start: SourceOffset,

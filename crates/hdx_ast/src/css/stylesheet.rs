@@ -1,18 +1,17 @@
 use hdx_atom::atom;
 use hdx_lexer::Cursor;
-use hdx_parser::{
-	CursorSink, Parse, Parser, Result as ParserResult, StyleSheet as StyleSheetTrait, ToCursors, Vec, T,
-};
+use hdx_parser::{CursorSink, Parse, Parser, Result as ParserResult, StyleSheet as StyleSheetTrait, ToCursors, Vec, T};
 use hdx_proc_macro::visit;
 
 use crate::{
-	css::{rules, stylerule::StyleRule},
+	css::{rules, stylerule::StyleRule, Visitable, Visit},
 	syntax::{AtRule, QualifiedRule},
 };
 
 // https://drafts.csswg.org/cssom-1/#the-cssstylesheet-interface
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", rename = "stylesheet"))]
+#[visit]
 pub struct StyleSheet<'a> {
 	pub rules: Vec<'a, Rule<'a>>,
 }
@@ -39,6 +38,15 @@ impl<'a> ToCursors for StyleSheet<'a> {
 	}
 }
 
+impl<'a> Visitable<'a> for StyleSheet<'a> {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		for rule in &self.rules {
+			v.visit_style_sheet(self);
+			Visitable::accept(rule, v);
+		}
+	}
+}
+
 macro_rules! apply_rules {
 	($macro: ident) => {
 		$macro! {
@@ -61,15 +69,59 @@ macro_rules! apply_rules {
 			SupportsRule<'a>: atom!("supports"),
 
 			// Deprecated Rules
-			Document<'a>: atom!("document"),
+			DocumentRule<'a>: atom!("document"),
 
 			// Vendor Prefixed
-			WebkitKeyframes<'a>: atom!("-webkit-keyframes"),
+			WebkitKeyframesRule<'a>: atom!("-webkit-keyframes"),
 
 			// https://developer.mozilla.org/en-US/docs/Web/CSS/Mozilla_Extensions#at-rules
-			MozDocument<'a>: atom!("-moz-document"),
+			MozDocumentRule<'a>: atom!("-moz-document"),
 		}
 	};
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[visit]
+pub struct UnknownAtRule<'a>(AtRule<'a>);
+
+impl<'a> Parse<'a> for UnknownAtRule<'a> {
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		Ok(Self(p.parse::<AtRule>()?))
+	}
+}
+
+impl<'a> ToCursors for UnknownAtRule<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
+		ToCursors::to_cursors(&self.0, s);
+	}
+}
+
+impl<'a> Visitable<'a> for UnknownAtRule<'a> {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		v.visit_unknown_at_rule(self);
+	}
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[visit]
+pub struct UnknownQualifiedRule<'a>(QualifiedRule<'a>);
+
+impl<'a> Parse<'a> for UnknownQualifiedRule<'a> {
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		Ok(Self(p.parse::<QualifiedRule>()?))
+	}
+}
+
+impl<'a> ToCursors for UnknownQualifiedRule<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
+		ToCursors::to_cursors(&self.0, s);
+	}
+}
+
+impl<'a> Visitable<'a> for UnknownQualifiedRule<'a> {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		v.visit_unknown_qualified_rule(self);
+	}
 }
 
 macro_rules! rule {
@@ -79,13 +131,14 @@ macro_rules! rule {
 		// https://drafts.csswg.org/cssom-1/#the-cssrule-interface
 		#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 		#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(untagged))]
+		#[visit]
 		pub enum Rule<'a> {
 			$(
 				$name(rules::$name$(<$a>)?),
 			)+
-			UnknownAt(AtRule<'a>),
+			UnknownAt(UnknownAtRule<'a>),
 			Style(StyleRule<'a>),
-			Unknown(QualifiedRule<'a>)
+			Unknown(UnknownQualifiedRule<'a>)
 		}
 	}
 }
@@ -104,7 +157,7 @@ impl<'a> Parse<'a> for Rule<'a> {
 					match p.parse_atom_lower(c) {
 						$($atom => p.parse::<rules::$name>().map(Self::$name),)+
 						_ => {
-							let rule = p.parse::<AtRule>()?;
+							let rule = p.parse::<UnknownAtRule>()?;
 							Ok(Self::UnknownAt(rule))
 						}
 					}
@@ -114,13 +167,13 @@ impl<'a> Parse<'a> for Rule<'a> {
 				Ok(rule)
 			} else {
 				p.rewind(checkpoint);
-				p.parse::<AtRule>().map(Self::UnknownAt)
+				p.parse::<UnknownAtRule>().map(Self::UnknownAt)
 			}
 		} else if let Ok(rule) = p.parse::<StyleRule>() {
 			Ok(Self::Style(rule))
 		} else {
 			p.rewind(checkpoint);
-			p.parse::<QualifiedRule>().map(Self::Unknown)
+			p.parse::<UnknownQualifiedRule>().map(Self::Unknown)
 		}
 	}
 }
@@ -143,11 +196,23 @@ impl<'a> ToCursors for Rule<'a> {
 	}
 }
 
-#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(untagged))]
-pub enum AtRuleId {
-	Charset(T![AtKeyword]), // atom!("charset")
-	Page(T![AtKeyword]),    // atom!("page")
+impl<'a> Visitable<'a> for Rule<'a> {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		v.visit_rule(self);
+		macro_rules! match_rule {
+				( $(
+					$name: ident$(<$a: lifetime>)?: $atom: pat,
+				)+ ) => {
+					match self {
+						$(Self::$name(r) => Visitable::accept(r, v),)+
+						Self::UnknownAt(r) => Visitable::accept(r, v),
+						Self::Style(r) => Visitable::accept(r, v),
+						Self::Unknown(r) => Visitable::accept(r, v),
+					};
+				}
+			}
+		apply_rules!(match_rule);
+	}
 }
 
 #[cfg(test)]
@@ -159,7 +224,6 @@ mod tests {
 	fn size_test() {
 		assert_size!(StyleSheet, 32);
 		assert_size!(Rule, 456);
-		assert_size!(AtRuleId, 16);
 	}
 
 	#[test]

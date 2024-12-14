@@ -2,6 +2,8 @@ use hdx_atom::atom;
 use hdx_lexer::Cursor;
 use hdx_parser::{diagnostics, Parse, Parser, Result as ParserResult, ToCursors, T};
 
+use crate::css::{Visit, Visitable};
+
 use super::{moz::MozPseudoClass, ms::MsPseudoClass, o::OPseudoClass, webkit::WebkitPseudoClass};
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -348,6 +350,12 @@ impl<'a> ToCursors for PseudoClass {
 			Self::Ms(c) => ToCursors::to_cursors(c, s),
 			Self::O(c) => ToCursors::to_cursors(c, s),
 		}
+	}
+}
+
+impl<'a> Visitable<'a> for PseudoClass {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		todo!();
 	}
 }
 

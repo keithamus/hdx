@@ -1,5 +1,5 @@
 use crate::{
-	css::{properties::Property, selector::ComplexSelector, stylesheet::Rule},
+	css::{properties::Property, selector::ComplexSelector, stylesheet::Rule, Visit, Visitable},
 	syntax::ComponentValues,
 };
 use bumpalo::collections::Vec;
@@ -8,6 +8,7 @@ use hdx_lexer::Span;
 use hdx_parser::{
 	diagnostics, AtRule, ConditionalAtRule, CursorSink, Parse, Parser, Result as ParserResult, RuleList, ToCursors, T,
 };
+use hdx_proc_macro::visit;
 
 mod kw {
 	use hdx_parser::custom_keyword;
@@ -19,6 +20,7 @@ mod kw {
 // https://drafts.csswg.org/css-conditional-3/#at-supports
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
+#[visit]
 pub struct SupportsRule<'a> {
 	pub at_keyword: T![AtKeyword],
 	pub condition: SupportsCondition<'a>,
@@ -48,6 +50,12 @@ impl<'a> ToCursors for SupportsRule<'a> {
 		s.append(self.at_keyword.into());
 		ToCursors::to_cursors(&self.condition, s);
 		ToCursors::to_cursors(&self.block, s);
+	}
+}
+
+impl<'a> Visitable<'a> for SupportsRule<'a> {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		todo!();
 	}
 }
 

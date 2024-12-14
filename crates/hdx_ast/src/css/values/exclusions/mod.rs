@@ -16,7 +16,7 @@ use impls::*;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("not animatable")]
-pub enum WrapFlow {}
+pub enum WrapFlowStyleValue {}
 
 // https://drafts.csswg.org/css-exclusions-1/#wrap-through
 #[value(" wrap | none ")]
@@ -26,4 +26,4 @@ pub enum WrapFlow {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("not animatable")]
-pub enum WrapThrough {}
+pub enum WrapThroughStyleValue {}

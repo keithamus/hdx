@@ -3,12 +3,14 @@ use std::{fmt::Debug, hash::Hash};
 use hdx_atom::atom;
 use hdx_lexer::{Cursor, KindSet};
 use hdx_parser::{
-	CursorSink, Declaration, DeclarationValue, Important, Is, Parse, Parser, Result as ParserResult, State,
-	ToCursors, T,
+	CursorSink, Declaration, DeclarationValue, Important, Is, Parse, Parser, Result as ParserResult, State, ToCursors,
+	T,
 };
 use hdx_proc_macro::visit;
 
 use crate::{css::values, syntax::ComponentValues};
+
+use super::{Visit, Visitable};
 
 // The build.rs generates a list of CSS properties from the value mods
 include!(concat!(env!("OUT_DIR"), "/css_apply_properties.rs"));
@@ -99,6 +101,7 @@ impl<'a> ToCursors for Unknown<'a> {
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", rename = "property"))]
+#[visit]
 pub struct Property<'a> {
 	pub name: T![Ident],
 	pub colon: Option<T![:]>,
@@ -134,12 +137,20 @@ impl<'a> ToCursors for Property<'a> {
 	}
 }
 
+impl<'a> Visitable<'a> for Property<'a> {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		v.visit_property(self);
+		Visitable::accept(&self.value, v);
+	}
+}
+
 macro_rules! style_value {
     ( $(
-        $name: ident$(<$a: lifetime>)?: $atom: pat,
+				$name: ident: $ty: ident$(<$a: lifetime>)? = $atom: pat,
     )+ ) => {
 		#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 		#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", rename_all = "kebab-case"))]
+		#[visit]
 		pub enum StyleValue<'a> {
 			Initial(T![Ident]),
 			Inherit(T![Ident]),
@@ -154,7 +165,7 @@ macro_rules! style_value {
 			Unknown(Unknown<'a>),
 			$(
 				#[cfg_attr(feature = "serde", serde(untagged))]
-				$name(values::$name$(<$a>)?),
+				$name(values::$ty$(<$a>)?),
 			)+
 		}
 	}
@@ -184,15 +195,13 @@ impl<'a> DeclarationValue<'a> for StyleValue<'a> {
 		let checkpoint = p.checkpoint();
 		macro_rules! parse_declaration_value {
 			( $(
-				$name: ident$(<$a: lifetime>)?: $atom: pat,
+				$name: ident: $ty: ident$(<$a: lifetime>)? = $atom: pat,
 			)+ ) => {
 				match p.parse_atom_lower(name) {
 					$(
 						$atom => {
-							if let Ok(val) = p.parse::<values::$name>() {
-								if p.at_end() {
-									return Ok(Self::$name(val))
-								} else if p.peek_n(1) == KindSet::RIGHT_CURLY_OR_SEMICOLON || p.peek::<T![!]>() {
+							if let Ok(val) = p.parse::<values::$ty>() {
+								if p.at_end() || p.peek_n(1) == KindSet::RIGHT_CURLY_OR_SEMICOLON || p.peek::<T![!]>() {
 									return Ok(Self::$name(val))
 								}
 							}
@@ -217,7 +226,7 @@ impl<'a> ToCursors for StyleValue<'a> {
 	fn to_cursors(&self, s: &mut impl CursorSink) {
 		macro_rules! match_value {
 			( $(
-				$name: ident$(<$a: lifetime>)?: $atom: pat,
+				$name: ident: $ty: ident$(<$a: lifetime>)? = $atom: pat,
 			)+ ) => {
 				match self {
 					Self::Initial(ident) => s.append(ident.into()),
@@ -228,11 +237,17 @@ impl<'a> ToCursors for StyleValue<'a> {
 					Self::Custom(custom) => ToCursors::to_cursors(custom, s),
 					Self::Computed(computed) => ToCursors::to_cursors(computed, s),
 					Self::Unknown(unknown) => ToCursors::to_cursors(unknown, s),
-					$( Self::$name(value) => ToCursors::to_cursors(value, s),)+
+					$( Self::$name(value) => ToCursors::to_cursors(value, s), )+
 				}
 			}
 		}
 		apply_properties!(match_value);
+	}
+}
+
+impl<'a> Visitable<'a> for StyleValue<'a> {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		v.visit_style_value(self);
 	}
 }
 

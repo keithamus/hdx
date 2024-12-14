@@ -5,9 +5,12 @@ use crate::{
 use hdx_parser::{Block, CursorSink, Parse, Parser, QualifiedRule, Result as ParserResult, ToCursors, Vec, T};
 use hdx_proc_macro::visit;
 
+use super::{Visit, Visitable};
+
 // https://drafts.csswg.org/cssom-1/#the-cssstylerule-interface
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", rename = "stylerule"))]
+#[visit]
 pub struct StyleRule<'a> {
 	pub selectors: SelectorList<'a>,
 	#[cfg_attr(feature = "serde", serde(flatten))]
@@ -34,9 +37,18 @@ impl<'a> ToCursors for StyleRule<'a> {
 	}
 }
 
+impl<'a> Visitable<'a> for StyleRule<'a> {
+    fn accept<V: Visit<'a>>(&self, v: &mut V) {
+			v.visit_style_rule(&self);
+			Visitable::accept(&self.selectors, v);
+			Visitable::accept(&self.style, v);
+    }
+}
+
 // https://drafts.csswg.org/cssom-1/#the-cssstylerule-interface
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", rename = "style-declaration"))]
+#[visit]
 pub struct StyleDeclaration<'a> {
 	pub open: T!['{'],
 	pub declarations: Vec<'a, Property<'a>>,
@@ -69,6 +81,18 @@ impl<'a> ToCursors for StyleDeclaration<'a> {
 			ToCursors::to_cursors(close, s);
 		}
 	}
+}
+
+impl<'a> Visitable<'a> for StyleDeclaration<'a> {
+    fn accept<V: Visit<'a>>(&self, v: &mut V) {
+			v.visit_style_declaration(self);
+			for declaration in &self.declarations {
+				Visitable::accept(declaration, v);
+			}
+			for rule in &self.rules {
+				Visitable::accept(rule, v);
+			}
+    }
 }
 
 #[cfg(test)]

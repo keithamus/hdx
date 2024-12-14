@@ -11,12 +11,6 @@ pub enum Time {
 	S(T![Dimension::S]),
 }
 
-impl Default for Time {
-	fn default() -> Self {
-		Self::Zero(Default::default())
-	}
-}
-
 impl From<Time> for f32 {
 	fn from(val: Time) -> Self {
 		match val {

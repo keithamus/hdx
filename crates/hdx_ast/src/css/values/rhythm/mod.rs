@@ -16,17 +16,17 @@ use impls::*;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub enum BlockStepSize {}
+pub enum BlockStepSizeStyleValue {}
 
 // https://drafts.csswg.org/css-rhythm-1/#block-step-insert
-#[value(" margin | padding ")]
-#[initial("margin")]
+#[value(" margin-box | padding-box | content-box ")]
+#[initial("margin-box")]
 #[applies_to("block-level boxes")]
 #[inherited("no")]
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum BlockStepInsert {}
+pub enum BlockStepInsertStyleValue {}
 
 // https://drafts.csswg.org/css-rhythm-1/#block-step-align
 #[value(" auto | center | start | end ")]
@@ -36,7 +36,7 @@ pub enum BlockStepInsert {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum BlockStepAlign {}
+pub enum BlockStepAlignStyleValue {}
 
 // https://drafts.csswg.org/css-rhythm-1/#block-step-round
 #[value(" up | down | nearest ")]
@@ -46,7 +46,7 @@ pub enum BlockStepAlign {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum BlockStepRound {}
+pub enum BlockStepRoundStyleValue {}
 
 // https://drafts.csswg.org/css-rhythm-1/#block-step
 #[value(" <'block-step-size'> || <'block-step-insert'> || <'block-step-align'> || <'block-step-round'> ")]
@@ -56,14 +56,14 @@ pub enum BlockStepRound {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("see individual properties")]
-pub struct BlockStep;
+pub struct BlockStepStyleValue;
 
 // https://drafts.csswg.org/css-rhythm-1/#line-height-step
 #[value(" <length [0,∞]> ")]
-#[initial("0px")]
+#[initial("0")]
 #[applies_to("block containers")]
 #[inherited("yes")]
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub struct LineHeightStep;
+pub struct LineHeightStepStyleValue;

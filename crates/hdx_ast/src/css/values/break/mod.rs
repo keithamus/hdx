@@ -16,7 +16,7 @@ use impls::*;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum BreakBefore {}
+pub enum BreakBeforeStyleValue {}
 
 // https://drafts.csswg.org/css-break-4/#break-after
 #[value(" auto | avoid | always | all | avoid-page | page | left | right | recto | verso | avoid-column | column | avoid-region | region ")]
@@ -26,7 +26,7 @@ pub enum BreakBefore {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum BreakAfter {}
+pub enum BreakAfterStyleValue {}
 
 // https://drafts.csswg.org/css-break-4/#break-inside
 #[value(" auto | avoid | avoid-page | avoid-column | avoid-region ")]
@@ -36,7 +36,7 @@ pub enum BreakAfter {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum BreakInside {}
+pub enum BreakInsideStyleValue {}
 
 // https://drafts.csswg.org/css-break-4/#orphans
 #[value(" <integer [1,∞]> ")]
@@ -46,7 +46,7 @@ pub enum BreakInside {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub struct Orphans;
+pub struct OrphansStyleValue;
 
 // https://drafts.csswg.org/css-break-4/#widows
 #[value(" <integer [1,∞]> ")]
@@ -56,7 +56,7 @@ pub struct Orphans;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub struct Widows;
+pub struct WidowsStyleValue;
 
 // https://drafts.csswg.org/css-break-4/#box-decoration-break
 #[value(" slice | clone ")]
@@ -66,7 +66,7 @@ pub struct Widows;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum BoxDecorationBreak {}
+pub enum BoxDecorationBreakStyleValue {}
 
 // https://drafts.csswg.org/css-break-4/#margin-break
 #[value(" auto | keep | discard ")]
@@ -76,4 +76,4 @@ pub enum BoxDecorationBreak {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum MarginBreak {}
+pub enum MarginBreakStyleValue {}

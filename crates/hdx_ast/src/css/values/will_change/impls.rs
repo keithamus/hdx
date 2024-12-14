@@ -8,17 +8,17 @@ mod test {
 
 	#[test]
 	fn test_writes() {
-		assert_parse!(WillChange, "auto");
-		assert_parse!(WillChange, "foo,bar,baz");
-		assert_parse!(WillChange, "-webkit-perspective");
-		assert_parse!(WillChange, "transform,filter,mask");
+		assert_parse!(WillChangeStyleValue, "auto");
+		assert_parse!(WillChangeStyleValue, "foo,bar,baz");
+		assert_parse!(WillChangeStyleValue, "-webkit-perspective");
+		assert_parse!(WillChangeStyleValue, "transform,filter,mask");
 	}
 
 	#[test]
 	fn test_errors() {
-		assert_parse_error!(WillChange, "auto auto"); // two autos is illegal
-		assert_parse_error!(WillChange, ""); // must be at-least-one
-		assert_parse_error!(WillChange, "transform filter"); // no commas
-		assert_parse_error!(WillChange, "0px 3px"); // dimensions not idents
+		assert_parse_error!(WillChangeStyleValue, "auto auto"); // two autos is illegal
+		assert_parse_error!(WillChangeStyleValue, ""); // must be at-least-one
+		assert_parse_error!(WillChangeStyleValue, "transform filter"); // no commas
+		assert_parse_error!(WillChangeStyleValue, "0px 3px"); // dimensions not idents
 	}
 }

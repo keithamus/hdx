@@ -16,7 +16,7 @@ use impls::*;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value")]
-pub struct BackgroundColor;
+pub struct BackgroundColorStyleValue;
 
 // // https://drafts.csswg.org/css-backgrounds-4/#background-image
 // #[value(" <bg-image># ")]
@@ -26,7 +26,7 @@ pub struct BackgroundColor;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub struct BackgroundImage<'a>;
+// pub struct BackgroundImageStyleValue<'a>;
 
 // https://drafts.csswg.org/css-backgrounds-4/#background-repeat
 #[value(" <repeat-style># ")]
@@ -36,7 +36,7 @@ pub struct BackgroundColor;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub struct BackgroundRepeat<'a>;
+pub struct BackgroundRepeatStyleValue<'a>;
 
 // https://drafts.csswg.org/css-backgrounds-4/#background-attachment
 #[value(" <attachment># ")]
@@ -46,7 +46,7 @@ pub struct BackgroundRepeat<'a>;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub struct BackgroundAttachment<'a>;
+pub struct BackgroundAttachmentStyleValue<'a>;
 
 // // https://drafts.csswg.org/css-backgrounds-4/#background-position
 // #[value(" <bg-position># ")]
@@ -56,7 +56,7 @@ pub struct BackgroundAttachment<'a>;
 // #[percentages("refer to size of background positioning area minus size of background image; see text")]
 // #[canonical_order("per grammar")]
 // #[animation_type("repeatable list")]
-// pub struct BackgroundPosition;
+// pub struct BackgroundPositionStyleValue<'a>;
 
 // https://drafts.csswg.org/css-backgrounds-4/#background-clip
 #[value(" <bg-clip># ")]
@@ -66,7 +66,7 @@ pub struct BackgroundAttachment<'a>;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("repeatable list")]
-pub struct BackgroundClip<'a>;
+pub struct BackgroundClipStyleValue<'a>;
 
 // https://drafts.csswg.org/css-backgrounds-4/#background-origin
 #[value(" <visual-box># ")]
@@ -76,7 +76,7 @@ pub struct BackgroundClip<'a>;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("repeatable list")]
-pub struct BackgroundOrigin<'a>;
+pub struct BackgroundOriginStyleValue<'a>;
 
 // // https://drafts.csswg.org/css-backgrounds-4/#background-size
 // #[value(" <bg-size># ")]
@@ -86,7 +86,7 @@ pub struct BackgroundOrigin<'a>;
 // #[percentages("see text")]
 // #[canonical_order("per grammar")]
 // #[animation_type("repeatable list")]
-// pub struct BackgroundSize;
+// pub struct BackgroundSizeStyleValue<'a>;
 
 // // https://drafts.csswg.org/css-backgrounds-4/#background
 // #[value(" <bg-layer>#? , <final-bg-layer> ")]
@@ -96,7 +96,7 @@ pub struct BackgroundOrigin<'a>;
 // #[percentages("see individual properties")]
 // #[canonical_order("per grammar")]
 // #[animation_type("see individual properties")]
-// pub struct Background;
+// pub struct BackgroundStyleValue<'a>;
 
 // https://drafts.csswg.org/css-backgrounds-4/#border-image-source
 #[value(" none | <image> ")]
@@ -106,7 +106,7 @@ pub struct BackgroundOrigin<'a>;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum BorderImageSource<'a> {}
+pub enum BorderImageSourceStyleValue<'a> {}
 
 // // https://drafts.csswg.org/css-backgrounds-4/#border-image-slice
 // #[value(" [<number [0,∞]> | <percentage [0,∞]>]{1,4} && fill? ")]
@@ -116,18 +116,17 @@ pub enum BorderImageSource<'a> {}
 // #[percentages("refer to size of the border image")]
 // #[canonical_order("per grammar")]
 // #[animation_type("by computed value")]
-// pub enum BorderImageSlice {}
+// pub enum BorderImageSliceStyleValue {}
 
 // // https://drafts.csswg.org/css-backgrounds-4/#border-image-width
 // #[value(" [ <length-percentage [0,∞]> | <number [0,∞]> | auto ]{1,4} ")]
 // #[initial("1")]
-// #[applies_to("All elements,
-// except internal table elements when border-collapse is collapse")]
+// #[applies_to("All elements,except internal table elements when border-collapse is collapse")]
 // #[inherited("no")]
 // #[percentages("relative to width/height of the border image area")]
 // #[canonical_order("per grammar")]
 // #[animation_type("by computed value")]
-// pub enum BorderImageWidth {}
+// pub enum BorderImageWidthStyleValue {}
 
 // // https://drafts.csswg.org/css-backgrounds-4/#border-image-outset
 // #[value(" [ <length [0,∞]> | <number [0,∞]> ]{1,4} ")]
@@ -137,7 +136,7 @@ pub enum BorderImageSource<'a> {}
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("by computed value")]
-// pub enum BorderImageOutset {}
+// pub enum BorderImageOutsetStyleValue {}
 
 // // https://drafts.csswg.org/css-backgrounds-4/#border-image-repeat
 // #[value(" [ stretch | repeat | round | space ]{1,2} ")]
@@ -147,7 +146,7 @@ pub enum BorderImageSource<'a> {}
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub enum BorderImageRepeat {}
+// pub enum BorderImageRepeatStyleValue {}
 
 // // https://drafts.csswg.org/css-backgrounds-4/#border-image
 // #[value(" <'border-image-source'> || <'border-image-slice'> [ / <'border-image-width'> | / <'border-image-width'>? / <'border-image-outset'> ]? || <'border-image-repeat'> ")]
@@ -157,7 +156,7 @@ pub enum BorderImageSource<'a> {}
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("see individual properties")]
-// pub enum BorderImage {}
+// pub enum BorderImageStyleValue {}
 
 // https://drafts.csswg.org/css-backgrounds-4/#background-repeat-x
 #[value(" <repetition># ")]
@@ -167,7 +166,7 @@ pub enum BorderImageSource<'a> {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub struct BackgroundRepeatX<'a>;
+pub struct BackgroundRepeatXStyleValue<'a>;
 
 // https://drafts.csswg.org/css-backgrounds-4/#background-repeat-y
 #[value(" <repetition># ")]
@@ -177,7 +176,7 @@ pub struct BackgroundRepeatX<'a>;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub struct BackgroundRepeatY<'a>;
+pub struct BackgroundRepeatYStyleValue<'a>;
 
 // https://drafts.csswg.org/css-backgrounds-4/#background-repeat-block
 #[value(" <repetition># ")]
@@ -187,7 +186,7 @@ pub struct BackgroundRepeatY<'a>;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub struct BackgroundRepeatBlock<'a>;
+pub struct BackgroundRepeatBlockStyleValue<'a>;
 
 // https://drafts.csswg.org/css-backgrounds-4/#background-repeat-inline
 #[value(" <repetition># ")]
@@ -197,7 +196,7 @@ pub struct BackgroundRepeatBlock<'a>;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub struct BackgroundRepeatInline<'a>;
+pub struct BackgroundRepeatInlineStyleValue<'a>;
 
 // // https://drafts.csswg.org/css-backgrounds-4/#background-position-x
 // #[value(" [ center | [ [ left | right | x-start | x-end ]? <length-percentage>? ]! ]# ")]
@@ -207,7 +206,7 @@ pub struct BackgroundRepeatInline<'a>;
 // #[percentages("refer to width of background positioning area minus width of background image")]
 // #[canonical_order("per grammar")]
 // #[animation_type("repeatable list")]
-// pub enum BackgroundPositionX {}
+// pub enum BackgroundPositionXStyleValue<'a> {}
 
 // // https://drafts.csswg.org/css-backgrounds-4/#background-position-y
 // #[value(" [ center | [ [ top | bottom | y-start | y-end ]? <length-percentage>? ]! ]# ")]
@@ -217,7 +216,7 @@ pub struct BackgroundRepeatInline<'a>;
 // #[percentages("refer to height of background positioning area minus height of background image")]
 // #[canonical_order("per grammar")]
 // #[animation_type("repeatable list")]
-// pub enum BackgroundPositionY {}
+// pub enum BackgroundPositionYStyleValue<'a> {}
 
 // // https://drafts.csswg.org/css-backgrounds-4/#background-position-inline
 // #[value(" [ center | [ [ start | end ]? <length-percentage>? ]! ]# ")]
@@ -227,7 +226,7 @@ pub struct BackgroundRepeatInline<'a>;
 // #[percentages("refer to inline-size of background positioning area minus inline-size of background image")]
 // #[canonical_order("per grammar")]
 // #[animation_type("repeatable list")]
-// pub enum BackgroundPositionInline {}
+// pub enum BackgroundPositionInlineStyleValue<'a> {}
 
 // // https://drafts.csswg.org/css-backgrounds-4/#background-position-block
 // #[value(" [ center | [ [ start | end ]? <length-percentage>? ]! ]# ")]
@@ -237,14 +236,4 @@ pub struct BackgroundRepeatInline<'a>;
 // #[percentages("refer to size of background positioning area minus size of background image")]
 // #[canonical_order("per grammar")]
 // #[animation_type("repeatable list")]
-// pub enum BackgroundPositionBlock {}
-
-// // https://drafts.csswg.org/css-backgrounds-4/#background-tbd
-// #[value(" <bg-layer># ")]
-// #[initial("see individual properties")]
-// #[applies_to("all elements")]
-// #[inherited("no")]
-// #[percentages("see individual properties")]
-// #[canonical_order("per grammar")]
-// #[animation_type("see individual properties")]
-// pub struct BackgroundTbd;
+// pub enum BackgroundPositionBlockStyleValue<'a> {}

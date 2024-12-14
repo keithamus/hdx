@@ -8,20 +8,20 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(ScrollbarColor, 280);
+		assert_size!(ScrollbarColorStyleValue, 280);
 	}
 
 	#[test]
 	fn test_parse() {
-		assert_parse!(ScrollbarColor, "red red");
-		assert_parse!(ScrollbarColor, "auto");
-		assert_parse!(ScrollbarColor, "red #eee", "red#eee");
+		assert_parse!(ScrollbarColorStyleValue, "red red");
+		assert_parse!(ScrollbarColorStyleValue, "auto");
+		assert_parse!(ScrollbarColorStyleValue, "red #eee", "red#eee");
 	}
 
 	#[test]
 	fn test_parse_error() {
-		assert_parse_error!(ScrollbarColor, "auto red");
-		assert_parse_error!(ScrollbarColor, "red");
-		assert_parse_error!(ScrollbarColor, "red green blue");
+		assert_parse_error!(ScrollbarColorStyleValue, "auto red");
+		assert_parse_error!(ScrollbarColorStyleValue, "red");
+		assert_parse_error!(ScrollbarColorStyleValue, "red green blue");
 	}
 }

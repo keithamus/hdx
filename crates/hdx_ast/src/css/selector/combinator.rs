@@ -1,8 +1,12 @@
 use hdx_parser::{CursorSink, Parse, Parser, Result as ParserResult, ToCursors, T};
+use hdx_proc_macro::visit;
 
+use crate::css::{Visit, Visitable};
+
+// https://drafts.csswg.org/selectors/#combinators
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(rename_all = "kebab-case"))]
-// https://drafts.csswg.org/selectors/#combinators
+#[visit]
 pub enum Combinator {
 	Child(T![>]),
 	NextSibling(T![+]),
@@ -40,6 +44,12 @@ impl<'a> ToCursors for Combinator {
 			Self::Column(c) => ToCursors::to_cursors(c, s),
 			Self::Nesting(c) => s.append(c.into()),
 		}
+	}
+}
+
+impl<'a> Visitable<'a> for Combinator {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		todo!();
 	}
 }
 

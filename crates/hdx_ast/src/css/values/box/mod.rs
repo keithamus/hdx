@@ -16,7 +16,7 @@ use impls::*;
 #[percentages("refer to logical width of containing block")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub enum MarginTop {}
+pub enum MarginTopStyleValue {}
 
 // https://drafts.csswg.org/css-box-4/#margin-right
 #[value(" <length-percentage> | auto ")]
@@ -26,7 +26,7 @@ pub enum MarginTop {}
 #[percentages("refer to logical width of containing block")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub enum MarginRight {}
+pub enum MarginRightStyleValue {}
 
 // https://drafts.csswg.org/css-box-4/#margin-bottom
 #[value(" <length-percentage> | auto ")]
@@ -36,7 +36,7 @@ pub enum MarginRight {}
 #[percentages("refer to logical width of containing block")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub enum MarginBottom {}
+pub enum MarginBottomStyleValue {}
 
 // https://drafts.csswg.org/css-box-4/#margin-left
 #[value(" <length-percentage> | auto ")]
@@ -46,7 +46,7 @@ pub enum MarginBottom {}
 #[percentages("refer to logical width of containing block")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub enum MarginLeft {}
+pub enum MarginLeftStyleValue {}
 
 // https://drafts.csswg.org/css-box-4/#margin
 #[value(" <'margin-top'>{1,4} ")]
@@ -56,7 +56,7 @@ pub enum MarginLeft {}
 #[percentages("refer to logical width of containing block")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub struct Margin;
+pub struct MarginStyleValue;
 
 // https://drafts.csswg.org/css-box-4/#padding-top
 #[value(" <length-percentage [0,∞]> ")]
@@ -66,7 +66,7 @@ pub struct Margin;
 #[percentages("refer to logical width of containing block")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub struct PaddingTop;
+pub struct PaddingTopStyleValue;
 
 // https://drafts.csswg.org/css-box-4/#padding-right
 #[value(" <length-percentage [0,∞]> ")]
@@ -76,7 +76,7 @@ pub struct PaddingTop;
 #[percentages("refer to logical width of containing block")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub struct PaddingRight;
+pub struct PaddingRightStyleValue;
 
 // https://drafts.csswg.org/css-box-4/#padding-bottom
 #[value(" <length-percentage [0,∞]> ")]
@@ -86,7 +86,7 @@ pub struct PaddingRight;
 #[percentages("refer to logical width of containing block")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub struct PaddingBottom;
+pub struct PaddingBottomStyleValue;
 
 // https://drafts.csswg.org/css-box-4/#padding-left
 #[value(" <length-percentage [0,∞]> ")]
@@ -96,7 +96,7 @@ pub struct PaddingBottom;
 #[percentages("refer to logical width of containing block")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub struct PaddingLeft;
+pub struct PaddingLeftStyleValue;
 
 // https://drafts.csswg.org/css-box-4/#padding
 #[value(" <'padding-top'>{1,4} ")]
@@ -106,7 +106,7 @@ pub struct PaddingLeft;
 #[percentages("refer to logical width of containing block")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub struct Padding;
+pub struct PaddingStyleValue;
 
 // // https://drafts.csswg.org/css-box-4/#margin-trim
 // #[value(" none | [ block || inline ] | [ block-start || inline-start || block-end || inline-end ] ")]
@@ -116,4 +116,4 @@ pub struct Padding;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub enum MarginTrim {}
+// pub enum MarginTrimStyleValue {}

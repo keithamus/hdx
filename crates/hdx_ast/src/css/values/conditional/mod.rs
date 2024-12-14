@@ -16,7 +16,7 @@ use impls::*;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("not animatable")]
-// pub enum ContainerType {}
+// pub enum ContainerTypeStyleValue {}
 
 // // https://drafts.csswg.org/css-conditional-5/#container-name
 // #[value(" none | <custom-ident>+ ")]
@@ -26,7 +26,7 @@ use impls::*;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("not animatable")]
-// pub enum ContainerName {}
+// pub enum ContainerNameStyleValue {}
 
 // // https://drafts.csswg.org/css-conditional-5/#container
 // #[value(" <'container-name'> [ / <'container-type'> ]? ")]
@@ -36,4 +36,4 @@ use impls::*;
 // #[percentages("see individual properties")]
 // #[canonical_order("per grammar")]
 // #[animation_type("see individual properties")]
-// pub struct Container;
+// pub struct ContainerStyleValue;

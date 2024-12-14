@@ -1,11 +1,15 @@
 use hdx_atom::atom;
 use hdx_lexer::Cursor;
 use hdx_parser::{diagnostics, CursorSink, Parse, Parser, Result as ParserResult, ToCursors, Vec, T};
+use hdx_proc_macro::visit;
+
+use crate::css::{Visit, Visitable};
 
 use super::CompoundSelector;
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", rename_all = "kebab-case"))]
+#[visit]
 pub enum FunctionalPseudoElement<'a> {
 	// https://drafts.csswg.org/css-highlight-api/#custom-highlight-pseudo
 	Highlight(HighlightPseudoElement),
@@ -56,6 +60,12 @@ impl<'a> ToCursors for FunctionalPseudoElement<'a> {
 			Self::Slotted(c) => ToCursors::to_cursors(c, s),
 			Self::Part(c) => ToCursors::to_cursors(c, s),
 		}
+	}
+}
+
+impl<'a> Visitable<'a> for FunctionalPseudoElement<'a> {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		v.visit_functional_pseudo_element(self);
 	}
 }
 

@@ -16,7 +16,7 @@ use impls::*;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum SpatialNavigationContain {}
+pub enum SpatialNavigationContainStyleValue {}
 
 // https://drafts.csswg.org/css-nav-1/#spatial-navigation-action
 #[value(" auto | focus | scroll ")]
@@ -26,7 +26,7 @@ pub enum SpatialNavigationContain {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum SpatialNavigationAction {}
+pub enum SpatialNavigationActionStyleValue {}
 
 // https://drafts.csswg.org/css-nav-1/#spatial-navigation-function
 #[value(" normal | grid ")]
@@ -36,4 +36,4 @@ pub enum SpatialNavigationAction {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum SpatialNavigationFunction {}
+pub enum SpatialNavigationFunctionStyleValue {}

@@ -16,7 +16,7 @@ use impls::*;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub enum Content {}
+// pub enum ContentStyleValue<'a> {}
 
 // // https://drafts.csswg.org/css-content-3/#quotes
 // #[value(" auto | none | match-parent | [ <string> <string> ]+ ")]
@@ -26,7 +26,7 @@ use impls::*;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub enum Quotes {}
+// pub enum QuotesStyleValue<'a> {}
 
 // // https://drafts.csswg.org/css-content-3/#string-set
 // #[value(" none | [ <custom-ident> <string>+ ]# ")]
@@ -36,7 +36,7 @@ use impls::*;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub enum StringSet {}
+// pub enum StringSetStyleValue<'a> {}
 
 // https://drafts.csswg.org/css-content-3/#bookmark-level
 #[value(" none | <integer [1,∞]> ")]
@@ -46,7 +46,7 @@ use impls::*;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub enum BookmarkLevel {}
+pub enum BookmarkLevelStyleValue {}
 
 // // https://drafts.csswg.org/css-content-3/#bookmark-label
 // #[value(" <content-list> ")]
@@ -56,7 +56,7 @@ pub enum BookmarkLevel {}
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub struct BookmarkLabel;
+// pub struct BookmarkLabelStyleValue;
 
 // https://drafts.csswg.org/css-content-3/#bookmark-state
 #[value(" open | closed ")]
@@ -66,4 +66,4 @@ pub enum BookmarkLevel {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum BookmarkState {}
+pub enum BookmarkStateStyleValue {}
