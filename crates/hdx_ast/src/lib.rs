@@ -6,7 +6,7 @@ pub mod traits;
 #[cfg(test)]
 pub mod test_helpers;
 
-use hdx_parser::{CursorStream, Parse, Parser, Result as ParserResult, ToCursors};
+use hdx_parser::{CursorSink, Parse, Parser, Result as ParserResult, ToCursors};
 pub use traits::StyleValue;
 
 // TODO! - delete this when we're done ;)
@@ -23,8 +23,8 @@ impl<'a> Parse<'a> for Todo {
 	}
 }
 
-impl<'a> ToCursors<'a> for Todo {
-	fn to_cursors(&self, _: &mut CursorStream<'a>) {
+impl<'a> ToCursors for Todo {
+	fn to_cursors(&self, _: &mut impl CursorSink) {
 		todo!();
 	}
 }

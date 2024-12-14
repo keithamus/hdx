@@ -2,7 +2,8 @@ use crate::{
 	css::{properties::Property, selector::SelectorList},
 	syntax::BadDeclaration,
 };
-use hdx_parser::{Block, CursorStream, Parse, Parser, QualifiedRule, Result as ParserResult, ToCursors, Vec, T};
+use hdx_parser::{Block, CursorSink, Parse, Parser, QualifiedRule, Result as ParserResult, ToCursors, Vec, T};
+use hdx_proc_macro::visit;
 
 // https://drafts.csswg.org/cssom-1/#the-cssstylerule-interface
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -26,8 +27,8 @@ impl<'a> QualifiedRule<'a> for StyleRule<'a> {
 	type BadDeclaration = BadDeclaration;
 }
 
-impl<'a> ToCursors<'a> for StyleRule<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for StyleRule<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		ToCursors::to_cursors(&self.selectors, s);
 		ToCursors::to_cursors(&self.style, s);
 	}
@@ -55,8 +56,8 @@ impl<'a> Block<'a> for StyleDeclaration<'a> {
 	type Rule = StyleRule<'a>;
 }
 
-impl<'a> ToCursors<'a> for StyleDeclaration<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for StyleDeclaration<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		ToCursors::to_cursors(&self.open, s);
 		for declaration in &self.declarations {
 			ToCursors::to_cursors(declaration, s);

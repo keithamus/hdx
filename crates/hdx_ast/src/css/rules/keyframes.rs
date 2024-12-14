@@ -1,7 +1,7 @@
 use hdx_atom::{atom, Atom};
 use hdx_lexer::Cursor;
 use hdx_parser::{
-	diagnostics, AtRule, CursorStream, DeclarationList, Is, Parse, Parser, PreludeCommaList, QualifiedRule,
+	diagnostics, AtRule, CursorSink, DeclarationList, Is, Parse, Parser, PreludeCommaList, QualifiedRule,
 	QualifiedRuleList, Result as ParserResult, ToCursors, Vec, T,
 };
 
@@ -34,8 +34,8 @@ impl<'a> Parse<'a> for KeyframesRule<'a> {
 	}
 }
 
-impl<'a> ToCursors<'a> for KeyframesRule<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for KeyframesRule<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.at_keyword.into());
 		if let Some(name) = self.name {
 			s.append(name.into());
@@ -110,8 +110,8 @@ impl<'a> Parse<'a> for KeyframesBlock<'a> {
 	}
 }
 
-impl<'a> ToCursors<'a> for KeyframesBlock<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for KeyframesBlock<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.open.into());
 		for keyframe in &self.keyframes {
 			ToCursors::to_cursors(keyframe, s);
@@ -142,8 +142,8 @@ impl<'a> Parse<'a> for Keyframe<'a> {
 	}
 }
 
-impl<'a> ToCursors<'a> for Keyframe<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for Keyframe<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		ToCursors::to_cursors(&self.selectors, s);
 		ToCursors::to_cursors(&self.block, s);
 	}
@@ -163,8 +163,8 @@ impl<'a> Parse<'a> for KeyframeSelectors<'a> {
 	}
 }
 
-impl<'a> ToCursors<'a> for KeyframeSelectors<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for KeyframeSelectors<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		for (selector, comma) in &self.0 {
 			s.append(selector.into());
 			if let Some(comma) = comma {
@@ -193,8 +193,8 @@ impl<'a> Parse<'a> for KeyframeBlock<'a> {
 	}
 }
 
-impl<'a> ToCursors<'a> for KeyframeBlock<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for KeyframeBlock<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.open.into());
 		for property in &self.properties {
 			ToCursors::to_cursors(property, s);

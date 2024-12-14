@@ -1,6 +1,6 @@
 use hdx_atom::{atom, Atom};
 use hdx_lexer::{Cursor, KindSet};
-use hdx_parser::{diagnostics, CursorStream, Parse, Parser, Result as ParserResult, ToCursors, T};
+use hdx_parser::{diagnostics, CursorSink, Parse, Parser, Result as ParserResult, ToCursors, T};
 
 use super::{moz::MozPseudoElement, ms::MsPseudoElement, o::OPseudoElement, webkit::WebkitPseudoElement};
 
@@ -74,8 +74,8 @@ impl<'a> Parse<'a> for PseudoElement {
 	}
 }
 
-impl<'a> ToCursors<'a> for PseudoElement {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for PseudoElement {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match self {
 			Self::After(colons, ident) => {
 				ToCursors::to_cursors(colons, s);
@@ -179,8 +179,8 @@ impl<'a> Parse<'a> for LegacyPseudoElement {
 	}
 }
 
-impl<'a> ToCursors<'a> for LegacyPseudoElement {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for LegacyPseudoElement {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match self {
 			Self::After(colon, ident) => {
 				s.append(colon.into());

@@ -28,8 +28,8 @@ impl<'a> Parse<'a> for Ratio {
 	}
 }
 
-impl<'a> ToCursors<'a> for Ratio {
-	fn to_cursors(&self, s: &mut hdx_parser::CursorStream<'a>) {
+impl<'a> ToCursors for Ratio {
+	fn to_cursors(&self, s: &mut impl hdx_parser::CursorSink) {
 		s.append(self.numerator.into());
 		if let Some(t) = self.slash {
 			s.append(t.into());

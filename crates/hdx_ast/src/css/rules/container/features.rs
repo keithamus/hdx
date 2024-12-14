@@ -4,7 +4,7 @@ use bumpalo::collections::Vec;
 use hdx_atom::atom;
 use hdx_lexer::Kind;
 use hdx_parser::{
-	diagnostics, discrete_feature, keyword_typedef, ranged_feature, AtRule, Build, ConditionalAtRule, CursorStream, Is,
+	diagnostics, discrete_feature, keyword_typedef, ranged_feature, AtRule, Build, ConditionalAtRule, CursorSink, Is,
 	Parse, Parser, Peek, PreludeList, Result as ParserResult, RuleList, ToCursors, T,
 };
 
@@ -54,8 +54,8 @@ impl<'a> Parse<'a> for StyleQuery<'a> {
 	}
 }
 
-impl<'a> ToCursors<'a> for StyleQuery<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for StyleQuery<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match self {
 			Self::Is(c) => ToCursors::to_cursors(c, s),
 			Self::Not(c) => ToCursors::to_cursors(c.as_ref(), s),
@@ -104,8 +104,8 @@ impl<'a> Parse<'a> for ScrollStateQuery<'a> {
 	}
 }
 
-impl<'a> ToCursors<'a> for ScrollStateQuery<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for ScrollStateQuery<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match self {
 			Self::Is(c) => ToCursors::to_cursors(c, s),
 			Self::Not(c) => ToCursors::to_cursors(c.as_ref(), s),
@@ -152,8 +152,8 @@ impl<'a> Parse<'a> for ScrollStateFeature {
 	}
 }
 
-impl<'a> ToCursors<'a> for ScrollStateFeature {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for ScrollStateFeature {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match self {
 			Self::Scrollable(feature) => ToCursors::to_cursors(feature, s),
 			Self::Snapped(feature) => ToCursors::to_cursors(feature, s),

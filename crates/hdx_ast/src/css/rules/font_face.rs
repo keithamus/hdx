@@ -2,7 +2,7 @@ use bumpalo::collections::Vec;
 use hdx_atom::atom;
 use hdx_lexer::Cursor;
 use hdx_parser::{
-	AtRule, CursorStream, Declaration, Important, NoPreludeAllowed, Parse, Parser, Result as ParserResult, RuleList,
+	AtRule, CursorSink, Declaration, Important, NoPreludeAllowed, Parse, Parser, Result as ParserResult, RuleList,
 	ToCursors, T,
 };
 
@@ -28,8 +28,8 @@ impl<'a> Parse<'a> for FontFaceRule<'a> {
 	}
 }
 
-impl<'a> ToCursors<'a> for FontFaceRule<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for FontFaceRule<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.at_keyword.into());
 		ToCursors::to_cursors(&self.block, s);
 	}
@@ -54,8 +54,8 @@ impl<'a> Parse<'a> for FontFaceDeclaration<'a> {
 	}
 }
 
-impl<'a> ToCursors<'a> for FontFaceDeclaration<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for FontFaceDeclaration<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.open.into());
 		for property in &self.properties {
 			ToCursors::to_cursors(property, s);
@@ -106,8 +106,8 @@ impl<'a> Parse<'a> for FontProperty<'a> {
 	}
 }
 
-impl<'a> ToCursors<'a> for FontProperty<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for FontProperty<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.name.into());
 		if let Some(colon) = self.colon {
 			s.append(colon.into());

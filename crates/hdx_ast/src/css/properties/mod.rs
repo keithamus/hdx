@@ -3,9 +3,10 @@ use std::{fmt::Debug, hash::Hash};
 use hdx_atom::atom;
 use hdx_lexer::{Cursor, KindSet};
 use hdx_parser::{
-	CursorStream, Declaration, DeclarationValue, Important, Is, Parse, Parser, Result as ParserResult, State,
+	CursorSink, Declaration, DeclarationValue, Important, Is, Parse, Parser, Result as ParserResult, State,
 	ToCursors, T,
 };
+use hdx_proc_macro::visit;
 
 use crate::{css::values, syntax::ComponentValues};
 
@@ -27,8 +28,8 @@ impl<'a> Parse<'a> for Custom<'a> {
 	}
 }
 
-impl<'a> ToCursors<'a> for Custom<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for Custom<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		ToCursors::to_cursors(&self.0, s);
 	}
 }
@@ -69,8 +70,8 @@ impl<'a> Parse<'a> for Computed<'a> {
 	}
 }
 
-impl<'a> ToCursors<'a> for Computed<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for Computed<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		ToCursors::to_cursors(&self.0, s);
 	}
 }
@@ -90,8 +91,8 @@ impl<'a> Parse<'a> for Unknown<'a> {
 	}
 }
 
-impl<'a> ToCursors<'a> for Unknown<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for Unknown<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		ToCursors::to_cursors(&self.0, s);
 	}
 }
@@ -117,8 +118,8 @@ impl<'a> Declaration<'a> for Property<'a> {
 	type DeclarationValue = StyleValue<'a>;
 }
 
-impl<'a> ToCursors<'a> for Property<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for Property<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.name.into());
 		if let Some(colon) = self.colon {
 			s.append(colon.into());
@@ -212,8 +213,8 @@ impl<'a> DeclarationValue<'a> for StyleValue<'a> {
 	}
 }
 
-impl<'a> ToCursors<'a> for StyleValue<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for StyleValue<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		macro_rules! match_value {
 			( $(
 				$name: ident$(<$a: lifetime>)?: $atom: pat,

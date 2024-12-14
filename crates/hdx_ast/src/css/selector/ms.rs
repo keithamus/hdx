@@ -1,6 +1,6 @@
 use hdx_atom::atom;
 use hdx_lexer::{Cursor, KindSet};
-use hdx_parser::{diagnostics, CursorStream, Parse, Parser, Result as ParserResult, ToCursors, T};
+use hdx_parser::{diagnostics, CursorSink, Parse, Parser, Result as ParserResult, ToCursors, T};
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
@@ -58,8 +58,8 @@ impl<'a> Parse<'a> for MsPseudoElement {
 	}
 }
 
-impl<'a> ToCursors<'a> for MsPseudoElement {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for MsPseudoElement {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match self {
 			Self::Backdrop(colons, ident) => {
 				ToCursors::to_cursors(colons, s);
@@ -161,8 +161,8 @@ impl<'a> Parse<'a> for MsPseudoClass {
 	}
 }
 
-impl<'a> ToCursors<'a> for MsPseudoClass {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for MsPseudoClass {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match self {
 			Self::Fullscreen(colon, ident) => {
 				ToCursors::to_cursors(colon, s);

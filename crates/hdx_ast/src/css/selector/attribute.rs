@@ -1,6 +1,6 @@
 use hdx_atom::atom;
 use hdx_lexer::{Cursor, KindSet};
-use hdx_parser::{Build, CursorStream, Is, Parse, Parser, Peek, Result as ParserResult, ToCursors, T};
+use hdx_parser::{Build, CursorSink, Is, Parse, Parser, Peek, Result as ParserResult, ToCursors, T};
 
 use super::NamespacePrefix;
 
@@ -40,8 +40,8 @@ impl<'a> Parse<'a> for Attribute {
 	}
 }
 
-impl<'a> ToCursors<'a> for Attribute {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for Attribute {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.open.into());
 		if let Some(namespace_prefix) = &self.namespace_prefix {
 			ToCursors::to_cursors(namespace_prefix, s);
@@ -102,8 +102,8 @@ impl<'a> Parse<'a> for AttributeOperator {
 	}
 }
 
-impl<'a> ToCursors<'a> for AttributeOperator {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for AttributeOperator {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match self {
 			Self::Exact(c) => s.append(c.into()),
 			Self::SpaceList(c) => ToCursors::to_cursors(c, s),

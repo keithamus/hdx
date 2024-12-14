@@ -1,6 +1,6 @@
 use hdx_atom::Atom;
 use hdx_parser::{
-	CompoundSelector as CompoundSelectorTrait, CursorStream, Parse, Parser, Result as ParserResult,
+	CompoundSelector as CompoundSelectorTrait, CursorSink, Parse, Parser, Result as ParserResult,
 	SelectorComponent as SelectorComponentTrait, SelectorList as SelectorListTrait, ToCursors, Vec, T,
 };
 
@@ -44,8 +44,8 @@ impl<'a> Parse<'a> for SelectorList<'a> {
 	}
 }
 
-impl<'a> ToCursors<'a> for SelectorList<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for SelectorList<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		for selector in &self.0 {
 			ToCursors::to_cursors(selector, s);
 		}
@@ -70,8 +70,8 @@ impl<'a> Parse<'a> for CompoundSelector<'a> {
 	}
 }
 
-impl<'a> ToCursors<'a> for CompoundSelector<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for CompoundSelector<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		for component in &self.components {
 			ToCursors::to_cursors(component, s);
 		}
@@ -115,8 +115,8 @@ impl<'a> Parse<'a> for SelectorComponent<'a> {
 	}
 }
 
-impl<'a> ToCursors<'a> for SelectorComponent<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for SelectorComponent<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match self {
 			Self::Id(c) => s.append(c.into()),
 			Self::Class(c) => ToCursors::to_cursors(c, s),

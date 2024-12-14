@@ -28,8 +28,8 @@ impl<'a> Parse<'a> for CounterStyle<'a> {
 	}
 }
 
-impl<'a> ToCursors<'a> for CounterStyle<'a> {
-	fn to_cursors(&self, s: &mut hdx_parser::CursorStream<'a>) {
+impl<'a> ToCursors for CounterStyle<'a> {
+	fn to_cursors(&self, s: &mut impl hdx_parser::CursorSink) {
 		match self {
 			Self::Predefined(c) => s.append(c.into()),
 			Self::Named(c) => s.append(c.into()),

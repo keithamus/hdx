@@ -1,6 +1,6 @@
 use hdx_atom::atom;
 use hdx_lexer::Cursor;
-use hdx_parser::{diagnostics, AtRule, CursorStream, Parse, Parser, Result as ParserResult, ToCursors, T};
+use hdx_parser::{diagnostics, AtRule, CursorSink, Parse, Parser, Result as ParserResult, ToCursors, T};
 
 use super::{DocumentBlock, DocumentMatcherList};
 
@@ -30,8 +30,8 @@ impl<'a> AtRule<'a> for MozDocument<'a> {
 	type Block = DocumentBlock<'a>;
 }
 
-impl<'a> ToCursors<'a> for MozDocument<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for MozDocument<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.at_keyword.into());
 		ToCursors::to_cursors(&self.matchers, s);
 		ToCursors::to_cursors(&self.block, s);

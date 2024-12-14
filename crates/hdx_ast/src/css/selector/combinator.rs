@@ -1,4 +1,4 @@
-use hdx_parser::{CursorStream, Parse, Parser, Result as ParserResult, ToCursors, T};
+use hdx_parser::{CursorSink, Parse, Parser, Result as ParserResult, ToCursors, T};
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(rename_all = "kebab-case"))]
@@ -30,8 +30,8 @@ impl<'a> Parse<'a> for Combinator {
 	}
 }
 
-impl<'a> ToCursors<'a> for Combinator {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for Combinator {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match self {
 			Self::Descendant(c) => s.append(c.into()),
 			Self::Child(c) => s.append(c.into()),

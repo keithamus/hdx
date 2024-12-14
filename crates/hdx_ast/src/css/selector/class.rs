@@ -15,8 +15,8 @@ impl<'a> Parse<'a> for Class {
 	}
 }
 
-impl<'a> ToCursors<'a> for Class {
-	fn to_cursors(&self, s: &mut hdx_parser::CursorStream<'a>) {
+impl<'a> ToCursors for Class {
+	fn to_cursors(&self, s: &mut impl hdx_parser::CursorSink) {
 		s.append(self.dot.into());
 		s.append(self.name.into());
 	}

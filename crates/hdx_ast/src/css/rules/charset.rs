@@ -35,8 +35,8 @@ impl<'a> Parse<'a> for CharsetRule {
 	}
 }
 
-impl<'a> ToCursors<'a> for CharsetRule {
-	fn to_cursors(&self, s: &mut hdx_parser::CursorStream<'a>) {
+impl<'a> ToCursors for CharsetRule {
+	fn to_cursors(&self, s: &mut impl hdx_parser::CursorSink) {
 		s.append(self.at_keyword.into());
 		s.append(self.space.into());
 		s.append(self.string.into());

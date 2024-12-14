@@ -140,8 +140,8 @@ impl<'a> Parse<'a> for PseudoClass {
 	}
 }
 
-impl<'a> ToCursors<'a> for PseudoClass {
-	fn to_cursors(&self, s: &mut hdx_parser::CursorStream<'a>) {
+impl<'a> ToCursors for PseudoClass {
+	fn to_cursors(&self, s: &mut impl hdx_parser::CursorSink) {
 		match self {
 			Self::Active(colon, ident) => {
 				s.append(colon.into());

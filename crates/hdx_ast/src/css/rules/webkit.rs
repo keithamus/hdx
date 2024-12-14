@@ -1,6 +1,6 @@
 use hdx_atom::atom;
 use hdx_lexer::Span;
-use hdx_parser::{diagnostics, AtRule, CursorStream, Parse, Parser, Result as ParserResult, ToCursors, T};
+use hdx_parser::{diagnostics, AtRule, CursorSink, Parse, Parser, Result as ParserResult, ToCursors, T};
 
 use super::{KeyframesBlock, KeyframesName};
 
@@ -30,8 +30,8 @@ impl<'a> AtRule<'a> for WebkitKeyframes<'a> {
 	type Block = KeyframesBlock<'a>;
 }
 
-impl<'a> ToCursors<'a> for WebkitKeyframes<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for WebkitKeyframes<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.at_keyword.into());
 		s.append(self.name.into());
 		ToCursors::to_cursors(&self.block, s);

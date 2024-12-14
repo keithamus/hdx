@@ -1,5 +1,5 @@
 use hdx_lexer::KindSet;
-use hdx_parser::{AtRule as AtRuleTrait, CursorStream, Parse, Parser, Result as ParserResult, ToCursors, T};
+use hdx_parser::{AtRule as AtRuleTrait, CursorSink, Parse, Parser, Result as ParserResult, ToCursors, T};
 
 use super::{Block, ComponentValues};
 
@@ -27,8 +27,8 @@ impl<'a> AtRuleTrait<'a> for AtRule<'a> {
 	type Prelude = ComponentValues<'a>;
 }
 
-impl<'a> ToCursors<'a> for AtRule<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for AtRule<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.name.into());
 		if let Some(prelude) = &self.prelude {
 			ToCursors::to_cursors(prelude, s);

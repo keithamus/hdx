@@ -2,7 +2,7 @@ use bumpalo::collections::Vec;
 use hdx_atom::atom;
 use hdx_lexer::{Cursor, Span};
 use hdx_parser::{
-	diagnostics, keyword_typedef, AtRule, Build, ConditionalAtRule, CursorStream, Is, Parse, Parser, PreludeList,
+	diagnostics, keyword_typedef, AtRule, Build, ConditionalAtRule, CursorSink, Is, Parse, Parser, PreludeList,
 	Result as ParserResult, RuleList, ToCursors, T,
 };
 
@@ -45,8 +45,8 @@ impl<'a> AtRule<'a> for MediaRule<'a> {
 	type Block = MediaRules<'a>;
 }
 
-impl<'a> ToCursors<'a> for MediaRule<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for MediaRule<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.at_keyword.into());
 		ToCursors::to_cursors(&self.query, s);
 		ToCursors::to_cursors(&self.block, s);
@@ -72,8 +72,8 @@ impl<'a> RuleList<'a> for MediaRules<'a> {
 	type Rule = Rule<'a>;
 }
 
-impl<'a> ToCursors<'a> for MediaRules<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for MediaRules<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.open.into());
 		for rule in &self.rules {
 			ToCursors::to_cursors(rule, s);
@@ -98,8 +98,8 @@ impl<'a> Parse<'a> for MediaQueryList<'a> {
 	}
 }
 
-impl<'a> ToCursors<'a> for MediaQueryList<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for MediaQueryList<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		for query in &self.0 {
 			ToCursors::to_cursors(query, s);
 		}
@@ -194,8 +194,8 @@ impl<'a> Parse<'a> for MediaQuery<'a> {
 	}
 }
 
-impl<'a> ToCursors<'a> for MediaQuery<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for MediaQuery<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		if let Some(precondition) = &self.precondition {
 			ToCursors::to_cursors(precondition, s);
 		}
@@ -239,8 +239,8 @@ impl<'a> Parse<'a> for MediaCondition<'a> {
 	}
 }
 
-impl<'a> ToCursors<'a> for MediaCondition<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for MediaCondition<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match self {
 			Self::Is(c) => ToCursors::to_cursors(c, s),
 			Self::Not(c) => ToCursors::to_cursors(c.as_ref(), s),
@@ -306,8 +306,8 @@ impl<'a> Parse<'a> for MediaFeature {
 	}
 }
 
-impl<'a> ToCursors<'a> for MediaFeature {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for MediaFeature {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		macro_rules! match_media {
 			( $($name: ident($typ: ident): atom!($atom: tt)$(| $alts:pat)*,)+) => {
 				match self {

@@ -1,5 +1,5 @@
 use hdx_lexer::Cursor;
-use hdx_parser::{diagnostics, CursorStream, Parse, Parser, Result as ParserResult, ToCursors, T};
+use hdx_parser::{diagnostics, CursorSink, Parse, Parser, Result as ParserResult, ToCursors, T};
 
 mod kw {
 	use hdx_parser::custom_keyword;
@@ -26,8 +26,8 @@ impl<'a> Parse<'a> for HackMediaFeature {
 	}
 }
 
-impl<'a> ToCursors<'a> for HackMediaFeature {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for HackMediaFeature {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match self {
 			Self::IEBackslashZero(keyword, colon, dimension) => {
 				s.append(keyword.into());

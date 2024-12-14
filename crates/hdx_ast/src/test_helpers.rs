@@ -10,7 +10,7 @@ macro_rules! assert_size {
 pub(crate) use assert_size;
 
 #[cfg(test)]
-pub fn test_write_with_options<'a, T: Parse<'a> + ToCursors<'a>>(
+pub fn test_write_with_options<'a, T: Parse<'a> + ToCursors>(
 	allocator: &'a Bump,
 	source_text: &'a str,
 	expected: &'a str,
@@ -23,7 +23,8 @@ pub fn test_write_with_options<'a, T: Parse<'a> + ToCursors<'a>>(
 		panic!("\n\nParse on {}:{} failed. ({:?}) saw error {:?}", file, line, source_text, result.errors[0]);
 	}
 	let mut actual = bumpalo::collections::String::new_in(allocator);
-	result.write(allocator, &mut actual).unwrap();
+	let mut cursors = hdx_parser::CursorStream::new(&allocator);
+	result.write(&mut cursors, &mut actual).unwrap();
 	if expected != actual {
 		panic!("\n\nParse on {}:{} failed: did not match expected format:\n\n   parser input: {:?}\n  parser output: {:?}\n       expected: {:?}\n", file, line, source_text, actual, expected);
 	}
@@ -44,12 +45,13 @@ macro_rules! assert_parse {
 pub(crate) use assert_parse;
 
 #[cfg(test)]
-pub fn test_error<'a, T: Parse<'a> + ToCursors<'a>>(allocator: &'a Bump, source_text: &'a str, file: &str, line: u32) {
+pub fn test_error<'a, T: Parse<'a> + ToCursors>(allocator: &'a Bump, source_text: &'a str, file: &str, line: u32) {
 	let mut parser = Parser::new(allocator, source_text, Features::default());
 	let result = parser.parse_entirely::<T>();
 	if result.errors.is_empty() {
 		let mut actual = bumpalo::collections::String::new_in(allocator);
-		result.write(allocator, &mut actual).unwrap();
+	let mut cursors = hdx_parser::CursorStream::new(&allocator);
+		result.write(&mut cursors, &mut actual).unwrap();
 		panic!("\n\nParse on {}:{} passed. Expected errors but it passed without error.\n\n   parser input: {:?}\n  parser output: {:?}\n       expected: (Error)", file, line, source_text, actual);
 	}
 	assert!(!result.errors.is_empty());
@@ -66,7 +68,7 @@ macro_rules! assert_parse_error {
 pub(crate) use assert_parse_error;
 
 #[cfg(feature = "serde")]
-pub fn test_serialize<'a, T: Parse<'a> + ToCursors<'a> + serde::Serialize>(
+pub fn test_serialize<'a, T: Parse<'a> + ToCursors + serde::Serialize>(
 	allocator: &'a Bump,
 	source_text: &'a str,
 	expected: serde_json::Value,

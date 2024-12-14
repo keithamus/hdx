@@ -2,7 +2,7 @@ use bumpalo::collections::Vec;
 use hdx_atom::atom;
 use hdx_lexer::Cursor;
 use hdx_parser::{
-	diagnostics, AtRule, CursorStream, Parse, Parser, PreludeCommaList, Result as ParserResult, RuleList, ToCursors, T,
+	diagnostics, AtRule, CursorSink, Parse, Parser, PreludeCommaList, Result as ParserResult, RuleList, ToCursors, T,
 };
 
 use crate::css::stylesheet::Rule;
@@ -35,8 +35,8 @@ impl<'a> AtRule<'a> for LayerRule<'a> {
 	type Block = OptionalLayerBlock<'a>;
 }
 
-impl<'a> ToCursors<'a> for LayerRule<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for LayerRule<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.at_keyword.into());
 		if let Some(names) = &self.names {
 			ToCursors::to_cursors(names, s);
@@ -59,8 +59,8 @@ impl<'a> Parse<'a> for LayerNameList<'a> {
 	}
 }
 
-impl<'a> ToCursors<'a> for LayerNameList<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for LayerNameList<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		for (selector, comma) in &self.0 {
 			ToCursors::to_cursors(selector, s);
 			if let Some(comma) = comma {
@@ -90,8 +90,8 @@ impl<'a> Parse<'a> for LayerName<'a> {
 	}
 }
 
-impl<'a> ToCursors<'a> for LayerName<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for LayerName<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.0.into());
 		for (dot, ident) in &self.1 {
 			s.append(dot.into());
@@ -117,8 +117,8 @@ impl<'a> Parse<'a> for OptionalLayerBlock<'a> {
 	}
 }
 
-impl<'a> ToCursors<'a> for OptionalLayerBlock<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for OptionalLayerBlock<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match self {
 			OptionalLayerBlock::None(semicolon) => s.append(semicolon.into()),
 			OptionalLayerBlock::Block(block) => {
@@ -148,8 +148,8 @@ impl<'a> RuleList<'a> for LayerBlock<'a> {
 	type Rule = Rule<'a>;
 }
 
-impl<'a> ToCursors<'a> for LayerBlock<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for LayerBlock<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.open.into());
 		for rule in &self.rules {
 			ToCursors::to_cursors(rule, s);

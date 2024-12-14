@@ -1,5 +1,5 @@
 use bumpalo::collections::Vec;
-use hdx_parser::{keyword_typedef, CursorStream, Parse, Parser, Peek, Result as ParserResult, ToCursors, T};
+use hdx_parser::{keyword_typedef, CursorSink, Parse, Parser, Peek, Result as ParserResult, ToCursors, T};
 
 use crate::css::types::Image;
 
@@ -48,8 +48,8 @@ impl<'a> Parse<'a> for Symbols<'a> {
 	}
 }
 
-impl<'a> ToCursors<'a> for Symbols<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for Symbols<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.function.into());
 		if let Some(symbols_type) = self.symbols_type {
 			s.append(symbols_type.into());
@@ -71,8 +71,8 @@ pub enum Symbol<'a> {
 	Image(Image<'a>),
 }
 
-impl<'a> ToCursors<'a> for Symbol<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for Symbol<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match self {
 			Self::String(c) => s.append(c.into()),
 			Self::Image(c) => ToCursors::to_cursors(c, s),

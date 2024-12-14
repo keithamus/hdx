@@ -1,7 +1,7 @@
 use bumpalo::collections::Vec;
 use hdx_atom::atom;
 use hdx_lexer::{Cursor, KindSet};
-use hdx_parser::{diagnostics, Build, CursorStream, Is, Parse, Parser, Result as ParserResult, ToCursors, T};
+use hdx_parser::{diagnostics, Build, CursorSink, Is, Parse, Parser, Result as ParserResult, ToCursors, T};
 
 use super::{ForgivingSelector, Nth, RelativeSelector, SelectorList};
 
@@ -125,8 +125,8 @@ impl<'a> Parse<'a> for FunctionalPseudoClass<'a> {
 	}
 }
 
-impl<'a> ToCursors<'a> for FunctionalPseudoClass<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for FunctionalPseudoClass<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match self {
 			Self::Dir(c) => ToCursors::to_cursors(c, s),
 			Self::Has(c) => ToCursors::to_cursors(c, s),
@@ -156,8 +156,8 @@ pub struct DirPseudoFunction {
 	pub close: Option<T![')']>,
 }
 
-impl<'a> ToCursors<'a> for DirPseudoFunction {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for DirPseudoFunction {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.colon.into());
 		s.append(self.function.into());
 		match self.value {
@@ -211,8 +211,8 @@ pub struct HasPseudoFunction<'a> {
 	pub close: Option<T![')']>,
 }
 
-impl<'a> ToCursors<'a> for HasPseudoFunction<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for HasPseudoFunction<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.colon.into());
 		s.append(self.function.into());
 		ToCursors::to_cursors(&self.value, s);
@@ -231,8 +231,8 @@ pub struct HostPseudoFunction<'a> {
 	pub close: Option<T![')']>,
 }
 
-impl<'a> ToCursors<'a> for HostPseudoFunction<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for HostPseudoFunction<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.colon.into());
 		s.append(self.function.into());
 		ToCursors::to_cursors(&self.value, s);
@@ -251,8 +251,8 @@ pub struct HostContextPseudoFunction<'a> {
 	pub close: Option<T![')']>,
 }
 
-impl<'a> ToCursors<'a> for HostContextPseudoFunction<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for HostContextPseudoFunction<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.colon.into());
 		s.append(self.function.into());
 		ToCursors::to_cursors(&self.value, s);
@@ -271,8 +271,8 @@ pub struct IsPseudoFunction<'a> {
 	pub close: Option<T![')']>,
 }
 
-impl<'a> ToCursors<'a> for IsPseudoFunction<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for IsPseudoFunction<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.colon.into());
 		s.append(self.function.into());
 		ToCursors::to_cursors(&self.value, s);
@@ -291,8 +291,8 @@ pub struct LangPseudoFunction<'a> {
 	pub close: Option<T![')']>,
 }
 
-impl<'a> ToCursors<'a> for LangPseudoFunction<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for LangPseudoFunction<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.colon.into());
 		s.append(self.function.into());
 		for value in &self.value {
@@ -325,8 +325,8 @@ impl<'a> Parse<'a> for LangValue {
 	}
 }
 
-impl<'a> ToCursors<'a> for LangValue {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for LangValue {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match self {
 			Self::Ident(value, comma) => {
 				s.append(value.into());
@@ -353,8 +353,8 @@ pub struct NotPseudoFunction<'a> {
 	pub close: Option<T![')']>,
 }
 
-impl<'a> ToCursors<'a> for NotPseudoFunction<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for NotPseudoFunction<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.colon.into());
 		s.append(self.function.into());
 		ToCursors::to_cursors(&self.value, s);
@@ -373,8 +373,8 @@ pub struct NthChildPseudoFunction<'a> {
 	pub close: Option<T![')']>,
 }
 
-impl<'a> ToCursors<'a> for NthChildPseudoFunction<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for NthChildPseudoFunction<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.colon.into());
 		s.append(self.function.into());
 		ToCursors::to_cursors(&self.value, s);
@@ -393,8 +393,8 @@ pub struct NthColPseudoFunction<'a> {
 	pub close: Option<T![')']>,
 }
 
-impl<'a> ToCursors<'a> for NthColPseudoFunction<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for NthColPseudoFunction<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.colon.into());
 		s.append(self.function.into());
 		ToCursors::to_cursors(&self.value, s);
@@ -413,8 +413,8 @@ pub struct NthLastChildPseudoFunction<'a> {
 	pub close: Option<T![')']>,
 }
 
-impl<'a> ToCursors<'a> for NthLastChildPseudoFunction<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for NthLastChildPseudoFunction<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.colon.into());
 		s.append(self.function.into());
 		ToCursors::to_cursors(&self.value, s);
@@ -433,8 +433,8 @@ pub struct NthLastColPseudoFunction<'a> {
 	pub close: Option<T![')']>,
 }
 
-impl<'a> ToCursors<'a> for NthLastColPseudoFunction<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for NthLastColPseudoFunction<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.colon.into());
 		s.append(self.function.into());
 		ToCursors::to_cursors(&self.value, s);
@@ -453,8 +453,8 @@ pub struct NthLastOfTypePseudoFunction<'a> {
 	pub close: Option<T![')']>,
 }
 
-impl<'a> ToCursors<'a> for NthLastOfTypePseudoFunction<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for NthLastOfTypePseudoFunction<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.colon.into());
 		s.append(self.function.into());
 		ToCursors::to_cursors(&self.value, s);
@@ -473,8 +473,8 @@ pub struct NthOfTypePseudoFunction<'a> {
 	pub close: Option<T![')']>,
 }
 
-impl<'a> ToCursors<'a> for NthOfTypePseudoFunction<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for NthOfTypePseudoFunction<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.colon.into());
 		s.append(self.function.into());
 		ToCursors::to_cursors(&self.value, s);
@@ -493,8 +493,8 @@ pub struct WherePseudoFunction<'a> {
 	pub close: Option<T![')']>,
 }
 
-impl<'a> ToCursors<'a> for WherePseudoFunction<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for WherePseudoFunction<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.colon.into());
 		s.append(self.function.into());
 		ToCursors::to_cursors(&self.value, s);
@@ -513,8 +513,8 @@ pub struct StatePseudoFunction {
 	pub close: Option<T![')']>,
 }
 
-impl<'a> ToCursors<'a> for StatePseudoFunction {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for StatePseudoFunction {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.colon.into());
 		s.append(self.function.into());
 		s.append(self.value.into());

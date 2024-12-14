@@ -2,7 +2,7 @@ use bumpalo::collections::Vec;
 use hdx_atom::atom;
 use hdx_lexer::Cursor;
 use hdx_parser::{
-	diagnostics, AtRule, CursorStream, Parse, Parser, PreludeCommaList, Result as ParserResult, RuleList, ToCursors, T,
+	diagnostics, AtRule, CursorSink, Parse, Parser, PreludeCommaList, Result as ParserResult, RuleList, ToCursors, T,
 };
 
 use crate::css::stylesheet::Rule;
@@ -33,8 +33,8 @@ impl<'a> AtRule<'a> for Document<'a> {
 	type Block = DocumentBlock<'a>;
 }
 
-impl<'a> ToCursors<'a> for Document<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for Document<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.at_keyword.into());
 		ToCursors::to_cursors(&self.matchers, s);
 		ToCursors::to_cursors(&self.block, s);
@@ -55,8 +55,8 @@ impl<'a> Parse<'a> for DocumentMatcherList<'a> {
 	}
 }
 
-impl<'a> ToCursors<'a> for DocumentMatcherList<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for DocumentMatcherList<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		for (selector, comma) in &self.0 {
 			ToCursors::to_cursors(selector, s);
 			if let Some(comma) = comma {
@@ -116,8 +116,8 @@ impl<'a> Parse<'a> for DocumentMatcher {
 	}
 }
 
-impl<'a> ToCursors<'a> for DocumentMatcher {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for DocumentMatcher {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match self {
 			Self::Url(url) => s.append(url.into()),
 			Self::UrlFunction(function, string, close) => {
@@ -169,8 +169,8 @@ impl<'a> RuleList<'a> for DocumentBlock<'a> {
 	type Rule = Rule<'a>;
 }
 
-impl<'a> ToCursors<'a> for DocumentBlock<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for DocumentBlock<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.open.into());
 		for rule in &self.rules {
 			ToCursors::to_cursors(rule, s);

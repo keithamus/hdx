@@ -1,6 +1,6 @@
 use hdx_lexer::Cursor;
 use hdx_parser::{
-	diagnostics, keyword_typedef, CursorStream, Parse, Parser, Peek, Result as ParserResult, ToCursors, T,
+	diagnostics, keyword_typedef, CursorSink, Parse, Parser, Peek, Result as ParserResult, ToCursors, T,
 };
 
 // Re-expose stylevalues for shorthands
@@ -90,8 +90,8 @@ impl<'a> Parse<'a> for PositionArea {
 	}
 }
 
-impl<'a> ToCursors<'a> for PositionArea {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for PositionArea {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match self {
 			Self::Physical(horizontal, vertical) => {
 				if let Some(horizontal) = horizontal {

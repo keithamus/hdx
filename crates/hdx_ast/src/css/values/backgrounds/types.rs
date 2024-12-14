@@ -1,7 +1,7 @@
 use hdx_atom::atom;
 use hdx_lexer::Cursor;
 use hdx_parser::{
-	diagnostics, keyword_typedef, Build, CursorStream, Parse, Parser, Peek, Result as ParserResult, ToCursors, T,
+	diagnostics, keyword_typedef, Build, CursorSink, Parse, Parser, Peek, Result as ParserResult, ToCursors, T,
 };
 
 pub(crate) use crate::css::types::*;
@@ -73,8 +73,8 @@ impl<'a> Parse<'a> for RepeatStyle {
 	}
 }
 
-impl<'a> ToCursors<'a> for RepeatStyle {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for RepeatStyle {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match self {
 			Self::RepeatX(c) => s.append(c.into()),
 			Self::RepeatY(c) => s.append(c.into()),

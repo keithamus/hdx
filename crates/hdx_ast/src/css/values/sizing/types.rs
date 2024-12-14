@@ -1,4 +1,4 @@
-use hdx_parser::{CursorStream, Parse, Parser, Peek, Result as ParserResult, ToCursors};
+use hdx_parser::{CursorSink, Parse, Parser, Peek, Result as ParserResult, ToCursors};
 
 pub use crate::css::units::*;
 
@@ -25,8 +25,8 @@ impl<'a> Parse<'a> for CalcSize {
 	}
 }
 
-impl<'a> ToCursors<'a> for CalcSize {
-	fn to_cursors(&self, _: &mut CursorStream<'a>) {
+impl<'a> ToCursors for CalcSize {
+	fn to_cursors(&self, _: &mut impl CursorSink) {
 		todo!();
 	}
 }

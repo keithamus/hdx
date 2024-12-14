@@ -1,4 +1,4 @@
-use hdx_parser::{keyword_typedef, CursorStream, Parse, Parser, Peek, Result as ParserResult, ToCursors, T};
+use hdx_parser::{keyword_typedef, CursorSink, Parse, Parser, Peek, Result as ParserResult, ToCursors, T};
 
 pub(crate) use crate::css::units::*;
 
@@ -38,8 +38,8 @@ impl<'a> Parse<'a> for SnapBlock {
 	}
 }
 
-impl<'a> ToCursors<'a> for SnapBlock {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for SnapBlock {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.function.into());
 		s.append(self.length.into());
 		if let Some(comma) = self.comma {
@@ -85,8 +85,8 @@ impl<'a> Parse<'a> for SnapInline {
 	}
 }
 
-impl<'a> ToCursors<'a> for SnapInline {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for SnapInline {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.function.into());
 		s.append(self.length.into());
 		if let Some(comma) = self.comma {

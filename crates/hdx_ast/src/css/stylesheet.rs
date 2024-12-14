@@ -1,8 +1,9 @@
 use hdx_atom::atom;
 use hdx_lexer::Cursor;
 use hdx_parser::{
-	CursorStream, Parse, Parser, Result as ParserResult, StyleSheet as StyleSheetTrait, ToCursors, Vec, T,
+	CursorSink, Parse, Parser, Result as ParserResult, StyleSheet as StyleSheetTrait, ToCursors, Vec, T,
 };
+use hdx_proc_macro::visit;
 
 use crate::{
 	css::{rules, stylerule::StyleRule},
@@ -30,8 +31,8 @@ impl<'a> StyleSheetTrait<'a> for StyleSheet<'a> {
 	type Rule = Rule<'a>;
 }
 
-impl<'a> ToCursors<'a> for StyleSheet<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for StyleSheet<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		for rule in &self.rules {
 			ToCursors::to_cursors(rule, s);
 		}
@@ -124,8 +125,8 @@ impl<'a> Parse<'a> for Rule<'a> {
 	}
 }
 
-impl<'a> ToCursors<'a> for Rule<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for Rule<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		macro_rules! match_rule {
 			( $(
 				$name: ident$(<$a: lifetime>)?: $atom: pat,

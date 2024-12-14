@@ -1,5 +1,5 @@
 use hdx_lexer::{Cursor, KindSet};
-use hdx_parser::{Build, CursorStream, Is, Parse, Parser, Result as ParserResult, ToCursors, T};
+use hdx_parser::{Build, CursorSink, Is, Parse, Parser, Result as ParserResult, ToCursors, T};
 
 use super::Tag;
 
@@ -38,8 +38,8 @@ impl<'a> Parse<'a> for Namespace {
 	}
 }
 
-impl<'a> ToCursors<'a> for Namespace {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for Namespace {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		if let Some(prefix) = &self.prefix {
 			ToCursors::to_cursors(prefix, s);
 		}
@@ -78,8 +78,8 @@ impl<'a> Parse<'a> for NamespacePrefix {
 	}
 }
 
-impl<'a> ToCursors<'a> for NamespacePrefix {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for NamespacePrefix {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match self {
 			NamespacePrefix::None(pipe) => {
 				s.append(pipe.into());

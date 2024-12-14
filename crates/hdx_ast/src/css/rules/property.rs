@@ -3,7 +3,7 @@ use bumpalo::collections::Vec;
 use hdx_atom::atom;
 use hdx_lexer::Cursor;
 use hdx_parser::{
-	diagnostics, AtRule, CursorStream, Declaration, DeclarationList, DeclarationValue, Parse, Parser,
+	diagnostics, AtRule, CursorSink, Declaration, DeclarationList, DeclarationValue, Parse, Parser,
 	Result as ParserResult, ToCursors, T,
 };
 
@@ -37,8 +37,8 @@ impl<'a> AtRule<'a> for PropertyRule<'a> {
 	type Block = PropertyRuleBlock<'a>;
 }
 
-impl<'a> ToCursors<'a> for PropertyRule<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for PropertyRule<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.at_keyword.into());
 		s.append(self.name.into());
 		ToCursors::to_cursors(&self.block, s);
@@ -65,8 +65,8 @@ impl<'a> DeclarationList<'a> for PropertyRuleBlock<'a> {
 	type Declaration = PropertyRuleProperty<'a>;
 }
 
-impl<'a> ToCursors<'a> for PropertyRuleBlock<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for PropertyRuleBlock<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.open.into());
 		for property in &self.properties {
 			ToCursors::to_cursors(property, s);
@@ -101,8 +101,8 @@ impl<'a> Declaration<'a> for PropertyRuleProperty<'a> {
 	type DeclarationValue = PropertyRuleStyleValue<'a>;
 }
 
-impl<'a> ToCursors<'a> for PropertyRuleProperty<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for PropertyRuleProperty<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.name.into());
 		if let Some(colon) = self.colon {
 			s.append(colon.into());
@@ -142,8 +142,8 @@ impl<'a> DeclarationValue<'a> for PropertyRuleStyleValue<'a> {
 	}
 }
 
-impl<'a> ToCursors<'a> for PropertyRuleStyleValue<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for PropertyRuleStyleValue<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match self {
 			Self::InitialValue(value) => ToCursors::to_cursors(value, s),
 			Self::Syntax(string) => {

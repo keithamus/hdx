@@ -1,5 +1,5 @@
 use hdx_lexer::Kind;
-use hdx_parser::{CursorStream, Important, Parse, Parser, Result as ParserResult, State, ToCursors, T};
+use hdx_parser::{CursorSink, Important, Parse, Parser, Result as ParserResult, State, ToCursors, T};
 
 use super::ComponentValues;
 
@@ -34,8 +34,8 @@ impl<'a> Parse<'a> for Declaration<'a> {
 	}
 }
 
-impl<'a> ToCursors<'a> for Declaration<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for Declaration<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.name.into());
 		if let Some(t) = self.colon {
 			s.append(t.into());

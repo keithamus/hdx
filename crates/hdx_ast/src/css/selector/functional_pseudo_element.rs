@@ -1,6 +1,6 @@
 use hdx_atom::atom;
 use hdx_lexer::Cursor;
-use hdx_parser::{diagnostics, CursorStream, Parse, Parser, Result as ParserResult, ToCursors, Vec, T};
+use hdx_parser::{diagnostics, CursorSink, Parse, Parser, Result as ParserResult, ToCursors, Vec, T};
 
 use super::CompoundSelector;
 
@@ -49,8 +49,8 @@ impl<'a> Parse<'a> for FunctionalPseudoElement<'a> {
 	}
 }
 
-impl<'a> ToCursors<'a> for FunctionalPseudoElement<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for FunctionalPseudoElement<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match self {
 			Self::Highlight(c) => ToCursors::to_cursors(c, s),
 			Self::Slotted(c) => ToCursors::to_cursors(c, s),
@@ -68,8 +68,8 @@ pub struct HighlightPseudoElement {
 	pub close: Option<T![')']>,
 }
 
-impl<'a> ToCursors<'a> for HighlightPseudoElement {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for HighlightPseudoElement {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		ToCursors::to_cursors(&self.colons, s);
 		s.append(self.function.into());
 		s.append(self.value.into());
@@ -88,8 +88,8 @@ pub struct SlottedPseudoElement<'a> {
 	pub close: Option<T![')']>,
 }
 
-impl<'a> ToCursors<'a> for SlottedPseudoElement<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for SlottedPseudoElement<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		ToCursors::to_cursors(&self.colons, s);
 		s.append(self.function.into());
 		ToCursors::to_cursors(&self.value, s);
@@ -108,8 +108,8 @@ pub struct PartPseudoElement<'a> {
 	pub close: Option<T![')']>,
 }
 
-impl<'a> ToCursors<'a> for PartPseudoElement<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for PartPseudoElement<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		ToCursors::to_cursors(&self.colons, s);
 		s.append(self.function.into());
 		for value in &self.value {

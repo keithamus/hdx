@@ -40,8 +40,8 @@ impl<'a> Parse<'a> for Image1D<'a> {
 	}
 }
 
-impl<'a> ToCursors<'a> for Image1D<'a> {
-	fn to_cursors(&self, s: &mut hdx_parser::CursorStream<'a>) {
+impl<'a> ToCursors for Image1D<'a> {
+	fn to_cursors(&self, s: &mut impl hdx_parser::CursorSink) {
 		s.append(self.function.into());
 		for stripe in &self.stripes {
 			ToCursors::to_cursors(stripe, s);
@@ -72,8 +72,8 @@ impl<'a> Parse<'a> for ColorStripe {
 	}
 }
 
-impl<'a> ToCursors<'a> for ColorStripe {
-	fn to_cursors(&self, s: &mut hdx_parser::CursorStream<'a>) {
+impl<'a> ToCursors for ColorStripe {
+	fn to_cursors(&self, s: &mut impl hdx_parser::CursorSink) {
 		ToCursors::to_cursors(&self.color, s);
 		if let Some(thickness) = self.thickness {
 			s.append(thickness.into());
