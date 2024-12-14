@@ -396,8 +396,8 @@ macro_rules! custom_double_delim {
 			}
 		}
 
-		impl<'a> $crate::ToCursors<'a> for $ident {
-			fn to_cursors(&self, s: &mut $crate::CursorStream<'a>) {
+		impl<'a> $crate::ToCursors for $ident {
+			fn to_cursors(&self, s: &mut impl $crate::CursorSink) {
 				s.append(self.0.into());
 				s.append(self.1.into());
 			}
@@ -748,8 +748,8 @@ pub mod double {
 		}
 	}
 
-	impl<'a> crate::ToCursors<'a> for ColonColon {
-		fn to_cursors(&self, s: &mut crate::CursorStream<'a>) {
+	impl crate::ToCursors for ColonColon {
+		fn to_cursors(&self, s: &mut impl crate::CursorSink) {
 			s.append(self.0.into());
 			s.append(self.1.into());
 		}

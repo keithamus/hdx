@@ -58,8 +58,8 @@ macro_rules! bool_feature {
 
 		impl<'a> $crate::BooleanFeature<'a> for $feat {}
 
-		impl<'a> $crate::ToCursors<'a> for $feat {
-			fn to_cursors(&self, s: &mut $crate::CursorStream<'a>) {
+		impl<'a> $crate::ToCursors for $feat {
+			fn to_cursors(&self, s: &mut impl $crate::CursorSink) {
 				match self {
 					$feat::Zero(ident, colon, number) => {
 						s.append(ident.into());

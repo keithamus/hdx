@@ -51,8 +51,8 @@ macro_rules! discrete_feature {
 
 		impl<'a> $crate::DiscreteFeature<'a> for $feat {}
 
-		impl<'a> $crate::ToCursors<'a> for $feat {
-			fn to_cursors(&self, s: &mut $crate::CursorStream<'a>) {
+		impl<'a> $crate::ToCursors for $feat {
+			fn to_cursors(&self, s: &mut impl $crate::CursorSink) {
 				match self {
 					$(
 						Self::$name(ident, colon, number) => {

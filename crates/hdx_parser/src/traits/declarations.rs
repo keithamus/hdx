@@ -1,6 +1,6 @@
 use core::fmt;
 
-use crate::{diagnostics, parser::Parser, CursorStream, Is, Parse, Peek, Result, ToCursors, T};
+use crate::{diagnostics, parser::Parser, CursorSink, Is, Parse, Peek, Result, ToCursors, T};
 use hdx_atom::Atom;
 use hdx_lexer::{Cursor, SourceOffset, Token};
 
@@ -30,8 +30,8 @@ impl<'a> Parse<'a> for Important {
 	}
 }
 
-impl<'a> ToCursors<'a> for Important {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for Important {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.bang.into());
 		s.append(self.important.into());
 	}

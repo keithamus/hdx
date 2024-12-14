@@ -30,7 +30,7 @@ mod test {
 		let mut p = Parser::new(&allocator, source_text, Features::none());
 		let foo = p.parse::<T![Ident]>().unwrap();
 		let bar = p.parse::<T![Ident]>().unwrap();
-		let mut s = CursorStream::new(&allocator);
+		let mut s = CursorSink::new(&allocator);
 		foo.to_cursors(&mut s);
 		bar.to_cursors(&mut s);
 		let mut str = String::new_in(&allocator);
