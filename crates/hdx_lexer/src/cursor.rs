@@ -1,4 +1,4 @@
-use std::{ascii::AsciiExt, char::REPLACEMENT_CHARACTER};
+use std::{char::REPLACEMENT_CHARACTER, fmt};
 
 use bumpalo::{collections::String, Bump};
 use hdx_atom::{Atom, Atomizable};
@@ -56,6 +56,58 @@ impl Cursor {
 	#[inline(always)]
 	pub fn span(&self) -> Span {
 		Span::new(self.offset(), self.end_offset())
+	}
+
+	pub fn write_str<'a>(&self, str: &'a str, f: &mut impl fmt::Write) -> fmt::Result {
+		match self.token().kind() {
+			Kind::Eof => {}
+			Kind::Whitespace => {
+				for _ in 0..self.token().len() {
+					f.write_str(self.token().whitespace_style().as_str())?;
+				}
+			}
+			Kind::CdcOrCdo => {
+				if self.token().is_cdc() {
+					f.write_str("-->")?
+				} else {
+					f.write_str("<!--")?
+				}
+			}
+			Kind::Number => {
+				if self.token().has_sign() {
+					write!(f, "{:+}", self.token().value())?;
+				} else {
+					write!(f, "{}", self.token().value())?;
+				}
+			}
+			Kind::Dimension => match self.token().dimension_unit() {
+				DimensionUnit::Unknown => f.write_str(self.str_slice(str))?,
+				d => {
+					f.write_str(&self.token().value().to_string())?;
+					f.write_str(&d.to_atom())?;
+				}
+			},
+			Kind::Comment
+			| Kind::BadString
+			| Kind::BadUrl
+			| Kind::Ident
+			| Kind::Function
+			| Kind::AtKeyword
+			| Kind::Hash
+			| Kind::String
+			| Kind::Url => f.write_str(self.str_slice(str))?,
+			Kind::Delim
+			| Kind::Colon
+			| Kind::Semicolon
+			| Kind::Comma
+			| Kind::LeftSquare
+			| Kind::LeftParen
+			| Kind::RightSquare
+			| Kind::RightParen
+			| Kind::LeftCurly
+			| Kind::RightCurly => f.write_char(self.token().char().unwrap())?,
+		}
+		Ok(())
 	}
 
 	#[inline(always)]
