@@ -394,6 +394,12 @@ impl From<Cursor> for Span {
 	}
 }
 
+impl From<&Cursor> for Span {
+	fn from(cursor: &Cursor) -> Self {
+		cursor.span()
+	}
+}
+
 impl PartialEq<Span> for Cursor {
 	fn eq(&self, other: &Span) -> bool {
 		self.span() == *other
