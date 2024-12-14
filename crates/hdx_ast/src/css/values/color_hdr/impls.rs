@@ -8,7 +8,7 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(DynamicRangeLimitStyleValue, 56);
+		assert_size!(DynamicRangeLimitStyleValue, 64);
 	}
 
 	#[test]

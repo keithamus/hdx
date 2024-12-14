@@ -102,7 +102,7 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(StyleRule, 120);
+		assert_size!(StyleRule, 128);
 	}
 
 	#[test]

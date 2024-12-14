@@ -64,7 +64,7 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(OpacityValue, 12);
+		assert_size!(OpacityValue, 16);
 	}
 
 	#[test]

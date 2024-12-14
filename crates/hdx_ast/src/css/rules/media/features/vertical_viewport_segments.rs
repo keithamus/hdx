@@ -10,7 +10,7 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(VerticalViewportSegmentsMediaFeature, 68);
+		assert_size!(VerticalViewportSegmentsMediaFeature, 92);
 	}
 
 	#[test]

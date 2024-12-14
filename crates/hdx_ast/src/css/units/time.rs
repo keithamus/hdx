@@ -59,7 +59,7 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(Time, 12);
+		assert_size!(Time, 16);
 	}
 
 	#[test]

@@ -57,7 +57,7 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(Declaration, 96);
+		assert_size!(Declaration, 104);
 	}
 
 	#[test]

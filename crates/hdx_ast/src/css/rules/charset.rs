@@ -63,7 +63,7 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(CharsetRule, 44);
+		assert_size!(CharsetRule, 52);
 	}
 
 	#[test]

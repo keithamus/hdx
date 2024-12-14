@@ -292,10 +292,10 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(ContainerRule, 104);
+		assert_size!(ContainerRule, 112);
 		assert_size!(ContainerConditionList, 32);
-		assert_size!(ContainerCondition, 376);
-		assert_size!(ContainerQuery, 360);
+		assert_size!(ContainerCondition, 416);
+		assert_size!(ContainerQuery, 400);
 	}
 
 	#[test]

@@ -92,7 +92,7 @@ mod tests {
 	#[test]
 	fn size_test() {
 		assert_size!(Image1D, 56);
-		assert_size!(ColorStripe, 164);
+		assert_size!(ColorStripe, 192);
 	}
 
 	#[test]

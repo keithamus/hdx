@@ -174,7 +174,7 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(PropertyRule, 80);
+		assert_size!(PropertyRule, 88);
 	}
 
 	#[test]

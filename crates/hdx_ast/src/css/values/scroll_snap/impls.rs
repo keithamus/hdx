@@ -23,16 +23,16 @@ mod tests {
 		assert_size!(ScrollPaddingBlockEndStyleValue, 16);
 		// assert_size!(ScrollPaddingBlockStyleValue, 2);
 		// assert_size!(ScrollPaddingInlineStyleValue, 2);
-		assert_size!(ScrollMarginTopStyleValue, 12);
-		assert_size!(ScrollMarginRightStyleValue, 12);
-		assert_size!(ScrollMarginBottomStyleValue, 12);
-		assert_size!(ScrollMarginLeftStyleValue, 12);
-		assert_size!(ScrollMarginBlockStartStyleValue, 12);
-		assert_size!(ScrollMarginInlineStartStyleValue, 12);
-		assert_size!(ScrollMarginBlockEndStyleValue, 12);
-		assert_size!(ScrollMarginInlineEndStyleValue, 12);
-		assert_size!(ScrollMarginBlockStyleValue, 24);
-		assert_size!(ScrollMarginInlineStyleValue, 24);
+		assert_size!(ScrollMarginTopStyleValue, 16);
+		assert_size!(ScrollMarginRightStyleValue, 16);
+		assert_size!(ScrollMarginBottomStyleValue, 16);
+		assert_size!(ScrollMarginLeftStyleValue, 16);
+		assert_size!(ScrollMarginBlockStartStyleValue, 16);
+		assert_size!(ScrollMarginInlineStartStyleValue, 16);
+		assert_size!(ScrollMarginBlockEndStyleValue, 16);
+		assert_size!(ScrollMarginInlineEndStyleValue, 16);
+		assert_size!(ScrollMarginBlockStyleValue, 32);
+		assert_size!(ScrollMarginInlineStyleValue, 32);
 		assert_size!(ScrollStartTargetStyleValue, 16);
 	}
 

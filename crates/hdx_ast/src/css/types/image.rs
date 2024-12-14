@@ -58,7 +58,7 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(Image, 184);
+		assert_size!(Image, 208);
 	}
 
 	#[test]

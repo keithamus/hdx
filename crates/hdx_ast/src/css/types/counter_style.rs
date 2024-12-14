@@ -91,7 +91,7 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(CounterStyle, 72);
+		assert_size!(CounterStyle, 80);
 	}
 
 	#[test]

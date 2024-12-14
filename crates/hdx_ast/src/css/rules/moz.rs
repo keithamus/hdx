@@ -55,7 +55,7 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(MozDocumentRule, 104);
+		assert_size!(MozDocumentRule, 112);
 	}
 
 	#[test]

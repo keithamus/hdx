@@ -209,18 +209,18 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(WidthContainerFeature, 76);
-		assert_size!(HeightContainerFeature, 76);
-		assert_size!(InlineSizeContainerFeature, 76);
-		assert_size!(BlockSizeContainerFeature, 76);
-		assert_size!(AspectRatioContainerFeature, 124);
-		assert_size!(OrientationContainerFeature, 36);
-		assert_size!(StyleQuery, 360);
-		assert_size!(ScrollStateQuery, 40);
-		assert_size!(ScrollStateFeature, 40);
-		assert_size!(ScrollableScrollStateFeature, 36);
-		assert_size!(SnappedScrollStateFeature, 36);
-		assert_size!(StuckScrollStateFeature, 36);
+		assert_size!(WidthContainerFeature, 100);
+		assert_size!(HeightContainerFeature, 100);
+		assert_size!(InlineSizeContainerFeature, 100);
+		assert_size!(BlockSizeContainerFeature, 100);
+		assert_size!(AspectRatioContainerFeature, 164);
+		assert_size!(OrientationContainerFeature, 40);
+		assert_size!(StyleQuery, 400);
+		assert_size!(ScrollStateQuery, 48);
+		assert_size!(ScrollStateFeature, 44);
+		assert_size!(ScrollableScrollStateFeature, 40);
+		assert_size!(SnappedScrollStateFeature, 40);
+		assert_size!(StuckScrollStateFeature, 40);
 	}
 
 	#[test]

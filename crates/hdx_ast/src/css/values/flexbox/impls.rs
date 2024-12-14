@@ -12,9 +12,9 @@ mod tests {
 		assert_size!(FlexWrapStyleValue, 16);
 		assert_size!(FlexFlowStyleValue, 32);
 		// assert_size!(FlexStyleValue, 1);
-		assert_size!(FlexGrowStyleValue, 8);
-		assert_size!(FlexShrinkStyleValue, 8);
-		assert_size!(FlexBasisStyleValue, 36);
+		assert_size!(FlexGrowStyleValue, 12);
+		assert_size!(FlexShrinkStyleValue, 12);
+		assert_size!(FlexBasisStyleValue, 44);
 		assert_size!(JustifyContentStyleValue, 16);
 		assert_size!(AlignItemsStyleValue, 16);
 		assert_size!(AlignSelfStyleValue, 16);

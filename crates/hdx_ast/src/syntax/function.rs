@@ -48,7 +48,7 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(Function, 56);
+		assert_size!(Function, 64);
 	}
 
 	#[test]

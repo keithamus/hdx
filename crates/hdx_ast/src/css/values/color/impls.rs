@@ -8,8 +8,8 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(ColorStyleValue, 140);
-		assert_size!(OpacityStyleValue, 12);
+		assert_size!(ColorStyleValue, 160);
+		assert_size!(OpacityStyleValue, 16);
 	}
 
 	#[test]

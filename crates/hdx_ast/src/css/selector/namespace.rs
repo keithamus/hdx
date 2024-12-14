@@ -143,7 +143,7 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(Namespace, 44);
+		assert_size!(Namespace, 48);
 	}
 
 	#[test]

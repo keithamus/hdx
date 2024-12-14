@@ -13,7 +13,7 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(OverflowBlockMediaFeature, 36);
+		assert_size!(OverflowBlockMediaFeature, 40);
 	}
 
 	#[test]

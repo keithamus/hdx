@@ -406,10 +406,10 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(MediaRule, 104);
+		assert_size!(MediaRule, 112);
 		assert_size!(MediaQueryList, 32);
-		assert_size!(MediaQuery, 112);
-		assert_size!(MediaCondition, 80);
+		assert_size!(MediaQuery, 136);
+		assert_size!(MediaCondition, 104);
 	}
 
 	#[test]

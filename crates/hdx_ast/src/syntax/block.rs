@@ -49,7 +49,7 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(Block, 88);
+		assert_size!(Block, 96);
 	}
 
 	#[test]

@@ -47,7 +47,7 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(CSSFloat, 8);
+		assert_size!(CSSFloat, 12);
 	}
 
 	#[test]

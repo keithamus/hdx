@@ -27,11 +27,11 @@ mod tests {
 		assert_size!(MarginBottomStyleValue, 16);
 		assert_size!(MarginLeftStyleValue, 16);
 		assert_size!(MarginStyleValue, 64);
-		assert_size!(PaddingTopStyleValue, 12);
-		assert_size!(PaddingRightStyleValue, 12);
-		assert_size!(PaddingBottomStyleValue, 12);
-		assert_size!(PaddingLeftStyleValue, 12);
-		assert_size!(PaddingStyleValue, 48);
+		assert_size!(PaddingTopStyleValue, 16);
+		assert_size!(PaddingRightStyleValue, 16);
+		assert_size!(PaddingBottomStyleValue, 16);
+		assert_size!(PaddingLeftStyleValue, 16);
+		assert_size!(PaddingStyleValue, 64);
 		// assert_size!(MarginTrimStyleValue, 1);
 	}
 

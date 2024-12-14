@@ -71,7 +71,7 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(DynamicRangeLimitMix, 56);
+		assert_size!(DynamicRangeLimitMix, 64);
 	}
 
 	#[test]

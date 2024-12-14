@@ -8,7 +8,7 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(BackgroundColorStyleValue, 140);
+		assert_size!(BackgroundColorStyleValue, 160);
 		// assert_size!(BackgroundImageStyleValue, 1);
 		assert_size!(BackgroundRepeatStyleValue, 32);
 		assert_size!(BackgroundAttachmentStyleValue, 32);
@@ -17,7 +17,7 @@ mod tests {
 		assert_size!(BackgroundOriginStyleValue, 32);
 		// assert_size!(BackgroundSizeStyleValue, 1);
 		// assert_size!(BackgroundStyleValue, 1);
-		assert_size!(BorderImageSourceStyleValue, 184);
+		assert_size!(BorderImageSourceStyleValue, 208);
 		// assert_size!(BorderImageSliceStyleValue, 1);
 		// assert_size!(BorderImageWidthStyleValue, 1);
 		// assert_size!(BorderImageOutsetStyleValue, 1);

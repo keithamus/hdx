@@ -196,7 +196,7 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(DocumentRule, 104);
+		assert_size!(DocumentRule, 112);
 	}
 
 	#[test]

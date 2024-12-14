@@ -313,9 +313,9 @@ mod tests {
 		assert_size!(ComplexSelector, 32);
 		assert_size!(ForgivingSelector, 32);
 		assert_size!(RelativeSelector, 32);
-		assert_size!(SelectorComponent, 112);
-		assert_size!(LegacyPseudoElement, 24);
-		assert_size!(Combinator, 20);
+		assert_size!(SelectorComponent, 128);
+		assert_size!(LegacyPseudoElement, 28);
+		assert_size!(Combinator, 28);
 	}
 
 	#[test]

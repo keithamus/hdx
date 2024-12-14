@@ -55,7 +55,7 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(WebkitKeyframesRule, 88);
+		assert_size!(WebkitKeyframesRule, 96);
 	}
 
 	#[test]

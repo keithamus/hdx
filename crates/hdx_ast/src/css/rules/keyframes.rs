@@ -274,7 +274,7 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(KeyframesRule, 88);
+		assert_size!(KeyframesRule, 96);
 	}
 
 	#[test]

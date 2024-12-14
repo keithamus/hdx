@@ -239,9 +239,9 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(SupportsRule, 456);
-		assert_size!(SupportsCondition, 384);
-		assert_size!(SupportsBlock, 56);
+		assert_size!(SupportsRule, 512);
+		assert_size!(SupportsCondition, 432);
+		assert_size!(SupportsBlock, 64);
 	}
 
 	#[test]

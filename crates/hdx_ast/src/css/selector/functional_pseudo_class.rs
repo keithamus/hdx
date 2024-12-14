@@ -539,7 +539,7 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(FunctionalPseudoClass, 88);
+		assert_size!(FunctionalPseudoClass, 96);
 		assert_size!(DirValue, 16);
 	}
 }

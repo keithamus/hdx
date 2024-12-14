@@ -13,7 +13,7 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(AnyPointerMediaFeature, 36);
+		assert_size!(AnyPointerMediaFeature, 40);
 	}
 
 	#[test]

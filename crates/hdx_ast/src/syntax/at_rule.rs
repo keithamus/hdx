@@ -44,7 +44,7 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(AtRule, 136);
+		assert_size!(AtRule, 144);
 	}
 
 	#[test]

@@ -45,7 +45,7 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(HackMediaFeature, 32);
+		assert_size!(HackMediaFeature, 36);
 	}
 
 	#[test]

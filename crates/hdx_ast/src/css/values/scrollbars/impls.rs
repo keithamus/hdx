@@ -8,7 +8,7 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(ScrollbarColorStyleValue, 280);
+		assert_size!(ScrollbarColorStyleValue, 320);
 	}
 
 	#[test]

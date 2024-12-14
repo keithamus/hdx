@@ -366,7 +366,7 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(PseudoClass, 28);
+		assert_size!(PseudoClass, 32);
 	}
 
 	#[test]

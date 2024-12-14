@@ -196,9 +196,10 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(Attribute, 108);
-		assert_size!(AttributeOperator, 20);
-		assert_size!(AttributeOperator, 20);
+		assert_size!(Attribute, 128);
+		assert_size!(AttributeOperator, 28);
+		assert_size!(AttributeModifier, 16);
+		assert_size!(AttributeValue, 16);
 	}
 
 	#[test]

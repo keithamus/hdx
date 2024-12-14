@@ -22,12 +22,12 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(WidthStyleValue, 36);
-		assert_size!(HeightStyleValue, 36);
-		assert_size!(MinWidthStyleValue, 36);
-		assert_size!(MinHeightStyleValue, 36);
-		assert_size!(MaxWidthStyleValue, 36);
-		assert_size!(MaxHeightStyleValue, 36);
+		assert_size!(WidthStyleValue, 44);
+		assert_size!(HeightStyleValue, 44);
+		assert_size!(MinWidthStyleValue, 44);
+		assert_size!(MinHeightStyleValue, 44);
+		assert_size!(MaxWidthStyleValue, 44);
+		assert_size!(MaxHeightStyleValue, 44);
 		assert_size!(BoxSizingStyleValue, 16);
 	}
 

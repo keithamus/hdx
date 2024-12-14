@@ -9,10 +9,10 @@ mod tests {
 	#[test]
 	fn size_test() {
 		assert_size!(FloatReferenceStyleValue, 16);
-		assert_size!(FloatStyleValue, 68);
+		assert_size!(FloatStyleValue, 80);
 		assert_size!(ClearStyleValue, 16);
 		assert_size!(FloatDeferStyleValue, 16);
-		assert_size!(FloatOffsetStyleValue, 12);
+		assert_size!(FloatOffsetStyleValue, 16);
 	}
 
 	#[test]

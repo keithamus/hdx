@@ -175,11 +175,11 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(LayerRule, 104);
+		assert_size!(LayerRule, 112);
 		assert_size!(LayerNameList, 32);
 		assert_size!(LayerName, 48);
-		assert_size!(OptionalLayerBlock, 56);
-		assert_size!(LayerBlock, 56);
+		assert_size!(OptionalLayerBlock, 64);
+		assert_size!(LayerBlock, 64);
 	}
 
 	#[test]

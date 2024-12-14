@@ -92,8 +92,8 @@ mod tests {
 	#[test]
 	fn size_test() {
 		assert_size!(Channel, 16);
-		assert_size!(ColorFunction, 140);
-		assert_size!(Color, 140);
+		assert_size!(ColorFunction, 160);
+		assert_size!(Color, 160);
 	}
 
 	#[test]

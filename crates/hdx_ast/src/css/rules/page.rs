@@ -320,13 +320,13 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(PageRule, 136);
+		assert_size!(PageRule, 144);
 		assert_size!(PageSelectorList, 32);
 		assert_size!(PageSelector, 48);
-		assert_size!(PagePseudoClass, 24);
-		assert_size!(PageBlock, 88);
-		assert_size!(MarginRule, 72);
-		assert_size!(MarginBlock, 56);
+		assert_size!(PagePseudoClass, 28);
+		assert_size!(PageBlock, 96);
+		assert_size!(MarginRule, 80);
+		assert_size!(MarginBlock, 64);
 	}
 
 	#[test]

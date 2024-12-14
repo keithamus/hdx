@@ -37,7 +37,7 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(QualifiedRule, 120);
+		assert_size!(QualifiedRule, 128);
 	}
 
 	#[test]

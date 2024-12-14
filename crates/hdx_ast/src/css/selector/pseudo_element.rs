@@ -223,8 +223,8 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(PseudoElement, 36);
-		assert_size!(LegacyPseudoElement, 24);
+		assert_size!(PseudoElement, 44);
+		assert_size!(LegacyPseudoElement, 28);
 	}
 
 	#[test]

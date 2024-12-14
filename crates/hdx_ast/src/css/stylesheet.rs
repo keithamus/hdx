@@ -4,7 +4,7 @@ use hdx_parser::{CursorSink, Parse, Parser, Result as ParserResult, StyleSheet a
 use hdx_proc_macro::visit;
 
 use crate::{
-	css::{rules, stylerule::StyleRule, Visitable, Visit},
+	css::{rules, stylerule::StyleRule, Visit, Visitable},
 	syntax::{AtRule, QualifiedRule},
 };
 
@@ -81,6 +81,7 @@ macro_rules! apply_rules {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 #[visit]
 pub struct UnknownAtRule<'a>(AtRule<'a>);
 
@@ -103,6 +104,7 @@ impl<'a> Visitable<'a> for UnknownAtRule<'a> {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 #[visit]
 pub struct UnknownQualifiedRule<'a>(QualifiedRule<'a>);
 
@@ -223,7 +225,7 @@ mod tests {
 	#[test]
 	fn size_test() {
 		assert_size!(StyleSheet, 32);
-		assert_size!(Rule, 456);
+		assert_size!(Rule, 512);
 	}
 
 	#[test]

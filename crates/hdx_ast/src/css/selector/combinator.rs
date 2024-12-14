@@ -60,7 +60,7 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(Combinator, 20);
+		assert_size!(Combinator, 28);
 	}
 
 	#[test]

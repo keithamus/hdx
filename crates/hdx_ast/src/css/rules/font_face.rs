@@ -137,7 +137,7 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(FontFaceRule, 72);
+		assert_size!(FontFaceRule, 80);
 	}
 
 	#[test]
