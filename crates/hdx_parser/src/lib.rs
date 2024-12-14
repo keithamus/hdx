@@ -18,7 +18,7 @@ pub use parser_return::*;
 pub use traits::*;
 
 #[cfg(test)]
-mod test {
+mod tests {
 	use bumpalo::{collections::String, Bump};
 
 	use crate::*;

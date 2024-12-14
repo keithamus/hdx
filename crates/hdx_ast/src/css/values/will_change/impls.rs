@@ -2,7 +2,7 @@ pub(crate) use crate::traits::StyleValue;
 pub(crate) use hdx_proc_macro::*;
 
 #[cfg(test)]
-mod test {
+mod tests {
 	use super::super::*;
 	use crate::test_helpers::*;
 
