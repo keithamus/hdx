@@ -21,6 +21,7 @@ expression: result.output.unwrap()
         "start": 1,
         "open_curly": {
           "kind": "LeftCurly",
+          "offset": 2,
           "len": 1
         },
         "declarations": [
@@ -33,12 +34,14 @@ expression: result.output.unwrap()
             },
             "colon": {
               "kind": "Colon",
+              "offset": 13,
               "len": 1
             },
             "value": {
               "values": [
                 {
                   "kind": "Whitespace",
+                  "offset": 14,
                   "len": 1
                 },
                 {
@@ -52,6 +55,7 @@ expression: result.output.unwrap()
             "important": null,
             "semicolon": {
               "kind": "Semicolon",
+              "offset": 19,
               "len": 1
             }
           },
@@ -64,20 +68,24 @@ expression: result.output.unwrap()
             },
             "colon": {
               "kind": "Colon",
+              "offset": 31,
               "len": 1
             },
             "value": {
               "values": [
                 {
                   "kind": "Whitespace",
+                  "offset": 32,
                   "len": 1
                 },
                 {
                   "kind": "Number",
+                  "offset": 33,
                   "len": 1
                 },
                 {
                   "kind": "Whitespace",
+                  "offset": 34,
                   "len": 1
                 },
                 {
@@ -90,6 +98,7 @@ expression: result.output.unwrap()
             "important": null,
             "semicolon": {
               "kind": "Semicolon",
+              "offset": 41,
               "len": 1
             }
           }
@@ -107,6 +116,7 @@ expression: result.output.unwrap()
               "values": [
                 {
                   "kind": "Whitespace",
+                  "offset": 53,
                   "len": 1
                 },
                 {
@@ -121,6 +131,7 @@ expression: result.output.unwrap()
               "start": 60,
               "open_curly": {
                 "kind": "LeftCurly",
+                "offset": 61,
                 "len": 1
               },
               "declarations": [
@@ -133,12 +144,14 @@ expression: result.output.unwrap()
                   },
                   "colon": {
                     "kind": "Colon",
+                    "offset": 77,
                     "len": 1
                   },
                   "value": {
                     "values": [
                       {
                         "kind": "Whitespace",
+                        "offset": 78,
                         "len": 1
                       },
                       {
@@ -152,6 +165,7 @@ expression: result.output.unwrap()
                   "important": null,
                   "semicolon": {
                     "kind": "Semicolon",
+                    "offset": 84,
                     "len": 1
                   }
                 }
@@ -159,6 +173,7 @@ expression: result.output.unwrap()
               "rules": [],
               "close_curly": {
                 "kind": "RightCurly",
+                "offset": 90,
                 "len": 1
               }
             }
@@ -166,6 +181,7 @@ expression: result.output.unwrap()
         ],
         "close_curly": {
           "kind": "RightCurly",
+          "offset": 92,
           "len": 1
         }
       }

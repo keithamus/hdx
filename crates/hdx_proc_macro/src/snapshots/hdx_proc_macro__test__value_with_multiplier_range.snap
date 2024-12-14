@@ -29,8 +29,8 @@ impl<'a> ::hdx_parser::Parse<'a> for Foo {
     }
 }
 #[automatically_derived]
-impl<'a> ::hdx_parser::ToCursors<'a> for Foo {
-    fn to_cursors(&self, s: &mut ::hdx_parser::CursorStream<'a>) {
+impl ::hdx_parser::ToCursors for Foo {
+    fn to_cursors(&self, s: &mut impl ::hdx_parser::CursorSink) {
         ::hdx_parser::ToCursors::to_cursors(&self.0, s);
         ::hdx_parser::ToCursors::to_cursors(&self.1, s);
         if let Some(inner) = &self.2 {

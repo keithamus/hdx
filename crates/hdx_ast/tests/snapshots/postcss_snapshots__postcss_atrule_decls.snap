@@ -22,6 +22,7 @@ expression: result.output.unwrap()
                 "left": [
                   {
                     "kind": "Colon",
+                    "offset": 6,
                     "len": 1
                   },
                   {
@@ -40,6 +41,7 @@ expression: result.output.unwrap()
         "type": "PageBlock",
         "open": {
           "kind": "LeftCurly",
+          "offset": 12,
           "len": 1
         },
         "properties": [
@@ -52,12 +54,14 @@ expression: result.output.unwrap()
             },
             "colon": {
               "kind": "Colon",
+              "offset": 28,
               "len": 1
             },
             "value": {
               "values": [
                 {
                   "kind": "Whitespace",
+                  "offset": 29,
                   "len": 1
                 },
                 {
@@ -74,6 +78,7 @@ expression: result.output.unwrap()
         "rules": [],
         "close": {
           "kind": "RightCurly",
+          "offset": 36,
           "len": 1
         }
       }

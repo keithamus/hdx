@@ -29,6 +29,7 @@ expression: result.output.unwrap()
       "type": "style-declaration",
       "open": {
         "kind": "LeftCurly",
+        "offset": 5,
         "len": 1
       },
       "declarations": [
@@ -41,6 +42,7 @@ expression: result.output.unwrap()
           },
           "colon": {
             "kind": "Colon",
+            "offset": 18,
             "len": 1
           },
           "value": {
@@ -56,6 +58,7 @@ expression: result.output.unwrap()
           "important": null,
           "semicolon": {
             "kind": "Semicolon",
+            "offset": 25,
             "len": 1
           }
         }
@@ -63,6 +66,7 @@ expression: result.output.unwrap()
       "rules": [],
       "close": {
         "kind": "RightCurly",
+        "offset": 27,
         "len": 1
       }
     }

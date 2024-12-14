@@ -16,6 +16,7 @@ expression: result.output.unwrap()
                 "active": [
                   {
                     "kind": "Colon",
+                    "offset": 0,
                     "len": 1
                   },
                   {
@@ -33,6 +34,7 @@ expression: result.output.unwrap()
       "type": "style-declaration",
       "open": {
         "kind": "LeftCurly",
+        "offset": 6,
         "len": 1
       },
       "declarations": [
@@ -45,16 +47,19 @@ expression: result.output.unwrap()
           },
           "colon": {
             "kind": "Colon",
+            "offset": 18,
             "len": 1
           },
           "value": {
             "values": [
               {
                 "kind": "Whitespace",
+                "offset": 19,
                 "len": 1
               },
               {
                 "kind": "Number",
+                "offset": 20,
                 "len": 1
               }
             ]
@@ -62,6 +67,7 @@ expression: result.output.unwrap()
           "important": null,
           "semicolon": {
             "kind": "Semicolon",
+            "offset": 21,
             "len": 1
           }
         },
@@ -74,12 +80,14 @@ expression: result.output.unwrap()
           },
           "colon": {
             "kind": "Colon",
+            "offset": 31,
             "len": 1
           },
           "value": {
             "values": [
               {
                 "kind": "Whitespace",
+                "offset": 32,
                 "len": 1
               },
               {
@@ -93,6 +101,7 @@ expression: result.output.unwrap()
           "important": null,
           "semicolon": {
             "kind": "Semicolon",
+            "offset": 38,
             "len": 1
           }
         },
@@ -105,12 +114,14 @@ expression: result.output.unwrap()
           },
           "colon": {
             "kind": "Colon",
+            "offset": 49,
             "len": 1
           },
           "value": {
             "values": [
               {
                 "kind": "Whitespace",
+                "offset": 50,
                 "len": 1
               },
               {
@@ -123,6 +134,7 @@ expression: result.output.unwrap()
           "important": null,
           "semicolon": {
             "kind": "Semicolon",
+            "offset": 55,
             "len": 1
           }
         },
@@ -135,12 +147,14 @@ expression: result.output.unwrap()
           },
           "colon": {
             "kind": "Colon",
+            "offset": 70,
             "len": 1
           },
           "value": {
             "values": [
               {
                 "kind": "Whitespace",
+                "offset": 71,
                 "len": 1
               },
               {
@@ -153,27 +167,33 @@ expression: result.output.unwrap()
                 "values": [
                   {
                     "kind": "Number",
+                    "offset": 77,
                     "len": 1
                   },
                   {
                     "kind": "Whitespace",
+                    "offset": 78,
                     "len": 1
                   },
                   {
                     "kind": "Delim",
+                    "offset": 79,
                     "len": 1
                   },
                   {
                     "kind": "Whitespace",
+                    "offset": 80,
                     "len": 1
                   },
                   {
                     "kind": "Number",
+                    "offset": 81,
                     "len": 1
                   }
                 ],
                 "close_paren": {
                   "kind": "RightParen",
+                  "offset": 82,
                   "len": 1
                 }
               }
@@ -182,6 +202,7 @@ expression: result.output.unwrap()
           "important": null,
           "semicolon": {
             "kind": "Semicolon",
+            "offset": 83,
             "len": 1
           }
         },
@@ -194,12 +215,14 @@ expression: result.output.unwrap()
           },
           "colon": {
             "kind": "Colon",
+            "offset": 97,
             "len": 1
           },
           "value": {
             "values": [
               {
                 "kind": "Whitespace",
+                "offset": 98,
                 "len": 1
               },
               {
@@ -218,6 +241,7 @@ expression: result.output.unwrap()
                 ],
                 "close_paren": {
                   "kind": "RightParen",
+                  "offset": 109,
                   "len": 1
                 }
               }
@@ -226,6 +250,7 @@ expression: result.output.unwrap()
           "important": null,
           "semicolon": {
             "kind": "Semicolon",
+            "offset": 110,
             "len": 1
           }
         },
@@ -238,12 +263,14 @@ expression: result.output.unwrap()
           },
           "colon": {
             "kind": "Colon",
+            "offset": 123,
             "len": 1
           },
           "value": {
             "values": [
               {
                 "kind": "Whitespace",
+                "offset": 124,
                 "len": 1
               },
               {
@@ -256,6 +283,7 @@ expression: result.output.unwrap()
           "important": null,
           "semicolon": {
             "kind": "Semicolon",
+            "offset": 147,
             "len": 1
           }
         },
@@ -268,12 +296,14 @@ expression: result.output.unwrap()
           },
           "colon": {
             "kind": "Colon",
+            "offset": 159,
             "len": 1
           },
           "value": {
             "values": [
               {
                 "kind": "Whitespace",
+                "offset": 160,
                 "len": 1
               },
               {
@@ -286,6 +316,7 @@ expression: result.output.unwrap()
           "important": null,
           "semicolon": {
             "kind": "Semicolon",
+            "offset": 183,
             "len": 1
           }
         },
@@ -298,12 +329,14 @@ expression: result.output.unwrap()
           },
           "colon": {
             "kind": "Colon",
+            "offset": 202,
             "len": 1
           },
           "value": {
             "values": [
               {
                 "kind": "Whitespace",
+                "offset": 203,
                 "len": 1
               },
               {
@@ -317,30 +350,37 @@ expression: result.output.unwrap()
                   "values": [
                     {
                       "kind": "Number",
+                      "offset": 205,
                       "len": 1
                     },
                     {
                       "kind": "Comma",
+                      "offset": 206,
                       "len": 1
                     },
                     {
                       "kind": "Whitespace",
+                      "offset": 207,
                       "len": 1
                     },
                     {
                       "kind": "Number",
+                      "offset": 208,
                       "len": 1
                     },
                     {
                       "kind": "Comma",
+                      "offset": 209,
                       "len": 1
                     },
                     {
                       "kind": "Whitespace",
+                      "offset": 210,
                       "len": 1
                     },
                     {
                       "kind": "Number",
+                      "offset": 211,
                       "len": 1
                     }
                   ]
@@ -355,6 +395,7 @@ expression: result.output.unwrap()
           "important": null,
           "semicolon": {
             "kind": "Semicolon",
+            "offset": 213,
             "len": 1
           }
         },
@@ -367,12 +408,14 @@ expression: result.output.unwrap()
           },
           "colon": {
             "kind": "Colon",
+            "offset": 230,
             "len": 1
           },
           "value": {
             "values": [
               {
                 "kind": "Whitespace",
+                "offset": 231,
                 "len": 1
               },
               {
@@ -386,30 +429,37 @@ expression: result.output.unwrap()
                   "values": [
                     {
                       "kind": "Number",
+                      "offset": 233,
                       "len": 1
                     },
                     {
                       "kind": "Comma",
+                      "offset": 234,
                       "len": 1
                     },
                     {
                       "kind": "Whitespace",
+                      "offset": 235,
                       "len": 1
                     },
                     {
                       "kind": "Number",
+                      "offset": 236,
                       "len": 1
                     },
                     {
                       "kind": "Comma",
+                      "offset": 237,
                       "len": 1
                     },
                     {
                       "kind": "Whitespace",
+                      "offset": 238,
                       "len": 1
                     },
                     {
                       "kind": "Number",
+                      "offset": 239,
                       "len": 1
                     }
                   ]
@@ -424,6 +474,7 @@ expression: result.output.unwrap()
           "important": null,
           "semicolon": {
             "kind": "Semicolon",
+            "offset": 241,
             "len": 1
           }
         },
@@ -436,6 +487,7 @@ expression: result.output.unwrap()
           },
           "colon": {
             "kind": "Colon",
+            "offset": 254,
             "len": 1
           },
           "value": {
@@ -444,6 +496,7 @@ expression: result.output.unwrap()
           "important": null,
           "semicolon": {
             "kind": "Semicolon",
+            "offset": 256,
             "len": 1
           }
         },
@@ -456,6 +509,7 @@ expression: result.output.unwrap()
           },
           "colon": {
             "kind": "Colon",
+            "offset": 268,
             "len": 1
           },
           "value": {
@@ -464,6 +518,7 @@ expression: result.output.unwrap()
           "important": null,
           "semicolon": {
             "kind": "Semicolon",
+            "offset": 274,
             "len": 1
           }
         },
@@ -476,16 +531,19 @@ expression: result.output.unwrap()
           },
           "colon": {
             "kind": "Colon",
+            "offset": 286,
             "len": 1
           },
           "value": {
             "values": [
               {
                 "kind": "Whitespace",
+                "offset": 287,
                 "len": 1
               },
               {
                 "kind": "Delim",
+                "offset": 288,
                 "len": 1
               },
               {
@@ -498,6 +556,7 @@ expression: result.output.unwrap()
           "important": null,
           "semicolon": {
             "kind": "Semicolon",
+            "offset": 298,
             "len": 1
           }
         },
@@ -510,16 +569,19 @@ expression: result.output.unwrap()
           },
           "colon": {
             "kind": "Colon",
+            "offset": 310,
             "len": 1
           },
           "value": {
             "values": [
               {
                 "kind": "Whitespace",
+                "offset": 315,
                 "len": 1
               },
               {
                 "kind": "Delim",
+                "offset": 316,
                 "len": 1
               },
               {
@@ -532,6 +594,7 @@ expression: result.output.unwrap()
           "important": null,
           "semicolon": {
             "kind": "Semicolon",
+            "offset": 326,
             "len": 1
           }
         },
@@ -544,6 +607,7 @@ expression: result.output.unwrap()
           },
           "colon": {
             "kind": "Colon",
+            "offset": 338,
             "len": 1
           },
           "value": {
@@ -552,6 +616,7 @@ expression: result.output.unwrap()
           "important": null,
           "semicolon": {
             "kind": "Semicolon",
+            "offset": 344,
             "len": 1
           }
         },
@@ -564,12 +629,14 @@ expression: result.output.unwrap()
           },
           "colon": {
             "kind": "Colon",
+            "offset": 364,
             "len": 1
           },
           "value": {
             "values": [
               {
                 "kind": "Whitespace",
+                "offset": 365,
                 "len": 1
               },
               {
@@ -583,30 +650,37 @@ expression: result.output.unwrap()
                   "values": [
                     {
                       "kind": "Number",
+                      "offset": 367,
                       "len": 1
                     },
                     {
                       "kind": "Comma",
+                      "offset": 368,
                       "len": 1
                     },
                     {
                       "kind": "Whitespace",
+                      "offset": 369,
                       "len": 1
                     },
                     {
                       "kind": "Number",
+                      "offset": 370,
                       "len": 1
                     },
                     {
                       "kind": "Comma",
+                      "offset": 371,
                       "len": 1
                     },
                     {
                       "kind": "Whitespace",
+                      "offset": 372,
                       "len": 1
                     },
                     {
                       "kind": "Number",
+                      "offset": 373,
                       "len": 1
                     }
                   ]
@@ -621,6 +695,7 @@ expression: result.output.unwrap()
           "important": null,
           "semicolon": {
             "kind": "Semicolon",
+            "offset": 375,
             "len": 1
           }
         },
@@ -633,12 +708,14 @@ expression: result.output.unwrap()
           },
           "colon": {
             "kind": "Colon",
+            "offset": 385,
             "len": 1
           },
           "value": {
             "values": [
               {
                 "kind": "Whitespace",
+                "offset": 386,
                 "len": 1
               },
               {
@@ -652,14 +729,17 @@ expression: result.output.unwrap()
                   "values": [
                     {
                       "kind": "Number",
+                      "offset": 388,
                       "len": 1
                     },
                     {
                       "kind": "Comma",
+                      "offset": 389,
                       "len": 1
                     },
                     {
                       "kind": "Whitespace",
+                      "offset": 390,
                       "len": 1
                     },
                     {
@@ -669,10 +749,12 @@ expression: result.output.unwrap()
                     },
                     {
                       "kind": "Comma",
+                      "offset": 394,
                       "len": 1
                     },
                     {
                       "kind": "Whitespace",
+                      "offset": 395,
                       "len": 1
                     },
                     {
@@ -691,10 +773,12 @@ expression: result.output.unwrap()
                           },
                           {
                             "kind": "Colon",
+                            "offset": 404,
                             "len": 1
                           },
                           {
                             "kind": "Whitespace",
+                            "offset": 405,
                             "len": 1
                           },
                           {
@@ -713,10 +797,12 @@ expression: result.output.unwrap()
                                 },
                                 {
                                   "kind": "Colon",
+                                  "offset": 410,
                                   "len": 1
                                 },
                                 {
                                   "kind": "Number",
+                                  "offset": 411,
                                   "len": 1
                                 }
                               ]
@@ -735,10 +821,12 @@ expression: result.output.unwrap()
                     },
                     {
                       "kind": "Comma",
+                      "offset": 414,
                       "len": 1
                     },
                     {
                       "kind": "Whitespace",
+                      "offset": 415,
                       "len": 1
                     },
                     {
@@ -752,6 +840,7 @@ expression: result.output.unwrap()
                         "values": [
                           {
                             "kind": "Number",
+                            "offset": 417,
                             "len": 1
                           }
                         ]
@@ -773,6 +862,7 @@ expression: result.output.unwrap()
           "important": null,
           "semicolon": {
             "kind": "Semicolon",
+            "offset": 420,
             "len": 1
           }
         },
@@ -785,12 +875,14 @@ expression: result.output.unwrap()
           },
           "colon": {
             "kind": "Colon",
+            "offset": 436,
             "len": 1
           },
           "value": {
             "values": [
               {
                 "kind": "Whitespace",
+                "offset": 437,
                 "len": 1
               },
               {
@@ -809,11 +901,13 @@ expression: result.output.unwrap()
                 ],
                 "close_paren": {
                   "kind": "RightParen",
+                  "offset": 451,
                   "len": 1
                 }
               },
               {
                 "kind": "Whitespace",
+                "offset": 452,
                 "len": 1
               },
               {
@@ -827,6 +921,7 @@ expression: result.output.unwrap()
                   "values": [
                     {
                       "kind": "Whitespace",
+                      "offset": 454,
                       "len": 1
                     },
                     {
@@ -836,6 +931,7 @@ expression: result.output.unwrap()
                     },
                     {
                       "kind": "Delim",
+                      "offset": 462,
                       "len": 1
                     },
                     {
@@ -854,6 +950,7 @@ expression: result.output.unwrap()
                       ],
                       "close_paren": {
                         "kind": "RightParen",
+                        "offset": 471,
                         "len": 1
                       }
                     }
@@ -869,6 +966,7 @@ expression: result.output.unwrap()
           "important": null,
           "semicolon": {
             "kind": "Semicolon",
+            "offset": 474,
             "len": 1
           }
         }
@@ -876,6 +974,7 @@ expression: result.output.unwrap()
       "rules": [],
       "close": {
         "kind": "RightCurly",
+        "offset": 476,
         "len": 1
       }
     },
@@ -890,6 +989,7 @@ expression: result.output.unwrap()
                 "active": [
                   {
                     "kind": "Colon",
+                    "offset": 479,
                     "len": 1
                   },
                   {
@@ -907,6 +1007,7 @@ expression: result.output.unwrap()
       "type": "style-declaration",
       "open": {
         "kind": "LeftCurly",
+        "offset": 484,
         "len": 1
       },
       "declarations": [
@@ -919,12 +1020,14 @@ expression: result.output.unwrap()
           },
           "colon": {
             "kind": "Colon",
+            "offset": 488,
             "len": 1
           },
           "value": {
             "values": [
               {
                 "kind": "Number",
+                "offset": 489,
                 "len": 1
               }
             ]
@@ -936,6 +1039,7 @@ expression: result.output.unwrap()
       "rules": [],
       "close": {
         "kind": "RightCurly",
+        "offset": 490,
         "len": 1
       }
     },
@@ -950,6 +1054,7 @@ expression: result.output.unwrap()
                 "type": "Class",
                 "dot": {
                   "kind": "Delim",
+                  "offset": 493,
                   "len": 1
                 },
                 "name": {
@@ -966,6 +1071,7 @@ expression: result.output.unwrap()
       "type": "style-declaration",
       "open": {
         "kind": "LeftCurly",
+        "offset": 509,
         "len": 1
       },
       "declarations": [
@@ -978,6 +1084,7 @@ expression: result.output.unwrap()
           },
           "colon": {
             "kind": "Colon",
+            "offset": 521,
             "len": 1
           },
           "value": {
@@ -990,6 +1097,7 @@ expression: result.output.unwrap()
       "rules": [],
       "close": {
         "kind": "RightCurly",
+        "offset": 527,
         "len": 1
       }
     },
@@ -1004,6 +1112,7 @@ expression: result.output.unwrap()
                 "type": "Class",
                 "dot": {
                   "kind": "Delim",
+                  "offset": 530,
                   "len": 1
                 },
                 "name": {
@@ -1020,6 +1129,7 @@ expression: result.output.unwrap()
       "type": "style-declaration",
       "open": {
         "kind": "LeftCurly",
+        "offset": 536,
         "len": 1
       },
       "declarations": [
@@ -1032,6 +1142,7 @@ expression: result.output.unwrap()
           },
           "colon": {
             "kind": "Colon",
+            "offset": 540,
             "len": 1
           },
           "value": {
@@ -1044,6 +1155,7 @@ expression: result.output.unwrap()
       "rules": [],
       "close": {
         "kind": "RightCurly",
+        "offset": 542,
         "len": 1
       }
     }

@@ -28,6 +28,7 @@ expression: result.output.unwrap()
               },
               {
                 "kind": "RightParen",
+                "offset": 57,
                 "len": 1
               }
             ]
@@ -39,11 +40,13 @@ expression: result.output.unwrap()
         "type": "DocumentBlock",
         "open": {
           "kind": "LeftCurly",
+          "offset": 67,
           "len": 1
         },
         "rules": [],
         "close": {
           "kind": "RightCurly",
+          "offset": 68,
           "len": 1
         }
       }

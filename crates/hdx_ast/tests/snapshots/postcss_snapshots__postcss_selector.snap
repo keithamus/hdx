@@ -27,6 +27,7 @@ expression: result.output.unwrap()
               "value": {
                 "descendant": {
                   "kind": "Whitespace",
+                  "offset": 11,
                   "len": 1
                 }
               }
@@ -50,12 +51,14 @@ expression: result.output.unwrap()
       "type": "style-declaration",
       "open": {
         "kind": "LeftCurly",
+        "offset": 14,
         "len": 1
       },
       "declarations": [],
       "rules": [],
       "close": {
         "kind": "RightCurly",
+        "offset": 15,
         "len": 1
       }
     },
@@ -65,6 +68,7 @@ expression: result.output.unwrap()
         "values": [
           {
             "kind": "Whitespace",
+            "offset": 16,
             "len": 2
           },
           {
@@ -84,12 +88,14 @@ expression: result.output.unwrap()
         "start": 30,
         "open_curly": {
           "kind": "LeftCurly",
+          "offset": 31,
           "len": 1
         },
         "declarations": [],
         "rules": [],
         "close_curly": {
           "kind": "RightCurly",
+          "offset": 32,
           "len": 1
         }
       }

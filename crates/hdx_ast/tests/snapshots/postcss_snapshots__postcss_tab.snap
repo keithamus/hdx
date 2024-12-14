@@ -29,6 +29,7 @@ expression: result.output.unwrap()
       "type": "style-declaration",
       "open": {
         "kind": "LeftCurly",
+        "offset": 2,
         "len": 1
       },
       "declarations": [
@@ -41,6 +42,7 @@ expression: result.output.unwrap()
           },
           "colon": {
             "kind": "Colon",
+            "offset": 10,
             "len": 1
           },
           "value": {
@@ -59,6 +61,7 @@ expression: result.output.unwrap()
       "rules": [],
       "close": {
         "kind": "RightCurly",
+        "offset": 18,
         "len": 1
       }
     }

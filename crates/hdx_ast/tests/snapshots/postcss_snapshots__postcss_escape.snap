@@ -29,6 +29,7 @@ expression: result.output.unwrap()
       "type": "style-declaration",
       "open": {
         "kind": "LeftCurly",
+        "offset": 2,
         "len": 1
       },
       "declarations": [
@@ -41,12 +42,14 @@ expression: result.output.unwrap()
           },
           "colon": {
             "kind": "Colon",
+            "offset": 18,
             "len": 1
           },
           "value": {
             "values": [
               {
                 "kind": "Whitespace",
+                "offset": 19,
                 "len": 1
               },
               {
@@ -65,6 +68,7 @@ expression: result.output.unwrap()
                 ],
                 "close_paren": {
                   "kind": "RightParen",
+                  "offset": 32,
                   "len": 1
                 }
               }
@@ -73,6 +77,7 @@ expression: result.output.unwrap()
           "important": null,
           "semicolon": {
             "kind": "Semicolon",
+            "offset": 33,
             "len": 1
           }
         },
@@ -85,12 +90,14 @@ expression: result.output.unwrap()
           },
           "colon": {
             "kind": "Colon",
+            "offset": 49,
             "len": 1
           },
           "value": {
             "values": [
               {
                 "kind": "Whitespace",
+                "offset": 50,
                 "len": 1
               },
               {
@@ -103,6 +110,7 @@ expression: result.output.unwrap()
           "important": null,
           "semicolon": {
             "kind": "Semicolon",
+            "offset": 59,
             "len": 1
           }
         },
@@ -115,12 +123,14 @@ expression: result.output.unwrap()
           },
           "colon": {
             "kind": "Colon",
+            "offset": 75,
             "len": 1
           },
           "value": {
             "values": [
               {
                 "kind": "Whitespace",
+                "offset": 76,
                 "len": 1
               },
               {
@@ -133,6 +143,7 @@ expression: result.output.unwrap()
           "important": null,
           "semicolon": {
             "kind": "Semicolon",
+            "offset": 85,
             "len": 1
           }
         },
@@ -145,12 +156,14 @@ expression: result.output.unwrap()
           },
           "colon": {
             "kind": "Colon",
+            "offset": 101,
             "len": 1
           },
           "value": {
             "values": [
               {
                 "kind": "Whitespace",
+                "offset": 102,
                 "len": 1
               },
               {
@@ -163,6 +176,7 @@ expression: result.output.unwrap()
           "important": null,
           "semicolon": {
             "kind": "Semicolon",
+            "offset": 106,
             "len": 1
           }
         }
@@ -170,6 +184,7 @@ expression: result.output.unwrap()
       "rules": [],
       "close": {
         "kind": "RightCurly",
+        "offset": 108,
         "len": 1
       }
     },
@@ -185,6 +200,7 @@ expression: result.output.unwrap()
                 "value": {
                   "colon": {
                     "kind": "Colon",
+                    "offset": 111,
                     "len": 1
                   },
                   "function": {
@@ -201,6 +217,7 @@ expression: result.output.unwrap()
                             "type": "Attribute",
                             "open": {
                               "kind": "LeftSquare",
+                              "offset": 116,
                               "len": 1
                             },
                             "namespace_prefix": null,
@@ -213,6 +230,7 @@ expression: result.output.unwrap()
                               "type": "Exact",
                               "value": {
                                 "kind": "Delim",
+                                "offset": 120,
                                 "len": 1
                               }
                             },
@@ -227,6 +245,7 @@ expression: result.output.unwrap()
                             "modifier": null,
                             "close": {
                               "kind": "RightSquare",
+                              "offset": 124,
                               "len": 1
                             }
                           }
@@ -237,6 +256,7 @@ expression: result.output.unwrap()
                   ],
                   "close": {
                     "kind": "RightParen",
+                    "offset": 125,
                     "len": 1
                   }
                 }
@@ -249,12 +269,14 @@ expression: result.output.unwrap()
       "type": "style-declaration",
       "open": {
         "kind": "LeftCurly",
+        "offset": 127,
         "len": 1
       },
       "declarations": [],
       "rules": [],
       "close": {
         "kind": "RightCurly",
+        "offset": 129,
         "len": 1
       }
     },
@@ -270,6 +292,7 @@ expression: result.output.unwrap()
                 "value": {
                   "colon": {
                     "kind": "Colon",
+                    "offset": 131,
                     "len": 1
                   },
                   "function": {
@@ -298,6 +321,7 @@ expression: result.output.unwrap()
                   ],
                   "close": {
                     "kind": "RightParen",
+                    "offset": 144,
                     "len": 1
                   }
                 }
@@ -310,12 +334,14 @@ expression: result.output.unwrap()
       "type": "style-declaration",
       "open": {
         "kind": "LeftCurly",
+        "offset": 146,
         "len": 1
       },
       "declarations": [],
       "rules": [],
       "close": {
         "kind": "RightCurly",
+        "offset": 148,
         "len": 1
       }
     },
@@ -325,10 +351,12 @@ expression: result.output.unwrap()
         "values": [
           {
             "kind": "Whitespace",
+            "offset": 149,
             "len": 1
           },
           {
             "kind": "Colon",
+            "offset": 150,
             "len": 1
           },
           {
@@ -341,6 +369,7 @@ expression: result.output.unwrap()
             "values": [
               {
                 "kind": "Colon",
+                "offset": 155,
                 "len": 1
               },
               {
@@ -359,6 +388,7 @@ expression: result.output.unwrap()
                   },
                   {
                     "kind": "Whitespace",
+                    "offset": 168,
                     "len": 1
                   },
                   {
@@ -368,6 +398,7 @@ expression: result.output.unwrap()
                   },
                   {
                     "kind": "Whitespace",
+                    "offset": 171,
                     "len": 1
                   },
                   {
@@ -386,6 +417,7 @@ expression: result.output.unwrap()
                         },
                         {
                           "kind": "Delim",
+                          "offset": 176,
                           "len": 1
                         },
                         {
@@ -403,12 +435,14 @@ expression: result.output.unwrap()
                 ],
                 "close_paren": {
                   "kind": "RightParen",
+                  "offset": 181,
                   "len": 1
                 }
               }
             ],
             "close_paren": {
               "kind": "RightParen",
+              "offset": 182,
               "len": 1
             }
           }
@@ -419,12 +453,14 @@ expression: result.output.unwrap()
         "start": 183,
         "open_curly": {
           "kind": "LeftCurly",
+          "offset": 184,
           "len": 1
         },
         "declarations": [],
         "rules": [],
         "close_curly": {
           "kind": "RightCurly",
+          "offset": 186,
           "len": 1
         }
       }
@@ -440,6 +476,7 @@ expression: result.output.unwrap()
                 "type": "Attribute",
                 "open": {
                   "kind": "LeftSquare",
+                  "offset": 188,
                   "len": 1
                 },
                 "namespace_prefix": null,
@@ -452,6 +489,7 @@ expression: result.output.unwrap()
                   "type": "Exact",
                   "value": {
                     "kind": "Delim",
+                    "offset": 192,
                     "len": 1
                   }
                 },
@@ -466,6 +504,7 @@ expression: result.output.unwrap()
                 "modifier": null,
                 "close": {
                   "kind": "RightSquare",
+                  "offset": 195,
                   "len": 1
                 }
               }
@@ -477,12 +516,14 @@ expression: result.output.unwrap()
       "type": "style-declaration",
       "open": {
         "kind": "LeftCurly",
+        "offset": 197,
         "len": 1
       },
       "declarations": [],
       "rules": [],
       "close": {
         "kind": "RightCurly",
+        "offset": 199,
         "len": 1
       }
     },
@@ -497,6 +538,7 @@ expression: result.output.unwrap()
                 "type": "Attribute",
                 "open": {
                   "kind": "LeftSquare",
+                  "offset": 201,
                   "len": 1
                 },
                 "namespace_prefix": null,
@@ -509,6 +551,7 @@ expression: result.output.unwrap()
                   "type": "Exact",
                   "value": {
                     "kind": "Delim",
+                    "offset": 205,
                     "len": 1
                   }
                 },
@@ -523,6 +566,7 @@ expression: result.output.unwrap()
                 "modifier": null,
                 "close": {
                   "kind": "RightSquare",
+                  "offset": 208,
                   "len": 1
                 }
               }
@@ -534,12 +578,14 @@ expression: result.output.unwrap()
       "type": "style-declaration",
       "open": {
         "kind": "LeftCurly",
+        "offset": 210,
         "len": 1
       },
       "declarations": [],
       "rules": [],
       "close": {
         "kind": "RightCurly",
+        "offset": 212,
         "len": 1
       }
     },
@@ -554,6 +600,7 @@ expression: result.output.unwrap()
                 "type": "Attribute",
                 "open": {
                   "kind": "LeftSquare",
+                  "offset": 214,
                   "len": 1
                 },
                 "namespace_prefix": null,
@@ -566,6 +613,7 @@ expression: result.output.unwrap()
                   "type": "Exact",
                   "value": {
                     "kind": "Delim",
+                    "offset": 218,
                     "len": 1
                   }
                 },
@@ -580,6 +628,7 @@ expression: result.output.unwrap()
                 "modifier": null,
                 "close": {
                   "kind": "RightSquare",
+                  "offset": 221,
                   "len": 1
                 }
               }
@@ -591,12 +640,14 @@ expression: result.output.unwrap()
       "type": "style-declaration",
       "open": {
         "kind": "LeftCurly",
+        "offset": 223,
         "len": 1
       },
       "declarations": [],
       "rules": [],
       "close": {
         "kind": "RightCurly",
+        "offset": 225,
         "len": 1
       }
     },
@@ -611,6 +662,7 @@ expression: result.output.unwrap()
                 "type": "Attribute",
                 "open": {
                   "kind": "LeftSquare",
+                  "offset": 227,
                   "len": 1
                 },
                 "namespace_prefix": null,
@@ -623,6 +675,7 @@ expression: result.output.unwrap()
                   "type": "Exact",
                   "value": {
                     "kind": "Delim",
+                    "offset": 231,
                     "len": 1
                   }
                 },
@@ -637,6 +690,7 @@ expression: result.output.unwrap()
                 "modifier": null,
                 "close": {
                   "kind": "RightSquare",
+                  "offset": 252,
                   "len": 1
                 }
               }
@@ -648,12 +702,14 @@ expression: result.output.unwrap()
       "type": "style-declaration",
       "open": {
         "kind": "LeftCurly",
+        "offset": 254,
         "len": 1
       },
       "declarations": [],
       "rules": [],
       "close": {
         "kind": "RightCurly",
+        "offset": 256,
         "len": 1
       }
     },
@@ -679,12 +735,14 @@ expression: result.output.unwrap()
       "type": "style-declaration",
       "open": {
         "kind": "LeftCurly",
+        "offset": 266,
         "len": 1
       },
       "declarations": [],
       "rules": [],
       "close": {
         "kind": "RightCurly",
+        "offset": 268,
         "len": 1
       }
     },
@@ -710,6 +768,7 @@ expression: result.output.unwrap()
       "type": "style-declaration",
       "open": {
         "kind": "LeftCurly",
+        "offset": 275,
         "len": 1
       },
       "declarations": [
@@ -722,12 +781,14 @@ expression: result.output.unwrap()
           },
           "colon": {
             "kind": "Colon",
+            "offset": 286,
             "len": 1
           },
           "value": {
             "values": [
               {
                 "kind": "Whitespace",
+                "offset": 287,
                 "len": 1
               },
               {
@@ -740,6 +801,7 @@ expression: result.output.unwrap()
           "important": null,
           "semicolon": {
             "kind": "Semicolon",
+            "offset": 290,
             "len": 1
           }
         }
@@ -747,6 +809,7 @@ expression: result.output.unwrap()
       "rules": [],
       "close": {
         "kind": "RightCurly",
+        "offset": 292,
         "len": 1
       }
     },
@@ -756,6 +819,7 @@ expression: result.output.unwrap()
         "values": [
           {
             "kind": "Whitespace",
+            "offset": 293,
             "len": 2
           },
           {
@@ -774,10 +838,12 @@ expression: result.output.unwrap()
                 },
                 {
                   "kind": "Delim",
+                  "offset": 300,
                   "len": 1
                 },
                 {
                   "kind": "Semicolon",
+                  "offset": 301,
                   "len": 1
                 }
               ]
@@ -794,12 +860,14 @@ expression: result.output.unwrap()
         "start": 303,
         "open_curly": {
           "kind": "LeftCurly",
+          "offset": 304,
           "len": 1
         },
         "declarations": [],
         "rules": [],
         "close_curly": {
           "kind": "RightCurly",
+          "offset": 306,
           "len": 1
         }
       }
@@ -815,6 +883,7 @@ expression: result.output.unwrap()
                 "type": "Class",
                 "dot": {
                   "kind": "Delim",
+                  "offset": 309,
                   "len": 1
                 },
                 "name": {
@@ -831,6 +900,7 @@ expression: result.output.unwrap()
       "type": "style-declaration",
       "open": {
         "kind": "LeftCurly",
+        "offset": 315,
         "len": 1
       },
       "declarations": [
@@ -843,12 +913,14 @@ expression: result.output.unwrap()
           },
           "colon": {
             "kind": "Colon",
+            "offset": 329,
             "len": 1
           },
           "value": {
             "values": [
               {
                 "kind": "Whitespace",
+                "offset": 330,
                 "len": 1
               },
               {
@@ -865,6 +937,7 @@ expression: result.output.unwrap()
       "rules": [],
       "close": {
         "kind": "RightCurly",
+        "offset": 335,
         "len": 1
       }
     }

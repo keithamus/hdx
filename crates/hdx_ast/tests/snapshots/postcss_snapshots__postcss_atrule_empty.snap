@@ -13,6 +13,7 @@ expression: result.output.unwrap()
       },
       "space": {
         "kind": "Whitespace",
+        "offset": 8,
         "len": 1
       },
       "string": {
@@ -22,6 +23,7 @@ expression: result.output.unwrap()
       },
       "semicolon": {
         "kind": "Semicolon",
+        "offset": 16,
         "len": 1
       }
     }
