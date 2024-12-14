@@ -831,8 +831,8 @@ impl Def {
 		};
 		quote! {
 			#[automatically_derived]
-			impl<'a> ::hdx_parser::ToCursors<'a> for #ident #gen {
-				fn to_cursors(&self, s: &mut ::hdx_parser::CursorStream<'a>) {
+			impl #gen ::hdx_parser::ToCursors for #ident #gen {
+				fn to_cursors(&self, s: &mut impl ::hdx_parser::CursorSink) {
 					#steps
 				}
 			}
