@@ -107,8 +107,6 @@ jobs:
           cache: "npm"
       - name: Download Artifacts
         uses: actions/download-artifact@v4
-        with:
-          name: binaries
       - name: Unzip
         uses: montudor/action-zip@v1
         with:
