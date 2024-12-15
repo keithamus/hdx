@@ -104,7 +104,7 @@ impl<'a> ToCursors for Unknown<'a> {
 #[visit]
 pub struct Property<'a> {
 	pub name: T![Ident],
-	pub colon: Option<T![:]>,
+	pub colon: T![:],
 	pub value: StyleValue<'a>,
 	pub important: Option<Important>,
 	pub semicolon: Option<T![;]>,
@@ -124,9 +124,7 @@ impl<'a> Declaration<'a> for Property<'a> {
 impl<'a> ToCursors for Property<'a> {
 	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.name.into());
-		if let Some(colon) = self.colon {
-			s.append(colon.into());
-		}
+		s.append(self.colon.into());
 		ToCursors::to_cursors(&self.value, s);
 		if let Some(important) = &self.important {
 			ToCursors::to_cursors(important, s);

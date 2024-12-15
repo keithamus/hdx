@@ -52,13 +52,13 @@ pub trait Declaration<'a>: Sized + Parse<'a> {
 
 	fn parse_declaration(
 		p: &mut Parser<'a>,
-	) -> Result<(T![Ident], Option<T![:]>, Self::DeclarationValue, Option<Important>, Option<T![;]>)> {
+	) -> Result<(T![Ident], T![:], Self::DeclarationValue, Option<Important>, Option<T![;]>)> {
 		let name = p.parse::<T![Ident]>()?;
 		let c: Cursor = name.into();
 		if !Self::valid_property(p, c) {
 			Err(diagnostics::UnknownDeclaration(c.into()))?;
 		}
-		let colon = p.parse_if_peek::<T![:]>()?;
+		let colon = p.parse::<T![:]>()?;
 		let value = Self::DeclarationValue::parse_declaration_value(c, p)?;
 		let important = p.parse_if_peek::<Important>()?;
 		let semi = p.parse_if_peek::<T![;]>()?;

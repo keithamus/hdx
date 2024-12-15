@@ -91,7 +91,7 @@ impl<'a> ToCursors for PropertyRuleBlock<'a> {
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct PropertyRuleProperty<'a> {
 	pub name: T![Ident],
-	pub colon: Option<T![:]>,
+	pub colon: T![:],
 	pub value: PropertyRuleStyleValue<'a>,
 	pub semicolon: Option<T![;]>,
 }
@@ -114,9 +114,7 @@ impl<'a> Declaration<'a> for PropertyRuleProperty<'a> {
 impl<'a> ToCursors for PropertyRuleProperty<'a> {
 	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.name.into());
-		if let Some(colon) = self.colon {
-			s.append(colon.into());
-		}
+		s.append(self.colon.into());
 		ToCursors::to_cursors(&self.value, s);
 		if let Some(semicolon) = self.semicolon {
 			s.append(semicolon.into());

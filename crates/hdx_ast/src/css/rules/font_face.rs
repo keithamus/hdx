@@ -78,7 +78,7 @@ impl<'a> ToCursors for FontFaceDeclaration<'a> {
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", rename = "property"))]
 pub struct FontProperty<'a> {
 	pub name: T![Ident],
-	pub colon: Option<T![:]>,
+	pub colon: T![:],
 	pub value: StyleValue<'a>,
 	pub important: Option<Important>,
 	pub semicolon: Option<T![;]>,
@@ -117,9 +117,7 @@ impl<'a> Parse<'a> for FontProperty<'a> {
 impl<'a> ToCursors for FontProperty<'a> {
 	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.name.into());
-		if let Some(colon) = self.colon {
-			s.append(colon.into());
-		}
+		s.append(self.colon.into());
 		ToCursors::to_cursors(&self.value, s);
 		if let Some(important) = &self.important {
 			ToCursors::to_cursors(important, s);
