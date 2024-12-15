@@ -203,7 +203,6 @@ pub enum HtmlTag {
 	Dt(T![Ident]),
 	Em(T![Ident]),
 	Embed(T![Ident]),
-	Fencedframe(T![Ident]),
 	Fieldset(T![Ident]),
 	Figcaption(T![Ident]),
 	Figure(T![Ident]),
@@ -255,7 +254,6 @@ pub enum HtmlTag {
 	Param(T![Ident]),
 	Picture(T![Ident]),
 	Plaintext(T![Ident]),
-	Portal(T![Ident]),
 	Pre(T![Ident]),
 	Progress(T![Ident]),
 	Q(T![Ident]),
@@ -575,7 +573,6 @@ impl From<HtmlTag> for Cursor {
 			HtmlTag::Dt(c) => c.into(),
 			HtmlTag::Em(c) => c.into(),
 			HtmlTag::Embed(c) => c.into(),
-			HtmlTag::Fencedframe(c) => c.into(),
 			HtmlTag::Fieldset(c) => c.into(),
 			HtmlTag::Figcaption(c) => c.into(),
 			HtmlTag::Figure(c) => c.into(),
@@ -627,7 +624,6 @@ impl From<HtmlTag> for Cursor {
 			HtmlTag::Param(c) => c.into(),
 			HtmlTag::Picture(c) => c.into(),
 			HtmlTag::Plaintext(c) => c.into(),
-			HtmlTag::Portal(c) => c.into(),
 			HtmlTag::Pre(c) => c.into(),
 			HtmlTag::Progress(c) => c.into(),
 			HtmlTag::Q(c) => c.into(),
@@ -731,7 +727,6 @@ impl<'a> Is<'a> for HtmlNonConformingTag {
 			atom!("acronym")
 				| atom!("big")
 				| atom!("dir")
-				| atom!("fencedframe")
 				| atom!("font")
 				| atom!("frame")
 				| atom!("frameset")
@@ -742,7 +737,6 @@ impl<'a> Is<'a> for HtmlNonConformingTag {
 				| atom!("noframes")
 				| atom!("param")
 				| atom!("plaintext")
-				| atom!("portal")
 				| atom!("rb")
 				| atom!("rtc")
 				| atom!("strike")
@@ -1356,7 +1350,7 @@ impl<'a> Is<'a> for MathmlTag {
 			atom!("abs")
 				| atom!("and")
 				| atom!("annotation")
-				| atom!("annotationxml")
+				| atom!("annotation-xml")
 				| atom!("apply")
 				| atom!("approx")
 				| atom!("arg")
@@ -1521,7 +1515,7 @@ impl<'a> Build<'a> for MathmlTag {
 			atom!("abs") => Self::Abs(<T![Ident]>::build(p, c)),
 			atom!("and") => Self::And(<T![Ident]>::build(p, c)),
 			atom!("annotation") => Self::Annotation(<T![Ident]>::build(p, c)),
-			atom!("annotationxml") => Self::AnnotationXml(<T![Ident]>::build(p, c)),
+			atom!("annotation-xml") => Self::AnnotationXml(<T![Ident]>::build(p, c)),
 			atom!("apply") => Self::Apply(<T![Ident]>::build(p, c)),
 			atom!("approx") => Self::Approx(<T![Ident]>::build(p, c)),
 			atom!("arg") => Self::Arg(<T![Ident]>::build(p, c)),
