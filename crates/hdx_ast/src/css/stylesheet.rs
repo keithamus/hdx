@@ -133,7 +133,6 @@ macro_rules! rule {
 		// https://drafts.csswg.org/cssom-1/#the-cssrule-interface
 		#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 		#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(untagged))]
-		#[visit]
 		pub enum Rule<'a> {
 			$(
 				$name(rules::$name$(<$a>)?),
@@ -200,7 +199,6 @@ impl<'a> ToCursors for Rule<'a> {
 
 impl<'a> Visitable<'a> for Rule<'a> {
 	fn accept<V: Visit<'a>>(&self, v: &mut V) {
-		v.visit_rule(self);
 		macro_rules! match_rule {
 				( $(
 					$name: ident$(<$a: lifetime>)?: $atom: pat,
