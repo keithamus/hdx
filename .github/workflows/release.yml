@@ -61,24 +61,18 @@ jobs:
         env:
           CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER: aarch64-linux-gnu-gcc
 
-      # The binary is zipped to fix permission loss https://github.com/actions/upload-artifact#permission-loss
       - name: Archive Binary
         if: runner.os == 'Windows'
         shell: bash
         run: |
           BIN_NAME=hdx-${{ matrix.code-target }}
           mv target/${{ matrix.target }}/release/hdx.exe $BIN_NAME.exe
-          7z a $BIN_NAME.zip $BIN_NAME.exe
-          ls *.zip
 
-      # The binary is zipped to fix permission loss https://github.com/actions/upload-artifact#permission-loss
       - name: Archive Binary
         if: runner.os != 'Windows'
         run: |
           BIN_NAME=hdx-${{ matrix.code-target }}
           mv target/${{ matrix.target }}/release/hdx $BIN_NAME
-          tar czf $BIN_NAME.tar.gz $BIN_NAME
-          ls  *.tar.gz
 
       - name: Upload Binary
         uses: actions/upload-artifact@v4
@@ -86,8 +80,7 @@ jobs:
           if-no-files-found: error
           name: binary-${{ matrix.code-target }}
           path: |
-            *.zip
-            *.tar.gz
+            $BIN_NAME*
 
   deploy:
     env:
@@ -107,12 +100,8 @@ jobs:
           cache: "npm"
       - name: Download Artifacts
         uses: actions/download-artifact@v4
-      - name: Unzip
-        uses: montudor/action-zip@v1
-        with:
-          args: unzip -qq *.zip -d packages/hdx/bin/
       - name: Untar
-        run: ls *.gz | xargs -i tar xf {} -C packages/hdx/bin
+        run: mv binary-* packages/hdx/bin && chmod +x packages/hdx/bin/*
       - run: tree
       - run: npm i
         working-directory: ./packages/hdx
