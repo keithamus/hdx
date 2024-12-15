@@ -26,11 +26,15 @@ pub use class::*;
 pub use combinator::*;
 pub use functional_pseudo_class::*;
 pub use functional_pseudo_element::*;
+pub use moz::*;
+pub use ms::*;
 pub use namespace::*;
 pub use nth::*;
+pub use o::*;
 pub use pseudo_class::*;
 pub use pseudo_element::*;
 pub use tag::*;
+pub use webkit::*;
 
 use super::{Visit, Visitable};
 

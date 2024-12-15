@@ -1,6 +1,7 @@
 use hdx_atom::atom;
-use hdx_lexer::Cursor;
+use hdx_lexer::{Cursor, Span};
 use hdx_parser::{diagnostics, Parse, Parser, Result as ParserResult, ToCursors, T};
+use hdx_proc_macro::visit;
 
 use crate::css::{Visit, Visitable};
 
@@ -8,6 +9,7 @@ use super::{moz::MozPseudoClass, ms::MsPseudoClass, o::OPseudoClass, webkit::Web
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(rename_all = "kebab-case"))]
+#[visit]
 pub enum PseudoClass {
 	Active(T![:], T![Ident]),
 	AnyLink(T![:], T![Ident]),
@@ -145,203 +147,56 @@ impl<'a> Parse<'a> for PseudoClass {
 impl<'a> ToCursors for PseudoClass {
 	fn to_cursors(&self, s: &mut impl hdx_parser::CursorSink) {
 		match self {
-			Self::Active(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::AnyLink(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::Autofill(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::Blank(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::Checked(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::Current(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::Default(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::Defined(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::Disabled(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::Empty(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::Enabled(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::First(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::FirstChild(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::FirstOfType(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::Fullscreen(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::Future(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::Focus(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::FocusVisible(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::FocusWithin(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::Host(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::Hover(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::Indeterminate(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::InRange(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::Invalid(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::LastChild(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::LastOfType(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::Left(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::Link(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::LocalLink(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::Modal(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::OnlyChild(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::OnlyOfType(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::Optional(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::OutOfRange(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::Past(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::PictureInPicture(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::PlaceholderShown(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::PopoverOpen(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::Paused(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::Playing(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::ReadOnly(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::ReadWrite(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::Required(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::Right(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::Root(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::Scope(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::Target(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::TargetWithin(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::Valid(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::Visited(colon, ident) => {
+			Self::Active(colon, ident)
+			| Self::AnyLink(colon, ident)
+			| Self::Autofill(colon, ident)
+			| Self::Blank(colon, ident)
+			| Self::Checked(colon, ident)
+			| Self::Current(colon, ident)
+			| Self::Default(colon, ident)
+			| Self::Defined(colon, ident)
+			| Self::Disabled(colon, ident)
+			| Self::Empty(colon, ident)
+			| Self::Enabled(colon, ident)
+			| Self::First(colon, ident)
+			| Self::FirstChild(colon, ident)
+			| Self::FirstOfType(colon, ident)
+			| Self::Fullscreen(colon, ident)
+			| Self::Future(colon, ident)
+			| Self::Focus(colon, ident)
+			| Self::FocusVisible(colon, ident)
+			| Self::FocusWithin(colon, ident)
+			| Self::Host(colon, ident)
+			| Self::Hover(colon, ident)
+			| Self::Indeterminate(colon, ident)
+			| Self::InRange(colon, ident)
+			| Self::Invalid(colon, ident)
+			| Self::LastChild(colon, ident)
+			| Self::LastOfType(colon, ident)
+			| Self::Left(colon, ident)
+			| Self::Link(colon, ident)
+			| Self::LocalLink(colon, ident)
+			| Self::Modal(colon, ident)
+			| Self::OnlyChild(colon, ident)
+			| Self::OnlyOfType(colon, ident)
+			| Self::Optional(colon, ident)
+			| Self::OutOfRange(colon, ident)
+			| Self::Past(colon, ident)
+			| Self::PictureInPicture(colon, ident)
+			| Self::PlaceholderShown(colon, ident)
+			| Self::PopoverOpen(colon, ident)
+			| Self::Paused(colon, ident)
+			| Self::Playing(colon, ident)
+			| Self::ReadOnly(colon, ident)
+			| Self::ReadWrite(colon, ident)
+			| Self::Required(colon, ident)
+			| Self::Right(colon, ident)
+			| Self::Root(colon, ident)
+			| Self::Scope(colon, ident)
+			| Self::Target(colon, ident)
+			| Self::TargetWithin(colon, ident)
+			| Self::Valid(colon, ident)
+			| Self::Visited(colon, ident) => {
 				s.append(colon.into());
 				s.append(ident.into());
 			}
@@ -353,9 +208,78 @@ impl<'a> ToCursors for PseudoClass {
 	}
 }
 
+impl<'a> From<&PseudoClass> for Span {
+	fn from(value: &PseudoClass) -> Self {
+		match value {
+			PseudoClass::Active(colon, ident)
+			| PseudoClass::AnyLink(colon, ident)
+			| PseudoClass::Autofill(colon, ident)
+			| PseudoClass::Blank(colon, ident)
+			| PseudoClass::Checked(colon, ident)
+			| PseudoClass::Current(colon, ident)
+			| PseudoClass::Default(colon, ident)
+			| PseudoClass::Defined(colon, ident)
+			| PseudoClass::Disabled(colon, ident)
+			| PseudoClass::Empty(colon, ident)
+			| PseudoClass::Enabled(colon, ident)
+			| PseudoClass::First(colon, ident)
+			| PseudoClass::FirstChild(colon, ident)
+			| PseudoClass::FirstOfType(colon, ident)
+			| PseudoClass::Fullscreen(colon, ident)
+			| PseudoClass::Future(colon, ident)
+			| PseudoClass::Focus(colon, ident)
+			| PseudoClass::FocusVisible(colon, ident)
+			| PseudoClass::FocusWithin(colon, ident)
+			| PseudoClass::Host(colon, ident)
+			| PseudoClass::Hover(colon, ident)
+			| PseudoClass::Indeterminate(colon, ident)
+			| PseudoClass::InRange(colon, ident)
+			| PseudoClass::Invalid(colon, ident)
+			| PseudoClass::LastChild(colon, ident)
+			| PseudoClass::LastOfType(colon, ident)
+			| PseudoClass::Left(colon, ident)
+			| PseudoClass::Link(colon, ident)
+			| PseudoClass::LocalLink(colon, ident)
+			| PseudoClass::Modal(colon, ident)
+			| PseudoClass::OnlyChild(colon, ident)
+			| PseudoClass::OnlyOfType(colon, ident)
+			| PseudoClass::Optional(colon, ident)
+			| PseudoClass::OutOfRange(colon, ident)
+			| PseudoClass::Past(colon, ident)
+			| PseudoClass::PictureInPicture(colon, ident)
+			| PseudoClass::PlaceholderShown(colon, ident)
+			| PseudoClass::PopoverOpen(colon, ident)
+			| PseudoClass::Paused(colon, ident)
+			| PseudoClass::Playing(colon, ident)
+			| PseudoClass::ReadOnly(colon, ident)
+			| PseudoClass::ReadWrite(colon, ident)
+			| PseudoClass::Required(colon, ident)
+			| PseudoClass::Right(colon, ident)
+			| PseudoClass::Root(colon, ident)
+			| PseudoClass::Scope(colon, ident)
+			| PseudoClass::Target(colon, ident)
+			| PseudoClass::TargetWithin(colon, ident)
+			| PseudoClass::Valid(colon, ident)
+			| PseudoClass::Visited(colon, ident) => Into::<Span>::into(colon) + ident.into(),
+			PseudoClass::Webkit(c) => todo!(),
+			PseudoClass::Moz(c) => todo!(),
+			PseudoClass::Ms(c) => todo!(),
+			PseudoClass::O(c) => todo!(),
+		}
+	}
+}
+
 impl<'a> Visitable<'a> for PseudoClass {
 	fn accept<V: Visit<'a>>(&self, v: &mut V) {
-		todo!();
+		dbg!("visit pseudo_class");
+		v.visit_pseudo_class(self);
+		match self {
+			Self::Webkit(c) => Visitable::accept(c, v),
+			Self::Moz(c) => Visitable::accept(c, v),
+			Self::Ms(c) => Visitable::accept(c, v),
+			Self::O(c) => Visitable::accept(c, v),
+			_ => {}
+		}
 	}
 }
 

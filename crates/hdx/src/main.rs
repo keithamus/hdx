@@ -1,8 +1,12 @@
 use bumpalo::Bump;
-use clap::{Parser, Subcommand};
+use clap::{crate_version, Parser, Subcommand};
 use hdx_ast::css::StyleSheet;
+use hdx_lsp::server_with_handlers;
 use hdx_parser::{CursorStream, ToCursors};
 use miette::{GraphicalReportHandler, GraphicalTheme, NamedSource};
+use std::io;
+use tracing::{level_filters::LevelFilter, trace};
+use tracing_subscriber::{fmt, layer::SubscriberExt, registry, util::SubscriberInitExt, Layer};
 
 #[derive(Debug, Parser)]
 #[clap(author, version, about, long_about = None)]
@@ -47,7 +51,6 @@ enum Commands {
 		input: String,
 	},
 
-
 	/// Convert one or more CSS files into production ready CSS.
 	#[command(arg_required_else_help(true))]
 	Build {
@@ -63,6 +66,9 @@ enum Commands {
 		#[arg(short, long, group = "output_file", value_parser)]
 		output: Option<String>,
 	},
+
+	/// Run the LSP server. It's unlikely you want to run this, but your IDE might!
+	Lsp {},
 }
 
 fn main() {
@@ -106,7 +112,7 @@ fn main() {
 			let result = hdx_parser::Parser::new(&allocator, source_text.as_str(), hdx_parser::Features::default())
 				.parse_entirely::<StyleSheet>();
 			{
-				if let Some(stylesheet) = &result.output {
+				if result.output.is_some() {
 					let mut str = String::new();
 					let mut stream = CursorStream::new(&allocator);
 					result.to_cursors(&mut stream);
@@ -130,6 +136,14 @@ fn main() {
 					}
 				}
 			}
+		}
+		Commands::Lsp {} => {
+			let server = server_with_handlers(crate_version!());
+			let stderr_log = fmt::layer().with_writer(io::stderr).with_filter(LevelFilter::TRACE);
+			registry().with(stderr_log).with(server.tracer()).init();
+			let thread = server.listen_stdio().unwrap();
+			trace!("Listening on stdin/stdout");
+			thread.sender.join().expect("Couldn't start server").ok();
 		}
 	}
 }

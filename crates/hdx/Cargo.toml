@@ -15,6 +15,7 @@ hdx_syntax = { workspace = true }
 hdx_ast = { workspace = true }
 hdx_parser = { workspace = true }
 hdx_atom = { workspace = true }
+hdx_lsp = { workspace = true }
 
 clap = { workspace = true, features = ["derive", "cargo"] }
 miette = { workspace = true }
@@ -23,6 +24,9 @@ bumpalo = { workspace = true, features = ["collections", "boxed"] }
 
 serde = { workspace = true, optional = true }
 serde_json = { workspace = true, optional = true }
+
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
 
 [features]
 default = ["fancy"]

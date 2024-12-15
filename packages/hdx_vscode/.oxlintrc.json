@@ -1,0 +1,20 @@
+{
+	"$schema": "./node_modules/oxlint/configuration_schema.json",
+	"plugins": ["import", "typescript", "unicorn", "oxc"],
+	"env": {
+		"browser": true
+	},
+	"settings": {},
+	"rules": {
+		"import/no-cycle": "error"
+	},
+	"ignorePatterns": [".vscode-test/**/*", "node_modules/**/*"],
+	"overrides": [
+		{
+			"files": ["./tests/"],
+			"rules": {
+				"@typescript-eslint/no-explicit-any": "off"
+			}
+		}
+	]
+}

@@ -1,0 +1,29 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"name": "Run Extension (DEBUG)",
+			"type": "extensionHost",
+			"request": "launch",
+			"runtimeExecutable": "${execPath}",
+			"env": {
+				"HDX_SERVER_PATH": "${workspaceFolder}/../../target/debug/hdx"
+			},
+			"skipFiles": ["<node_internals>/**/*.js", "/opt/visual-studio-code/**/*.js"],
+			"args": ["--extensionDevelopmentPath=${workspaceFolder}"],
+			"outFiles": ["${workspaceFolder}/src/main.js"]
+		},
+		{
+			"name": "Run Extension Tests",
+			"type": "extensionHost",
+			"request": "launch",
+			"runtimeExecutable": "${execPath}",
+			"args": [
+				"--disable-extensions",
+				"--extensionDevelopmentPath=${workspaceFolder}",
+				"--extensionTestsPath=${workspaceFolder}/tests/run-tests.mjs"
+			],
+			"outFiles": ["${workspaceFolder}/out/tests/**/*.js"]
+		}
+	]
+}
