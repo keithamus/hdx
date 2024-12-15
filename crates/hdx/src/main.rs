@@ -39,6 +39,15 @@ enum Commands {
 		check: bool,
 	},
 
+	#[command(hide = true)]
+	/// Show the debug output for a parsed file
+	DbgParse {
+		/// A CSS file to parse.
+		#[arg(required = true, value_parser)]
+		input: String,
+	},
+
+
 	/// Convert one or more CSS files into production ready CSS.
 	#[command(arg_required_else_help(true))]
 	Build {
@@ -65,6 +74,25 @@ fn main() {
 		}
 		Commands::Fmt { input, check } => {
 			todo!()
+		}
+		Commands::DbgParse { input } => {
+			let source_text = std::fs::read_to_string(input).unwrap();
+			println!("{}", source_text);
+			let allocator = Bump::default();
+			let result = hdx_parser::Parser::new(&allocator, source_text.as_str(), hdx_parser::Features::default())
+				.parse_entirely::<StyleSheet>();
+			if let Some(stylesheet) = &result.output {
+				println!("{:#?}", stylesheet);
+			} else {
+				let handler = GraphicalReportHandler::new_themed(GraphicalTheme::unicode_nocolor());
+				for err in result.errors {
+					let mut report = String::new();
+					let named = NamedSource::new(input, source_text.clone());
+					let err = err.with_source_code(named);
+					handler.render_report(&mut report, err.as_ref()).unwrap();
+					println!("{}", report);
+				}
+			}
 		}
 		Commands::Build { input, minify, output } => {
 			if input.len() > 1 {

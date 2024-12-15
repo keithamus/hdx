@@ -519,25 +519,23 @@ impl Token {
 
 impl core::fmt::Debug for Token {
 	fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-		let bits = match self.kind() {
-			Kind::Number | Kind::Delim => format!(
-				"{:03b}_{:05b}_{:08b}_{:016b}",
-				&self.0 >> 29,
-				self.kind_bits(),
-				(self.0 & LENGTH_MASK) >> 16,
-				self.0 & !DIMENSION_NUMBER_LENGTH_MASK
-			),
-			_ => format!("{:03b}_{:05b}_{:024b}", &self.0 >> 29, self.kind_bits(), self.0 & LENGTH_MASK),
-		};
+		let mut d = f.debug_struct(format!("Token::{}", self.kind().as_str()).as_str());
 		match self.kind() {
-			Kind::Eof => write!(f, "Token::Eof {{ bits: {}, }}", bits),
-			Kind::Delim => {
-				write!(f, "Token::Delim {{ bits: {}, char: {:?}, len: 1\n}}", bits, &self.char().unwrap())
-			}
-			_ => {
-				write!(f, "Token::{} {{ bits: {}, len: {} }}", &self.kind().as_str(), bits, &self.len())
-			}
+			Kind::Eof => &mut d,
+			Kind::Number => d.field("value", &self.value()).field("len", &self.numeric_len()),
+			Kind::Dimension => d
+				.field("value", &self.value())
+				.field("len", &self.numeric_len())
+				.field("dimension", &self.dimension_unit())
+				.field("dimension_len", &self.len()),
+			_ if self.is_delim_like() => d.field("char", &self.char().unwrap()).field("len", &(self.0 >> 29)),
+			_ => d
+				.field("flag_0", &self.first_bit_is_set())
+				.field("flag_1", &self.second_bit_is_set())
+				.field("flag_2", &self.third_bit_is_set())
+				.field("len", &self.len()),
 		}
+		.finish()
 	}
 }
 
