@@ -100,8 +100,8 @@ jobs:
           cache: "npm"
       - name: Download Artifacts
         uses: actions/download-artifact@v4
-      - name: Untar
-        run: mv binary-* packages/hdx/bin && chmod +x packages/hdx/bin/*
+      - name: Move
+        run: mv binary-*/* packages/hdx/bin && chmod +x packages/hdx/bin/*
       - run: tree
       - run: npm i
         working-directory: ./packages/hdx
