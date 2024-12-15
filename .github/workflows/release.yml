@@ -80,7 +80,7 @@ jobs:
           if-no-files-found: error
           name: binary-${{ matrix.code-target }}
           path: |
-            $BIN_NAME*
+            hdx-*
 
   deploy:
     env:
