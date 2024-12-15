@@ -1,9 +1,7 @@
 use core::fmt;
 
 use crate::{CursorSink, Error, ToCursors};
-use bumpalo::Bump;
-use hdx_atom::Atomizable;
-use hdx_lexer::{Cursor, DimensionUnit, Kind};
+use hdx_lexer::{Cursor, Kind};
 
 #[derive(Debug)]
 pub struct ParserReturn<'a, T>
@@ -64,7 +62,7 @@ impl<'a, T: ToCursors> ParserReturn<'a, T> {
 	}
 }
 
-impl<'a, T: ToCursors> ToCursors for ParserReturn<'a, T> {
+impl<T: ToCursors> ToCursors for ParserReturn<'_, T> {
 	fn to_cursors(&self, s: &mut impl crate::CursorSink) {
 		if let Some(output) = &self.output {
 			ToCursors::to_cursors(output, s);

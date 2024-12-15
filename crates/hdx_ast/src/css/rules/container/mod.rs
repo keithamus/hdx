@@ -2,8 +2,8 @@ use bumpalo::collections::Vec;
 use hdx_atom::atom;
 use hdx_lexer::{Cursor, Kind, Span};
 use hdx_parser::{
-	diagnostics, keyword_typedef, AtRule, Build, ConditionalAtRule, CursorSink, Is, Parse, Parser, Peek, PreludeList,
-	Result as ParserResult, RuleList, ToCursors, T,
+	diagnostics, AtRule, ConditionalAtRule, CursorSink, Parse, Parser, Peek, PreludeList, Result as ParserResult,
+	RuleList, ToCursors, T,
 };
 
 use crate::css::{stylesheet::Rule, Visit, Visitable};

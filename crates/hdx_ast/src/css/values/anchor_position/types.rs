@@ -3,9 +3,6 @@ use hdx_parser::{
 	diagnostics, keyword_typedef, CursorSink, Parse, Parser, Peek, Result as ParserResult, ToCursors, T,
 };
 
-// Re-expose stylevalues for shorthands
-pub(crate) use super::AnchorNameStyleValue;
-
 pub(crate) type AnchorName = T![DashedIdent];
 
 // https://drafts.csswg.org/css-anchor-position-1/#typedef-try-size

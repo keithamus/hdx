@@ -1,10 +1,4 @@
-use core::fmt;
-
-use bumpalo::{
-	collections::{vec::IntoIter, Vec},
-	Bump,
-};
-use hdx_atom::Atomizable;
+use bumpalo::{collections::Vec, Bump};
 use hdx_lexer::Cursor;
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]

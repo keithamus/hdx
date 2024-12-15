@@ -25,7 +25,7 @@ pub fn value(args: TokenStream, input: TokenStream) -> TokenStream {
 }
 
 #[proc_macro_attribute]
-pub fn initial(args: TokenStream, input: TokenStream) -> TokenStream {
+pub fn initial(_args: TokenStream, input: TokenStream) -> TokenStream {
 	input
 	// let args_string = args.to_string();
 	// // CSS specs have a variety of "see individual properties" styles
