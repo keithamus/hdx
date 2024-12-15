@@ -8,77 +8,65 @@ use impls::*;
  * CSS Box Sizing Module Level 4
  */
 
-// https://drafts.csswg.org/css-sizing-3/#width
-// https://drafts.csswg.org/css-sizing-4/#sizing-values
-// XXX: sizing-4 includes new Sizing Values: the stretch, fit-content, and contain keywords
-#[value(" auto | <length-percentage [0,∞]> | min-content | max-content | fit-content(<length-percentage [0,∞]>) | <calc-size()> | stretch | fit-content | contain ")]
+// https://drafts.csswg.org/css-sizing-4/#width
+#[value(" auto | <length-percentage [0,∞]> | min-content | max-content | fit-content(<length-percentage [0,∞]>) | <calc-size()> | stretch | fit-content ")]
 #[initial("auto")]
 #[applies_to("all elements except non-replaced inlines")]
 #[inherited("no")]
 #[percentages("relative to width/height of containing block")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type, recursing into fit-content()")]
-pub enum Width {}
+pub enum WidthStyleValue {}
 
-// https://drafts.csswg.org/css-sizing-3/#height
-// https://drafts.csswg.org/css-sizing-4/#sizing-values
-// XXX: sizing-4 includes new Sizing Values: the stretch, fit-content, and contain keywords
-#[value(" auto | <length-percentage [0,∞]> | min-content | max-content | fit-content(<length-percentage [0,∞]>) | <calc-size()> | stretch | fit-content | contain ")]
+// https://drafts.csswg.org/css-sizing-4/#height
+#[value(" auto | <length-percentage [0,∞]> | min-content | max-content | fit-content(<length-percentage [0,∞]>) | <calc-size()> | stretch | fit-content ")]
 #[initial("auto")]
 #[applies_to("all elements except non-replaced inlines")]
 #[inherited("no")]
 #[percentages("relative to width/height of containing block")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type, recursing into fit-content()")]
-pub enum Height {}
+pub enum HeightStyleValue {}
 
-// https://drafts.csswg.org/css-sizing-3/#min-width
-// https://drafts.csswg.org/css-sizing-4/#sizing-values
-// XXX: sizing-4 includes new Sizing Values: the stretch, fit-content, and contain keywords
-#[value(" auto | <length-percentage [0,∞]> | min-content | max-content | fit-content(<length-percentage [0,∞]>) | <calc-size()> | stretch | fit-content | contain ")]
+// https://drafts.csswg.org/css-sizing-4/#min-width
+#[value(" auto | <length-percentage [0,∞]> | min-content | max-content | fit-content(<length-percentage [0,∞]>) | <calc-size()> | stretch | fit-content ")]
 #[initial("auto")]
 #[applies_to("all elements that accept width or height")]
 #[inherited("no")]
 #[percentages("relative to width/height of containing block")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value, recursing into fit-content()")]
-pub enum MinWidth {}
+pub enum MinWidthStyleValue {}
 
-// https://drafts.csswg.org/css-sizing-3/#min-height
-// https://drafts.csswg.org/css-sizing-4/#sizing-values
-// XXX: sizing-4 includes new Sizing Values: the stretch, fit-content, and contain keywords
-#[value(" auto | <length-percentage [0,∞]> | min-content | max-content | fit-content(<length-percentage [0,∞]>) | <calc-size()> | stretch | fit-content | contain ")]
+// https://drafts.csswg.org/css-sizing-4/#min-height
+#[value(" auto | <length-percentage [0,∞]> | min-content | max-content | fit-content(<length-percentage [0,∞]>) | <calc-size()> | stretch | fit-content ")]
 #[initial("auto")]
 #[applies_to("all elements that accept width or height")]
 #[inherited("no")]
 #[percentages("relative to width/height of containing block")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value, recursing into fit-content()")]
-pub enum MinHeight {}
+pub enum MinHeightStyleValue {}
 
-// https://drafts.csswg.org/css-sizing-3/#max-width
-// https://drafts.csswg.org/css-sizing-4/#sizing-values
-// XXX: sizing-4 includes new Sizing Values: the stretch, fit-content, and contain keywords
-#[value(" none | <length-percentage [0,∞]> | min-content | max-content | fit-content(<length-percentage [0,∞]>) | <calc-size()> | stretch | fit-content | contain ")]
+// https://drafts.csswg.org/css-sizing-4/#max-width
+#[value(" none | <length-percentage [0,∞]> | min-content | max-content | fit-content(<length-percentage [0,∞]>) | <calc-size()> | stretch | fit-content ")]
 #[initial("none")]
 #[applies_to("all elements that accept width or height")]
 #[inherited("no")]
 #[percentages("relative to width/height of containing block")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value, recursing into fit-content()")]
-pub enum MaxWidth {}
+pub enum MaxWidthStyleValue {}
 
-// https://drafts.csswg.org/css-sizing-3/#max-height
-// https://drafts.csswg.org/css-sizing-4/#sizing-values
-// XXX: sizing-4 includes new Sizing Values: the stretch, fit-content, and contain keywords
-#[value(" none | <length-percentage [0,∞]> | min-content | max-content | fit-content(<length-percentage [0,∞]>) | <calc-size()> | stretch | fit-content | contain ")]
+// https://drafts.csswg.org/css-sizing-4/#max-height
+#[value(" none | <length-percentage [0,∞]> | min-content | max-content | fit-content(<length-percentage [0,∞]>) | <calc-size()> | stretch | fit-content ")]
 #[initial("none")]
 #[applies_to("all elements that accept width or height")]
 #[inherited("no")]
 #[percentages("relative to width/height of containing block")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value, recursing into fit-content()")]
-pub enum MaxHeight {}
+pub enum MaxHeightStyleValue {}
 
 // https://drafts.csswg.org/css-sizing-4/#box-sizing
 #[value(" content-box | border-box ")]
@@ -88,7 +76,7 @@ pub enum MaxHeight {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum BoxSizing {}
+pub enum BoxSizingStyleValue {}
 
 // // https://drafts.csswg.org/css-sizing-4/#aspect-ratio
 // #[value(" auto || <ratio> ")]
@@ -98,7 +86,7 @@ pub enum BoxSizing {}
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("by computed value")]
-// pub struct AspectRatio;
+// pub struct AspectRatioStyleValue;
 
 // // https://drafts.csswg.org/css-sizing-4/#contain-intrinsic-width
 // #[value(" auto? [ none | <length> ] ")]
@@ -108,7 +96,7 @@ pub enum BoxSizing {}
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("by computed value type")]
-// pub enum ContainIntrinsicWidth {}
+// pub enum ContainIntrinsicWidthStyleValue {}
 
 // // https://drafts.csswg.org/css-sizing-4/#contain-intrinsic-height
 // #[value(" auto? [ none | <length> ] ")]
@@ -118,7 +106,7 @@ pub enum BoxSizing {}
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("by computed value type")]
-// pub enum ContainIntrinsicHeight {}
+// pub enum ContainIntrinsicHeightStyleValue {}
 
 // // https://drafts.csswg.org/css-sizing-4/#contain-intrinsic-block-size
 // #[value(" auto? [ none | <length> ] ")]
@@ -128,7 +116,7 @@ pub enum BoxSizing {}
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("by computed value type")]
-// pub enum ContainIntrinsicBlockSize {}
+// pub enum ContainIntrinsicBlockSizeStyleValue {}
 
 // // https://drafts.csswg.org/css-sizing-4/#contain-intrinsic-inline-size
 // #[value(" auto? [ none | <length> ] ")]
@@ -138,7 +126,7 @@ pub enum BoxSizing {}
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("by computed value type")]
-// pub enum ContainIntrinsicInlineSize {}
+// pub enum ContainIntrinsicInlineSizeStyleValue {}
 
 // // https://drafts.csswg.org/css-sizing-4/#contain-intrinsic-size
 // #[value(" [ auto? [ none | <length> ] ]{1,2} ")]
@@ -148,7 +136,7 @@ pub enum BoxSizing {}
 // #[percentages("see individual properties")]
 // #[canonical_order("per grammar")]
 // #[animation_type("see individual properties")]
-// pub enum ContainIntrinsicSize {}
+// pub enum ContainIntrinsicSizeStyleValue {}
 
 // // https://drafts.csswg.org/css-sizing-4/#min-intrinsic-sizing
 // #[value(" legacy | zero-if-scroll || zero-if-extrinsic ")]
@@ -158,4 +146,4 @@ pub enum BoxSizing {}
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub enum MinIntrinsicSizing {}
+// pub enum MinIntrinsicSizingStyleValue {}

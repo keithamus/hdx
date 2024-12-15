@@ -17,7 +17,7 @@ impl<'a> VisitMut<'a> for ReduceInitial {
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
 	use super::*;
 	use crate::test_helpers::*;
 

@@ -16,4 +16,4 @@ use impls::*;
 #[percentages("converted to <number>")]
 #[canonical_order("per grammar")]
 #[animation_type("not animatable")]
-pub struct Zoom;
+pub struct ZoomStyleValue;

@@ -1,11 +1,15 @@
 use hdx_atom::{atom, Atom};
 use hdx_lexer::Cursor;
 use hdx_parser::{
-	diagnostics, AtRule, CursorStream, DeclarationList, Is, Parse, Parser, PreludeCommaList, QualifiedRule,
+	diagnostics, AtRule, CursorSink, DeclarationList, Is, Parse, Parser, PreludeCommaList, QualifiedRule,
 	QualifiedRuleList, Result as ParserResult, ToCursors, Vec, T,
 };
+use hdx_proc_macro::visit;
 
-use crate::{css::properties::Property, syntax::BadDeclaration};
+use crate::{
+	css::{properties::Property, Visit, Visitable},
+	syntax::BadDeclaration,
+};
 
 pub mod kw {
 	use hdx_parser::custom_keyword;
@@ -16,6 +20,7 @@ pub mod kw {
 // https://drafts.csswg.org/css-animations/#at-ruledef-keyframes
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
+#[visit]
 pub struct KeyframesRule<'a> {
 	at_keyword: T![AtKeyword],
 	name: Option<KeyframesName>,
@@ -34,13 +39,19 @@ impl<'a> Parse<'a> for KeyframesRule<'a> {
 	}
 }
 
-impl<'a> ToCursors<'a> for KeyframesRule<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for KeyframesRule<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.at_keyword.into());
 		if let Some(name) = self.name {
 			s.append(name.into());
 		}
 		ToCursors::to_cursors(&self.rules, s);
+	}
+}
+
+impl<'a> Visitable<'a> for KeyframesRule<'a> {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		todo!();
 	}
 }
 
@@ -110,8 +121,8 @@ impl<'a> Parse<'a> for KeyframesBlock<'a> {
 	}
 }
 
-impl<'a> ToCursors<'a> for KeyframesBlock<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for KeyframesBlock<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.open.into());
 		for keyframe in &self.keyframes {
 			ToCursors::to_cursors(keyframe, s);
@@ -142,8 +153,8 @@ impl<'a> Parse<'a> for Keyframe<'a> {
 	}
 }
 
-impl<'a> ToCursors<'a> for Keyframe<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for Keyframe<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		ToCursors::to_cursors(&self.selectors, s);
 		ToCursors::to_cursors(&self.block, s);
 	}
@@ -163,8 +174,8 @@ impl<'a> Parse<'a> for KeyframeSelectors<'a> {
 	}
 }
 
-impl<'a> ToCursors<'a> for KeyframeSelectors<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for KeyframeSelectors<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		for (selector, comma) in &self.0 {
 			s.append(selector.into());
 			if let Some(comma) = comma {
@@ -193,8 +204,8 @@ impl<'a> Parse<'a> for KeyframeBlock<'a> {
 	}
 }
 
-impl<'a> ToCursors<'a> for KeyframeBlock<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for KeyframeBlock<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.open.into());
 		for property in &self.properties {
 			ToCursors::to_cursors(property, s);
@@ -263,7 +274,7 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(KeyframesRule, 88);
+		assert_size!(KeyframesRule, 96);
 	}
 
 	#[test]

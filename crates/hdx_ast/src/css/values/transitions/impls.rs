@@ -8,16 +8,16 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		// assert_size!(TransitionProperty, 1);
-		assert_size!(TransitionDuration, 32);
-		// assert_size!(TransitionTimingFunction, 1);
-		assert_size!(TransitionDelay, 32);
-		// assert_size!(Transition, 1);
-		assert_size!(TransitionBehavior, 32);
+		// assert_size!(TransitionPropertyStyleValue, 1);
+		assert_size!(TransitionDurationStyleValue, 32);
+		// assert_size!(TransitionTimingFunctionStyleValue, 1);
+		assert_size!(TransitionDelayStyleValue, 32);
+		// assert_size!(TransitionStyleValue, 1);
+		assert_size!(TransitionBehaviorStyleValue, 32);
 	}
 
 	#[test]
 	fn test_writes() {
-		assert_parse!(TransitionBehavior, "allow-discrete");
+		assert_parse!(TransitionBehaviorStyleValue, "allow-discrete");
 	}
 }

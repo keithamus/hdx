@@ -12,7 +12,7 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(NavControlsMediaFeature, 36);
+		assert_size!(NavControlsMediaFeature, 40);
 	}
 
 	#[test]

@@ -1,6 +1,6 @@
 use hdx_atom::atom;
 use hdx_lexer::{Cursor, KindSet};
-use hdx_parser::{diagnostics, CursorStream, Parse, Parser, Result as ParserResult, ToCursors, T};
+use hdx_parser::{diagnostics, CursorSink, Parse, Parser, Result as ParserResult, ToCursors, T};
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
@@ -38,8 +38,8 @@ impl<'a> Parse<'a> for OPseudoElement {
 	}
 }
 
-impl<'a> ToCursors<'a> for OPseudoElement {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for OPseudoElement {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match self {
 			Self::InnerSpinButton(colons, ident) => {
 				ToCursors::to_cursors(colons, s);
@@ -99,8 +99,8 @@ impl<'a> Parse<'a> for OPseudoClass {
 	}
 }
 
-impl<'a> ToCursors<'a> for OPseudoClass {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for OPseudoClass {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match self {
 			Self::Prefocus(colon, ident) => {
 				ToCursors::to_cursors(colon, s);

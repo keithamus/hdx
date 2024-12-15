@@ -10,7 +10,7 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(MonochromeMediaFeature, 68);
+		assert_size!(MonochromeMediaFeature, 92);
 	}
 
 	#[test]

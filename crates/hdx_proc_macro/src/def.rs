@@ -261,8 +261,12 @@ impl Parse for DefIdent {
 impl Parse for DefType {
 	fn parse(input: ParseStream) -> Result<Self> {
 		input.parse::<Token![<]>()?;
-		let ident =
-			if input.peek(LitStr) { input.parse::<StrWrapped<DefIdent>>()?.0 } else { input.parse::<DefIdent>()? };
+		let ident = if input.peek(LitStr) {
+			let atom = input.parse::<StrWrapped<DefIdent>>()?.0 .0;
+			DefIdent(Atom::from(format!("{}-style-value", atom)))
+		} else {
+			input.parse::<DefIdent>()?
+		};
 		let mut checks = DefRange::None;
 		if input.peek(token::Bracket) {
 			let content;
@@ -831,8 +835,8 @@ impl Def {
 		};
 		quote! {
 			#[automatically_derived]
-			impl<'a> ::hdx_parser::ToCursors<'a> for #ident #gen {
-				fn to_cursors(&self, s: &mut ::hdx_parser::CursorStream<'a>) {
+			impl #gen ::hdx_parser::ToCursors for #ident #gen {
+				fn to_cursors(&self, s: &mut impl ::hdx_parser::CursorSink) {
 					#steps
 				}
 			}
@@ -1430,7 +1434,12 @@ impl DefType {
 
 	pub fn requires_allocator_lifetime(&self) -> bool {
 		if let Self::Custom(DefIdent(ident), _) = self {
-			return matches!(ident, &atom!("OutlineColor") | &atom!("BorderTopColor") | &atom!("AnchorName") | &atom!("DynamicRangeLimitMix"));
+			return matches!(
+				ident,
+				&atom!("OutlineColor")
+					| &atom!("BorderTopColorStyleValue")
+					| &atom!("DynamicRangeLimitMix")
+			);
 		}
 		matches!(self, Self::Image | Self::Image1D)
 	}

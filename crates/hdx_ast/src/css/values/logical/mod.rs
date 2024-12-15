@@ -16,7 +16,7 @@ use impls::*;
 #[percentages("as for the corresponding physical property")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub struct BlockSize;
+pub struct BlockSizeStyleValue;
 
 // https://drafts.csswg.org/css-logical-1/#inline-size
 #[value(" <'width'> ")]
@@ -26,7 +26,7 @@ pub struct BlockSize;
 #[percentages("as for the corresponding physical property")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub struct InlineSize;
+pub struct InlineSizeStyleValue;
 
 // https://drafts.csswg.org/css-logical-1/#min-block-size
 #[value(" <'min-width'> ")]
@@ -36,7 +36,7 @@ pub struct InlineSize;
 #[percentages("as for the corresponding physical property")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub struct MinBlockSize;
+pub struct MinBlockSizeStyleValue;
 
 // https://drafts.csswg.org/css-logical-1/#min-inline-size
 #[value(" <'min-width'> ")]
@@ -46,7 +46,7 @@ pub struct MinBlockSize;
 #[percentages("as for the corresponding physical property")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub struct MinInlineSize;
+pub struct MinInlineSizeStyleValue;
 
 // https://drafts.csswg.org/css-logical-1/#max-block-size
 #[value(" <'max-width'> ")]
@@ -56,7 +56,7 @@ pub struct MinInlineSize;
 #[percentages("as for the corresponding physical property")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub struct MaxBlockSize;
+pub struct MaxBlockSizeStyleValue;
 
 // https://drafts.csswg.org/css-logical-1/#max-inline-size
 #[value(" <'max-width'> ")]
@@ -66,7 +66,7 @@ pub struct MaxBlockSize;
 #[percentages("as for the corresponding physical property")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub struct MaxInlineSize;
+pub struct MaxInlineSizeStyleValue;
 
 // https://drafts.csswg.org/css-logical-1/#margin-block-start
 #[value(" <'margin-top'> ")]
@@ -76,7 +76,7 @@ pub struct MaxInlineSize;
 #[percentages("as for the corresponding physical property")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub struct MarginBlockStart;
+pub struct MarginBlockStartStyleValue;
 
 // https://drafts.csswg.org/css-logical-1/#margin-block-end
 #[value(" <'margin-top'> ")]
@@ -86,7 +86,7 @@ pub struct MarginBlockStart;
 #[percentages("as for the corresponding physical property")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub struct MarginBlockEnd;
+pub struct MarginBlockEndStyleValue;
 
 // https://drafts.csswg.org/css-logical-1/#margin-inline-start
 #[value(" <'margin-top'> ")]
@@ -96,7 +96,7 @@ pub struct MarginBlockEnd;
 #[percentages("as for the corresponding physical property")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub struct MarginInlineStart;
+pub struct MarginInlineStartStyleValue;
 
 // https://drafts.csswg.org/css-logical-1/#margin-inline-end
 #[value(" <'margin-top'> ")]
@@ -106,7 +106,7 @@ pub struct MarginInlineStart;
 #[percentages("as for the corresponding physical property")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub struct MarginInlineEnd;
+pub struct MarginInlineEndStyleValue;
 
 // https://drafts.csswg.org/css-logical-1/#margin-block
 #[value(" <'margin-top'>{1,2} ")]
@@ -116,7 +116,7 @@ pub struct MarginInlineEnd;
 #[percentages("see individual properties")]
 #[canonical_order("per grammar")]
 #[animation_type("see individual properties")]
-pub struct MarginBlock;
+pub struct MarginBlockStyleValue;
 
 // https://drafts.csswg.org/css-logical-1/#margin-inline
 #[value(" <'margin-top'>{1,2} ")]
@@ -126,7 +126,7 @@ pub struct MarginBlock;
 #[percentages("see individual properties")]
 #[canonical_order("per grammar")]
 #[animation_type("see individual properties")]
-pub struct MarginInline;
+pub struct MarginInlineStyleValue;
 
 // https://drafts.csswg.org/css-logical-1/#padding-block-start
 #[value(" <'padding-top'> ")]
@@ -136,7 +136,7 @@ pub struct MarginInline;
 #[percentages("as for the corresponding physical property")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub struct PaddingBlockStart;
+pub struct PaddingBlockStartStyleValue;
 
 // https://drafts.csswg.org/css-logical-1/#padding-block-end
 #[value(" <'padding-top'> ")]
@@ -146,7 +146,7 @@ pub struct PaddingBlockStart;
 #[percentages("as for the corresponding physical property")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub struct PaddingBlockEnd;
+pub struct PaddingBlockEndStyleValue;
 
 // https://drafts.csswg.org/css-logical-1/#padding-inline-start
 #[value(" <'padding-top'> ")]
@@ -156,7 +156,7 @@ pub struct PaddingBlockEnd;
 #[percentages("as for the corresponding physical property")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub struct PaddingInlineStart;
+pub struct PaddingInlineStartStyleValue;
 
 // https://drafts.csswg.org/css-logical-1/#padding-inline-end
 #[value(" <'padding-top'> ")]
@@ -166,7 +166,7 @@ pub struct PaddingInlineStart;
 #[percentages("as for the corresponding physical property")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub struct PaddingInlineEnd;
+pub struct PaddingInlineEndStyleValue;
 
 // https://drafts.csswg.org/css-logical-1/#padding-block
 #[value(" <'padding-top'>{1,2} ")]
@@ -176,7 +176,7 @@ pub struct PaddingInlineEnd;
 #[percentages("see individual properties")]
 #[canonical_order("per grammar")]
 #[animation_type("see individual properties")]
-pub struct PaddingBlock;
+pub struct PaddingBlockStyleValue;
 
 // https://drafts.csswg.org/css-logical-1/#padding-inline
 #[value(" <'padding-top'>{1,2} ")]
@@ -186,4 +186,4 @@ pub struct PaddingBlock;
 #[percentages("see individual properties")]
 #[canonical_order("per grammar")]
 #[animation_type("see individual properties")]
-pub struct PaddingInline;
+pub struct PaddingInlineStyleValue;

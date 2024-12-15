@@ -9,7 +9,7 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(GridMediaFeature, 32);
+		assert_size!(GridMediaFeature, 40);
 	}
 
 	#[test]

@@ -16,7 +16,7 @@ use impls::*;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum OverflowX {}
+pub enum OverflowXStyleValue {}
 
 // https://drafts.csswg.org/css-overflow-5/#overflow-y
 #[value(" visible | hidden | clip | scroll | auto ")]
@@ -26,7 +26,7 @@ pub enum OverflowX {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum OverflowY {}
+pub enum OverflowYStyleValue {}
 
 // https://drafts.csswg.org/css-overflow-5/#overflow-block
 #[value(" visible | hidden | clip | scroll | auto ")]
@@ -36,7 +36,7 @@ pub enum OverflowY {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum OverflowBlock {}
+pub enum OverflowBlockStyleValue {}
 
 // https://drafts.csswg.org/css-overflow-5/#overflow-inline
 #[value(" visible | hidden | clip | scroll | auto ")]
@@ -46,7 +46,7 @@ pub enum OverflowBlock {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum OverflowInline {}
+pub enum OverflowInlineStyleValue {}
 
 // https://drafts.csswg.org/css-overflow-5/#overflow
 #[value(" <'overflow-block'>{1,2} ")]
@@ -56,7 +56,7 @@ pub enum OverflowInline {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub struct Overflow;
+pub struct OverflowStyleValue;
 
 // // https://drafts.csswg.org/css-overflow-5/#overflow-clip-margin
 // #[value(" <visual-box> || <length [0,∞]> ")]
@@ -66,7 +66,7 @@ pub struct Overflow;
 // #[percentages("see individual properties")]
 // #[canonical_order("per grammar")]
 // #[animation_type("see individual properties")]
-// pub struct OverflowClipMargin;
+// pub struct OverflowClipMarginStyleValue;
 
 // https://drafts.csswg.org/css-overflow-5/#scroll-behavior
 #[value(" auto | smooth ")]
@@ -76,7 +76,7 @@ pub struct Overflow;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("not animatable")]
-pub enum ScrollBehavior {}
+pub enum ScrollBehaviorStyleValue {}
 
 // // https://drafts.csswg.org/css-overflow-5/#scrollbar-gutter
 // #[value(" auto | stable && both-edges? ")]
@@ -86,7 +86,7 @@ pub enum ScrollBehavior {}
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub enum ScrollbarGutter {}
+// pub enum ScrollbarGutterStyleValue {}
 
 // // https://drafts.csswg.org/css-overflow-5/#text-overflow
 // #[value(" [ clip | ellipsis | <string> | fade | <fade()> ]{1,2} ")]
@@ -96,7 +96,7 @@ pub enum ScrollBehavior {}
 // #[percentages("refer to the width of the line box")]
 // #[canonical_order("per grammar")]
 // #[animation_type("by computed value type")]
-// pub enum TextOverflow {}
+// pub enum TextOverflowStyleValue {}
 
 // https://drafts.csswg.org/css-overflow-5/#overflow-clip-margin-top
 #[value(" <visual-box> || <length [0,∞]> ")]
@@ -106,7 +106,7 @@ pub enum ScrollBehavior {}
 #[percentages("see individual properties")]
 #[canonical_order("per grammar")]
 #[animation_type("per computed value if the <visual-box> values match; otherwise discrete")]
-pub struct OverflowClipMarginTop;
+pub struct OverflowClipMarginTopStyleValue;
 
 // https://drafts.csswg.org/css-overflow-5/#overflow-clip-margin-right
 #[value(" <visual-box> || <length [0,∞]> ")]
@@ -116,7 +116,7 @@ pub struct OverflowClipMarginTop;
 #[percentages("see individual properties")]
 #[canonical_order("per grammar")]
 #[animation_type("per computed value if the <visual-box> values match; otherwise discrete")]
-pub struct OverflowClipMarginRight;
+pub struct OverflowClipMarginRightStyleValue;
 
 // https://drafts.csswg.org/css-overflow-5/#overflow-clip-margin-bottom
 #[value(" <visual-box> || <length [0,∞]> ")]
@@ -126,7 +126,7 @@ pub struct OverflowClipMarginRight;
 #[percentages("see individual properties")]
 #[canonical_order("per grammar")]
 #[animation_type("per computed value if the <visual-box> values match; otherwise discrete")]
-pub struct OverflowClipMarginBottom;
+pub struct OverflowClipMarginBottomStyleValue;
 
 // https://drafts.csswg.org/css-overflow-5/#overflow-clip-margin-left
 #[value(" <visual-box> || <length [0,∞]> ")]
@@ -136,7 +136,7 @@ pub struct OverflowClipMarginBottom;
 #[percentages("see individual properties")]
 #[canonical_order("per grammar")]
 #[animation_type("per computed value if the <visual-box> values match; otherwise discrete")]
-pub struct OverflowClipMarginLeft;
+pub struct OverflowClipMarginLeftStyleValue;
 
 // https://drafts.csswg.org/css-overflow-5/#overflow-clip-margin-block-start
 #[value(" <visual-box> || <length [0,∞]> ")]
@@ -146,7 +146,7 @@ pub struct OverflowClipMarginLeft;
 #[percentages("see individual properties")]
 #[canonical_order("per grammar")]
 #[animation_type("per computed value if the <visual-box> values match; otherwise discrete")]
-pub struct OverflowClipMarginBlockStart;
+pub struct OverflowClipMarginBlockStartStyleValue;
 
 // https://drafts.csswg.org/css-overflow-5/#overflow-clip-margin-inline-start
 #[value(" <visual-box> || <length [0,∞]> ")]
@@ -156,7 +156,7 @@ pub struct OverflowClipMarginBlockStart;
 #[percentages("see individual properties")]
 #[canonical_order("per grammar")]
 #[animation_type("per computed value if the <visual-box> values match; otherwise discrete")]
-pub struct OverflowClipMarginInlineStart;
+pub struct OverflowClipMarginInlineStartStyleValue;
 
 // https://drafts.csswg.org/css-overflow-5/#overflow-clip-margin-block-end
 #[value(" <visual-box> || <length [0,∞]> ")]
@@ -166,7 +166,7 @@ pub struct OverflowClipMarginInlineStart;
 #[percentages("see individual properties")]
 #[canonical_order("per grammar")]
 #[animation_type("per computed value if the <visual-box> values match; otherwise discrete")]
-pub struct OverflowClipMarginBlockEnd;
+pub struct OverflowClipMarginBlockEndStyleValue;
 
 // https://drafts.csswg.org/css-overflow-5/#overflow-clip-margin-inline-end
 #[value(" <visual-box> || <length [0,∞]> ")]
@@ -176,7 +176,7 @@ pub struct OverflowClipMarginBlockEnd;
 #[percentages("see individual properties")]
 #[canonical_order("per grammar")]
 #[animation_type("per computed value if the <visual-box> values match; otherwise discrete")]
-pub struct OverflowClipMarginInlineEnd;
+pub struct OverflowClipMarginInlineEndStyleValue;
 
 // https://drafts.csswg.org/css-overflow-5/#overflow-clip-margin-inline
 #[value(" <visual-box> || <length [0,∞]> ")]
@@ -186,7 +186,7 @@ pub struct OverflowClipMarginInlineEnd;
 #[percentages("see individual properties")]
 #[canonical_order("per grammar")]
 #[animation_type("see individual properties")]
-pub struct OverflowClipMarginInline;
+pub struct OverflowClipMarginInlineStyleValue;
 
 // https://drafts.csswg.org/css-overflow-5/#overflow-clip-margin-block
 #[value(" <visual-box> || <length [0,∞]> ")]
@@ -196,7 +196,7 @@ pub struct OverflowClipMarginInline;
 #[percentages("see individual properties")]
 #[canonical_order("per grammar")]
 #[animation_type("see individual properties")]
-pub struct OverflowClipMarginBlock;
+pub struct OverflowClipMarginBlockStyleValue;
 
 // https://drafts.csswg.org/css-overflow-5/#block-ellipsis
 #[value(" none | auto | <string> ")]
@@ -206,7 +206,7 @@ pub struct OverflowClipMarginBlock;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum BlockEllipsis {}
+pub enum BlockEllipsisStyleValue {}
 
 // // https://drafts.csswg.org/css-overflow-5/#line-clamp
 // #[value(" none | <integer [1,∞]> || <'block-ellipsis'> ")]
@@ -216,7 +216,7 @@ pub enum BlockEllipsis {}
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("see individual properties")]
-// pub enum LineClamp {}
+// pub enum LineClampStyleValue {}
 
 // https://drafts.csswg.org/css-overflow-5/#-webkit-line-clamp
 #[value(" none | <integer [1,∞]> ")]
@@ -226,7 +226,7 @@ pub enum BlockEllipsis {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("see individual properties")]
-pub enum WebkitLineClamp {}
+pub enum WebkitLineClampStyleValue {}
 
 // https://drafts.csswg.org/css-overflow-5/#max-lines
 #[value(" none | <integer [1,∞]> ")]
@@ -236,7 +236,7 @@ pub enum WebkitLineClamp {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub enum MaxLines {}
+pub enum MaxLinesStyleValue {}
 
 // https://drafts.csswg.org/css-overflow-5/#continue
 #[value(" auto | discard ")]
@@ -246,7 +246,7 @@ pub enum MaxLines {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum Continue {}
+pub enum ContinueStyleValue {}
 
 // https://drafts.csswg.org/css-overflow-5/#scroll-marker-group
 #[value(" none | before | after ")]
@@ -256,4 +256,4 @@ pub enum Continue {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum ScrollMarkerGroup {}
+pub enum ScrollMarkerGroupStyleValue {}

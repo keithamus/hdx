@@ -21,8 +21,8 @@ impl<'a> ::hdx_parser::Parse<'a> for Foo<'a> {
     }
 }
 #[automatically_derived]
-impl<'a> ::hdx_parser::ToCursors<'a> for Foo<'a> {
-    fn to_cursors(&self, s: &mut ::hdx_parser::CursorStream<'a>) {
+impl<'a> ::hdx_parser::ToCursors for Foo<'a> {
+    fn to_cursors(&self, s: &mut impl ::hdx_parser::CursorSink) {
         ::hdx_parser::ToCursors::to_cursors(&self.0, s);
     }
 }

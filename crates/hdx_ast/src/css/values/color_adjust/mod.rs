@@ -16,7 +16,7 @@ use impls::*;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub enum ColorScheme {}
+// pub enum ColorSchemeStyleValue {}
 
 // https://drafts.csswg.org/css-color-adjust-1/#forced-color-adjust
 #[value(" auto | none | preserve-parent-color ")]
@@ -26,7 +26,7 @@ use impls::*;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("not animatable")]
-pub enum ForcedColorAdjust {}
+pub enum ForcedColorAdjustStyleValue {}
 
 // https://drafts.csswg.org/css-color-adjust-1/#print-color-adjust
 #[value(" economy | exact ")]
@@ -36,7 +36,7 @@ pub enum ForcedColorAdjust {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum PrintColorAdjust {}
+pub enum PrintColorAdjustStyleValue {}
 
 // https://drafts.csswg.org/css-color-adjust-1/#color-adjust
 #[value(" <'print-color-adjust'> ")]
@@ -46,4 +46,4 @@ pub enum PrintColorAdjust {}
 #[percentages("see individual properties")]
 #[canonical_order("per grammar")]
 #[animation_type("see individual properties")]
-pub struct ColorAdjust;
+pub struct ColorAdjustStyleValue;

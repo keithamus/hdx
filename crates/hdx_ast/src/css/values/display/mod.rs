@@ -16,7 +16,7 @@ use impls::*;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("see § 2.9 animating and interpolating display")]
-// pub enum Display {}
+// pub enum DisplayStyleValue {}
 
 // https://drafts.csswg.org/css-display-4/#order
 #[value(" <integer> ")]
@@ -26,7 +26,7 @@ use impls::*;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub struct Order;
+pub struct OrderStyleValue;
 
 // https://drafts.csswg.org/css-display-4/#visibility
 #[value(" visible | hidden | collapse ")]
@@ -36,7 +36,7 @@ pub struct Order;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum Visibility {}
+pub enum VisibilityStyleValue {}
 
 // https://drafts.csswg.org/css-display-4/#reading-flow
 #[value(" normal | flex-visual | flex-flow | grid-rows | grid-columns | grid-order ")]
@@ -46,4 +46,4 @@ pub enum Visibility {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("not animatable")]
-pub enum ReadingFlow {}
+pub enum ReadingFlowStyleValue {}

@@ -1,4 +1,4 @@
-use hdx_parser::{CursorStream, Parse, Parser, Result as ParserResult, ToCursors, T};
+use hdx_parser::{CursorSink, Parse, Parser, Result as ParserResult, ToCursors, T};
 
 use super::{AtRule, QualifiedRule};
 
@@ -18,8 +18,8 @@ impl<'a> Parse<'a> for Rule<'a> {
 	}
 }
 
-impl<'a> ToCursors<'a> for Rule<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for Rule<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match self {
 			Self::AtRule(rule) => ToCursors::to_cursors(rule, s),
 			Self::QualifiedRule(rule) => ToCursors::to_cursors(rule, s),

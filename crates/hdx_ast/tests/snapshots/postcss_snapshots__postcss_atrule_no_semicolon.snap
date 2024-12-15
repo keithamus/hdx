@@ -13,6 +13,7 @@ expression: result.output.unwrap()
       },
       "space": {
         "kind": "Whitespace",
+        "offset": 34,
         "len": 1
       },
       "string": {

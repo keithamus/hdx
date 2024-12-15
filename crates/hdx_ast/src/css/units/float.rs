@@ -1,7 +1,7 @@
 use hdx_lexer::Cursor;
 use hdx_parser::{Build, Is, Parser, T};
 
-#[derive(Debug, Default, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(transparent))]
 pub struct CSSFloat(T![Number]);
 
@@ -47,7 +47,7 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(CSSFloat, 8);
+		assert_size!(CSSFloat, 12);
 	}
 
 	#[test]

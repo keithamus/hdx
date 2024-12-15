@@ -8,14 +8,35 @@ const snake = (name: string) => name.replace(/([_-\s]\w)/g, (n) => `_${n.slice(1
 // Some properties should have lifetime annotations. It's a little tricky to detect which ones
 // so it's easier just to hardcode these as a list...
 const requiresAllocatorLifetime = new Map([
+	["anchor-position", new Set(["position-anchor"])],
+	["color-hdr", new Set(["dynamic-range-limit"])],
+	["ui", new Set(["outline"])],
+	["borders", new Set(["border-top-color", "border-bottom-color", "border-inline-color", "border-block-color"])],
 ]);
 
 // Some properties should be enums but they have complex grammars that aren't worth attempting to
 // parse so let's just hardcode a list...
 const enumOverrides = new Map([
-	["animation", new Set(["AnimationName"])],
-	["ui", new Set(["Cursor"])],
-	["overscroll", new Set(["OverscrollBehavior"])],
+	["animation", new Set(["animation-name"])],
+	["ui", new Set(["cursor"])],
+	["overscroll", new Set(["overscroll-behavior"])],
+]);
+
+// Some properties' values are defined across multiple specs, so we need to accomodate for that...
+// parse so let's just hardcode a list...
+const valueExtensions = new Map([
+	// https://drafts.csswg.org/css-sizing-4/#sizing-values
+	[
+		"sizing",
+		{
+			width: " | stretch | fit-content",
+			"max-width": " | stretch | fit-content",
+			"min-width": " | stretch | fit-content",
+			height: " | stretch | fit-content",
+			"max-height": " | stretch | fit-content",
+			"min-height": " | stretch | fit-content",
+		},
+	],
 ]);
 
 // Ignore properties from some specs as they've moved around or are very rough
@@ -27,7 +48,7 @@ const ignore = new Map([
 	// (Round-Display just extends to add the `display` keyword which is specified in shapes-2 anyway)
 	["round-display", new Set(["shape-inside"])],
 	[
-		"background",
+		"backgrounds",
 		new Set([
 			// https://drafts.csswg.org/css-backgrounds-4/#background-layers
 			// The name of this property is discussed in issue https://github.com/w3c/csswg-drafts/issues/9083.
@@ -59,9 +80,13 @@ const ignore = new Map([
 			"border-bottom",
 			"border-left",
 			"border-radius",
+			"border-top-left-radius",
+			"border-top-right-radius",
 			"border-top-radius",
 			"border-right-radius",
 			"border-bottom-radius",
+			"border-bottom-left-radius",
+			"border-bottom-right-radius",
 			"border-left-radius",
 			"box-shadow",
 		]),
@@ -187,6 +212,7 @@ async function getSpec(name: string, index: Record<string, number[]>) {
 	const typeDefs = [...types.values()].map((table) => {
 		let dataType = "struct";
 		const enums = enumOverrides.get(name);
+		const valueExts = valueExtensions.get(name);
 		if (
 			enums?.has(table.name) ||
 			/[^\|]\|[^\|]/.test(table.value.replace(/(?:\[[^\]]+\])g/, "").replace(/(?:<[^>]+>)g/, ""))
@@ -196,19 +222,25 @@ async function getSpec(name: string, index: Record<string, number[]>) {
 		let trail = dataType == "enum" ? " {}" : ";";
 		let generics = "";
 		const lifetimes = requiresAllocatorLifetime.get(name);
-		if (lifetimes?.has(table.name) || table.value.includes("<string>") || table.value.includes("<image>")) {
+		console.log(lifetimes, name, lifetimes?.has(table.name));
+		if (
+			lifetimes?.has(table.name) ||
+			table.value.includes("<image>") ||
+			table.value.includes("<image-1D>") ||
+			/#(:?$|[^\{])/.test(table.value)
+		) {
 			generics = "<'a>";
 		}
 		return `
 // ${url}#${table.name == "--*" ? "defining-variables" : table.name}
-#[value(" ${table.value} ")]
+#[value(" ${table.value}${valueExts?.[table.name] || ""} ")]
 #[initial("${table.initial}")]
-#[applies_to("${table.applies_to}")]
+#[applies_to("${table.applies_to.replace(/\n/g, "")}")]
 #[inherited("${table.inherited.toLowerCase()}")]
 #[percentages("${table.percentages.toLowerCase()}")]
 #[canonical_order("${table.canonical_order.toLowerCase()}")]
 #[animation_type("${table.animation_type?.toLowerCase() ?? "not animatable"}")]
-pub ${dataType} ${table.name == "--*" ? "Custom" : pascal(table.name)}${generics}${trail}`;
+pub ${dataType} ${table.name == "--*" ? "Custom" : pascal(table.name)}StyleValue${generics}${trail}`;
 	});
 
 	if (typeDefs.length == 0) return "";

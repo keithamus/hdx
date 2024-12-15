@@ -1,2 +1,2 @@
 // Re-expose stylevalues for shorthands
-pub(crate) use super::PrintColorAdjust;
+pub(crate) use super::PrintColorAdjustStyleValue;

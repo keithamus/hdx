@@ -16,7 +16,7 @@ use impls::*;
 // #[percentages("refer to the size of reference box")]
 // #[canonical_order("per grammar")]
 // #[animation_type("transform list, see interpolation rules")]
-// pub enum Transform {}
+// pub enum TransformStyleValue {}
 
 // // https://drafts.csswg.org/css-transforms-2/#transform-origin
 // #[value(" [ left | center | right | top | bottom | <length-percentage> ] |   [ left | center | right | <length-percentage> ]  [ top | center | bottom | <length-percentage> ] <length>? |  [[ center | left | right ] && [ center | top | bottom ]] <length>? ")]
@@ -26,7 +26,7 @@ use impls::*;
 // #[percentages("refer to the size of reference box")]
 // #[canonical_order("per grammar")]
 // #[animation_type("by computed value")]
-// pub enum TransformOrigin {}
+// pub enum TransformOriginStyleValue {}
 
 // https://drafts.csswg.org/css-transforms-2/#transform-box
 #[value(" content-box | border-box | fill-box | stroke-box | view-box ")]
@@ -36,7 +36,7 @@ use impls::*;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum TransformBox {}
+pub enum TransformBoxStyleValue {}
 
 // // https://drafts.csswg.org/css-transforms-2/#translate
 // #[value(" none | <length-percentage> [ <length-percentage> <length>? ]? ")]
@@ -46,7 +46,7 @@ pub enum TransformBox {}
 // #[percentages("relative to the width of the reference box (for the first value) or the height (for the second value)")]
 // #[canonical_order("per grammar")]
 // #[animation_type("by computed value, but see below for none")]
-// pub enum Translate {}
+// pub enum TranslateStyleValue {}
 
 // // https://drafts.csswg.org/css-transforms-2/#rotate
 // #[value(" none | <angle> | [ x | y | z | <number>{3} ] && <angle> ")]
@@ -56,7 +56,7 @@ pub enum TransformBox {}
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("as slerp, but see below for none")]
-// pub enum Rotate {}
+// pub enum RotateStyleValue {}
 
 // // https://drafts.csswg.org/css-transforms-2/#scale
 // #[value(" none | [ <number> | <percentage> ]{1,3} ")]
@@ -66,7 +66,7 @@ pub enum TransformBox {}
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("by computed value, but see below for none")]
-// pub enum Scale {}
+// pub enum ScaleStyleValue {}
 
 // https://drafts.csswg.org/css-transforms-2/#transform-style
 #[value(" flat | preserve-3d ")]
@@ -76,7 +76,7 @@ pub enum TransformBox {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum TransformStyle {}
+pub enum TransformStyleStyleValue {}
 
 // // https://drafts.csswg.org/css-transforms-2/#perspective
 // #[value(" none | <length [0,∞]> ")]
@@ -86,7 +86,7 @@ pub enum TransformStyle {}
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("by computed value")]
-// pub enum Perspective {}
+// pub enum PerspectiveStyleValue {}
 
 // // https://drafts.csswg.org/css-transforms-2/#perspective-origin
 // #[value(" <position> ")]
@@ -96,7 +96,7 @@ pub enum TransformStyle {}
 // #[percentages("refer to the size of the reference box")]
 // #[canonical_order("per grammar")]
 // #[animation_type("by computed value")]
-// pub struct PerspectiveOrigin;
+// pub struct PerspectiveOriginStyleValue;
 
 // https://drafts.csswg.org/css-transforms-2/#backface-visibility
 #[value(" visible | hidden ")]
@@ -106,4 +106,4 @@ pub enum TransformStyle {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum BackfaceVisibility {}
+pub enum BackfaceVisibilityStyleValue {}

@@ -10,7 +10,7 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(DeviceHeightMediaFeature, 76);
+		assert_size!(DeviceHeightMediaFeature, 100);
 	}
 
 	#[test]

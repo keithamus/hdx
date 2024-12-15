@@ -2,6 +2,8 @@ use hdx_atom::atom;
 use hdx_lexer::Cursor;
 use hdx_parser::{diagnostics, Parse, Parser, Result as ParserResult, ToCursors, T};
 
+use crate::css::{Visit, Visitable};
+
 use super::{moz::MozPseudoClass, ms::MsPseudoClass, o::OPseudoClass, webkit::WebkitPseudoClass};
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -140,8 +142,8 @@ impl<'a> Parse<'a> for PseudoClass {
 	}
 }
 
-impl<'a> ToCursors<'a> for PseudoClass {
-	fn to_cursors(&self, s: &mut hdx_parser::CursorStream<'a>) {
+impl<'a> ToCursors for PseudoClass {
+	fn to_cursors(&self, s: &mut impl hdx_parser::CursorSink) {
 		match self {
 			Self::Active(colon, ident) => {
 				s.append(colon.into());
@@ -351,6 +353,12 @@ impl<'a> ToCursors<'a> for PseudoClass {
 	}
 }
 
+impl<'a> Visitable<'a> for PseudoClass {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		todo!();
+	}
+}
+
 #[cfg(test)]
 mod tests {
 	use super::*;
@@ -358,7 +366,7 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(PseudoClass, 28);
+		assert_size!(PseudoClass, 32);
 	}
 
 	#[test]

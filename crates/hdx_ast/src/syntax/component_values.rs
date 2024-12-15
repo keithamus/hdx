@@ -1,5 +1,5 @@
 use bumpalo::collections::Vec;
-use hdx_parser::{CursorStream, Parse, Parser, Result as ParserResult, ToCursors};
+use hdx_parser::{CursorSink, Parse, Parser, Result as ParserResult, ToCursors};
 
 use super::ComponentValue;
 
@@ -31,8 +31,8 @@ impl<'a> Parse<'a> for ComponentValues<'a> {
 	}
 }
 
-impl<'a> ToCursors<'a> for ComponentValues<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for ComponentValues<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		for value in &self.values {
 			ToCursors::to_cursors(value, s)
 		}

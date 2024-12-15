@@ -4,26 +4,26 @@ expression: pretty
 ---
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-struct Foo(pub types::CaretColor, pub Option<types::CaretAnimation>);
+struct Foo(pub types::CaretColorStyleValue, pub Option<types::CaretAnimationStyleValue>);
 #[automatically_derived]
 impl<'a> ::hdx_parser::Peek<'a> for Foo {
     fn peek(p: &::hdx_parser::Parser<'a>) -> bool {
         use ::hdx_parser::Peek;
-        p.peek::<types::CaretColor>()
+        p.peek::<types::CaretColorStyleValue>()
     }
 }
 #[automatically_derived]
 impl<'a> ::hdx_parser::Parse<'a> for Foo {
     fn parse(p: &mut ::hdx_parser::Parser<'a>) -> ::hdx_parser::Result<Self> {
         use ::hdx_parser::Parse;
-        let val0 = p.parse::<types::CaretColor>()?;
-        let val1 = p.parse_if_peek::<types::CaretAnimation>()?;
+        let val0 = p.parse::<types::CaretColorStyleValue>()?;
+        let val1 = p.parse_if_peek::<types::CaretAnimationStyleValue>()?;
         Ok(Self(val0, val1))
     }
 }
 #[automatically_derived]
-impl<'a> ::hdx_parser::ToCursors<'a> for Foo {
-    fn to_cursors(&self, s: &mut ::hdx_parser::CursorStream<'a>) {
+impl ::hdx_parser::ToCursors for Foo {
+    fn to_cursors(&self, s: &mut impl ::hdx_parser::CursorSink) {
         ::hdx_parser::ToCursors::to_cursors(&self.0, s);
         if let Some(inner) = &self.1 {
             ::hdx_parser::ToCursors::to_cursors(inner, s);

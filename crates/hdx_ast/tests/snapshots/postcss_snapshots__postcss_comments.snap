@@ -29,6 +29,7 @@ expression: result.output.unwrap()
       "type": "style-declaration",
       "open": {
         "kind": "LeftCurly",
+        "offset": 40,
         "len": 1
       },
       "declarations": [
@@ -41,6 +42,7 @@ expression: result.output.unwrap()
           },
           "colon": {
             "kind": "Colon",
+            "offset": 68,
             "len": 1
           },
           "value": {
@@ -55,6 +57,7 @@ expression: result.output.unwrap()
           "important": null,
           "semicolon": {
             "kind": "Semicolon",
+            "offset": 75,
             "len": 1
           }
         },
@@ -67,12 +70,14 @@ expression: result.output.unwrap()
           },
           "colon": {
             "kind": "Colon",
+            "offset": 112,
             "len": 1
           },
           "value": {
             "values": [
               {
                 "kind": "Whitespace",
+                "offset": 113,
                 "len": 1
               },
               {
@@ -83,14 +88,17 @@ expression: result.output.unwrap()
               },
               {
                 "kind": "Whitespace",
+                "offset": 117,
                 "len": 1
               },
               {
                 "kind": "Delim",
+                "offset": 118,
                 "len": 1
               },
               {
                 "kind": "Whitespace",
+                "offset": 119,
                 "len": 1
               },
               {
@@ -108,6 +116,7 @@ expression: result.output.unwrap()
       "rules": [],
       "close": {
         "kind": "RightCurly",
+        "offset": 138,
         "len": 1
       }
     },
@@ -135,6 +144,7 @@ expression: result.output.unwrap()
       "type": "style-declaration",
       "open": {
         "kind": "LeftCurly",
+        "offset": 151,
         "len": 1
       },
       "declarations": [
@@ -147,6 +157,7 @@ expression: result.output.unwrap()
           },
           "colon": {
             "kind": "Colon",
+            "offset": 162,
             "len": 1
           },
           "value": {
@@ -161,6 +172,7 @@ expression: result.output.unwrap()
           "important": null,
           "semicolon": {
             "kind": "Semicolon",
+            "offset": 169,
             "len": 1
           }
         }
@@ -168,6 +180,7 @@ expression: result.output.unwrap()
       "rules": [],
       "close": {
         "kind": "RightCurly",
+        "offset": 183,
         "len": 1
       }
     },
@@ -177,10 +190,12 @@ expression: result.output.unwrap()
         "values": [
           {
             "kind": "Whitespace",
+            "offset": 184,
             "len": 2
           },
           {
             "kind": "Delim",
+            "offset": 186,
             "len": 1
           },
           {
@@ -200,6 +215,7 @@ expression: result.output.unwrap()
         "start": 197,
         "open_curly": {
           "kind": "LeftCurly",
+          "offset": 198,
           "len": 1
         },
         "declarations": [
@@ -212,12 +228,14 @@ expression: result.output.unwrap()
             },
             "colon": {
               "kind": "Colon",
+              "offset": 207,
               "len": 1
             },
             "value": {
               "values": [
                 {
                   "kind": "Whitespace",
+                  "offset": 208,
                   "len": 1
                 },
                 {
@@ -251,6 +269,7 @@ expression: result.output.unwrap()
             "important": null,
             "semicolon": {
               "kind": "Semicolon",
+              "offset": 226,
               "len": 1
             }
           },
@@ -263,12 +282,14 @@ expression: result.output.unwrap()
             },
             "colon": {
               "kind": "Colon",
+              "offset": 241,
               "len": 1
             },
             "value": {
               "values": [
                 {
                   "kind": "Whitespace",
+                  "offset": 242,
                   "len": 1
                 },
                 {
@@ -278,6 +299,7 @@ expression: result.output.unwrap()
                 },
                 {
                   "kind": "Comma",
+                  "offset": 253,
                   "len": 1
                 },
                 {
@@ -290,6 +312,7 @@ expression: result.output.unwrap()
             "important": null,
             "semicolon": {
               "kind": "Semicolon",
+              "offset": 263,
               "len": 1
             }
           }
@@ -297,6 +320,7 @@ expression: result.output.unwrap()
         "rules": [],
         "close_curly": {
           "kind": "RightCurly",
+          "offset": 265,
           "len": 1
         }
       }

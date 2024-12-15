@@ -16,7 +16,7 @@ use impls::*;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("see prose")]
-pub enum BorderTopColor<'a> {}
+pub enum BorderTopColorStyleValue<'a> {}
 
 // https://drafts.csswg.org/css-borders-4/#border-right-color
 #[value(" <color> | <image-1D> ")]
@@ -26,7 +26,7 @@ pub enum BorderTopColor<'a> {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("see prose")]
-pub enum BorderRightColor<'a> {}
+pub enum BorderRightColorStyleValue<'a> {}
 
 // https://drafts.csswg.org/css-borders-4/#border-bottom-color
 #[value(" <color> | <image-1D> ")]
@@ -36,7 +36,7 @@ pub enum BorderRightColor<'a> {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("see prose")]
-pub enum BorderBottomColor<'a> {}
+pub enum BorderBottomColorStyleValue<'a> {}
 
 // https://drafts.csswg.org/css-borders-4/#border-left-color
 #[value(" <color> | <image-1D> ")]
@@ -46,7 +46,7 @@ pub enum BorderBottomColor<'a> {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("see prose")]
-pub enum BorderLeftColor<'a> {}
+pub enum BorderLeftColorStyleValue<'a> {}
 
 // https://drafts.csswg.org/css-borders-4/#border-block-start-color
 #[value(" <color> | <image-1D> ")]
@@ -56,7 +56,7 @@ pub enum BorderLeftColor<'a> {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("see prose")]
-pub enum BorderBlockStartColor<'a> {}
+pub enum BorderBlockStartColorStyleValue<'a> {}
 
 // https://drafts.csswg.org/css-borders-4/#border-block-end-color
 #[value(" <color> | <image-1D> ")]
@@ -66,7 +66,7 @@ pub enum BorderBlockStartColor<'a> {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("see prose")]
-pub enum BorderBlockEndColor<'a> {}
+pub enum BorderBlockEndColorStyleValue<'a> {}
 
 // https://drafts.csswg.org/css-borders-4/#border-inline-start-color
 #[value(" <color> | <image-1D> ")]
@@ -76,7 +76,7 @@ pub enum BorderBlockEndColor<'a> {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("see prose")]
-pub enum BorderInlineStartColor<'a> {}
+pub enum BorderInlineStartColorStyleValue<'a> {}
 
 // https://drafts.csswg.org/css-borders-4/#border-inline-end-color
 #[value(" <color> | <image-1D> ")]
@@ -86,7 +86,7 @@ pub enum BorderInlineStartColor<'a> {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("see prose")]
-pub enum BorderInlineEndColor<'a> {}
+pub enum BorderInlineEndColorStyleValue<'a> {}
 
 // // https://drafts.csswg.org/css-borders-4/#border-color
 // #[value(" [ <color> | <image-1D> ]{1,4} ")]
@@ -96,7 +96,7 @@ pub enum BorderInlineEndColor<'a> {}
 // #[percentages("see individual properties")]
 // #[canonical_order("per grammar")]
 // #[animation_type("see individual properties")]
-// pub enum BorderColor<'a> {}
+// pub enum BorderColorStyleValue<'a> {}
 
 // https://drafts.csswg.org/css-borders-4/#border-block-color
 #[value(" <'border-top-color'>{1,2} ")]
@@ -106,7 +106,7 @@ pub enum BorderInlineEndColor<'a> {}
 #[percentages("see individual properties")]
 #[canonical_order("per grammar")]
 #[animation_type("see individual properties")]
-pub struct BorderBlockColor<'a>;
+pub struct BorderBlockColorStyleValue<'a>;
 
 // https://drafts.csswg.org/css-borders-4/#border-inline-color
 #[value(" <'border-top-color'>{1,2} ")]
@@ -116,7 +116,7 @@ pub struct BorderBlockColor<'a>;
 #[percentages("see individual properties")]
 #[canonical_order("per grammar")]
 #[animation_type("see individual properties")]
-pub struct BorderInlineColor<'a>;
+pub struct BorderInlineColorStyleValue<'a>;
 
 // https://drafts.csswg.org/css-borders-4/#border-top-style
 #[value(" <line-style> ")]
@@ -126,7 +126,7 @@ pub struct BorderInlineColor<'a>;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub struct BorderTopStyle;
+pub struct BorderTopStyleStyleValue;
 
 // https://drafts.csswg.org/css-borders-4/#border-right-style
 #[value(" <line-style> ")]
@@ -136,7 +136,7 @@ pub struct BorderTopStyle;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub struct BorderRightStyle;
+pub struct BorderRightStyleStyleValue;
 
 // https://drafts.csswg.org/css-borders-4/#border-bottom-style
 #[value(" <line-style> ")]
@@ -146,7 +146,7 @@ pub struct BorderRightStyle;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub struct BorderBottomStyle;
+pub struct BorderBottomStyleStyleValue;
 
 // https://drafts.csswg.org/css-borders-4/#border-left-style
 #[value(" <line-style> ")]
@@ -156,7 +156,7 @@ pub struct BorderBottomStyle;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub struct BorderLeftStyle;
+pub struct BorderLeftStyleStyleValue;
 
 // https://drafts.csswg.org/css-borders-4/#border-block-start-style
 #[value(" <line-style> ")]
@@ -166,7 +166,7 @@ pub struct BorderLeftStyle;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub struct BorderBlockStartStyle;
+pub struct BorderBlockStartStyleStyleValue;
 
 // https://drafts.csswg.org/css-borders-4/#border-block-end-style
 #[value(" <line-style> ")]
@@ -176,7 +176,7 @@ pub struct BorderBlockStartStyle;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub struct BorderBlockEndStyle;
+pub struct BorderBlockEndStyleStyleValue;
 
 // https://drafts.csswg.org/css-borders-4/#border-inline-start-style
 #[value(" <line-style> ")]
@@ -186,7 +186,7 @@ pub struct BorderBlockEndStyle;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub struct BorderInlineStartStyle;
+pub struct BorderInlineStartStyleStyleValue;
 
 // https://drafts.csswg.org/css-borders-4/#border-inline-end-style
 #[value(" <line-style> ")]
@@ -196,7 +196,7 @@ pub struct BorderInlineStartStyle;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub struct BorderInlineEndStyle;
+pub struct BorderInlineEndStyleStyleValue;
 
 // https://drafts.csswg.org/css-borders-4/#border-block-style
 #[value(" <'border-top-style'>{1,2} ")]
@@ -206,7 +206,7 @@ pub struct BorderInlineEndStyle;
 #[percentages("see individual properties")]
 #[canonical_order("per grammar")]
 #[animation_type("see individual properties")]
-pub struct BorderBlockStyle;
+pub struct BorderBlockStyleStyleValue;
 
 // https://drafts.csswg.org/css-borders-4/#border-inline-style
 #[value(" <'border-top-style'>{1,2} ")]
@@ -216,7 +216,7 @@ pub struct BorderBlockStyle;
 #[percentages("see individual properties")]
 #[canonical_order("per grammar")]
 #[animation_type("see individual properties")]
-pub struct BorderInlineStyle;
+pub struct BorderInlineStyleStyleValue;
 
 // https://drafts.csswg.org/css-borders-4/#border-top-width
 #[value(" <line-width> ")]
@@ -226,7 +226,7 @@ pub struct BorderInlineStyle;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value")]
-pub struct BorderTopWidth;
+pub struct BorderTopWidthStyleValue;
 
 // https://drafts.csswg.org/css-borders-4/#border-right-width
 #[value(" <line-width> ")]
@@ -236,7 +236,7 @@ pub struct BorderTopWidth;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value")]
-pub struct BorderRightWidth;
+pub struct BorderRightWidthStyleValue;
 
 // https://drafts.csswg.org/css-borders-4/#border-bottom-width
 #[value(" <line-width> ")]
@@ -246,7 +246,7 @@ pub struct BorderRightWidth;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value")]
-pub struct BorderBottomWidth;
+pub struct BorderBottomWidthStyleValue;
 
 // https://drafts.csswg.org/css-borders-4/#border-left-width
 #[value(" <line-width> ")]
@@ -256,7 +256,7 @@ pub struct BorderBottomWidth;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value")]
-pub struct BorderLeftWidth;
+pub struct BorderLeftWidthStyleValue;
 
 // https://drafts.csswg.org/css-borders-4/#border-block-start-width
 #[value(" <line-width> ")]
@@ -266,7 +266,7 @@ pub struct BorderLeftWidth;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value")]
-pub struct BorderBlockStartWidth;
+pub struct BorderBlockStartWidthStyleValue;
 
 // https://drafts.csswg.org/css-borders-4/#border-block-end-width
 #[value(" <line-width> ")]
@@ -276,7 +276,7 @@ pub struct BorderBlockStartWidth;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value")]
-pub struct BorderBlockEndWidth;
+pub struct BorderBlockEndWidthStyleValue;
 
 // https://drafts.csswg.org/css-borders-4/#border-inline-start-width
 #[value(" <line-width> ")]
@@ -286,7 +286,7 @@ pub struct BorderBlockEndWidth;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value")]
-pub struct BorderInlineStartWidth;
+pub struct BorderInlineStartWidthStyleValue;
 
 // https://drafts.csswg.org/css-borders-4/#border-inline-end-width
 #[value(" <line-width> ")]
@@ -296,7 +296,7 @@ pub struct BorderInlineStartWidth;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value")]
-pub struct BorderInlineEndWidth;
+pub struct BorderInlineEndWidthStyleValue;
 
 // https://drafts.csswg.org/css-borders-4/#border-block-width
 #[value(" <'border-top-width'>{1,2} ")]
@@ -306,7 +306,7 @@ pub struct BorderInlineEndWidth;
 #[percentages("see individual properties")]
 #[canonical_order("per grammar")]
 #[animation_type("see individual properties")]
-pub struct BorderBlockWidth;
+pub struct BorderBlockWidthStyleValue;
 
 // https://drafts.csswg.org/css-borders-4/#border-inline-width
 #[value(" <'border-top-width'>{1,2} ")]
@@ -316,7 +316,7 @@ pub struct BorderBlockWidth;
 #[percentages("see individual properties")]
 #[canonical_order("per grammar")]
 #[animation_type("see individual properties")]
-pub struct BorderInlineWidth;
+pub struct BorderInlineWidthStyleValue;
 
 // https://drafts.csswg.org/css-borders-4/#border-top
 #[value(" <line-width> || <line-style> || <color> ")]
@@ -326,7 +326,7 @@ pub struct BorderInlineWidth;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("see individual properties")]
-pub struct BorderTop;
+pub struct BorderTopStyleValue;
 
 // https://drafts.csswg.org/css-borders-4/#border-right
 #[value(" <line-width> || <line-style> || <color> ")]
@@ -336,7 +336,7 @@ pub struct BorderTop;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("see individual properties")]
-pub struct BorderRight;
+pub struct BorderRightStyleValue;
 
 // https://drafts.csswg.org/css-borders-4/#border-bottom
 #[value(" <line-width> || <line-style> || <color> ")]
@@ -346,7 +346,7 @@ pub struct BorderRight;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("see individual properties")]
-pub struct BorderBottom;
+pub struct BorderBottomStyleValue;
 
 // https://drafts.csswg.org/css-borders-4/#border-left
 #[value(" <line-width> || <line-style> || <color> ")]
@@ -356,7 +356,7 @@ pub struct BorderBottom;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("see individual properties")]
-pub struct BorderLeft;
+pub struct BorderLeftStyleValue;
 
 // https://drafts.csswg.org/css-borders-4/#border-block-start
 #[value(" <line-width> || <line-style> || <color> ")]
@@ -366,7 +366,7 @@ pub struct BorderLeft;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("see individual properties")]
-pub struct BorderBlockStart;
+pub struct BorderBlockStartStyleValue;
 
 // https://drafts.csswg.org/css-borders-4/#border-block-end
 #[value(" <line-width> || <line-style> || <color> ")]
@@ -376,7 +376,7 @@ pub struct BorderBlockStart;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("see individual properties")]
-pub struct BorderBlockEnd;
+pub struct BorderBlockEndStyleValue;
 
 // https://drafts.csswg.org/css-borders-4/#border-inline-start
 #[value(" <line-width> || <line-style> || <color> ")]
@@ -386,7 +386,7 @@ pub struct BorderBlockEnd;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("see individual properties")]
-pub struct BorderInlineStart;
+pub struct BorderInlineStartStyleValue;
 
 // https://drafts.csswg.org/css-borders-4/#border-inline-end
 #[value(" <line-width> || <line-style> || <color> ")]
@@ -396,7 +396,7 @@ pub struct BorderInlineStart;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("see individual properties")]
-pub struct BorderInlineEnd;
+pub struct BorderInlineEndStyleValue;
 
 // https://drafts.csswg.org/css-borders-4/#border-block
 #[value(" <'border-block-start'> ")]
@@ -406,7 +406,7 @@ pub struct BorderInlineEnd;
 #[percentages("see individual properties")]
 #[canonical_order("per grammar")]
 #[animation_type("see individual properties")]
-pub struct BorderBlock;
+pub struct BorderBlockStyleValue;
 
 // https://drafts.csswg.org/css-borders-4/#border-inline
 #[value(" <'border-block-start'> ")]
@@ -416,7 +416,7 @@ pub struct BorderBlock;
 #[percentages("see individual properties")]
 #[canonical_order("per grammar")]
 #[animation_type("see individual properties")]
-pub struct BorderInline;
+pub struct BorderInlineStyleValue;
 
 // https://drafts.csswg.org/css-borders-4/#border-top-left-radius
 #[value(" <length-percentage [0,∞]>{1,2} ")]
@@ -426,7 +426,7 @@ pub struct BorderInline;
 #[percentages("refer to corresponding dimension of the border box.")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value")]
-pub struct BorderTopLeftRadius;
+pub struct BorderTopLeftRadiusStyleValue;
 
 // https://drafts.csswg.org/css-borders-4/#border-top-right-radius
 #[value(" <length-percentage [0,∞]>{1,2} ")]
@@ -436,7 +436,7 @@ pub struct BorderTopLeftRadius;
 #[percentages("refer to corresponding dimension of the border box.")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value")]
-pub struct BorderTopRightRadius;
+pub struct BorderTopRightRadiusStyleValue;
 
 // https://drafts.csswg.org/css-borders-4/#border-bottom-right-radius
 #[value(" <length-percentage [0,∞]>{1,2} ")]
@@ -446,7 +446,7 @@ pub struct BorderTopRightRadius;
 #[percentages("refer to corresponding dimension of the border box.")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value")]
-pub struct BorderBottomRightRadius;
+pub struct BorderBottomRightRadiusStyleValue;
 
 // https://drafts.csswg.org/css-borders-4/#border-bottom-left-radius
 #[value(" <length-percentage [0,∞]>{1,2} ")]
@@ -456,7 +456,7 @@ pub struct BorderBottomRightRadius;
 #[percentages("refer to corresponding dimension of the border box.")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value")]
-pub struct BorderBottomLeftRadius;
+pub struct BorderBottomLeftRadiusStyleValue;
 
 // https://drafts.csswg.org/css-borders-4/#border-start-start-radius
 #[value(" <length-percentage [0,∞]>{1,2} ")]
@@ -466,7 +466,7 @@ pub struct BorderBottomLeftRadius;
 #[percentages("refer to corresponding dimension of the border box.")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value")]
-pub struct BorderStartStartRadius;
+pub struct BorderStartStartRadiusStyleValue;
 
 // https://drafts.csswg.org/css-borders-4/#border-start-end-radius
 #[value(" <length-percentage [0,∞]>{1,2} ")]
@@ -476,7 +476,7 @@ pub struct BorderStartStartRadius;
 #[percentages("refer to corresponding dimension of the border box.")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value")]
-pub struct BorderStartEndRadius;
+pub struct BorderStartEndRadiusStyleValue;
 
 // https://drafts.csswg.org/css-borders-4/#border-end-start-radius
 #[value(" <length-percentage [0,∞]>{1,2} ")]
@@ -486,7 +486,7 @@ pub struct BorderStartEndRadius;
 #[percentages("refer to corresponding dimension of the border box.")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value")]
-pub struct BorderEndStartRadius;
+pub struct BorderEndStartRadiusStyleValue;
 
 // https://drafts.csswg.org/css-borders-4/#border-end-end-radius
 #[value(" <length-percentage [0,∞]>{1,2} ")]
@@ -496,7 +496,7 @@ pub struct BorderEndStartRadius;
 #[percentages("refer to corresponding dimension of the border box.")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value")]
-pub struct BorderEndEndRadius;
+pub struct BorderEndEndRadiusStyleValue;
 
 // // https://drafts.csswg.org/css-borders-4/#border-top-radius
 // #[value(" <length-percentage [0,∞]>{1,2} [ / <length-percentage [0,∞]>{1,2} ]? ")]
@@ -506,7 +506,7 @@ pub struct BorderEndEndRadius;
 // #[percentages("refer to corresponding dimension of the border box.")]
 // #[canonical_order("per grammar")]
 // #[animation_type("see individual properties")]
-// pub struct BorderTopRadius;
+// pub struct BorderTopRadiusStyleValue;
 
 // // https://drafts.csswg.org/css-borders-4/#border-right-radius
 // #[value(" <length-percentage [0,∞]>{1,2} [ / <length-percentage [0,∞]>{1,2} ]? ")]
@@ -516,7 +516,7 @@ pub struct BorderEndEndRadius;
 // #[percentages("refer to corresponding dimension of the border box.")]
 // #[canonical_order("per grammar")]
 // #[animation_type("see individual properties")]
-// pub struct BorderRightRadius;
+// pub struct BorderRightRadiusStyleValue;
 
 // // https://drafts.csswg.org/css-borders-4/#border-bottom-radius
 // #[value(" <length-percentage [0,∞]>{1,2} [ / <length-percentage [0,∞]>{1,2} ]? ")]
@@ -526,7 +526,7 @@ pub struct BorderEndEndRadius;
 // #[percentages("refer to corresponding dimension of the border box.")]
 // #[canonical_order("per grammar")]
 // #[animation_type("see individual properties")]
-// pub struct BorderBottomRadius;
+// pub struct BorderBottomRadiusStyleValue;
 
 // // https://drafts.csswg.org/css-borders-4/#border-left-radius
 // #[value(" <length-percentage [0,∞]>{1,2} [ / <length-percentage [0,∞]>{1,2} ]? ")]
@@ -536,7 +536,7 @@ pub struct BorderEndEndRadius;
 // #[percentages("refer to corresponding dimension of the border box.")]
 // #[canonical_order("per grammar")]
 // #[animation_type("see individual properties")]
-// pub struct BorderLeftRadius;
+// pub struct BorderLeftRadiusStyleValue;
 
 // // https://drafts.csswg.org/css-borders-4/#border-block-start-radius
 // #[value(" <length-percentage [0,∞]>{1,2} [ / <length-percentage [0,∞]>{1,2} ]? ")]
@@ -546,7 +546,7 @@ pub struct BorderEndEndRadius;
 // #[percentages("refer to corresponding dimension of the border box.")]
 // #[canonical_order("per grammar")]
 // #[animation_type("see individual properties")]
-// pub struct BorderBlockStartRadius;
+// pub struct BorderBlockStartRadiusStyleValue;
 
 // // https://drafts.csswg.org/css-borders-4/#border-block-end-radius
 // #[value(" <length-percentage [0,∞]>{1,2} [ / <length-percentage [0,∞]>{1,2} ]? ")]
@@ -556,7 +556,7 @@ pub struct BorderEndEndRadius;
 // #[percentages("refer to corresponding dimension of the border box.")]
 // #[canonical_order("per grammar")]
 // #[animation_type("see individual properties")]
-// pub struct BorderBlockEndRadius;
+// pub struct BorderBlockEndRadiusStyleValue;
 
 // // https://drafts.csswg.org/css-borders-4/#border-inline-start-radius
 // #[value(" <length-percentage [0,∞]>{1,2} [ / <length-percentage [0,∞]>{1,2} ]? ")]
@@ -566,7 +566,7 @@ pub struct BorderEndEndRadius;
 // #[percentages("refer to corresponding dimension of the border box.")]
 // #[canonical_order("per grammar")]
 // #[animation_type("see individual properties")]
-// pub struct BorderInlineStartRadius;
+// pub struct BorderInlineStartRadiusStyleValue;
 
 // // https://drafts.csswg.org/css-borders-4/#border-inline-end-radius
 // #[value(" <length-percentage [0,∞]>{1,2} [ / <length-percentage [0,∞]>{1,2} ]? ")]
@@ -576,7 +576,7 @@ pub struct BorderEndEndRadius;
 // #[percentages("refer to corresponding dimension of the border box.")]
 // #[canonical_order("per grammar")]
 // #[animation_type("see individual properties")]
-// pub struct BorderInlineEndRadius;
+// pub struct BorderInlineEndRadiusStyleValue;
 
 // // https://drafts.csswg.org/css-borders-4/#border-radius
 // #[value(" <length-percentage [0,∞]>{1,4} [ / <length-percentage [0,∞]>{1,4} ]? ")]
@@ -586,7 +586,7 @@ pub struct BorderEndEndRadius;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("see individual properties")]
-// pub struct BorderRadius;
+// pub struct BorderRadiusStyleValue;
 
 // // https://drafts.csswg.org/css-borders-4/#corner-shape
 // #[value(" [ round | angle ]{1,4} ")]
@@ -596,7 +596,7 @@ pub struct BorderEndEndRadius;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub enum CornerShape {}
+// pub enum CornerShapeStyleValue {}
 
 // // https://drafts.csswg.org/css-borders-4/#corners
 // #[value(" <'corner-shape'> || <'border-radius'> ")]
@@ -606,7 +606,7 @@ pub struct BorderEndEndRadius;
 // #[percentages("see individual properties")]
 // #[canonical_order("per grammar")]
 // #[animation_type("see individual properties")]
-// pub struct Corners;
+// pub struct CornersStyleValue;
 
 // // https://drafts.csswg.org/css-borders-4/#border-limit
 // #[value(" all | [ sides | corners ] <length-percentage [0,∞]>? | [ top | right | bottom | left ] <length-percentage [0,∞]> ")]
@@ -616,7 +616,7 @@ pub struct BorderEndEndRadius;
 // #[percentages("relative to border-box")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub enum BorderLimit {}
+// pub enum BorderLimitStyleValue {}
 
 // // https://drafts.csswg.org/css-borders-4/#border-clip
 // #[value(" normal | [ <length-percentage [0,∞]> | <flex> ]+ ")]
@@ -626,7 +626,7 @@ pub struct BorderEndEndRadius;
 // #[percentages("refer to length of border-edge side")]
 // #[canonical_order("per grammar")]
 // #[animation_type("by computed value")]
-// pub enum BorderClip {}
+// pub enum BorderClipStyleValue {}
 
 // // https://drafts.csswg.org/css-borders-4/#border-clip-top
 // #[value(" normal | [ <length-percentage [0,∞]> | <flex> ]+ ")]
@@ -636,7 +636,7 @@ pub struct BorderEndEndRadius;
 // #[percentages("refer to length of border-edge side")]
 // #[canonical_order("per grammar")]
 // #[animation_type("by computed value")]
-// pub enum BorderClipTop {}
+// pub enum BorderClipTopStyleValue {}
 
 // // https://drafts.csswg.org/css-borders-4/#border-clip-right
 // #[value(" normal | [ <length-percentage [0,∞]> | <flex> ]+ ")]
@@ -646,7 +646,7 @@ pub struct BorderEndEndRadius;
 // #[percentages("refer to length of border-edge side")]
 // #[canonical_order("per grammar")]
 // #[animation_type("by computed value")]
-// pub enum BorderClipRight {}
+// pub enum BorderClipRightStyleValue {}
 
 // // https://drafts.csswg.org/css-borders-4/#border-clip-bottom
 // #[value(" normal | [ <length-percentage [0,∞]> | <flex> ]+ ")]
@@ -656,7 +656,7 @@ pub struct BorderEndEndRadius;
 // #[percentages("refer to length of border-edge side")]
 // #[canonical_order("per grammar")]
 // #[animation_type("by computed value")]
-// pub enum BorderClipBottom {}
+// pub enum BorderClipBottomStyleValue {}
 
 // // https://drafts.csswg.org/css-borders-4/#border-clip-left
 // #[value(" normal | [ <length-percentage [0,∞]> | <flex> ]+ ")]
@@ -666,7 +666,7 @@ pub struct BorderEndEndRadius;
 // #[percentages("refer to length of border-edge side")]
 // #[canonical_order("per grammar")]
 // #[animation_type("by computed value")]
-// pub enum BorderClipLeft {}
+// pub enum BorderClipLeftStyleValue {}
 
 // // https://drafts.csswg.org/css-borders-4/#box-shadow-color
 // #[value(" <color># ")]
@@ -676,7 +676,7 @@ pub struct BorderEndEndRadius;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("by computed value")]
-// pub struct BoxShadowColor;
+// pub struct BoxShadowColorStyleValue<'a>;
 
 // // https://drafts.csswg.org/css-borders-4/#box-shadow-offset
 // #[value(" [ none | <length>{2} ]# ")]
@@ -685,9 +685,8 @@ pub struct BorderEndEndRadius;
 // #[inherited("no")]
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
-// #[animation_type("by computed value,
-// treating none as 0 0 when interpolated with non-none values.")]
-// pub enum BoxShadowOffset {}
+// #[animation_type("by computed value, treating none as 0 0 when interpolated with non-none values.")]
+// pub enum BoxShadowOffsetStyleValue<'a> {}
 
 // https://drafts.csswg.org/css-borders-4/#box-shadow-blur
 #[value(" <length [0,∞]># ")]
@@ -697,7 +696,7 @@ pub struct BorderEndEndRadius;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value")]
-pub struct BoxShadowBlur<'a>;
+pub struct BoxShadowBlurStyleValue<'a>;
 
 // https://drafts.csswg.org/css-borders-4/#box-shadow-spread
 #[value(" <length># ")]
@@ -707,7 +706,7 @@ pub struct BoxShadowBlur<'a>;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value")]
-pub struct BoxShadowSpread<'a>;
+pub struct BoxShadowSpreadStyleValue<'a>;
 
 // // https://drafts.csswg.org/css-borders-4/#box-shadow-position
 // #[value(" [ outset | inset ]# ")]
@@ -717,7 +716,7 @@ pub struct BoxShadowSpread<'a>;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("by computed value")]
-// pub enum BoxShadowPosition {}
+// pub enum BoxShadowPositionStyleValue<'a> {}
 
 // // https://drafts.csswg.org/css-borders-4/#box-shadow
 // #[value(" <spread-shadow># ")]
@@ -727,4 +726,4 @@ pub struct BoxShadowSpread<'a>;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("see individual properties")]
-// pub struct BoxShadow;
+// pub struct BoxShadowStyleValue<'a>;

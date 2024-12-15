@@ -2,15 +2,17 @@ use bumpalo::collections::Vec;
 use hdx_atom::atom;
 use hdx_lexer::Cursor;
 use hdx_parser::{
-	AtRule, CursorStream, Declaration, Important, NoPreludeAllowed, Parse, Parser, Result as ParserResult, RuleList,
+	AtRule, CursorSink, Declaration, Important, NoPreludeAllowed, Parse, Parser, Result as ParserResult, RuleList,
 	ToCursors, T,
 };
+use hdx_proc_macro::visit;
 
-use crate::css::properties::StyleValue;
+use crate::css::{properties::StyleValue, Visit, Visitable};
 
 // https://drafts.csswg.org/css-fonts/#font-face-rule
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+#[visit]
 pub struct FontFaceRule<'a> {
 	pub at_keyword: T![AtKeyword],
 	pub block: FontFaceDeclaration<'a>,
@@ -28,10 +30,16 @@ impl<'a> Parse<'a> for FontFaceRule<'a> {
 	}
 }
 
-impl<'a> ToCursors<'a> for FontFaceRule<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for FontFaceRule<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.at_keyword.into());
 		ToCursors::to_cursors(&self.block, s);
+	}
+}
+
+impl<'a> Visitable<'a> for FontFaceRule<'a> {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		todo!();
 	}
 }
 
@@ -54,8 +62,8 @@ impl<'a> Parse<'a> for FontFaceDeclaration<'a> {
 	}
 }
 
-impl<'a> ToCursors<'a> for FontFaceDeclaration<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for FontFaceDeclaration<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.open.into());
 		for property in &self.properties {
 			ToCursors::to_cursors(property, s);
@@ -70,7 +78,7 @@ impl<'a> ToCursors<'a> for FontFaceDeclaration<'a> {
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", rename = "property"))]
 pub struct FontProperty<'a> {
 	pub name: T![Ident],
-	pub colon: Option<T![:]>,
+	pub colon: T![:],
 	pub value: StyleValue<'a>,
 	pub important: Option<Important>,
 	pub semicolon: Option<T![;]>,
@@ -106,12 +114,10 @@ impl<'a> Parse<'a> for FontProperty<'a> {
 	}
 }
 
-impl<'a> ToCursors<'a> for FontProperty<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for FontProperty<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.name.into());
-		if let Some(colon) = self.colon {
-			s.append(colon.into());
-		}
+		s.append(self.colon.into());
 		ToCursors::to_cursors(&self.value, s);
 		if let Some(important) = &self.important {
 			ToCursors::to_cursors(important, s);
@@ -129,7 +135,7 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(FontFaceRule, 72);
+		assert_size!(FontFaceRule, 80);
 	}
 
 	#[test]

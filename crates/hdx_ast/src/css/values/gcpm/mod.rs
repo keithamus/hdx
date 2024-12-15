@@ -16,17 +16,17 @@ use impls::*;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub enum StringSet {}
+// pub enum StringSetStyleValue<'a> {}
 
-// // https://drafts.csswg.org/css-gcpm-4/#running
-// #[value(" <custom-ident> ")]
-// #[initial("none")]
-// #[applies_to("elements")]
-// #[inherited("no")]
-// #[percentages("n/a")]
-// #[canonical_order("per grammar")]
-// #[animation_type("discrete")]
-// pub struct Running;
+// https://drafts.csswg.org/css-gcpm-4/#running
+#[value(" <custom-ident> ")]
+#[initial("none")]
+#[applies_to("elements")]
+#[inherited("no")]
+#[percentages("n/a")]
+#[canonical_order("per grammar")]
+#[animation_type("discrete")]
+pub struct RunningStyleValue;
 
 // https://drafts.csswg.org/css-gcpm-4/#footnote-display
 #[value(" block | inline | compact ")]
@@ -36,7 +36,7 @@ use impls::*;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum FootnoteDisplay {}
+pub enum FootnoteDisplayStyleValue {}
 
 // https://drafts.csswg.org/css-gcpm-4/#footnote-policy
 #[value(" auto | line | block ")]
@@ -46,7 +46,7 @@ pub enum FootnoteDisplay {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum FootnotePolicy {}
+pub enum FootnotePolicyStyleValue {}
 
 // // https://drafts.csswg.org/css-gcpm-4/#copy-into
 // #[value(" none | [ [ <custom-ident> <content-level>] [, <custom-ident> <content-level>]* ]? ")]
@@ -56,4 +56,4 @@ pub enum FootnotePolicy {}
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub enum CopyInto {}
+// pub enum CopyIntoStyleValue {}

@@ -25,6 +25,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 106,
             "len": 1
           }
         },
@@ -45,6 +46,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 112,
             "len": 1
           }
         },
@@ -65,6 +67,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 117,
             "len": 1
           }
         },
@@ -85,6 +88,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 123,
             "len": 1
           }
         },
@@ -103,6 +107,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 131,
             "len": 1
           }
         },
@@ -123,6 +128,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 139,
             "len": 1
           }
         },
@@ -143,6 +149,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 147,
             "len": 1
           }
         },
@@ -163,6 +170,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 151,
             "len": 1
           }
         },
@@ -183,6 +191,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 155,
             "len": 1
           }
         },
@@ -203,6 +212,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 159,
             "len": 1
           }
         },
@@ -223,6 +233,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 163,
             "len": 1
           }
         },
@@ -243,6 +254,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 167,
             "len": 1
           }
         },
@@ -263,6 +275,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 171,
             "len": 1
           }
         },
@@ -283,6 +296,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 174,
             "len": 1
           }
         },
@@ -303,6 +317,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 186,
             "len": 1
           }
         },
@@ -323,6 +338,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 191,
             "len": 1
           }
         },
@@ -343,6 +359,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 194,
             "len": 1
           }
         },
@@ -363,6 +380,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 200,
             "len": 1
           }
         },
@@ -383,6 +401,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 209,
             "len": 1
           }
         },
@@ -403,6 +422,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 218,
             "len": 1
           }
         },
@@ -423,6 +443,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 223,
             "len": 1
           }
         },
@@ -443,6 +464,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 229,
             "len": 1
           }
         },
@@ -463,6 +485,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 235,
             "len": 1
           }
         },
@@ -483,6 +506,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 240,
             "len": 1
           }
         },
@@ -503,6 +527,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 245,
             "len": 1
           }
         },
@@ -523,6 +548,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 249,
             "len": 1
           }
         },
@@ -543,6 +569,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 254,
             "len": 1
           }
         },
@@ -563,6 +590,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 259,
             "len": 1
           }
         },
@@ -583,6 +611,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 264,
             "len": 1
           }
         },
@@ -603,6 +632,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 267,
             "len": 1
           }
         },
@@ -623,6 +653,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 270,
             "len": 1
           }
         },
@@ -643,6 +674,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 276,
             "len": 1
           }
         },
@@ -663,6 +695,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 283,
             "len": 1
           }
         },
@@ -683,6 +716,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 291,
             "len": 1
           }
         },
@@ -703,6 +737,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 299,
             "len": 1
           }
         },
@@ -723,6 +758,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 304,
             "len": 1
           }
         },
@@ -743,6 +779,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 309,
             "len": 1
           }
         },
@@ -763,6 +800,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 313,
             "len": 1
           }
         },
@@ -783,6 +821,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 318,
             "len": 1
           }
         },
@@ -803,6 +842,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 321,
             "len": 1
           }
         },
@@ -823,6 +863,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 324,
             "len": 1
           }
         },
@@ -843,6 +884,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 327,
             "len": 1
           }
         },
@@ -861,6 +903,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 335,
             "len": 1
           }
         },
@@ -881,6 +924,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 339,
             "len": 1
           }
         },
@@ -901,6 +945,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 343,
             "len": 1
           }
         },
@@ -921,6 +966,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 347,
             "len": 1
           }
         },
@@ -941,6 +987,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 351,
             "len": 1
           }
         },
@@ -961,6 +1008,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 355,
             "len": 1
           }
         },
@@ -981,6 +1029,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 359,
             "len": 1
           }
         },
@@ -1001,6 +1050,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 369,
             "len": 1
           }
         },
@@ -1021,6 +1071,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 375,
             "len": 1
           }
         },
@@ -1041,6 +1092,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 382,
             "len": 1
           }
         },
@@ -1061,6 +1113,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 390,
             "len": 1
           }
         },
@@ -1081,6 +1134,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 397,
             "len": 1
           }
         },
@@ -1101,6 +1155,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 406,
             "len": 1
           }
         },
@@ -1121,6 +1176,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 413,
             "len": 1
           }
         },
@@ -1141,6 +1197,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 420,
             "len": 1
           }
         },
@@ -1161,6 +1218,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 427,
             "len": 1
           }
         },
@@ -1181,6 +1239,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 431,
             "len": 1
           }
         },
@@ -1201,6 +1260,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 435,
             "len": 1
           }
         },
@@ -1221,6 +1281,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 439,
             "len": 1
           }
         },
@@ -1241,6 +1302,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 448,
             "len": 1
           }
         },
@@ -1261,6 +1323,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 455,
             "len": 1
           }
         },
@@ -1281,6 +1344,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 463,
             "len": 1
           }
         },
@@ -1301,6 +1365,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 472,
             "len": 1
           }
         },
@@ -1321,6 +1386,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 479,
             "len": 1
           }
         },
@@ -1341,6 +1407,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 488,
             "len": 1
           }
         },
@@ -1361,6 +1428,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 500,
             "len": 1
           }
         },
@@ -1381,6 +1449,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 508,
             "len": 1
           }
         },
@@ -1401,6 +1470,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 516,
             "len": 1
           }
         },
@@ -1421,6 +1491,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 524,
             "len": 1
           }
         },
@@ -1441,6 +1512,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 531,
             "len": 1
           }
         },
@@ -1461,6 +1533,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 536,
             "len": 1
           }
         },
@@ -1481,6 +1554,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 544,
             "len": 1
           }
         },
@@ -1501,6 +1575,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 550,
             "len": 1
           }
         },
@@ -1521,6 +1596,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 559,
             "len": 1
           }
         },
@@ -1541,6 +1617,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 568,
             "len": 1
           }
         },
@@ -1561,6 +1638,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 574,
             "len": 1
           }
         },
@@ -1581,6 +1659,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 580,
             "len": 1
           }
         },
@@ -1601,6 +1680,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 587,
             "len": 1
           }
         },
@@ -1625,6 +1705,7 @@ expression: result.output.unwrap()
       "type": "style-declaration",
       "open": {
         "kind": "LeftCurly",
+        "offset": 595,
         "len": 1
       },
       "declarations": [
@@ -1637,6 +1718,7 @@ expression: result.output.unwrap()
           },
           "colon": {
             "kind": "Colon",
+            "offset": 604,
             "len": 1
           },
           "value": [
@@ -1645,6 +1727,7 @@ expression: result.output.unwrap()
                 "type": "zero",
                 "value": {
                   "kind": "Number",
+                  "offset": 606,
                   "len": 1
                 }
               }
@@ -1656,6 +1739,7 @@ expression: result.output.unwrap()
           "important": null,
           "semicolon": {
             "kind": "Semicolon",
+            "offset": 607,
             "len": 1
           }
         },
@@ -1668,6 +1752,7 @@ expression: result.output.unwrap()
           },
           "colon": {
             "kind": "Colon",
+            "offset": 617,
             "len": 1
           },
           "value": [
@@ -1675,6 +1760,7 @@ expression: result.output.unwrap()
               "type": "zero",
               "value": {
                 "kind": "Number",
+                "offset": 619,
                 "len": 1
               }
             },
@@ -1685,6 +1771,7 @@ expression: result.output.unwrap()
           "important": null,
           "semicolon": {
             "kind": "Semicolon",
+            "offset": 620,
             "len": 1
           }
         },
@@ -1697,16 +1784,19 @@ expression: result.output.unwrap()
           },
           "colon": {
             "kind": "Colon",
+            "offset": 629,
             "len": 1
           },
           "value": {
             "values": [
               {
                 "kind": "Whitespace",
+                "offset": 630,
                 "len": 1
               },
               {
                 "kind": "Number",
+                "offset": 631,
                 "len": 1
               }
             ]
@@ -1714,6 +1804,7 @@ expression: result.output.unwrap()
           "important": null,
           "semicolon": {
             "kind": "Semicolon",
+            "offset": 632,
             "len": 1
           }
         },
@@ -1726,12 +1817,14 @@ expression: result.output.unwrap()
           },
           "colon": {
             "kind": "Colon",
+            "offset": 644,
             "len": 1
           },
           "value": {
             "values": [
               {
                 "kind": "Whitespace",
+                "offset": 645,
                 "len": 1
               },
               {
@@ -1745,6 +1838,7 @@ expression: result.output.unwrap()
           "important": null,
           "semicolon": {
             "kind": "Semicolon",
+            "offset": 650,
             "len": 1
           }
         },
@@ -1757,6 +1851,7 @@ expression: result.output.unwrap()
           },
           "colon": {
             "kind": "Colon",
+            "offset": 657,
             "len": 1
           },
           "value": {
@@ -1768,6 +1863,7 @@ expression: result.output.unwrap()
           "important": null,
           "semicolon": {
             "kind": "Semicolon",
+            "offset": 666,
             "len": 1
           }
         },
@@ -1780,12 +1876,14 @@ expression: result.output.unwrap()
           },
           "colon": {
             "kind": "Colon",
+            "offset": 683,
             "len": 1
           },
           "value": {
             "values": [
               {
                 "kind": "Whitespace",
+                "offset": 684,
                 "len": 1
               },
               {
@@ -1798,6 +1896,7 @@ expression: result.output.unwrap()
           "important": null,
           "semicolon": {
             "kind": "Semicolon",
+            "offset": 693,
             "len": 1
           }
         }
@@ -1805,6 +1904,7 @@ expression: result.output.unwrap()
       "rules": [],
       "close": {
         "kind": "RightCurly",
+        "offset": 695,
         "len": 1
       }
     },
@@ -1828,6 +1928,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 754,
             "len": 1
           }
         },
@@ -1848,6 +1949,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 761,
             "len": 1
           }
         },
@@ -1868,6 +1970,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 770,
             "len": 1
           }
         },
@@ -1888,6 +1991,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 782,
             "len": 1
           }
         },
@@ -1908,6 +2012,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 790,
             "len": 1
           }
         },
@@ -1928,6 +2033,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 799,
             "len": 1
           }
         },
@@ -1948,6 +2054,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 807,
             "len": 1
           }
         },
@@ -1968,6 +2075,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 815,
             "len": 1
           }
         },
@@ -1988,6 +2096,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 821,
             "len": 1
           }
         },
@@ -2008,6 +2117,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 826,
             "len": 1
           }
         },
@@ -2032,6 +2142,7 @@ expression: result.output.unwrap()
       "type": "style-declaration",
       "open": {
         "kind": "LeftCurly",
+        "offset": 836,
         "len": 1
       },
       "declarations": [
@@ -2044,12 +2155,14 @@ expression: result.output.unwrap()
           },
           "colon": {
             "kind": "Colon",
+            "offset": 846,
             "len": 1
           },
           "value": {
             "values": [
               {
                 "kind": "Whitespace",
+                "offset": 847,
                 "len": 1
               },
               {
@@ -2062,6 +2175,7 @@ expression: result.output.unwrap()
           "important": null,
           "semicolon": {
             "kind": "Semicolon",
+            "offset": 853,
             "len": 1
           }
         }
@@ -2069,6 +2183,7 @@ expression: result.output.unwrap()
       "rules": [],
       "close": {
         "kind": "RightCurly",
+        "offset": 855,
         "len": 1
       }
     },
@@ -2096,6 +2211,7 @@ expression: result.output.unwrap()
       "type": "style-declaration",
       "open": {
         "kind": "LeftCurly",
+        "offset": 862,
         "len": 1
       },
       "declarations": [
@@ -2108,16 +2224,19 @@ expression: result.output.unwrap()
           },
           "colon": {
             "kind": "Colon",
+            "offset": 876,
             "len": 1
           },
           "value": {
             "values": [
               {
                 "kind": "Whitespace",
+                "offset": 877,
                 "len": 1
               },
               {
                 "kind": "Number",
+                "offset": 878,
                 "len": 1
               }
             ]
@@ -2125,6 +2244,7 @@ expression: result.output.unwrap()
           "important": null,
           "semicolon": {
             "kind": "Semicolon",
+            "offset": 879,
             "len": 1
           }
         }
@@ -2132,6 +2252,7 @@ expression: result.output.unwrap()
       "rules": [],
       "close": {
         "kind": "RightCurly",
+        "offset": 881,
         "len": 1
       }
     },
@@ -2155,6 +2276,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 885,
             "len": 1
           }
         },
@@ -2179,6 +2301,7 @@ expression: result.output.unwrap()
       "type": "style-declaration",
       "open": {
         "kind": "LeftCurly",
+        "offset": 890,
         "len": 1
       },
       "declarations": [
@@ -2191,12 +2314,14 @@ expression: result.output.unwrap()
           },
           "colon": {
             "kind": "Colon",
+            "offset": 903,
             "len": 1
           },
           "value": {
             "values": [
               {
                 "kind": "Whitespace",
+                "offset": 904,
                 "len": 1
               },
               {
@@ -2209,6 +2334,7 @@ expression: result.output.unwrap()
           "important": null,
           "semicolon": {
             "kind": "Semicolon",
+            "offset": 909,
             "len": 1
           }
         }
@@ -2216,6 +2342,7 @@ expression: result.output.unwrap()
       "rules": [],
       "close": {
         "kind": "RightCurly",
+        "offset": 911,
         "len": 1
       }
     },
@@ -2239,6 +2366,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 923,
             "len": 1
           }
         },
@@ -2263,6 +2391,7 @@ expression: result.output.unwrap()
       "type": "style-declaration",
       "open": {
         "kind": "LeftCurly",
+        "offset": 927,
         "len": 1
       },
       "declarations": [
@@ -2275,12 +2404,14 @@ expression: result.output.unwrap()
           },
           "colon": {
             "kind": "Colon",
+            "offset": 936,
             "len": 1
           },
           "value": {
             "values": [
               {
                 "kind": "Whitespace",
+                "offset": 937,
                 "len": 1
               },
               {
@@ -2293,6 +2424,7 @@ expression: result.output.unwrap()
           "important": null,
           "semicolon": {
             "kind": "Semicolon",
+            "offset": 942,
             "len": 1
           }
         }
@@ -2300,6 +2432,7 @@ expression: result.output.unwrap()
       "rules": [],
       "close": {
         "kind": "RightCurly",
+        "offset": 944,
         "len": 1
       }
     },
@@ -2326,6 +2459,7 @@ expression: result.output.unwrap()
                 "before": [
                   {
                     "kind": "Colon",
+                    "offset": 956,
                     "len": 1
                   },
                   {
@@ -2339,6 +2473,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 963,
             "len": 1
           }
         },
@@ -2362,6 +2497,7 @@ expression: result.output.unwrap()
                 "after": [
                   {
                     "kind": "Colon",
+                    "offset": 975,
                     "len": 1
                   },
                   {
@@ -2375,6 +2511,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 981,
             "len": 1
           }
         },
@@ -2398,6 +2535,7 @@ expression: result.output.unwrap()
                 "before": [
                   {
                     "kind": "Colon",
+                    "offset": 984,
                     "len": 1
                   },
                   {
@@ -2411,6 +2549,7 @@ expression: result.output.unwrap()
           ],
           "comma": {
             "kind": "Comma",
+            "offset": 991,
             "len": 1
           }
         },
@@ -2434,6 +2573,7 @@ expression: result.output.unwrap()
                 "after": [
                   {
                     "kind": "Colon",
+                    "offset": 994,
                     "len": 1
                   },
                   {
@@ -2451,6 +2591,7 @@ expression: result.output.unwrap()
       "type": "style-declaration",
       "open": {
         "kind": "LeftCurly",
+        "offset": 1001,
         "len": 1
       },
       "declarations": [
@@ -2463,12 +2604,14 @@ expression: result.output.unwrap()
           },
           "colon": {
             "kind": "Colon",
+            "offset": 1011,
             "len": 1
           },
           "value": {
             "values": [
               {
                 "kind": "Whitespace",
+                "offset": 1012,
                 "len": 1
               },
               {
@@ -2481,6 +2624,7 @@ expression: result.output.unwrap()
           "important": null,
           "semicolon": {
             "kind": "Semicolon",
+            "offset": 1015,
             "len": 1
           }
         },
@@ -2493,12 +2637,14 @@ expression: result.output.unwrap()
           },
           "colon": {
             "kind": "Colon",
+            "offset": 1025,
             "len": 1
           },
           "value": {
             "values": [
               {
                 "kind": "Whitespace",
+                "offset": 1026,
                 "len": 1
               },
               {
@@ -2511,6 +2657,7 @@ expression: result.output.unwrap()
           "important": null,
           "semicolon": {
             "kind": "Semicolon",
+            "offset": 1031,
             "len": 1
           }
         }
@@ -2518,6 +2665,7 @@ expression: result.output.unwrap()
       "rules": [],
       "close": {
         "kind": "RightCurly",
+        "offset": 1033,
         "len": 1
       }
     },
@@ -2545,6 +2693,7 @@ expression: result.output.unwrap()
       "type": "style-declaration",
       "open": {
         "kind": "LeftCurly",
+        "offset": 1041,
         "len": 1
       },
       "declarations": [
@@ -2557,6 +2706,7 @@ expression: result.output.unwrap()
           },
           "colon": {
             "kind": "Colon",
+            "offset": 1059,
             "len": 1
           },
           "value": {
@@ -2569,6 +2719,7 @@ expression: result.output.unwrap()
           "important": null,
           "semicolon": {
             "kind": "Semicolon",
+            "offset": 1069,
             "len": 1
           }
         },
@@ -2581,16 +2732,19 @@ expression: result.output.unwrap()
           },
           "colon": {
             "kind": "Colon",
+            "offset": 1086,
             "len": 1
           },
           "value": {
             "values": [
               {
                 "kind": "Whitespace",
+                "offset": 1087,
                 "len": 1
               },
               {
                 "kind": "Number",
+                "offset": 1088,
                 "len": 1
               }
             ]
@@ -2598,6 +2752,7 @@ expression: result.output.unwrap()
           "important": null,
           "semicolon": {
             "kind": "Semicolon",
+            "offset": 1089,
             "len": 1
           }
         }
@@ -2605,6 +2760,7 @@ expression: result.output.unwrap()
       "rules": [],
       "close": {
         "kind": "RightCurly",
+        "offset": 1091,
         "len": 1
       }
     }

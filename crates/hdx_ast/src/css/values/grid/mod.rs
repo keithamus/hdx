@@ -16,7 +16,7 @@ use impls::*;
 // #[percentages("refer to corresponding dimension of the content area")]
 // #[canonical_order("per grammar")]
 // #[animation_type("if the list lengths match, by computed value type per item in the computed track list (see § 7.2.5 computed value of a track listing and § 7.2.3.3 interpolation/combination of repeat()); discrete otherwise")]
-// pub enum GridTemplateColumns {}
+// pub enum GridTemplateColumnsStyleValue {}
 
 // // https://drafts.csswg.org/css-grid-3/#grid-template-rows
 // #[value(" none | <track-list> | <auto-track-list> | subgrid <line-name-list>? ")]
@@ -26,7 +26,7 @@ use impls::*;
 // #[percentages("refer to corresponding dimension of the content area")]
 // #[canonical_order("per grammar")]
 // #[animation_type("if the list lengths match, by computed value type per item in the computed track list (see § 7.2.5 computed value of a track listing and § 7.2.3.3 interpolation/combination of repeat()); discrete otherwise")]
-// pub enum GridTemplateRows {}
+// pub enum GridTemplateRowsStyleValue {}
 
 // // https://drafts.csswg.org/css-grid-3/#grid-template-areas
 // #[value(" none | <string>+ ")]
@@ -36,7 +36,7 @@ use impls::*;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub enum GridTemplateAreas {}
+// pub enum GridTemplateAreasStyleValue<'a> {}
 
 // // https://drafts.csswg.org/css-grid-3/#grid-template
 // #[value(" none | [ <'grid-template-rows'> / <'grid-template-columns'> ] | [ <line-names>? <string> <track-size>? <line-names>? ]+ [ / <explicit-track-list> ]? ")]
@@ -46,7 +46,7 @@ use impls::*;
 // #[percentages("see individual properties")]
 // #[canonical_order("per grammar")]
 // #[animation_type("see individual properties")]
-// pub enum GridTemplate {}
+// pub enum GridTemplateStyleValue<'a> {}
 
 // // https://drafts.csswg.org/css-grid-3/#grid-auto-columns
 // #[value(" <track-size>+ ")]
@@ -56,7 +56,7 @@ use impls::*;
 // #[percentages("see track sizing")]
 // #[canonical_order("per grammar")]
 // #[animation_type("if the list lengths match, by computed value type per item; discrete otherwise")]
-// pub struct GridAutoColumns;
+// pub struct GridAutoColumnsStyleValue;
 
 // // https://drafts.csswg.org/css-grid-3/#grid-auto-rows
 // #[value(" <track-size>+ ")]
@@ -66,7 +66,7 @@ use impls::*;
 // #[percentages("see track sizing")]
 // #[canonical_order("per grammar")]
 // #[animation_type("if the list lengths match, by computed value type per item; discrete otherwise")]
-// pub struct GridAutoRows;
+// pub struct GridAutoRowsStyleValue;
 
 // // https://drafts.csswg.org/css-grid-3/#grid-auto-flow
 // #[value(" [ row | column | row-reverse | column-reverse ] || dense || wrap-reverse ")]
@@ -76,7 +76,7 @@ use impls::*;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub enum GridAutoFlow {}
+// pub enum GridAutoFlowStyleValue {}
 
 // // https://drafts.csswg.org/css-grid-3/#grid
 // #[value(" <'grid-template'> | <'grid-template-rows'> / [ auto-flow && dense? ] <'grid-auto-columns'>? | [ auto-flow && dense? ] <'grid-auto-rows'>? / <'grid-template-columns'> ")]
@@ -86,7 +86,7 @@ use impls::*;
 // #[percentages("see individual properties")]
 // #[canonical_order("per grammar")]
 // #[animation_type("see individual properties")]
-// pub enum Grid {}
+// pub enum GridStyleValue {}
 
 // // https://drafts.csswg.org/css-grid-3/#grid-row-start
 // #[value(" <grid-line> ")]
@@ -96,7 +96,7 @@ use impls::*;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub struct GridRowStart;
+// pub struct GridRowStartStyleValue;
 
 // // https://drafts.csswg.org/css-grid-3/#grid-column-start
 // #[value(" <grid-line> ")]
@@ -106,7 +106,7 @@ use impls::*;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub struct GridColumnStart;
+// pub struct GridColumnStartStyleValue;
 
 // // https://drafts.csswg.org/css-grid-3/#grid-row-end
 // #[value(" <grid-line> ")]
@@ -116,7 +116,7 @@ use impls::*;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub struct GridRowEnd;
+// pub struct GridRowEndStyleValue;
 
 // // https://drafts.csswg.org/css-grid-3/#grid-column-end
 // #[value(" <grid-line> ")]
@@ -126,7 +126,7 @@ use impls::*;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub struct GridColumnEnd;
+// pub struct GridColumnEndStyleValue;
 
 // // https://drafts.csswg.org/css-grid-3/#grid-row
 // #[value(" <grid-line> [ / <grid-line> ]? ")]
@@ -136,7 +136,7 @@ use impls::*;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub struct GridRow;
+// pub struct GridRowStyleValue;
 
 // // https://drafts.csswg.org/css-grid-3/#grid-column
 // #[value(" <grid-line> [ / <grid-line> ]? ")]
@@ -146,7 +146,7 @@ use impls::*;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub struct GridColumn;
+// pub struct GridColumnStyleValue;
 
 // // https://drafts.csswg.org/css-grid-3/#grid-area
 // #[value(" <grid-line> [ / <grid-line> ]{0,3} ")]
@@ -156,7 +156,7 @@ use impls::*;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub struct GridArea;
+// pub struct GridAreaStyleValue;
 
 // https://drafts.csswg.org/css-grid-3/#masonry-direction
 #[value(" row | column | row-reverse | column-reverse ")]
@@ -166,7 +166,7 @@ use impls::*;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum MasonryDirection {}
+pub enum MasonryDirectionStyleValue {}
 
 // https://drafts.csswg.org/css-grid-3/#masonry-fill
 #[value(" normal | reverse ")]
@@ -176,7 +176,7 @@ pub enum MasonryDirection {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum MasonryFill {}
+pub enum MasonryFillStyleValue {}
 
 // https://drafts.csswg.org/css-grid-3/#masonry-flow
 #[value(" <'masonry-direction'> || <'masonry-fill'> ")]
@@ -186,7 +186,7 @@ pub enum MasonryFill {}
 #[percentages("see individual properties")]
 #[canonical_order("per grammar")]
 #[animation_type("see individual properties")]
-pub struct MasonryFlow;
+pub struct MasonryFlowStyleValue;
 
 // // https://drafts.csswg.org/css-grid-3/#masonry
 // #[value(" <'masonry-template-areas'> || <'masonry-template-tracks'> || <'masonry-direction'> || <'masonry-fill'> ")]
@@ -196,7 +196,7 @@ pub struct MasonryFlow;
 // #[percentages("see individual properties")]
 // #[canonical_order("per grammar")]
 // #[animation_type("see individual properties")]
-// pub struct Masonry;
+// pub struct MasonryStyleValue;
 
 // // https://drafts.csswg.org/css-grid-3/#masonry-template-tracks
 // #[value(" none | <track-list> | <masonry-auto-track-list> | subgrid <line-name-list>? ")]
@@ -206,7 +206,7 @@ pub struct MasonryFlow;
 // #[percentages("refer to corresponding dimension of the content area")]
 // #[canonical_order("per grammar")]
 // #[animation_type("if list lengths match, by computed value type; otherwise, discrete")]
-// pub enum MasonryTemplateTracks {}
+// pub enum MasonryTemplateTracksStyleValue {}
 
 // // https://drafts.csswg.org/css-grid-3/#masonry-template-areas
 // #[value(" none | <string> ")]
@@ -216,7 +216,7 @@ pub struct MasonryFlow;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub enum MasonryTemplateAreas {}
+// pub enum MasonryTemplateAreasStyleValue<'a> {}
 
 // // https://drafts.csswg.org/css-grid-3/#masonry-auto-tracks
 // #[value(" <'grid-auto-columns'> ")]
@@ -226,7 +226,7 @@ pub struct MasonryFlow;
 // #[percentages("refer to corresponding dimension of the content area")]
 // #[canonical_order("per grammar")]
 // #[animation_type("if the list lengths match, by computed value type per item; discrete otherwise")]
-// pub struct MasonryAutoTracks;
+// pub struct MasonryAutoTracksStyleValue;
 
 // // https://drafts.csswg.org/css-grid-3/#masonry-slack
 // #[value(" <length-percentage> | infinite ")]
@@ -236,4 +236,4 @@ pub struct MasonryFlow;
 // #[percentages("relative to the grid-axis content box size of the masonry container")]
 // #[canonical_order("per grammar")]
 // #[animation_type("as length")]
-// pub enum MasonrySlack {}
+// pub enum MasonrySlackStyleValue {}

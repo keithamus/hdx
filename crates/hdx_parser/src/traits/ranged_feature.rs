@@ -123,8 +123,8 @@ macro_rules! ranged_feature {
 			}
 		}
 
-		impl<'a> $crate::ToCursors<'a> for $feat {
-			fn to_cursors(&self, s: &mut $crate::CursorStream<'a>) {
+		impl<'a> $crate::ToCursors for $feat {
+			fn to_cursors(&self, s: &mut impl $crate::CursorSink) {
 				match self {
 					Self::Left(ident, comparison, value) => {
 						s.append(ident.into());

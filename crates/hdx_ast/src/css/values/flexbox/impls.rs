@@ -8,22 +8,22 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(FlexDirection, 16);
-		assert_size!(FlexWrap, 16);
-		assert_size!(FlexFlow, 32);
-		// assert_size!(Flex, 1);
-		assert_size!(FlexGrow, 8);
-		assert_size!(FlexShrink, 8);
-		assert_size!(FlexBasis, 36);
-		assert_size!(JustifyContent, 16);
-		assert_size!(AlignItems, 16);
-		assert_size!(AlignSelf, 16);
-		assert_size!(AlignContent, 16);
+		assert_size!(FlexDirectionStyleValue, 16);
+		assert_size!(FlexWrapStyleValue, 16);
+		assert_size!(FlexFlowStyleValue, 32);
+		// assert_size!(FlexStyleValue, 1);
+		assert_size!(FlexGrowStyleValue, 12);
+		assert_size!(FlexShrinkStyleValue, 12);
+		assert_size!(FlexBasisStyleValue, 44);
+		assert_size!(JustifyContentStyleValue, 16);
+		assert_size!(AlignItemsStyleValue, 16);
+		assert_size!(AlignSelfStyleValue, 16);
+		assert_size!(AlignContentStyleValue, 16);
 	}
 
 	#[test]
 	fn test_writes() {
-		assert_parse!(FlexBasis, "auto");
-		assert_parse!(FlexBasis, "4px");
+		assert_parse!(FlexBasisStyleValue, "auto");
+		assert_parse!(FlexBasisStyleValue, "4px");
 	}
 }

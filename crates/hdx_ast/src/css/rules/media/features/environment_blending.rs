@@ -13,7 +13,7 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(EnvironmentBlendingMediaFeature, 36);
+		assert_size!(EnvironmentBlendingMediaFeature, 40);
 	}
 
 	#[test]

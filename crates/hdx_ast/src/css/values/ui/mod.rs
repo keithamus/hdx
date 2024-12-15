@@ -8,15 +8,15 @@ use impls::*;
  * CSS Basic User Interface Module Level 4
  */
 
-// https://drafts.csswg.org/css-ui-4/#outline
-#[value(" <'outline-width'> || <'outline-style'> || <'outline-color'> ")]
-#[initial("see individual properties")]
-#[applies_to("all elements")]
-#[inherited("no")]
-#[percentages("n/a")]
-#[canonical_order("per grammar")]
-#[animation_type("see individual properties")]
-pub struct Outline<'a>;
+// // https://drafts.csswg.org/css-ui-4/#outline
+// #[value(" <'outline-width'> || <'outline-style'> || <'outline-color'> ")]
+// #[initial("see individual properties")]
+// #[applies_to("all elements")]
+// #[inherited("no")]
+// #[percentages("n/a")]
+// #[canonical_order("per grammar")]
+// #[animation_type("see individual properties")]
+// pub struct OutlineStyleValue<'a>;
 
 // https://drafts.csswg.org/css-ui-4/#outline-width
 #[value(" <line-width> ")]
@@ -26,7 +26,7 @@ pub struct Outline<'a>;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value")]
-pub struct OutlineWidth;
+pub struct OutlineWidthStyleValue;
 
 // https://drafts.csswg.org/css-ui-4/#outline-style
 #[value(" auto | <outline-line-style> ")]
@@ -36,7 +36,7 @@ pub struct OutlineWidth;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value")]
-pub enum OutlineStyle {}
+pub enum OutlineStyleStyleValue {}
 
 // https://drafts.csswg.org/css-ui-4/#outline-color
 #[value(" auto | <color> | <image-1D> ")]
@@ -46,7 +46,7 @@ pub enum OutlineStyle {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value")]
-pub enum OutlineColor<'a> {}
+pub enum OutlineColorStyleValue<'a> {}
 
 // https://drafts.csswg.org/css-ui-4/#outline-offset
 #[value(" <length> ")]
@@ -56,29 +56,17 @@ pub enum OutlineColor<'a> {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value")]
-pub struct OutlineOffset;
+pub struct OutlineOffsetStyleValue;
 
 // https://drafts.csswg.org/css-ui-4/#resize
 #[value(" none | both | horizontal | vertical | block | inline ")]
 #[initial("none")]
-#[applies_to(
-	"elements that are scroll containers and optionally replaced elements such as images, videos, and iframes"
-)]
+#[applies_to("elements that are scroll containers and optionally replaced elements such as images, videos, and iframes")]
 #[inherited("no")]
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum Resize {}
-
-// https://drafts.csswg.org/css-ui-4/#text-overflow
-#[value(" clip | ellipsis ")]
-#[initial("clip")]
-#[applies_to("block containers")]
-#[inherited("no")]
-#[percentages("n/a")]
-#[canonical_order("per grammar")]
-#[animation_type("discrete")]
-pub enum TextOverflow {}
+pub enum ResizeStyleValue {}
 
 // // https://drafts.csswg.org/css-ui-4/#cursor
 // #[value(" [ [ <url> | <url-set> ] [<x> <y>]? ]#?  [ auto | default | none | context-menu | help | pointer | progress | wait |  cell | crosshair | text | vertical-text |  alias | copy | move | no-drop | not-allowed | grab | grabbing |  e-resize | n-resize | ne-resize | nw-resize | s-resize | se-resize | sw-resize | w-resize | ew-resize | ns-resize | nesw-resize | nwse-resize | col-resize | row-resize | all-scroll | zoom-in | zoom-out  ] ")]
@@ -88,7 +76,7 @@ pub enum TextOverflow {}
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub struct Cursor {}
+// pub enum CursorStyleValue<'a> {}
 
 // https://drafts.csswg.org/css-ui-4/#caret-color
 #[value(" auto | <color> ")]
@@ -98,7 +86,7 @@ pub enum TextOverflow {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value")]
-pub enum CaretColor {}
+pub enum CaretColorStyleValue {}
 
 // https://drafts.csswg.org/css-ui-4/#caret-animation
 #[value(" auto | manual ")]
@@ -108,7 +96,7 @@ pub enum CaretColor {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum CaretAnimation {}
+pub enum CaretAnimationStyleValue {}
 
 // https://drafts.csswg.org/css-ui-4/#caret-shape
 #[value(" auto | bar | block | underscore ")]
@@ -118,7 +106,7 @@ pub enum CaretAnimation {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value")]
-pub enum CaretShape {}
+pub enum CaretShapeStyleValue {}
 
 // https://drafts.csswg.org/css-ui-4/#caret
 #[value(" <'caret-color'> || <'caret-animation'> || <'caret-shape'> ")]
@@ -128,7 +116,7 @@ pub enum CaretShape {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("see individual properties")]
-pub struct Caret;
+pub struct CaretStyleValue;
 
 // // https://drafts.csswg.org/css-ui-4/#nav-up
 // #[value(" auto | <id> [ current | root | <target-name> ]? ")]
@@ -138,7 +126,7 @@ pub struct Caret;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub enum NavUp {}
+// pub enum NavUpStyleValue {}
 
 // // https://drafts.csswg.org/css-ui-4/#nav-right
 // #[value(" auto | <id> [ current | root | <target-name> ]? ")]
@@ -148,7 +136,7 @@ pub struct Caret;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub enum NavRight {}
+// pub enum NavRightStyleValue {}
 
 // // https://drafts.csswg.org/css-ui-4/#nav-down
 // #[value(" auto | <id> [ current | root | <target-name> ]? ")]
@@ -158,7 +146,7 @@ pub struct Caret;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub enum NavDown {}
+// pub enum NavDownStyleValue {}
 
 // // https://drafts.csswg.org/css-ui-4/#nav-left
 // #[value(" auto | <id> [ current | root | <target-name> ]? ")]
@@ -168,7 +156,7 @@ pub struct Caret;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub enum NavLeft {}
+// pub enum NavLeftStyleValue {}
 
 // https://drafts.csswg.org/css-ui-4/#user-select
 #[value(" auto | text | none | contain | all ")]
@@ -178,7 +166,7 @@ pub struct Caret;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum UserSelect {}
+pub enum UserSelectStyleValue {}
 
 // https://drafts.csswg.org/css-ui-4/#pointer-events
 #[value(" auto | none ")]
@@ -188,7 +176,7 @@ pub enum UserSelect {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub enum PointerEvents {}
+pub enum PointerEventsStyleValue {}
 
 // https://drafts.csswg.org/css-ui-4/#accent-color
 #[value(" auto | <color> ")]
@@ -198,7 +186,7 @@ pub enum PointerEvents {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub enum AccentColor {}
+pub enum AccentColorStyleValue {}
 
 // https://drafts.csswg.org/css-ui-4/#appearance
 #[value(" none | auto | base | <compat-auto> | <compat-special> ")]
@@ -208,7 +196,7 @@ pub enum AccentColor {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum Appearance {}
+pub enum AppearanceStyleValue {}
 
 // https://drafts.csswg.org/css-ui-4/#field-sizing
 #[value(" fixed | content ")]
@@ -218,7 +206,7 @@ pub enum Appearance {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum FieldSizing {}
+pub enum FieldSizingStyleValue {}
 
 // https://drafts.csswg.org/css-ui-4/#input-security
 #[value(" auto | none ")]
@@ -228,4 +216,4 @@ pub enum FieldSizing {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub enum InputSecurity {}
+pub enum InputSecurityStyleValue {}

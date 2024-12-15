@@ -14,7 +14,7 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(PrefersContrastMediaFeature, 36);
+		assert_size!(PrefersContrastMediaFeature, 40);
 	}
 
 	#[test]

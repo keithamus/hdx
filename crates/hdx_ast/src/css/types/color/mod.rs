@@ -38,8 +38,8 @@ impl Color {
 	// pub const Canvastext: Color = Color::System(SystemColor::CanvasText);
 }
 
-impl<'a> ToCursors<'a> for Color {
-	fn to_cursors(&self, s: &mut hdx_parser::CursorStream<'a>) {
+impl<'a> ToCursors for Color {
+	fn to_cursors(&self, s: &mut impl hdx_parser::CursorSink) {
 		match self {
 			Self::Currentcolor(t) => s.append((*t).into()),
 			Self::Transparent(t) => s.append((*t).into()),
@@ -92,8 +92,8 @@ mod tests {
 	#[test]
 	fn size_test() {
 		assert_size!(Channel, 16);
-		assert_size!(ColorFunction, 140);
-		assert_size!(Color, 140);
+		assert_size!(ColorFunction, 160);
+		assert_size!(Color, 160);
 	}
 
 	#[test]

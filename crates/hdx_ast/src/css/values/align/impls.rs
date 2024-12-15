@@ -8,24 +8,24 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		// assert_size!(AlignContent, 1);
-		// assert_size!(JustifyContent, 1);
-		// assert_size!(PlaceContent, 1);
-		// assert_size!(JustifySelf, 1);
-		// assert_size!(AlignSelf, 1);
-		// assert_size!(PlaceSelf, 1);
-		// assert_size!(JustifyItems, 1);
-		// assert_size!(AlignItems, 1);
-		// assert_size!(PlaceItems, 1);
-		assert_size!(RowGap, 16);
-		assert_size!(ColumnGap, 16);
-		assert_size!(Gap, 32);
+		// assert_size!(AlignContentStyleValue, 1);
+		// assert_size!(JustifyContentStyleValue, 1);
+		// assert_size!(PlaceContentStyleValue, 1);
+		// assert_size!(JustifySelfStyleValue, 1);
+		// assert_size!(AlignSelfStyleValue, 1);
+		// assert_size!(PlaceSelfStyleValue, 1);
+		// assert_size!(JustifyItemsStyleValue, 1);
+		// assert_size!(AlignItemsStyleValue, 1);
+		// assert_size!(PlaceItemsStyleValue, 1);
+		assert_size!(RowGapStyleValue, 16);
+		assert_size!(ColumnGapStyleValue, 16);
+		assert_size!(GapStyleValue, 32);
 	}
 
 	#[test]
 	fn test_writes() {
-		assert_parse!(RowGap, "normal");
-		assert_parse!(ColumnGap, "1px");
-		assert_parse!(Gap, "normal 1px");
+		assert_parse!(RowGapStyleValue, "normal");
+		assert_parse!(ColumnGapStyleValue, "1px");
+		assert_parse!(GapStyleValue, "normal 1px");
 	}
 }

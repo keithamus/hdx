@@ -1,6 +1,6 @@
 use hdx_atom::atom;
 use hdx_lexer::{Cursor, KindSet};
-use hdx_parser::{diagnostics, todo, CursorStream, Parse, Parser, Result as ParserResult, ToCursors, T};
+use hdx_parser::{diagnostics, todo, CursorSink, Parse, Parser, Result as ParserResult, ToCursors, T};
 
 use super::functional_pseudo_class::DirValue;
 
@@ -173,8 +173,8 @@ impl<'a> Parse<'a> for MozPseudoElement {
 	}
 }
 
-impl<'a> ToCursors<'a> for MozPseudoElement {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for MozPseudoElement {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match self {
 			Self::AnonymousBlock(colons, ident) => {
 				ToCursors::to_cursors(colons, s);
@@ -585,8 +585,8 @@ impl<'a> Parse<'a> for MozPseudoClass {
 	}
 }
 
-impl<'a> ToCursors<'a> for MozPseudoClass {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for MozPseudoClass {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match self {
 			Self::Any(colon, ident) => {
 				s.append(colon.into());
@@ -722,8 +722,8 @@ impl<'a> Parse<'a> for MozFunctionalPseudoClass {
 	}
 }
 
-impl<'a> ToCursors<'a> for MozFunctionalPseudoClass {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for MozFunctionalPseudoClass {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match self {
 			Self::LocaleDir(c) => ToCursors::to_cursors(c, s),
 		}
@@ -739,8 +739,8 @@ pub struct MozLocaleDirFunctionalPseudoClass {
 	pub close: Option<T![')']>,
 }
 
-impl<'a> ToCursors<'a> for MozLocaleDirFunctionalPseudoClass {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for MozLocaleDirFunctionalPseudoClass {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		ToCursors::to_cursors(&self.colon, s);
 		s.append(self.function.into());
 		s.append(self.value.into());

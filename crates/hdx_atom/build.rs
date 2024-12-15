@@ -19,10 +19,7 @@ pub fn kebab(str: String) -> String {
 fn main() {
 	println!("cargo::rerun-if-changed=build.rs");
 
-	let matcher = RegexMatcher::new_line_matcher(
-		"(atom!\\(\"|atomizable\\(\"|suffix = \"|https://drafts.csswg.org/css[^/]+/#|#\\[value\\(\")([^\"\\)]+)(?: \"\\)\\])?",
-	)
-	.unwrap();
+	let matcher = RegexMatcher::new_line_matcher(r#"(atom!\("|#\[value\(")([^"\)]+)(?: "\)\])?"#).unwrap();
 	let mut matches = HashSet::new();
 	matches.insert("%".to_owned());
 	for entry in glob("../**/*.rs").unwrap() {
@@ -37,10 +34,8 @@ fn main() {
 				UTF8(|_lnum, line| {
 					let mut captures = matcher.new_captures()?;
 					matcher.captures_iter(line.as_bytes(), &mut captures, |captures| -> bool {
-						dbg!(&line, &line[captures.get(0).unwrap()]);
 						let start = &line[captures.get(1).unwrap()];
 						let capture = &line[captures.get(2).unwrap()];
-						dbg!(&start, &capture);
 						if start == "#[value(\"" {
 							let keywords = capture
 								.split(" | ")
@@ -88,7 +83,7 @@ fn main() {
 					matcher.captures_iter(line.as_bytes(), &mut captures, |captures| -> bool {
 						let capture = &line[captures.get(1).unwrap()];
 						if !capture.is_empty() {
-							let mut atom_name = kebab(capture.to_string());
+							let mut atom_name = kebab(capture.trim_end_matches("StyleValue").into());
 							if atom_name.starts_with("webkit") {
 								atom_name = format!("-{}", atom_name);
 							}

@@ -1,2 +1,3 @@
-pub(crate) use crate::css::values::r#box::{MarginTop, PaddingTop};
-pub(crate) use crate::css::values::sizing::{MaxWidth, MinWidth, Width};
+// Re-expose stylevalues for shorthands
+pub(crate) use crate::css::values::r#box::{MarginTopStyleValue, PaddingTopStyleValue};
+pub(crate) use crate::css::values::sizing::{MaxWidthStyleValue, MinWidthStyleValue, WidthStyleValue};

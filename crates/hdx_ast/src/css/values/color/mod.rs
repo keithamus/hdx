@@ -16,7 +16,7 @@ use impls::*;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub struct Color;
+pub struct ColorStyleValue;
 
 // https://drafts.csswg.org/css-color-6/#opacity
 #[value(" <opacity-value> ")]
@@ -26,4 +26,4 @@ pub struct Color;
 #[percentages("map to the range [0,1]")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub struct Opacity;
+pub struct OpacityStyleValue;

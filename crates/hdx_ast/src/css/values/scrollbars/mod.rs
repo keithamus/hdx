@@ -16,7 +16,7 @@ use impls::*;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value")]
-pub enum ScrollbarColor {}
+pub enum ScrollbarColorStyleValue {}
 
 // https://drafts.csswg.org/css-scrollbars-1/#scrollbar-width
 #[value(" auto | thin | none ")]
@@ -26,4 +26,4 @@ pub enum ScrollbarColor {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum ScrollbarWidth {}
+pub enum ScrollbarWidthStyleValue {}

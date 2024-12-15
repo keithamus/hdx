@@ -16,7 +16,7 @@ use impls::*;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum FloatReference {}
+pub enum FloatReferenceStyleValue {}
 
 // https://drafts.csswg.org/css-page-floats-3/#float
 #[value(" block-start | block-end | inline-start | inline-end | snap-block | <snap-block()> | snap-inline | <snap-inline()> | left | right | top | bottom | none ")]
@@ -26,7 +26,7 @@ pub enum FloatReference {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub enum Float {}
+pub enum FloatStyleValue {}
 
 // https://drafts.csswg.org/css-page-floats-3/#clear
 #[value(" inline-start | inline-end | block-start | block-end | left | right | top | bottom | both-inline | both-block | both | none ")]
@@ -36,7 +36,7 @@ pub enum Float {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum Clear {}
+pub enum ClearStyleValue {}
 
 // https://drafts.csswg.org/css-page-floats-3/#float-defer
 #[value(" <integer> | last | none ")]
@@ -46,7 +46,7 @@ pub enum Clear {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum FloatDefer {}
+pub enum FloatDeferStyleValue {}
 
 // https://drafts.csswg.org/css-page-floats-3/#float-offset
 #[value(" <length-percentage> ")]
@@ -56,4 +56,4 @@ pub enum FloatDefer {}
 #[percentages("see prose")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub struct FloatOffset;
+pub struct FloatOffsetStyleValue;

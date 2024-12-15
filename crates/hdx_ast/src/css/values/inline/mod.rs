@@ -11,14 +11,12 @@ use impls::*;
 // https://drafts.csswg.org/css-inline-3/#dominant-baseline
 #[value(" auto | text-bottom | alphabetic | ideographic | middle | central | mathematical | hanging | text-top ")]
 #[initial("auto")]
-#[applies_to(
-	"block containers, inline boxes, table rows, grid containers, flex containers, and SVG text content elements"
-)]
+#[applies_to("block containers, inline boxes, table rows, grid containers, flex containers, and SVG text content elements")]
 #[inherited("yes")]
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum DominantBaseline {}
+pub enum DominantBaselineStyleValue {}
 
 // // https://drafts.csswg.org/css-inline-3/#vertical-align
 // #[value(" [ first | last] || <'alignment-baseline'> || <'baseline-shift'> ")]
@@ -28,7 +26,7 @@ pub enum DominantBaseline {}
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("see individual properties")]
-// pub enum VerticalAlign {}
+// pub enum VerticalAlignStyleValue {}
 
 // https://drafts.csswg.org/css-inline-3/#baseline-source
 #[value(" auto | first | last ")]
@@ -38,7 +36,7 @@ pub enum DominantBaseline {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum BaselineSource {}
+pub enum BaselineSourceStyleValue {}
 
 // https://drafts.csswg.org/css-inline-3/#alignment-baseline
 #[value(" baseline | text-bottom | alphabetic | ideographic | middle | central | mathematical | text-top ")]
@@ -48,7 +46,7 @@ pub enum BaselineSource {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum AlignmentBaseline {}
+pub enum AlignmentBaselineStyleValue {}
 
 // // https://drafts.csswg.org/css-inline-3/#baseline-shift
 // #[value(" <length-percentage> | sub | super | top | center | bottom ")]
@@ -58,7 +56,7 @@ pub enum AlignmentBaseline {}
 // #[percentages("refer to the used value of line-height")]
 // #[canonical_order("per grammar")]
 // #[animation_type("by computed value type")]
-// pub enum BaselineShift {}
+// pub enum BaselineShiftStyleValue {}
 
 // https://drafts.csswg.org/css-inline-3/#line-height
 #[value(" normal | <number [0,∞]> | <length-percentage [0,∞]> ")]
@@ -68,7 +66,7 @@ pub enum AlignmentBaseline {}
 #[percentages("computed relative to 1em")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub enum LineHeight {}
+pub enum LineHeightStyleValue {}
 
 // // https://drafts.csswg.org/css-inline-3/#line-fit-edge
 // #[value(" leading | <text-edge> ")]
@@ -78,7 +76,7 @@ pub enum LineHeight {}
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub enum LineFitEdge {}
+// pub enum LineFitEdgeStyleValue {}
 
 // // https://drafts.csswg.org/css-inline-3/#text-box
 // #[value(" normal | <'text-box-trim'> || <'text-box-edge'> ")]
@@ -88,7 +86,7 @@ pub enum LineHeight {}
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub enum TextBox {}
+// pub enum TextBoxStyleValue {}
 
 // https://drafts.csswg.org/css-inline-3/#text-box-trim
 #[value(" none | trim-start | trim-end | trim-both ")]
@@ -98,17 +96,17 @@ pub enum LineHeight {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum TextBoxTrim {}
+pub enum TextBoxTrimStyleValue {}
 
 // // https://drafts.csswg.org/css-inline-3/#text-box-edge
 // #[value(" auto | <text-edge> ")]
 // #[initial("auto")]
 // #[applies_to("block containers and inline boxes")]
-// #[inherited("no")]
+// #[inherited("yes")]
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub enum TextBoxEdge {}
+// pub enum TextBoxEdgeStyleValue {}
 
 // https://drafts.csswg.org/css-inline-3/#inline-sizing
 #[value(" normal | stretch ")]
@@ -118,7 +116,7 @@ pub enum TextBoxTrim {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum InlineSizing {}
+pub enum InlineSizingStyleValue {}
 
 // // https://drafts.csswg.org/css-inline-3/#initial-letter
 // #[value(" normal | <number [1,∞]> <integer [1,∞]> | <number [1,∞]> && [ drop | raise ]? ")]
@@ -128,7 +126,7 @@ pub enum InlineSizing {}
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("by computed value type")]
-// pub enum InitialLetter {}
+// pub enum InitialLetterStyleValue {}
 
 // // https://drafts.csswg.org/css-inline-3/#initial-letter-align
 // #[value(" [ border-box? [ alphabetic | ideographic | hanging | leading ]? ]! ")]
@@ -138,7 +136,7 @@ pub enum InlineSizing {}
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub enum InitialLetterAlign {}
+// pub enum InitialLetterAlignStyleValue {}
 
 // https://drafts.csswg.org/css-inline-3/#initial-letter-wrap
 #[value(" none | first | all | grid | <length-percentage> ")]
@@ -148,4 +146,4 @@ pub enum InlineSizing {}
 #[percentages("relative to logical width of (last fragment of) initial letter")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub enum InitialLetterWrap {}
+pub enum InitialLetterWrapStyleValue {}

@@ -2,7 +2,7 @@ pub(crate) use crate::traits::StyleValue;
 pub(crate) use hdx_proc_macro::*;
 
 // use super::types::LengthPercentage;
-// use super::{MinWidth, Width};
+// use super::{MinWidthStyleValue, Width};
 
 // shortcuts for logical properties to resolve to 0
 // impl Width {
@@ -22,21 +22,21 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(Width, 36);
-		assert_size!(Height, 36);
-		assert_size!(MinWidth, 36);
-		assert_size!(MinHeight, 36);
-		assert_size!(MaxWidth, 36);
-		assert_size!(MaxHeight, 36);
-		assert_size!(BoxSizing, 16);
+		assert_size!(WidthStyleValue, 44);
+		assert_size!(HeightStyleValue, 44);
+		assert_size!(MinWidthStyleValue, 44);
+		assert_size!(MinHeightStyleValue, 44);
+		assert_size!(MaxWidthStyleValue, 44);
+		assert_size!(MaxHeightStyleValue, 44);
+		assert_size!(BoxSizingStyleValue, 16);
 	}
 
 	#[test]
 	fn test_writes() {
-		assert_parse!(Width, "0");
-		assert_parse!(Width, "1px");
-		assert_parse!(Width, "fit-content");
-		assert_parse!(Width, "fit-content(20rem)");
-		assert_parse!(Width, "fit-content(0)");
+		assert_parse!(WidthStyleValue, "0");
+		assert_parse!(WidthStyleValue, "1px");
+		assert_parse!(WidthStyleValue, "fit-content");
+		assert_parse!(WidthStyleValue, "fit-content(20rem)");
+		assert_parse!(WidthStyleValue, "fit-content(0)");
 	}
 }
