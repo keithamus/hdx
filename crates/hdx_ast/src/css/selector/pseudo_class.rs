@@ -261,17 +261,16 @@ impl<'a> From<&PseudoClass> for Span {
 			| PseudoClass::TargetWithin(colon, ident)
 			| PseudoClass::Valid(colon, ident)
 			| PseudoClass::Visited(colon, ident) => Into::<Span>::into(colon) + ident.into(),
-			PseudoClass::Webkit(c) => todo!(),
-			PseudoClass::Moz(c) => todo!(),
-			PseudoClass::Ms(c) => todo!(),
-			PseudoClass::O(c) => todo!(),
+			PseudoClass::Webkit(c) => c.into(),
+			PseudoClass::Moz(c) => c.into(),
+			PseudoClass::Ms(c) => c.into(),
+			PseudoClass::O(c) => c.into(),
 		}
 	}
 }
 
 impl<'a> Visitable<'a> for PseudoClass {
 	fn accept<V: Visit<'a>>(&self, v: &mut V) {
-		dbg!("visit pseudo_class");
 		v.visit_pseudo_class(self);
 		match self {
 			Self::Webkit(c) => Visitable::accept(c, v),

@@ -121,7 +121,7 @@ impl<'a> Declaration<'a> for Property<'a> {
 	type DeclarationValue = StyleValue<'a>;
 }
 
-impl<'a> ToCursors for Property<'a> {
+impl ToCursors for Property<'_> {
 	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.name.into());
 		s.append(self.colon.into());

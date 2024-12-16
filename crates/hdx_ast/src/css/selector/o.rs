@@ -1,5 +1,5 @@
 use hdx_atom::atom;
-use hdx_lexer::{Cursor, KindSet};
+use hdx_lexer::{Cursor, KindSet, Span};
 use hdx_parser::{diagnostics, CursorSink, Parse, Parser, Result as ParserResult, ToCursors, T};
 use hdx_proc_macro::visit;
 
@@ -45,38 +45,32 @@ impl<'a> Parse<'a> for OPseudoElement {
 impl<'a> ToCursors for OPseudoElement {
 	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match self {
-			Self::InnerSpinButton(colons, ident) => {
+			Self::InnerSpinButton(colons, ident)
+			| Self::OuterSpinButton(colons, ident)
+			| Self::Placeholder(colons, ident)
+			| Self::Scrollbar(colons, ident)
+			| Self::ScrollbarThumb(colons, ident)
+			| Self::ScrollbarTrack(colons, ident)
+			| Self::ScrollbarTrackPiece(colons, ident)
+			| Self::Selection(colons, ident) => {
 				ToCursors::to_cursors(colons, s);
 				s.append(ident.into());
 			}
-			Self::OuterSpinButton(colons, ident) => {
-				ToCursors::to_cursors(colons, s);
-				s.append(ident.into());
-			}
-			Self::Placeholder(colons, ident) => {
-				ToCursors::to_cursors(colons, s);
-				s.append(ident.into());
-			}
-			Self::Scrollbar(colons, ident) => {
-				ToCursors::to_cursors(colons, s);
-				s.append(ident.into());
-			}
-			Self::ScrollbarThumb(colons, ident) => {
-				ToCursors::to_cursors(colons, s);
-				s.append(ident.into());
-			}
-			Self::ScrollbarTrack(colons, ident) => {
-				ToCursors::to_cursors(colons, s);
-				s.append(ident.into());
-			}
-			Self::ScrollbarTrackPiece(colons, ident) => {
-				ToCursors::to_cursors(colons, s);
-				s.append(ident.into());
-			}
-			Self::Selection(colons, ident) => {
-				ToCursors::to_cursors(colons, s);
-				s.append(ident.into());
-			}
+		}
+	}
+}
+
+impl From<&OPseudoElement> for Span {
+	fn from(value: &OPseudoElement) -> Self {
+		match value {
+			OPseudoElement::InnerSpinButton(colons, ident)
+			| OPseudoElement::OuterSpinButton(colons, ident)
+			| OPseudoElement::Placeholder(colons, ident)
+			| OPseudoElement::Scrollbar(colons, ident)
+			| OPseudoElement::ScrollbarThumb(colons, ident)
+			| OPseudoElement::ScrollbarTrack(colons, ident)
+			| OPseudoElement::ScrollbarTrackPiece(colons, ident)
+			| OPseudoElement::Selection(colons, ident) => Into::<Span>::into(colons) + ident.into(),
 		}
 	}
 }
@@ -117,6 +111,14 @@ impl<'a> ToCursors for OPseudoClass {
 				ToCursors::to_cursors(colon, s);
 				s.append(ident.into());
 			}
+		}
+	}
+}
+
+impl From<&OPseudoClass> for Span {
+	fn from(value: &OPseudoClass) -> Self {
+		match value {
+			OPseudoClass::Prefocus(colon, ident) => Into::<Span>::into(colon) + ident.into(),
 		}
 	}
 }

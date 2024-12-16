@@ -1,5 +1,5 @@
 use hdx_atom::atom;
-use hdx_lexer::{Cursor, KindSet};
+use hdx_lexer::{Cursor, KindSet, Span};
 use hdx_parser::{diagnostics, CursorSink, Parse, Parser, Result as ParserResult, ToCursors, T};
 use hdx_proc_macro::visit;
 
@@ -162,257 +162,69 @@ impl<'a> Parse<'a> for WebkitPseudoElement {
 impl<'a> ToCursors for WebkitPseudoElement {
 	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match self {
-			Self::CalendarDatePickerIndicator(colon, ident) => {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::CapsLockIndicator(colon, ident) => {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::ColorSwatch(colon, ident) => {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::ColorSwatchWrapper(colon, ident) => {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::ContactsAutoFillButton(colon, ident) => {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::CredentialsAutoFillButton(colon, ident) => {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::CreditCardAutoFillButton(colon, ident) => {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::DateAndTimeValue(colon, ident) => {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::DatetimeEdit(colon, ident) => {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::DatetimeEditDayField(colon, ident) => {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::DatetimeEditFieldsWrapper(colon, ident) => {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::DatetimeEditHourField(colon, ident) => {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::DatetimeEditMeridiemField(colon, ident) => {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::DatetimeEditMillisecondField(colon, ident) => {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::DatetimeEditMinute(colon, ident) => {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::DatetimeEditMinuteField(colon, ident) => {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::DatetimeEditMonthField(colon, ident) => {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::DatetimeEditSecondField(colon, ident) => {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::DatetimeEditText(colon, ident) => {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::DatetimeEditYearField(colon, ident) => {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::DetailsMarker(colon, ident) => {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::FileUploadButton(colon, ident) => {
-				// Alias for `:file-selector-button = {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::GenericCueRoot(colon, ident) => {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::InputPlaceholder(colon, ident) => {
-				// Alias for `:placeholder = {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::InnerSpinButton(colon, ident) => {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::ListButton(colon, ident) => {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::MediaTextTrackContainer(colon, ident) => {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::MediaTextTrackDisplay(colon, ident) => {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::MediaTextTrackDisplayBackdrop(colon, ident) => {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::MediaTextTrackRegion(colon, ident) => {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::MediaTextTrackRegionContainer(colon, ident) => {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::MeterBar(colon, ident) => {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::MeterEvenLessGoodValue(colon, ident) => {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::MeterInnerElement(colon, ident) => {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::MeterOptimumValue(colon, ident) => {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::MeterSuboptimumValue(colon, ident) => {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::OuterSpinButton(colon, ident) => {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::ProgressBar(colon, ident) => {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::ProgressInnerElement(colon, ident) => {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::ProgressValue(colon, ident) => {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::Resizer(colon, ident) => {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::Scrollbar(colon, ident) => {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::ScrollbarButton(colon, ident) => {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::ScrollbarCorner(colon, ident) => {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::ScrollbarThumb(colon, ident) => {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::ScrollbarTrack(colon, ident) => {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::ScrollbarTrackPiece(colon, ident) => {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::SearchCancelButton(colon, ident) => {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::SearchDecoration(colon, ident) => {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::SearchResultsButton(colon, ident) => {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::SliderContainer(colon, ident) => {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::SliderRunnableTrack(colon, ident) => {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::SliderThumb(colon, ident) => {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::PasswordAutoFillButton(colon, ident) => {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::TextfieldDecorationContainer(colon, ident) => {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::ValidationBubble(colon, ident) => {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::ValidationBubbleArrow(colon, ident) => {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::ValidationBubbleArrowClipper(colon, ident) => {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::ValidationBubbleBody(colon, ident) => {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::ValidationBubbleHeading(colon, ident) => {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::ValidationBubbleIcon(colon, ident) => {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::ValidationBubbleMessage(colon, ident) => {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::ValidationBubbleTextBlock(colon, ident) => {
+			Self::CalendarDatePickerIndicator(colon, ident)
+			| Self::CapsLockIndicator(colon, ident)
+			| Self::ColorSwatch(colon, ident)
+			| Self::ColorSwatchWrapper(colon, ident)
+			| Self::ContactsAutoFillButton(colon, ident)
+			| Self::CredentialsAutoFillButton(colon, ident)
+			| Self::CreditCardAutoFillButton(colon, ident)
+			| Self::DateAndTimeValue(colon, ident)
+			| Self::DatetimeEdit(colon, ident)
+			| Self::DatetimeEditDayField(colon, ident)
+			| Self::DatetimeEditFieldsWrapper(colon, ident)
+			| Self::DatetimeEditHourField(colon, ident)
+			| Self::DatetimeEditMeridiemField(colon, ident)
+			| Self::DatetimeEditMillisecondField(colon, ident)
+			| Self::DatetimeEditMinute(colon, ident)
+			| Self::DatetimeEditMinuteField(colon, ident)
+			| Self::DatetimeEditMonthField(colon, ident)
+			| Self::DatetimeEditSecondField(colon, ident)
+			| Self::DatetimeEditText(colon, ident)
+			| Self::DatetimeEditYearField(colon, ident)
+			| Self::DetailsMarker(colon, ident)
+			| Self::FileUploadButton(colon, ident)
+			| Self::GenericCueRoot(colon, ident)
+			| Self::InputPlaceholder(colon, ident)
+			| Self::InnerSpinButton(colon, ident)
+			| Self::ListButton(colon, ident)
+			| Self::MediaTextTrackContainer(colon, ident)
+			| Self::MediaTextTrackDisplay(colon, ident)
+			| Self::MediaTextTrackDisplayBackdrop(colon, ident)
+			| Self::MediaTextTrackRegion(colon, ident)
+			| Self::MediaTextTrackRegionContainer(colon, ident)
+			| Self::MeterBar(colon, ident)
+			| Self::MeterEvenLessGoodValue(colon, ident)
+			| Self::MeterInnerElement(colon, ident)
+			| Self::MeterOptimumValue(colon, ident)
+			| Self::MeterSuboptimumValue(colon, ident)
+			| Self::OuterSpinButton(colon, ident)
+			| Self::ProgressBar(colon, ident)
+			| Self::ProgressInnerElement(colon, ident)
+			| Self::ProgressValue(colon, ident)
+			| Self::Resizer(colon, ident)
+			| Self::Scrollbar(colon, ident)
+			| Self::ScrollbarButton(colon, ident)
+			| Self::ScrollbarCorner(colon, ident)
+			| Self::ScrollbarThumb(colon, ident)
+			| Self::ScrollbarTrack(colon, ident)
+			| Self::ScrollbarTrackPiece(colon, ident)
+			| Self::SearchCancelButton(colon, ident)
+			| Self::SearchDecoration(colon, ident)
+			| Self::SearchResultsButton(colon, ident)
+			| Self::SliderContainer(colon, ident)
+			| Self::SliderRunnableTrack(colon, ident)
+			| Self::SliderThumb(colon, ident)
+			| Self::PasswordAutoFillButton(colon, ident)
+			| Self::TextfieldDecorationContainer(colon, ident)
+			| Self::ValidationBubble(colon, ident)
+			| Self::ValidationBubbleArrow(colon, ident)
+			| Self::ValidationBubbleArrowClipper(colon, ident)
+			| Self::ValidationBubbleBody(colon, ident)
+			| Self::ValidationBubbleHeading(colon, ident)
+			| Self::ValidationBubbleIcon(colon, ident)
+			| Self::ValidationBubbleMessage(colon, ident)
+			| Self::ValidationBubbleTextBlock(colon, ident) => {
 				ToCursors::to_cursors(colon, s);
 				s.append(ident.into());
 			}
@@ -598,56 +410,40 @@ impl<'a> Parse<'a> for WebkitPseudoClass {
 impl<'a> ToCursors for WebkitPseudoClass {
 	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match self {
-			Self::AnimatingFullScreenTransition(colon, ident) => {
+			Self::AnimatingFullScreenTransition(colon, ident)
+			| Self::AnyLink(colon, ident)
+			| Self::Autofill(colon, ident)
+			| Self::AutofillAndObscured(colon, ident)
+			| Self::AutofillStrongPassword(colon, ident)
+			| Self::AutofillStrongPasswordViewable(colon, ident)
+			| Self::Drag(colon, ident)
+			| Self::FullPageMedia(colon, ident)
+			| Self::FullScreen(colon, ident)
+			| Self::FullScreenAncestor(colon, ident)
+			| Self::FullScreenControlsHidden(colon, ident)
+			| Self::FullScreenDocument(colon, ident) => {
 				ToCursors::to_cursors(colon, s);
 				s.append(ident.into());
 			}
-			Self::AnyLink(colon, ident) => {
-				// Alias for :any-link
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::Autofill(colon, ident) => {
-				// Alias for :autofill
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::AutofillAndObscured(colon, ident) => {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::AutofillStrongPassword(colon, ident) => {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::AutofillStrongPasswordViewable(colon, ident) => {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::Drag(colon, ident) => {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::FullPageMedia(colon, ident) => {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::FullScreen(colon, ident) => {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::FullScreenAncestor(colon, ident) => {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::FullScreenControlsHidden(colon, ident) => {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
-			Self::FullScreenDocument(colon, ident) => {
-				ToCursors::to_cursors(colon, s);
-				s.append(ident.into());
-			}
+		}
+	}
+}
+
+impl From<&WebkitPseudoClass> for Span {
+	fn from(value: &WebkitPseudoClass) -> Self {
+		match value {
+			WebkitPseudoClass::AnimatingFullScreenTransition(colon, ident)
+			| WebkitPseudoClass::AnyLink(colon, ident)
+			| WebkitPseudoClass::Autofill(colon, ident)
+			| WebkitPseudoClass::AutofillAndObscured(colon, ident)
+			| WebkitPseudoClass::AutofillStrongPassword(colon, ident)
+			| WebkitPseudoClass::AutofillStrongPasswordViewable(colon, ident)
+			| WebkitPseudoClass::Drag(colon, ident)
+			| WebkitPseudoClass::FullPageMedia(colon, ident)
+			| WebkitPseudoClass::FullScreen(colon, ident)
+			| WebkitPseudoClass::FullScreenAncestor(colon, ident)
+			| WebkitPseudoClass::FullScreenControlsHidden(colon, ident)
+			| WebkitPseudoClass::FullScreenDocument(colon, ident) => Into::<Span>::into(colon) + ident.into(),
 		}
 	}
 }

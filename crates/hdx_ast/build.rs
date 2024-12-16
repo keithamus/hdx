@@ -67,7 +67,7 @@ fn main() {
 		.multi_line(true)
 		.dot_matches_new_line(true)
 		// .build(r#"#\[value.*pub (?:struct|enum) (\w*(:?<'a>)?)"#)
-		.build(r#"^\s*#\[(value|visit).*?pub (?:struct|enum) (\w*(:?<'a>)?)"#)
+		.build(r#"^\s*#\[(value|visit).*?(?:pub (?:struct|enum) |(?:ranged|boolean|discrete)_feature!\()(\w*(:?<'a>)?)"#)
 		.unwrap();
 	let mut visit_matches = HashSet::new();
 	let mut stylevalue_matches = HashSet::new();
@@ -118,7 +118,7 @@ fn main() {
 			}}
 		}}",
 		stylevalue_matches.iter().fold(String::new(), |mut out, prop| {
-			let mut variant_name = prop.trim_end_matches("<'a>").trim_end_matches("StyleValue").to_string();
+			let variant_name = prop.trim_end_matches("<'a>").trim_end_matches("StyleValue").to_string();
 			let mut atom_name = kebab(variant_name.to_owned());
 			if atom_name.starts_with("webkit") {
 				atom_name = format!("-{}", atom_name);

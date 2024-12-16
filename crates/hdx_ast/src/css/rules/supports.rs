@@ -24,7 +24,7 @@ mod kw {
 pub struct SupportsRule<'a> {
 	pub at_keyword: T![AtKeyword],
 	pub condition: SupportsCondition<'a>,
-	pub block: SupportsBlock<'a>,
+	pub block: SupportsRuleBlock<'a>,
 }
 
 // https://drafts.csswg.org/css-conditional-3/#at-ruledef-supports
@@ -42,7 +42,7 @@ impl<'a> Parse<'a> for SupportsRule<'a> {
 
 impl<'a> AtRule<'a> for SupportsRule<'a> {
 	type Prelude = SupportsCondition<'a>;
-	type Block = SupportsBlock<'a>;
+	type Block = SupportsRuleBlock<'a>;
 }
 
 impl<'a> ToCursors for SupportsRule<'a> {
@@ -55,30 +55,32 @@ impl<'a> ToCursors for SupportsRule<'a> {
 
 impl<'a> Visitable<'a> for SupportsRule<'a> {
 	fn accept<V: Visit<'a>>(&self, v: &mut V) {
-		todo!();
+		v.visit_supports_rule(self);
+		Visitable::accept(&self.condition, v);
+		Visitable::accept(&self.block, v);
 	}
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-pub struct SupportsBlock<'a> {
+pub struct SupportsRuleBlock<'a> {
 	pub open: T!['{'],
 	pub rules: Vec<'a, Rule<'a>>,
 	pub close: Option<T!['}']>,
 }
 
-impl<'a> Parse<'a> for SupportsBlock<'a> {
+impl<'a> Parse<'a> for SupportsRuleBlock<'a> {
 	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
 		let (open, rules, close) = Self::parse_rule_list(p)?;
 		Ok(Self { open, rules, close })
 	}
 }
 
-impl<'a> RuleList<'a> for SupportsBlock<'a> {
+impl<'a> RuleList<'a> for SupportsRuleBlock<'a> {
 	type Rule = Rule<'a>;
 }
 
-impl<'a> ToCursors for SupportsBlock<'a> {
+impl<'a> ToCursors for SupportsRuleBlock<'a> {
 	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.open.into());
 		for rule in &self.rules {
@@ -86,6 +88,14 @@ impl<'a> ToCursors for SupportsBlock<'a> {
 		}
 		if let Some(close) = &self.close {
 			s.append(close.into());
+		}
+	}
+}
+
+impl<'a> Visitable<'a> for SupportsRuleBlock<'a> {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		for rule in &self.rules {
+			Visitable::accept(rule, v);
 		}
 	}
 }
@@ -137,6 +147,25 @@ impl<'a> ToCursors for SupportsCondition<'a> {
 			Self::Or(features) => {
 				for feature in features {
 					ToCursors::to_cursors(feature, s);
+				}
+			}
+		}
+	}
+}
+
+impl<'a> Visitable<'a> for SupportsCondition<'a> {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		match self {
+			Self::Is(feature) => Visitable::accept(feature, v),
+			Self::Not(feature) => Visitable::accept(feature.as_ref(), v),
+			Self::And(features) => {
+				for feature in features {
+					Visitable::accept(feature, v);
+				}
+			}
+			Self::Or(features) => {
+				for feature in features {
+					Visitable::accept(feature, v);
 				}
 			}
 		}
@@ -232,6 +261,17 @@ impl<'a> ToCursors for SupportsFeature<'a> {
 	}
 }
 
+impl<'a> Visitable<'a> for SupportsFeature<'a> {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		match self {
+			Self::FontTech(_, _, _, _, _) => todo!(),
+			Self::FontFormat(_, _, _, _, _) => todo!(),
+			Self::Selector(_, _, selector, _, _) => Visitable::accept(selector, v),
+			Self::Property(_, property, _) => Visitable::accept(property, v),
+		}
+	}
+}
+
 #[cfg(test)]
 mod tests {
 	use super::*;
@@ -241,7 +281,7 @@ mod tests {
 	fn size_test() {
 		assert_size!(SupportsRule, 512);
 		assert_size!(SupportsCondition, 432);
-		assert_size!(SupportsBlock, 64);
+		assert_size!(SupportsRuleBlock, 64);
 	}
 
 	#[test]

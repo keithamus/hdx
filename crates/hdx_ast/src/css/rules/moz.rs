@@ -5,7 +5,7 @@ use hdx_proc_macro::visit;
 
 use crate::css::{Visit, Visitable};
 
-use super::{DocumentBlock, DocumentMatcherList};
+use super::{DocumentRuleBlock, DocumentMatcherList};
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
@@ -13,7 +13,7 @@ use super::{DocumentBlock, DocumentMatcherList};
 pub struct MozDocumentRule<'a> {
 	pub at_keyword: T![AtKeyword],
 	pub matchers: DocumentMatcherList<'a>,
-	pub block: DocumentBlock<'a>,
+	pub block: DocumentRuleBlock<'a>,
 }
 
 // https://drafts.csswg.org/css-page-3/#syntax-page-selector
@@ -31,7 +31,7 @@ impl<'a> Parse<'a> for MozDocumentRule<'a> {
 
 impl<'a> AtRule<'a> for MozDocumentRule<'a> {
 	type Prelude = DocumentMatcherList<'a>;
-	type Block = DocumentBlock<'a>;
+	type Block = DocumentRuleBlock<'a>;
 }
 
 impl<'a> ToCursors for MozDocumentRule<'a> {

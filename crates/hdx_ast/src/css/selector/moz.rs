@@ -1,5 +1,5 @@
 use hdx_atom::atom;
-use hdx_lexer::{Cursor, KindSet};
+use hdx_lexer::{Cursor, KindSet, Span};
 use hdx_parser::{diagnostics, todo, CursorSink, Parse, Parser, Result as ParserResult, ToCursors, T};
 use hdx_proc_macro::visit;
 
@@ -606,114 +606,70 @@ impl<'a> Parse<'a> for MozPseudoClass {
 impl<'a> ToCursors for MozPseudoClass {
 	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match self {
-			Self::Any(colon, ident) => {
+			Self::Any(colon, ident)
+			| Self::AnyLink(colon, ident)
+			| Self::Broken(colon, ident)
+			| Self::DragOver(colon, ident)
+			| Self::FirstNode(colon, ident)
+			| Self::FocusRing(colon, ident)
+			| Self::FullScreen(colon, ident)
+			| Self::FullScreenAncestor(colon, ident)
+			| Self::HandlerBlocked(colon, ident)
+			| Self::HandlerCrashed(colon, ident)
+			| Self::HandlerDisabled(colon, ident)
+			| Self::LastNode(colon, ident)
+			| Self::Loading(colon, ident)
+			| Self::LwTheme(colon, ident)
+			| Self::LwThemeBrighttext(colon, ident)
+			| Self::LwThemeDarktext(colon, ident)
+			| Self::NativeAnonymous(colon, ident)
+			| Self::OnlyWhitespace(colon, ident)
+			| Self::PlaceholderShown(colon, ident)
+			| Self::ReadOnly(colon, ident)
+			| Self::ReadWrite(colon, ident)
+			| Self::SubmitInvalid(colon, ident)
+			| Self::Suppressed(colon, ident)
+			| Self::UiInvalid(colon, ident)
+			| Self::UiValid(colon, ident)
+			| Self::UserDisabled(colon, ident)
+			| Self::WindowInactive(colon, ident) => {
 				s.append(colon.into());
 				s.append(ident.into());
 			}
-			Self::AnyLink(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::Broken(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::DragOver(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::FirstNode(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::FocusRing(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::FullScreen(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::FullScreenAncestor(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::HandlerBlocked(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::HandlerCrashed(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::HandlerDisabled(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::LastNode(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::Loading(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::LwTheme(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::LwThemeBrighttext(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::LwThemeDarktext(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::NativeAnonymous(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::OnlyWhitespace(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::PlaceholderShown(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::ReadOnly(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::ReadWrite(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::SubmitInvalid(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::Suppressed(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::UiInvalid(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::UiValid(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::UserDisabled(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
-			Self::WindowInactive(colon, ident) => {
-				s.append(colon.into());
-				s.append(ident.into());
-			}
+		}
+	}
+}
+
+impl From<&MozPseudoClass> for Span {
+	fn from(value: &MozPseudoClass) -> Self {
+		match value {
+			MozPseudoClass::Any(colon, ident)
+			| MozPseudoClass::AnyLink(colon, ident)
+			| MozPseudoClass::Broken(colon, ident)
+			| MozPseudoClass::DragOver(colon, ident)
+			| MozPseudoClass::FirstNode(colon, ident)
+			| MozPseudoClass::FocusRing(colon, ident)
+			| MozPseudoClass::FullScreen(colon, ident)
+			| MozPseudoClass::FullScreenAncestor(colon, ident)
+			| MozPseudoClass::HandlerBlocked(colon, ident)
+			| MozPseudoClass::HandlerCrashed(colon, ident)
+			| MozPseudoClass::HandlerDisabled(colon, ident)
+			| MozPseudoClass::LastNode(colon, ident)
+			| MozPseudoClass::Loading(colon, ident)
+			| MozPseudoClass::LwTheme(colon, ident)
+			| MozPseudoClass::LwThemeBrighttext(colon, ident)
+			| MozPseudoClass::LwThemeDarktext(colon, ident)
+			| MozPseudoClass::NativeAnonymous(colon, ident)
+			| MozPseudoClass::OnlyWhitespace(colon, ident)
+			| MozPseudoClass::PlaceholderShown(colon, ident)
+			| MozPseudoClass::ReadOnly(colon, ident)
+			| MozPseudoClass::ReadWrite(colon, ident)
+			| MozPseudoClass::SubmitInvalid(colon, ident)
+			| MozPseudoClass::Suppressed(colon, ident)
+			| MozPseudoClass::UiInvalid(colon, ident)
+			| MozPseudoClass::UiValid(colon, ident)
+			| MozPseudoClass::UserDisabled(colon, ident)
+			| MozPseudoClass::WindowInactive(colon, ident) => Into::<Span>::into(colon) + ident.into(),
 		}
 	}
 }

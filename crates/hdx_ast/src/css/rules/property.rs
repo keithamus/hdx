@@ -51,7 +51,10 @@ impl<'a> ToCursors for PropertyRule<'a> {
 
 impl<'a> Visitable<'a> for PropertyRule<'a> {
 	fn accept<V: Visit<'a>>(&self, v: &mut V) {
-		todo!();
+		v.visit_property_rule(self);
+		for property in &self.block.properties {
+			Visitable::accept(property, v);
+		}
 	}
 }
 
@@ -89,6 +92,7 @@ impl<'a> ToCursors for PropertyRuleBlock<'a> {
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+#[visit]
 pub struct PropertyRuleProperty<'a> {
 	pub name: T![Ident],
 	pub colon: T![:],
@@ -122,6 +126,12 @@ impl<'a> ToCursors for PropertyRuleProperty<'a> {
 	}
 }
 
+impl<'a> Visitable<'a> for PropertyRuleProperty<'a> {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		v.visit_property_rule_property(self);
+	}
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub enum PropertyRuleStyleValue<'a> {
@@ -150,7 +160,7 @@ impl<'a> DeclarationValue<'a> for PropertyRuleStyleValue<'a> {
 	}
 }
 
-impl<'a> ToCursors for PropertyRuleStyleValue<'a> {
+impl ToCursors for PropertyRuleStyleValue<'_> {
 	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match self {
 			Self::InitialValue(value) => ToCursors::to_cursors(value, s),

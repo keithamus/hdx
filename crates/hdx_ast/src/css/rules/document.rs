@@ -15,7 +15,7 @@ use crate::css::{stylesheet::Rule, Visit, Visitable};
 pub struct DocumentRule<'a> {
 	pub at_keyword: T![AtKeyword],
 	pub matchers: DocumentMatcherList<'a>,
-	pub block: DocumentBlock<'a>,
+	pub block: DocumentRuleBlock<'a>,
 }
 // https://drafts.csswg.org/css-page-3/#syntax-page-selector
 impl<'a> Parse<'a> for DocumentRule<'a> {
@@ -32,10 +32,10 @@ impl<'a> Parse<'a> for DocumentRule<'a> {
 
 impl<'a> AtRule<'a> for DocumentRule<'a> {
 	type Prelude = DocumentMatcherList<'a>;
-	type Block = DocumentBlock<'a>;
+	type Block = DocumentRuleBlock<'a>;
 }
 
-impl<'a> ToCursors for DocumentRule<'a> {
+impl ToCursors for DocumentRule<'_> {
 	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.at_keyword.into());
 		ToCursors::to_cursors(&self.matchers, s);
@@ -44,9 +44,11 @@ impl<'a> ToCursors for DocumentRule<'a> {
 }
 
 impl<'a> Visitable<'a> for DocumentRule<'a> {
-    fn accept<V: Visit<'a>>(&self, v: &mut V) {
-			todo!();
-    }
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		v.visit_document_rule(self);
+		Visitable::accept(&self.matchers, v);
+		Visitable::accept(&self.block, v);
+	}
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -63,7 +65,7 @@ impl<'a> Parse<'a> for DocumentMatcherList<'a> {
 	}
 }
 
-impl<'a> ToCursors for DocumentMatcherList<'a> {
+impl ToCursors for DocumentMatcherList<'_> {
 	fn to_cursors(&self, s: &mut impl CursorSink) {
 		for (selector, comma) in &self.0 {
 			ToCursors::to_cursors(selector, s);
@@ -74,8 +76,17 @@ impl<'a> ToCursors for DocumentMatcherList<'a> {
 	}
 }
 
+impl<'a> Visitable<'a> for DocumentMatcherList<'a> {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		for (matcher, _) in &self.0 {
+			Visitable::accept(matcher, v);
+		}
+	}
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+#[visit]
 pub enum DocumentMatcher {
 	Url(T![Url]),
 	UrlFunction(T![Function], T![String], T![')']),
@@ -128,27 +139,11 @@ impl<'a> ToCursors for DocumentMatcher {
 	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match self {
 			Self::Url(url) => s.append(url.into()),
-			Self::UrlFunction(function, string, close) => {
-				s.append(function.into());
-				s.append(string.into());
-				s.append(close.into());
-			}
-			Self::UrlPrefix(function, string, close) => {
-				s.append(function.into());
-				s.append(string.into());
-				s.append(close.into());
-			}
-			Self::Domain(function, string, close) => {
-				s.append(function.into());
-				s.append(string.into());
-				s.append(close.into());
-			}
-			Self::MediaDocument(function, string, close) => {
-				s.append(function.into());
-				s.append(string.into());
-				s.append(close.into());
-			}
-			Self::Regexp(function, string, close) => {
+			Self::UrlFunction(function, string, close)
+			| Self::UrlPrefix(function, string, close)
+			| Self::Domain(function, string, close)
+			| Self::MediaDocument(function, string, close)
+			| Self::Regexp(function, string, close) => {
 				s.append(function.into());
 				s.append(string.into());
 				s.append(close.into());
@@ -157,27 +152,33 @@ impl<'a> ToCursors for DocumentMatcher {
 	}
 }
 
+impl<'a> Visitable<'a> for DocumentMatcher {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		v.visit_document_matcher(self);
+	}
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
-pub struct DocumentBlock<'a> {
+pub struct DocumentRuleBlock<'a> {
 	pub open: T!['{'],
 	#[cfg_attr(feature = "serde", serde(borrow))]
 	pub rules: Vec<'a, Rule<'a>>,
 	pub close: Option<T!['}']>,
 }
 
-impl<'a> Parse<'a> for DocumentBlock<'a> {
+impl<'a> Parse<'a> for DocumentRuleBlock<'a> {
 	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
 		let (open, rules, close) = Self::parse_rule_list(p)?;
 		Ok(Self { open, rules, close })
 	}
 }
 
-impl<'a> RuleList<'a> for DocumentBlock<'a> {
+impl<'a> RuleList<'a> for DocumentRuleBlock<'a> {
 	type Rule = Rule<'a>;
 }
 
-impl<'a> ToCursors for DocumentBlock<'a> {
+impl ToCursors for DocumentRuleBlock<'_> {
 	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.open.into());
 		for rule in &self.rules {
@@ -185,6 +186,14 @@ impl<'a> ToCursors for DocumentBlock<'a> {
 		}
 		if let Some(close) = self.close {
 			s.append(close.into());
+		}
+	}
+}
+
+impl<'a> Visitable<'a> for DocumentRuleBlock<'a> {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		for rule in &self.rules {
+			Visitable::accept(rule, v);
 		}
 	}
 }

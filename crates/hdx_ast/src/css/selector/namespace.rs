@@ -1,13 +1,15 @@
-use hdx_lexer::{Cursor, KindSet};
+use hdx_lexer::{Cursor, KindSet, Span};
 use hdx_parser::{Build, CursorSink, Is, Parse, Parser, Result as ParserResult, ToCursors, T};
+use hdx_proc_macro::visit;
 
 use crate::css::{Visit, Visitable};
 
 use super::Tag;
 
+// https://drafts.csswg.org/selectors/#combinators
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(rename_all = "kebab-case"))]
-// https://drafts.csswg.org/selectors/#combinators
+#[visit]
 pub struct Namespace {
 	pub prefix: Option<NamespacePrefix>,
 	pub tag: NamespaceTag,
@@ -49,9 +51,19 @@ impl<'a> ToCursors for Namespace {
 	}
 }
 
+impl From<&Namespace> for Span {
+	fn from(value: &Namespace) -> Self {
+		if let Some(prefix) = value.prefix {
+			Into::<Span>::into(&prefix) + (&value.tag).into()
+		} else {
+			(&value.tag).into()
+		}
+	}
+}
+
 impl<'a> Visitable<'a> for Namespace {
 	fn accept<V: Visit<'a>>(&self, v: &mut V) {
-		todo!();
+		v.visit_namespace(self);
 	}
 }
 
@@ -89,17 +101,27 @@ impl<'a> Parse<'a> for NamespacePrefix {
 impl<'a> ToCursors for NamespacePrefix {
 	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match self {
-			NamespacePrefix::None(pipe) => {
+			Self::None(pipe) => {
 				s.append(pipe.into());
 			}
-			NamespacePrefix::Name(ident, pipe) => {
+			Self::Name(ident, pipe) => {
 				s.append(ident.into());
 				s.append(pipe.into());
 			}
-			NamespacePrefix::Wildcard(star, pipe) => {
+			Self::Wildcard(star, pipe) => {
 				s.append(star.into());
 				s.append(pipe.into());
 			}
+		}
+	}
+}
+
+impl From<&NamespacePrefix> for Span {
+	fn from(value: &NamespacePrefix) -> Self {
+		match value {
+			NamespacePrefix::None(pipe) => pipe.into(),
+			NamespacePrefix::Name(ident, pipe) => Into::<Span>::into(ident) + pipe.into(),
+			NamespacePrefix::Wildcard(star, pipe) => Into::<Span>::into(star) + pipe.into(),
 		}
 	}
 }
@@ -133,6 +155,12 @@ impl From<NamespaceTag> for Cursor {
 			NamespaceTag::Tag(c) => c.into(),
 			NamespaceTag::Wildcard(c) => c.into(),
 		}
+	}
+}
+
+impl From<&NamespaceTag> for Span {
+	fn from(value: &NamespaceTag) -> Self {
+		Into::<Cursor>::into(*value).into()
 	}
 }
 
