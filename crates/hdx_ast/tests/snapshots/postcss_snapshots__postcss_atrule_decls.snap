@@ -38,7 +38,7 @@ expression: result.output.unwrap()
         ]
       ],
       "block": {
-        "type": "PageBlock",
+        "type": "PageRuleBlock",
         "open": {
           "kind": "LeftCurly",
           "offset": 12,

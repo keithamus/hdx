@@ -22,10 +22,10 @@ impl<'a> HTMLHighlightCursorStream<'a> {
 <head>
 	<style>
 		:root { background: #22272E; color: hotpink }
-		.tag { color: #8ddb8c }
-		.punctuation { color: #d1d7e0 }
-		.property { color: #6cb6ff }
-		.pseudo-class { color: #6cb6ff }
+		.Tag { color: #8ddb8c }
+		.Punctuation { color: #d1d7e0 }
+		.Property { color: #6cb6ff }
+		.PseudoClass { color: #6cb6ff }
 
 		.unknown { color: grey }
 		.deprecated { text-decoration: line-through }

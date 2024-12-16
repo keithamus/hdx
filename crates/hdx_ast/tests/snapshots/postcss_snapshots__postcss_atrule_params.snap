@@ -37,7 +37,7 @@ expression: result.output.unwrap()
         ]
       ],
       "block": {
-        "type": "DocumentBlock",
+        "type": "DocumentRuleBlock",
         "open": {
           "kind": "LeftCurly",
           "offset": 67,

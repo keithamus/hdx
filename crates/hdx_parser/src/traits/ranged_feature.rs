@@ -74,9 +74,9 @@ macro_rules! ranged_feature {
 			Left($crate::T![Ident], $crate::Comparison, $ty),
 			Right($ty, $crate::Comparison, $crate::T![Ident]),
 			Range($ty, $crate::Comparison, $crate::T![Ident], $crate::Comparison, $ty),
-			LegacyMax($crate::T![Ident], $crate::T![:], $ty),
-			LegacyMin($crate::T![Ident], $crate::T![:], $ty),
-			Legacy($crate::T![Ident], $crate::T![:], $ty),
+	LegacyMax($crate::T![Ident], $crate::T![:], $ty),
+	LegacyMin($crate::T![Ident], $crate::T![:], $ty),
+	Legacy($crate::T![Ident], $crate::T![:], $ty),
 		}
 
 		impl<'a> $crate::Parse<'a> for $feat {
