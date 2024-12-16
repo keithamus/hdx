@@ -19,14 +19,14 @@ use impls::*;
 // pub enum FontFamilyStyleValue<'a> {}
 
 // // https://drafts.csswg.org/css-fonts-5/#font-weight
-// #[value(" <font-weight-absolute> | bolder | lighter ")]
-// #[initial("normal")]
-// #[applies_to("all elements and text")]
-// #[inherited("yes")]
-// #[percentages("n/a")]
-// #[canonical_order("per grammar")]
-// #[animation_type("by computed value type")]
-// pub enum FontWeightStyleValue {}
+#[value(" <font-weight-absolute> | bolder | lighter ")]
+#[initial("normal")]
+#[applies_to("all elements and text")]
+#[inherited("yes")]
+#[percentages("n/a")]
+#[canonical_order("per grammar")]
+#[animation_type("by computed value type")]
+pub enum FontWeightStyleValue {}
 
 // https://drafts.csswg.org/css-fonts-5/#font-width
 #[value(" normal | <percentage [0,∞]> | ultra-condensed | extra-condensed | condensed | semi-condensed | semi-expanded | expanded | extra-expanded | ultra-expanded ")]
