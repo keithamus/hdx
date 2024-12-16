@@ -257,7 +257,7 @@ mod tests {
 	};
 	use serde_json::json;
 	use tracing::level_filters::LevelFilter;
-	use tracing_subscriber::{fmt, registry, Layer, layer::SubscriberExt};
+	use tracing_subscriber::{fmt, layer::SubscriberExt, registry, util::SubscriberInitExt, Layer};
 
 	#[test]
 	fn smoke_test() {
