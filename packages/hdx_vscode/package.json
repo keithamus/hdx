@@ -106,7 +106,9 @@
 		"views": [],
 		"walkthroughs": []
 	},
-	"activationEvents": ["onLanguage:css"],
+	"activationEvents": [
+		"onLanguage:css"
+	],
 	"dependencies": {
 		"@vscode/test-cli": "^0.0.10",
 		"vscode-languageclient": "^9.0.1"
