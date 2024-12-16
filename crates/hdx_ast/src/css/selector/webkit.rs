@@ -1,12 +1,16 @@
 use hdx_atom::atom;
 use hdx_lexer::{Cursor, KindSet};
 use hdx_parser::{diagnostics, CursorSink, Parse, Parser, Result as ParserResult, ToCursors, T};
+use hdx_proc_macro::visit;
+
+use crate::css::{Visit, Visitable};
 
 use super::CompoundSelector;
 
 // https://searchfox.org/wubkat/source/Source/WebCore/css/CSSPseudoSelectors.json
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(rename_all = "kebab-case"))]
+#[visit]
 pub enum WebkitPseudoElement {
 	CalendarDatePickerIndicator(T![::], T![Ident]),
 	CapsLockIndicator(T![::], T![Ident]),
@@ -416,8 +420,15 @@ impl<'a> ToCursors for WebkitPseudoElement {
 	}
 }
 
+impl<'a> Visitable<'a> for WebkitPseudoElement {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		v.visit_webkit_pseudo_element(self);
+	}
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(rename_all = "kebab-case"))]
+#[visit]
 pub enum WebkitFunctionalPseudoElement<'a> {
 	Distributed(WebkitDistrubutedFunctionalPseudoElement<'a>),
 }
@@ -446,6 +457,17 @@ impl<'a> ToCursors for WebkitFunctionalPseudoElement<'a> {
 	}
 }
 
+impl<'a> Visitable<'a> for WebkitFunctionalPseudoElement<'a> {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		v.visit_webkit_functional_pseudo_element(self);
+		match self {
+			Self::Distributed(pseudo) => {
+				pseudo.value.accept(v);
+			}
+		}
+	}
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(rename_all = "kebab-case"))]
 pub struct WebkitDistrubutedFunctionalPseudoElement<'a> {
@@ -468,8 +490,20 @@ impl<'a> ToCursors for WebkitDistrubutedFunctionalPseudoElement<'a> {
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(rename_all = "kebab-case"))]
+#[visit]
 pub enum WebkitFunctionalPseudoClass<'a> {
 	Any(WebkitAnyFunctionalPseudoClass<'a>),
+}
+
+impl<'a> Visitable<'a> for WebkitFunctionalPseudoClass<'a> {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		v.visit_webkit_functional_pseudo_class(self);
+		match self {
+			Self::Any(pseudo) => {
+				pseudo.value.accept(v);
+			}
+		}
+	}
 }
 
 impl<'a> Parse<'a> for WebkitFunctionalPseudoClass<'a> {
@@ -518,6 +552,7 @@ impl<'a> ToCursors for WebkitAnyFunctionalPseudoClass<'a> {
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(rename_all = "kebab-case"))]
+#[visit]
 pub enum WebkitPseudoClass {
 	AnimatingFullScreenTransition(T![:], T![Ident]),
 	AnyLink(T![:], T![Ident]),  // Alias for :any-link
@@ -614,5 +649,11 @@ impl<'a> ToCursors for WebkitPseudoClass {
 				s.append(ident.into());
 			}
 		}
+	}
+}
+
+impl<'a> Visitable<'a> for WebkitPseudoClass {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		v.visit_webkit_pseudo_class(self);
 	}
 }

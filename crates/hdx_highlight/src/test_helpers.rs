@@ -2,7 +2,6 @@ use core::fmt;
 
 use crate::TokenHighlighter;
 use bumpalo::{collections::Vec, Bump};
-use hdx_ast::css::{Visit, Visitable};
 use hdx_lexer::Cursor;
 use hdx_parser::CursorSink;
 
@@ -17,7 +16,6 @@ impl<'a> HTMLHighlightCursorStream<'a> {
 	}
 
 	pub fn write(&self, source: &str, f: &mut impl fmt::Write) -> fmt::Result {
-		let mut cursors = self.iter_cursors();
 		f.write_str(
 			r#"
 <!DOCTYPE html>
@@ -27,6 +25,7 @@ impl<'a> HTMLHighlightCursorStream<'a> {
 		.tag { color: #8ddb8c }
 		.punctuation { color: #d1d7e0 }
 		.property { color: #6cb6ff }
+		.pseudo-class { color: #6cb6ff }
 
 		.unknown { color: grey }
 		.deprecated { text-decoration: line-through }
@@ -38,13 +37,13 @@ impl<'a> HTMLHighlightCursorStream<'a> {
 		<code>
 		"#,
 		)?;
-		while let Some(c) = cursors.next() {
+		for c in self.iter_cursors() {
 			let highlight = self.highlighter.get(c.into());
 			if let Some(highlight) = highlight {
 				f.write_str(format!(r#"<span class="{}{}">"#, highlight.kind, highlight.modifier).as_str())?;
 			}
 			c.write_str(source, f)?;
-			if let Some(highlight) = highlight {
+			if highlight.is_some() {
 				f.write_str(r#"</span>"#)?;
 			}
 		}
@@ -79,7 +78,7 @@ macro_rules! assert_highlight {
 		if !result.errors.is_empty() {
 			panic!("\n\nParse on {}:{} failed. ({:?}) saw error {:?}", file!(), line!(), $str, result.errors[0]);
 		}
-		let mut actual = bumpalo::collections::String::new_in(&bump);
+		let mut actual = String::new_in(&bump);
 		let mut cursors = HTMLHighlightCursorStream::new(&bump);
 		let node = result.output.clone().unwrap();
 		dbg!(&node);

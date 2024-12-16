@@ -1,4 +1,4 @@
-use hdx_ast::css::{Property, StyleDeclaration, StyleValue, Tag, Visit};
+use hdx_ast::css::{Property, PseudoClass, StyleDeclaration, StyleValue, Tag, Visit};
 use hdx_lexer::Span;
 
 use crate::{SemanticKind, SemanticModifier, TokenHighlighter};
@@ -27,6 +27,18 @@ impl<'a> Visit<'a> for TokenHighlighter {
 		self.insert(span, SemanticKind::Tag, modifier);
 	}
 
+	fn visit_pseudo_class(&mut self, class: &PseudoClass) {
+		let span: Span = class.into();
+		let mut modifier = SemanticModifier::none();
+		match class {
+			PseudoClass::Webkit(_) | PseudoClass::Moz(_) | PseudoClass::O(_) | PseudoClass::Ms(_) => {
+				modifier |= SemanticModifier::Deprecated;
+			}
+			_ => {}
+		}
+		self.insert(span, SemanticKind::PseudoClass, modifier);
+	}
+
 	fn visit_style_declaration(&mut self, rule: &StyleDeclaration<'a>) {
 		self.insert(rule.open.into(), SemanticKind::Punctuation, SemanticModifier::none());
 		if let Some(close) = rule.close {
@@ -40,7 +52,7 @@ impl<'a> Visit<'a> for TokenHighlighter {
 		if matches!(&property.value, StyleValue::Unknown(_)) {
 			modifier |= SemanticModifier::Unknown;
 		}
-		self.insert(span, SemanticKind::Property, modifier);
+		self.insert(span, SemanticKind::Declaration, modifier);
 		self.insert(property.colon.into(), SemanticKind::Punctuation, SemanticModifier::none());
 		if let Some(semicolon) = property.semicolon {
 			self.insert(semicolon.into(), SemanticKind::Punctuation, SemanticModifier::none());

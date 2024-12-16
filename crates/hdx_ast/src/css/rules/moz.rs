@@ -43,9 +43,9 @@ impl<'a> ToCursors for MozDocumentRule<'a> {
 }
 
 impl<'a> Visitable<'a> for MozDocumentRule<'a> {
-    fn accept<V: Visit<'a>>(&self, v: &mut V) {
-			todo!();
-    }
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		v.visit_moz_document_rule(self);
+	}
 }
 
 #[cfg(test)]

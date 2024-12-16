@@ -1,4 +1,4 @@
-body {
+body, portal {
 	font-family: sans-serif;
 	display: flex;
 	max-width: 700px;

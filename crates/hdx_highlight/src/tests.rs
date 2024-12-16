@@ -22,3 +22,8 @@ fn test_tags() {
 fn test_nesting() {
 	assert_highlight!("nesting", r#"body{main{dialog{input{}}}}"#);
 }
+
+#[test]
+fn test_pseudo_classes() {
+	assert_highlight!("pseudo_classes", r#"body:focus,dialog:modal{}"#);
+}

@@ -106,7 +106,7 @@ impl<'a> Is<'a> for CustomElementTag {
 			return false;
 		}
 		let mut has_dash = false;
-		while let Some(char) = chars.next() {
+		for char in chars {
 			if char == '-' {
 				has_dash = true;
 				continue;
@@ -133,7 +133,7 @@ impl<'a> Is<'a> for CustomElementTag {
 				return false;
 			}
 		}
-		return has_dash;
+		has_dash
 	}
 }
 

@@ -9,6 +9,7 @@ expression: actual
 		.tag { color: #8ddb8c }
 		.punctuation { color: #d1d7e0 }
 		.property { color: #6cb6ff }
+		.pseudo-class { color: #6cb6ff }
 
 		.unknown { color: grey }
 		.deprecated { text-decoration: line-through }
@@ -18,7 +19,7 @@ expression: actual
 <body>
 	<pre>
 		<code>
-		<span class="tag">body</span>,<span class="tag">dialog</span>,<span class="tag unknown">madeup</span>,<span class="tag deprecated">marquee</span>,<span class="tag experimental">portal</span>,<span class="tag custom">custom-element</span><span class="punctuation">{</span><span class="punctuation">}</span>
+		<span class="Tag">body</span>,<span class="Tag">dialog</span>,<span class="Tag unknown">madeup</span>,<span class="Tag deprecated">marquee</span>,<span class="Tag experimental">portal</span>,<span class="Tag custom">custom-element</span><span class="Punctuation">{</span><span class="Punctuation">}</span>
 					</code>
 				</pre>
 			</body>

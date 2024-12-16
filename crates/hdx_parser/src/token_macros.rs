@@ -79,27 +79,25 @@ macro_rules! kind_ident {
 
 		impl From<$ident> for ::hdx_lexer::Token {
 			fn from(value: $ident) -> Self {
-				value.0.into()
+				value.0.token()
 			}
 		}
 
 		impl From<&$ident> for ::hdx_lexer::Token {
 			fn from(value: &$ident) -> Self {
-				let t: ::hdx_lexer::Token = value.into();
-				t
+				value.0.token()
 			}
 		}
 
 		impl From<$ident> for ::hdx_lexer::Span {
 			fn from(value: $ident) -> Self {
-				value.0.into()
+				value.0.span()
 			}
 		}
 
 		impl From<&$ident> for ::hdx_lexer::Span {
 			fn from(value: &$ident) -> Self {
-				let t: ::hdx_lexer::Span = value.into();
-				t
+				value.0.span()
 			}
 		}
 
@@ -143,6 +141,18 @@ macro_rules! custom_delim {
 		}
 
 		impl From<&$ident> for ::hdx_lexer::Token {
+			fn from(value: &$ident) -> Self {
+				value.0.into()
+			}
+		}
+
+		impl From<$ident> for ::hdx_lexer::Span {
+			fn from(value: $ident) -> Self {
+				value.0.into()
+			}
+		}
+
+		impl From<&$ident> for ::hdx_lexer::Span {
 			fn from(value: &$ident) -> Self {
 				value.0.into()
 			}

@@ -3,15 +3,16 @@ resolver = "2"
 members = ["crates/*"]
 
 [workspace.package]
-authors = ["Keith Cirkel <hdx@keithcirkel.co.uk>"]
+authors = ["Keith Cirkel (https://keithcirkel.co.uk)"]
 description = "Refreshing CSS!"
 edition = "2021"
-homepage = "https://github.com/keithamus/hdx"
+homepage = "https://hdx.rs"
 keywords = ["CSS", "parser"]
 license = "MIT"
 repository = "https://github.com/keithamus/hdx"
 
 [workspace.dependencies]
+# Local packages
 hdx = { version = "0.0.1", path = "crates/hdx" }
 hdx_atom = { version = "0.0.0", path = "crates/hdx_atom" }
 hdx_proc_macro = { version = "0.0.0", path = "crates/hdx_proc_macro" }
@@ -20,41 +21,68 @@ hdx_lexer = { version = "0.0.1", path = "crates/hdx_lexer" }
 hdx_syntax = { version = "0.0.0", path = "crates/hdx_syntax" }
 hdx_ast = { version = "0.0.0", path = "crates/hdx_ast" }
 hdx_transform = { version = "0.0.0", path = "crates/hdx_transform" }
+hdx_highlight = { version = "0.0.0", path = "crates/hdx_highlight" }
+hdx_lsp = { version = "0.0.0", path = "crates/hdx_lsp" }
 
+# Memory 
 bumpalo = { version = "3.16.0" }
 
-clap = { version = "4.5.23" }
+# Data structure libraries/helpers
+smallvec = { version = "1.13.2" }
+itertools = { version = "0.13.0" }
+strum = { version = "0.26.3" }
+bitmask-enum = { version = "2.2.5" }
 
-closestmatch = { version = "0.1.2" }
+# CLI
+clap = { version = "4.5.23" }
+glob = { version = "0.3.1" }
+project-root = { version = "0.2.2" }
+
+# LSP packages
+lsp-types = { version = "0.97.0" }
+httparse = { version = "1.9.5" }
+
+# Multithreading
+crossbeam-channel = { version = "0.5.13" }
+dashmap = { version = "6.1.0" }
+
+# Logging
+log = { version = "0.4.22" }
+tracing = { version = "0.1.41" }
+tracing-subscriber = { version = "0.3.19" }
+console = { version = "0.15.8" }
+
+# Error handling
 miette = { version = "7.4.0", default-features = false }
 thiserror = { version = "2.0.6" }
-serde = { version = "1.0.215" }
-serde_json = { version = "1.0.133" }
+
+# Procc Macro Tools
 syn = { version = "2.0.90" }
 quote = { version = "1.0.37" }
 proc-macro2 = { version = "1.0.92" }
-bitmask-enum = { version = "2.2.5" }
-smallvec = { version = "1.13.2" }
-itertools = { version = "0.13.0" }
 
-glob = { version = "0.3.1" }
-pico-args = { version = "0.5.0" }
-project-root = { version = "0.2.2" }
+# Serialization
+serde = { version = "1.0.215" }
+serde_json = { version = "1.0.133" }
+
+# Testing, benchmarking
 similar = { version = "2.6.0" }
 criterion = { version = "0.5.1" }
 pprof = { version = "0.14.0" }
 flate2 = { version = "1.0.35" }
 insta = { version = "1.41.1" }
-console = { version = "0.15.8" }
 prettyplease = { version = "0.2.25" }
 
+# String interning
 string_cache = { version = "0.8.7" }
 string_cache_codegen = { version = "0.5.2" }
 
+# Build tools
 grep-regex = { version = "0.1.13" }
 grep-matcher = { version = "0.1.7" }
 grep-searcher = { version = "0.1.14" }
 
+# Wasm
 wasm-bindgen = { version = "0.2.99" }
 serde-wasm-bindgen = { version = "0.6.5" }
 console_error_panic_hook = { version = "0.1.7" }
@@ -79,6 +107,7 @@ inherits = "release"
 strip = false
 debug = true
 
+# For faster compiles during development, opt-level some dynamic libraries
 [profile.dev.package]
 criterion.opt-level = 3
 insta.opt-level = 3

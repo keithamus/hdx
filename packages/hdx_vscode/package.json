@@ -1,0 +1,85 @@
+{
+	"name": "hdx_vscode",
+	"displayName": "hdx",
+	"version": "1.0.0",
+	"description": "Refreshing CSS",
+	"keywords": [],
+	"repository": "https://github.com/keithamus/hdx",
+	"funding": {
+		"url": "https://github.com/sponsors/keithamus"
+	},
+	"license": "MIT",
+	"author": "Keith Cirkel (https://keithcirke.co.uk)",
+	"type": "commonjs",
+	"main": "./src/main.js",
+	"files": [
+		"./dist"
+	],
+	"scripts": {
+		"check": "prettier --check . && npm run lint && npm run typecheck",
+		"fmt": "prettier --write .",
+		"lint": "oxlint",
+		"typecheck": "tsc",
+		"watch": "npm run build -- --watch",
+		"watch-test": "vscode-test"
+	},
+	"contributes": {
+		"commands": [
+			{
+				"command": "extension.helloWorld",
+				"title": "Hello World"
+			}
+		],
+		"configuration": [],
+		"configurationDefaults": {},
+		"keybindings": [],
+		"problemMatchers": [],
+		"problemPatterns": [],
+		"semanticTokenModifiers": [],
+		"semanticTokenScopes": [
+      {
+        "scopes": {
+          "Tag": ["entity.name.tag.css"],
+          "Tag.Unknown": ["meta.selector.css"],
+          "Tag.Experimental": ["entity.name.tag.css"],
+          "Property": ["support.type.property-name.css"],
+          "Property.Unknown": ["meta.property-name.css"],
+          "PseudoClass": ["entity.other.attribute-name.pseudo-class.css"],
+          "Punctuation": ["source.css"]
+        }
+      }
+		],
+		"semanticTokenTypes": [],
+		"snippets": [],
+		"taskDefinitions": [],
+		"views": [],
+		"walkthroughs": []
+	},
+	"activationEvents": ["onLanguage:css"],
+	"dependencies": {
+		"@vscode/test-cli": "^0.0.10",
+		"vscode-languageclient": "^9.0.1"
+	},
+	"devDependencies": {
+		"@types/mocha": "^10.0.10",
+		"@types/node": "^22.10.1",
+		"@types/vscode": "^1.95.0",
+		"@typescript-eslint/eslint-plugin": "^8.16.0",
+		"@typescript-eslint/parser": "^8.16.0",
+		"@vscode/test-electron": "^2.4.1",
+		"esbuild": "^0.24.0",
+		"mocha": "^10.8.2",
+		"oxlint": "^0.13.2",
+		"prettier": "^3.4.1",
+		"tinyglobby": "^0.2.10",
+		"typescript": "^5.7.2",
+		"vscode": "^1.1.34"
+	},
+	"engines": {
+		"vscode": "^1.95.0"
+	},
+	"prettierConfig": {
+		"useTabs": true,
+		"printWidth": 120
+	}
+}
