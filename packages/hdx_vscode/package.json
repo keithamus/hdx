@@ -44,6 +44,7 @@
           "Tag.Experimental": ["entity.name.tag.css"],
           "Property": ["support.type.property-name.css"],
           "Property.Unknown": ["meta.property-name.css"],
+          "PseudoClass": ["entity.other.attribute-name.pseudo-class.css"],
           "Punctuation": ["source.css"]
         }
       }
