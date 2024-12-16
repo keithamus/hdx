@@ -1,6 +1,7 @@
 use hdx_atom::{atom, Atom};
 use hdx_lexer::{Cursor, KindSet};
 use hdx_parser::{diagnostics, CursorSink, Parse, Parser, Result as ParserResult, ToCursors, T};
+use hdx_proc_macro::visit;
 
 use crate::css::{Visit, Visitable};
 
@@ -8,6 +9,7 @@ use super::{moz::MozPseudoElement, ms::MsPseudoElement, o::OPseudoElement, webki
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(rename_all = "kebab-case"))]
+#[visit]
 pub enum PseudoElement {
 	After(T![::], T![Ident]),
 	Backdrop(T![::], T![Ident]),
@@ -149,12 +151,20 @@ impl<'a> ToCursors for PseudoElement {
 
 impl<'a> Visitable<'a> for PseudoElement {
 	fn accept<V: Visit<'a>>(&self, v: &mut V) {
-		todo!();
+		v.visit_pseudo_element(self);
+		match self {
+			Self::Webkit(c) => Visitable::accept(c, v),
+			Self::Moz(c) => Visitable::accept(c, v),
+			Self::Ms(c) => Visitable::accept(c, v),
+			Self::O(c) => Visitable::accept(c, v),
+			_ => {}
+		}
 	}
 }
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(rename_all = "kebab-case"))]
+#[visit]
 pub enum LegacyPseudoElement {
 	After(T![:], T![Ident]),
 	Before(T![:], T![Ident]),
@@ -212,7 +222,7 @@ impl<'a> ToCursors for LegacyPseudoElement {
 
 impl<'a> Visitable<'a> for LegacyPseudoElement {
 	fn accept<V: Visit<'a>>(&self, v: &mut V) {
-		todo!();
+		v.visit_legacy_pseudo_element(self);
 	}
 }
 

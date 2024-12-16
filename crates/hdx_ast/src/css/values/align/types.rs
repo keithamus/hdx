@@ -4,7 +4,8 @@ pub(crate) use crate::css::units::*;
 
 // Re-expose stylevalues for shorthands
 pub(crate) use super::{
-	ColumnGapStyleValue, /*AlignContent, AlignItems, AlignSelf, JustifyContent, JustifyItems, JustifySelf, */ RowGapStyleValue,
+	ColumnGapStyleValue,
+	/*AlignContent, AlignItems, AlignSelf, JustifyContent, JustifyItems, JustifySelf, */ RowGapStyleValue,
 };
 
 // https://drafts.csswg.org/css-align-3/#typedef-baseline-position

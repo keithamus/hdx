@@ -72,7 +72,6 @@ where
 		if event.metadata().level() > &self.level {
 			return;
 		}
-		let name = event.metadata().name();
 		let mut fields = MessageVisitor::default();
 		fields.insert("name", event.metadata().name().into());
 		fields.insert("level", event.metadata().level().as_str().into());
@@ -100,7 +99,7 @@ where
 		let message = Message::Notification(Notification {
 			method: LogMessage::METHOD.into(),
 			params: to_value(LogMessageParams {
-				typ: MessageType::LOG,
+				typ: level,
 				message: to_string_pretty(&output).ok().unwrap_or_default(),
 			})
 			.unwrap_or_default(),

@@ -1,7 +1,5 @@
 use hdx_lexer::Cursor;
-use hdx_parser::{
-	diagnostics, keyword_typedef, CursorSink, Parse, Parser, Peek, Result as ParserResult, ToCursors, T,
-};
+use hdx_parser::{diagnostics, keyword_typedef, CursorSink, Parse, Parser, Peek, Result as ParserResult, ToCursors, T};
 
 pub(crate) type AnchorName = T![DashedIdent];
 

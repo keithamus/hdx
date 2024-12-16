@@ -15,7 +15,7 @@ use crate::css::{stylesheet::Rule, Visit, Visitable};
 pub struct LayerRule<'a> {
 	pub at_keyword: T![AtKeyword],
 	pub names: Option<LayerNameList<'a>>,
-	pub block: OptionalLayerBlock<'a>,
+	pub block: OptionalLayerRuleBlock<'a>,
 }
 
 // https://drafts.csswg.org/css-page-3/#syntax-page-selector
@@ -23,7 +23,7 @@ impl<'a> Parse<'a> for LayerRule<'a> {
 	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
 		let (at_keyword, names, block) = Self::parse_at_rule(p, Some(atom!("layer")))?;
 		if let Some(ref names) = names {
-			if matches!(block, OptionalLayerBlock::Block(_)) && names.0.len() > 1 {
+			if matches!(block, OptionalLayerRuleBlock::Block(_)) && names.0.len() > 1 {
 				let c: Cursor = names.0[0].0 .0.into();
 				Err(diagnostics::DisallowedLayerBlockWithMultipleNames(c.into()))?
 			}
@@ -34,7 +34,7 @@ impl<'a> Parse<'a> for LayerRule<'a> {
 
 impl<'a> AtRule<'a> for LayerRule<'a> {
 	type Prelude = LayerNameList<'a>;
-	type Block = OptionalLayerBlock<'a>;
+	type Block = OptionalLayerRuleBlock<'a>;
 }
 
 impl<'a> ToCursors for LayerRule<'a> {
@@ -49,7 +49,11 @@ impl<'a> ToCursors for LayerRule<'a> {
 
 impl<'a> Visitable<'a> for LayerRule<'a> {
 	fn accept<V: Visit<'a>>(&self, v: &mut V) {
-		todo!();
+		v.visit_layer_rule(self);
+		if let Some(names) = &self.names {
+			Visitable::accept(names, v);
+		}
+		Visitable::accept(&self.block, v);
 	}
 }
 
@@ -78,8 +82,17 @@ impl<'a> ToCursors for LayerNameList<'a> {
 	}
 }
 
+impl<'a> Visitable<'a> for LayerNameList<'a> {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		for (name, _) in &self.0 {
+			Visitable::accept(name, v);
+		}
+	}
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+#[visit]
 pub struct LayerName<'a>(T![Ident], Vec<'a, (T![.], T![Ident])>);
 
 impl<'a> Parse<'a> for LayerName<'a> {
@@ -108,55 +121,69 @@ impl<'a> ToCursors for LayerName<'a> {
 	}
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-pub enum OptionalLayerBlock<'a> {
-	None(T![;]),
-	Block(LayerBlock<'a>),
+impl<'a> Visitable<'a> for LayerName<'a> {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		v.visit_layer_name(self);
+	}
 }
 
-impl<'a> Parse<'a> for OptionalLayerBlock<'a> {
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+pub enum OptionalLayerRuleBlock<'a> {
+	None(T![;]),
+	Block(LayerRuleBlock<'a>),
+}
+
+impl<'a> Parse<'a> for OptionalLayerRuleBlock<'a> {
 	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
 		if let Some(semicolon) = p.parse_if_peek::<T![;]>()? {
 			Ok(Self::None(semicolon))
 		} else {
-			Ok(Self::Block(p.parse::<LayerBlock>()?))
+			Ok(Self::Block(p.parse::<LayerRuleBlock>()?))
 		}
 	}
 }
 
-impl<'a> ToCursors for OptionalLayerBlock<'a> {
+impl<'a> ToCursors for OptionalLayerRuleBlock<'a> {
 	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match self {
-			OptionalLayerBlock::None(semicolon) => s.append(semicolon.into()),
-			OptionalLayerBlock::Block(block) => {
+			OptionalLayerRuleBlock::None(semicolon) => s.append(semicolon.into()),
+			OptionalLayerRuleBlock::Block(block) => {
 				ToCursors::to_cursors(block, s);
 			}
 		}
 	}
 }
 
+impl<'a> Visitable<'a> for OptionalLayerRuleBlock<'a> {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		if let Self::Block(block) = self {
+			Visitable::accept(block, v);
+		}
+	}
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
-pub struct LayerBlock<'a> {
+pub struct LayerRuleBlock<'a> {
 	pub open: T!['{'],
 	#[cfg_attr(feature = "serde", serde(borrow))]
 	pub rules: Vec<'a, Rule<'a>>,
 	pub close: Option<T!['}']>,
 }
 
-impl<'a> Parse<'a> for LayerBlock<'a> {
+impl<'a> Parse<'a> for LayerRuleBlock<'a> {
 	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
 		let (open, rules, close) = Self::parse_rule_list(p)?;
 		Ok(Self { open, rules, close })
 	}
 }
 
-impl<'a> RuleList<'a> for LayerBlock<'a> {
+impl<'a> RuleList<'a> for LayerRuleBlock<'a> {
 	type Rule = Rule<'a>;
 }
 
-impl<'a> ToCursors for LayerBlock<'a> {
+impl<'a> ToCursors for LayerRuleBlock<'a> {
 	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.open.into());
 		for rule in &self.rules {
@@ -164,6 +191,14 @@ impl<'a> ToCursors for LayerBlock<'a> {
 		}
 		if let Some(close) = self.close {
 			s.append(close.into());
+		}
+	}
+}
+
+impl<'a> Visitable<'a> for LayerRuleBlock<'a> {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		for rule in &self.rules {
+			Visitable::accept(rule, v);
 		}
 	}
 }
@@ -178,8 +213,8 @@ mod tests {
 		assert_size!(LayerRule, 112);
 		assert_size!(LayerNameList, 32);
 		assert_size!(LayerName, 48);
-		assert_size!(OptionalLayerBlock, 64);
-		assert_size!(LayerBlock, 64);
+		assert_size!(OptionalLayerRuleBlock, 64);
+		assert_size!(LayerRuleBlock, 64);
 	}
 
 	#[test]

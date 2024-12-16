@@ -1,15 +1,16 @@
 use bumpalo::collections::Vec;
 use hdx_atom::atom;
-use hdx_lexer::{Cursor, Kind, Span};
+use hdx_lexer::{Kind, Span};
 use hdx_parser::{
 	diagnostics, AtRule, ConditionalAtRule, CursorSink, Parse, Parser, Peek, PreludeList, Result as ParserResult,
 	RuleList, ToCursors, T,
 };
+use hdx_proc_macro::visit;
 
 use crate::css::{stylesheet::Rule, Visit, Visitable};
 
 mod features;
-use features::*;
+pub use features::*;
 
 mod kw {
 	use hdx_parser::custom_keyword;
@@ -21,6 +22,7 @@ mod kw {
 // https://drafts.csswg.org/css-contain-3/#container-rule
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
+#[visit]
 pub struct ContainerRule<'a> {
 	pub at_keyword: T![AtKeyword],
 	pub query: ContainerConditionList<'a>,
@@ -55,7 +57,13 @@ impl<'a> ToCursors for ContainerRule<'a> {
 
 impl<'a> Visitable<'a> for ContainerRule<'a> {
 	fn accept<V: Visit<'a>>(&self, v: &mut V) {
-		todo!();
+		v.visit_container_rule(self);
+		for condition in &self.query.0 {
+			Visitable::accept(condition, v);
+		}
+		for rule in &self.block.rules {
+			Visitable::accept(rule, v);
+		}
 	}
 }
 
@@ -140,10 +148,18 @@ impl<'a> Parse<'a> for ContainerCondition<'a> {
 impl<'a> ToCursors for ContainerCondition<'a> {
 	fn to_cursors(&self, s: &mut impl CursorSink) {
 		if let Some(name) = &self.name {
-			ToCursors::to_cursors(name, s);
+			s.append(name.into());
 		}
 		if let Some(condition) = &self.condition {
 			ToCursors::to_cursors(condition, s);
+		}
+	}
+}
+
+impl<'a> Visitable<'a> for ContainerCondition<'a> {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		if let Some(condition) = &self.condition {
+			Visitable::accept(condition, v);
 		}
 	}
 }
@@ -204,6 +220,25 @@ impl<'a> ToCursors for ContainerQuery<'a> {
 	}
 }
 
+impl<'a> Visitable<'a> for ContainerQuery<'a> {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		match self {
+			Self::Is(feature) => Visitable::accept(feature, v),
+			Self::Not(feature) => Visitable::accept(feature.as_ref(), v),
+			Self::And(features) => {
+				for feature in features {
+					Visitable::accept(feature, v);
+				}
+			}
+			Self::Or(features) => {
+				for feature in features {
+					Visitable::accept(feature, v);
+				}
+			}
+		}
+	}
+}
+
 macro_rules! container_feature {
 	( $($name: ident($typ: ident): atom!($atom: tt),)+) => {
 		#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -224,34 +259,36 @@ impl<'a> Parse<'a> for ContainerFeature<'a> {
 			todo!();
 		}
 		let open = p.parse::<T![LeftParen]>()?;
-		let checkpoint = p.checkpoint();
-		if p.peek::<T![Ident]>() {
-			let c = p.peek_n(1);
-			macro_rules! match_feature {
-				( $($name: ident($typ: ident): atom!($atom: tt),)+) => {
-					// Only peek at the token as the underlying media feature parser needs to parse the leading atom.
-					{
-						match p.parse_atom_lower(c) {
-							$(atom!($atom) => {
-								let value = $typ::parse(p)?;
-								let close = p.parse::<T![')']>()?;
-								Self::$name(open, value, close)
-							},)+
-							atom => Err(diagnostics::UnexpectedIdent(atom, c.into()))?,
-						}
+		let mut c = p.peek_n(1);
+		macro_rules! match_feature {
+			( $($name: ident($typ: ident): atom!($atom: tt),)+) => {
+				// Only peek at the token as the underlying media feature parser needs to parse the leading atom.
+				{
+					match p.parse_atom_lower(c) {
+						$(atom!($atom) => {
+							let value = $typ::parse(p)?;
+							let close = p.parse::<T![')']>()?;
+							Self::$name(open, value, close)
+						},)+
+						atom => Err(diagnostics::UnexpectedIdent(atom, c.into()))?,
 					}
 				}
 			}
-			let value = apply_size_feature!(match_feature);
-			Ok(value)
+		}
+		if c == Kind::Ident {
+			Ok(apply_size_feature!(match_feature))
 		} else {
-			let c: Cursor = p.parse::<T![Any]>()?.into();
-			Err(diagnostics::Unexpected(c.into(), c.into()))?
+			// Styles like (1em < width < 1em) or (1em <= width <= 1em)
+			c = p.peek_n(3);
+			if c != Kind::Ident {
+				c = p.peek_n(4)
+			}
+			Ok(apply_size_feature!(match_feature))
 		}
 	}
 }
 
-impl<'a> ToCursors for ContainerFeature<'a> {
+impl ToCursors for ContainerFeature<'_> {
 	fn to_cursors(&self, s: &mut impl CursorSink) {
 		macro_rules! match_feature {
 			( $($name: ident($typ: ident): atom!($atom: tt),)+) => {
@@ -263,6 +300,21 @@ impl<'a> ToCursors for ContainerFeature<'a> {
 					},)+
 					Self::Style(c) => ToCursors::to_cursors(c, s),
 					Self::ScrollState(c) => ToCursors::to_cursors(c, s),
+				}
+			};
+		}
+		apply_size_feature!(match_feature)
+	}
+}
+
+impl<'a> Visitable<'a> for ContainerFeature<'a> {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		macro_rules! match_feature {
+			( $($name: ident($typ: ident): atom!($atom: tt),)+) => {
+				match self {
+					$(Self::$name(_, f, _) => Visitable::accept(f, v),)+
+					Self::Style(f) => Visitable::accept(f, v),
+					Self::ScrollState(f) => Visitable::accept(f, v),
 				}
 			};
 		}
@@ -302,8 +354,10 @@ mod tests {
 	fn test_writes() {
 		assert_parse!(ContainerCondition, "(width:2px)");
 		assert_parse!(ContainerCondition, "(inline-size>30em)");
+		assert_parse!(ContainerCondition, "(1em<width<1em)");
 		assert_parse!(ContainerRule, "@container foo{}");
 		assert_parse!(ContainerRule, "@container foo (width:2px){}");
+		assert_parse!(ContainerRule, "@container foo (10em<width<10em){}");
 		assert_parse!(ContainerRule, "@container foo (width:2px){body{color:black}}");
 	}
 }

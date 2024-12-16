@@ -5,7 +5,7 @@ use hdx_highlight::{SemanticKind, SemanticModifier, TokenHighlighter};
 use hdx_parser::{Features, Parser};
 use itertools::Itertools;
 use lsp_types::{
-	notification::DidOpenTextDocument,
+	notification::{DidChangeTextDocument, DidOpenTextDocument},
 	request::{Initialize, SemanticTokensFullRequest},
 	InitializeResult, SemanticToken, SemanticTokenModifier, SemanticTokenType, SemanticTokens,
 	SemanticTokensFullOptions, SemanticTokensLegend, SemanticTokensOptions, SemanticTokensResult,
@@ -22,6 +22,7 @@ pub fn server_with_handlers(version: &'static str) -> Server {
 	let files = Arc::new(DashMap::<Uri, String>::new());
 	let files_for_semantic_tokens = files.clone();
 	let files_for_open_doc = files.clone();
+	let files_for_change_doc = files.clone();
 	Server::new()
 		.handle::<Initialize>(move |_| -> Result<InitializeResult, io::Error> {
 			Ok(InitializeResult {
@@ -89,7 +90,7 @@ pub fn server_with_handlers(version: &'static str) -> Server {
 		.handle::<SemanticTokensFullRequest>(move |params| -> Result<Option<SemanticTokensResult>, io::Error> {
 			let uri = params.text_document.uri;
 			let allocator = Bump::default();
-			if let Some(source_text) = files_for_semantic_tokens.clone().get(&uri) {
+			if let Some(source_text) = files_for_semantic_tokens.get(&uri) {
 				trace!("Asked for SemanticTokens");
 				let result =
 					Parser::new(&allocator, source_text.as_str(), Features::default()).parse_entirely::<StyleSheet>();
@@ -129,7 +130,16 @@ pub fn server_with_handlers(version: &'static str) -> Server {
 		.on::<DidOpenTextDocument>(move |params| -> Result<(), io::Error> {
 			let uri = params.text_document.uri;
 			let source_text = params.text_document.text;
-			files_for_open_doc.clone().insert(uri, source_text);
+			files_for_open_doc.insert(uri, source_text);
+			Ok(())
+		})
+		.on::<DidChangeTextDocument>(move |params| -> Result<(), io::Error> {
+			let uri = params.text_document.uri;
+			let changes = params.content_changes;
+			if changes.len() == 1 && changes[0].range.is_none() {
+				let source_text = &changes[0].text;
+				files_for_change_doc.clone().insert(uri, source_text.into());
+			}
 			Ok(())
 		})
 }

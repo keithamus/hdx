@@ -10,8 +10,6 @@ mod test_helpers;
 #[cfg(test)]
 mod tests;
 
-use css::*;
-
 // https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#semanticTokenTypes
 #[derive(Display, VariantNames, Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum SemanticKind {
@@ -55,6 +53,7 @@ pub enum SemanticModifier {
 	Unknown,
 	Deprecated,
 	Experimental,
+	Vendor,
 	Custom,
 }
 
@@ -68,6 +67,9 @@ impl fmt::Display for SemanticModifier {
 		}
 		if self.contains(Self::Experimental) {
 			write!(f, " experimental")?;
+		}
+		if self.contains(Self::Experimental) {
+			write!(f, " vendor")?;
 		}
 		if self.contains(Self::Custom) {
 			write!(f, " custom")?;

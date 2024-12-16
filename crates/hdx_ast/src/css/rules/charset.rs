@@ -52,7 +52,7 @@ impl<'a> ToCursors for CharsetRule {
 
 impl<'a> Visitable<'a> for CharsetRule {
 	fn accept<V: Visit<'a>>(&self, v: &mut V) {
-		todo!();
+		v.visit_charset_rule(self);
 	}
 }
 

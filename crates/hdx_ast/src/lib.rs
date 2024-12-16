@@ -31,7 +31,7 @@ impl ToCursors for Todo {
 }
 
 impl<'a> Visitable<'a> for Todo {
-	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+	fn accept<V: Visit<'a>>(&self, _: &mut V) {
 		todo!();
 	}
 }

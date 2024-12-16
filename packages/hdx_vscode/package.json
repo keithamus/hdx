@@ -37,17 +37,68 @@
 		"problemPatterns": [],
 		"semanticTokenModifiers": [],
 		"semanticTokenScopes": [
-      {
-        "scopes": {
-          "Tag": ["entity.name.tag.css"],
-          "Tag.Unknown": ["meta.selector.css"],
-          "Tag.Experimental": ["entity.name.tag.css"],
-          "Property": ["support.type.property-name.css"],
-          "Property.Unknown": ["meta.property-name.css"],
-          "PseudoClass": ["entity.other.attribute-name.pseudo-class.css"],
-          "Punctuation": ["source.css"]
-        }
-      }
+			{
+				"scopes": {
+					"Tag": [
+						"entity.name.tag.css"
+					],
+					"Tag.Unknown": [
+						"invalid",
+						"meta.selector.css"
+					],
+					"Tag.Experimental": [
+						"entity.name.tag.css"
+					],
+					"Tag.Deprecated": [
+						"invalid.deprecated",
+						"entity.name.tag.css"
+					],
+					"Tag.Vendor": [
+						"invalid.deprecated",
+						"entity.name.tag.css"
+					],
+					"Declaration": [
+						"support.type.property-name.css"
+					],
+					"Declaration.Unknown": [
+						"invalid",
+						"meta.property-name.css"
+					],
+					"Declaration.Deprecated": [
+						"invalid.deprecated",
+						"meta.property-name.css"
+					],
+					"Declaration.Vendor": [
+						"invalid.deprecated",
+						"meta.property-name.css"
+					],
+					"Declaration.Custom": [
+						"variable.css",
+						"meta.property-list.css"
+					],
+					"PseudoClass": [
+						"entity.other.attribute-name.pseudo-class.css"
+					],
+					"PseudoElement": [
+						"entity.other.attribute-name.pseudo-element.css"
+					],
+					"PseudoClass.Vendor": [
+						"invalid.deprecated",
+						"entity.other.attribute-name.pseudo-class.css"
+					],
+					"PseudoElement.Vendor": [
+						"invalid.deprecated",
+						"entity.other.attribute-name.pseudo-element.css"
+					],
+					"Id": [
+						"entity.other.attribute-name.id"
+					],
+					"Punctuation": [
+						"punctuation.section",
+						"source.css"
+					]
+				}
+			}
 		],
 		"semanticTokenTypes": [],
 		"snippets": [],
@@ -55,7 +106,9 @@
 		"views": [],
 		"walkthroughs": []
 	},
-	"activationEvents": ["onLanguage:css"],
+	"activationEvents": [
+		"onLanguage:css"
+	],
 	"dependencies": {
 		"@vscode/test-cli": "^0.0.10",
 		"vscode-languageclient": "^9.0.1"

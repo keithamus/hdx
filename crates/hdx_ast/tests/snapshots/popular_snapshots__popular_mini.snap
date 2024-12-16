@@ -76034,7 +76034,7 @@ expression: result.output.unwrap()
           "len": 18
         }
       },
-      "rules": {
+      "block": {
         "open": {
           "kind": "LeftCurly",
           "offset": 41954,

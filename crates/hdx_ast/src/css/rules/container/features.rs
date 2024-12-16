@@ -1,5 +1,4 @@
-use crate::css::units::Length;
-use crate::css::{properties::Property, types::Ratio};
+use crate::css::{properties::Property, types::Ratio, units::Length, Visit, Visitable};
 use bumpalo::collections::Vec;
 use hdx_atom::atom;
 use hdx_lexer::Kind;
@@ -7,21 +6,64 @@ use hdx_parser::{
 	diagnostics, discrete_feature, ranged_feature, ConditionalAtRule, CursorSink, Parse, Parser, Peek,
 	Result as ParserResult, ToCursors, T,
 };
+use hdx_proc_macro::visit;
 
+#[visit]
 ranged_feature!(WidthContainerFeature[atom!("width")], Length);
 
+impl<'a> Visitable<'a> for WidthContainerFeature {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		v.visit_width_container_feature(self);
+	}
+}
+
+#[visit]
 ranged_feature!(HeightContainerFeature[atom!("height")], Length);
 
+impl<'a> Visitable<'a> for HeightContainerFeature {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		v.visit_height_container_feature(self);
+	}
+}
+
+#[visit]
 ranged_feature!(InlineSizeContainerFeature[atom!("inline-size")], Length);
 
+impl<'a> Visitable<'a> for InlineSizeContainerFeature {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		v.visit_inline_size_container_feature(self);
+	}
+}
+
+#[visit]
 ranged_feature!(BlockSizeContainerFeature[atom!("block-size")], Length);
 
+impl<'a> Visitable<'a> for BlockSizeContainerFeature {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		v.visit_block_size_container_feature(self);
+	}
+}
+
+#[visit]
 ranged_feature!(AspectRatioContainerFeature[atom!("aspect-ratio")], Ratio);
 
+impl<'a> Visitable<'a> for AspectRatioContainerFeature {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		v.visit_aspect_ratio_container_feature(self);
+	}
+}
+
+#[visit]
 discrete_feature!(OrientationContainerFeature[atom!("orientation")] {
 	Portrait: atom!("portrait"),
 	Landscape: atom!("landscape"),
 });
+
+impl<'a> Visitable<'a> for OrientationContainerFeature {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		v.visit_orientation_container_feature(self);
+	}
+}
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", content = "value"))]
@@ -54,7 +96,7 @@ impl<'a> Parse<'a> for StyleQuery<'a> {
 	}
 }
 
-impl<'a> ToCursors for StyleQuery<'a> {
+impl ToCursors for StyleQuery<'_> {
 	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match self {
 			Self::Is(c) => ToCursors::to_cursors(c, s),
@@ -67,6 +109,25 @@ impl<'a> ToCursors for StyleQuery<'a> {
 			Self::Or(cs) => {
 				for c in cs {
 					ToCursors::to_cursors(c, s);
+				}
+			}
+		}
+	}
+}
+
+impl<'a> Visitable<'a> for StyleQuery<'a> {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		match self {
+			Self::Is(feature) => Visitable::accept(feature, v),
+			Self::Not(feature) => Visitable::accept(feature.as_ref(), v),
+			Self::And(features) => {
+				for feature in features {
+					Visitable::accept(feature, v);
+				}
+			}
+			Self::Or(features) => {
+				for feature in features {
+					Visitable::accept(feature, v);
 				}
 			}
 		}
@@ -104,7 +165,7 @@ impl<'a> Parse<'a> for ScrollStateQuery<'a> {
 	}
 }
 
-impl<'a> ToCursors for ScrollStateQuery<'a> {
+impl ToCursors for ScrollStateQuery<'_> {
 	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match self {
 			Self::Is(c) => ToCursors::to_cursors(c, s),
@@ -117,6 +178,25 @@ impl<'a> ToCursors for ScrollStateQuery<'a> {
 			Self::Or(cs) => {
 				for c in cs {
 					ToCursors::to_cursors(c, s);
+				}
+			}
+		}
+	}
+}
+
+impl<'a> Visitable<'a> for ScrollStateQuery<'a> {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		match self {
+			Self::Is(feature) => Visitable::accept(feature, v),
+			Self::Not(feature) => Visitable::accept(feature.as_ref(), v),
+			Self::And(features) => {
+				for feature in features {
+					Visitable::accept(feature, v);
+				}
+			}
+			Self::Or(features) => {
+				for feature in features {
+					Visitable::accept(feature, v);
 				}
 			}
 		}
@@ -152,7 +232,7 @@ impl<'a> Parse<'a> for ScrollStateFeature {
 	}
 }
 
-impl<'a> ToCursors for ScrollStateFeature {
+impl ToCursors for ScrollStateFeature {
 	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match self {
 			Self::Scrollable(feature) => ToCursors::to_cursors(feature, s),
@@ -162,6 +242,17 @@ impl<'a> ToCursors for ScrollStateFeature {
 	}
 }
 
+impl<'a> Visitable<'a> for ScrollStateFeature {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		match self {
+			Self::Scrollable(feature) => Visitable::accept(feature, v),
+			Self::Snapped(feature) => Visitable::accept(feature, v),
+			Self::Stuck(feature) => Visitable::accept(feature, v),
+		}
+	}
+}
+
+#[visit]
 discrete_feature!(ScrollableScrollStateFeature[atom!("scrollable")] {
 	None: atom!("none"),
 	Top: atom!("top"),
@@ -179,6 +270,13 @@ discrete_feature!(ScrollableScrollStateFeature[atom!("scrollable")] {
 	Discrete: atom!("discrete"),
 });
 
+impl<'a> Visitable<'a> for ScrollableScrollStateFeature {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		v.visit_scrollable_scroll_state_feature(self);
+	}
+}
+
+#[visit]
 discrete_feature!(SnappedScrollStateFeature[atom!("snapped")] {
 	None: atom!("none"),
 	X: atom!("x"),
@@ -189,6 +287,13 @@ discrete_feature!(SnappedScrollStateFeature[atom!("snapped")] {
 	Discrete: atom!("discrete"),
 });
 
+impl<'a> Visitable<'a> for SnappedScrollStateFeature {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		v.visit_snapped_scroll_state_feature(self);
+	}
+}
+
+#[visit]
 discrete_feature!(StuckScrollStateFeature[atom!("stuck")] {
 	None: atom!("none"),
 	Top: atom!("top"),
@@ -201,6 +306,12 @@ discrete_feature!(StuckScrollStateFeature[atom!("stuck")] {
 	InlineEnd: atom!("inline-end"),
 	Discrete: atom!("discrete"),
 });
+
+impl<'a> Visitable<'a> for StuckScrollStateFeature {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		v.visit_stuck_scroll_state_feature(self);
+	}
+}
 
 #[cfg(test)]
 mod tests {

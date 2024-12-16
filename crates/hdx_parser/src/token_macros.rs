@@ -112,6 +112,12 @@ macro_rules! kind_ident {
 				Self(c)
 			}
 		}
+
+		impl $ident {
+			pub fn is_dashed_ident(&self) -> bool {
+				self.0.token().is_dashed_ident()
+			}
+		}
 	};
 }
 
@@ -437,6 +443,12 @@ macro_rules! custom_double_delim {
 				s.append(self.1.into());
 			}
 		}
+
+		impl From<&$ident> for ::hdx_lexer::Span {
+			fn from(value: &$ident) -> Self {
+				Into::<::hdx_lexer::Span>::into(value.0) + Into::<::hdx_lexer::Span>::into(value.1)
+			}
+		}
 	};
 }
 
@@ -600,6 +612,20 @@ impl From<&DashedIdent> for Cursor {
 	fn from(value: &DashedIdent) -> Self {
 		let t: Cursor = value.into();
 		t
+	}
+}
+
+impl From<DashedIdent> for Span {
+	fn from(value: DashedIdent) -> Self {
+		let t: Cursor = value.into();
+		t.into()
+	}
+}
+
+impl From<&DashedIdent> for Span {
+	fn from(value: &DashedIdent) -> Self {
+		let t: Cursor = value.into();
+		t.into()
 	}
 }
 
@@ -804,6 +830,12 @@ pub mod double {
 		fn to_cursors(&self, s: &mut impl crate::CursorSink) {
 			s.append(self.0.into());
 			s.append(self.1.into());
+		}
+	}
+
+	impl From<&ColonColon> for ::hdx_lexer::Span {
+		fn from(value: &ColonColon) -> Self {
+			Into::<::hdx_lexer::Span>::into(value.0) + Into::<::hdx_lexer::Span>::into(value.1)
 		}
 	}
 }

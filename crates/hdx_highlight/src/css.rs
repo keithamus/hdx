@@ -1,4 +1,7 @@
-use hdx_ast::css::{Property, PseudoClass, StyleDeclaration, StyleValue, Tag, Visit};
+use hdx_ast::css::{
+	Property, PropertyRule, PropertyRuleProperty, PropertyRuleStyleValue, PseudoClass, StyleDeclaration, StyleValue,
+	Tag, Visit,
+};
 use hdx_lexer::Span;
 
 use crate::{SemanticKind, SemanticModifier, TokenHighlighter};
@@ -51,6 +54,30 @@ impl<'a> Visit<'a> for TokenHighlighter {
 		let mut modifier = SemanticModifier::none();
 		if matches!(&property.value, StyleValue::Unknown(_)) {
 			modifier |= SemanticModifier::Unknown;
+		}
+		if property.name.is_dashed_ident() {
+			modifier |= SemanticModifier::Custom;
+		}
+		self.insert(span, SemanticKind::Declaration, modifier);
+		self.insert(property.colon.into(), SemanticKind::Punctuation, SemanticModifier::none());
+		if let Some(semicolon) = property.semicolon {
+			self.insert(semicolon.into(), SemanticKind::Punctuation, SemanticModifier::none());
+		}
+	}
+
+	fn visit_property_rule(&mut self, property: &PropertyRule<'a>) {
+		let span: Span = property.name.into();
+		self.insert(span, SemanticKind::Declaration, SemanticModifier::Custom);
+	}
+
+	fn visit_property_rule_property(&mut self, property: &PropertyRuleProperty<'a>) {
+		let span: Span = property.name.into();
+		let mut modifier = SemanticModifier::none();
+		if matches!(&property.value, PropertyRuleStyleValue::Unknown(_)) {
+			modifier |= SemanticModifier::Unknown;
+		}
+		if property.name.is_dashed_ident() {
+			modifier |= SemanticModifier::Custom;
 		}
 		self.insert(span, SemanticKind::Declaration, modifier);
 		self.insert(property.colon.into(), SemanticKind::Punctuation, SemanticModifier::none());

@@ -407,7 +407,7 @@ impl Def {
 				todo!("variant name")
 			}
 			Self::Multiplier(def, DefMultiplierStyle::Range(DefRange::Fixed(val))) => {
-				let opts:Vec<_> = (1..=*val as u32)
+				let opts: Vec<_> = (1..=*val as u32)
 					.map(|_| match def.deref() {
 						Def::Type(v) => v.to_inner_variant_type(0, None),
 						_ => {
@@ -511,7 +511,7 @@ impl Def {
 								_ => quote! { val },
 							},
 							Def::Multiplier(def, DefMultiplierStyle::Range(DefRange::Fixed(val))) => {
-								let opts:Vec<_> = (1..=*val as u32)
+								let opts: Vec<_> = (1..=*val as u32)
 									.map(|i| match def.deref() {
 										Def::Type(_) => format_ident!("val{}", i),
 										_ => {
@@ -661,9 +661,7 @@ impl Def {
 			Self::Multiplier(def, DefMultiplierStyle::Range(DefRange::Fixed(val))) => {
 				// Optimize for bounded ranges like `<foo>{2}` which could be expressed as `(Foo, Foo)`
 				debug_assert!(*val > 0.0);
-				let opts: Vec<Def> = (1..=*val as u32)
-					.map(|_| def.deref().clone())
-					.collect();
+				let opts: Vec<Def> = (1..=*val as u32).map(|_| def.deref().clone()).collect();
 				return Self::Combinator(opts, DefCombinatorStyle::Ordered)
 					.generate_parse_trait_implementation(ident, generics);
 			}
@@ -774,7 +772,8 @@ impl Def {
 							Self::Multiplier(_, DefMultiplierStyle::Range(DefRange::Fixed(val))) => {
 								// Optimize for bounded ranges like `<foo>{2}` which could be expressed as `(Foo, Foo)`
 								debug_assert!(*val > 0.0);
-								let idents: Vec<Ident> = (1..=*val as u32).map(|i| format_ident!("inner{}", i)).collect();
+								let idents: Vec<Ident> =
+									(1..=*val as u32).map(|i| format_ident!("inner{}", i)).collect();
 								quote! { #(#idents),* }
 							}
 							Self::Function(_, _) => quote! { function, val, close },
@@ -1194,7 +1193,7 @@ impl GenerateParseImpl for Def {
 			}
 			Self::Multiplier(def, DefMultiplierStyle::Range(DefRange::Fixed(val))) => {
 				debug_assert!(*val > 0.0);
-				let steps:Vec<_> = (1..=*val as u32)
+				let steps: Vec<_> = (1..=*val as u32)
 					.map(|i| match def.deref() {
 						Def::Type(v) => v.parse_steps(Some(format_ident!("val{}", i))),
 						_ => {
@@ -1235,7 +1234,7 @@ impl GenerateParseImpl for Def {
 								Err(::hdx_parser::diagnostics::Unexpected(c.into(), c.into()))?
 							}
 						}
-					},
+					}
 				};
 				let instantiate_i =
 					if matches!(range, DefRange::None) { None } else { Some(quote! { let mut i = 0; }) };
@@ -1436,9 +1435,7 @@ impl DefType {
 		if let Self::Custom(DefIdent(ident), _) = self {
 			return matches!(
 				ident,
-				&atom!("OutlineColor")
-					| &atom!("BorderTopColorStyleValue")
-					| &atom!("DynamicRangeLimitMix")
+				&atom!("OutlineColor") | &atom!("BorderTopColorStyleValue") | &atom!("DynamicRangeLimitMix")
 			);
 		}
 		matches!(self, Self::Image | Self::Image1D)

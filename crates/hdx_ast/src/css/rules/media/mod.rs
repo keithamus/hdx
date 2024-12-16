@@ -1,6 +1,6 @@
 use bumpalo::collections::Vec;
 use hdx_atom::atom;
-use hdx_lexer::{Cursor, Span};
+use hdx_lexer::{Cursor, Kind, Span};
 use hdx_parser::{
 	diagnostics, keyword_typedef, AtRule, Build, ConditionalAtRule, CursorSink, Is, Parse, Parser, PreludeList,
 	Result as ParserResult, RuleList, ToCursors, T,
@@ -282,19 +282,19 @@ impl<'a> Parse<'a> for MediaFeature {
 	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
 		p.parse::<T![LeftParen]>()?;
 		let checkpoint = p.checkpoint();
-		if p.peek::<T![Ident]>() {
-			let c = p.peek_n(1);
-			macro_rules! match_media {
-				( $($name: ident($typ: ident): atom!($atom: tt)$(| $alts:pat)*,)+) => {
-					// Only peek at the token as the underlying media feature parser needs to parse the leading atom.
-					{
-						match p.parse_atom_lower(c) {
-							$(atom!($atom)$(| $alts)* => $typ::parse(p).map(Self::$name),)+
-							atom => Err(diagnostics::UnexpectedIdent(atom, c.into()))?,
-						}
+		let mut c = p.peek_n(1);
+		macro_rules! match_media {
+			( $($name: ident($typ: ident): atom!($atom: tt)$(| $alts:pat)*,)+) => {
+				// Only peek at the token as the underlying media feature parser needs to parse the leading atom.
+				{
+					match p.parse_atom_lower(c) {
+						$(atom!($atom)$(| $alts)* => $typ::parse(p).map(Self::$name),)+
+						atom => Err(diagnostics::UnexpectedIdent(atom, c.into()))?,
 					}
 				}
 			}
+		}
+		if c == Kind::Ident {
 			let value = apply_medias!(match_media).or_else(|err| {
 				p.rewind(checkpoint);
 				if let Ok(hack) = p.parse::<HackMediaFeature>() {
@@ -306,13 +306,21 @@ impl<'a> Parse<'a> for MediaFeature {
 			p.parse::<T![')']>()?;
 			Ok(value)
 		} else {
-			let c: Cursor = p.parse::<T![Any]>()?.into();
-			Err(diagnostics::Unexpected(c.into(), c.into()))?
+			// Styles like (1em < width < 1em) or (1em <= width <= 1em)
+			c = p.peek_n(3);
+			if c != Kind::Ident {
+				c = p.peek_n(4)
+			}
+			if c != Kind::Ident {
+				c = p.parse::<T![Any]>()?.into();
+				Err(diagnostics::Unexpected(c.into(), c.into()))?
+			}
+			apply_medias!(match_media)
 		}
 	}
 }
 
-impl<'a> ToCursors for MediaFeature {
+impl ToCursors for MediaFeature {
 	fn to_cursors(&self, s: &mut impl CursorSink) {
 		macro_rules! match_media {
 			( $($name: ident($typ: ident): atom!($atom: tt)$(| $alts:pat)*,)+) => {
@@ -417,7 +425,7 @@ mod tests {
 		assert_parse!(MediaQuery, "print");
 		assert_parse!(MediaQuery, "not embossed");
 		assert_parse!(MediaQuery, "only screen");
-		// assert_parse!(MediaFeature, "(grid)", "grid");
+		assert_parse!(MediaFeature, "(grid)", "grid");
 		// assert_parse!(MediaQuery, "screen and (grid)");
 		// assert_parse!(MediaQuery, "screen and (hover) and (pointer)");
 		// assert_parse!(MediaQuery, "screen and (orientation: landscape)");

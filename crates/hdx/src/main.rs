@@ -76,10 +76,10 @@ fn main() {
 
 	match &cli.command {
 		Commands::Check { input, fix } => {
-			todo!()
+			todo!("Check ({:?}, {:?})", input, fix);
 		}
 		Commands::Fmt { input, check } => {
-			todo!()
+			todo!("Fmt ({:?}, {:?})", input, check);
 		}
 		Commands::DbgParse { input } => {
 			let source_text = std::fs::read_to_string(input).unwrap();
@@ -124,6 +124,9 @@ fn main() {
 					} else {
 						println!("{}", str);
 						eprintln!("Slurped up CSS in {:?}! Neat!", start.elapsed());
+						if *minify {
+							eprintln!("Warning: minification not yet supported");
+						}
 					}
 				} else {
 					let handler = GraphicalReportHandler::new_themed(GraphicalTheme::unicode_nocolor());

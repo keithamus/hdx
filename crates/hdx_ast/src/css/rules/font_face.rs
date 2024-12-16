@@ -15,12 +15,12 @@ use crate::css::{properties::StyleValue, Visit, Visitable};
 #[visit]
 pub struct FontFaceRule<'a> {
 	pub at_keyword: T![AtKeyword],
-	pub block: FontFaceDeclaration<'a>,
+	pub block: FontFaceRuleBlock<'a>,
 }
 
 impl<'a> AtRule<'a> for FontFaceRule<'a> {
 	type Prelude = NoPreludeAllowed;
-	type Block = FontFaceDeclaration<'a>;
+	type Block = FontFaceRuleBlock<'a>;
 }
 
 impl<'a> Parse<'a> for FontFaceRule<'a> {
@@ -39,30 +39,31 @@ impl<'a> ToCursors for FontFaceRule<'a> {
 
 impl<'a> Visitable<'a> for FontFaceRule<'a> {
 	fn accept<V: Visit<'a>>(&self, v: &mut V) {
-		todo!();
+		v.visit_font_face_rule(self);
+		Visitable::accept(&self.block, v);
 	}
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-pub struct FontFaceDeclaration<'a> {
+pub struct FontFaceRuleBlock<'a> {
 	pub open: T!['{'],
-	pub properties: Vec<'a, FontProperty<'a>>,
+	pub properties: Vec<'a, FontFaceRuleProperty<'a>>,
 	pub close: Option<T!['}']>,
 }
 
-impl<'a> RuleList<'a> for FontFaceDeclaration<'a> {
-	type Rule = FontProperty<'a>;
+impl<'a> RuleList<'a> for FontFaceRuleBlock<'a> {
+	type Rule = FontFaceRuleProperty<'a>;
 }
 
-impl<'a> Parse<'a> for FontFaceDeclaration<'a> {
+impl<'a> Parse<'a> for FontFaceRuleBlock<'a> {
 	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
 		let (open, properties, close) = Self::parse_rule_list(p)?;
 		Ok(Self { open, properties, close })
 	}
 }
 
-impl<'a> ToCursors for FontFaceDeclaration<'a> {
+impl<'a> ToCursors for FontFaceRuleBlock<'a> {
 	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.open.into());
 		for property in &self.properties {
@@ -74,9 +75,18 @@ impl<'a> ToCursors for FontFaceDeclaration<'a> {
 	}
 }
 
+impl<'a> Visitable<'a> for FontFaceRuleBlock<'a> {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		for property in &self.properties {
+			Visitable::accept(property, v);
+		}
+	}
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", rename = "property"))]
-pub struct FontProperty<'a> {
+#[visit]
+pub struct FontFaceRuleProperty<'a> {
 	pub name: T![Ident],
 	pub colon: T![:],
 	pub value: StyleValue<'a>,
@@ -84,7 +94,7 @@ pub struct FontProperty<'a> {
 	pub semicolon: Option<T![;]>,
 }
 
-impl<'a> Declaration<'a> for FontProperty<'a> {
+impl<'a> Declaration<'a> for FontFaceRuleProperty<'a> {
 	type DeclarationValue = StyleValue<'a>;
 	fn valid_property(p: &Parser, c: Cursor) -> bool {
 		matches!(
@@ -107,14 +117,14 @@ impl<'a> Declaration<'a> for FontProperty<'a> {
 	}
 }
 
-impl<'a> Parse<'a> for FontProperty<'a> {
+impl<'a> Parse<'a> for FontFaceRuleProperty<'a> {
 	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
 		let (name, colon, value, important, semicolon) = Self::parse_declaration(p)?;
 		Ok(Self { name, colon, value, important, semicolon })
 	}
 }
 
-impl<'a> ToCursors for FontProperty<'a> {
+impl<'a> ToCursors for FontFaceRuleProperty<'a> {
 	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.name.into());
 		s.append(self.colon.into());
@@ -125,6 +135,13 @@ impl<'a> ToCursors for FontProperty<'a> {
 		if let Some(semicolon) = &self.semicolon {
 			ToCursors::to_cursors(semicolon, s);
 		}
+	}
+}
+
+impl<'a> Visitable<'a> for FontFaceRuleProperty<'a> {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		v.visit_font_face_rule_property(self);
+		Visitable::accept(&self.value, v);
 	}
 }
 

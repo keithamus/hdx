@@ -1,5 +1,4 @@
 use httparse::{parse_headers, EMPTY_HEADER};
-use lsp_types::notification::{Exit, Notification as NotificationTrait};
 use serde::{Deserialize, Serialize};
 use serde_json::to_string;
 use std::io;

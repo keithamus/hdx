@@ -1,9 +1,9 @@
 use hdx_atom::atom;
-use hdx_lexer::{Cursor, KindSet};
+use hdx_lexer::{Cursor, KindSet, Span};
 use hdx_parser::{diagnostics, CursorSink, Parse, Parser, Result as ParserResult, ToCursors, T};
 use hdx_proc_macro::visit;
 
-use crate::css::{Visitable, Visit};
+use crate::css::{Visit, Visitable};
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
@@ -65,78 +65,52 @@ impl<'a> Parse<'a> for MsPseudoElement {
 impl<'a> ToCursors for MsPseudoElement {
 	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match self {
-			Self::Backdrop(colons, ident) => {
+			Self::Backdrop(colons, ident)
+			| Self::Browse(colons, ident)
+			| Self::Check(colons, ident)
+			| Self::Clear(colons, ident)
+			| Self::Expand(colons, ident)
+			| Self::Fill(colons, ident)
+			| Self::FillUpper(colons, ident)
+			| Self::FillLower(colons, ident)
+			| Self::InputPlaceholder(colons, ident)
+			| Self::Placeholder(colons, ident)
+			| Self::Reveal(colons, ident)
+			| Self::Selection(colons, ident)
+			| Self::Thumb(colons, ident)
+			| Self::TicksAfter(colons, ident)
+			| Self::TicksBefore(colons, ident)
+			| Self::Tooltip(colons, ident)
+			| Self::Track(colons, ident)
+			| Self::Value(colons, ident) => {
 				ToCursors::to_cursors(colons, s);
 				s.append(ident.into());
 			}
-			Self::Browse(colons, ident) => {
-				ToCursors::to_cursors(colons, s);
-				s.append(ident.into());
-			}
-			Self::Check(colons, ident) => {
-				ToCursors::to_cursors(colons, s);
-				s.append(ident.into());
-			}
-			Self::Clear(colons, ident) => {
-				ToCursors::to_cursors(colons, s);
-				s.append(ident.into());
-			}
-			Self::Expand(colons, ident) => {
-				ToCursors::to_cursors(colons, s);
-				s.append(ident.into());
-			}
-			Self::Fill(colons, ident) => {
-				ToCursors::to_cursors(colons, s);
-				s.append(ident.into());
-			}
-			Self::FillUpper(colons, ident) => {
-				ToCursors::to_cursors(colons, s);
-				s.append(ident.into());
-			}
-			Self::FillLower(colons, ident) => {
-				ToCursors::to_cursors(colons, s);
-				s.append(ident.into());
-			}
-			Self::InputPlaceholder(colons, ident) => {
-				ToCursors::to_cursors(colons, s);
-				s.append(ident.into());
-			}
-			Self::Placeholder(colons, ident) => {
-				ToCursors::to_cursors(colons, s);
-				s.append(ident.into());
-			}
-			Self::Reveal(colons, ident) => {
-				ToCursors::to_cursors(colons, s);
-				s.append(ident.into());
-			}
-			Self::Selection(colons, ident) => {
-				ToCursors::to_cursors(colons, s);
-				s.append(ident.into());
-			}
-			Self::Thumb(colons, ident) => {
-				ToCursors::to_cursors(colons, s);
-				s.append(ident.into());
-			}
-			Self::TicksAfter(colons, ident) => {
-				ToCursors::to_cursors(colons, s);
-				s.append(ident.into());
-			}
-			Self::TicksBefore(colons, ident) => {
-				ToCursors::to_cursors(colons, s);
-				s.append(ident.into());
-			}
-			Self::Tooltip(colons, ident) => {
-				ToCursors::to_cursors(colons, s);
-				s.append(ident.into());
-			}
-			Self::Track(colons, ident) => {
-				ToCursors::to_cursors(colons, s);
-				s.append(ident.into());
-			}
-			Self::Value(colons, ident) => {
-				ToCursors::to_cursors(colons, s);
-				s.append(ident.into());
-			}
+		}
+	}
+}
+
+impl From<&MsPseudoElement> for Span {
+	fn from(value: &MsPseudoElement) -> Self {
+		match value {
+			MsPseudoElement::Backdrop(colons, ident)
+			| MsPseudoElement::Browse(colons, ident)
+			| MsPseudoElement::Check(colons, ident)
+			| MsPseudoElement::Clear(colons, ident)
+			| MsPseudoElement::Expand(colons, ident)
+			| MsPseudoElement::Fill(colons, ident)
+			| MsPseudoElement::FillUpper(colons, ident)
+			| MsPseudoElement::FillLower(colons, ident)
+			| MsPseudoElement::InputPlaceholder(colons, ident)
+			| MsPseudoElement::Placeholder(colons, ident)
+			| MsPseudoElement::Reveal(colons, ident)
+			| MsPseudoElement::Selection(colons, ident)
+			| MsPseudoElement::Thumb(colons, ident)
+			| MsPseudoElement::TicksAfter(colons, ident)
+			| MsPseudoElement::TicksBefore(colons, ident)
+			| MsPseudoElement::Tooltip(colons, ident)
+			| MsPseudoElement::Track(colons, ident)
+			| MsPseudoElement::Value(colons, ident) => Into::<Span>::into(colons) + ident.into(),
 		}
 	}
 }
@@ -182,6 +156,16 @@ impl<'a> ToCursors for MsPseudoClass {
 			Self::InputPlaceholder(colon, ident) => {
 				ToCursors::to_cursors(colon, s);
 				s.append(ident.into());
+			}
+		}
+	}
+}
+
+impl From<&MsPseudoClass> for Span {
+	fn from(value: &MsPseudoClass) -> Self {
+		match value {
+			MsPseudoClass::Fullscreen(colon, ident) | MsPseudoClass::InputPlaceholder(colon, ident) => {
+				Into::<Span>::into(colon) + ident.into()
 			}
 		}
 	}
