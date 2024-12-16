@@ -69,7 +69,7 @@
 		"@vscode/test-electron": "^2.4.1",
 		"esbuild": "^0.24.0",
 		"mocha": "^10.8.2",
-		"oxlint": "^0.13.2",
+		"oxlint": "^0.15.0",
 		"prettier": "^3.4.1",
 		"tinyglobby": "^0.2.10",
 		"typescript": "^5.7.2",
