@@ -27,6 +27,7 @@ expression: result.output.unwrap()
       "block": {
         "open": {
           "kind": "LeftCurly",
+          "offset": 14,
           "len": 1
         },
         "rules": [
@@ -54,6 +55,7 @@ expression: result.output.unwrap()
             "type": "style-declaration",
             "open": {
               "kind": "LeftCurly",
+              "offset": 22,
               "len": 1
             },
             "declarations": [
@@ -66,6 +68,7 @@ expression: result.output.unwrap()
                 },
                 "colon": {
                   "kind": "Colon",
+                  "offset": 31,
                   "len": 1
                 },
                 "value": {
@@ -84,12 +87,14 @@ expression: result.output.unwrap()
             "rules": [],
             "close": {
               "kind": "RightCurly",
+              "offset": 40,
               "len": 1
             }
           }
         ],
         "close": {
           "kind": "RightCurly",
+          "offset": 42,
           "len": 1
         }
       }

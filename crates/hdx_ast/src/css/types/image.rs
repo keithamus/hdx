@@ -1,4 +1,4 @@
-use hdx_parser::{CursorStream, Parse, Parser, Peek, Result as ParserResult, ToCursors, T};
+use hdx_parser::{CursorSink, Parse, Parser, Peek, Result as ParserResult, ToCursors, T};
 
 use super::Gradient;
 
@@ -37,8 +37,8 @@ impl<'a> Parse<'a> for Image<'a> {
 	}
 }
 
-impl<'a> ToCursors<'a> for Image<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for Image<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match self {
 			Self::Url(c) => s.append(c.into()),
 			Self::UrlFunction(func, string, close) => {
@@ -58,7 +58,7 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(Image, 184);
+		assert_size!(Image, 208);
 	}
 
 	#[test]

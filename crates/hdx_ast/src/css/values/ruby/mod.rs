@@ -16,7 +16,7 @@ use impls::*;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub enum RubyPosition {}
+// pub enum RubyPositionStyleValue {}
 
 // https://drafts.csswg.org/css-ruby-1/#ruby-merge
 #[value(" separate | merge | auto ")]
@@ -26,7 +26,7 @@ use impls::*;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub enum RubyMerge {}
+pub enum RubyMergeStyleValue {}
 
 // https://drafts.csswg.org/css-ruby-1/#ruby-align
 #[value(" start | center | space-between | space-around ")]
@@ -36,7 +36,7 @@ pub enum RubyMerge {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub enum RubyAlign {}
+pub enum RubyAlignStyleValue {}
 
 // https://drafts.csswg.org/css-ruby-1/#ruby-overhang
 #[value(" auto | none ")]
@@ -46,4 +46,4 @@ pub enum RubyAlign {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub enum RubyOverhang {}
+pub enum RubyOverhangStyleValue {}

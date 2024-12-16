@@ -16,7 +16,7 @@ use impls::*;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum LineGrid {}
+pub enum LineGridStyleValue {}
 
 // https://drafts.csswg.org/css-line-grid-1/#line-snap
 #[value(" none | baseline | contain ")]
@@ -26,7 +26,7 @@ pub enum LineGrid {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum LineSnap {}
+pub enum LineSnapStyleValue {}
 
 // https://drafts.csswg.org/css-line-grid-1/#box-snap
 #[value(" none | block-start | block-end | center | baseline | last-baseline ")]
@@ -36,4 +36,4 @@ pub enum LineSnap {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum BoxSnap {}
+pub enum BoxSnapStyleValue {}

@@ -2,7 +2,7 @@ use bumpalo::collections::Vec;
 use hdx_atom::atom;
 use hdx_lexer::Cursor;
 use hdx_parser::{
-	diagnostics, keyword_typedef, Build, CursorStream, Is, Parse, Parser, Result as ParserResult, ToCursors, T,
+	diagnostics, keyword_typedef, Build, CursorSink, Is, Parse, Parser, Result as ParserResult, ToCursors, T,
 };
 
 use crate::css::{
@@ -147,8 +147,8 @@ impl<'a> Parse<'a> for Gradient<'a> {
 	}
 }
 
-impl<'a> ToCursors<'a> for Gradient<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for Gradient<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match self {
 			Self::Linear(func, direction, comma, stops, close) => {
 				s.append(func.into());
@@ -265,8 +265,8 @@ impl<'a> Parse<'a> for LinearDirection {
 	}
 }
 
-impl<'a> ToCursors<'a> for LinearDirection {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for LinearDirection {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match self {
 			Self::Angle(c) => s.append(c.into()),
 			Self::Named(to, a, b) => {
@@ -329,8 +329,8 @@ impl<'a> Parse<'a> for RadialSize {
 	}
 }
 
-impl<'a> ToCursors<'a> for RadialSize {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for RadialSize {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match self {
 			Self::ClosestCorner(c) => s.append(c.into()),
 			Self::ClosestSide(c) => s.append(c.into()),
@@ -355,8 +355,8 @@ pub enum ColorStopOrHint {
 	Hint(LengthPercentage, T![,]),
 }
 
-impl<'a> ToCursors<'a> for ColorStopOrHint {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for ColorStopOrHint {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match self {
 			Self::Stop(c, l, comma) => {
 				ToCursors::to_cursors(c, s);
@@ -382,10 +382,10 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(Gradient, 184);
+		assert_size!(Gradient, 208);
 		assert_size!(LinearDirection, 44);
-		assert_size!(RadialSize, 24);
-		assert_size!(ColorStopOrHint, 164);
+		assert_size!(RadialSize, 32);
+		assert_size!(ColorStopOrHint, 192);
 	}
 
 	#[test]

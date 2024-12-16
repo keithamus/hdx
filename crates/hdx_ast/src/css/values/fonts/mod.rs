@@ -16,7 +16,7 @@ use impls::*;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub enum FontFamily<'a> {}
+// pub enum FontFamilyStyleValue<'a> {}
 
 // // https://drafts.csswg.org/css-fonts-5/#font-weight
 #[value(" <font-weight-absolute> | bolder | lighter ")]
@@ -26,7 +26,7 @@ use impls::*;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub enum FontWeight {}
+pub enum FontWeightStyleValue {}
 
 // https://drafts.csswg.org/css-fonts-5/#font-width
 #[value(" normal | <percentage [0,∞]> | ultra-condensed | extra-condensed | condensed | semi-condensed | semi-expanded | expanded | extra-expanded | ultra-expanded ")]
@@ -36,7 +36,7 @@ pub enum FontWeight {}
 #[percentages("not resolved")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub enum FontWidth {}
+pub enum FontWidthStyleValue {}
 
 // // https://drafts.csswg.org/css-fonts-5/#font-style
 // #[value(" normal | italic | oblique <angle [-90deg,90deg]>? ")]
@@ -46,7 +46,7 @@ pub enum FontWidth {}
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("by computed value type;normal animates as oblique 0deg")]
-// pub enum FontStyle {}
+// pub enum FontStyleStyleValue {}
 
 // // https://drafts.csswg.org/css-fonts-5/#font-size
 // #[value(" <absolute-size> | <relative-size> | <length-percentage [0,∞]> | math ")]
@@ -56,7 +56,7 @@ pub enum FontWidth {}
 // #[percentages("refer to parent element’s font size")]
 // #[canonical_order("per grammar")]
 // #[animation_type("by computed value type")]
-// pub enum FontSize {}
+// pub enum FontSizeStyleValue {}
 
 // // https://drafts.csswg.org/css-fonts-5/#font-size-adjust
 // #[value(" none | [ ex-height | cap-height | ch-width | ic-width | ic-height ]? [ from-font | <number [0,∞]> ] ")]
@@ -66,7 +66,7 @@ pub enum FontWidth {}
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete if the keywords differ, otherwise by computed value type")]
-// pub enum FontSizeAdjust {}
+// pub enum FontSizeAdjustStyleValue {}
 
 // // https://drafts.csswg.org/css-fonts-5/#font
 // #[value(" [ [ <'font-style'> || <font-variant-css2> || <'font-weight'> || <font-width-css3> ]? <'font-size'> [ / <'line-height'> ]? <'font-family'># ] | <system-family-name> ")]
@@ -76,7 +76,7 @@ pub enum FontWidth {}
 // #[percentages("see individual properties")]
 // #[canonical_order("per grammar")]
 // #[animation_type("see individual properties")]
-// pub enum Font {}
+// pub enum FontStyleValue<'a> {}
 
 // https://drafts.csswg.org/css-fonts-5/#font-synthesis-weight
 #[value(" auto | none ")]
@@ -86,7 +86,7 @@ pub enum FontWidth {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum FontSynthesisWeight {}
+pub enum FontSynthesisWeightStyleValue {}
 
 // https://drafts.csswg.org/css-fonts-5/#font-synthesis-style
 #[value(" auto | none ")]
@@ -96,7 +96,7 @@ pub enum FontSynthesisWeight {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum FontSynthesisStyle {}
+pub enum FontSynthesisStyleStyleValue {}
 
 // https://drafts.csswg.org/css-fonts-5/#font-synthesis-small-caps
 #[value(" auto | none ")]
@@ -106,7 +106,7 @@ pub enum FontSynthesisStyle {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum FontSynthesisSmallCaps {}
+pub enum FontSynthesisSmallCapsStyleValue {}
 
 // https://drafts.csswg.org/css-fonts-5/#font-synthesis-position
 #[value(" auto | none ")]
@@ -116,7 +116,7 @@ pub enum FontSynthesisSmallCaps {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum FontSynthesisPosition {}
+pub enum FontSynthesisPositionStyleValue {}
 
 // // https://drafts.csswg.org/css-fonts-5/#font-synthesis
 // #[value(" none | [ weight || style || small-caps || position] ")]
@@ -126,7 +126,7 @@ pub enum FontSynthesisPosition {}
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub enum FontSynthesis {}
+// pub enum FontSynthesisStyleValue {}
 
 // https://drafts.csswg.org/css-fonts-5/#font-kerning
 #[value(" auto | normal | none ")]
@@ -136,7 +136,7 @@ pub enum FontSynthesisPosition {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum FontKerning {}
+pub enum FontKerningStyleValue {}
 
 // // https://drafts.csswg.org/css-fonts-5/#font-variant-ligatures
 // #[value(" normal | none | [ <common-lig-values> || <discretionary-lig-values> || <historical-lig-values> || <contextual-alt-values> ] ")]
@@ -146,7 +146,7 @@ pub enum FontKerning {}
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub enum FontVariantLigatures {}
+// pub enum FontVariantLigaturesStyleValue {}
 
 // https://drafts.csswg.org/css-fonts-5/#font-variant-position
 #[value(" normal | sub | super ")]
@@ -156,7 +156,7 @@ pub enum FontKerning {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum FontVariantPosition {}
+pub enum FontVariantPositionStyleValue {}
 
 // https://drafts.csswg.org/css-fonts-5/#font-variant-caps
 #[value(" normal | small-caps | all-small-caps | petite-caps | all-petite-caps | unicase | titling-caps ")]
@@ -166,7 +166,7 @@ pub enum FontVariantPosition {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum FontVariantCaps {}
+pub enum FontVariantCapsStyleValue {}
 
 // // https://drafts.csswg.org/css-fonts-5/#font-variant-numeric
 // #[value(" normal | [ <numeric-figure-values> || <numeric-spacing-values> || <numeric-fraction-values> || ordinal || slashed-zero ] ")]
@@ -176,7 +176,7 @@ pub enum FontVariantCaps {}
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub enum FontVariantNumeric {}
+// pub enum FontVariantNumericStyleValue {}
 
 // // https://drafts.csswg.org/css-fonts-5/#font-variant-alternates
 // #[value(" normal | [ stylistic(<feature-value-name>) || historical-forms || styleset(<feature-value-name>#) || character-variant(<feature-value-name>#) || swash(<feature-value-name>) || ornaments(<feature-value-name>) || annotation(<feature-value-name>) ] ")]
@@ -186,7 +186,7 @@ pub enum FontVariantCaps {}
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub enum FontVariantAlternates {}
+// pub enum FontVariantAlternatesStyleValue<'a> {}
 
 // // https://drafts.csswg.org/css-fonts-5/#font-variant-east-asian
 // #[value(" normal | [ <east-asian-variant-values> || <east-asian-width-values> || ruby ] ")]
@@ -196,7 +196,7 @@ pub enum FontVariantCaps {}
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub enum FontVariantEastAsian {}
+// pub enum FontVariantEastAsianStyleValue {}
 
 // // https://drafts.csswg.org/css-fonts-5/#font-variant
 // #[value(" normal | none | [ [ <common-lig-values> || <discretionary-lig-values> || <historical-lig-values> || <contextual-alt-values> ] || [ small-caps | all-small-caps | petite-caps | all-petite-caps | unicase | titling-caps ] || [ stylistic(<feature-value-name>) || historical-forms || styleset(<feature-value-name>#) || character-variant(<feature-value-name>#) || swash(<feature-value-name>) || ornaments(<feature-value-name>) || annotation(<feature-value-name>) ] || [ <numeric-figure-values> || <numeric-spacing-values> || <numeric-fraction-values> || ordinal || slashed-zero ] || [ <east-asian-variant-values> || <east-asian-width-values> || ruby ] || [ sub | super ] || [ text | emoji | unicode ] ] ")]
@@ -206,7 +206,7 @@ pub enum FontVariantCaps {}
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub enum FontVariant {}
+// pub enum FontVariantStyleValue<'a> {}
 
 // // https://drafts.csswg.org/css-fonts-5/#font-feature-settings
 // #[value(" normal | <feature-tag-value># ")]
@@ -216,7 +216,7 @@ pub enum FontVariantCaps {}
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub enum FontFeatureSettings<'a> {}
+// pub enum FontFeatureSettingsStyleValue<'a> {}
 
 // https://drafts.csswg.org/css-fonts-5/#font-language-override
 #[value(" normal | <string> ")]
@@ -226,7 +226,7 @@ pub enum FontVariantCaps {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum FontLanguageOverride {}
+pub enum FontLanguageOverrideStyleValue {}
 
 // https://drafts.csswg.org/css-fonts-5/#font-optical-sizing
 #[value(" auto | none ")]
@@ -236,7 +236,7 @@ pub enum FontLanguageOverride {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum FontOpticalSizing {}
+pub enum FontOpticalSizingStyleValue {}
 
 // // https://drafts.csswg.org/css-fonts-5/#font-variation-settings
 // #[value(" normal | [ <opentype-tag> <number>]# ")]
@@ -245,10 +245,10 @@ pub enum FontOpticalSizing {}
 // #[inherited("yes")]
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
-// #[animation_type("(see prose)")]
-// pub enum FontVariationSettings<'a> {}
+// #[animation_type("see prose")]
+// pub enum FontVariationSettingsStyleValue<'a> {}
 
-// https://drafts.csswg.org/css-fonts-5/#font-palette
+// // https://drafts.csswg.org/css-fonts-5/#font-palette
 // #[value(" normal | light | dark | <palette-identifier> | <palette-mix()> ")]
 // #[initial("normal")]
 // #[applies_to("all elements and text")]
@@ -256,7 +256,7 @@ pub enum FontOpticalSizing {}
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("by computed value")]
-// pub enum FontPalette {}
+// pub enum FontPaletteStyleValue {}
 
 // https://drafts.csswg.org/css-fonts-5/#font-variant-emoji
 #[value(" normal | text | emoji | unicode ")]
@@ -266,4 +266,4 @@ pub enum FontOpticalSizing {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum FontVariantEmoji {}
+pub enum FontVariantEmojiStyleValue {}

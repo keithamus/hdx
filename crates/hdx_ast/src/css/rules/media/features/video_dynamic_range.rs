@@ -12,7 +12,7 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(VideoDynamicRangeMediaFeature, 36);
+		assert_size!(VideoDynamicRangeMediaFeature, 40);
 	}
 
 	#[test]

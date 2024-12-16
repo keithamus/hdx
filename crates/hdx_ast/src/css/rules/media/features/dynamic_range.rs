@@ -12,7 +12,7 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(DynamicRangeMediaFeature, 36);
+		assert_size!(DynamicRangeMediaFeature, 40);
 	}
 
 	#[test]

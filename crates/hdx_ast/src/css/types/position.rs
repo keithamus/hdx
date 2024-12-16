@@ -1,7 +1,7 @@
 use hdx_atom::atom;
 use hdx_lexer::{Cursor, Kind, Token};
 use hdx_parser::{
-	diagnostics, keyword_typedef, Build, CursorStream, Is, Parse, Parser, Peek, Result as ParserResult, ToCursors, T,
+	diagnostics, keyword_typedef, Build, CursorSink, Is, Parse, Parser, Peek, Result as ParserResult, ToCursors, T,
 };
 
 use crate::css::units::LengthPercentage;
@@ -94,8 +94,8 @@ impl<'a> Parse<'a> for Position {
 	}
 }
 
-impl<'a> ToCursors<'a> for Position {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for Position {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match *self {
 			Self::SingleValue(v) => {
 				s.append(v.into());
@@ -304,7 +304,7 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(Position, 56);
+		assert_size!(Position, 64);
 	}
 
 	#[test]

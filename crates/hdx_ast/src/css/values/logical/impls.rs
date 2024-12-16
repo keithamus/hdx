@@ -8,23 +8,23 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(BlockSize, 36);
-		assert_size!(InlineSize, 36);
-		assert_size!(MinBlockSize, 36);
-		assert_size!(MinInlineSize, 36);
-		assert_size!(MaxBlockSize, 36);
-		assert_size!(MaxInlineSize, 36);
-		assert_size!(MarginBlockStart, 16);
-		assert_size!(MarginBlockEnd, 16);
-		assert_size!(MarginInlineStart, 16);
-		assert_size!(MarginInlineEnd, 16);
-		assert_size!(MarginBlock, 32);
-		assert_size!(MarginInline, 32);
-		assert_size!(PaddingBlockStart, 12);
-		assert_size!(PaddingBlockEnd, 12);
-		assert_size!(PaddingInlineStart, 12);
-		assert_size!(PaddingInlineEnd, 12);
-		assert_size!(PaddingBlock, 24);
-		assert_size!(PaddingInline, 24);
+		assert_size!(BlockSizeStyleValue, 44);
+		assert_size!(InlineSizeStyleValue, 44);
+		assert_size!(MinBlockSizeStyleValue, 44);
+		assert_size!(MinInlineSizeStyleValue, 44);
+		assert_size!(MaxBlockSizeStyleValue, 44);
+		assert_size!(MaxInlineSizeStyleValue, 44);
+		assert_size!(MarginBlockStartStyleValue, 16);
+		assert_size!(MarginBlockEndStyleValue, 16);
+		assert_size!(MarginInlineStartStyleValue, 16);
+		assert_size!(MarginInlineEndStyleValue, 16);
+		assert_size!(MarginBlockStyleValue, 32);
+		assert_size!(MarginInlineStyleValue, 32);
+		assert_size!(PaddingBlockStartStyleValue, 16);
+		assert_size!(PaddingBlockEndStyleValue, 16);
+		assert_size!(PaddingInlineStartStyleValue, 16);
+		assert_size!(PaddingInlineEndStyleValue, 16);
+		assert_size!(PaddingBlockStyleValue, 32);
+		assert_size!(PaddingInlineStyleValue, 32);
 	}
 }

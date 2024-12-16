@@ -16,7 +16,7 @@ use impls::*;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum Position {}
+pub enum PositionStyleValue {}
 
 // https://drafts.csswg.org/css-position-4/#top
 #[value(" auto | <length-percentage> ")]
@@ -26,7 +26,7 @@ pub enum Position {}
 #[percentages("refer to size of containing block; see prose")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub enum Top {}
+pub enum TopStyleValue {}
 
 // https://drafts.csswg.org/css-position-4/#right
 #[value(" auto | <length-percentage> ")]
@@ -36,7 +36,7 @@ pub enum Top {}
 #[percentages("refer to size of containing block; see prose")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub enum Right {}
+pub enum RightStyleValue {}
 
 // https://drafts.csswg.org/css-position-4/#bottom
 #[value(" auto | <length-percentage> ")]
@@ -46,7 +46,7 @@ pub enum Right {}
 #[percentages("refer to size of containing block; see prose")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub enum Bottom {}
+pub enum BottomStyleValue {}
 
 // https://drafts.csswg.org/css-position-4/#left
 #[value(" auto | <length-percentage> ")]
@@ -56,7 +56,7 @@ pub enum Bottom {}
 #[percentages("refer to size of containing block; see prose")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub enum Left {}
+pub enum LeftStyleValue {}
 
 // https://drafts.csswg.org/css-position-4/#inset-block-start
 #[value(" auto | <length-percentage> ")]
@@ -66,7 +66,7 @@ pub enum Left {}
 #[percentages("refer to size of containing block; see prose")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub enum InsetBlockStart {}
+pub enum InsetBlockStartStyleValue {}
 
 // https://drafts.csswg.org/css-position-4/#inset-inline-start
 #[value(" auto | <length-percentage> ")]
@@ -76,7 +76,7 @@ pub enum InsetBlockStart {}
 #[percentages("refer to size of containing block; see prose")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub enum InsetInlineStart {}
+pub enum InsetInlineStartStyleValue {}
 
 // https://drafts.csswg.org/css-position-4/#inset-block-end
 #[value(" auto | <length-percentage> ")]
@@ -86,7 +86,7 @@ pub enum InsetInlineStart {}
 #[percentages("refer to size of containing block; see prose")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub enum InsetBlockEnd {}
+pub enum InsetBlockEndStyleValue {}
 
 // https://drafts.csswg.org/css-position-4/#inset-inline-end
 #[value(" auto | <length-percentage> ")]
@@ -96,7 +96,7 @@ pub enum InsetBlockEnd {}
 #[percentages("refer to size of containing block; see prose")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub enum InsetInlineEnd {}
+pub enum InsetInlineEndStyleValue {}
 
 // https://drafts.csswg.org/css-position-4/#inset-block
 #[value(" <'top'>{1,2} ")]
@@ -106,7 +106,7 @@ pub enum InsetInlineEnd {}
 #[percentages("see individual properties")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub struct InsetBlock;
+pub struct InsetBlockStyleValue;
 
 // https://drafts.csswg.org/css-position-4/#inset-inline
 #[value(" <'top'>{1,2} ")]
@@ -116,7 +116,7 @@ pub struct InsetBlock;
 #[percentages("see individual properties")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub struct InsetInline;
+pub struct InsetInlineStyleValue;
 
 // https://drafts.csswg.org/css-position-4/#inset
 #[value(" <'top'>{1,4} ")]
@@ -126,7 +126,7 @@ pub struct InsetInline;
 #[percentages("see individual properties")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub struct Inset;
+pub struct InsetStyleValue;
 
 // https://drafts.csswg.org/css-position-4/#overlay
 #[value(" none | auto ")]
@@ -135,5 +135,5 @@ pub struct Inset;
 #[inherited("no")]
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
-#[animation_type("(see prose)")]
-pub enum Overlay {}
+#[animation_type("see prose")]
+pub enum OverlayStyleValue {}

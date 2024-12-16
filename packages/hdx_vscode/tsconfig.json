@@ -1,0 +1,13 @@
+{
+	"compilerOptions": {
+		"allowJs": true,
+		"module": "nodenext",
+		"target": "es2022",
+		"noEmit": true,
+		"lib": ["ES2023"],
+		"rootDir": ".",
+		"strict": true
+	},
+	"exclude": ["node_modules/", ".vscode-test"],
+	"include": ["src", "tests"]
+}

@@ -16,7 +16,7 @@ use impls::*;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum AnchorName<'a> {}
+pub enum AnchorNameStyleValue<'a> {}
 
 // https://drafts.csswg.org/css-anchor-position-1/#anchor-scope
 #[value(" none | all | <dashed-ident># ")]
@@ -26,7 +26,7 @@ pub enum AnchorName<'a> {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum AnchorScope<'a> {}
+pub enum AnchorScopeStyleValue<'a> {}
 
 // https://drafts.csswg.org/css-anchor-position-1/#position-anchor
 #[value(" auto | <anchor-name> ")]
@@ -36,7 +36,7 @@ pub enum AnchorScope<'a> {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum PositionAnchor<'a> {}
+pub enum PositionAnchorStyleValue {}
 
 // https://drafts.csswg.org/css-anchor-position-1/#position-area
 #[value(" none | <position-area> ")]
@@ -46,7 +46,7 @@ pub enum PositionAnchor<'a> {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("tbd")]
-pub enum PositionArea {}
+pub enum PositionAreaStyleValue {}
 
 // // https://drafts.csswg.org/css-anchor-position-1/#position-visibility
 // #[value(" always | [ anchors-valid || anchors-visible || no-overflow ] ")]
@@ -56,7 +56,7 @@ pub enum PositionArea {}
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub enum PositionVisibility {}
+// pub enum PositionVisibilityStyleValue {}
 
 // // https://drafts.csswg.org/css-anchor-position-1/#position-try-fallbacks
 // #[value(" none | [ [<dashed-ident> || <try-tactic>] | <'position-area'> ]# ")]
@@ -66,7 +66,7 @@ pub enum PositionArea {}
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub enum PositionTryFallbacks {}
+// pub enum PositionTryFallbacksStyleValue<'a> {}
 
 // https://drafts.csswg.org/css-anchor-position-1/#position-try-order
 #[value(" normal | <try-size> ")]
@@ -76,7 +76,7 @@ pub enum PositionArea {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum PositionTryOrder {}
+pub enum PositionTryOrderStyleValue {}
 
 // // https://drafts.csswg.org/css-anchor-position-1/#position-try
 // #[value(" <'position-try-order'>? <'position-try-fallbacks'> ")]
@@ -86,4 +86,4 @@ pub enum PositionTryOrder {}
 // #[percentages("see individual properties")]
 // #[canonical_order("per grammar")]
 // #[animation_type("see individual properties")]
-// pub struct PositionTry;
+// pub struct PositionTryStyleValue;

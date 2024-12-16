@@ -16,7 +16,7 @@ use impls::*;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("not animatable")]
-// pub enum FlowInto {}
+// pub enum FlowIntoStyleValue {}
 
 // // https://drafts.csswg.org/css-regions-1/#flow-from
 // #[value(" <ident> | none ")]
@@ -26,7 +26,7 @@ use impls::*;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("not animatable")]
-// pub enum FlowFrom {}
+// pub enum FlowFromStyleValue {}
 
 // https://drafts.csswg.org/css-regions-1/#region-fragment
 #[value(" auto | break ")]
@@ -36,4 +36,4 @@ use impls::*;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum RegionFragment {}
+pub enum RegionFragmentStyleValue {}

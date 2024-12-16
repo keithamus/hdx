@@ -16,7 +16,7 @@ use impls::*;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub enum ScrollSnapType {}
+// pub enum ScrollSnapTypeStyleValue {}
 
 // // https://drafts.csswg.org/css-scroll-snap-2/#scroll-padding
 // #[value(" [ auto | <length-percentage [0,∞]> ]{1,4} ")]
@@ -26,7 +26,7 @@ use impls::*;
 // #[percentages("relative to the corresponding dimension of the scroll container’s scrollport")]
 // #[canonical_order("per grammar")]
 // #[animation_type("by computed value type")]
-// pub enum ScrollPadding {}
+// pub enum ScrollPaddingStyleValue {}
 
 // // https://drafts.csswg.org/css-scroll-snap-2/#scroll-margin
 // #[value(" <length>{1,4} ")]
@@ -36,7 +36,7 @@ use impls::*;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("by computed value type")]
-// pub struct ScrollMargin;
+// pub struct ScrollMarginStyleValue;
 
 // // https://drafts.csswg.org/css-scroll-snap-2/#scroll-snap-align
 // #[value(" [ none | start | end | center ]{1,2} ")]
@@ -46,7 +46,7 @@ use impls::*;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub enum ScrollSnapAlign {}
+// pub enum ScrollSnapAlignStyleValue {}
 
 // https://drafts.csswg.org/css-scroll-snap-2/#scroll-snap-stop
 #[value(" normal | always ")]
@@ -56,7 +56,7 @@ use impls::*;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum ScrollSnapStop {}
+pub enum ScrollSnapStopStyleValue {}
 
 // https://drafts.csswg.org/css-scroll-snap-2/#scroll-padding-top
 #[value(" auto | <length-percentage [0,∞]> ")]
@@ -66,7 +66,7 @@ pub enum ScrollSnapStop {}
 #[percentages("relative to the scroll container’s scrollport")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub enum ScrollPaddingTop {}
+pub enum ScrollPaddingTopStyleValue {}
 
 // https://drafts.csswg.org/css-scroll-snap-2/#scroll-padding-right
 #[value(" auto | <length-percentage [0,∞]> ")]
@@ -76,7 +76,7 @@ pub enum ScrollPaddingTop {}
 #[percentages("relative to the scroll container’s scrollport")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub enum ScrollPaddingRight {}
+pub enum ScrollPaddingRightStyleValue {}
 
 // https://drafts.csswg.org/css-scroll-snap-2/#scroll-padding-bottom
 #[value(" auto | <length-percentage [0,∞]> ")]
@@ -86,7 +86,7 @@ pub enum ScrollPaddingRight {}
 #[percentages("relative to the scroll container’s scrollport")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub enum ScrollPaddingBottom {}
+pub enum ScrollPaddingBottomStyleValue {}
 
 // https://drafts.csswg.org/css-scroll-snap-2/#scroll-padding-left
 #[value(" auto | <length-percentage [0,∞]> ")]
@@ -96,7 +96,7 @@ pub enum ScrollPaddingBottom {}
 #[percentages("relative to the scroll container’s scrollport")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub enum ScrollPaddingLeft {}
+pub enum ScrollPaddingLeftStyleValue {}
 
 // https://drafts.csswg.org/css-scroll-snap-2/#scroll-padding-inline-start
 #[value(" auto | <length-percentage [0,∞]> ")]
@@ -106,7 +106,7 @@ pub enum ScrollPaddingLeft {}
 #[percentages("relative to the scroll container’s scrollport")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub enum ScrollPaddingInlineStart {}
+pub enum ScrollPaddingInlineStartStyleValue {}
 
 // https://drafts.csswg.org/css-scroll-snap-2/#scroll-padding-block-start
 #[value(" auto | <length-percentage [0,∞]> ")]
@@ -116,7 +116,7 @@ pub enum ScrollPaddingInlineStart {}
 #[percentages("relative to the scroll container’s scrollport")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub enum ScrollPaddingBlockStart {}
+pub enum ScrollPaddingBlockStartStyleValue {}
 
 // https://drafts.csswg.org/css-scroll-snap-2/#scroll-padding-inline-end
 #[value(" auto | <length-percentage [0,∞]> ")]
@@ -126,7 +126,7 @@ pub enum ScrollPaddingBlockStart {}
 #[percentages("relative to the scroll container’s scrollport")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub enum ScrollPaddingInlineEnd {}
+pub enum ScrollPaddingInlineEndStyleValue {}
 
 // https://drafts.csswg.org/css-scroll-snap-2/#scroll-padding-block-end
 #[value(" auto | <length-percentage [0,∞]> ")]
@@ -136,7 +136,7 @@ pub enum ScrollPaddingInlineEnd {}
 #[percentages("relative to the scroll container’s scrollport")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub enum ScrollPaddingBlockEnd {}
+pub enum ScrollPaddingBlockEndStyleValue {}
 
 // // https://drafts.csswg.org/css-scroll-snap-2/#scroll-padding-block
 // #[value(" [ auto | <length-percentage [0,∞]> ]{1,2} ")]
@@ -146,7 +146,7 @@ pub enum ScrollPaddingBlockEnd {}
 // #[percentages("relative to the scroll container’s scrollport")]
 // #[canonical_order("per grammar")]
 // #[animation_type("by computed value")]
-// pub enum ScrollPaddingBlock {}
+// pub enum ScrollPaddingBlockStyleValue {}
 
 // // https://drafts.csswg.org/css-scroll-snap-2/#scroll-padding-inline
 // #[value(" [ auto | <length-percentage [0,∞]> ]{1,2} ")]
@@ -156,7 +156,7 @@ pub enum ScrollPaddingBlockEnd {}
 // #[percentages("relative to the scroll container’s scrollport")]
 // #[canonical_order("per grammar")]
 // #[animation_type("by computed value")]
-// pub enum ScrollPaddingInline {}
+// pub enum ScrollPaddingInlineStyleValue {}
 
 // https://drafts.csswg.org/css-scroll-snap-2/#scroll-margin-top
 #[value(" <length> ")]
@@ -166,7 +166,7 @@ pub enum ScrollPaddingBlockEnd {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub struct ScrollMarginTop;
+pub struct ScrollMarginTopStyleValue;
 
 // https://drafts.csswg.org/css-scroll-snap-2/#scroll-margin-right
 #[value(" <length> ")]
@@ -176,7 +176,7 @@ pub struct ScrollMarginTop;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub struct ScrollMarginRight;
+pub struct ScrollMarginRightStyleValue;
 
 // https://drafts.csswg.org/css-scroll-snap-2/#scroll-margin-bottom
 #[value(" <length> ")]
@@ -186,7 +186,7 @@ pub struct ScrollMarginRight;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub struct ScrollMarginBottom;
+pub struct ScrollMarginBottomStyleValue;
 
 // https://drafts.csswg.org/css-scroll-snap-2/#scroll-margin-left
 #[value(" <length> ")]
@@ -196,7 +196,7 @@ pub struct ScrollMarginBottom;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub struct ScrollMarginLeft;
+pub struct ScrollMarginLeftStyleValue;
 
 // https://drafts.csswg.org/css-scroll-snap-2/#scroll-margin-block-start
 #[value(" <length> ")]
@@ -206,7 +206,7 @@ pub struct ScrollMarginLeft;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub struct ScrollMarginBlockStart;
+pub struct ScrollMarginBlockStartStyleValue;
 
 // https://drafts.csswg.org/css-scroll-snap-2/#scroll-margin-inline-start
 #[value(" <length> ")]
@@ -216,7 +216,7 @@ pub struct ScrollMarginBlockStart;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub struct ScrollMarginInlineStart;
+pub struct ScrollMarginInlineStartStyleValue;
 
 // https://drafts.csswg.org/css-scroll-snap-2/#scroll-margin-block-end
 #[value(" <length> ")]
@@ -226,7 +226,7 @@ pub struct ScrollMarginInlineStart;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub struct ScrollMarginBlockEnd;
+pub struct ScrollMarginBlockEndStyleValue;
 
 // https://drafts.csswg.org/css-scroll-snap-2/#scroll-margin-inline-end
 #[value(" <length> ")]
@@ -236,7 +236,7 @@ pub struct ScrollMarginBlockEnd;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub struct ScrollMarginInlineEnd;
+pub struct ScrollMarginInlineEndStyleValue;
 
 // https://drafts.csswg.org/css-scroll-snap-2/#scroll-margin-block
 #[value(" <length>{1,2} ")]
@@ -246,7 +246,7 @@ pub struct ScrollMarginInlineEnd;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub struct ScrollMarginBlock;
+pub struct ScrollMarginBlockStyleValue;
 
 // https://drafts.csswg.org/css-scroll-snap-2/#scroll-margin-inline
 #[value(" <length>{1,2} ")]
@@ -256,7 +256,7 @@ pub struct ScrollMarginBlock;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub struct ScrollMarginInline;
+pub struct ScrollMarginInlineStyleValue;
 
 // https://drafts.csswg.org/css-scroll-snap-2/#scroll-start-target
 #[value(" none | auto ")]
@@ -266,4 +266,4 @@ pub struct ScrollMarginInline;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("none")]
-pub enum ScrollStartTarget {}
+pub enum ScrollStartTargetStyleValue {}

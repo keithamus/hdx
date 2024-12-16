@@ -1,9 +1,13 @@
 use hdx_atom::atom;
 use hdx_lexer::{Cursor, KindSet};
-use hdx_parser::{diagnostics, CursorStream, Parse, Parser, Result as ParserResult, ToCursors, T};
+use hdx_parser::{diagnostics, CursorSink, Parse, Parser, Result as ParserResult, ToCursors, T};
+use hdx_proc_macro::visit;
+
+use crate::css::{Visit, Visitable};
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+#[visit]
 pub enum OPseudoElement {
 	InnerSpinButton(T![::], T![Ident]),
 	OuterSpinButton(T![::], T![Ident]),
@@ -38,8 +42,8 @@ impl<'a> Parse<'a> for OPseudoElement {
 	}
 }
 
-impl<'a> ToCursors<'a> for OPseudoElement {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for OPseudoElement {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match self {
 			Self::InnerSpinButton(colons, ident) => {
 				ToCursors::to_cursors(colons, s);
@@ -77,8 +81,15 @@ impl<'a> ToCursors<'a> for OPseudoElement {
 	}
 }
 
+impl<'a> Visitable<'a> for OPseudoElement {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		v.visit_o_pseudo_element(self);
+	}
+}
+
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+#[visit]
 pub enum OPseudoClass {
 	Prefocus(T![:], T![Ident]),
 }
@@ -99,13 +110,19 @@ impl<'a> Parse<'a> for OPseudoClass {
 	}
 }
 
-impl<'a> ToCursors<'a> for OPseudoClass {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for OPseudoClass {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match self {
 			Self::Prefocus(colon, ident) => {
 				ToCursors::to_cursors(colon, s);
 				s.append(ident.into());
 			}
 		}
+	}
+}
+
+impl<'a> Visitable<'a> for OPseudoClass {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		v.visit_o_pseudo_class(self);
 	}
 }

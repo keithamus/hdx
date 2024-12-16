@@ -8,26 +8,26 @@ mod tests {
 
 	#[test]
 	pub fn size_test() {
-		assert_size!(Position, 16);
-		assert_size!(Top, 16);
-		assert_size!(Right, 16);
-		assert_size!(Bottom, 16);
-		assert_size!(Left, 16);
-		assert_size!(InsetBlockStart, 16);
-		assert_size!(InsetInlineStart, 16);
-		assert_size!(InsetBlockEnd, 16);
-		assert_size!(InsetInlineEnd, 16);
-		assert_size!(InsetBlock, 32);
-		assert_size!(InsetInline, 32);
-		assert_size!(Inset, 64);
-		assert_size!(Overlay, 16);
+		assert_size!(PositionStyleValue, 16);
+		assert_size!(TopStyleValue, 16);
+		assert_size!(RightStyleValue, 16);
+		assert_size!(BottomStyleValue, 16);
+		assert_size!(LeftStyleValue, 16);
+		assert_size!(InsetBlockStartStyleValue, 16);
+		assert_size!(InsetInlineStartStyleValue, 16);
+		assert_size!(InsetBlockEndStyleValue, 16);
+		assert_size!(InsetInlineEndStyleValue, 16);
+		assert_size!(InsetBlockStyleValue, 32);
+		assert_size!(InsetInlineStyleValue, 32);
+		assert_size!(InsetStyleValue, 64);
+		assert_size!(OverlayStyleValue, 16);
 	}
 
 	#[test]
 	fn test_writes() {
-		assert_parse!(Position, "sticky");
-		assert_parse!(InsetBlockStart, "auto");
-		assert_parse!(Inset, "1px 2px");
-		assert_parse!(Inset, "1px 2px 3px 4px");
+		assert_parse!(PositionStyleValue, "sticky");
+		assert_parse!(InsetBlockStartStyleValue, "auto");
+		assert_parse!(InsetStyleValue, "1px 2px");
+		assert_parse!(InsetStyleValue, "1px 2px 3px 4px");
 	}
 }

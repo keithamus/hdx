@@ -2,14 +2,16 @@ use bumpalo::collections::Vec;
 use hdx_atom::atom;
 use hdx_lexer::Cursor;
 use hdx_parser::{
-	diagnostics, AtRule, CursorStream, Parse, Parser, PreludeCommaList, Result as ParserResult, RuleList, ToCursors, T,
+	diagnostics, AtRule, CursorSink, Parse, Parser, PreludeCommaList, Result as ParserResult, RuleList, ToCursors, T,
 };
+use hdx_proc_macro::visit;
 
-use crate::css::stylesheet::Rule;
+use crate::css::{stylesheet::Rule, Visit, Visitable};
 
 // https://drafts.csswg.org/css-cascade-5/#layering
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+#[visit]
 pub struct LayerRule<'a> {
 	pub at_keyword: T![AtKeyword],
 	pub names: Option<LayerNameList<'a>>,
@@ -22,7 +24,7 @@ impl<'a> Parse<'a> for LayerRule<'a> {
 		let (at_keyword, names, block) = Self::parse_at_rule(p, Some(atom!("layer")))?;
 		if let Some(ref names) = names {
 			if matches!(block, OptionalLayerBlock::Block(_)) && names.0.len() > 1 {
-				let c: Cursor = names.0[0].0.0.into();
+				let c: Cursor = names.0[0].0 .0.into();
 				Err(diagnostics::DisallowedLayerBlockWithMultipleNames(c.into()))?
 			}
 		}
@@ -35,13 +37,19 @@ impl<'a> AtRule<'a> for LayerRule<'a> {
 	type Block = OptionalLayerBlock<'a>;
 }
 
-impl<'a> ToCursors<'a> for LayerRule<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for LayerRule<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.at_keyword.into());
 		if let Some(names) = &self.names {
 			ToCursors::to_cursors(names, s);
 		}
 		ToCursors::to_cursors(&self.block, s);
+	}
+}
+
+impl<'a> Visitable<'a> for LayerRule<'a> {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		todo!();
 	}
 }
 
@@ -59,8 +67,8 @@ impl<'a> Parse<'a> for LayerNameList<'a> {
 	}
 }
 
-impl<'a> ToCursors<'a> for LayerNameList<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for LayerNameList<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		for (selector, comma) in &self.0 {
 			ToCursors::to_cursors(selector, s);
 			if let Some(comma) = comma {
@@ -90,8 +98,8 @@ impl<'a> Parse<'a> for LayerName<'a> {
 	}
 }
 
-impl<'a> ToCursors<'a> for LayerName<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for LayerName<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.0.into());
 		for (dot, ident) in &self.1 {
 			s.append(dot.into());
@@ -117,8 +125,8 @@ impl<'a> Parse<'a> for OptionalLayerBlock<'a> {
 	}
 }
 
-impl<'a> ToCursors<'a> for OptionalLayerBlock<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for OptionalLayerBlock<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match self {
 			OptionalLayerBlock::None(semicolon) => s.append(semicolon.into()),
 			OptionalLayerBlock::Block(block) => {
@@ -148,8 +156,8 @@ impl<'a> RuleList<'a> for LayerBlock<'a> {
 	type Rule = Rule<'a>;
 }
 
-impl<'a> ToCursors<'a> for LayerBlock<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for LayerBlock<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.open.into());
 		for rule in &self.rules {
 			ToCursors::to_cursors(rule, s);
@@ -167,11 +175,11 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(LayerRule, 104);
+		assert_size!(LayerRule, 112);
 		assert_size!(LayerNameList, 32);
 		assert_size!(LayerName, 48);
-		assert_size!(OptionalLayerBlock, 56);
-		assert_size!(LayerBlock, 56);
+		assert_size!(OptionalLayerBlock, 64);
+		assert_size!(LayerBlock, 64);
 	}
 
 	#[test]

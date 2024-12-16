@@ -16,7 +16,7 @@ use impls::*;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub struct OverscrollBehavior {}
+// pub enum OverscrollBehaviorStyleValue {}
 
 // https://drafts.csswg.org/css-overscroll-1/#overscroll-behavior-x
 #[value(" contain | none | auto ")]
@@ -26,7 +26,7 @@ use impls::*;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum OverscrollBehaviorX {}
+pub enum OverscrollBehaviorXStyleValue {}
 
 // https://drafts.csswg.org/css-overscroll-1/#overscroll-behavior-y
 #[value(" contain | none | auto ")]
@@ -36,7 +36,7 @@ pub enum OverscrollBehaviorX {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum OverscrollBehaviorY {}
+pub enum OverscrollBehaviorYStyleValue {}
 
 // https://drafts.csswg.org/css-overscroll-1/#overscroll-behavior-inline
 #[value(" contain | none | auto ")]
@@ -46,7 +46,7 @@ pub enum OverscrollBehaviorY {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum OverscrollBehaviorInline {}
+pub enum OverscrollBehaviorInlineStyleValue {}
 
 // https://drafts.csswg.org/css-overscroll-1/#overscroll-behavior-block
 #[value(" contain | none | auto ")]
@@ -56,4 +56,4 @@ pub enum OverscrollBehaviorInline {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum OverscrollBehaviorBlock {}
+pub enum OverscrollBehaviorBlockStyleValue {}

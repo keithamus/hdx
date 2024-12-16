@@ -11,12 +11,14 @@ expression: result.output.unwrap()
       "type": "style-declaration",
       "open": {
         "kind": "LeftCurly",
+        "offset": 0,
         "len": 1
       },
       "declarations": [],
       "rules": [],
       "close": {
         "kind": "RightCurly",
+        "offset": 1,
         "len": 1
       }
     }

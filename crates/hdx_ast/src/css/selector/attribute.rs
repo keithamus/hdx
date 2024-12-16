@@ -1,11 +1,15 @@
 use hdx_atom::atom;
 use hdx_lexer::{Cursor, KindSet};
-use hdx_parser::{Build, CursorStream, Is, Parse, Parser, Peek, Result as ParserResult, ToCursors, T};
+use hdx_parser::{Build, CursorSink, Is, Parse, Parser, Peek, Result as ParserResult, ToCursors, T};
+use hdx_proc_macro::visit;
+
+use crate::css::{Visit, Visitable};
 
 use super::NamespacePrefix;
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
+#[visit]
 pub struct Attribute {
 	pub open: T!['['],
 	pub namespace_prefix: Option<NamespacePrefix>,
@@ -40,8 +44,8 @@ impl<'a> Parse<'a> for Attribute {
 	}
 }
 
-impl<'a> ToCursors<'a> for Attribute {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for Attribute {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.open.into());
 		if let Some(namespace_prefix) = &self.namespace_prefix {
 			ToCursors::to_cursors(namespace_prefix, s);
@@ -59,6 +63,12 @@ impl<'a> ToCursors<'a> for Attribute {
 		if let Some(close) = self.close {
 			s.append(close.into());
 		}
+	}
+}
+
+impl<'a> Visitable<'a> for Attribute {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		v.visit_attribute(self);
 	}
 }
 
@@ -102,8 +112,8 @@ impl<'a> Parse<'a> for AttributeOperator {
 	}
 }
 
-impl<'a> ToCursors<'a> for AttributeOperator {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for AttributeOperator {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match self {
 			Self::Exact(c) => s.append(c.into()),
 			Self::SpaceList(c) => ToCursors::to_cursors(c, s),
@@ -186,9 +196,10 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(Attribute, 108);
-		assert_size!(AttributeOperator, 20);
-		assert_size!(AttributeOperator, 20);
+		assert_size!(Attribute, 128);
+		assert_size!(AttributeOperator, 28);
+		assert_size!(AttributeModifier, 16);
+		assert_size!(AttributeValue, 16);
 	}
 
 	#[test]

@@ -13,7 +13,7 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(VideoColorGamutMediaFeature, 36);
+		assert_size!(VideoColorGamutMediaFeature, 40);
 	}
 
 	#[test]

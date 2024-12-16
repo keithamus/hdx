@@ -87,6 +87,7 @@ pub(crate) enum DefRange {
 	Range(Range<f32>),         // {A,B}
 	RangeFrom(RangeFrom<f32>), // {A,}
 	RangeTo(RangeTo<f32>),     // {,B}
+	Fixed(f32),                // {A}
 }
 
 #[derive(Debug, PartialEq, Clone)]
@@ -260,8 +261,12 @@ impl Parse for DefIdent {
 impl Parse for DefType {
 	fn parse(input: ParseStream) -> Result<Self> {
 		input.parse::<Token![<]>()?;
-		let ident =
-			if input.peek(LitStr) { input.parse::<StrWrapped<DefIdent>>()?.0 } else { input.parse::<DefIdent>()? };
+		let ident = if input.peek(LitStr) {
+			let atom = input.parse::<StrWrapped<DefIdent>>()?.0 .0;
+			DefIdent(Atom::from(format!("{}-style-value", atom)))
+		} else {
+			input.parse::<DefIdent>()?
+		};
 		let mut checks = DefRange::None;
 		if input.peek(token::Bracket) {
 			let content;
@@ -318,6 +323,8 @@ impl Parse for DefRange {
 			} else if input.peek(LitInt) {
 				rhs = Some(input.parse::<LitInt>()?.base10_parse::<f32>()?);
 			}
+		} else if let Some(lhs) = lhs {
+			return Ok(Self::Fixed(lhs));
 		}
 		Ok(match (lhs, rhs) {
 			(Some(start), Some(end)) => Self::Range(Range { start, end }),
@@ -398,6 +405,18 @@ impl Def {
 			Self::Combinator(_def, _) => {
 				dbg!("TODO variant name", self);
 				todo!("variant name")
+			}
+			Self::Multiplier(def, DefMultiplierStyle::Range(DefRange::Fixed(val))) => {
+				let opts:Vec<_> = (1..=*val as u32)
+					.map(|_| match def.deref() {
+						Def::Type(v) => v.to_inner_variant_type(0, None),
+						_ => {
+							dbg!("TODO fixed range variant", self);
+							todo!("multiplier fixed range")
+						}
+					})
+					.collect();
+				quote! { #name(#(#opts),*) }
 			}
 			Self::Multiplier(def, style) => {
 				let extra = if matches!(style, DefMultiplierStyle::OneOrMoreCommaSeparated(_)) {
@@ -491,6 +510,18 @@ impl Def {
 								}
 								_ => quote! { val },
 							},
+							Def::Multiplier(def, DefMultiplierStyle::Range(DefRange::Fixed(val))) => {
+								let opts:Vec<_> = (1..=*val as u32)
+									.map(|i| match def.deref() {
+										Def::Type(_) => format_ident!("val{}", i),
+										_ => {
+											dbg!("TODO multiplier fixed range", self);
+											todo!("multiplier fixed range")
+										}
+									})
+									.collect();
+								quote! { #(#opts),* }
+							}
 							Def::Function(_, _) => quote! { function, val, close },
 							_ => quote! { val },
 						};
@@ -627,6 +658,15 @@ impl Def {
 				return Self::Combinator(opts, DefCombinatorStyle::Ordered)
 					.generate_parse_trait_implementation(ident, generics);
 			}
+			Self::Multiplier(def, DefMultiplierStyle::Range(DefRange::Fixed(val))) => {
+				// Optimize for bounded ranges like `<foo>{2}` which could be expressed as `(Foo, Foo)`
+				debug_assert!(*val > 0.0);
+				let opts: Vec<Def> = (1..=*val as u32)
+					.map(|_| def.deref().clone())
+					.collect();
+				return Self::Combinator(opts, DefCombinatorStyle::Ordered)
+					.generate_parse_trait_implementation(ident, generics);
+			}
 			Self::Multiplier(_, _) => {
 				let parse_steps = self.parse_steps(Some(format_ident!("items")));
 				quote! {
@@ -731,6 +771,12 @@ impl Def {
 									quote! { #ident }
 								}
 							},
+							Self::Multiplier(_, DefMultiplierStyle::Range(DefRange::Fixed(val))) => {
+								// Optimize for bounded ranges like `<foo>{2}` which could be expressed as `(Foo, Foo)`
+								debug_assert!(*val > 0.0);
+								let idents: Vec<Ident> = (1..=*val as u32).map(|i| format_ident!("inner{}", i)).collect();
+								quote! { #(#idents),* }
+							}
 							Self::Function(_, _) => quote! { function, val, close },
 							_ => {
 								let ident = format_ident!("inner");
@@ -740,6 +786,16 @@ impl Def {
 						let var = def.to_variant_name(0);
 						let step = if matches!(def, Self::Function(_, _)) {
 							def.to_cursors_steps(quote! { val })
+						} else if let Self::Multiplier(def, DefMultiplierStyle::Range(DefRange::Fixed(val))) = def {
+							// Optimize for bounded ranges like `<foo>{2}` which could be expressed as `(Foo, Foo)`
+							debug_assert!(*val > 0.0);
+							let opts: Vec<_> = (1..=*val as u32)
+								.map(|i| {
+									let ident = format_ident!("inner{}", i);
+									def.deref().to_cursors_steps(quote! { #ident })
+								})
+								.collect();
+							quote! { #(#opts)* }
 						} else {
 							def.to_cursors_steps(quote! { #name })
 						};
@@ -767,13 +823,20 @@ impl Def {
 				return Self::Combinator(opts, DefCombinatorStyle::Ordered)
 					.generate_tocursors_trait_implementation(ident, generics);
 			}
+			Self::Multiplier(def, DefMultiplierStyle::Range(DefRange::Fixed(val))) => {
+				// Optimize for bounded ranges like `<foo>{2}` which could be expressed as `(Foo, Foo)`
+				debug_assert!(*val > 0.0);
+				let opts: Vec<Def> = (1..=*val as u32).map(|_| def.deref().clone()).collect();
+				return Self::Combinator(opts, DefCombinatorStyle::Ordered)
+					.generate_tocursors_trait_implementation(ident, generics);
+			}
 			Self::Multiplier(_, _) => self.to_cursors_steps(quote! { &self.0 }),
 			Self::Punct(_) => todo!(),
 		};
 		quote! {
 			#[automatically_derived]
-			impl<'a> ::hdx_parser::ToCursors<'a> for #ident #gen {
-				fn to_cursors(&self, s: &mut ::hdx_parser::CursorStream<'a>) {
+			impl #gen ::hdx_parser::ToCursors for #ident #gen {
+				fn to_cursors(&self, s: &mut impl ::hdx_parser::CursorSink) {
 					#steps
 				}
 			}
@@ -914,6 +977,13 @@ impl GenerateDefinition for Def {
 						.map(|i| if i <= (*start as i32) { def.deref().clone() } else { Self::Optional(def.clone()) })
 						.collect();
 					Self::Combinator(opts, DefCombinatorStyle::Ordered).generate_definition(vis, ident, generics)
+				}
+				Self::Multiplier(def, DefMultiplierStyle::Range(DefRange::Fixed(val))) => {
+					// Optimize for bounded ranges like `<foo>{2}` which could be expressed as `(Foo, Foo)`
+					debug_assert!(*val > 0.0);
+					let opts: Vec<Def> = (1..=*val as u32).map(|_| def.deref().clone()).collect();
+					return Self::Combinator(opts, DefCombinatorStyle::Ordered)
+						.generate_definition(vis, ident, generics);
 				}
 				Self::Multiplier(x, style) => match x.as_ref() {
 					Def::Type(ty) => {
@@ -1122,6 +1192,19 @@ impl GenerateParseImpl for Def {
 					let close = p.parse_if_peek::<::hdx_parser::T![')']>()?;
 				}
 			}
+			Self::Multiplier(def, DefMultiplierStyle::Range(DefRange::Fixed(val))) => {
+				debug_assert!(*val > 0.0);
+				let steps:Vec<_> = (1..=*val as u32)
+					.map(|i| match def.deref() {
+						Def::Type(v) => v.parse_steps(Some(format_ident!("val{}", i))),
+						_ => {
+							dbg!("parse_steps for multiplier fixed range", self);
+							todo!("parse_steps for multiplier fixed range")
+						}
+					})
+					.collect();
+				quote! { #(#steps)* }
+			}
 			Self::Multiplier(
 				def,
 				DefMultiplierStyle::Range(range) | DefMultiplierStyle::OneOrMoreCommaSeparated(range),
@@ -1141,8 +1224,9 @@ impl GenerateParseImpl for Def {
 				};
 				let min_check = match range {
 					DefRange::None => quote! {},
-					DefRange::RangeTo(_) => quote! { compile_error!("invalid range expression on multipler") },
+					DefRange::RangeTo(_) => quote! { compile_error!("invalid range expression on multiplier") },
 					DefRange::RangeFrom(_) => quote! { compile_error!("from range multiplier is todo") },
+					DefRange::Fixed(_) => quote! { compile_error!("invalid fixed range expression on multiplier") },
 					DefRange::Range(Range { start, .. }) => {
 						let n = *start as usize;
 						quote! {
@@ -1151,7 +1235,7 @@ impl GenerateParseImpl for Def {
 								Err(::hdx_parser::diagnostics::Unexpected(c.into(), c.into()))?
 							}
 						}
-					}
+					},
 				};
 				let instantiate_i =
 					if matches!(range, DefRange::None) { None } else { Some(quote! { let mut i = 0; }) };
@@ -1350,8 +1434,13 @@ impl DefType {
 
 	pub fn requires_allocator_lifetime(&self) -> bool {
 		if let Self::Custom(DefIdent(ident), _) = self {
-			return matches!(ident, &atom!("OutlineColor") | &atom!("BorderTopColor") | &atom!("AnchorName") | &atom!("DynamicRangeLimitMix"));
-		} 
+			return matches!(
+				ident,
+				&atom!("OutlineColor")
+					| &atom!("BorderTopColorStyleValue")
+					| &atom!("DynamicRangeLimitMix")
+			);
+		}
 		matches!(self, Self::Image | Self::Image1D)
 	}
 }
@@ -1405,6 +1494,7 @@ impl GenerateParseImpl for DefType {
 					}
 				}),
 			DefRange::None => None,
+			DefRange::Fixed(_) => None,
 		};
 		let start_offset = if check_code.is_some() { Some(quote! { let start = p.offset(); }) } else { None };
 		quote! {

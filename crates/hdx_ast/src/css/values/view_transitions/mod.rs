@@ -16,7 +16,7 @@ use impls::*;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum ViewTransitionName {}
+pub enum ViewTransitionNameStyleValue {}
 
 // // https://drafts.csswg.org/css-view-transitions-2/#view-transition-class
 // #[value(" none | <custom-ident>+ ")]
@@ -26,7 +26,7 @@ pub enum ViewTransitionName {}
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub enum ViewTransitionClass {}
+// pub enum ViewTransitionClassStyleValue {}
 
 // https://drafts.csswg.org/css-view-transitions-2/#view-transition-group
 #[value(" normal | contain | nearest | <custom-ident> ")]
@@ -36,4 +36,4 @@ pub enum ViewTransitionName {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum ViewTransitionGroup {}
+pub enum ViewTransitionGroupStyleValue {}

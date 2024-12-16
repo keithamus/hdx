@@ -16,7 +16,7 @@ use impls::*;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub enum ObjectFit {}
+// pub enum ObjectFitStyleValue {}
 
 // // https://drafts.csswg.org/css-images-5/#object-position
 // #[value(" <position> ")]
@@ -26,7 +26,7 @@ use impls::*;
 // #[percentages("refer to width and height of element itself")]
 // #[canonical_order("the horizontal component of the <position>, followed by the vertical component")]
 // #[animation_type("as for background-position")]
-// pub struct ObjectPosition;
+// pub struct ObjectPositionStyleValue;
 
 // // https://drafts.csswg.org/css-images-5/#image-orientation
 // #[value(" from-image | none | [ <angle> || flip ] ")]
@@ -36,7 +36,7 @@ use impls::*;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub enum ImageOrientation {}
+// pub enum ImageOrientationStyleValue {}
 
 // https://drafts.csswg.org/css-images-5/#image-rendering
 #[value(" auto | smooth | high-quality | pixelated | crisp-edges ")]
@@ -46,7 +46,7 @@ use impls::*;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum ImageRendering {}
+pub enum ImageRenderingStyleValue {}
 
 // // https://drafts.csswg.org/css-images-5/#image-resolution
 // #[value(" [ from-image || <resolution> ] && snap? ")]
@@ -56,7 +56,7 @@ pub enum ImageRendering {}
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub struct ImageResolution;
+// pub struct ImageResolutionStyleValue;
 
 // // https://drafts.csswg.org/css-images-5/#object-view-box
 // #[value(" none | <basic-shape-rect> ")]
@@ -66,4 +66,4 @@ pub enum ImageRendering {}
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("as  if possible, otherwise discrete")]
-// pub enum ObjectViewBox {}
+// pub enum ObjectViewBoxStyleValue {}

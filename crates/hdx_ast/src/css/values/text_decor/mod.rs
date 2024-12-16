@@ -16,7 +16,7 @@ use impls::*;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub enum TextDecorationLine {}
+// pub enum TextDecorationLineStyleValue {}
 
 // https://drafts.csswg.org/css-text-decor-4/#text-decoration-style
 #[value(" solid | double | dotted | dashed | wavy ")]
@@ -26,7 +26,7 @@ use impls::*;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum TextDecorationStyle {}
+pub enum TextDecorationStyleStyleValue {}
 
 // https://drafts.csswg.org/css-text-decor-4/#text-decoration-color
 #[value(" <color> ")]
@@ -36,7 +36,7 @@ pub enum TextDecorationStyle {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub struct TextDecorationColor;
+pub struct TextDecorationColorStyleValue;
 
 // // https://drafts.csswg.org/css-text-decor-4/#text-decoration
 // #[value(" <'text-decoration-line'> || <'text-decoration-thickness'> || <'text-decoration-style'> || <'text-decoration-color'> ")]
@@ -46,7 +46,7 @@ pub struct TextDecorationColor;
 // #[percentages("see individual properties")]
 // #[canonical_order("per grammar")]
 // #[animation_type("see individual properties")]
-// pub struct TextDecoration;
+// pub struct TextDecorationStyleValue;
 
 // // https://drafts.csswg.org/css-text-decor-4/#text-underline-position
 // #[value(" auto | [ from-font | under ] || [ left | right ] ")]
@@ -56,7 +56,7 @@ pub struct TextDecorationColor;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub enum TextUnderlinePosition {}
+// pub enum TextUnderlinePositionStyleValue {}
 
 // // https://drafts.csswg.org/css-text-decor-4/#text-emphasis-style
 // #[value(" none | [ [ filled | open ] || [ dot | circle | double-circle | triangle | sesame ] ] | <string> ")]
@@ -66,7 +66,7 @@ pub struct TextDecorationColor;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub enum TextEmphasisStyle {}
+// pub enum TextEmphasisStyleStyleValue<'a> {}
 
 // https://drafts.csswg.org/css-text-decor-4/#text-emphasis-color
 #[value(" <color> ")]
@@ -76,7 +76,7 @@ pub struct TextDecorationColor;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub struct TextEmphasisColor;
+pub struct TextEmphasisColorStyleValue;
 
 // // https://drafts.csswg.org/css-text-decor-4/#text-emphasis
 // #[value(" <'text-emphasis-style'> || <'text-emphasis-color'> ")]
@@ -86,7 +86,7 @@ pub struct TextEmphasisColor;
 // #[percentages("see individual properties")]
 // #[canonical_order("per grammar")]
 // #[animation_type("see individual properties")]
-// pub struct TextEmphasis;
+// pub struct TextEmphasisStyleValue;
 
 // // https://drafts.csswg.org/css-text-decor-4/#text-emphasis-position
 // #[value(" [ over | under ] && [ right | left ]? ")]
@@ -96,7 +96,7 @@ pub struct TextEmphasisColor;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub enum TextEmphasisPosition {}
+// pub enum TextEmphasisPositionStyleValue {}
 
 // // https://drafts.csswg.org/css-text-decor-4/#text-shadow
 // #[value(" none | <shadow># ")]
@@ -106,7 +106,7 @@ pub struct TextEmphasisColor;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("as shadow list")]
-// pub enum TextShadow {}
+// pub enum TextShadowStyleValue<'a> {}
 
 // https://drafts.csswg.org/css-text-decor-4/#text-decoration-thickness
 #[value(" auto | from-font | <length-percentage> ")]
@@ -116,7 +116,7 @@ pub struct TextEmphasisColor;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value")]
-pub enum TextDecorationThickness {}
+pub enum TextDecorationThicknessStyleValue {}
 
 // https://drafts.csswg.org/css-text-decor-4/#text-underline-offset
 #[value(" auto | <length-percentage> ")]
@@ -126,7 +126,7 @@ pub enum TextDecorationThickness {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value")]
-pub enum TextUnderlineOffset {}
+pub enum TextUnderlineOffsetStyleValue {}
 
 // // https://drafts.csswg.org/css-text-decor-4/#text-decoration-trim
 // #[value(" <length>{1,2} | auto ")]
@@ -136,7 +136,7 @@ pub enum TextUnderlineOffset {}
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("by computed value")]
-// pub enum TextDecorationTrim {}
+// pub enum TextDecorationTrimStyleValue {}
 
 // https://drafts.csswg.org/css-text-decor-4/#text-decoration-skip
 #[value(" none | auto ")]
@@ -146,7 +146,7 @@ pub enum TextUnderlineOffset {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum TextDecorationSkip {}
+pub enum TextDecorationSkipStyleValue {}
 
 // // https://drafts.csswg.org/css-text-decor-4/#text-decoration-skip-self
 // #[value(" auto | skip-all | [ skip-underline || skip-overline || skip-line-through ] | no-skip ")]
@@ -156,7 +156,7 @@ pub enum TextDecorationSkip {}
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub enum TextDecorationSkipSelf {}
+// pub enum TextDecorationSkipSelfStyleValue {}
 
 // https://drafts.csswg.org/css-text-decor-4/#text-decoration-skip-box
 #[value(" none | all ")]
@@ -166,7 +166,7 @@ pub enum TextDecorationSkip {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum TextDecorationSkipBox {}
+pub enum TextDecorationSkipBoxStyleValue {}
 
 // // https://drafts.csswg.org/css-text-decor-4/#text-decoration-skip-spaces
 // #[value(" none | all | [ start || end ] ")]
@@ -176,7 +176,7 @@ pub enum TextDecorationSkipBox {}
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub enum TextDecorationSkipSpaces {}
+// pub enum TextDecorationSkipSpacesStyleValue {}
 
 // https://drafts.csswg.org/css-text-decor-4/#text-decoration-skip-ink
 #[value(" auto | none | all ")]
@@ -186,7 +186,7 @@ pub enum TextDecorationSkipBox {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum TextDecorationSkipInk {}
+pub enum TextDecorationSkipInkStyleValue {}
 
 // // https://drafts.csswg.org/css-text-decor-4/#text-emphasis-skip
 // #[value(" spaces || punctuation || symbols || narrow ")]
@@ -196,4 +196,4 @@ pub enum TextDecorationSkipInk {}
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("discrete")]
-// pub struct TextEmphasisSkip;
+// pub struct TextEmphasisSkipStyleValue;

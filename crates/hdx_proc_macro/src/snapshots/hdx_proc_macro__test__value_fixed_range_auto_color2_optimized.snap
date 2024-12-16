@@ -1,0 +1,49 @@
+---
+source: crates/hdx_proc_macro/src/test.rs
+expression: pretty
+---
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+enum Foo {
+    Auto(::hdx_parser::T![Ident]),
+    Colors(types::Color, types::Color),
+}
+#[automatically_derived]
+impl<'a> ::hdx_parser::Peek<'a> for Foo {
+    fn peek(p: &::hdx_parser::Parser<'a>) -> bool {
+        use ::hdx_parser::Peek;
+        p.peek::<::hdx_parser::T![Ident]>() || p.peek::<types::Color>()
+    }
+}
+#[automatically_derived]
+impl<'a> ::hdx_parser::Parse<'a> for Foo {
+    fn parse(p: &mut ::hdx_parser::Parser<'a>) -> ::hdx_parser::Result<Self> {
+        use ::hdx_parser::Parse;
+        if p.peek::<::hdx_parser::T![Ident]>() {
+            let c = p.peek_n(1);
+            match p.parse_atom_lower(c) {
+                ::hdx_atom::atom!("auto") => {
+                    return Ok(Self::Auto(p.parse::<::hdx_parser::T![Ident]>()?));
+                }
+                atom => {}
+            }
+        }
+        let val1 = p.parse::<types::Color>()?;
+        let val2 = p.parse::<types::Color>()?;
+        Ok(Self::Colors(val1, val2))
+    }
+}
+#[automatically_derived]
+impl ::hdx_parser::ToCursors for Foo {
+    fn to_cursors(&self, s: &mut impl ::hdx_parser::CursorSink) {
+        match self {
+            Self::Auto(inner) => {
+                s.append(inner.into());
+            }
+            Self::Colors(inner1, inner2) => {
+                ::hdx_parser::ToCursors::to_cursors(inner1, s);
+                ::hdx_parser::ToCursors::to_cursors(inner2, s);
+            }
+        }
+    }
+}

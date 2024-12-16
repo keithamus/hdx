@@ -1,0 +1,25 @@
+---
+source: crates/hdx_highlight/src/tests.rs
+expression: actual
+---
+<!DOCTYPE html>
+<head>
+	<style>
+		:root { background: #22272E; color: hotpink }
+		.tag { color: #8ddb8c }
+		.punctuation { color: #d1d7e0 }
+		.property { color: #6cb6ff }
+		.pseudo-class { color: #6cb6ff }
+
+		.unknown { color: grey }
+		.deprecated { text-decoration: line-through }
+		.experimental { text-decoration: wavy underline #bf4b8a 0.5px }
+	</style>
+</head>
+<body>
+	<pre>
+		<code>
+		<span class="Tag">body</span>,<span class="Tag">dialog</span>,<span class="Tag unknown">madeup</span>,<span class="Tag deprecated">marquee</span>,<span class="Tag experimental">portal</span>,<span class="Tag custom">custom-element</span><span class="Punctuation">{</span><span class="Punctuation">}</span>
+					</code>
+				</pre>
+			</body>

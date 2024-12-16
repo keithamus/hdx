@@ -12,7 +12,7 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(PrefersColorSchemeMediaFeature, 36);
+		assert_size!(PrefersColorSchemeMediaFeature, 40);
 	}
 
 	#[test]

@@ -1,9 +1,13 @@
 use hdx_atom::atom;
 use hdx_lexer::{Cursor, KindSet};
-use hdx_parser::{diagnostics, CursorStream, Parse, Parser, Result as ParserResult, ToCursors, T};
+use hdx_parser::{diagnostics, CursorSink, Parse, Parser, Result as ParserResult, ToCursors, T};
+use hdx_proc_macro::visit;
+
+use crate::css::{Visitable, Visit};
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+#[visit]
 pub enum MsPseudoElement {
 	Backdrop(T![::], T![Ident]),
 	Browse(T![::], T![Ident]),
@@ -58,8 +62,8 @@ impl<'a> Parse<'a> for MsPseudoElement {
 	}
 }
 
-impl<'a> ToCursors<'a> for MsPseudoElement {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for MsPseudoElement {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match self {
 			Self::Backdrop(colons, ident) => {
 				ToCursors::to_cursors(colons, s);
@@ -137,8 +141,15 @@ impl<'a> ToCursors<'a> for MsPseudoElement {
 	}
 }
 
+impl<'a> Visitable<'a> for MsPseudoElement {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		v.visit_ms_pseudo_element(self);
+	}
+}
+
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+#[visit]
 pub enum MsPseudoClass {
 	Fullscreen(T![:], T![Ident]),
 	InputPlaceholder(T![:], T![Ident]),
@@ -161,8 +172,8 @@ impl<'a> Parse<'a> for MsPseudoClass {
 	}
 }
 
-impl<'a> ToCursors<'a> for MsPseudoClass {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for MsPseudoClass {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match self {
 			Self::Fullscreen(colon, ident) => {
 				ToCursors::to_cursors(colon, s);
@@ -173,5 +184,11 @@ impl<'a> ToCursors<'a> for MsPseudoClass {
 				s.append(ident.into());
 			}
 		}
+	}
+}
+
+impl<'a> Visitable<'a> for MsPseudoClass {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		v.visit_ms_pseudo_class(self);
 	}
 }

@@ -16,7 +16,7 @@ use impls::*;
 #[percentages("n/a")]
 #[canonical_order("n/a")]
 #[animation_type("not animatable")]
-pub enum Direction {}
+pub enum DirectionStyleValue {}
 
 // https://drafts.csswg.org/css-writing-modes-4/#unicode-bidi
 #[value(" normal | embed | isolate | bidi-override | isolate-override | plaintext ")]
@@ -26,7 +26,7 @@ pub enum Direction {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("not animatable")]
-pub enum UnicodeBidi {}
+pub enum UnicodeBidiStyleValue {}
 
 // https://drafts.csswg.org/css-writing-modes-4/#writing-mode
 #[value(" horizontal-tb | vertical-rl | vertical-lr | sideways-rl | sideways-lr ")]
@@ -36,7 +36,7 @@ pub enum UnicodeBidi {}
 #[percentages("n/a")]
 #[canonical_order("n/a")]
 #[animation_type("not animatable")]
-pub enum WritingMode {}
+pub enum WritingModeStyleValue {}
 
 // https://drafts.csswg.org/css-writing-modes-4/#text-orientation
 #[value(" mixed | upright | sideways ")]
@@ -46,7 +46,7 @@ pub enum WritingMode {}
 #[percentages("n/a")]
 #[canonical_order("n/a")]
 #[animation_type("not animatable")]
-pub enum TextOrientation {}
+pub enum TextOrientationStyleValue {}
 
 // // https://drafts.csswg.org/css-writing-modes-4/#glyph-orientation-vertical
 // #[value(" auto | 0deg | 90deg | 0 | 90 ")]
@@ -56,7 +56,7 @@ pub enum TextOrientation {}
 // #[percentages("n/a")]
 // #[canonical_order("n/a")]
 // #[animation_type("n/a")]
-// pub enum GlyphOrientationVertical {}
+// pub enum GlyphOrientationVerticalStyleValue {}
 
 // // https://drafts.csswg.org/css-writing-modes-4/#text-combine-upright
 // #[value(" none | all | [ digits <integer [2,4]>? ] ")]
@@ -66,4 +66,4 @@ pub enum TextOrientation {}
 // #[percentages("n/a")]
 // #[canonical_order("n/a")]
 // #[animation_type("not animatable")]
-// pub enum TextCombineUpright {}
+// pub enum TextCombineUprightStyleValue {}

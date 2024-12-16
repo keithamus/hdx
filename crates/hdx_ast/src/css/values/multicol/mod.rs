@@ -16,7 +16,7 @@ use impls::*;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub enum ColumnWidth {}
+pub enum ColumnWidthStyleValue {}
 
 // https://drafts.csswg.org/css-multicol-2/#column-count
 #[value(" auto | <integer [1,∞]> ")]
@@ -26,7 +26,7 @@ pub enum ColumnWidth {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value")]
-pub enum ColumnCount {}
+pub enum ColumnCountStyleValue {}
 
 // https://drafts.csswg.org/css-multicol-2/#columns
 #[value(" <'column-width'> || <'column-count'> ")]
@@ -36,7 +36,7 @@ pub enum ColumnCount {}
 #[percentages("see individual properties")]
 #[canonical_order("per grammar")]
 #[animation_type("see individual properties")]
-pub struct Columns;
+pub struct ColumnsStyleValue;
 
 // https://drafts.csswg.org/css-multicol-2/#column-rule-color
 #[value(" <color> ")]
@@ -46,7 +46,7 @@ pub struct Columns;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub struct ColumnRuleColor;
+pub struct ColumnRuleColorStyleValue;
 
 // https://drafts.csswg.org/css-multicol-2/#column-rule-style
 #[value(" <line-style> ")]
@@ -56,7 +56,7 @@ pub struct ColumnRuleColor;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub struct ColumnRuleStyle;
+pub struct ColumnRuleStyleStyleValue;
 
 // https://drafts.csswg.org/css-multicol-2/#column-rule-width
 #[value(" <line-width> ")]
@@ -66,7 +66,7 @@ pub struct ColumnRuleStyle;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub struct ColumnRuleWidth;
+pub struct ColumnRuleWidthStyleValue;
 
 // https://drafts.csswg.org/css-multicol-2/#column-rule
 #[value(" <'column-rule-width'> || <'column-rule-style'> || <'column-rule-color'> ")]
@@ -76,7 +76,7 @@ pub struct ColumnRuleWidth;
 #[percentages("see individual properties")]
 #[canonical_order("per grammar")]
 #[animation_type("see individual properties")]
-pub struct ColumnRule;
+pub struct ColumnRuleStyleValue;
 
 // https://drafts.csswg.org/css-multicol-2/#column-span
 #[value(" none | <integer [1,∞]> | all | auto ")]
@@ -86,7 +86,7 @@ pub struct ColumnRule;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum ColumnSpan {}
+pub enum ColumnSpanStyleValue {}
 
 // https://drafts.csswg.org/css-multicol-2/#column-fill
 #[value(" auto | balance | balance-all ")]
@@ -96,4 +96,4 @@ pub enum ColumnSpan {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum ColumnFill {}
+pub enum ColumnFillStyleValue {}

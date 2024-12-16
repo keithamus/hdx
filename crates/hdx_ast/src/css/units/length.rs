@@ -398,8 +398,8 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(Length, 12);
-		assert_size!(LengthPercentage, 12);
+		assert_size!(Length, 16);
+		assert_size!(LengthPercentage, 16);
 		assert_size!(LengthPercentageOrAuto, 16);
 	}
 

@@ -2,21 +2,23 @@ use bumpalo::collections::Vec;
 use hdx_atom::atom;
 use hdx_lexer::Cursor;
 use hdx_parser::{
-	diagnostics, AtRule, CursorStream, Parse, Parser, PreludeCommaList, Result as ParserResult, RuleList, ToCursors, T,
+	diagnostics, AtRule, CursorSink, Parse, Parser, PreludeCommaList, Result as ParserResult, RuleList, ToCursors, T,
 };
+use hdx_proc_macro::visit;
 
-use crate::css::stylesheet::Rule;
+use crate::css::{stylesheet::Rule, Visit, Visitable};
 
 // https://www.w3.org/TR/2012/WD-css3-conditional-20120911/#at-document
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
-pub struct Document<'a> {
+#[visit]
+pub struct DocumentRule<'a> {
 	pub at_keyword: T![AtKeyword],
 	pub matchers: DocumentMatcherList<'a>,
 	pub block: DocumentBlock<'a>,
 }
 // https://drafts.csswg.org/css-page-3/#syntax-page-selector
-impl<'a> Parse<'a> for Document<'a> {
+impl<'a> Parse<'a> for DocumentRule<'a> {
 	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
 		let (at_keyword, matchers, block) = Self::parse_at_rule(p, Some(atom!("document")))?;
 		if let Some(matchers) = matchers {
@@ -28,17 +30,23 @@ impl<'a> Parse<'a> for Document<'a> {
 	}
 }
 
-impl<'a> AtRule<'a> for Document<'a> {
+impl<'a> AtRule<'a> for DocumentRule<'a> {
 	type Prelude = DocumentMatcherList<'a>;
 	type Block = DocumentBlock<'a>;
 }
 
-impl<'a> ToCursors<'a> for Document<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for DocumentRule<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.at_keyword.into());
 		ToCursors::to_cursors(&self.matchers, s);
 		ToCursors::to_cursors(&self.block, s);
 	}
+}
+
+impl<'a> Visitable<'a> for DocumentRule<'a> {
+    fn accept<V: Visit<'a>>(&self, v: &mut V) {
+			todo!();
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -55,8 +63,8 @@ impl<'a> Parse<'a> for DocumentMatcherList<'a> {
 	}
 }
 
-impl<'a> ToCursors<'a> for DocumentMatcherList<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for DocumentMatcherList<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		for (selector, comma) in &self.0 {
 			ToCursors::to_cursors(selector, s);
 			if let Some(comma) = comma {
@@ -116,8 +124,8 @@ impl<'a> Parse<'a> for DocumentMatcher {
 	}
 }
 
-impl<'a> ToCursors<'a> for DocumentMatcher {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for DocumentMatcher {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match self {
 			Self::Url(url) => s.append(url.into()),
 			Self::UrlFunction(function, string, close) => {
@@ -169,8 +177,8 @@ impl<'a> RuleList<'a> for DocumentBlock<'a> {
 	type Rule = Rule<'a>;
 }
 
-impl<'a> ToCursors<'a> for DocumentBlock<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for DocumentBlock<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.open.into());
 		for rule in &self.rules {
 			ToCursors::to_cursors(rule, s);
@@ -188,22 +196,22 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(Document, 104);
+		assert_size!(DocumentRule, 112);
 	}
 
 	#[test]
 	fn test_writes() {
-		assert_parse!(Document, r#"@document url("http://www.w3.org"){}"#);
-		assert_parse!(Document, r#"@document domain("mozilla.org"){}"#);
-		assert_parse!(Document, r#"@document url-prefix("http://www.w3.org/Style/"){}"#);
-		assert_parse!(Document, r#"@document media-document("video"){}"#);
-		assert_parse!(Document, r#"@document regexp("https:.*"){}"#);
+		assert_parse!(DocumentRule, r#"@document url("http://www.w3.org"){}"#);
+		assert_parse!(DocumentRule, r#"@document domain("mozilla.org"){}"#);
+		assert_parse!(DocumentRule, r#"@document url-prefix("http://www.w3.org/Style/"){}"#);
+		assert_parse!(DocumentRule, r#"@document media-document("video"){}"#);
+		assert_parse!(DocumentRule, r#"@document regexp("https:.*"){}"#);
 		assert_parse!(
-			Document,
+			DocumentRule,
 			r#"@document url(http://www.w3.org),url-prefix("http://www.w3.org/Style/"),domain("mozilla.org"){}"#
 		);
 		assert_parse!(
-			Document,
+			DocumentRule,
 			r#"@document url(http://www.w3.org),url-prefix("http://www.w3.org/Style/"),domain("mozilla.org"){body{color:black}}"#
 		);
 	}

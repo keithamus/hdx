@@ -16,7 +16,7 @@ use impls::*;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum FlexDirection {}
+pub enum FlexDirectionStyleValue {}
 
 // https://drafts.csswg.org/css-flexbox-1/#flex-wrap
 #[value(" nowrap | wrap | wrap-reverse ")]
@@ -26,7 +26,7 @@ pub enum FlexDirection {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum FlexWrap {}
+pub enum FlexWrapStyleValue {}
 
 // https://drafts.csswg.org/css-flexbox-1/#flex-flow
 #[value(" <'flex-direction'> || <'flex-wrap'> ")]
@@ -36,7 +36,7 @@ pub enum FlexWrap {}
 #[percentages("see individual properties")]
 #[canonical_order("per grammar")]
 #[animation_type("see individual properties")]
-pub struct FlexFlow;
+pub struct FlexFlowStyleValue;
 
 // // https://drafts.csswg.org/css-flexbox-1/#flex
 // #[value(" none | [ <'flex-grow'> <'flex-shrink'>? || <'flex-basis'> ] ")]
@@ -46,7 +46,7 @@ pub struct FlexFlow;
 // #[percentages("see individual properties")]
 // #[canonical_order("per grammar")]
 // #[animation_type("by computed value type")]
-// pub enum Flex {}
+// pub enum FlexStyleValue {}
 
 // https://drafts.csswg.org/css-flexbox-1/#flex-grow
 #[value(" <number [0,∞]> ")]
@@ -56,7 +56,7 @@ pub struct FlexFlow;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub struct FlexGrow;
+pub struct FlexGrowStyleValue;
 
 // https://drafts.csswg.org/css-flexbox-1/#flex-shrink
 #[value(" <number [0,∞]> ")]
@@ -66,7 +66,7 @@ pub struct FlexGrow;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("number")]
-pub struct FlexShrink;
+pub struct FlexShrinkStyleValue;
 
 // https://drafts.csswg.org/css-flexbox-1/#flex-basis
 #[value(" content | <'width'> ")]
@@ -76,7 +76,7 @@ pub struct FlexShrink;
 #[percentages("relative to the flex container’s inner main size")]
 #[canonical_order("per grammar")]
 #[animation_type("by computed value type")]
-pub enum FlexBasis {}
+pub enum FlexBasisStyleValue {}
 
 // https://drafts.csswg.org/css-flexbox-1/#justify-content
 #[value(" flex-start | flex-end | center | space-between | space-around ")]
@@ -86,7 +86,7 @@ pub enum FlexBasis {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum JustifyContent {}
+pub enum JustifyContentStyleValue {}
 
 // https://drafts.csswg.org/css-flexbox-1/#align-items
 #[value(" flex-start | flex-end | center | baseline | stretch ")]
@@ -96,7 +96,7 @@ pub enum JustifyContent {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum AlignItems {}
+pub enum AlignItemsStyleValue {}
 
 // https://drafts.csswg.org/css-flexbox-1/#align-self
 #[value(" auto | flex-start | flex-end | center | baseline | stretch ")]
@@ -106,7 +106,7 @@ pub enum AlignItems {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum AlignSelf {}
+pub enum AlignSelfStyleValue {}
 
 // https://drafts.csswg.org/css-flexbox-1/#align-content
 #[value(" flex-start | flex-end | center | space-between | space-around | stretch ")]
@@ -116,4 +116,4 @@ pub enum AlignSelf {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum AlignContent {}
+pub enum AlignContentStyleValue {}

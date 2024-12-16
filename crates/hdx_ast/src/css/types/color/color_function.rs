@@ -449,8 +449,8 @@ impl<'a> Parse<'a> for ColorFunction {
 	}
 }
 
-impl<'a> ToCursors<'a> for ColorFunction {
-	fn to_cursors(&self, s: &mut hdx_parser::CursorStream<'a>) {
+impl<'a> ToCursors for ColorFunction {
+	fn to_cursors(&self, s: &mut impl hdx_parser::CursorSink) {
 		match self {
 			Self::Color(function, space, ch1, ch2, ch3, slash, alpha, close) => {
 				s.append(function.into());

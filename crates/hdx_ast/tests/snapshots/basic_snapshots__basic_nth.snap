@@ -17,6 +17,7 @@ expression: result.output.unwrap()
                 "value": {
                   "colon": {
                     "kind": "Colon",
+                    "offset": 0,
                     "len": 1
                   },
                   "function": {
@@ -36,7 +37,7 @@ expression: result.output.unwrap()
                         },
                         {
                           "kind": "Number",
-                          "offset": 4294967295,
+                          "offset": 12,
                           "len": 2
                         }
                       ]
@@ -44,6 +45,7 @@ expression: result.output.unwrap()
                   },
                   "close": {
                     "kind": "RightParen",
+                    "offset": 14,
                     "len": 1
                   }
                 }
@@ -56,12 +58,14 @@ expression: result.output.unwrap()
       "type": "style-declaration",
       "open": {
         "kind": "LeftCurly",
+        "offset": 16,
         "len": 1
       },
       "declarations": [],
       "rules": [],
       "close": {
         "kind": "RightCurly",
+        "offset": 17,
         "len": 1
       }
     }

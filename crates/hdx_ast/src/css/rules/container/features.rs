@@ -4,8 +4,8 @@ use bumpalo::collections::Vec;
 use hdx_atom::atom;
 use hdx_lexer::Kind;
 use hdx_parser::{
-	diagnostics, discrete_feature, keyword_typedef, ranged_feature, AtRule, Build, ConditionalAtRule, CursorStream, Is,
-	Parse, Parser, Peek, PreludeList, Result as ParserResult, RuleList, ToCursors, T,
+	diagnostics, discrete_feature, ranged_feature, ConditionalAtRule, CursorSink, Parse, Parser, Peek,
+	Result as ParserResult, ToCursors, T,
 };
 
 ranged_feature!(WidthContainerFeature[atom!("width")], Length);
@@ -54,8 +54,8 @@ impl<'a> Parse<'a> for StyleQuery<'a> {
 	}
 }
 
-impl<'a> ToCursors<'a> for StyleQuery<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for StyleQuery<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match self {
 			Self::Is(c) => ToCursors::to_cursors(c, s),
 			Self::Not(c) => ToCursors::to_cursors(c.as_ref(), s),
@@ -104,8 +104,8 @@ impl<'a> Parse<'a> for ScrollStateQuery<'a> {
 	}
 }
 
-impl<'a> ToCursors<'a> for ScrollStateQuery<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for ScrollStateQuery<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match self {
 			Self::Is(c) => ToCursors::to_cursors(c, s),
 			Self::Not(c) => ToCursors::to_cursors(c.as_ref(), s),
@@ -152,8 +152,8 @@ impl<'a> Parse<'a> for ScrollStateFeature {
 	}
 }
 
-impl<'a> ToCursors<'a> for ScrollStateFeature {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for ScrollStateFeature {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match self {
 			Self::Scrollable(feature) => ToCursors::to_cursors(feature, s),
 			Self::Snapped(feature) => ToCursors::to_cursors(feature, s),
@@ -209,18 +209,18 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(WidthContainerFeature, 76);
-		assert_size!(HeightContainerFeature, 76);
-		assert_size!(InlineSizeContainerFeature, 76);
-		assert_size!(BlockSizeContainerFeature, 76);
-		assert_size!(AspectRatioContainerFeature, 124);
-		assert_size!(OrientationContainerFeature, 36);
-		assert_size!(StyleQuery, 360);
-		assert_size!(ScrollStateQuery, 40);
-		assert_size!(ScrollStateFeature, 40);
-		assert_size!(ScrollableScrollStateFeature, 36);
-		assert_size!(SnappedScrollStateFeature, 36);
-		assert_size!(StuckScrollStateFeature, 36);
+		assert_size!(WidthContainerFeature, 100);
+		assert_size!(HeightContainerFeature, 100);
+		assert_size!(InlineSizeContainerFeature, 100);
+		assert_size!(BlockSizeContainerFeature, 100);
+		assert_size!(AspectRatioContainerFeature, 164);
+		assert_size!(OrientationContainerFeature, 40);
+		assert_size!(StyleQuery, 400);
+		assert_size!(ScrollStateQuery, 48);
+		assert_size!(ScrollStateFeature, 44);
+		assert_size!(ScrollableScrollStateFeature, 40);
+		assert_size!(SnappedScrollStateFeature, 40);
+		assert_size!(StuckScrollStateFeature, 40);
 	}
 
 	#[test]

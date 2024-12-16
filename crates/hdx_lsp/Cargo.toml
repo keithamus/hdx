@@ -1,0 +1,48 @@
+[package]
+name = "hdx_lsp"
+version = "0.0.0"
+authors.workspace = true
+description.workspace = true
+edition.workspace = true
+homepage.workspace = true
+keywords.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[lib]
+bench = false
+
+[dependencies]
+hdx_parser = { workspace = true }
+hdx_ast = { workspace = true }
+hdx_highlight = { workspace = true }
+
+bumpalo = { workspace = true, features = ["collections", "boxed"] }
+miette = { workspace = true, features = ["derive"] }
+
+smallvec = { workspace = true }
+bitmask-enum = { workspace = true }
+strum = { workspace = true, features = ["derive"] }
+itertools = { workspace = true }
+
+serde = { workspace = true }
+serde_json = { workspace = true }
+
+lsp-types = { workspace = true, features = ["proposed"] }
+crossbeam-channel = { workspace = true }
+httparse = { workspace = true }
+dashmap = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+
+[dev-dependencies]
+glob = { workspace = true }
+criterion = { workspace = true, features = ["html_reports"] }
+pprof = { workspace = true, features = ["flamegraph", "criterion"] }
+insta = { workspace = true, features = ["json"] }
+similar = { workspace = true }
+console = { workspace = true }
+
+[features]
+default = []
+fancy = ["miette/fancy-no-backtrace"]

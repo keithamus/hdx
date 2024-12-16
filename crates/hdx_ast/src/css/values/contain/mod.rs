@@ -16,7 +16,7 @@ use impls::*;
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("not animatable")]
-// pub enum Contain {}
+// pub enum ContainStyleValue {}
 
 // https://drafts.csswg.org/css-contain-4/#content-visibility
 #[value(" visible | auto | hidden ")]
@@ -26,4 +26,4 @@ use impls::*;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("see § 4.1 animating and interpolating content-visibility")]
-pub enum ContentVisibility {}
+pub enum ContentVisibilityStyleValue {}

@@ -4,7 +4,7 @@ pub(crate) use crate::css::types::*;
 pub(crate) use crate::css::units::*;
 
 // Re-expose stylevalues for shorthands
-pub(crate) use super::{CaretAnimation, CaretColor, CaretShape, OutlineColor, OutlineStyle, OutlineWidth};
+pub(crate) use super::{CaretAnimationStyleValue, CaretColorStyleValue, CaretShapeStyleValue};
 
 // https://drafts.csswg.org/css-ui-4/#typedef-outline-line-style
 // <outline-line-style> accepts the same values as <line-style> (CSS Backgrounds 3 § 3.2 Line

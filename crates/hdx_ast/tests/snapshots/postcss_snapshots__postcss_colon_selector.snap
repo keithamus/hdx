@@ -16,6 +16,7 @@ expression: result.output.unwrap()
                 "active": [
                   {
                     "kind": "Colon",
+                    "offset": 0,
                     "len": 1
                   },
                   {
@@ -33,12 +34,14 @@ expression: result.output.unwrap()
       "type": "style-declaration",
       "open": {
         "kind": "LeftCurly",
+        "offset": 12,
         "len": 1
       },
       "declarations": [],
       "rules": [],
       "close": {
         "kind": "RightCurly",
+        "offset": 13,
         "len": 1
       }
     }

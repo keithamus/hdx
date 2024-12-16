@@ -2,12 +2,13 @@ use bumpalo::collections::Vec;
 use hdx_atom::atom;
 use hdx_lexer::{Cursor, KindSet};
 use hdx_parser::{
-	diagnostics, AtRule, Build, CursorStream, DeclarationList, DeclarationRuleList, NoPreludeAllowed, Parse, Parser,
+	diagnostics, AtRule, Build, CursorSink, DeclarationList, DeclarationRuleList, NoPreludeAllowed, Parse, Parser,
 	PreludeCommaList, Result as ParserResult, ToCursors, T,
 };
+use hdx_proc_macro::visit;
 
 use crate::{
-	css::properties::Property,
+	css::{properties::Property, Visit, Visitable},
 	specificity::{Specificity, ToSpecificity},
 };
 
@@ -23,6 +24,7 @@ mod kw {
 // https://drafts.csswg.org/css-page-3/#at-page-rule
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
+#[visit]
 pub struct PageRule<'a> {
 	pub at_keyword: T![AtKeyword],
 	pub selectors: Option<PageSelectorList<'a>>,
@@ -42,14 +44,20 @@ impl<'a> AtRule<'a> for PageRule<'a> {
 	type Block = PageBlock<'a>;
 }
 
-impl<'a> ToCursors<'a> for PageRule<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for PageRule<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.at_keyword.into());
 		if let Some(selectors) = &self.selectors {
 			ToCursors::to_cursors(selectors, s);
 		}
 		ToCursors::to_cursors(&self.block, s);
 	}
+}
+
+impl<'a> Visitable<'a> for PageRule<'a> {
+    fn accept<V: Visit<'a>>(&self, v: &mut V) {
+			todo!();
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -66,8 +74,8 @@ impl<'a> Parse<'a> for PageSelectorList<'a> {
 	}
 }
 
-impl<'a> ToCursors<'a> for PageSelectorList<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for PageSelectorList<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		for (selector, comma) in &self.0 {
 			ToCursors::to_cursors(selector, s);
 			if let Some(comma) = comma {
@@ -98,8 +106,8 @@ impl<'a> Parse<'a> for PageSelector<'a> {
 	}
 }
 
-impl<'a> ToCursors<'a> for PageSelector<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for PageSelector<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		if let Some(page_type) = self.page_type {
 			s.append(page_type.into())
 		}
@@ -145,8 +153,8 @@ impl<'a> Parse<'a> for PagePseudoClass {
 	}
 }
 
-impl<'a> ToCursors<'a> for PagePseudoClass {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for PagePseudoClass {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match self {
 			Self::Left(colon, kw) => {
 				s.append(colon.into());
@@ -208,8 +216,8 @@ impl<'a> DeclarationRuleList<'a> for PageBlock<'a> {
 	type AtRule = MarginRule<'a>;
 }
 
-impl<'a> ToCursors<'a> for PageBlock<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for PageBlock<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.open.into());
 		for property in &self.properties {
 			ToCursors::to_cursors(property, s);
@@ -266,8 +274,8 @@ impl<'a> Parse<'a> for MarginRule<'a> {
 	}
 }
 
-impl<'a> ToCursors<'a> for MarginRule<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for MarginRule<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.at_keyword.into());
 		ToCursors::to_cursors(&self.block, s);
 	}
@@ -293,8 +301,8 @@ impl<'a> DeclarationList<'a> for MarginBlock<'a> {
 	type Declaration = Property<'a>;
 }
 
-impl<'a> ToCursors<'a> for MarginBlock<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for MarginBlock<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.open.into());
 		for property in &self.properties {
 			ToCursors::to_cursors(property, s);
@@ -312,13 +320,13 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(PageRule, 136);
+		assert_size!(PageRule, 144);
 		assert_size!(PageSelectorList, 32);
 		assert_size!(PageSelector, 48);
-		assert_size!(PagePseudoClass, 24);
-		assert_size!(PageBlock, 88);
-		assert_size!(MarginRule, 72);
-		assert_size!(MarginBlock, 56);
+		assert_size!(PagePseudoClass, 28);
+		assert_size!(PageBlock, 96);
+		assert_size!(MarginRule, 80);
+		assert_size!(MarginBlock, 64);
 	}
 
 	#[test]

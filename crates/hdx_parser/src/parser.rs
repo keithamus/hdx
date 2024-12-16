@@ -105,7 +105,7 @@ impl<'a> Parser<'a> {
 		old
 	}
 
-	pub fn parse_entirely<T: Parse<'a> + ToCursors<'a>>(&mut self) -> ParserReturn<'a, T> {
+	pub fn parse_entirely<T: Parse<'a> + ToCursors>(&mut self) -> ParserReturn<'a, T> {
 		let output = match T::parse(self) {
 			Ok(output) => Some(output),
 			Err(error) => {

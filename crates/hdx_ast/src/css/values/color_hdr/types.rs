@@ -1,6 +1,6 @@
 use bumpalo::collections::Vec;
 use hdx_lexer::Cursor;
-use hdx_parser::{diagnostics, CursorStream, Is, Parse, Parser, Peek, Result as ParserResult, ToCursors, T};
+use hdx_parser::{diagnostics, CursorSink, Is, Parse, Parser, Peek, Result as ParserResult, ToCursors, T};
 
 mod func {
 	use hdx_parser::custom_function;
@@ -48,8 +48,8 @@ impl<'a> Parse<'a> for DynamicRangeLimitMix<'a> {
 	}
 }
 
-impl<'a> ToCursors<'a> for DynamicRangeLimitMix<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for DynamicRangeLimitMix<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.function.into());
 		for (ident, length, comma) in &self.values {
 			s.append(ident.into());
@@ -71,7 +71,7 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(DynamicRangeLimitMix, 56);
+		assert_size!(DynamicRangeLimitMix, 64);
 	}
 
 	#[test]

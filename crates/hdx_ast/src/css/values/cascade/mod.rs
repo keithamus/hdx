@@ -16,4 +16,4 @@ use impls::*;
 #[percentages("see individual properties")]
 #[canonical_order("per grammar")]
 #[animation_type("see individual properties")]
-pub enum All {}
+pub enum AllStyleValue {}

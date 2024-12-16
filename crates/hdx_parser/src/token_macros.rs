@@ -1,4 +1,4 @@
-use hdx_lexer::{Cursor, Kind, KindSet, Token};
+use hdx_lexer::{Cursor, Kind, KindSet, Span, Token};
 use miette::Result;
 
 use crate::{diagnostics, Build, Is, Parse, Parser, Peek};
@@ -7,29 +7,41 @@ macro_rules! kind {
 	($ident:ident) => {
 		#[derive(Debug, Default, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 		#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-		pub struct $ident(::hdx_lexer::Token);
+		pub struct $ident(::hdx_lexer::Cursor);
 
 		impl From<$ident> for ::hdx_lexer::Cursor {
 			fn from(value: $ident) -> Self {
-				Cursor::dummy(value.0)
+				value.0
 			}
 		}
 
 		impl From<&$ident> for ::hdx_lexer::Cursor {
 			fn from(value: &$ident) -> Self {
-				Cursor::dummy(value.0)
+				value.0
 			}
 		}
 
 		impl From<$ident> for ::hdx_lexer::Token {
 			fn from(value: $ident) -> Self {
-				value.0
+				value.0.token()
 			}
 		}
 
 		impl From<&$ident> for ::hdx_lexer::Token {
 			fn from(value: &$ident) -> Self {
-				value.0
+				value.0.token()
+			}
+		}
+
+		impl From<$ident> for ::hdx_lexer::Span {
+			fn from(value: $ident) -> Self {
+				value.0.span()
+			}
+		}
+
+		impl From<&$ident> for ::hdx_lexer::Span {
+			fn from(value: &$ident) -> Self {
+				value.0.span()
 			}
 		}
 
@@ -41,7 +53,7 @@ macro_rules! kind {
 
 		impl<'a> $crate::Build<'a> for $ident {
 			fn build(_: &$crate::Parser<'a>, c: ::hdx_lexer::Cursor) -> Self {
-				Self(c.token())
+				Self(c)
 			}
 		}
 	};
@@ -67,14 +79,25 @@ macro_rules! kind_ident {
 
 		impl From<$ident> for ::hdx_lexer::Token {
 			fn from(value: $ident) -> Self {
-				value.0.into()
+				value.0.token()
 			}
 		}
 
 		impl From<&$ident> for ::hdx_lexer::Token {
 			fn from(value: &$ident) -> Self {
-				let t: Token = value.into();
-				t
+				value.0.token()
+			}
+		}
+
+		impl From<$ident> for ::hdx_lexer::Span {
+			fn from(value: $ident) -> Self {
+				value.0.span()
+			}
+		}
+
+		impl From<&$ident> for ::hdx_lexer::Span {
+			fn from(value: &$ident) -> Self {
+				value.0.span()
 			}
 		}
 
@@ -118,6 +141,18 @@ macro_rules! custom_delim {
 		}
 
 		impl From<&$ident> for ::hdx_lexer::Token {
+			fn from(value: &$ident) -> Self {
+				value.0.into()
+			}
+		}
+
+		impl From<$ident> for ::hdx_lexer::Span {
+			fn from(value: $ident) -> Self {
+				value.0.into()
+			}
+		}
+
+		impl From<&$ident> for ::hdx_lexer::Span {
 			fn from(value: &$ident) -> Self {
 				value.0.into()
 			}
@@ -379,25 +414,25 @@ macro_rules! custom_double_delim {
 
 		impl<'a> $crate::Parse<'a> for $ident {
 			fn parse(p: &mut $crate::Parser<'a>) -> $crate::Result<Self> {
-				let start_offset = p.offset();
 				let first = p.parse::<$crate::T![Delim]>()?;
 				if first != $first {
-					Err($crate::diagnostics::ExpectedDelim(first.0.kind(), start_offset.as_span(first.0)))?;
+					let c: hdx_lexer::Cursor = first.into();
+					Err($crate::diagnostics::ExpectedDelim(c.into(), c.into()))?;
 				}
-				let start_offset = p.offset();
 				let skip = p.set_skip(hdx_lexer::KindSet::NONE);
 				let second = p.parse::<$crate::T![Delim]>();
 				p.set_skip(skip);
 				let second = second?;
 				if second != $second {
-					Err($crate::diagnostics::ExpectedDelim(second.0.kind(), start_offset.as_span(second.0)))?;
+					let c: hdx_lexer::Cursor = second.into();
+					Err($crate::diagnostics::ExpectedDelim(c.into(), c.into()))?;
 				}
 				Ok(Self(first, second))
 			}
 		}
 
-		impl<'a> $crate::ToCursors<'a> for $ident {
-			fn to_cursors(&self, s: &mut $crate::CursorStream<'a>) {
+		impl<'a> $crate::ToCursors for $ident {
+			fn to_cursors(&self, s: &mut impl $crate::CursorSink) {
 				s.append(self.0.into());
 				s.append(self.1.into());
 			}
@@ -494,29 +529,41 @@ kind_ident!(Hash);
 
 #[derive(Debug, Default, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-pub struct Whitespace(Token);
+pub struct Whitespace(Cursor);
 
 impl From<Whitespace> for Cursor {
 	fn from(value: Whitespace) -> Self {
-		Cursor::dummy(value.0)
+		value.0
 	}
 }
 
 impl From<&Whitespace> for Cursor {
 	fn from(value: &Whitespace) -> Self {
-		Cursor::dummy(value.0)
+		value.0
 	}
 }
 
 impl From<Whitespace> for Token {
 	fn from(value: Whitespace) -> Self {
-		value.0
+		value.0.token()
 	}
 }
 
 impl From<&Whitespace> for Token {
 	fn from(value: &Whitespace) -> Self {
-		value.0
+		value.0.token()
+	}
+}
+
+impl From<Whitespace> for Span {
+	fn from(value: Whitespace) -> Self {
+		value.0.span()
+	}
+}
+
+impl From<&Whitespace> for Span {
+	fn from(value: &Whitespace) -> Self {
+		value.0.span()
 	}
 }
 
@@ -535,7 +582,7 @@ impl<'a> Parse<'a> for Whitespace {
 		if c != Kind::Whitespace {
 			Err(diagnostics::Unexpected(c.into(), c.into()))?
 		}
-		Ok(Self(c.token()))
+		Ok(Self(c))
 	}
 }
 
@@ -616,47 +663,52 @@ impl From<&Dimension> for f32 {
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-pub struct Number(Token);
+pub struct Number(Cursor);
 
 impl Number {
-	pub const NUMBER_ZERO: Number = Number(Token::NUMBER_ZERO);
-}
-
-impl Default for Number {
-	fn default() -> Self {
-		Self(Token::new_number(false, false, 1, 0.0))
-	}
+	pub const NUMBER_ZERO: Number = Number(Cursor::dummy(Token::NUMBER_ZERO));
 }
 
 impl From<Number> for Cursor {
 	fn from(value: Number) -> Self {
-		Cursor::dummy(value.0)
+		value.0
 	}
 }
 
 impl From<&Number> for Cursor {
 	fn from(value: &Number) -> Self {
-		Cursor::dummy(value.0)
+		value.0
 	}
 }
 
 impl From<Number> for Token {
 	fn from(value: Number) -> Self {
-		value.0
+		value.0.token()
 	}
 }
 
 impl From<&Number> for Token {
 	fn from(value: &Number) -> Self {
-		value.0
+		value.0.token()
 	}
 }
 
+impl From<Number> for Span {
+	fn from(value: Number) -> Self {
+		value.0.span()
+	}
+}
+
+impl From<&Number> for Span {
+	fn from(value: &Number) -> Self {
+		value.0.span()
+	}
+}
 impl Number {
-	pub const ZERO: Number = Number(Token::NUMBER_ZERO);
+	pub const ZERO: Number = Number(Cursor::dummy(Token::NUMBER_ZERO));
 
 	pub fn new(n: f32) -> Self {
-		Self(Token::new_number(false, false, 0, n))
+		Self(Cursor::dummy(Token::new_number(false, false, 0, n)))
 	}
 }
 
@@ -668,25 +720,25 @@ impl<'a> Is<'a> for Number {
 
 impl<'a> Build<'a> for Number {
 	fn build(_: &Parser<'a>, c: Cursor) -> Self {
-		Self(c.token())
+		Self(c)
 	}
 }
 
 impl From<Number> for f32 {
 	fn from(value: Number) -> Self {
-		value.0.value()
+		value.0.token().value()
 	}
 }
 
 impl From<Number> for i32 {
 	fn from(value: Number) -> Self {
-		value.0.value() as i32
+		value.0.token().value() as i32
 	}
 }
 
 impl PartialEq<f32> for Number {
 	fn eq(&self, other: &f32) -> bool {
-		self.0.value() == *other
+		self.0.token().value() == *other
 	}
 }
 
@@ -748,8 +800,8 @@ pub mod double {
 		}
 	}
 
-	impl<'a> crate::ToCursors<'a> for ColonColon {
-		fn to_cursors(&self, s: &mut crate::CursorStream<'a>) {
+	impl crate::ToCursors for ColonColon {
+		fn to_cursors(&self, s: &mut impl crate::CursorSink) {
 			s.append(self.0.into());
 			s.append(self.1.into());
 		}

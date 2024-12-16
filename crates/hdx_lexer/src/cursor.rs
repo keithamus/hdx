@@ -1,10 +1,10 @@
-use std::{ascii::AsciiExt, char::REPLACEMENT_CHARACTER};
+use std::{char::REPLACEMENT_CHARACTER, fmt};
 
 use bumpalo::{collections::String, Bump};
 use hdx_atom::{Atom, Atomizable};
 use hdx_syntax::{is_escape_sequence, is_newline, is_whitespace, ParseEscape, EOF};
 
-use crate::{CommentStyle, DimensionUnit, Kind, KindSet, QuoteStyle, SourceOffset, Span, Token};
+use crate::{span::SpanContents, CommentStyle, DimensionUnit, Kind, KindSet, QuoteStyle, SourceOffset, Span, Token};
 
 // The `Cursor` type is a wrapping of the immutable `Token`, plus an offset
 // into a text document (&'a str). The Cursor's knowledge of the underlying
@@ -58,9 +58,66 @@ impl Cursor {
 		Span::new(self.offset(), self.end_offset())
 	}
 
+	pub fn write_str(&self, str: &str, f: &mut impl fmt::Write) -> fmt::Result {
+		match self.token().kind() {
+			Kind::Eof => {}
+			Kind::Whitespace => {
+				for _ in 0..self.token().len() {
+					f.write_str(self.token().whitespace_style().as_str())?;
+				}
+			}
+			Kind::CdcOrCdo => {
+				if self.token().is_cdc() {
+					f.write_str("-->")?
+				} else {
+					f.write_str("<!--")?
+				}
+			}
+			Kind::Number => {
+				if self.token().has_sign() {
+					write!(f, "{:+}", self.token().value())?;
+				} else {
+					write!(f, "{}", self.token().value())?;
+				}
+			}
+			Kind::Dimension => match self.token().dimension_unit() {
+				DimensionUnit::Unknown => f.write_str(self.str_slice(str))?,
+				d => {
+					f.write_str(&self.token().value().to_string())?;
+					f.write_str(&d.to_atom())?;
+				}
+			},
+			Kind::Comment
+			| Kind::BadString
+			| Kind::BadUrl
+			| Kind::Ident
+			| Kind::Function
+			| Kind::AtKeyword
+			| Kind::Hash
+			| Kind::String
+			| Kind::Url => f.write_str(self.str_slice(str))?,
+			Kind::Delim
+			| Kind::Colon
+			| Kind::Semicolon
+			| Kind::Comma
+			| Kind::LeftSquare
+			| Kind::LeftParen
+			| Kind::RightSquare
+			| Kind::RightParen
+			| Kind::LeftCurly
+			| Kind::RightCurly => f.write_char(self.token().char().unwrap())?,
+		}
+		Ok(())
+	}
+
+	#[inline(always)]
+	pub fn span_contents<'a>(&self, str: &'a str) -> SpanContents<'a> {
+		self.span().span_contents(str)
+	}
+
 	#[inline(always)]
 	pub fn str_slice<'a>(&self, str: &'a str) -> &'a str {
-		self.span().source_text(str)
+		self.span_contents(str).contents()
 	}
 
 	pub fn eq_ignore_ascii_case<'a>(&self, source: &'a str, other: &'a str) -> bool {
@@ -86,7 +143,7 @@ impl Cursor {
 				return false;
 			}
 			if self.token().is_lower_case() {
-				debug_assert!(&source[start..end].to_ascii_lowercase() == &source[start..end]);
+				debug_assert!(source[start..end].to_ascii_lowercase() == source[start..end]);
 				return &source[start..end] == other;
 			}
 			return source[start..end].eq_ignore_ascii_case(other);
@@ -338,6 +395,12 @@ impl PartialEq<Token> for Cursor {
 
 impl From<Cursor> for Span {
 	fn from(cursor: Cursor) -> Self {
+		cursor.span()
+	}
+}
+
+impl From<&Cursor> for Span {
+	fn from(cursor: &Cursor) -> Self {
 		cursor.span()
 	}
 }

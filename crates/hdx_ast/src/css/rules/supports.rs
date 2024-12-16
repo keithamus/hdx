@@ -1,13 +1,14 @@
 use crate::{
-	css::{properties::Property, selector::ComplexSelector, stylesheet::Rule},
+	css::{properties::Property, selector::ComplexSelector, stylesheet::Rule, Visit, Visitable},
 	syntax::ComponentValues,
 };
 use bumpalo::collections::Vec;
 use hdx_atom::atom;
 use hdx_lexer::Span;
 use hdx_parser::{
-	diagnostics, AtRule, ConditionalAtRule, CursorStream, Parse, Parser, Result as ParserResult, RuleList, ToCursors, T,
+	diagnostics, AtRule, ConditionalAtRule, CursorSink, Parse, Parser, Result as ParserResult, RuleList, ToCursors, T,
 };
+use hdx_proc_macro::visit;
 
 mod kw {
 	use hdx_parser::custom_keyword;
@@ -19,6 +20,7 @@ mod kw {
 // https://drafts.csswg.org/css-conditional-3/#at-supports
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
+#[visit]
 pub struct SupportsRule<'a> {
 	pub at_keyword: T![AtKeyword],
 	pub condition: SupportsCondition<'a>,
@@ -43,11 +45,17 @@ impl<'a> AtRule<'a> for SupportsRule<'a> {
 	type Block = SupportsBlock<'a>;
 }
 
-impl<'a> ToCursors<'a> for SupportsRule<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for SupportsRule<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.at_keyword.into());
 		ToCursors::to_cursors(&self.condition, s);
 		ToCursors::to_cursors(&self.block, s);
+	}
+}
+
+impl<'a> Visitable<'a> for SupportsRule<'a> {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		todo!();
 	}
 }
 
@@ -70,8 +78,8 @@ impl<'a> RuleList<'a> for SupportsBlock<'a> {
 	type Rule = Rule<'a>;
 }
 
-impl<'a> ToCursors<'a> for SupportsBlock<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for SupportsBlock<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.open.into());
 		for rule in &self.rules {
 			ToCursors::to_cursors(rule, s);
@@ -116,8 +124,8 @@ impl<'a> Parse<'a> for SupportsCondition<'a> {
 	}
 }
 
-impl<'a> ToCursors<'a> for SupportsCondition<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for SupportsCondition<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match self {
 			Self::Is(feature) => ToCursors::to_cursors(feature, s),
 			Self::Not(feature) => ToCursors::to_cursors(feature.as_ref(), s),
@@ -177,8 +185,8 @@ impl<'a> Parse<'a> for SupportsFeature<'a> {
 	}
 }
 
-impl<'a> ToCursors<'a> for SupportsFeature<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for SupportsFeature<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match self {
 			Self::FontTech(open, function, feature, close, open_close) => {
 				if let Some(open) = open {
@@ -231,9 +239,9 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(SupportsRule, 456);
-		assert_size!(SupportsCondition, 384);
-		assert_size!(SupportsBlock, 56);
+		assert_size!(SupportsRule, 512);
+		assert_size!(SupportsCondition, 432);
+		assert_size!(SupportsBlock, 64);
 	}
 
 	#[test]

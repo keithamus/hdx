@@ -1,12 +1,16 @@
 use hdx_atom::atom;
 use hdx_lexer::{Cursor, KindSet};
-use hdx_parser::{diagnostics, CursorStream, Parse, Parser, Result as ParserResult, ToCursors, T};
+use hdx_parser::{diagnostics, CursorSink, Parse, Parser, Result as ParserResult, ToCursors, T};
+use hdx_proc_macro::visit;
+
+use crate::css::{Visit, Visitable};
 
 use super::CompoundSelector;
 
 // https://searchfox.org/wubkat/source/Source/WebCore/css/CSSPseudoSelectors.json
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(rename_all = "kebab-case"))]
+#[visit]
 pub enum WebkitPseudoElement {
 	CalendarDatePickerIndicator(T![::], T![Ident]),
 	CapsLockIndicator(T![::], T![Ident]),
@@ -155,8 +159,8 @@ impl<'a> Parse<'a> for WebkitPseudoElement {
 	}
 }
 
-impl<'a> ToCursors<'a> for WebkitPseudoElement {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for WebkitPseudoElement {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match self {
 			Self::CalendarDatePickerIndicator(colon, ident) => {
 				ToCursors::to_cursors(colon, s);
@@ -416,8 +420,15 @@ impl<'a> ToCursors<'a> for WebkitPseudoElement {
 	}
 }
 
+impl<'a> Visitable<'a> for WebkitPseudoElement {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		v.visit_webkit_pseudo_element(self);
+	}
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(rename_all = "kebab-case"))]
+#[visit]
 pub enum WebkitFunctionalPseudoElement<'a> {
 	Distributed(WebkitDistrubutedFunctionalPseudoElement<'a>),
 }
@@ -438,10 +449,21 @@ impl<'a> Parse<'a> for WebkitFunctionalPseudoElement<'a> {
 	}
 }
 
-impl<'a> ToCursors<'a> for WebkitFunctionalPseudoElement<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for WebkitFunctionalPseudoElement<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match self {
 			Self::Distributed(c) => ToCursors::to_cursors(c, s),
+		}
+	}
+}
+
+impl<'a> Visitable<'a> for WebkitFunctionalPseudoElement<'a> {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		v.visit_webkit_functional_pseudo_element(self);
+		match self {
+			Self::Distributed(pseudo) => {
+				pseudo.value.accept(v);
+			}
 		}
 	}
 }
@@ -455,8 +477,8 @@ pub struct WebkitDistrubutedFunctionalPseudoElement<'a> {
 	pub close: Option<T![')']>,
 }
 
-impl<'a> ToCursors<'a> for WebkitDistrubutedFunctionalPseudoElement<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for WebkitDistrubutedFunctionalPseudoElement<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		ToCursors::to_cursors(&self.colons, s);
 		s.append(self.function.into());
 		ToCursors::to_cursors(&self.value, s);
@@ -468,8 +490,20 @@ impl<'a> ToCursors<'a> for WebkitDistrubutedFunctionalPseudoElement<'a> {
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(rename_all = "kebab-case"))]
+#[visit]
 pub enum WebkitFunctionalPseudoClass<'a> {
 	Any(WebkitAnyFunctionalPseudoClass<'a>),
+}
+
+impl<'a> Visitable<'a> for WebkitFunctionalPseudoClass<'a> {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		v.visit_webkit_functional_pseudo_class(self);
+		match self {
+			Self::Any(pseudo) => {
+				pseudo.value.accept(v);
+			}
+		}
+	}
 }
 
 impl<'a> Parse<'a> for WebkitFunctionalPseudoClass<'a> {
@@ -488,8 +522,8 @@ impl<'a> Parse<'a> for WebkitFunctionalPseudoClass<'a> {
 	}
 }
 
-impl<'a> ToCursors<'a> for WebkitFunctionalPseudoClass<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for WebkitFunctionalPseudoClass<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match self {
 			Self::Any(c) => ToCursors::to_cursors(c, s),
 		}
@@ -505,8 +539,8 @@ pub struct WebkitAnyFunctionalPseudoClass<'a> {
 	pub close: Option<T![')']>,
 }
 
-impl<'a> ToCursors<'a> for WebkitAnyFunctionalPseudoClass<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for WebkitAnyFunctionalPseudoClass<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		ToCursors::to_cursors(&self.colon, s);
 		s.append(self.function.into());
 		ToCursors::to_cursors(&self.value, s);
@@ -518,6 +552,7 @@ impl<'a> ToCursors<'a> for WebkitAnyFunctionalPseudoClass<'a> {
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(rename_all = "kebab-case"))]
+#[visit]
 pub enum WebkitPseudoClass {
 	AnimatingFullScreenTransition(T![:], T![Ident]),
 	AnyLink(T![:], T![Ident]),  // Alias for :any-link
@@ -560,8 +595,8 @@ impl<'a> Parse<'a> for WebkitPseudoClass {
 	}
 }
 
-impl<'a> ToCursors<'a> for WebkitPseudoClass {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for WebkitPseudoClass {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match self {
 			Self::AnimatingFullScreenTransition(colon, ident) => {
 				ToCursors::to_cursors(colon, s);
@@ -614,5 +649,11 @@ impl<'a> ToCursors<'a> for WebkitPseudoClass {
 				s.append(ident.into());
 			}
 		}
+	}
+}
+
+impl<'a> Visitable<'a> for WebkitPseudoClass {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		v.visit_webkit_pseudo_class(self);
 	}
 }

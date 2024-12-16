@@ -2,7 +2,7 @@ pub(crate) use crate::css::units::*;
 use hdx_parser::keyword_typedef;
 
 // Re-expose stylevalues for shorthands
-pub(crate) use super::{MarginTop, PaddingTop};
+pub(crate) use super::{MarginTopStyleValue, PaddingTopStyleValue};
 
 // https://drafts.csswg.org/css-box-4/#typedef-visual-box
 // <visual-box> = content-box | padding-box | border-box

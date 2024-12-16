@@ -1,4 +1,4 @@
-use hdx_parser::{CursorStream, Parse, Parser, QualifiedRule as QualifiedRuleTrait, Result as ParserResult, ToCursors};
+use hdx_parser::{CursorSink, Parse, Parser, QualifiedRule as QualifiedRuleTrait, Result as ParserResult, ToCursors};
 
 use super::{BadDeclaration, Block, ComponentValues};
 
@@ -23,8 +23,8 @@ impl<'a> QualifiedRuleTrait<'a> for QualifiedRule<'a> {
 	type BadDeclaration = BadDeclaration;
 }
 
-impl<'a> ToCursors<'a> for QualifiedRule<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for QualifiedRule<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		ToCursors::to_cursors(&self.prelude, s);
 		ToCursors::to_cursors(&self.block, s);
 	}
@@ -37,7 +37,7 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(QualifiedRule, 120);
+		assert_size!(QualifiedRule, 128);
 	}
 
 	#[test]

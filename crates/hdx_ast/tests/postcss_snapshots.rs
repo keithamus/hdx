@@ -3,8 +3,7 @@ mod helpers;
 #[test]
 #[cfg(feature = "serde")]
 fn postcss_media() {
-	// FIXME: this fails we need CI green for now.
-	// assert_snap_ast!("../../tasks/coverage/postcss-parser-tests/apply.css");
+	assert_snap_ast!("../../tasks/coverage/postcss-parser-tests/cases/apply.css");
 }
 
 #[test]

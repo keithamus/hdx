@@ -1,6 +1,6 @@
 use core::fmt;
 
-use crate::{diagnostics, parser::Parser, CursorStream, Is, Parse, Peek, Result, ToCursors, T};
+use crate::{diagnostics, parser::Parser, CursorSink, Is, Parse, Peek, Result, ToCursors, T};
 use hdx_atom::Atom;
 use hdx_lexer::{Cursor, SourceOffset, Token};
 
@@ -30,8 +30,8 @@ impl<'a> Parse<'a> for Important {
 	}
 }
 
-impl<'a> ToCursors<'a> for Important {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for Important {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.bang.into());
 		s.append(self.important.into());
 	}
@@ -52,13 +52,13 @@ pub trait Declaration<'a>: Sized + Parse<'a> {
 
 	fn parse_declaration(
 		p: &mut Parser<'a>,
-	) -> Result<(T![Ident], Option<T![:]>, Self::DeclarationValue, Option<Important>, Option<T![;]>)> {
+	) -> Result<(T![Ident], T![:], Self::DeclarationValue, Option<Important>, Option<T![;]>)> {
 		let name = p.parse::<T![Ident]>()?;
 		let c: Cursor = name.into();
 		if !Self::valid_property(p, c) {
 			Err(diagnostics::UnknownDeclaration(c.into()))?;
 		}
-		let colon = p.parse_if_peek::<T![:]>()?;
+		let colon = p.parse::<T![:]>()?;
 		let value = Self::DeclarationValue::parse_declaration_value(c, p)?;
 		let important = p.parse_if_peek::<Important>()?;
 		let semi = p.parse_if_peek::<T![;]>()?;

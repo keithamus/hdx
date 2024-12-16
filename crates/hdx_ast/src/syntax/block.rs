@@ -1,6 +1,6 @@
 use bumpalo::collections::Vec;
 use hdx_lexer::{SourceOffset, Token};
-use hdx_parser::{Block as BlockTrait, CursorStream, Parse, Parser, Result as ParserResult, ToCursors, T};
+use hdx_parser::{Block as BlockTrait, CursorSink, Parse, Parser, Result as ParserResult, ToCursors, T};
 
 use super::{Declaration, Rule};
 
@@ -27,8 +27,8 @@ impl<'a> BlockTrait<'a> for Block<'a> {
 	type Rule = Rule<'a>;
 }
 
-impl<'a> ToCursors<'a> for Block<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for Block<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(Into::<Token>::into(self.open_curly).with_cursor(self.start));
 		for declaration in &self.declarations {
 			ToCursors::to_cursors(declaration, s);
@@ -49,7 +49,7 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(Block, 88);
+		assert_size!(Block, 96);
 	}
 
 	#[test]

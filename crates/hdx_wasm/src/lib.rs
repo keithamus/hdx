@@ -1,7 +1,7 @@
 use bumpalo::Bump;
 use hdx_ast::css::StyleSheet;
 use hdx_lexer::{Kind, Lexer};
-use hdx_parser::{Features, Parser};
+use hdx_parser::{CursorStream, Features, Parser, ToCursors};
 #[cfg(not(feature = "fancy"))]
 use miette::JSONReportHandler;
 use miette::NamedSource;
@@ -67,7 +67,9 @@ pub fn minify(source_text: String) -> Result<String, serde_wasm_bindgen::Error> 
 		return Err(serde_wasm_bindgen::Error::new("Parse error"));
 	}
 	let mut output_string = String::new();
-	if let Err(_) = result.write(&allocator, &mut output_string) {
+	let mut stream = CursorStream::new(&allocator);
+	result.to_cursors(&mut stream);
+	if let Err(_) = result.write(&mut stream, &mut output_string) {
 		return Err(serde_wasm_bindgen::Error::new("Write error"));
 	}
 	Ok(output_string)

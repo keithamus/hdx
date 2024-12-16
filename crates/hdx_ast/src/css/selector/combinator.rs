@@ -1,8 +1,12 @@
-use hdx_parser::{CursorStream, Parse, Parser, Result as ParserResult, ToCursors, T};
+use hdx_parser::{CursorSink, Parse, Parser, Result as ParserResult, ToCursors, T};
+use hdx_proc_macro::visit;
 
+use crate::css::{Visit, Visitable};
+
+// https://drafts.csswg.org/selectors/#combinators
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(rename_all = "kebab-case"))]
-// https://drafts.csswg.org/selectors/#combinators
+#[visit]
 pub enum Combinator {
 	Child(T![>]),
 	NextSibling(T![+]),
@@ -30,8 +34,8 @@ impl<'a> Parse<'a> for Combinator {
 	}
 }
 
-impl<'a> ToCursors<'a> for Combinator {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for Combinator {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match self {
 			Self::Descendant(c) => s.append(c.into()),
 			Self::Child(c) => s.append(c.into()),
@@ -43,6 +47,12 @@ impl<'a> ToCursors<'a> for Combinator {
 	}
 }
 
+impl<'a> Visitable<'a> for Combinator {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		todo!();
+	}
+}
+
 #[cfg(test)]
 mod tests {
 	use super::*;
@@ -50,7 +60,7 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(Combinator, 20);
+		assert_size!(Combinator, 28);
 	}
 
 	#[test]

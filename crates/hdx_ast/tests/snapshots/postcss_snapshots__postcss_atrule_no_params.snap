@@ -17,12 +17,14 @@ expression: result.output.unwrap()
         "type": "PageBlock",
         "open": {
           "kind": "LeftCurly",
+          "offset": 5,
           "len": 1
         },
         "properties": [],
         "rules": [],
         "close": {
           "kind": "RightCurly",
+          "offset": 7,
           "len": 1
         }
       }

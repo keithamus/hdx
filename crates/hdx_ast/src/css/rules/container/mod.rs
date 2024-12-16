@@ -2,11 +2,11 @@ use bumpalo::collections::Vec;
 use hdx_atom::atom;
 use hdx_lexer::{Cursor, Kind, Span};
 use hdx_parser::{
-	diagnostics, keyword_typedef, AtRule, Build, ConditionalAtRule, CursorStream, Is, Parse, Parser, Peek, PreludeList,
-	Result as ParserResult, RuleList, ToCursors, T,
+	diagnostics, AtRule, ConditionalAtRule, CursorSink, Parse, Parser, Peek, PreludeList, Result as ParserResult,
+	RuleList, ToCursors, T,
 };
 
-use crate::css::stylesheet::Rule;
+use crate::css::{stylesheet::Rule, Visit, Visitable};
 
 mod features;
 use features::*;
@@ -45,11 +45,17 @@ impl<'a> AtRule<'a> for ContainerRule<'a> {
 	type Block = ContainerRules<'a>;
 }
 
-impl<'a> ToCursors<'a> for ContainerRule<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for ContainerRule<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.at_keyword.into());
 		ToCursors::to_cursors(&self.query, s);
 		ToCursors::to_cursors(&self.block, s);
+	}
+}
+
+impl<'a> Visitable<'a> for ContainerRule<'a> {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		todo!();
 	}
 }
 
@@ -72,8 +78,8 @@ impl<'a> RuleList<'a> for ContainerRules<'a> {
 	type Rule = Rule<'a>;
 }
 
-impl<'a> ToCursors<'a> for ContainerRules<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for ContainerRules<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.open.into());
 		for rule in &self.rules {
 			ToCursors::to_cursors(rule, s);
@@ -98,8 +104,8 @@ impl<'a> Parse<'a> for ContainerConditionList<'a> {
 	}
 }
 
-impl<'a> ToCursors<'a> for ContainerConditionList<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for ContainerConditionList<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		for query in &self.0 {
 			ToCursors::to_cursors(query, s);
 		}
@@ -131,8 +137,8 @@ impl<'a> Parse<'a> for ContainerCondition<'a> {
 	}
 }
 
-impl<'a> ToCursors<'a> for ContainerCondition<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for ContainerCondition<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		if let Some(name) = &self.name {
 			ToCursors::to_cursors(name, s);
 		}
@@ -179,8 +185,8 @@ impl<'a> ConditionalAtRule<'a> for ContainerQuery<'a> {
 	}
 }
 
-impl<'a> ToCursors<'a> for ContainerQuery<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for ContainerQuery<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match self {
 			Self::Is(c) => ToCursors::to_cursors(c, s),
 			Self::Not(c) => ToCursors::to_cursors(c.as_ref(), s),
@@ -245,8 +251,8 @@ impl<'a> Parse<'a> for ContainerFeature<'a> {
 	}
 }
 
-impl<'a> ToCursors<'a> for ContainerFeature<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for ContainerFeature<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		macro_rules! match_feature {
 			( $($name: ident($typ: ident): atom!($atom: tt),)+) => {
 				match self {
@@ -286,10 +292,10 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(ContainerRule, 104);
+		assert_size!(ContainerRule, 112);
 		assert_size!(ContainerConditionList, 32);
-		assert_size!(ContainerCondition, 376);
-		assert_size!(ContainerQuery, 360);
+		assert_size!(ContainerCondition, 416);
+		assert_size!(ContainerQuery, 400);
 	}
 
 	#[test]

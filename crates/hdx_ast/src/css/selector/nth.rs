@@ -1,7 +1,7 @@
 use bumpalo::collections::Vec;
 use hdx_atom::atom;
 use hdx_lexer::{Cursor, Kind, KindSet};
-use hdx_parser::{diagnostics, CursorStream, Parse, Parser, Result as ParserResult, ToCursors, T};
+use hdx_parser::{diagnostics, CursorSink, Parse, Parser, Result as ParserResult, ToCursors, T};
 
 use crate::css::units::CSSInt;
 
@@ -111,8 +111,8 @@ impl<'a> Parse<'a> for Nth<'a> {
 	}
 }
 
-impl<'a> ToCursors<'a> for Nth<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for Nth<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match self {
 			Self::Odd(c) => s.append(c.into()),
 			Self::Even(c) => s.append(c.into()),

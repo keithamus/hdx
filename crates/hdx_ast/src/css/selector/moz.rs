@@ -1,12 +1,16 @@
 use hdx_atom::atom;
 use hdx_lexer::{Cursor, KindSet};
-use hdx_parser::{diagnostics, todo, CursorStream, Parse, Parser, Result as ParserResult, ToCursors, T};
+use hdx_parser::{diagnostics, todo, CursorSink, Parse, Parser, Result as ParserResult, ToCursors, T};
+use hdx_proc_macro::visit;
+
+use crate::css::{Visit, Visitable};
 
 use super::functional_pseudo_class::DirValue;
 
 // https://developer.mozilla.org/en-US/docs/Web/CSS/Mozilla_Extensions#pseudo-elements_and_pseudo-classes
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(rename_all = "kebab-case"))]
+#[visit]
 pub enum MozPseudoElement {
 	AnonymousBlock(T![::], T![Ident]),
 	AnonymousItem(T![::], T![Ident]),
@@ -173,8 +177,8 @@ impl<'a> Parse<'a> for MozPseudoElement {
 	}
 }
 
-impl<'a> ToCursors<'a> for MozPseudoElement {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for MozPseudoElement {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match self {
 			Self::AnonymousBlock(colons, ident) => {
 				ToCursors::to_cursors(colons, s);
@@ -476,8 +480,15 @@ impl<'a> ToCursors<'a> for MozPseudoElement {
 	}
 }
 
+impl<'a> Visitable<'a> for MozPseudoElement {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		v.visit_moz_pseudo_element(self);
+	}
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(rename_all = "kebab-case"))]
+#[visit]
 pub enum MozFunctionalPseudoElement {
 	TreeCell(()),
 	TreeCellText(()),
@@ -514,9 +525,16 @@ impl<'a> Parse<'a> for MozFunctionalPseudoElement {
 	}
 }
 
+impl<'a> Visitable<'a> for MozFunctionalPseudoElement {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		v.visit_moz_functional_pseudo_element(self);
+	}
+}
+
 // https://searchfox.org/mozilla-central/source/xpcom/ds/StaticAtoms.py#2502
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(rename_all = "kebab-case"))]
+#[visit]
 pub enum MozPseudoClass {
 	Any(T![:], T![Ident]),
 	AnyLink(T![:], T![Ident]),
@@ -585,8 +603,8 @@ impl<'a> Parse<'a> for MozPseudoClass {
 	}
 }
 
-impl<'a> ToCursors<'a> for MozPseudoClass {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for MozPseudoClass {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match self {
 			Self::Any(colon, ident) => {
 				s.append(colon.into());
@@ -700,8 +718,15 @@ impl<'a> ToCursors<'a> for MozPseudoClass {
 	}
 }
 
+impl<'a> Visitable<'a> for MozPseudoClass {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		v.visit_moz_pseudo_class(self);
+	}
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(rename_all = "kebab-case"))]
+#[visit]
 pub enum MozFunctionalPseudoClass {
 	LocaleDir(MozLocaleDirFunctionalPseudoClass),
 }
@@ -722,11 +747,17 @@ impl<'a> Parse<'a> for MozFunctionalPseudoClass {
 	}
 }
 
-impl<'a> ToCursors<'a> for MozFunctionalPseudoClass {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for MozFunctionalPseudoClass {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match self {
 			Self::LocaleDir(c) => ToCursors::to_cursors(c, s),
 		}
+	}
+}
+
+impl<'a> Visitable<'a> for MozFunctionalPseudoClass {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
+		v.visit_moz_functional_pseudo_class(self);
 	}
 }
 
@@ -739,8 +770,8 @@ pub struct MozLocaleDirFunctionalPseudoClass {
 	pub close: Option<T![')']>,
 }
 
-impl<'a> ToCursors<'a> for MozLocaleDirFunctionalPseudoClass {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for MozLocaleDirFunctionalPseudoClass {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		ToCursors::to_cursors(&self.colon, s);
 		s.append(self.function.into());
 		s.append(self.value.into());

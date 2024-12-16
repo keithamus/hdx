@@ -8,12 +8,6 @@ pub enum OpacityValue {
 	Percent(T![Dimension::%]),
 }
 
-impl Default for OpacityValue {
-	fn default() -> Self {
-		Self::Number(Default::default())
-	}
-}
-
 impl OpacityValue {
 	#[allow(non_upper_case_globals)]
 	pub const Zero: OpacityValue = OpacityValue::Number(<T![Number]>::NUMBER_ZERO);
@@ -70,7 +64,7 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(OpacityValue, 12);
+		assert_size!(OpacityValue, 16);
 	}
 
 	#[test]

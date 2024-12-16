@@ -3,7 +3,7 @@ use hdx_lexer::SourceOffset;
 use hdx_parser::{Parse, Parser, Peek, Result as ParserResult, ToCursors, T};
 
 // https://drafts.csswg.org/css-values-4/#ratios
-#[derive(Debug, Default, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct Ratio {
 	start: SourceOffset,
@@ -28,8 +28,8 @@ impl<'a> Parse<'a> for Ratio {
 	}
 }
 
-impl<'a> ToCursors<'a> for Ratio {
-	fn to_cursors(&self, s: &mut hdx_parser::CursorStream<'a>) {
+impl<'a> ToCursors for Ratio {
+	fn to_cursors(&self, s: &mut impl hdx_parser::CursorSink) {
 		s.append(self.numerator.into());
 		if let Some(t) = self.slash {
 			s.append(t.into());
@@ -47,7 +47,7 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(Ratio, 36);
+		assert_size!(Ratio, 48);
 	}
 
 	#[test]

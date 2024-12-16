@@ -12,7 +12,7 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_size!(OverflowInlineMediaFeature, 36);
+		assert_size!(OverflowInlineMediaFeature, 40);
 	}
 
 	#[test]

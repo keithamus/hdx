@@ -6,7 +6,8 @@ pub mod traits;
 #[cfg(test)]
 pub mod test_helpers;
 
-use hdx_parser::{CursorStream, Parse, Parser, Result as ParserResult, ToCursors};
+use css::{Visit, Visitable};
+use hdx_parser::{CursorSink, Parse, Parser, Result as ParserResult, ToCursors};
 pub use traits::StyleValue;
 
 // TODO! - delete this when we're done ;)
@@ -23,8 +24,14 @@ impl<'a> Parse<'a> for Todo {
 	}
 }
 
-impl<'a> ToCursors<'a> for Todo {
-	fn to_cursors(&self, _: &mut CursorStream<'a>) {
+impl ToCursors for Todo {
+	fn to_cursors(&self, _: &mut impl CursorSink) {
+		todo!();
+	}
+}
+
+impl<'a> Visitable<'a> for Todo {
+	fn accept<V: Visit<'a>>(&self, v: &mut V) {
 		todo!();
 	}
 }

@@ -1,5 +1,5 @@
 use hdx_lexer::{SourceOffset, Token};
-use hdx_parser::{CursorStream, Parse, Parser, Result as ParserResult, ToCursors, T};
+use hdx_parser::{CursorSink, Parse, Parser, Result as ParserResult, ToCursors, T};
 
 use super::ComponentValues;
 
@@ -25,8 +25,8 @@ impl<'a> Parse<'a> for SimpleBlock<'a> {
 	}
 }
 
-impl<'a> ToCursors<'a> for SimpleBlock<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for SimpleBlock<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(Into::<Token>::into(self.open).with_cursor(self.start));
 		ToCursors::to_cursors(&self.values, s);
 		if let Some(close) = self.close {

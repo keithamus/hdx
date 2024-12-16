@@ -1,5 +1,5 @@
 use hdx_lexer::{Cursor, Kind, KindSet};
-use hdx_parser::{diagnostics, CursorStream, Is, Parse, Parser, Result as ParserResult, State, ToCursors, T};
+use hdx_parser::{diagnostics, CursorSink, Is, Parse, Parser, Result as ParserResult, State, ToCursors, T};
 
 use super::{Function, SimpleBlock};
 
@@ -96,8 +96,8 @@ impl<'a> Parse<'a> for ComponentValue<'a> {
 	}
 }
 
-impl<'a> ToCursors<'a> for ComponentValue<'a> {
-	fn to_cursors(&self, s: &mut CursorStream<'a>) {
+impl<'a> ToCursors for ComponentValue<'a> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
 		match self {
 			Self::SimpleBlock(t) => ToCursors::to_cursors(t, s),
 			Self::Function(t) => ToCursors::to_cursors(t, s),

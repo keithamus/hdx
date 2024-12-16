@@ -16,7 +16,7 @@ use impls::*;
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum TableLayout {}
+pub enum TableLayoutStyleValue {}
 
 // https://drafts.csswg.org/css-tables-3/#border-collapse
 #[value(" separate | collapse ")]
@@ -26,7 +26,7 @@ pub enum TableLayout {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum BorderCollapse {}
+pub enum BorderCollapseStyleValue {}
 
 // // https://drafts.csswg.org/css-tables-3/#border-spacing
 // #[value(" <length>{1,2} ")]
@@ -36,7 +36,7 @@ pub enum BorderCollapse {}
 // #[percentages("n/a")]
 // #[canonical_order("per grammar")]
 // #[animation_type("by computed value")]
-// pub struct BorderSpacing;
+// pub struct BorderSpacingStyleValue;
 
 // https://drafts.csswg.org/css-tables-3/#caption-side
 #[value(" top | bottom ")]
@@ -46,7 +46,7 @@ pub enum BorderCollapse {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum CaptionSide {}
+pub enum CaptionSideStyleValue {}
 
 // https://drafts.csswg.org/css-tables-3/#empty-cells
 #[value(" show | hide ")]
@@ -56,4 +56,4 @@ pub enum CaptionSide {}
 #[percentages("n/a")]
 #[canonical_order("per grammar")]
 #[animation_type("discrete")]
-pub enum EmptyCells {}
+pub enum EmptyCellsStyleValue {}
