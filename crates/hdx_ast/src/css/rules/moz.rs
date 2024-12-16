@@ -5,7 +5,7 @@ use hdx_proc_macro::visit;
 
 use crate::css::{Visit, Visitable};
 
-use super::{DocumentRuleBlock, DocumentMatcherList};
+use super::{DocumentMatcherList, DocumentRuleBlock};
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]

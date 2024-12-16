@@ -11,7 +11,9 @@ use impls::*;
 // https://drafts.csswg.org/css-inline-3/#dominant-baseline
 #[value(" auto | text-bottom | alphabetic | ideographic | middle | central | mathematical | hanging | text-top ")]
 #[initial("auto")]
-#[applies_to("block containers, inline boxes, table rows, grid containers, flex containers, and SVG text content elements")]
+#[applies_to(
+	"block containers, inline boxes, table rows, grid containers, flex containers, and SVG text content elements"
+)]
 #[inherited("yes")]
 #[percentages("n/a")]
 #[canonical_order("per grammar")]

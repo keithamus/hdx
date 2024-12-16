@@ -61,7 +61,9 @@ pub struct OutlineOffsetStyleValue;
 // https://drafts.csswg.org/css-ui-4/#resize
 #[value(" none | both | horizontal | vertical | block | inline ")]
 #[initial("none")]
-#[applies_to("elements that are scroll containers and optionally replaced elements such as images, videos, and iframes")]
+#[applies_to(
+	"elements that are scroll containers and optionally replaced elements such as images, videos, and iframes"
+)]
 #[inherited("no")]
 #[percentages("n/a")]
 #[canonical_order("per grammar")]

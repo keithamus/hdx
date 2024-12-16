@@ -67,7 +67,9 @@ fn main() {
 		.multi_line(true)
 		.dot_matches_new_line(true)
 		// .build(r#"#\[value.*pub (?:struct|enum) (\w*(:?<'a>)?)"#)
-		.build(r#"^\s*#\[(value|visit).*?(?:pub (?:struct|enum) |(?:ranged|boolean|discrete)_feature!\()(\w*(:?<'a>)?)"#)
+		.build(
+			r#"^\s*#\[(value|visit).*?(?:pub (?:struct|enum) |(?:ranged|boolean|discrete)_feature!\()(\w*(:?<'a>)?)"#,
+		)
 		.unwrap();
 	let mut visit_matches = HashSet::new();
 	let mut stylevalue_matches = HashSet::new();

@@ -50,7 +50,7 @@ pub fn test_error<'a, T: Parse<'a> + ToCursors>(allocator: &'a Bump, source_text
 	let result = parser.parse_entirely::<T>();
 	if result.errors.is_empty() {
 		let mut actual = bumpalo::collections::String::new_in(allocator);
-	let mut cursors = hdx_parser::CursorStream::new(&allocator);
+		let mut cursors = hdx_parser::CursorStream::new(&allocator);
 		result.write(&mut cursors, &mut actual).unwrap();
 		panic!("\n\nParse on {}:{} passed. Expected errors but it passed without error.\n\n   parser input: {:?}\n  parser output: {:?}\n       expected: (Error)", file, line, source_text, actual);
 	}
