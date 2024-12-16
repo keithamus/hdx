@@ -1,8 +1,7 @@
 use core::fmt;
 
 use crate::{diagnostics, parser::Parser, CursorSink, Is, Parse, Peek, Result, ToCursors, T};
-use hdx_atom::Atom;
-use hdx_lexer::{Cursor, SourceOffset, Token};
+use hdx_lexer::Cursor;
 
 mod kw {
 	use crate::custom_keyword;
