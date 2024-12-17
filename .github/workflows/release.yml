@@ -145,5 +145,5 @@ jobs:
 
             And is currently published to npm:
             ```shell
-            npm add hdx@$DIST_TAG
+            npm i hdx@canary
             ```
