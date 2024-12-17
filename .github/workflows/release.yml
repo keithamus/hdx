@@ -1,10 +1,10 @@
 # mostly copied from https://raw.githubusercontent.com/web-infra-dev/oxc/main/.github/workflows/release_cli.yml
 name: release
 on:
-  push:
-    branches: ["main"]
-  release:
-    types: [created]
+  workflow_run:
+    workflows: [test]
+    types: [completed]
+    branches: [main]
   workflow_dispatch:
 concurrency:
   group: "release"
@@ -13,7 +13,29 @@ permissions:
   contents: read
   id-token: write
 jobs:
+  tag:
+    runs-on: ubuntu-latest
+    needs: [build]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Tag
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -fa canary -m "Latest Continuous Release" ${GITHUB_SHA}
+          git push --force origin canary
+
   build:
+    if: |
+      ${{
+        github.event_name == 'workflow_dispatch' ||
+        (
+          github.event.workflow_run.conclusion == 'success' &&
+          github.repository_owner == 'keithamus' &&
+          github.ref_name == 'main'
+        )
+      }}
+
     strategy:
       matrix:
         include:
@@ -84,11 +106,10 @@ jobs:
 
   deploy:
     env:
-      TAG_NAME: ${{ github.event.release.tag_name || format('0.0.0-canary.{0}', github.SHA) }}
-      DIST_TAG: ${{ github.event.release.tag_name && 'latest' || 'canary' }}
+      TAG_NAME: ${{ format('0.0.0-canary.{0}', github.SHA) }}
+      DIST_TAG: canary
     runs-on: ubuntu-latest
-    needs:
-      - build
+    needs: [build]
     steps:
       - run: echo "TAG_NAME=$TAG_NAME"; echo "DIST_TAG=$DIST_TAG"
       - uses: actions/checkout@v4
@@ -100,8 +121,7 @@ jobs:
           cache: "npm"
       - name: Download Artifacts
         uses: actions/download-artifact@v4
-      - name: Move
-        run: mv binary-*/* packages/hdx/bin && chmod +x packages/hdx/bin/*
+      - run: cp binary-*/* packages/hdx/bin && chmod +x packages/hdx/bin/*
       - run: tree
       - run: npm i
         working-directory: ./packages/hdx
@@ -111,3 +131,19 @@ jobs:
         working-directory: ./packages/hdx
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
+      - name: Update Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: Canary
+          prerelease: true
+          tag_name: canary
+          target_commitish: ${{ github.sha }}
+          files: binary-*/*
+          token: ${{ secrets.GITHUB_TOKEN }}
+          body: |
+            This release is automatically built and generated on every commit to main that passes tests.
+
+            And is currently published to npm:
+            ```shell
+            npm add hdx@$DIST_TAG
+            ```
