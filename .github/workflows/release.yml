@@ -23,7 +23,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git tag -fa canary -m "Latest Continuous Release" ${GITHUB_SHA}
-          git push --force origin canary
+          git push --force-with-lease origin canary
 
   build:
     if: |
