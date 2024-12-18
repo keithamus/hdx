@@ -48,7 +48,6 @@ crossbeam-channel = { version = "0.5.13" }
 dashmap = { version = "6.1.0" }
 
 # Logging
-log = { version = "0.4.22" }
 tracing = { version = "0.1.41" }
 tracing-subscriber = { version = "0.3.19" }
 console = { version = "0.15.8" }

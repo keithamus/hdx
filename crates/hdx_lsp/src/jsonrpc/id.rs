@@ -16,6 +16,12 @@ pub enum Id {
 	String(String),
 }
 
+impl Default for Id {
+	fn default() -> Self {
+		Self::Number(0)
+	}
+}
+
 impl From<&str> for Id {
 	fn from(value: &str) -> Self {
 		Self::String(value.into())

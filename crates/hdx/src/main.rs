@@ -1,7 +1,7 @@
 use bumpalo::Bump;
 use clap::{crate_version, Parser, Subcommand};
 use hdx_ast::css::StyleSheet;
-use hdx_lsp::server_with_handlers;
+use hdx_lsp::{LSPService, Server};
 use hdx_parser::{CursorStream, ToCursors};
 use miette::{GraphicalReportHandler, GraphicalTheme, NamedSource};
 use std::io;
@@ -141,7 +141,7 @@ fn main() {
 			}
 		}
 		Commands::Lsp {} => {
-			let server = server_with_handlers(crate_version!());
+			let server = Server::new(LSPService::new(crate_version!()));
 			let stderr_log = fmt::layer().with_writer(io::stderr).with_filter(LevelFilter::TRACE);
 			registry().with(stderr_log).with(server.tracer()).init();
 			let thread = server.listen_stdio().unwrap();

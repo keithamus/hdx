@@ -1,9 +1,11 @@
 use httparse::{parse_headers, EMPTY_HEADER};
-use serde::{Deserialize, Serialize};
-use serde_json::to_string;
+use serde::{de::DeserializeOwned, Deserialize, Serialize};
+use serde_json::{from_value, to_string, to_value, Error, Value};
 use std::io;
 
 use crate::{Notification, Request, Response};
+
+use super::{ErrorCode, Id};
 
 /// JSON RPC Message
 /// This represents a single message coming in or going out, that is
@@ -28,6 +30,49 @@ impl Message {
 			matches!(notification.method.as_str(), "exit")
 		} else {
 			false
+		}
+	}
+
+	#[doc(hidden)]
+	#[inline]
+	pub fn is_initialize_request(&self) -> bool {
+		if let Message::Request(request) = self {
+			matches!(request.method.as_str(), "initialize")
+		} else {
+			false
+		}
+	}
+
+	pub fn method(&self) -> Option<&str> {
+		match self {
+			Message::Request(Request { method, .. }) => Some(method),
+			Message::Notification(Notification { method, .. }) => Some(method),
+			_ => None,
+		}
+	}
+
+	pub fn id(&self) -> Option<Id> {
+		match self {
+			Message::Request(Request { id, .. }) => Some(id.clone()),
+			Message::Notification(_) => None,
+			Message::Response(Response::Ok(id, _)) => Some(id.clone()),
+			Message::Response(Response::Err(id, _, _, _)) => Some(id.clone()),
+		}
+	}
+
+	pub fn from_value<T: DeserializeOwned>(&self) -> Result<T, Error> {
+		match self {
+			Message::Request(Request { params, .. }) => from_value(params.clone()),
+			Message::Notification(Notification { params, .. }) => from_value(params.clone()),
+			Message::Response(Response::Ok(_, params)) => from_value(params.clone()),
+			Message::Response(Response::Err(_, _, _, params)) => from_value(params.clone()),
+		}
+	}
+
+	pub fn from_result(id: Id, result: Result<impl Serialize, ErrorCode>) -> Message {
+		match result {
+			Err(code) => Message::Response(Response::Err(id, code, "".into(), Value::Null)),
+			Ok(value) => Message::Response(Response::Ok(id, to_value(value).unwrap())),
 		}
 	}
 }
