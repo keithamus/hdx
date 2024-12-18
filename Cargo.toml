@@ -1,6 +1,7 @@
 [workspace]
 resolver = "2"
 members = ["crates/*"]
+exclude = ["packages/hdx_zed"]
 
 [workspace.package]
 authors = ["Keith Cirkel (https://keithcirkel.co.uk)"]
@@ -24,7 +25,7 @@ hdx_transform = { version = "0.0.0", path = "crates/hdx_transform" }
 hdx_highlight = { version = "0.0.0", path = "crates/hdx_highlight" }
 hdx_lsp = { version = "0.0.0", path = "crates/hdx_lsp" }
 
-# Memory 
+# Memory
 bumpalo = { version = "3.16.0" }
 
 # Data structure libraries/helpers

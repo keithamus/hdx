@@ -1,0 +1,11 @@
+id = "hdx"
+name = "hdx"
+version = "0.0.1"
+schema_version = 1
+authors = ["Keith Cirkel (https://keithcirkel.co.uk)", "Marais Rossouw (https://marais.io)"]
+description = "Refreshing CSS!"
+repository = "https://github.com/keithamus/hdx"
+
+[language_servers.hdx]
+language = "CSS"
+name = "hdx Language Server"
