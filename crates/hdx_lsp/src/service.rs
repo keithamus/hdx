@@ -59,7 +59,6 @@ impl File {
 					let mut result: ParserReturn<'_, StyleSheet<'_>> =
 						Parser::new(&bump, "", Features::default()).parse_entirely::<StyleSheet>();
 					while let Ok(call) = read_receiver.recv() {
-						trace!("String is currently {:?}", string);
 						match call {
 							FileCall::RopeChange(rope) => {
 								trace!("Parsing document");

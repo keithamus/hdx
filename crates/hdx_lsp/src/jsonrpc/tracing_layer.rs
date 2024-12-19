@@ -1,4 +1,7 @@
-use std::collections::BTreeMap;
+use std::{
+	collections::BTreeMap,
+	sync::{Arc, RwLock},
+};
 
 use crossbeam_channel::Sender;
 use lsp_types::{
@@ -13,13 +16,13 @@ use tracing_subscriber::{layer::Context, Layer};
 use super::{Message, Notification};
 
 pub struct TracingLayer {
-	level: LevelFilter,
+	pub level: Arc<RwLock<LevelFilter>>,
 	sender: Sender<Message>,
 }
 
 impl TracingLayer {
-	pub fn new(sender: Sender<Message>) -> Self {
-		Self { level: LevelFilter::OFF, sender }
+	pub fn new(level: Arc<RwLock<LevelFilter>>, sender: Sender<Message>) -> Self {
+		Self { level, sender }
 	}
 }
 // lsp_types::notification::LogTrace
@@ -69,7 +72,7 @@ where
 	S: Subscriber,
 {
 	fn on_event(&self, event: &Event, _ctx: Context<'_, S>) {
-		if event.metadata().level() > &self.level {
+		if event.metadata().level() > &(*self.level.read().unwrap()) {
 			return;
 		}
 		let mut fields = MessageVisitor::default();
@@ -91,7 +94,7 @@ where
 					})
 					.unwrap_or_default(),
 				});
-				self.sender.send(message).ok();
+				self.sender.try_send(message).ok();
 				return;
 			}
 		};
@@ -105,6 +108,6 @@ where
 			.unwrap_or_default(),
 		});
 
-		self.sender.send(message).ok();
+		self.sender.try_send(message).ok();
 	}
 }

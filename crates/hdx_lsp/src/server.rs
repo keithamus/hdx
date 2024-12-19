@@ -7,13 +7,16 @@
 //!
 
 use crossbeam_channel::{bounded, Receiver, Sender};
+use lsp_types::SetTraceParams;
+use serde_json::from_value;
 use std::{
 	io,
+	sync::{Arc, RwLock},
 	thread::{Builder, JoinHandle},
 };
-use tracing::{trace, warn};
+use tracing::{level_filters::LevelFilter, trace, warn};
 
-use crate::TracingLayer;
+use crate::{Notification, TracingLayer};
 
 use super::Message;
 
@@ -39,6 +42,7 @@ pub struct Server {
 	read_sender: Sender<Message>,
 	request_handler: JoinHandle<Result<(), io::Error>>,
 	read_receiver: Receiver<Message>,
+	trace_level: Arc<RwLock<LevelFilter>>,
 }
 
 impl Server {
@@ -48,13 +52,29 @@ impl Server {
 
 		let handler_receiver = read_receiver.clone();
 		let handler_sender = write_sender.clone();
+		let trace_level = Arc::new(RwLock::new(LevelFilter::OFF));
+		let level_set = trace_level.clone();
 		let request_handler = Builder::new()
 			.name("LspMessageHandler".into())
 			.spawn(move || {
 				while let Ok(message) = handler_receiver.recv() {
 					trace!("LspMessageHandler -> {:#?}", &message);
-					if message.is_exit_notification() {
-						break;
+					if let Message::Notification(Notification { method, params }) = &message {
+						if method == "exit" {
+							break;
+						}
+						if method == "$/setTrace" {
+							let level = from_value::<SetTraceParams>(params.clone())
+								.map(|p| match p.value {
+									lsp_types::TraceValue::Off => LevelFilter::OFF,
+									lsp_types::TraceValue::Messages => LevelFilter::WARN,
+									lsp_types::TraceValue::Verbose => LevelFilter::TRACE,
+								})
+								.unwrap_or(LevelFilter::OFF);
+							trace!("Changing level to {:?}", level);
+							let mut level_set = level_set.write().unwrap();
+							*level_set = level;
+						}
 					}
 					let response = handler.handle(message);
 					if let Some(response) = response {
@@ -68,7 +88,11 @@ impl Server {
 				Ok(())
 			})
 			.expect("Failed to create Reader");
-		Server { write_sender, write_receiver, read_sender, read_receiver, request_handler }
+		Server { write_sender, write_receiver, read_sender, read_receiver, request_handler, trace_level }
+	}
+
+	pub fn tracer(&self) -> TracingLayer {
+		TracingLayer::new(self.trace_level.clone(), self.write_sender.clone())
 	}
 
 	pub fn listen_stdio(&self) -> Result<ThreadConnection, io::Error> {
@@ -92,10 +116,6 @@ impl Server {
 			Ok(())
 		})?;
 		Ok(ThreadConnection { sender: reader, receiver: writer })
-	}
-
-	pub fn tracer(&self) -> TracingLayer {
-		TracingLayer::new(self.write_sender.clone())
 	}
 
 	#[cfg(test)]
@@ -163,12 +183,7 @@ mod tests {
 			.unwrap();
 		assert_eq!(
 			receiver.recv(),
-			Ok(Message::Response(Response::Err(
-				1.into(),
-				ErrorCode::MethodNotFound,
-				"".into(),
-				Value::Null
-			)))
+			Ok(Message::Response(Response::Err(1.into(), ErrorCode::MethodNotFound, "".into(), Value::Null)))
 		);
 		sender.send(Message::Notification(Notification { method: "exit".into(), params: Value::Null })).unwrap();
 	}
