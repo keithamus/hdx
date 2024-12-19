@@ -235,10 +235,6 @@ impl Handler for LSPService {
 		let uri = req.text_document.uri;
 		trace!("Asked for SemanticTokens for {:?}", &uri);
 		if let Some(document) = self.files.get(&uri) {
-			let mut current_line = 0;
-			let mut current_start = 0;
-			// TODO: remove this, figure out a more efficient way to get line/col
-			let str = document.to_string();
 			let data = document
 				.get_highlights()
 				.into_iter()
