@@ -110,8 +110,8 @@ mod tests {
 
 	use super::*;
 	use lsp_types::{
-		request::{GotoDeclaration, GotoDeclarationParams, Initialize, Request as RequestTrait},
-		GotoDefinitionResponse, InitializeParams, InitializeResult,
+		request::{GotoDeclaration, Initialize, Request as RequestTrait},
+		InitializeParams, InitializeResult,
 	};
 	use serde_json::{json, to_value, Value};
 	use tracing::level_filters::LevelFilter;
@@ -122,7 +122,7 @@ mod tests {
 		let stderr_log = fmt::layer().with_writer(io::stderr).with_filter(LevelFilter::TRACE);
 		struct TestHandler {}
 		impl Handler for TestHandler {
-			fn initialize(&self, req: InitializeParams) -> Result<InitializeResult, ErrorCode> {
+			fn initialize(&self, _req: InitializeParams) -> Result<InitializeResult, ErrorCode> {
 				Ok(InitializeResult { ..Default::default() })
 			}
 		}

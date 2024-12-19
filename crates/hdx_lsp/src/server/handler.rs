@@ -24,7 +24,6 @@ pub trait Handler: Sized + Send + Sync + 'static {
 		let span = trace_span!("Handling request", "{:#?}", message);
 		let _ = span.enter();
 		let id = message.id().unwrap_or_default();
-		debug!("LspMessageHandler -> {:#?}", &message);
 		if message.is_exit_notification() {
 			return None;
 		}
