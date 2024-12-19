@@ -11,7 +11,7 @@ use std::{
 	io,
 	thread::{Builder, JoinHandle},
 };
-use tracing::{debug, trace, warn};
+use tracing::{trace, warn};
 
 use crate::TracingLayer;
 
@@ -52,7 +52,7 @@ impl Server {
 			.name("LspMessageHandler".into())
 			.spawn(move || {
 				while let Ok(message) = handler_receiver.recv() {
-					debug!("LspMessageHandler -> {:#?}", &message);
+					trace!("LspMessageHandler -> {:#?}", &message);
 					if message.is_exit_notification() {
 						break;
 					}
@@ -76,7 +76,7 @@ impl Server {
 		let writer = Builder::new().name("LspWriter".into()).spawn(move || {
 			let mut stdout = io::stdout().lock();
 			while let Ok(message) = write_receiver.recv() {
-				trace!("{:?}", message);
+				trace!("{:#?}", message);
 				message.write(&mut stdout)?;
 			}
 			Ok(())
@@ -106,7 +106,9 @@ impl Server {
 
 #[cfg(test)]
 mod tests {
-	use crate::{ErrorCode, Request, Response};
+	use std::sync::atomic::{AtomicBool, Ordering};
+
+	use crate::{ErrorCode, Notification, Request, Response};
 
 	use super::*;
 	use lsp_types::{
@@ -120,14 +122,20 @@ mod tests {
 	#[test]
 	fn smoke_test() {
 		let stderr_log = fmt::layer().with_writer(io::stderr).with_filter(LevelFilter::TRACE);
-		struct TestHandler {}
+		struct TestHandler {
+			initialized: AtomicBool,
+		}
 		impl Handler for TestHandler {
+			fn initialized(&self) -> bool {
+				self.initialized.load(Ordering::SeqCst)
+			}
 			fn initialize(&self, _req: InitializeParams) -> Result<InitializeResult, ErrorCode> {
+				self.initialized.swap(true, Ordering::SeqCst);
 				Ok(InitializeResult { ..Default::default() })
 			}
 		}
 
-		let server = Server::new(TestHandler {});
+		let server = Server::new(TestHandler { initialized: AtomicBool::new(false) });
 		registry().with(stderr_log).with(server.tracer()).init();
 		let (sender, receiver) = server.raw_channels();
 		sender
@@ -158,9 +166,10 @@ mod tests {
 			Ok(Message::Response(Response::Err(
 				1.into(),
 				ErrorCode::MethodNotFound,
-				"MethodNotFound".into(),
+				"".into(),
 				Value::Null
 			)))
 		);
+		sender.send(Message::Notification(Notification { method: "exit".into(), params: Value::Null })).unwrap();
 	}
 }
