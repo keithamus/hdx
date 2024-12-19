@@ -153,7 +153,7 @@ impl Handler for LSPService {
 				text_document_sync: Some(lsp_types::TextDocumentSyncCapability::Options(
 					lsp_types::TextDocumentSyncOptions {
 						open_close: Some(true),
-						change: Some(lsp_types::TextDocumentSyncKind::FULL),
+						change: Some(lsp_types::TextDocumentSyncKind::INCREMENTAL),
 						will_save: Some(true),
 						will_save_wait_until: Some(false),
 						save: Some(lsp_types::TextDocumentSyncSaveOptions::Supported(false)),
