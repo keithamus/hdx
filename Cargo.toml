@@ -18,7 +18,7 @@ hdx = { version = "0.0.1", path = "crates/hdx" }
 hdx_atom = { version = "0.0.0", path = "crates/hdx_atom" }
 hdx_proc_macro = { version = "0.0.0", path = "crates/hdx_proc_macro" }
 hdx_parser = { version = "0.0.1", path = "crates/hdx_parser" }
-hdx_lexer = { version = "0.0.1", path = "crates/hdx_lexer" }
+css_lexer = { version = "0.0.1", path = "crates/css_lexer" }
 hdx_syntax = { version = "0.0.0", path = "crates/hdx_syntax" }
 hdx_ast = { version = "0.0.0", path = "crates/hdx_ast" }
 hdx_transform = { version = "0.0.0", path = "crates/hdx_transform" }
