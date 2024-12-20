@@ -69,6 +69,20 @@ use crate::{
 //                        If K is Number, this represents the length of that number (this means
 //                        number tokens cannot be longer than 16,777,216 characters which is
 //                        probably an acceptable limit).
+//                        if K is URL, this represents the "leading length" and "trailing length".
+//                        This value is split into two 12 bit numbers.
+//
+//                        |--------------|--------------|
+//                        | LL           | TL           |
+//                        | 000000000000 | 000000000000 |
+//                        |--------------|--------------|
+//                        | 12---------- | 12---------- |
+//
+//                        This is because while most of the time this will be the literal `url(`,
+//                        it can also be escaped, so `\u\r\l(` is also valid, as is `\\75\\52\\6c(`
+//                        Additionally while the trailing end is usually `)`, it can also have a
+//                        number of trailing whitespace, e.g. ` )` or `  )`.
+//
 //                        If K is a Dimension, then this is split further (see table just below).
 //                        For all other kinds this is left reserved (zeroed out).
 //
@@ -115,7 +129,7 @@ impl Default for Token {
 
 const KIND_MASK: u32 = !((1 << 24) - 1);
 const LENGTH_MASK: u32 = (1 << 24) - 1;
-const DIMENSION_NUMBER_LENGTH_MASK: u32 = !((1 << 12) - 1);
+const HALF_LENGTH_MASK: u32 = !((1 << 12) - 1);
 
 impl Token {
 	pub const EOF: Token = Token(0b0, 0);
@@ -193,7 +207,7 @@ impl Token {
 		unit: DimensionUnit,
 	) -> Self {
 		debug_assert!(num_len <= 4097);
-		let num_len = (num_len << 12) & DIMENSION_NUMBER_LENGTH_MASK;
+		let num_len = (num_len << 12) & HALF_LENGTH_MASK;
 		let (is_known_unit, known_or_len) =
 			if unit == DimensionUnit::Unknown { (0, unit_len) } else { (0b100_00000, unit as u32) };
 		let flags: u32 = Kind::Dimension as u32 | is_known_unit | ((is_float as u32) << 5) | ((has_sign as u32) << 6);
@@ -260,13 +274,16 @@ impl Token {
 		ends_with_paren: bool,
 		contains_whitespace_after_open_paren: bool,
 		contains_escape: bool,
+		leading_length: u32,
+		trailing_length: u32,
 		len: u32,
 	) -> Self {
+		let leading_length = (leading_length << 12) & HALF_LENGTH_MASK;
 		let flags: u32 = Kind::Url as u32
 			| ((ends_with_paren as u32) << 5)
 			| ((contains_whitespace_after_open_paren as u32) << 6)
 			| ((contains_escape as u32) << 7);
-		Self((flags << 24) & KIND_MASK, len)
+		Self((flags << 24) & KIND_MASK | ((leading_length | trailing_length) & LENGTH_MASK), len)
 	}
 
 	#[inline]
@@ -342,7 +359,7 @@ impl Token {
 			if self.first_bit_is_set() {
 				self.numeric_len() + self.dimension_unit().len()
 			} else {
-				((self.0 & LENGTH_MASK) >> 12) + (self.0 & !DIMENSION_NUMBER_LENGTH_MASK)
+				((self.0 & LENGTH_MASK) >> 12) + (self.0 & !HALF_LENGTH_MASK)
 			}
 		} else {
 			self.1
@@ -504,6 +521,26 @@ impl Token {
 	#[inline]
 	pub const fn is_cdc(&self) -> bool {
 		self.kind_bits() == (Kind::CdcOrCdo as u8) && self.third_bit_is_set()
+	}
+
+	pub fn get_leading_len(&self) -> u32 {
+		match self.kind() {
+			Kind::AtKeyword | Kind::Hash | Kind::String => 1,
+			Kind::Dimension => self.numeric_len(),
+			Kind::Comment => 2,
+			Kind::Url => (self.0 & LENGTH_MASK) >> 12,
+			_ => 0,
+		}
+	}
+
+	pub fn get_trailing_len(&self) -> u32 {
+		match self.kind() {
+			Kind::Function => 1,
+			Kind::String => self.string_has_closing_quote() as u32,
+			Kind::Comment if self.comment_style().unwrap().is_block() => 2,
+			Kind::Url => self.0 & !HALF_LENGTH_MASK,
+			_ => 0,
+		}
 	}
 
 	#[inline]

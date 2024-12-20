@@ -22,7 +22,7 @@ pub use kindset::KindSet;
 pub use pairwise::PairWise;
 pub use quote_style::QuoteStyle;
 pub use source_offset::SourceOffset;
-pub use span::Span;
+pub use span::{Span, SpanContents, Spanned};
 pub use token::Token;
 pub use whitespace_style::WhitespaceStyle;
 

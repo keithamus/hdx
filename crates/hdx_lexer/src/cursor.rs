@@ -1,8 +1,7 @@
 use std::{char::REPLACEMENT_CHARACTER, fmt};
 
 use bumpalo::{collections::String, Bump};
-use hdx_atom::{Atom, Atomizable};
-use hdx_syntax::{is_escape_sequence, is_newline, is_whitespace, ParseEscape, EOF};
+use hdx_syntax::{is_newline, ParseEscape, EOF};
 
 use crate::{span::SpanContents, CommentStyle, DimensionUnit, Kind, KindSet, QuoteStyle, SourceOffset, Span, Token};
 
@@ -84,7 +83,7 @@ impl Cursor {
 				DimensionUnit::Unknown => f.write_str(self.str_slice(str))?,
 				d => {
 					f.write_str(&self.token().value().to_string())?;
-					f.write_str(&d.to_atom())?;
+					f.write_str(d.into())?;
 				}
 			},
 			Kind::Comment
@@ -123,21 +122,8 @@ impl Cursor {
 	pub fn eq_ignore_ascii_case<'a>(&self, source: &'a str, other: &'a str) -> bool {
 		debug_assert!(self != Kind::Delim && self != Kind::Url);
 		debug_assert!(other.to_ascii_lowercase() == other);
-		let kind = self.token().kind();
-		let start = self.offset().0 as usize
-			+ match kind {
-				Kind::AtKeyword | Kind::Hash | Kind::String => 1,
-				Kind::Dimension => self.token().numeric_len() as usize,
-				Kind::Comment => 2,
-				_ => 0,
-			};
-		let end = self.end_offset().0 as usize
-			- match kind {
-				Kind::Function => 1,
-				Kind::String if self.token().string_has_closing_quote() => 1,
-				Kind::Comment if self.token().comment_style().unwrap().is_block() => 2,
-				_ => 0,
-			};
+		let start = (self.offset().0 + self.token().get_leading_len()) as usize;
+		let end = (self.end_offset().0 - self.token().get_trailing_len()) as usize;
 		if !self.token().contains_escape_chars() {
 			if end - start != other.len() {
 				return false;
@@ -203,24 +189,8 @@ impl Cursor {
 
 	pub fn parse_str<'a>(&self, source: &'a str, allocator: &'a Bump) -> &'a str {
 		debug_assert!(self != Kind::Delim);
-		let kind = self.token().kind();
-		if kind == Kind::Url {
-			return self.parse_url_str(source, allocator);
-		}
-		let start = self.offset().0 as usize
-			+ match kind {
-				Kind::AtKeyword | Kind::Hash | Kind::String => 1,
-				Kind::Dimension => self.token().numeric_len() as usize,
-				Kind::Comment => 2,
-				_ => 0,
-			};
-		let end = self.end_offset().0 as usize
-			- match kind {
-				Kind::Function => 1,
-				Kind::String if self.token().string_has_closing_quote() => 1,
-				Kind::Comment if self.token().comment_style().unwrap().is_block() => 2,
-				_ => 0,
-			};
+		let start = (self.offset().0 + self.token().get_leading_len()) as usize;
+		let end = (self.end_offset().0 - self.token().get_trailing_len()) as usize;
 		if !self.token().contains_escape_chars() {
 			return &source[start..end];
 		}
@@ -231,7 +201,7 @@ impl Cursor {
 			if c == '\0' {
 				if str.is_none() {
 					str = if i == 0 {
-						Some(String::from_str_in("", allocator))
+						Some(String::new_in(allocator))
 					} else {
 						Some(String::from_str_in(&source[start..(start + i)], allocator))
 					}
@@ -241,7 +211,7 @@ impl Cursor {
 			} else if c == '\\' {
 				if str.is_none() {
 					str = if i == 0 {
-						Some(String::from_str_in("", allocator))
+						Some(String::new_in(allocator))
 					} else {
 						Some(String::from_str_in(&source[start..(start + i)], allocator))
 					}
@@ -287,97 +257,58 @@ impl Cursor {
 		}
 	}
 
-	fn parse_url_str<'a>(&self, source: &'a str, allocator: &'a Bump) -> &'a str {
-		debug_assert!(self == Kind::Url);
-		// Url is special because we need to factor in that the function identifier itself can be escaped;
-		let mut off = if self.token().contains_escape_chars() {
-			let mut chars = source[self.offset().0 as usize..].chars().peekable();
-			let mut i = 0;
-			while let Some(c) = chars.next() {
-				if c == '(' {
-					i += 1;
-					break;
-				} else if is_escape_sequence(c, *chars.peek().unwrap_or(&EOF)) {
-					let (_, n) = source[self.offset().0 as usize + i..].chars().parse_escape_sequence();
-					i += n as usize;
-				} else {
-					i += 1;
-				}
-			}
-			i
-		} else {
-			4
-		};
-		if self.token().url_has_leading_space() {
-			// Url is also special because we need to remove leading whitespace...
-			let mut chars = source[self.offset().0 as usize + off..].chars();
-			while is_whitespace(chars.next().unwrap_or(EOF)) {
-				off += 1;
-			}
+	#[inline]
+	pub fn parse_str_lower<'a>(&self, source: &'a str, allocator: &'a Bump) -> &'a str {
+		debug_assert!(self != Kind::Delim);
+		if self.token().is_lower_case() {
+			return self.parse_str(source, allocator);
 		}
-		let start = self.offset().0 as usize + off;
-		let end = self.end_offset().0 as usize - (self.token().url_has_closing_paren() as usize);
-		if self.token().can_escape() && !self.token().contains_escape_chars() {
+		let start = (self.offset().0 + self.token().get_leading_len()) as usize;
+		let end = (self.end_offset().0 - dbg!(self.token().get_trailing_len())) as usize;
+		if !self.token().contains_escape_chars() && self.token().is_lower_case() {
 			return &source[start..end];
 		}
-		let mut chars = source[start..end].chars();
+		let mut chars = source[start..end].chars().peekable();
 		let mut i = 0;
-		let mut str: Option<String<'a>> = None;
+		let mut str: String<'a> = String::new_in(allocator);
 		while let Some(c) = chars.next() {
-			match c {
-				c if c == ')' || is_whitespace(c) => {
-					break;
-				}
-				'\\' => {
-					if str.is_none() {
-						str = if i == 0 {
-							Some(String::from_str_in("", allocator))
-						} else {
-							Some(String::from_str_in(&source[start..(start + i)], allocator))
+			if c == '\0' {
+				str.push(REPLACEMENT_CHARACTER);
+				i += 1;
+			} else if c == '\\' {
+				// String has special rules
+				// https://drafts.csswg.org/css-syntax-3/#consume-string-cursor
+				if self.token().kind_bits() == Kind::String as u8 {
+					// When the token is a string, escaped EOF points are not consumed
+					// U+005C REVERSE SOLIDUS (\)
+					//   If the next input code point is EOF, do nothing.
+					//   Otherwise, if the next input code point is a newline, consume it.
+					let c = chars.peek();
+					if let Some(c) = c {
+						if is_newline(*c) {
+							chars.next();
+							if chars.peek() == Some(&'\n') {
+								i += 1;
+							}
+							i += 2;
+							chars = source[(start + i)..end].chars().peekable();
+							continue;
 						}
+					} else {
+						break;
 					}
-					i += 1;
-					let (ch, n) = source[start + i..].chars().parse_escape_sequence();
-					if is_newline(c) && source[(start + i + (n as usize))..].starts_with('\n') {
-						i += 1;
-					}
-					str.as_mut().unwrap().push(ch);
-					i += n as usize;
-					chars = source[(start + i)..end].chars();
 				}
-				c => {
-					if let Some(text) = &mut str {
-						text.push(c);
-					}
-					i += c.len_utf8();
-				}
+				i += 1;
+				let (ch, n) = source[(start + i)..].chars().parse_escape_sequence();
+				str.push(if ch == '\0' { REPLACEMENT_CHARACTER } else { ch.to_ascii_lowercase() });
+				i += n as usize;
+				chars = source[(start + i)..end].chars().peekable();
+			} else {
+				str.push(c.to_ascii_lowercase());
+				i += c.len_utf8();
 			}
 		}
-		if str.is_some() {
-			str.take().unwrap().into_bump_str()
-		} else {
-			&source[start..start + i]
-		}
-	}
-
-	#[inline]
-	pub fn parse_atom<'a>(&self, source: &'a str, allocator: &'a Bump) -> Atom {
-		Atom::from(self.parse_str(source, allocator))
-	}
-
-	#[inline]
-	pub fn parse_atom_lower<'a>(&self, source: &'a str, allocator: &'a Bump) -> Atom {
-		if self == Kind::Dimension {
-			let unit = self.token().dimension_unit();
-			if unit != DimensionUnit::Unknown {
-				return unit.to_atom();
-			}
-		}
-		let str = self.parse_str(source, allocator);
-		if self.token().is_lower_case() {
-			return Atom::from(str);
-		}
-		Atom::from(str.to_ascii_lowercase())
+		str.into_bump_str()
 	}
 }
 
@@ -528,6 +459,39 @@ impl serde::ser::Serialize for Cursor {
 #[test]
 fn size_test() {
 	assert_eq!(::std::mem::size_of::<Cursor>(), 12);
+}
+
+#[test]
+fn parse_str_lower() {
+	let allocator = Bump::new();
+	let c = Cursor::new(SourceOffset(0), Token::new_ident(true, false, false, 3));
+	assert_eq!(c.parse_str_lower("FoO", &allocator), "foo");
+	assert_eq!(c.parse_str_lower("FOO", &allocator), "foo");
+	assert_eq!(c.parse_str_lower("foo", &allocator), "foo");
+
+	let c = Cursor::new(SourceOffset(0), Token::new_string(QuoteStyle::Single, true, false, 5));
+	assert_eq!(c.parse_str_lower("'FoO'", &allocator), "foo");
+	assert_eq!(c.parse_str_lower("'FOO'", &allocator), "foo");
+
+	let c = Cursor::new(SourceOffset(0), Token::new_string(QuoteStyle::Single, false, false, 4));
+	assert_eq!(c.parse_str_lower("'FoO", &allocator), "foo");
+	assert_eq!(c.parse_str_lower("'FOO", &allocator), "foo");
+	assert_eq!(c.parse_str_lower("'foo", &allocator), "foo");
+	assert_eq!(c.parse_str_lower("'foo", &allocator), "foo");
+
+	let c = Cursor::new(SourceOffset(0), Token::new_url(true, false, false, 4, 1, 6));
+	assert_eq!(c.parse_str_lower("url(a)", &allocator), "a");
+	assert_eq!(c.parse_str_lower("url(b)", &allocator), "b");
+
+	let c = Cursor::new(SourceOffset(0), Token::new_url(true, false, false, 6, 1, 8));
+	assert_eq!(c.parse_str_lower("\\75rl(A)", &allocator), "a");
+	assert_eq!(c.parse_str_lower("u\\52l(B)", &allocator), "b");
+	assert_eq!(c.parse_str_lower("ur\\6c(C)", &allocator), "c");
+
+	let c = Cursor::new(SourceOffset(0), Token::new_url(true, false, false, 8, 1, 10));
+	assert_eq!(c.parse_str_lower("\\75\\52l(A)", &allocator), "a");
+	assert_eq!(c.parse_str_lower("u\\52\\6c(B)", &allocator), "b");
+	assert_eq!(c.parse_str_lower("\\75r\\6c(C)", &allocator), "c");
 }
 
 #[test]

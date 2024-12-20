@@ -1,7 +1,6 @@
 use bumpalo::Bump;
 use console::Style;
 use glob::glob;
-use hdx_atom::atom;
 use hdx_lexer::{Cursor, Feature, Kind, Lexer};
 use serde::{Deserialize, Serialize};
 use serde_json::{from_str, to_string_pretty};
@@ -146,7 +145,7 @@ fn convert_token(source: &str, allocator: &Bump, cursor: Cursor) -> CSSTokenizer
 			kind: Some(String::from(if cursor.token().is_int() { "integer" } else { "number" })),
 		})),
 		Kind::Dimension => {
-			if cursor.parse_atom(source, allocator) == atom!("%") {
+			if cursor.parse_str(source, allocator) == "%" {
 				Some(Structured::Number(NumberStructured { value: cursor.token().value(), kind: None }))
 			} else {
 				Some(Structured::Dimension(DimensionStructured {
@@ -180,7 +179,7 @@ fn convert_token(source: &str, allocator: &Bump, cursor: Cursor) -> CSSTokenizer
 			Kind::Delim => CSSTokenizerTestKind::Delim,
 			Kind::Number => CSSTokenizerTestKind::Number,
 			Kind::Dimension => {
-				if cursor.parse_atom(source, allocator) == atom!("%") {
+				if cursor.parse_str(source, allocator) == "%" {
 					CSSTokenizerTestKind::Percentage
 				} else {
 					CSSTokenizerTestKind::Dimension

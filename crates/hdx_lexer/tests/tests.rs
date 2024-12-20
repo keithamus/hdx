@@ -1,5 +1,4 @@
 use bumpalo::Bump;
-use hdx_atom::{atom, Atom};
 use hdx_lexer::{CommentStyle, DimensionUnit, Feature, Kind, Lexer, QuoteStyle, SourceOffset};
 
 #[test]
@@ -142,7 +141,7 @@ fn tokenizes_basic_selector() {
 		let token = lexer.advance();
 		assert_eq!(token, Kind::Ident);
 		assert_eq!(token.with_cursor(SourceOffset(1)).str_slice(source), "foo");
-		assert_eq!(token.with_cursor(SourceOffset(1)).parse_atom(source, &allocator), Atom::from("foo"));
+		assert_eq!(token.with_cursor(SourceOffset(1)).parse_str(source, &allocator), "foo");
 		assert_eq!(lexer.offset(), 4);
 	}
 	{
@@ -155,7 +154,7 @@ fn tokenizes_basic_selector() {
 		let token = lexer.advance();
 		assert_eq!(token, Kind::Ident);
 		assert_eq!(token.with_cursor(SourceOffset(5)).str_slice(source), "bar");
-		assert_eq!(token.with_cursor(SourceOffset(5)).parse_atom(source, &allocator), Atom::from("bar"));
+		assert_eq!(token.with_cursor(SourceOffset(5)).parse_str(source, &allocator), "bar");
 		assert_eq!(lexer.offset(), 8);
 	}
 	{
@@ -168,7 +167,7 @@ fn tokenizes_basic_selector() {
 		let token = lexer.advance();
 		assert_eq!(token, Kind::Ident);
 		assert_eq!(token.with_cursor(SourceOffset(9)).str_slice(source), "baz");
-		assert_eq!(token.with_cursor(SourceOffset(9)).parse_atom(source, &allocator), Atom::from("baz"));
+		assert_eq!(token.with_cursor(SourceOffset(9)).parse_str(source, &allocator), "baz");
 		assert_eq!(lexer.offset(), 12);
 	}
 	{
@@ -181,7 +180,7 @@ fn tokenizes_basic_selector() {
 		let token = lexer.advance();
 		assert_eq!(token, Kind::Ident);
 		assert_eq!(token.with_cursor(SourceOffset(13)).str_slice(source), "bing");
-		assert_eq!(token.with_cursor(SourceOffset(13)).parse_atom(source, &allocator), Atom::from("bing"));
+		assert_eq!(token.with_cursor(SourceOffset(13)).parse_str(source, &allocator), "bing");
 		assert_eq!(lexer.offset(), 17);
 	}
 	{
@@ -207,7 +206,7 @@ fn tokenizes_basic_css_file() {
 		let token = lexer.advance();
 		assert_eq!(token, Kind::Ident);
 		assert_eq!(lexer.offset(), 4);
-		assert_eq!(token.with_cursor(SourceOffset(0)).parse_atom(source, &allocator), atom!("body"));
+		assert_eq!(token.with_cursor(SourceOffset(0)).parse_str(source, &allocator), "body");
 	}
 	assert_eq!(lexer.advance(), Kind::Whitespace);
 	assert_eq!(lexer.offset(), 5);
@@ -218,7 +217,7 @@ fn tokenizes_basic_css_file() {
 	{
 		let token = lexer.advance();
 		assert_eq!(token, Kind::Ident);
-		assert_eq!(token.with_cursor(SourceOffset(7)).parse_atom(source, &allocator), atom!("color"));
+		assert_eq!(token.with_cursor(SourceOffset(7)).parse_str(source, &allocator), "color");
 	}
 	assert_eq!(lexer.offset(), 12);
 	assert_eq!(lexer.advance(), Kind::Colon);
@@ -228,7 +227,7 @@ fn tokenizes_basic_css_file() {
 	{
 		let token = lexer.advance();
 		assert_eq!(token, Kind::Ident);
-		assert_eq!(token.with_cursor(SourceOffset(14)).parse_atom(source, &allocator), atom!("black"));
+		assert_eq!(token.with_cursor(SourceOffset(14)).parse_str(source, &allocator), "black");
 	}
 	assert_eq!(lexer.offset(), 19);
 	assert_eq!(lexer.advance(), Kind::Whitespace);
@@ -254,7 +253,7 @@ fn tokenizes_skipping_whitespace_and_comments() {
 	{
 		let token = lexer.advance();
 		assert_eq!(token, Kind::Ident);
-		assert_eq!(token.with_cursor(SourceOffset(0)).parse_atom(source, &allocator), atom!("body"));
+		assert_eq!(token.with_cursor(SourceOffset(0)).parse_str(source, &allocator), "body");
 	}
 	assert_eq!(lexer.offset(), 4);
 	assert_eq!(lexer.advance(), Kind::Whitespace);
@@ -264,7 +263,7 @@ fn tokenizes_skipping_whitespace_and_comments() {
 	{
 		let token = lexer.advance();
 		assert_eq!(token, Kind::Ident);
-		assert_eq!(token.with_cursor(SourceOffset(7)).parse_atom(source, &allocator), atom!("color"));
+		assert_eq!(token.with_cursor(SourceOffset(7)).parse_str(source, &allocator), "color");
 	}
 	assert_eq!(lexer.offset(), 12);
 	assert_eq!(lexer.advance(), Kind::Colon);
@@ -273,7 +272,7 @@ fn tokenizes_skipping_whitespace_and_comments() {
 	{
 		let token = lexer.advance();
 		assert_eq!(token, Kind::Ident);
-		assert_eq!(token.with_cursor(SourceOffset(14)).parse_atom(source, &allocator), atom!("black"));
+		assert_eq!(token.with_cursor(SourceOffset(14)).parse_str(source, &allocator), "black");
 	}
 	assert_eq!(lexer.offset(), 19);
 	assert_eq!(lexer.advance(), Kind::Whitespace);

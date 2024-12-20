@@ -700,8 +700,9 @@ impl<'a> CharsConsumer for Chars<'a> {
 	}
 
 	#[must_use]
-	fn consume_url_sequence(&mut self, len: u32, ident_escaped: bool) -> Token {
-		let mut len = len;
+	fn consume_url_sequence(&mut self, leading_len: u32, ident_escaped: bool) -> Token {
+		let mut len = leading_len;
+		let mut trailing_len = 0;
 		let mut contains_escape = ident_escaped;
 		let mut ends_with_paren = false;
 		let whitespace_count = self.consume_whitespace();
@@ -714,6 +715,7 @@ impl<'a> CharsConsumer for Chars<'a> {
 				')' => {
 					self.next();
 					len += 1;
+					trailing_len += 1;
 					ends_with_paren = true;
 					break;
 				}
@@ -721,14 +723,16 @@ impl<'a> CharsConsumer for Chars<'a> {
 					break;
 				}
 				_ if is_whitespace(c) => {
-					len += self.consume_whitespace();
+					trailing_len += self.consume_whitespace();
+					len += trailing_len;
 					// Consider trailing whitespace as escape to allow the string
 					// parser to consume characters one-by-one
 					contains_escape = true;
 					match self.peek_nth(0) {
 						')' => {
-							len += 1;
 							self.next();
+							len += 1;
+							trailing_len += 1;
 							ends_with_paren = true;
 							break;
 						}
@@ -761,7 +765,7 @@ impl<'a> CharsConsumer for Chars<'a> {
 				}
 			}
 		}
-		Token::new_url(ends_with_paren, whitespace_count > 0, contains_escape, len)
+		Token::new_url(ends_with_paren, whitespace_count > 0, contains_escape, leading_len + whitespace_count, trailing_len, len)
 	}
 
 	#[must_use]
