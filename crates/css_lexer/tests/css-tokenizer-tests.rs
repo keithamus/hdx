@@ -1,7 +1,7 @@
 use bumpalo::Bump;
 use console::Style;
+use css_lexer::{Cursor, Kind, Lexer};
 use glob::glob;
-use hdx_lexer::{Cursor, Feature, Kind, Lexer};
 use serde::{Deserialize, Serialize};
 use serde_json::{from_str, to_string_pretty};
 use similar::{ChangeTag, TextDiff};
@@ -213,7 +213,7 @@ fn convert_token(source: &str, allocator: &Bump, cursor: Cursor) -> CSSTokenizer
 
 fn test_case(case: CSSTokenizerTestCase) -> u8 {
 	dbg!(&case.name);
-	let mut lexer = Lexer::new_with_features(&case.source_text, Feature::CombinedWhitespace);
+	let mut lexer = Lexer::new(&case.source_text);
 	let allocator = Bump::default();
 	let mut tokens = vec![];
 	loop {

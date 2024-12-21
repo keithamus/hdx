@@ -1,74 +1,56 @@
-#[derive(Debug, Default, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "kind", content = "value"))]
-pub enum WhitespaceStyle {
-	#[default]
-	None,
-	Space = 0b001,                                 // ' '
-	Tab = 0b010,                                   // '\t'
-	Newline = 0b011,                               // '\n'
-	NewlineUsingCarriageReturn = 0b100,            // '\r'
-	NewlineUsingCarriageReturnAndLineFeed = 0b101, // '\r\n'
-	NewlineUsingFormFeed = 0b110,                  // '\u{c}'
+use bitmask_enum::bitmask;
+
+/// A [bitmask][bitmask_enum] representing the characters that make up a [Kind::Whitespace][crate::Kind::Whitespace]
+/// token.
+///
+/// A [Token][crate::Token] with [Kind::Whitespace][crate::Kind::Whitespace] will store this data internal to the
+/// token. Using [Token::whitespace_style()][crate::Token::whitespace_style()] will return this bitmask, depending on
+/// what characters make up the whitespace token. By default the [Lexer][crate::Lexer] will produce combine multiple
+/// whitespaces into a single [Token][crate::Token], so it is possible that
+/// [Token::whitespace_style()][crate::Token::whitespace_style()] could contain all of the available bits here. With
+/// [Feature::SeparateWhitespace][crate::Feature::SeparateWhitespace] the [Lexer][crate::Lexer] will produce discrete
+/// tokens each which can only have one of the available bits in this bitmask.
+///
+/// ```
+/// use css_lexer::*;
+/// let mut lexer = Lexer::new("\n\t");
+/// {
+///		// This token will be collapsed Whitespace.
+///		let token = lexer.advance();
+///		assert_eq!(token, Kind::Whitespace);
+///		// The Whitespace is comprised of many bits:
+///		assert_eq!(token, Whitespace::Newline | Whitespace::Tab);
+/// }
+/// ```
+#[bitmask(u8)]
+#[bitmask_config(vec_debug)]
+pub enum Whitespace {
+	/// The whitespace token contains at least 1 Space (` `) character.
+	Space = 0b001,
+	/// The whitespace token contains at least 1 Tab (`\t`) character.
+	Tab = 0b010,
+	/// The whitespace token contains at least 1 Newline (`\n`) or newline-adjacent (`\r`, `\r\n`, `\u{c}`) character.
+	Newline = 0b100,
 }
 
-impl WhitespaceStyle {
-	#[inline]
-	pub const fn is_newline(&self) -> bool {
-		matches!(
-			self,
-			Self::Newline
-				| Self::NewlineUsingCarriageReturn
-				| Self::NewlineUsingCarriageReturnAndLineFeed
-				| Self::NewlineUsingFormFeed
-		)
-	}
-
+impl Whitespace {
 	pub(crate) const fn from_bits(bits: u8) -> Self {
-		match bits {
-			0b001 => Self::Space,
-			0b010 => Self::Tab,
-			0b011 => Self::Newline,
-			0b100 => Self::NewlineUsingCarriageReturn,
-			0b101 => Self::NewlineUsingCarriageReturnAndLineFeed,
-			0b110 => Self::NewlineUsingFormFeed,
-			_ => Self::None,
-		}
+		Self { bits: bits & 0b111 }
 	}
 
-	pub const fn as_str(&self) -> &str {
-		match self {
-			Self::None => "",
-			Self::Space => " ",
-			Self::Tab => "\t",
-			Self::Newline => "\n",
-			Self::NewlineUsingCarriageReturn => "\r",
-			Self::NewlineUsingCarriageReturnAndLineFeed => "\r\n",
-			Self::NewlineUsingFormFeed => "\u{c}",
-		}
+	pub(crate) const fn to_bits(&self) -> u8 {
+		self.bits
 	}
 }
 
 #[test]
 fn size_test() {
-	assert_eq!(::std::mem::size_of::<WhitespaceStyle>(), 1);
+	assert_eq!(::std::mem::size_of::<Whitespace>(), 1);
 }
 
 #[test]
 fn test_from_bits() {
-	assert_eq!(WhitespaceStyle::from_bits(WhitespaceStyle::None as u8), WhitespaceStyle::None);
-	assert_eq!(WhitespaceStyle::from_bits(WhitespaceStyle::Space as u8), WhitespaceStyle::Space);
-	assert_eq!(WhitespaceStyle::from_bits(WhitespaceStyle::Tab as u8), WhitespaceStyle::Tab);
-	assert_eq!(WhitespaceStyle::from_bits(WhitespaceStyle::Newline as u8), WhitespaceStyle::Newline);
-	assert_eq!(
-		WhitespaceStyle::from_bits(WhitespaceStyle::NewlineUsingCarriageReturn as u8),
-		WhitespaceStyle::NewlineUsingCarriageReturn
-	);
-	assert_eq!(
-		WhitespaceStyle::from_bits(WhitespaceStyle::NewlineUsingCarriageReturnAndLineFeed as u8),
-		WhitespaceStyle::NewlineUsingCarriageReturnAndLineFeed
-	);
-	assert_eq!(
-		WhitespaceStyle::from_bits(WhitespaceStyle::NewlineUsingFormFeed as u8),
-		WhitespaceStyle::NewlineUsingFormFeed
-	);
+	assert!(Whitespace::from_bits(Whitespace::Space.bits).contains(Whitespace::Space));
+	assert!(Whitespace::from_bits(Whitespace::Tab.bits).contains(Whitespace::Tab));
+	assert!(Whitespace::from_bits(Whitespace::Newline.bits).contains(Whitespace::Newline));
 }

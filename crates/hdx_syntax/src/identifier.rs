@@ -74,16 +74,6 @@ pub fn is_ident_ascii_lower(c: char) -> bool {
 }
 
 #[inline]
-pub fn is_dash_or_ident_start(c: char) -> bool {
-	c == '-' || is_ident_start(c)
-}
-
-#[inline]
-pub fn is_ident_str(s: &str) -> bool {
-	is_dash_or_ident_start(s.chars().next().unwrap()) && s.chars().all(is_ident)
-}
-
-#[inline]
 pub fn is_ident_start_sequence(c: char, c2: char, c3: char) -> bool {
 	if c == '-' {
 		return c2 == '-' || is_ident_start(c2) || is_escape_sequence(c2, c3);

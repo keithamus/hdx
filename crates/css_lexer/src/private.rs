@@ -7,7 +7,7 @@ use hdx_syntax::{
 use std::{char::REPLACEMENT_CHARACTER, str::Chars};
 
 use crate::{
-	constants::SINGLE_CHAR_TOKENS, CommentStyle, DimensionUnit, Feature, Lexer, QuoteStyle, Token, WhitespaceStyle,
+	constants::SINGLE_CHAR_TOKENS, CommentStyle, DimensionUnit, Feature, Lexer, QuoteStyle, Token, Whitespace,
 };
 
 trait CharsConsumer {
@@ -22,7 +22,7 @@ trait CharsConsumer {
 	fn consume_same(&mut self, char: char) -> u32;
 
 	#[must_use]
-	fn consume_whitespace(&mut self) -> u32;
+	fn consume_whitespace(&mut self) -> (u32, Whitespace);
 
 	#[must_use]
 	fn consume_ident_sequence(&mut self) -> (u32, bool, bool, bool);
@@ -91,13 +91,21 @@ impl<'a> CharsConsumer for Chars<'a> {
 	}
 
 	#[must_use]
-	fn consume_whitespace(&mut self) -> u32 {
+	fn consume_whitespace(&mut self) -> (u32, Whitespace) {
 		let mut i = 0;
+		let mut style = Whitespace::none();
 		while is_whitespace(self.peek_nth(0)) {
-			self.next();
+			let c = self.next().unwrap();
+			if c == ' ' {
+				style |= Whitespace::Space;
+			} else if c == '\t' {
+				style |= Whitespace::Tab;
+			} else {
+				style |= Whitespace::Newline;
+			}
 			i += 1;
 		}
-		i
+		(i, style)
 	}
 
 	#[must_use]
@@ -705,7 +713,7 @@ impl<'a> CharsConsumer for Chars<'a> {
 		let mut trailing_len = 0;
 		let mut contains_escape = ident_escaped;
 		let mut ends_with_paren = false;
-		let whitespace_count = self.consume_whitespace();
+		let (whitespace_count, _) = self.consume_whitespace();
 		if whitespace_count > 0 {
 			len += whitespace_count;
 		}
@@ -723,7 +731,7 @@ impl<'a> CharsConsumer for Chars<'a> {
 					break;
 				}
 				_ if is_whitespace(c) => {
-					trailing_len += self.consume_whitespace();
+					trailing_len += self.consume_whitespace().0;
 					len += trailing_len;
 					// Consider trailing whitespace as escape to allow the string
 					// parser to consume characters one-by-one
@@ -765,7 +773,14 @@ impl<'a> CharsConsumer for Chars<'a> {
 				}
 			}
 		}
-		Token::new_url(ends_with_paren, whitespace_count > 0, contains_escape, leading_len + whitespace_count, trailing_len, len)
+		Token::new_url(
+			ends_with_paren,
+			whitespace_count > 0,
+			contains_escape,
+			leading_len + whitespace_count,
+			trailing_len,
+			len,
+		)
 	}
 
 	#[must_use]
@@ -1042,13 +1057,13 @@ impl<'a> Lexer<'a> {
 					Token::EOF
 				}
 			}
-			c if is_whitespace(c) && self.features.intersects(Feature::CombinedWhitespace) => {
-				let len = chars.consume_whitespace();
-				Token::new_whitespace(WhitespaceStyle::None, len)
+			c if is_whitespace(c) && !self.features.contains(Feature::SeparateWhitespace) => {
+				let (len, style) = chars.consume_whitespace();
+				Token::new_whitespace(style, len)
 			}
 			// Whitespace Range
-			TAB => Token::new_whitespace(WhitespaceStyle::NewlineUsingFormFeed, chars.consume_same(TAB)),
-			SPACE => Token::new_whitespace(WhitespaceStyle::Space, chars.consume_same(SPACE)),
+			TAB => Token::new_whitespace(Whitespace::Tab, chars.consume_same(TAB)),
+			SPACE => Token::new_whitespace(Whitespace::Space, chars.consume_same(SPACE)),
 			LF | CR | FF => {
 				// https://drafts.csswg.org/css-syntax/#input-preprocessing
 				//  Replace any U+000D CARRIAGE RETURN (CR) code points, U+000C FORM FEED
@@ -1056,30 +1071,15 @@ impl<'a> Lexer<'a> {
 				//  U+000A LINE FEED (LF) in input by a single U+000A LINE FEED (LF) code
 				//  point.
 				let mut len = 0;
-				let mut style = WhitespaceStyle::Newline;
 				loop {
 					let c = chars.peek_nth(0);
 					if !matches!(c, LF | CR | FF) {
 						break;
 					}
-					if c == FF {
-						style = WhitespaceStyle::NewlineUsingFormFeed
-					}
-					if c == CR
-						&& chars.peek_nth(1) != LF
-						&& style == WhitespaceStyle::NewlineUsingCarriageReturnAndLineFeed
-					{
-						break;
-					}
-					if c == CR && chars.peek_nth(1) == LF {
-						chars.next();
-						len += 1;
-						style = WhitespaceStyle::NewlineUsingCarriageReturnAndLineFeed
-					}
 					chars.next();
 					len += 1;
 				}
-				Token::new_whitespace(style, len)
+				Token::new_whitespace(Whitespace::Newline, len)
 			}
 			// Quote Range
 			c if is_quote(c) => chars.consume_string_token(),
@@ -1179,7 +1179,7 @@ impl<'a> Lexer<'a> {
 						'!' => CommentStyle::SingleBang,
 						_ => CommentStyle::Single,
 					};
-					while !matches!(chars.peek_nth(0), LF | CR | FF) {
+					while !matches!(chars.peek_nth(0), LF | CR | FF | EOF) {
 						chars.next();
 						len += 1;
 					}

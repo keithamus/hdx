@@ -45,7 +45,7 @@ pub fn is_escape_sequence(c: char, c2: char) -> bool {
 
 #[cfg(test)]
 mod tests {
-	use crate::{identifier::is_ident_start_sequence, CR, FF, LF};
+	use super::{identifier::is_ident_start_sequence, CR, FF, LF};
 
 	#[test]
 	fn test_is_ident_start_sequence() {

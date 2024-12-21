@@ -1,6 +1,5 @@
+use crate::syntax::{is_whitespace, SURROGATE_RANGE};
 use std::{char::REPLACEMENT_CHARACTER, str::Chars};
-
-use crate::{is_whitespace, SURROGATE_RANGE};
 
 pub trait ParseEscape {
 	fn parse_escape_sequence(&mut self) -> (char, u8);

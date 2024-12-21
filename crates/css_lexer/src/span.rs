@@ -1,37 +1,63 @@
 use std::{fmt::Display, hash::Hash, ops::Add};
 
 use crate::SourceOffset;
-use miette::SourceSpan;
 
+/// Represents a range of text within a document, as a Start and End offset.
+///
+/// Effectively two [SourceOffsets][SourceOffset] in one struct.
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize))]
 pub struct Span {
-	pub start: SourceOffset,
-	pub end: SourceOffset,
+	start: SourceOffset,
+	end: SourceOffset,
 }
 
 impl Span {
+	/// Represents a fake Span with [SourceOffset::DUMMY] as the start/end offsets.
+	pub const DUMMY: Span = Span::new(SourceOffset::DUMMY, SourceOffset::DUMMY);
+
+	/// Creates a new [Span] given a starting [SourceOffset] and an ending [SourceOffset].
+	///
+	/// Asserts: start <= end
 	#[inline]
 	pub const fn new(start: SourceOffset, end: SourceOffset) -> Self {
 		debug_assert!(start.0 <= end.0);
 		Self { start, end }
 	}
 
+	/// Gets the starting [SourceOffset].
 	#[inline]
-	pub fn end(self, end: SourceOffset) -> Self {
+	pub fn start(&self) -> SourceOffset {
+		self.start
+	}
+
+	/// Gets the ending [SourceOffset].
+	#[inline]
+	pub fn end(&self) -> SourceOffset {
+		self.end
+	}
+
+	/// Extends this [Span] into a new one with the end altered to be [SourceOffset].
+	///
+	/// Asserts: start <= end
+	#[inline]
+	pub fn with_end(self, end: SourceOffset) -> Self {
 		debug_assert!(self.start <= end);
 		Self { start: self.start, end }
 	}
 
-	pub fn dummy() -> Self {
-		Self::new(SourceOffset::DUMMY, SourceOffset::DUMMY)
+	/// Checks if the given [Span] would fit entirely within this [Span].
+	pub fn contains(&self, span: Span) -> bool {
+		self.start <= span.start && span.end <= self.end
 	}
 
-	pub fn is_dummy(&self) -> bool {
-		self.start == self.end && self.end == SourceOffset::DUMMY
+	/// Checks if the [Span] has no length.
+	pub fn is_empty(&self) -> bool {
+		self.start.0 == self.end.0
 	}
 
-	pub fn size(&self) -> u32 {
+	/// Returns the length of the [Span].
+	pub fn len(&self) -> u32 {
 		debug_assert!(self.start <= self.end);
 		self.end.0 - self.start.0
 	}
@@ -41,6 +67,8 @@ impl Span {
 	}
 }
 
+/// Extends this [Span], ensuring that the resulting new [Span] is broader than both this and the given [Span].
+/// In other words the resulting span will always [Span::contains()] both [Spans][Span].
 impl Add for Span {
 	type Output = Self;
 	fn add(self, rhs: Self) -> Self::Output {
@@ -50,6 +78,7 @@ impl Add for Span {
 	}
 }
 
+/// Represents a [Span], and a pointer to the `&str` - the underlying source text that the [Span] originates from.
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize))]
 pub struct SpanContents<'a> {
@@ -58,10 +87,15 @@ pub struct SpanContents<'a> {
 }
 
 impl<'a> SpanContents<'a> {
-	pub fn new(span: Span, source: &'a str) -> SpanContents<'a> {
+	/// Create a new [SpanContents] with the given [Span] and `&str`. The lifetime of the [SpanContents] will be bound to
+	/// that of the `&str`.
+	pub const fn new(span: Span, source: &'a str) -> SpanContents<'a> {
 		SpanContents { span, source }
 	}
 
+	/// Scans the `&str`, accumulating newlines and columns until reaching the start of the [Span], returning those two
+	/// numbers. The fist [u32] will be the line number (0-indexed) that the [Span] resides on. The second [u32] will be
+	/// the column; the number of characters (0-indexed) between the last newline and the start of the [Span].
 	pub fn line_and_column(&self) -> (u32, u32) {
 		let mut line = 0;
 		let mut column = 0;
@@ -81,12 +115,19 @@ impl<'a> SpanContents<'a> {
 		(line, column)
 	}
 
+	/// Returns a new [str] slice of just the contents that the [Span] contains.
 	pub fn contents(&self) -> &'a str {
 		&self.source[self.span.start.0 as usize..self.span.end.0 as usize]
 	}
 
-	pub fn size(&self) -> u32 {
-		self.span.size()
+	/// Delegates to [Span::is_empty()].
+	pub fn is_empty(&self) -> bool {
+		self.span.is_empty()
+	}
+
+	/// Delegates to [Span::len()].
+	pub fn len(&self) -> u32 {
+		self.span.len()
 	}
 }
 
@@ -96,8 +137,15 @@ impl Display for Span {
 	}
 }
 
-impl From<Span> for SourceSpan {
+#[cfg(feature = "miette")]
+impl From<Span> for miette::SourceSpan {
 	fn from(val: Span) -> Self {
-		Self::new(miette::SourceOffset::from(val.start.0 as usize), val.size() as usize)
+		Self::new(miette::SourceOffset::from(val.start.0 as usize), val.len() as usize)
 	}
+}
+
+/// A trait representing an object that can derive its own [Span]. This is very similar to `From<MyStuct> for Span`,
+/// however `From<MyStruct> for Span` requires `Sized`, meaning it is not `dyn` compatible.
+pub trait Spanned {
+	fn to_span(&self) -> Span;
 }

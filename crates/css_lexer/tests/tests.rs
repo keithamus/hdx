@@ -1,5 +1,5 @@
 use bumpalo::Bump;
-use hdx_lexer::{CommentStyle, DimensionUnit, Feature, Kind, Lexer, QuoteStyle, SourceOffset};
+use css_lexer::{CommentStyle, DimensionUnit, Feature, Kind, Lexer, QuoteStyle, SourceOffset};
 
 #[test]
 fn tokenizes_empty() {
@@ -53,7 +53,7 @@ fn tokenizes_multiple_newlines_as_whitespace() {
 
 #[test]
 fn tokenizes_multiple_whitespace_as_whitespace() {
-	let mut lexer = Lexer::new("\t \t \t");
+	let mut lexer = Lexer::new_with_features("\t \t \t", Feature::SeparateWhitespace);
 	assert_eq!(lexer.offset(), 0);
 	assert_eq!(lexer.advance(), Kind::Whitespace);
 	assert_eq!(lexer.offset(), 1);

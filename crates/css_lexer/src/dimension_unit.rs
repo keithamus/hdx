@@ -1,3 +1,27 @@
+/// Represents a [Kind::Dimension's][crate::Kind::Dimension] unit, if it is "known": defined by the CSS grammar.
+///
+/// In order to more efficiently lex CSS, the known dimension units are encoded into [Tokens][crate::Token]. This
+/// avoids the need for subsequent downstream passes to consult the underlying string data to establish what kind of
+/// dimension unit the [Kind::Dimension][crate::Kind::Dimension] represents.
+///
+/// This enum captures all known and defined units per the CSS specifications. Custom units (e.g. those beginning with a
+/// double dash (`--`)), unknown units, or units using escape characters will all be represented using the
+/// [DimensionUnit::Unknown] variant which means the underlying `&str` must be consulted.
+///
+/// # Example
+///
+/// ```
+/// use css_lexer::*;
+/// let mut lexer = Lexer::new("10px");
+/// {
+///		let token = lexer.advance();
+///		assert_eq!(token, Kind::Dimension);
+///		assert_eq!(token, DimensionUnit::Px);
+///		let unit = token.dimension_unit();
+///		let str: &'static str = unit.into();
+///		assert_eq!(str, "px");
+/// }
+/// ```
 #[derive(Debug, Default, Copy, Clone, Eq, PartialEq, PartialOrd, Ord)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(rename_all = "lowercase"))]
 pub enum DimensionUnit {

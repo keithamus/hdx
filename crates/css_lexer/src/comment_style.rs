@@ -1,15 +1,65 @@
+/// An enum representing the "Style" the [Kind::Comment][crate::Kind::Comment] token represents.
+///
+/// A [Token][crate::Token] with [Kind::Comment][crate::Kind::Comment] will store this data internal to the token.
+/// Using [Token::comment_style()][crate::Token::comment_style()] will return this enum, depending on what characters
+/// make up the beginning of the comment token. By default the [Lexer][crate::Lexer] will only produce multi-line - aka
+/// "Block" - comments, but adding [Feature::SeparateWhitespace][crate::Feature::SingleLineComments] will allow the
+/// [Lexer][crate::Lexer] to produce single line comments too.
+///
+/// A basic [Block][CommentStyle::Block] comment style uses the `/*` leading characters, but sub-styles of the block
+/// style are also computed, for example [BlockStar][CommentStyle::BlockStar] represents a comment using the "double
+/// star" syntax to open the comment, i.e. `/**`. Determing if these comments are using these alternate style can help a
+/// parser (or writer) determine if it should retain these comments or otherwise treat them differently to regular block
+/// comments.
+///
+/// ```
+/// use css_lexer::*;
+/// let mut lexer = Lexer::new("/* Normal Comment */  /** Double Star Comment */");
+/// {
+///		// This token will be collapsed Whitespace.
+///		let token = lexer.advance();
+///		assert_eq!(token, Kind::Comment);
+///		assert_eq!(token, CommentStyle::Block);
+/// }
+/// assert_eq!(lexer.advance(), Kind::Whitespace);
+/// {
+///		// This token will be collapsed Whitespace.
+///		let token = lexer.advance();
+///		assert_eq!(token, Kind::Comment);
+///		assert_eq!(token, CommentStyle::BlockStar);
+/// }
+/// ```
 #[derive(Debug, Default, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "kind", content = "value"))]
 pub enum CommentStyle {
 	#[default]
-	Block = 0b000, // Standard: /* */
-	BlockStar = 0b001,    // Standard but with two stars: /** */
-	BlockBang = 0b010,    // Standard but with an excalamation: /*! */
-	BlockPound = 0b011,   // Standard but with a hash: /*# */
-	BlockHeading = 0b100, // Standard but with a dash or equals: /*= */ or /*- */
-	Single = 0b101,       // Non-standard two slashes '//'
-	SingleStar = 0b110,   // Non-standard two slashes and a star '//*'
-	SingleBang = 0b111,   // Non-standard two slashes and a star '//!'
+	/// A basic block comment which uses `/*` as the leading style. The third character may be a whitespace, or may
+	/// include a character that _isn't_ `!`, `#`, `=`, `-`.
+	Block = 0b000,
+	/// A block comment which uses `/**` as the leading style. The two `*`s must be adjacent, so this does not count
+	/// `/* *`.
+	BlockStar = 0b001,
+	/// A block comment which uses `/*!` as the leading style. The `*` and `!` must be adjacent, so this does not count
+	/// `/* !`.
+	BlockBang = 0b010,
+	/// A block comment which uses `/*#` as the leading style. The `*` and `#` must be adjacent, so this does not count
+	/// `/* #`.
+	BlockPound = 0b011,
+	/// A block comment which uses `/*=` or `/*-` as the leading style. The `*` and `-` or `=` must be adjacent, so this
+	/// does not count `/* #`.
+	BlockHeading = 0b100,
+	/// A basic single line  comment which uses `//` as the leading style. The third character may be a whitespace, or
+	/// may include a character that _isn't_ `*`, `!`. The [Lexer][crate::Lexer] can only produce a [Token][crate::Token]
+	/// with this style if [Feature::SingleLineComments][crate::Feature::SingleLineComments] is enabled.
+	Single = 0b101,
+	/// A single line comment which uses `//*` as the leading style. The `*` be adjacent to the `//`, so this does not
+	/// count `// *`. The [Lexer][crate::Lexer] can only produce a [Token][crate::Token] with this style if
+	/// [Feature::SingleLineComments][crate::Feature::SingleLineComments] is enabled.
+	SingleStar = 0b110,
+	/// A single line comment which uses `//!` as the leading style. The `!` be adjacent to the `//`, so this does not
+	/// count `// !`. The [Lexer][crate::Lexer] can only produce a [Token][crate::Token] with this style if
+	/// [Feature::SingleLineComments][crate::Feature::SingleLineComments] is enabled.
+	SingleBang = 0b111,
 }
 
 impl CommentStyle {

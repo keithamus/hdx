@@ -1,18 +1,18 @@
 use std::{char::REPLACEMENT_CHARACTER, fmt};
 
 use bumpalo::{collections::String, Bump};
-use hdx_syntax::{is_newline, ParseEscape, EOF};
+use hdx_syntax::{is_newline, ParseEscape};
 
 use crate::{span::SpanContents, CommentStyle, DimensionUnit, Kind, KindSet, QuoteStyle, SourceOffset, Span, Token};
 
-// The `Cursor` type is a wrapping of the immutable `Token`, plus an offset
-// into a text document (&'a str). The Cursor's knowledge of the underlying
-// text lives inside `Token`.
+/// Wraps [Token] with a [SourceOffset], allows it to reason about the character data of the source text.
+///
+///
 #[derive(Debug, Default, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct Cursor(SourceOffset, Token);
 
 impl Cursor {
-	pub const DUMMY_SITE_NUMBER_ZERO: Cursor = Cursor(SourceOffset(0), Token::NUMBER_ZERO);
+	pub const DUMMY_SITE_NUMBER_ZERO: Cursor = Cursor(SourceOffset::DUMMY, Token::NUMBER_ZERO);
 
 	#[inline(always)]
 	pub const fn new(offset: SourceOffset, token: Token) -> Self {
@@ -25,13 +25,13 @@ impl Cursor {
 	}
 
 	#[inline(always)]
-	pub const fn offset(&self) -> SourceOffset {
-		self.0
+	pub const fn token(&self) -> Token {
+		self.1
 	}
 
 	#[inline(always)]
-	pub const fn token(&self) -> Token {
-		self.1
+	pub const fn offset(&self) -> SourceOffset {
+		self.0
 	}
 
 	#[inline(always)]
@@ -60,11 +60,6 @@ impl Cursor {
 	pub fn write_str(&self, str: &str, f: &mut impl fmt::Write) -> fmt::Result {
 		match self.token().kind() {
 			Kind::Eof => {}
-			Kind::Whitespace => {
-				for _ in 0..self.token().len() {
-					f.write_str(self.token().whitespace_style().as_str())?;
-				}
-			}
 			Kind::CdcOrCdo => {
 				if self.token().is_cdc() {
 					f.write_str("-->")?
@@ -87,6 +82,7 @@ impl Cursor {
 				}
 			},
 			Kind::Comment
+			| Kind::Whitespace
 			| Kind::BadString
 			| Kind::BadUrl
 			| Kind::Ident
@@ -122,8 +118,8 @@ impl Cursor {
 	pub fn eq_ignore_ascii_case<'a>(&self, source: &'a str, other: &'a str) -> bool {
 		debug_assert!(self != Kind::Delim && self != Kind::Url);
 		debug_assert!(other.to_ascii_lowercase() == other);
-		let start = (self.offset().0 + self.token().get_leading_len()) as usize;
-		let end = (self.end_offset().0 - self.token().get_trailing_len()) as usize;
+		let start = (self.offset().0 + self.token().leading_len()) as usize;
+		let end = (self.end_offset().0 - self.token().trailing_len()) as usize;
 		if !self.token().contains_escape_chars() {
 			if end - start != other.len() {
 				return false;
@@ -189,8 +185,8 @@ impl Cursor {
 
 	pub fn parse_str<'a>(&self, source: &'a str, allocator: &'a Bump) -> &'a str {
 		debug_assert!(self != Kind::Delim);
-		let start = (self.offset().0 + self.token().get_leading_len()) as usize;
-		let end = (self.end_offset().0 - self.token().get_trailing_len()) as usize;
+		let start = (self.offset().0 + self.token().leading_len()) as usize;
+		let end = (self.end_offset().0 - self.token().trailing_len()) as usize;
 		if !self.token().contains_escape_chars() {
 			return &source[start..end];
 		}
@@ -263,8 +259,8 @@ impl Cursor {
 		if self.token().is_lower_case() {
 			return self.parse_str(source, allocator);
 		}
-		let start = (self.offset().0 + self.token().get_leading_len()) as usize;
-		let end = (self.end_offset().0 - dbg!(self.token().get_trailing_len())) as usize;
+		let start = (self.offset().0 + self.token().leading_len()) as usize;
+		let end = (self.end_offset().0 - self.token().trailing_len()) as usize;
 		if !self.token().contains_escape_chars() && self.token().is_lower_case() {
 			return &source[start..end];
 		}

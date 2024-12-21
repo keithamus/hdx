@@ -1,5 +1,35 @@
 use crate::{Kind, Token};
 
+/// Represents either the left or right [Kind] of a [PairWise] set.
+///
+/// Certain kinds have a [PairWise] equivalent:
+///  - [Kind::LeftParen] has [Kind::RightParen]
+///  - [Kind::LeftCurly] has [Kind::RightCurly]
+///  - [Kind::LeftSquare] has [Kind::RightSquare]
+///
+/// The [PairWise] enum represents either one of the above listed [Kinds][Kind]. So for example [PairWise::Paren]
+/// represents both the [Kind::LeftParen] and [Kind::RightParen].
+///
+/// # Example
+///
+/// ```
+/// use css_lexer::*;
+/// let mut lexer = Lexer::new("(a)");
+/// {
+///		let token = lexer.advance();
+///		assert_eq!(token, PairWise::Paren);
+///		assert_eq!(token, Kind::LeftParen);
+///		let pair: PairWise = token.to_pairwise().unwrap();
+///		let mut close_token;
+///		loop {
+///			close_token = lexer.advance();
+///			if close_token == pair {
+///				break;
+///			}
+///		}
+///		assert_eq!(close_token, Kind::RightParen);
+/// }
+/// ```
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize))]
 pub enum PairWise {

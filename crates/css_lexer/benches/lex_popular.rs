@@ -1,6 +1,6 @@
 use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion, Throughput};
+use css_lexer::{Kind, Lexer};
 use glob::glob;
-use hdx_lexer::{Kind, Lexer};
 #[cfg(target_family = "unix")]
 use pprof::criterion::{Output, PProfProfiler};
 use std::fs::read_to_string;
