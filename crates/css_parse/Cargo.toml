@@ -1,0 +1,36 @@
+[package]
+name = "css_parse"
+version = "0.0.1"
+authors.workspace = true
+description.workspace = true
+edition.workspace = true
+homepage.workspace = true
+keywords.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[lib]
+bench = false
+
+[dependencies]
+css_lexer = { workspace = true, features = ["miette"] }
+
+bumpalo = { workspace = true }
+smallvec = { workspace = true }
+
+miette = { workspace = true, features = ["derive"] }
+thiserror = { workspace = true }
+bitmask-enum = { workspace = true }
+serde = { workspace = true, optional = true }
+serde_json = { workspace = true, optional = true }
+phf = { workspace = true, features = ["macros", "unicase"] }
+unicase = { workspace = true }
+
+[dev-dependencies]
+glob = { workspace = true }
+
+[features]
+default = []
+testing = []
+serde = ["dep:serde", "dep:serde_json", "css_lexer/serde", "bumpalo/serde"]
+fancy = ["miette/fancy-no-backtrace"]

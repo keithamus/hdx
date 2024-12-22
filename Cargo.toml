@@ -17,7 +17,7 @@ repository = "https://github.com/keithamus/hdx"
 hdx = { version = "0.0.1", path = "crates/hdx" }
 hdx_atom = { version = "0.0.0", path = "crates/hdx_atom" }
 hdx_proc_macro = { version = "0.0.0", path = "crates/hdx_proc_macro" }
-hdx_parser = { version = "0.0.1", path = "crates/hdx_parser" }
+css_parse = { version = "0.0.1", path = "crates/css_parse" }
 css_lexer = { version = "0.0.1", path = "crates/css_lexer" }
 hdx_syntax = { version = "0.0.0", path = "crates/hdx_syntax" }
 hdx_ast = { version = "0.0.0", path = "crates/hdx_ast" }
@@ -34,6 +34,8 @@ itertools = { version = "0.13.0" }
 ropey = { version = "1.6.1" }
 smallvec = { version = "1.13.2" }
 strum = { version = "0.26.3" }
+phf = { version = "0.11.2" }
+unicase = { version = "2.8.0" }
 
 # CLI
 clap = { version = "4.5.23" }
