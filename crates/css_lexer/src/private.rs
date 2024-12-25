@@ -1,14 +1,14 @@
-use hdx_syntax::{
-	identifier::{is_ident, is_ident_ascii_lower, is_ident_ascii_start, is_ident_start, is_ident_start_sequence},
-	is_escape_sequence, is_newline, is_quote, is_sign, is_whitespace,
-	url::is_non_printable,
-	CR, EOF, FF, LF, SPACE, TAB,
+use crate::{
+	constants::SINGLE_CHAR_TOKENS,
+	syntax::{
+		identifier::{is_ident, is_ident_ascii_lower, is_ident_ascii_start, is_ident_start, is_ident_start_sequence},
+		is_escape_sequence, is_newline, is_quote, is_sign, is_whitespace,
+		url::is_non_printable,
+		CR, EOF, FF, LF, SPACE, TAB,
+	},
+	CommentStyle, DimensionUnit, Feature, Lexer, QuoteStyle, Token, Whitespace,
 };
 use std::{char::REPLACEMENT_CHARACTER, str::Chars};
-
-use crate::{
-	constants::SINGLE_CHAR_TOKENS, CommentStyle, DimensionUnit, Feature, Lexer, QuoteStyle, Token, Whitespace,
-};
 
 trait CharsConsumer {
 	fn is_last(&self) -> bool;

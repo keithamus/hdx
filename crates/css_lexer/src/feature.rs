@@ -1,6 +1,6 @@
 use bitmask_enum::bitmask;
 
-/// A set of runtime feature flags which can be enabled individually or in combination, which will change the way 
+/// A set of runtime feature flags which can be enabled individually or in combination, which will change the way
 /// individual [Lexer][crate::Lexer] produces [Tokens][crate::Token].
 ///
 /// To build multiple features, use the bitwise OR operator.

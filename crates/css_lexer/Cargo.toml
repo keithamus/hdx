@@ -13,8 +13,6 @@ repository.workspace = true
 bench = false
 
 [dependencies]
-hdx_syntax.workspace = true
-
 bumpalo = { workspace = true, features = ["boxed", "collections"] }
 bitmask-enum = { workspace = true }
 

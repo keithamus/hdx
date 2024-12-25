@@ -49,6 +49,9 @@ impl KindSet {
 	pub const LEFT_CURLY_RIGHT_PAREN_COMMA_OR_SEMICOLON: KindSet =
 		KindSet::new(&[Kind::LeftCurly, Kind::RightParen, Kind::Comma, Kind::Semicolon]);
 
+	/// A [KindSet] that matches _any_ token.
+	pub const ANY: KindSet = KindSet(u32::MAX);
+
 	/// Creates a new [KindSet] with the combination of all given [Kinds][Kind].
 	///
 	/// This function is marked `const` to allow creation of const [KindSets][KindSet].

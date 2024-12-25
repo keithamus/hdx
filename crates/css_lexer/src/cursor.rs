@@ -1,9 +1,10 @@
-use std::{char::REPLACEMENT_CHARACTER, fmt};
-
+use crate::{
+	span::SpanContents,
+	syntax::{is_newline, ParseEscape},
+	CommentStyle, DimensionUnit, Kind, KindSet, QuoteStyle, SourceOffset, Span, Token,
+};
 use bumpalo::{collections::String, Bump};
-use hdx_syntax::{is_newline, ParseEscape};
-
-use crate::{span::SpanContents, CommentStyle, DimensionUnit, Kind, KindSet, QuoteStyle, SourceOffset, Span, Token};
+use std::{char::REPLACEMENT_CHARACTER, fmt};
 
 /// Wraps [Token] with a [SourceOffset], allows it to reason about the character data of the source text.
 ///
