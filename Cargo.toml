@@ -15,7 +15,6 @@ repository = "https://github.com/keithamus/hdx"
 [workspace.dependencies]
 # Local packages
 hdx = { version = "0.0.1", path = "crates/hdx" }
-hdx_atom = { version = "0.0.0", path = "crates/hdx_atom" }
 hdx_proc_macro = { version = "0.0.0", path = "crates/hdx_proc_macro" }
 css_parse = { version = "0.0.1", path = "crates/css_parse" }
 css_lexer = { version = "0.0.1", path = "crates/css_lexer" }
