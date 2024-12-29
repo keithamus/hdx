@@ -1,5 +1,5 @@
 ---
-source: crates/hdx_ast/tests/basic_snapshots.rs
+source: crates/css_ast/tests/basic_snapshots.rs
 expression: result.output.unwrap()
 ---
 {
@@ -16,11 +16,12 @@ expression: result.output.unwrap()
         {
           "precondition": null,
           "media_type": {
-            "type": "All",
+            "type": "Screen",
             "kind": "Ident",
             "offset": 7,
             "len": 6
           },
+          "and": null,
           "condition": null
         }
       ],
@@ -59,30 +60,32 @@ expression: result.output.unwrap()
               "len": 1
             },
             "declarations": [
-              {
-                "type": "property",
-                "name": {
-                  "kind": "Ident",
-                  "offset": 26,
-                  "len": 5
-                },
-                "colon": {
-                  "kind": "Colon",
-                  "offset": 31,
-                  "len": 1
-                },
-                "value": {
-                  "Named": {
-                    "black": {
-                      "kind": "Ident",
-                      "offset": 33,
-                      "len": 5
+              [
+                {
+                  "type": "property",
+                  "name": {
+                    "kind": "Ident",
+                    "offset": 26,
+                    "len": 5
+                  },
+                  "colon": {
+                    "kind": "Colon",
+                    "offset": 31,
+                    "len": 1
+                  },
+                  "value": {
+                    "Named": {
+                      "Black": {
+                        "kind": "Ident",
+                        "offset": 33,
+                        "len": 5
+                      }
                     }
-                  }
+                  },
+                  "important": null
                 },
-                "important": null,
-                "semicolon": null
-              }
+                null
+              ]
             ],
             "rules": [],
             "close": {

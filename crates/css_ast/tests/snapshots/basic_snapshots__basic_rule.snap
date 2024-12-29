@@ -1,5 +1,5 @@
 ---
-source: crates/hdx_ast/tests/basic_snapshots.rs
+source: crates/css_ast/tests/basic_snapshots.rs
 expression: result.output.unwrap()
 ---
 {
@@ -33,35 +33,38 @@ expression: result.output.unwrap()
         "len": 1
       },
       "declarations": [
-        {
-          "type": "property",
-          "name": {
-            "kind": "Ident",
-            "offset": 9,
-            "len": 9
-          },
-          "colon": {
-            "kind": "Colon",
-            "offset": 18,
-            "len": 1
-          },
-          "value": {
-            "LengthPercentage": {
-              "type": "px",
-              "value": {
-                "kind": "Dimension",
-                "len": 5,
-                "unit": "px"
+        [
+          {
+            "type": "property",
+            "name": {
+              "kind": "Ident",
+              "offset": 9,
+              "len": 9
+            },
+            "colon": {
+              "kind": "Colon",
+              "offset": 18,
+              "len": 1
+            },
+            "value": {
+              "LengthPercentage": {
+                "type": "px",
+                "value": {
+                  "kind": "Dimension",
+                  "offset": 20,
+                  "len": 5,
+                  "unit": "px"
+                }
               }
-            }
+            },
+            "important": null
           },
-          "important": null,
-          "semicolon": {
+          {
             "kind": "Semicolon",
             "offset": 25,
             "len": 1
           }
-        }
+        ]
       ],
       "rules": [],
       "close": {
