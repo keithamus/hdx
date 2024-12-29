@@ -18,7 +18,6 @@ hdx = { version = "0.0.1", path = "crates/hdx" }
 hdx_proc_macro = { version = "0.0.0", path = "crates/hdx_proc_macro" }
 css_parse = { version = "0.0.1", path = "crates/css_parse" }
 css_lexer = { version = "0.0.1", path = "crates/css_lexer" }
-hdx_syntax = { version = "0.0.0", path = "crates/hdx_syntax" }
 css_ast = { version = "0.0.0", path = "crates/css_ast" }
 hdx_transform = { version = "0.0.0", path = "crates/hdx_transform" }
 hdx_highlight = { version = "0.0.0", path = "crates/hdx_highlight" }
@@ -34,7 +33,6 @@ ropey = { version = "1.6.1" }
 smallvec = { version = "1.13.2" }
 strum = { version = "0.26.3" }
 phf = { version = "0.11.2" }
-unicase = { version = "2.8.0" }
 
 # CLI
 clap = { version = "4.5.23" }

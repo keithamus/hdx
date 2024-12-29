@@ -20,8 +20,7 @@ hdx_proc_macro = { workspace = true }
 bumpalo = { workspace = true, features = ["collections", "boxed"] }
 miette = { workspace = true, features = ["derive"] }
 smallvec = { workspace = true }
-phf = { workspace = true, features = ["macros", "unicase"] }
-unicase = { workspace = true }
+phf = { workspace = true, features = ["macros"] }
 
 serde = { workspace = true, optional = true }
 serde_json = { workspace = true, optional = true }

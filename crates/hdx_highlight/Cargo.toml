@@ -10,14 +10,14 @@ license.workspace = true
 repository.workspace = true
 
 [dependencies]
-hdx_ast = { workspace = true }
-hdx_lexer = { workspace = true }
+css_ast = { workspace = true }
+css_lexer = { workspace = true }
 
 bitmask-enum = { workspace = true }
 strum = { workspace = true, features = ["derive"] }
 
 [dev-dependencies]
-hdx_parser = { workspace = true }
+css_parse = { workspace = true }
 bumpalo = { workspace = true }
 insta = { workspace = true, features = ["json"] }
 similar = { workspace = true }

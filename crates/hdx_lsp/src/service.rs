@@ -1,9 +1,13 @@
 use bumpalo::Bump;
 use crossbeam_channel::{bounded, Receiver, Sender};
+use css_ast::{
+	completions::{CompletionContext, CompletionItem, CompletionList},
+	css::{StyleSheet, Visitable},
+	traits::NodeAtSpan,
+};
+use css_parse::{Cursor, Features, Parser, ParserReturn, SourceOffset, Span, Token};
 use dashmap::DashMap;
-use hdx_ast::css::{StyleSheet, Visitable};
 use hdx_highlight::{Highlight, SemanticKind, SemanticModifier, TokenHighlighter};
-use hdx_parser::{Features, Parser, ParserReturn};
 use itertools::Itertools;
 use lsp_types::Uri;
 use ropey::Rope;

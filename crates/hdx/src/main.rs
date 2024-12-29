@@ -1,8 +1,8 @@
 use bumpalo::Bump;
 use clap::{crate_version, Parser, Subcommand};
-use hdx_ast::css::StyleSheet;
+use css_ast::css::StyleSheet;
+use css_parse::{CursorStream, ToCursors};
 use hdx_lsp::{LSPService, Server};
-use hdx_parser::{CursorStream, ToCursors};
 use miette::{GraphicalReportHandler, GraphicalTheme, NamedSource};
 use std::io;
 use tracing::{level_filters::LevelFilter, trace};
@@ -85,7 +85,7 @@ fn main() {
 			let source_text = std::fs::read_to_string(input).unwrap();
 			println!("{}", source_text);
 			let allocator = Bump::default();
-			let result = hdx_parser::Parser::new(&allocator, source_text.as_str(), hdx_parser::Features::default())
+			let result = css_parse::Parser::new(&allocator, source_text.as_str(), hdx_parser::Features::default())
 				.parse_entirely::<StyleSheet>();
 			if let Some(stylesheet) = &result.output {
 				println!("{:#?}", stylesheet);
@@ -109,7 +109,7 @@ fn main() {
 			let source_text = std::fs::read_to_string(file_name).unwrap();
 			let allocator = Bump::default();
 			let start = std::time::Instant::now();
-			let result = hdx_parser::Parser::new(&allocator, source_text.as_str(), hdx_parser::Features::default())
+			let result = css_parse::Parser::new(&allocator, source_text.as_str(), hdx_parser::Features::default())
 				.parse_entirely::<StyleSheet>();
 			{
 				if result.output.is_some() {

@@ -1,8 +1,8 @@
 use bumpalo::Bump;
 use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion, Throughput};
+use css_ast::css::{visit::VisitableMut, StyleSheet};
+use css_parse::{Features, Parser};
 use glob::glob;
-use hdx_ast::css::{visit::VisitableMut, StyleSheet};
-use hdx_parser::{Features, Parser};
 use hdx_transform::ReduceInitial;
 #[cfg(target_family = "unix")]
 use pprof::criterion::{Output, PProfProfiler};

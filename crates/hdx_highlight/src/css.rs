@@ -1,8 +1,8 @@
-use hdx_ast::css::{
+use css_ast::{
 	Property, PropertyRule, PropertyRuleProperty, PropertyRuleStyleValue, PseudoClass, StyleDeclaration, StyleValue,
 	Tag, Visit,
 };
-use hdx_lexer::Span;
+use css_lexer::Span;
 
 use crate::{SemanticKind, SemanticModifier, TokenHighlighter};
 

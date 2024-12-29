@@ -2,8 +2,8 @@ use core::fmt;
 
 use crate::TokenHighlighter;
 use bumpalo::{collections::Vec, Bump};
-use hdx_lexer::Cursor;
-use hdx_parser::CursorSink;
+use css_lexer::Cursor;
+use css_parse::CursorSink;
 
 pub(crate) struct HTMLHighlightCursorStream<'a> {
 	cursors: Vec<'a, Cursor>,
@@ -69,8 +69,8 @@ impl<'a> CursorSink for HTMLHighlightCursorStream<'a> {
 macro_rules! assert_highlight {
 	($name: literal, $str: literal $(,)*) => {
 		use bumpalo::{collections::String, Bump};
-		use hdx_ast::css::{visit::Visitable, StyleSheet};
-		use hdx_parser::{Features, Parser, ToCursors};
+		use css_ast::css::{visit::Visitable, StyleSheet};
+		use css_parse::{Features, Parser, ToCursors};
 
 		let bump = Bump::default();
 		let mut parser = Parser::new(&bump, $str, Features::default());

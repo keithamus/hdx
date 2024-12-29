@@ -1,7 +1,7 @@
 use bumpalo::Bump;
-use hdx_ast::css::StyleSheet;
-use hdx_lexer::{Kind, Lexer};
-use hdx_parser::{CursorStream, Features, Parser, ToCursors};
+use css_ast::css::StyleSheet;
+use css_lexer::{Kind, Lexer};
+use css_parse::{CursorStream, Features, Parser, ToCursors};
 #[cfg(not(feature = "fancy"))]
 use miette::JSONReportHandler;
 use miette::NamedSource;

@@ -23,8 +23,7 @@ thiserror = { workspace = true }
 bitmask-enum = { workspace = true }
 serde = { workspace = true, optional = true }
 serde_json = { workspace = true, optional = true }
-phf = { workspace = true, features = ["macros", "unicase"] }
-unicase = { workspace = true }
+phf = { workspace = true, features = ["macros"] }
 
 [dev-dependencies]
 glob = { workspace = true }

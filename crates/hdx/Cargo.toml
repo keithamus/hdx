@@ -10,11 +10,9 @@ license.workspace = true
 repository.workspace = true
 
 [dependencies]
-hdx_lexer = { workspace = true }
-hdx_syntax = { workspace = true }
-hdx_ast = { workspace = true }
-hdx_parser = { workspace = true }
-hdx_atom = { workspace = true }
+css_lexer = { workspace = true }
+css_ast = { workspace = true }
+css_parse = { workspace = true }
 hdx_lsp = { workspace = true }
 
 clap = { workspace = true, features = ["derive", "cargo"] }
@@ -30,8 +28,8 @@ tracing-subscriber = { workspace = true }
 
 [features]
 default = ["fancy"]
-serde = ["dep:serde", "dep:serde_json", "hdx_lexer/serde"] 
-fancy = ["hdx_ast/fancy", "hdx_parser/fancy", "miette/fancy"]
+serde = ["dep:serde", "dep:serde_json", "css_lexer/serde"] 
+fancy = ["css_ast/fancy", "css_parse/fancy", "miette/fancy"]
 
 [[bin]]
 name = "hdx"
