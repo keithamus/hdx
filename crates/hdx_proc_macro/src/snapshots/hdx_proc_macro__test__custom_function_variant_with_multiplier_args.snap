@@ -2,61 +2,67 @@
 source: crates/hdx_proc_macro/src/test.rs
 expression: pretty
 ---
+::css_parse::keyword_set!(FooKeywords { Normal : "normal", });
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 enum Foo<'a> {
-    Normal(::hdx_parser::T![Ident]),
+    Normal(::css_parse::T![Ident]),
     StylesetFunction(
-        ::hdx_parser::T![Function],
+        ::css_parse::T![Function],
         ::bumpalo::collections::Vec<
             'a,
-            (types::FeatureValueName, Option<::hdx_parser::T![,]>),
+            (types::FeatureValueName, Option<::css_parse::T![,]>),
         >,
-        Option<::hdx_parser::T![')']>,
+        Option<::css_parse::T![')']>,
     ),
 }
 #[automatically_derived]
-impl<'a> ::hdx_parser::Peek<'a> for Foo<'a> {
-    fn peek(p: &::hdx_parser::Parser<'a>) -> bool {
-        use ::hdx_parser::Peek;
-        p.peek::<::hdx_parser::T![Ident]>() || p.peek::<::hdx_parser::T![Function]>()
+impl<'a> ::css_parse::Peek<'a> for Foo<'a> {
+    fn peek(p: &::css_parse::Parser<'a>, c: ::css_lexer::Cursor) -> bool {
+        use ::css_parse::Peek;
+        p.peek::<::css_parse::T![Ident]>() || p.peek::<::css_parse::T![Function]>()
     }
 }
 #[automatically_derived]
-impl<'a> ::hdx_parser::Parse<'a> for Foo<'a> {
-    fn parse(p: &mut ::hdx_parser::Parser<'a>) -> ::hdx_parser::Result<Self> {
-        use ::hdx_parser::Parse;
-        if p.peek::<::hdx_parser::T![Ident]>() {
+impl<'a> ::css_parse::Parse<'a> for Foo<'a> {
+    fn parse(p: &mut ::css_parse::Parser<'a>) -> ::css_parse::Result<Self> {
+        use ::css_parse::Parse;
+        if p.peek::<::css_parse::T![Ident]>() {
             let c = p.peek_n(1);
-            match p.parse_atom_lower(c) {
-                ::hdx_atom::atom!("normal") => {
-                    return Ok(Self::Normal(p.parse::<::hdx_parser::T![Ident]>()?));
+            let keywords = p.parse::<FooKeywords>();
+            match keywords {
+                Ok(FooKeywords::Normal(_)) => {
+                    return Ok(Self::Normal(p.parse::<::css_parse::T![Ident]>()?));
                 }
-                atom => {}
+                Err(_) => {}
             }
         }
-        let function = p.parse::<::hdx_parser::T![Function]>()?;
-        let c: hdx_lexer::Cursor = function.into();
-        let atom = p.parse_atom_lower(c.into());
-        if atom != ::hdx_atom::atom!("styleset") {
-            return Err(::hdx_parser::diagnostics::UnexpectedFunction(atom, c.into()))?;
+        let function = p.parse::<::css_parse::T![Function]>()?;
+        let c: css_lexer::Cursor = function.into();
+        if p.eq_ignore_ascii_case(c, "styleset") {
+            return Err(
+                ::css_parse::diagnostics::UnexpectedFunction(
+                    p.parse_str(c).into(),
+                    c.into(),
+                ),
+            )?;
         }
         let mut val = ::bumpalo::collections::Vec::new_in(p.bump());
         loop {
             let item = p.parse::<types::FeatureValueName>()?;
-            let comma = p.parse_if_peek::<::hdx_parser::T![,]>()?;
+            let comma = p.parse_if_peek::<::css_parse::T![,]>()?;
             val.push((item, comma));
             if comma.is_none() {
                 break;
             }
         }
-        let close = p.parse_if_peek::<::hdx_parser::T![')']>()?;
+        let close = p.parse_if_peek::<::css_parse::T![')']>()?;
         Ok(Self::StylesetFunction(function, val, close))
     }
 }
 #[automatically_derived]
-impl<'a> ::hdx_parser::ToCursors for Foo<'a> {
-    fn to_cursors(&self, s: &mut impl ::hdx_parser::CursorSink) {
+impl<'a> ::css_parse::ToCursors for Foo<'a> {
+    fn to_cursors(&self, s: &mut impl ::css_parse::CursorSink) {
         match self {
             Self::Normal(inner) => {
                 s.append(inner.into());
@@ -65,7 +71,7 @@ impl<'a> ::hdx_parser::ToCursors for Foo<'a> {
                 s.append(function.into());
                 for item in val {
                     let (item, comma) = item;
-                    ::hdx_parser::ToCursors::to_cursors(item, s);
+                    ::css_parse::ToCursors::to_cursors(item, s);
                     if let Some(comma) = comma {
                         s.append(comma.into());
                     }

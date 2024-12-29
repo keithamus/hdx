@@ -2,47 +2,49 @@
 source: crates/hdx_proc_macro/src/test.rs
 expression: pretty
 ---
+::css_parse::keyword_set!(FooKeywords { None : "none", });
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 enum Foo {
-    None(::hdx_parser::T![Ident]),
-    CustomIdent(::hdx_parser::T![Ident]),
+    None(::css_parse::T![Ident]),
+    CustomIdent(::css_parse::T![Ident]),
 }
 #[automatically_derived]
-impl<'a> ::hdx_parser::Peek<'a> for Foo {
-    fn peek(p: &::hdx_parser::Parser<'a>) -> bool {
-        use ::hdx_parser::Peek;
-        p.peek::<::hdx_parser::T![Ident]>()
+impl<'a> ::css_parse::Peek<'a> for Foo {
+    fn peek(p: &::css_parse::Parser<'a>, c: ::css_lexer::Cursor) -> bool {
+        use ::css_parse::Peek;
+        p.peek::<::css_parse::T![Ident]>()
     }
 }
 #[automatically_derived]
-impl<'a> ::hdx_parser::Parse<'a> for Foo {
-    fn parse(p: &mut ::hdx_parser::Parser<'a>) -> ::hdx_parser::Result<Self> {
-        use ::hdx_parser::Parse;
-        if p.peek::<::hdx_parser::T![Ident]>() {
+impl<'a> ::css_parse::Parse<'a> for Foo {
+    fn parse(p: &mut ::css_parse::Parser<'a>) -> ::css_parse::Result<Self> {
+        use ::css_parse::Parse;
+        if p.peek::<::css_parse::T![Ident]>() {
             let c = p.peek_n(1);
-            match p.parse_atom_lower(c) {
-                ::hdx_atom::atom!("none") => {
-                    return Ok(Self::None(p.parse::<::hdx_parser::T![Ident]>()?));
+            let keywords = p.parse::<FooKeywords>();
+            match keywords {
+                Ok(FooKeywords::None(_)) => {
+                    return Ok(Self::None(p.parse::<::css_parse::T![Ident]>()?));
                 }
-                _ => {
-                    return Ok(Self::CustomIdent(p.parse::<::hdx_parser::T![Ident]>()?));
+                Err(_) => {
+                    return Ok(Self::CustomIdent(p.parse::<::css_parse::T![Ident]>()?));
                 }
             }
         }
-        let c: ::hdx_lexer::Cursor = p.parse::<::hdx_parser::T![Any]>()?.into();
-        Err(::hdx_parser::diagnostics::Unexpected(c.into(), c.into()))?
+        let c: ::css_lexer::Cursor = p.parse::<::css_parse::T![Any]>()?.into();
+        Err(::css_parse::diagnostics::Unexpected(c.into(), c.into()))?
     }
 }
 #[automatically_derived]
-impl ::hdx_parser::ToCursors for Foo {
-    fn to_cursors(&self, s: &mut impl ::hdx_parser::CursorSink) {
+impl ::css_parse::ToCursors for Foo {
+    fn to_cursors(&self, s: &mut impl ::css_parse::CursorSink) {
         match self {
             Self::None(inner) => {
                 s.append(inner.into());
             }
             Self::CustomIdent(inner) => {
-                ::hdx_parser::ToCursors::to_cursors(inner, s);
+                ::css_parse::ToCursors::to_cursors(inner, s);
             }
         }
     }

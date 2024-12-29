@@ -1,4 +1,3 @@
-use hdx_atom::{atom, Atom};
 use itertools::{Itertools, Position};
 use proc_macro2::{Span, TokenStream};
 use quote::{format_ident, quote, ToTokens, TokenStreamExt};
@@ -43,6 +42,10 @@ pub trait GenerateToCursorsImpl {
 	fn will_write_cond_steps(&self, _capture: TokenStream) -> Option<TokenStream> {
 		None
 	}
+}
+
+pub trait GenerateKeywordSet {
+	fn generate_keyword_set(&self, ident: &Ident) -> TokenStream;
 }
 
 #[derive(Debug, PartialEq, Clone)]
@@ -91,7 +94,7 @@ pub(crate) enum DefRange {
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub(crate) struct DefIdent(pub Atom);
+pub(crate) struct DefIdent(pub String);
 
 #[derive(Debug, PartialEq, Clone)]
 pub(crate) enum DefType {
@@ -237,7 +240,7 @@ impl Parse for DefIdent {
 		let mut last_was_ident = false;
 		loop {
 			if input.peek(Token![>]) || input.peek(token::Bracket) {
-				return Ok(Self(Atom::from(str)));
+				return Ok(Self(str.into()));
 			} else if input.peek(Ident::peek_any) && !last_was_ident {
 				last_was_ident = true;
 				let ident = input.call(Ident::parse_any)?;
@@ -252,7 +255,7 @@ impl Parse for DefIdent {
 				input.parse::<Token![-]>()?;
 				str.push('-');
 			} else {
-				return Ok(Self(Atom::from(str)));
+				return Ok(Self(str.into()));
 			}
 		}
 	}
@@ -262,8 +265,8 @@ impl Parse for DefType {
 	fn parse(input: ParseStream) -> Result<Self> {
 		input.parse::<Token![<]>()?;
 		let ident = if input.peek(LitStr) {
-			let atom = input.parse::<StrWrapped<DefIdent>>()?.0 .0;
-			DefIdent(Atom::from(format!("{}-style-value", atom)))
+			let str = input.parse::<StrWrapped<DefIdent>>()?.0 .0;
+			DefIdent(format!("{}-style-value", str))
 		} else {
 			input.parse::<DefIdent>()?
 		};
@@ -273,24 +276,24 @@ impl Parse for DefType {
 			bracketed!(content in input);
 			checks = content.parse::<DefRange>()?;
 		}
-		let ty = match ident.0 {
-			atom!("length") => Self::Length(checks),
-			atom!("length-percentage") => Self::LengthPercentage(checks),
-			atom!("angle") => Self::Angle(checks),
-			atom!("time") => Self::Time(checks),
-			atom!("resolution") => Self::Resolution(checks),
-			atom!("integer") => Self::Integer(checks),
-			atom!("number") => Self::Number(checks),
-			atom!("percentage") => Self::Percentage(checks),
-			atom!("string") => Self::String,
-			atom!("color") => Self::Color,
-			atom!("image") => Self::Image,
-			atom!("image-1D") => Self::Image1D,
-			atom!("dashed-ident") => Self::DashedIdent,
-			atom!("custom-ident") => Self::CustomIdent,
-			atom => {
-				let iden = DefIdent(Atom::from(pascal(atom.to_string())));
-				let mut str = pascal(atom.to_string()).to_owned();
+		let ty = match ident.0.as_str() {
+			"length" => Self::Length(checks),
+			"length-percentage" => Self::LengthPercentage(checks),
+			"angle" => Self::Angle(checks),
+			"time" => Self::Time(checks),
+			"resolution" => Self::Resolution(checks),
+			"integer" => Self::Integer(checks),
+			"number" => Self::Number(checks),
+			"percentage" => Self::Percentage(checks),
+			"string" => Self::String,
+			"color" => Self::Color,
+			"image" => Self::Image,
+			"image-1D" => Self::Image1D,
+			"dashed-ident" => Self::DashedIdent,
+			"custom-ident" => Self::CustomIdent,
+			str => {
+				let iden = DefIdent(pascal(str.to_string()));
+				let mut str = pascal(str.into()).to_owned();
 				if input.peek(token::Paren) {
 					let content;
 					parenthesized!(content in input);
@@ -299,7 +302,7 @@ impl Parse for DefType {
 					}
 					str.push_str("Function");
 				}
-				Self::Custom(iden, DefIdent(Atom::from(str)))
+				Self::Custom(iden, DefIdent(str.into()))
 			}
 		};
 		input.parse::<Token![>]>()?;
@@ -372,18 +375,18 @@ impl Def {
 	pub fn to_variant_type(&self, size_hint: usize, extra: Option<TokenStream>) -> TokenStream {
 		let name = self.to_variant_name(size_hint);
 		match self {
-			Self::Ident(_) => quote! { #name(::hdx_parser::T![Ident]) },
+			Self::Ident(_) => quote! { #name(::css_parse::T![Ident]) },
 			Self::Type(v) => v.to_variant_type(size_hint, extra),
 			Self::Function(_, ty) => {
 				let life = if self.requires_allocator_lifetime() { Some(quote! { <'a> }) } else { None };
 				match ty.deref() {
 					Def::Type(ty) => {
 						let inner = ty.to_type_name();
-						quote! { #name(::hdx_parser::T![Function], #inner #life, Option<::hdx_parser::T![')']>) }
+						quote! { #name(::css_parse::T![Function], #inner #life, Option<::css_parse::T![')']>) }
 					}
 					Def::Multiplier(def, style) => {
 						let extra = if matches!(style, DefMultiplierStyle::OneOrMoreCommaSeparated(_)) {
-							Some(quote! { Option<::hdx_parser::T![,]> })
+							Some(quote! { Option<::css_parse::T![,]> })
 						} else {
 							None
 						};
@@ -394,7 +397,7 @@ impl Def {
 								todo!("function multiplier inner variant")
 							}
 						};
-						quote! { #name(::hdx_parser::T![Function], #inner, Option<::hdx_parser::T![')']>) }
+						quote! { #name(::css_parse::T![Function], #inner, Option<::css_parse::T![')']>) }
 					}
 					_ => {
 						dbg!("TODO function variant", self);
@@ -420,7 +423,7 @@ impl Def {
 			}
 			Self::Multiplier(def, style) => {
 				let extra = if matches!(style, DefMultiplierStyle::OneOrMoreCommaSeparated(_)) {
-					Some(quote! { Option<::hdx_parser::T![,]> })
+					Some(quote! { Option<::css_parse::T![,]> })
 				} else {
 					None
 				};
@@ -469,9 +472,9 @@ impl Def {
 		let steps = self.peek_steps();
 		quote! {
 			#[automatically_derived]
-			impl<'a> ::hdx_parser::Peek<'a> for #ident #gen {
-				fn peek(p: &::hdx_parser::Parser<'a>) -> bool {
-					use ::hdx_parser::Peek;
+			impl<'a> ::css_parse::Peek<'a> for #ident #gen {
+				fn peek(p: &::css_parse::Parser<'a>, c: ::css_lexer::Cursor) -> bool {
+					use ::css_parse::Peek;
 					#steps
 				}
 			}
@@ -479,6 +482,7 @@ impl Def {
 	}
 
 	pub fn generate_parse_trait_implementation(&self, ident: &Ident, generics: &mut Generics) -> TokenStream {
+		let keyword_set_ident = format_ident!("{}Keywords", ident);
 		let steps = match self {
 			Self::Ident(_) => quote! { compile_error!("cannot generate top level singular keyword") },
 			Self::Type(ty) => {
@@ -536,24 +540,27 @@ impl Def {
 				let keyword_if = if keywords.is_empty() {
 					None
 				} else {
-					let mut last_arm = if other_if.is_empty() {
+					let mut else_arm = if other_if.is_empty() {
 						quote! {
-							atom => Err(::hdx_parser::diagnostics::UnexpectedIdent(atom, c.into()))?
+							else {
+								let c: ::css_lexer::Cursor = p.parse::<::css_parse::T![Any]>()?.into();
+								Err(::css_parse::diagnostics::UnexpectedIdent(p.parse_str(c).into(), c.into()))?
+							}
 						}
 					} else {
 						// likely cant Err as other Alternatives might use idents
-						quote! { atom => {} }
+						quote! {}
 					};
 					let keyword_arms = keywords.into_iter().map(|def| {
 						if let Def::Ident(ident) = def {
-							let atom = ident.to_atom_macro();
+							let keyword_variant = format_ident!("{}", pascal(ident.to_string()));
 							let variant_name = ident.to_variant_name(0);
-							quote! { #atom => {
-								return Ok(Self::#variant_name(p.parse::<::hdx_parser::T![Ident]>()?));
+							quote! { #keyword_set_ident::#keyword_variant(c) => {
+								return Ok(Self::#variant_name(<::css_parse::T![Ident]>::build(p, c)));
 							} }
 						} else if def == &Def::Type(DefType::CustomIdent) {
-							last_arm = quote! {
-								_ => { return Ok(Self::CustomIdent(p.parse::<::hdx_parser::T![Ident]>()?)); }
+							else_arm = quote! {
+								else { return Ok(Self::CustomIdent(p.parse::<::css_parse::T![Ident]>()?)); }
 							};
 							quote! {}
 						} else {
@@ -562,20 +569,19 @@ impl Def {
 					});
 					let error = if other_if.is_empty() {
 						Some(quote! {
-							let c: ::hdx_lexer::Cursor = p.parse::<::hdx_parser::T![Any]>()?.into();
-							Err(::hdx_parser::diagnostics::Unexpected(c.into(), c.into()))?
+							let c: ::css_lexer::Cursor = p.parse::<::css_parse::T![Any]>()?.into();
+							Err(::css_parse::diagnostics::Unexpected(c.into(), c.into()))?
 						})
 					} else {
 						None
 					};
 					Some(quote! {
-						if p.peek::<::hdx_parser::T![Ident]>() {
-							let c = p.peek_n(1);
-							match p.parse_atom_lower(c) {
+						if let Some(keyword) = p.parse_if_peek::<#keyword_set_ident>()? {
+							use ::css_parse::Build;
+							match keyword {
 								#(#keyword_arms)*
-								#last_arm
 							}
-						}
+						} #else_arm
 						#error
 					})
 				};
@@ -590,8 +596,8 @@ impl Def {
 					quote! {
 						#keyword_if
 						#(#other_if)*;
-							let c: ::hdx_lexer::Cursor = p.parse::<::hdx_parser::T![Any]>()?.into();
-							Err(::hdx_parser::diagnostics::Unexpected(c.into(), c.into()))?
+							let c: ::css_lexer::Cursor = p.parse::<::css_parse::T![Any]>()?.into();
+							Err(::css_parse::diagnostics::Unexpected(c.into(), c.into()))?
 					}
 				}
 			}
@@ -622,8 +628,8 @@ impl Def {
 					loop {
 						#(#steps)*
 						if #(#idents.is_none())&&* {
-							let c: ::hdx_lexer::Cursor = p.parse::<::hdx_parser::T![Any]>()?.into();
-							Err(::hdx_parser::diagnostics::Unexpected(c.into(), c.into()))?
+							let c: ::css_lexer::Cursor = p.parse::<::css_parse::T![Any]>()?.into();
+							Err(::css_parse::diagnostics::Unexpected(c.into(), c.into()))?
 						} else {
 							return Ok(Self(#(#idents),*));
 						}
@@ -681,9 +687,9 @@ impl Def {
 		let (gen, _, _) = generics.split_for_impl();
 		quote! {
 			#[automatically_derived]
-			impl<'a> ::hdx_parser::Parse<'a> for #ident #gen {
-				fn parse(p: &mut ::hdx_parser::Parser<'a>) -> ::hdx_parser::Result<Self> {
-					use ::hdx_parser::Parse;
+			impl<'a> ::css_parse::Parse<'a> for #ident #gen {
+				fn parse(p: &mut ::css_parse::Parser<'a>) -> ::css_parse::Result<Self> {
+					use ::css_parse::Parse;
 					#steps
 				}
 			}
@@ -698,7 +704,7 @@ impl Def {
 		let (gen, _, _) = generics.split_for_impl();
 		let steps = match self {
 			Self::Ident(_) => quote! { compile_error!("cannot generate top level singular keyword") },
-			Self::Type(_) => quote! { ::hdx_parser::ToCursors::to_cursors(&self.0, s); },
+			Self::Type(_) => quote! { ::css_parse::ToCursors::to_cursors(&self.0, s); },
 			Self::Optional(_) => {
 				let steps = self.to_cursors_steps(quote! { inner });
 				quote! {
@@ -718,13 +724,13 @@ impl Def {
 							Def::Optional(_) => {
 								quote! {
 									if let Some(inner) = &self.#index {
-										::hdx_parser::ToCursors::to_cursors(inner, s);
+										::css_parse::ToCursors::to_cursors(inner, s);
 									}
 								}
 							}
 							_ => {
 								quote! {
-									::hdx_parser::ToCursors::to_cursors(&self.#index, s);
+									::css_parse::ToCursors::to_cursors(&self.#index, s);
 								}
 							}
 						}
@@ -744,7 +750,7 @@ impl Def {
 						let index = Index { index: i as u32, span: Span::call_site() };
 						quote! {
 							if let Some(inner) = &self.#index {
-								::hdx_parser::ToCursors::to_cursors(inner, s);
+								::css_parse::ToCursors::to_cursors(inner, s);
 							}
 						}
 					})
@@ -834,8 +840,8 @@ impl Def {
 		};
 		quote! {
 			#[automatically_derived]
-			impl #gen ::hdx_parser::ToCursors for #ident #gen {
-				fn to_cursors(&self, s: &mut impl ::hdx_parser::CursorSink) {
+			impl #gen ::css_parse::ToCursors for #ident #gen {
+				fn to_cursors(&self, s: &mut impl ::css_parse::CursorSink) {
 					#steps
 				}
 			}
@@ -877,7 +883,7 @@ impl GenerateDefinition for Def {
 								Def::Type(ty) => {
 									let modname = if matches!(style, DefMultiplierStyle::OneOrMoreCommaSeparated(_)) {
 										let modname = ty.to_type_name();
-										quote! { (#modname, Option<::hdx_parser::T![,]>) }
+										quote! { (#modname, Option<::css_parse::T![,]>) }
 									} else {
 										ty.to_type_name()
 									};
@@ -926,7 +932,7 @@ impl GenerateDefinition for Def {
 								Def::Type(ty) => {
 									let modname = if matches!(style, DefMultiplierStyle::OneOrMoreCommaSeparated(_)) {
 										let modname = ty.to_type_name();
-										quote! { (#modname, Option<::hdx_parser::T![,]>) }
+										quote! { (#modname, Option<::css_parse::T![,]>) }
 									} else {
 										ty.to_type_name()
 									};
@@ -988,7 +994,7 @@ impl GenerateDefinition for Def {
 					Def::Type(ty) => {
 						let modname = if matches!(style, DefMultiplierStyle::OneOrMoreCommaSeparated(_)) {
 							let modname = ty.to_type_name();
-							quote! { (#modname, Option<::hdx_parser::T![,]>) }
+							quote! { (#modname, Option<::css_parse::T![,]>) }
 						} else {
 							ty.to_type_name()
 						};
@@ -1051,7 +1057,7 @@ impl GenerateToCursorsImpl for Def {
 				let exprs: Vec<TokenStream> = (0..opts.len())
 					.map(|i| {
 						let index = Index { index: i as u32, span: Span::call_site() };
-						quote! { ::hdx_parser::ToCursors::to_cursors(&self::#index, s); }
+						quote! { ::css_parse::ToCursors::to_cursors(&self::#index, s); }
 					})
 					.collect();
 				quote! {
@@ -1146,7 +1152,7 @@ impl GeneratePeekImpl for Def {
 		match self {
 			Self::Type(p) => p.peek_steps(),
 			Self::Ident(p) => p.peek_steps(),
-			Self::Function(_, _) => quote! { p.peek::<::hdx_parser::T![Function]>() },
+			Self::Function(_, _) => quote! { p.peek::<::css_parse::T![Function]>() },
 			Self::Optional(p) => p.peek_steps(),
 			Self::Combinator(p, DefCombinatorStyle::Ordered) => p[0].peek_steps(),
 			Self::Combinator(p, _) => {
@@ -1178,17 +1184,16 @@ impl GenerateParseImpl for Def {
 			Self::Type(p) => p.parse_steps(capture),
 			Self::Ident(p) => p.parse_steps(capture),
 			Self::Function(p, ty) => {
-				let atom = p.to_atom_macro();
+				let name = kebab(p.to_string());
 				let inner = ty.parse_steps(capture);
 				quote! {
-					let function = p.parse::<::hdx_parser::T![Function]>()?;
-					let c: hdx_lexer::Cursor = function.into();
-					let atom = p.parse_atom_lower(c.into());
-					if atom != #atom {
-						return Err(::hdx_parser::diagnostics::UnexpectedFunction(atom, c.into()))?
+					let function = p.parse::<::css_parse::T![Function]>()?;
+					let c: css_lexer::Cursor = function.into();
+					if !p.eq_ignore_ascii_case(c, #name) {
+						return Err(::css_parse::diagnostics::UnexpectedFunction(p.parse_str(c).into(), c.into()))?
 					}
 					#inner
-					let close = p.parse_if_peek::<::hdx_parser::T![')']>()?;
+					let close = p.parse_if_peek::<::css_parse::T![')']>()?;
 				}
 			}
 			Self::Multiplier(def, DefMultiplierStyle::Range(DefRange::Fixed(val))) => {
@@ -1230,8 +1235,8 @@ impl GenerateParseImpl for Def {
 						let n = *start as usize;
 						quote! {
 							if i < #n {
-								let c: ::hdx_lexer::Cursor = p.parse::<::hdx_parser::T![Any]>()?.into();
-								Err(::hdx_parser::diagnostics::Unexpected(c.into(), c.into()))?
+								let c: ::css_lexer::Cursor = p.parse::<::css_parse::T![Any]>()?.into();
+								Err(::css_parse::diagnostics::Unexpected(c.into(), c.into()))?
 							}
 						}
 					}
@@ -1243,7 +1248,7 @@ impl GenerateParseImpl for Def {
 				let inloop = if matches!(self, Self::Multiplier(_, DefMultiplierStyle::OneOrMoreCommaSeparated(_))) {
 					quote! {
 						#steps
-						let comma = p.parse_if_peek::<::hdx_parser::T![,]>()?;
+						let comma = p.parse_if_peek::<::css_parse::T![,]>()?;
 						#capture_name.push((item, comma));
 						#increment_i
 						if comma.is_none() {
@@ -1314,8 +1319,8 @@ impl GenerateParseImpl for Def {
 					loop {
 						#(#steps)*
 						if #(#idents.is_none())&&* {
-							let c: ::hdx_lexer::Cursor = p.parse::<::hdx_parser::T![Any]>()?.into();
-							Err(::hdx_parser::diagnostics::Unexpected(c.into(), c.into()))?
+							let c: ::css_lexer::Cursor = p.parse::<::css_parse::T![Any]>()?.into();
+							Err(::css_parse::diagnostics::Unexpected(c.into(), c.into()))?
 						} else {
 							break;
 						}
@@ -1326,6 +1331,38 @@ impl GenerateParseImpl for Def {
 			_ => {
 				dbg!("parse_steps", self);
 				todo!("parse_steps");
+			}
+		}
+	}
+}
+
+impl GenerateKeywordSet for Def {
+	fn generate_keyword_set(&self, ident: &Ident) -> TokenStream {
+		match self {
+			Self::Combinator(opts, DefCombinatorStyle::Alternatives) => {
+				let keywords: Vec<TokenStream> = opts
+					.iter()
+					.filter_map(|def| {
+						if let Def::Ident(def) = def {
+							let ident = format_ident!("{}", pascal(def.to_string()));
+							let str = kebab(def.to_string());
+							Some(quote! { #ident: #str, })
+						} else {
+							None
+						}
+					})
+					.collect();
+				let keyword_name = format_ident!("{}Keywords", ident);
+				if keywords.is_empty() {
+					quote! {}
+				} else {
+					quote! {
+						::css_parse::keyword_set!(#keyword_name { #(#keywords)* });
+					}
+				}
+			}
+			_ => {
+				quote! {}
 			}
 		}
 	}
@@ -1410,9 +1447,9 @@ impl DefType {
 			Self::Color => quote! { types::Color },
 			Self::Image => quote! { types::Image },
 			Self::Image1D => quote! { types::Image1D },
-			Self::DashedIdent => quote! { ::hdx_parser::T![DashedIdent] },
-			Self::CustomIdent => quote! { ::hdx_parser::T![Ident] },
-			Self::String => quote! { ::hdx_parser::T![Ident] },
+			Self::DashedIdent => quote! { ::css_parse::T![DashedIdent] },
+			Self::CustomIdent => quote! { ::css_parse::T![Ident] },
+			Self::String => quote! { ::css_parse::T![Ident] },
 			Self::Custom(ty, _) => quote! { types::#ty },
 		}
 	}
@@ -1433,10 +1470,7 @@ impl DefType {
 
 	pub fn requires_allocator_lifetime(&self) -> bool {
 		if let Self::Custom(DefIdent(ident), _) = self {
-			return matches!(
-				ident,
-				&atom!("OutlineColor") | &atom!("BorderTopColorStyleValue") | &atom!("DynamicRangeLimitMix")
-			);
+			return matches!(ident.as_str(), "OutlineColor" | "BorderTopColorStyleValue" | "DynamicRangeLimitMix");
 		}
 		matches!(self, Self::Image | Self::Image1D)
 	}
@@ -1444,14 +1478,14 @@ impl DefType {
 
 impl GenerateToCursorsImpl for DefType {
 	fn to_cursors_steps(&self, capture: TokenStream) -> TokenStream {
-		quote! { ::hdx_parser::ToCursors::to_cursors(#capture, s); }
+		quote! { ::css_parse::ToCursors::to_cursors(#capture, s); }
 	}
 }
 
 impl GeneratePeekImpl for DefType {
 	fn peek_steps(&self) -> TokenStream {
 		match self {
-			Self::CustomIdent => quote! { p.peek::<::hdx_parser::T![Ident]>() },
+			Self::CustomIdent => quote! { p.peek::<::css_parse::T![Ident]>() },
 			_ => {
 				let name = self.to_type_name();
 				quote! { p.peek::<#name>() }
@@ -1465,7 +1499,7 @@ impl GenerateParseImpl for DefType {
 		let capture_name = capture.unwrap_or_else(|| format_ident!("val"));
 		if self == &Self::CustomIdent {
 			return quote! {
-				let #capture_name = p.parse::<::hdx_parser::T![Ident]>()?;
+				let #capture_name = p.parse::<::css_parse::T![Ident]>()?;
 			};
 		}
 
@@ -1475,19 +1509,19 @@ impl GenerateParseImpl for DefType {
 			DefRange::RangeTo(RangeTo { end }) => Some(quote! {
 			let valf32: f32 = #capture_name.into();
 					if #end < valf32 {
-						return Err(::hdx_parser::diagnostics::NumberTooLarge(#end, ::hdx_lexer::Span::new(start, p.offset())))?
+						return Err(::css_parse::diagnostics::NumberTooLarge(#end, ::css_lexer::Span::new(start, p.offset())))?
 					}
 				}),
 			DefRange::Range(Range { start, end }) => Some(quote! {
 			let valf32: f32 = #capture_name.into();
 					if !(#start..#end).contains(valf32) {
-						return Err(::hdx_parser::diagnostics::NumberOutOfBounds(#capture_name, "#start..#end", ::hdx_lexer::Span::new(start, p.offset())))?
+						return Err(::css_parse::diagnostics::NumberOutOfBounds(#capture_name, "#start..#end", ::css_lexer::Span::new(start, p.offset())))?
 					}
 				}),
 			DefRange::RangeFrom(RangeFrom { start }) => Some(quote! {
 			let valf32: f32 = #capture_name.into();
 					if #start > valf32 {
-						return Err(::hdx_parser::diagnostics::NumberTooSmall(#start, ::hdx_lexer::Span::new(start, p.offset())))?
+						return Err(::css_parse::diagnostics::NumberTooSmall(#start, ::css_lexer::Span::new(start, p.offset())))?
 					}
 				}),
 			DefRange::None => None,
@@ -1515,16 +1549,11 @@ impl ToTokens for DefIdent {
 }
 
 impl DefIdent {
-	pub fn to_atom_macro(&self) -> TokenStream {
-		let name = kebab(self.to_string());
-		quote! { ::hdx_atom::atom!(#name) }
-	}
-
 	pub fn pluralize(&self) -> DefIdent {
 		if self.0.ends_with("s") {
 			self.clone()
 		} else {
-			Self(Atom::from(format!("{}s", self.0)))
+			Self(format!("{}s", self.0).into())
 		}
 	}
 
@@ -1543,19 +1572,19 @@ impl GenerateToCursorsImpl for DefIdent {
 
 impl GeneratePeekImpl for DefIdent {
 	fn peek_steps(&self) -> TokenStream {
-		quote! { p.peek::<::hdx_parser::T![Ident]>() }
+		quote! { p.peek::<::css_parse::T![Ident]>() }
 	}
 }
 
 impl GenerateParseImpl for DefIdent {
 	fn parse_steps(&self, capture: Option<Ident>) -> TokenStream {
-		let atom = self.to_atom_macro();
+		let name = kebab(self.to_string());
 		quote! {
-			let #capture = p.parse::<::hdx_parser::T![Ident]>()?;
-			let c: ::hdx_lexer::Cursor = #capture.into();
-			let atom = p.parse_atom_lower(t);
-			if atom != #atom {
-				Err(::hdx_parser::diagnostics::UnexpectedIdent(atom, c.into()))?
+			let #capture = p.parse::<::css_parse::T![Ident]>()?;
+			let c: ::css_lexer::Cursor = #capture.into();
+			p.parse_str_lower(t);
+			if !p.eq_ignore_ascii_case(c, #name) {
+				Err(::css_parse::diagnostics::UnexpectedIdent(p.parse_str(c).into(), c.into()))?
 			}
 		}
 	}

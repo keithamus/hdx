@@ -10,18 +10,18 @@ struct Foo(
     pub Option<types::CaretShapeStyleValue>,
 );
 #[automatically_derived]
-impl<'a> ::hdx_parser::Peek<'a> for Foo {
-    fn peek(p: &::hdx_parser::Parser<'a>) -> bool {
-        use ::hdx_parser::Peek;
+impl<'a> ::css_parse::Peek<'a> for Foo {
+    fn peek(p: &::css_parse::Parser<'a>, c: ::css_lexer::Cursor) -> bool {
+        use ::css_parse::Peek;
         p.peek::<types::CaretColorStyleValue>()
             || p.peek::<types::CaretAnimationStyleValue>()
             || p.peek::<types::CaretShapeStyleValue>()
     }
 }
 #[automatically_derived]
-impl<'a> ::hdx_parser::Parse<'a> for Foo {
-    fn parse(p: &mut ::hdx_parser::Parser<'a>) -> ::hdx_parser::Result<Self> {
-        use ::hdx_parser::Parse;
+impl<'a> ::css_parse::Parse<'a> for Foo {
+    fn parse(p: &mut ::css_parse::Parser<'a>) -> ::css_parse::Result<Self> {
+        use ::css_parse::Parse;
         let mut val0 = None;
         let mut val1 = None;
         let mut val2 = None;
@@ -39,8 +39,8 @@ impl<'a> ::hdx_parser::Parse<'a> for Foo {
                 continue;
             }
             if val0.is_none() && val1.is_none() && val2.is_none() {
-                let c: ::hdx_lexer::Cursor = p.parse::<::hdx_parser::T![Any]>()?.into();
-                Err(::hdx_parser::diagnostics::Unexpected(c.into(), c.into()))?
+                let c: ::css_lexer::Cursor = p.parse::<::css_parse::T![Any]>()?.into();
+                Err(::css_parse::diagnostics::Unexpected(c.into(), c.into()))?
             } else {
                 return Ok(Self(val0, val1, val2));
             }
@@ -48,16 +48,16 @@ impl<'a> ::hdx_parser::Parse<'a> for Foo {
     }
 }
 #[automatically_derived]
-impl ::hdx_parser::ToCursors for Foo {
-    fn to_cursors(&self, s: &mut impl ::hdx_parser::CursorSink) {
+impl ::css_parse::ToCursors for Foo {
+    fn to_cursors(&self, s: &mut impl ::css_parse::CursorSink) {
         if let Some(inner) = &self.0 {
-            ::hdx_parser::ToCursors::to_cursors(inner, s);
+            ::css_parse::ToCursors::to_cursors(inner, s);
         }
         if let Some(inner) = &self.1 {
-            ::hdx_parser::ToCursors::to_cursors(inner, s);
+            ::css_parse::ToCursors::to_cursors(inner, s);
         }
         if let Some(inner) = &self.2 {
-            ::hdx_parser::ToCursors::to_cursors(inner, s);
+            ::css_parse::ToCursors::to_cursors(inner, s);
         }
     }
 }
