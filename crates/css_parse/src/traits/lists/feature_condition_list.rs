@@ -100,13 +100,15 @@ where
 					features.push((feature, Some(keyword)));
 					feature = p.parse::<Self::FeatureCondition>()?;
 					let c = p.peek_next();
-					if !ConditionKeyword::peek(p, c) || !matches!(ConditionKeyword::build(p, c), ConditionKeyword::And(_)) {
+					if !ConditionKeyword::peek(p, c)
+						|| !matches!(ConditionKeyword::build(p, c), ConditionKeyword::And(_))
+					{
 						features.push((feature, None));
 						return Ok(Self::build_and(features));
 					}
 					keyword = ConditionKeyword::build(p, c);
 				}
-			},
+			}
 			Some(ConditionKeyword::Or(_)) => {
 				let mut features = Vec::new_in(p.bump());
 				let mut keyword = keyword.unwrap();
@@ -114,14 +116,18 @@ where
 					features.push((feature, Some(keyword)));
 					feature = p.parse::<Self::FeatureCondition>()?;
 					let c = p.peek_next();
-					if !ConditionKeyword::peek(p, c) || !matches!(ConditionKeyword::build(p, c), ConditionKeyword::And(_)) {
+					if !ConditionKeyword::peek(p, c)
+						|| !matches!(ConditionKeyword::build(p, c), ConditionKeyword::And(_))
+					{
 						features.push((feature, None));
 						return Ok(Self::build_or(features));
 					}
 					keyword = ConditionKeyword::build(p, c);
 				}
-			},
-			Some(ConditionKeyword::Not(_)) => Ok(Self::build_not(keyword.unwrap(), p.parse::<Self::FeatureCondition>()?)),
+			}
+			Some(ConditionKeyword::Not(_)) => {
+				Ok(Self::build_not(keyword.unwrap(), p.parse::<Self::FeatureCondition>()?))
+			}
 			None => Ok(Self::build_is(feature)),
 		}
 	}

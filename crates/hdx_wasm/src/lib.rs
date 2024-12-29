@@ -1,7 +1,7 @@
 use bumpalo::Bump;
-use css_ast::css::StyleSheet;
+use css_ast::StyleSheet;
 use css_lexer::{Kind, Lexer};
-use css_parse::{CursorStream, Features, Parser, ToCursors};
+use css_parse::{CursorFmtSink, Parser, ToCursors};
 #[cfg(not(feature = "fancy"))]
 use miette::JSONReportHandler;
 use miette::NamedSource;
@@ -34,7 +34,7 @@ pub fn lex(source_text: String) -> Result<JsValue, serde_wasm_bindgen::Error> {
 #[wasm_bindgen]
 pub fn parse(source_text: String) -> Result<SerializableParserResult, serde_wasm_bindgen::Error> {
 	let allocator = Bump::default();
-	let result = Parser::new(&allocator, source_text.as_str(), Features::default()).parse_entirely::<StyleSheet>();
+	let result = Parser::new(&allocator, source_text.as_str()).parse_entirely::<StyleSheet>();
 	let serializer = serde_wasm_bindgen::Serializer::json_compatible();
 	let diagnostics = result
 		.errors
@@ -62,23 +62,20 @@ pub fn parse(source_text: String) -> Result<SerializableParserResult, serde_wasm
 #[wasm_bindgen]
 pub fn minify(source_text: String) -> Result<String, serde_wasm_bindgen::Error> {
 	let allocator = Bump::default();
-	let result = Parser::new(&allocator, source_text.as_str(), Features::default()).parse_entirely::<StyleSheet>();
+	let result = Parser::new(&allocator, source_text.as_str()).parse_entirely::<StyleSheet>();
 	if !result.errors.is_empty() {
 		return Err(serde_wasm_bindgen::Error::new("Parse error"));
 	}
 	let mut output_string = String::new();
-	let mut stream = CursorStream::new(&allocator);
+	let mut stream = CursorFmtSink::new(source_text.as_str(), &mut output_string);
 	result.to_cursors(&mut stream);
-	if let Err(_) = result.write(&mut stream, &mut output_string) {
-		return Err(serde_wasm_bindgen::Error::new("Write error"));
-	}
 	Ok(output_string)
 }
 
 #[wasm_bindgen]
 pub fn parse_error_report(source_text: String) -> String {
 	let allocator = Bump::default();
-	let result = Parser::new(&allocator, source_text.as_str(), Features::default()).parse_entirely::<StyleSheet>();
+	let result = Parser::new(&allocator, source_text.as_str()).parse_entirely::<StyleSheet>();
 	#[cfg(feature = "fancy")]
 	let handler = GraphicalReportHandler::new_themed(GraphicalTheme::unicode_nocolor());
 	#[cfg(not(feature = "fancy"))]

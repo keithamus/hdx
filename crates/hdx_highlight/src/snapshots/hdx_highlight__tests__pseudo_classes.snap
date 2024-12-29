@@ -19,7 +19,7 @@ expression: actual
 <body>
 	<pre>
 		<code>
-		<span class="Tag">body</span>:focus,<span class="Tag">dialog</span>:modal<span class="Punctuation">{</span><span class="Punctuation">}</span>
-					</code>
-				</pre>
-			</body>
+			<span class="Tag">body</span>:focus,<span class="Tag">dialog</span>:modal<span class="Punctuation">{</span><span class="Punctuation">}</span>
+		</code>
+	</pre>
+</body>

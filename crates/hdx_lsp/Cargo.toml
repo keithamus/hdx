@@ -15,6 +15,7 @@ bench = false
 [dependencies]
 css_parse = { workspace = true }
 css_ast = { workspace = true }
+css_lexer = { workspace = true }
 hdx_highlight = { workspace = true }
 
 bumpalo = { workspace = true, features = ["collections", "boxed"] }

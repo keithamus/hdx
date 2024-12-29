@@ -533,7 +533,10 @@ impl Def {
 						if p == Position::Only {
 							quote! { #parse; Ok(Self::#var(#val)) }
 						} else {
-							quote! { if #peek { #parse; return Ok(Self::#var(#val)); } }
+							quote! {
+								let c = p.peek_n(1);
+								if #peek { #parse; return Ok(Self::#var(#val)); }
+							}
 						}
 					})
 					.collect();
@@ -689,7 +692,7 @@ impl Def {
 			#[automatically_derived]
 			impl<'a> ::css_parse::Parse<'a> for #ident #gen {
 				fn parse(p: &mut ::css_parse::Parser<'a>) -> ::css_parse::Result<Self> {
-					use ::css_parse::Parse;
+					use ::css_parse::{Parse,Peek};
 					#steps
 				}
 			}
@@ -1152,7 +1155,7 @@ impl GeneratePeekImpl for Def {
 		match self {
 			Self::Type(p) => p.peek_steps(),
 			Self::Ident(p) => p.peek_steps(),
-			Self::Function(_, _) => quote! { p.peek::<::css_parse::T![Function]>() },
+			Self::Function(_, _) => quote! { <::css_parse::T![Function]>::peek(p, c) },
 			Self::Optional(p) => p.peek_steps(),
 			Self::Combinator(p, DefCombinatorStyle::Ordered) => p[0].peek_steps(),
 			Self::Combinator(p, _) => {
@@ -1257,6 +1260,7 @@ impl GenerateParseImpl for Def {
 					}
 				} else {
 					quote! {
+						let c = p.peek_n(1);
 						if #peek_steps {
 							#steps
 							#increment_i
@@ -1485,10 +1489,10 @@ impl GenerateToCursorsImpl for DefType {
 impl GeneratePeekImpl for DefType {
 	fn peek_steps(&self) -> TokenStream {
 		match self {
-			Self::CustomIdent => quote! { p.peek::<::css_parse::T![Ident]>() },
+			Self::CustomIdent => quote! { <::css_parse::T![Ident]>::peek(p, c) },
 			_ => {
 				let name = self.to_type_name();
-				quote! { p.peek::<#name>() }
+				quote! { <#name>::peek(p, c) }
 			}
 		}
 	}
@@ -1572,7 +1576,7 @@ impl GenerateToCursorsImpl for DefIdent {
 
 impl GeneratePeekImpl for DefIdent {
 	fn peek_steps(&self) -> TokenStream {
-		quote! { p.peek::<::css_parse::T![Ident]>() }
+		quote! { <::css_parse::T![Ident]>::peek(p, c) }
 	}
 }
 

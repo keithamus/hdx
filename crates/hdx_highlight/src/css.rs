@@ -60,9 +60,6 @@ impl<'a> Visit<'a> for TokenHighlighter {
 		}
 		self.insert(span, SemanticKind::Declaration, modifier);
 		self.insert(property.colon.into(), SemanticKind::Punctuation, SemanticModifier::none());
-		if let Some(semicolon) = property.semicolon {
-			self.insert(semicolon.into(), SemanticKind::Punctuation, SemanticModifier::none());
-		}
 	}
 
 	fn visit_property_rule(&mut self, property: &PropertyRule<'a>) {
@@ -81,8 +78,5 @@ impl<'a> Visit<'a> for TokenHighlighter {
 		}
 		self.insert(span, SemanticKind::Declaration, modifier);
 		self.insert(property.colon.into(), SemanticKind::Punctuation, SemanticModifier::none());
-		if let Some(semicolon) = property.semicolon {
-			self.insert(semicolon.into(), SemanticKind::Punctuation, SemanticModifier::none());
-		}
 	}
 }

@@ -713,6 +713,7 @@ dependencies = [
  "criterion",
  "crossbeam-channel",
  "css_ast",
+ "css_lexer",
  "css_parse",
  "dashmap",
  "glob",
