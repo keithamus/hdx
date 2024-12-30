@@ -1,5 +1,5 @@
 ---
-source: crates/hdx_ast/tests/postcss_snapshots.rs
+source: crates/css_ast/tests/postcss_snapshots.rs
 expression: result.output.unwrap()
 ---
 {
@@ -33,49 +33,51 @@ expression: result.output.unwrap()
         "len": 1
       },
       "declarations": [
-        {
-          "type": "property",
-          "name": {
-            "kind": "Ident",
-            "offset": 4,
-            "len": 5
+        [
+          {
+            "type": "property",
+            "name": {
+              "kind": "Ident",
+              "offset": 4,
+              "len": 5
+            },
+            "colon": {
+              "kind": "Colon",
+              "offset": 9,
+              "len": 1
+            },
+            "value": {
+              "values": [
+                {
+                  "kind": "Whitespace",
+                  "offset": 10,
+                  "len": 1
+                },
+                {
+                  "kind": "Ident",
+                  "offset": 11,
+                  "len": 1
+                },
+                {
+                  "kind": "Whitespace",
+                  "offset": 19,
+                  "len": 1
+                },
+                {
+                  "kind": "Ident",
+                  "offset": 20,
+                  "len": 1
+                }
+              ]
+            },
+            "important": null
           },
-          "colon": {
-            "kind": "Colon",
-            "offset": 9,
-            "len": 1
-          },
-          "value": {
-            "values": [
-              {
-                "kind": "Whitespace",
-                "offset": 10,
-                "len": 1
-              },
-              {
-                "kind": "Ident",
-                "offset": 11,
-                "len": 1
-              },
-              {
-                "kind": "Whitespace",
-                "offset": 19,
-                "len": 1
-              },
-              {
-                "kind": "Ident",
-                "offset": 20,
-                "len": 1
-              }
-            ]
-          },
-          "important": null,
-          "semicolon": {
+          {
             "kind": "Semicolon",
             "offset": 23,
             "len": 1
           }
-        }
+        ]
       ],
       "rules": [],
       "close": {

@@ -12127,6 +12127,7 @@ expression: result.output.unwrap()
           "offset": 6653,
           "len": 1
         },
+        "properties": [],
         "rules": [
           {
             "type": "stylerule",
@@ -16142,6 +16143,7 @@ expression: result.output.unwrap()
           "offset": 8791,
           "len": 1
         },
+        "properties": [],
         "rules": [
           {
             "type": "stylerule",
@@ -20824,6 +20826,7 @@ expression: result.output.unwrap()
           "offset": 11445,
           "len": 1
         },
+        "properties": [],
         "rules": [
           {
             "type": "stylerule",
@@ -21822,6 +21825,7 @@ expression: result.output.unwrap()
           "offset": 11999,
           "len": 1
         },
+        "properties": [],
         "rules": [
           {
             "type": "stylerule",
@@ -21987,6 +21991,7 @@ expression: result.output.unwrap()
           "offset": 12083,
           "len": 1
         },
+        "properties": [],
         "rules": [
           {
             "type": "stylerule",
@@ -25032,6 +25037,7 @@ expression: result.output.unwrap()
           "offset": 14100,
           "len": 1
         },
+        "properties": [],
         "rules": [
           {
             "type": "stylerule",
@@ -36193,6 +36199,7 @@ expression: result.output.unwrap()
           "offset": 19442,
           "len": 1
         },
+        "properties": [],
         "rules": [
           {
             "type": "stylerule",
@@ -49498,6 +49505,7 @@ expression: result.output.unwrap()
           "offset": 26364,
           "len": 1
         },
+        "properties": [],
         "rules": [
           {
             "type": "stylerule",
@@ -52137,6 +52145,7 @@ expression: result.output.unwrap()
           "offset": 27732,
           "len": 1
         },
+        "properties": [],
         "rules": [
           {
             "type": "stylerule",
@@ -52528,6 +52537,7 @@ expression: result.output.unwrap()
           "offset": 27882,
           "len": 1
         },
+        "properties": [],
         "rules": [
           {
             "type": "stylerule",
@@ -59703,6 +59713,7 @@ expression: result.output.unwrap()
           "offset": 31603,
           "len": 1
         },
+        "properties": [],
         "rules": [
           {
             "type": "stylerule",
@@ -62894,6 +62905,7 @@ expression: result.output.unwrap()
           "offset": 33138,
           "len": 1
         },
+        "properties": [],
         "rules": [
           {
             "type": "stylerule",
@@ -63661,6 +63673,7 @@ expression: result.output.unwrap()
           "offset": 33492,
           "len": 1
         },
+        "properties": [],
         "rules": [
           {
             "type": "stylerule",
@@ -84233,6 +84246,7 @@ expression: result.output.unwrap()
           "offset": 53221,
           "len": 1
         },
+        "properties": [],
         "rules": [
           {
             "type": "stylerule",
@@ -84450,6 +84464,7 @@ expression: result.output.unwrap()
           "offset": 53349,
           "len": 1
         },
+        "properties": [],
         "rules": [
           {
             "type": "stylerule",
@@ -84772,6 +84787,7 @@ expression: result.output.unwrap()
           "offset": 53549,
           "len": 1
         },
+        "properties": [],
         "rules": [
           {
             "type": "stylerule",
@@ -84989,6 +85005,7 @@ expression: result.output.unwrap()
           "offset": 53680,
           "len": 1
         },
+        "properties": [],
         "rules": [
           {
             "type": "stylerule",
@@ -85171,6 +85188,7 @@ expression: result.output.unwrap()
           "offset": 53800,
           "len": 1
         },
+        "properties": [],
         "rules": [
           {
             "type": "stylerule",
@@ -85388,6 +85406,7 @@ expression: result.output.unwrap()
           "offset": 53915,
           "len": 1
         },
+        "properties": [],
         "rules": [
           {
             "type": "stylerule",
@@ -85555,6 +85574,7 @@ expression: result.output.unwrap()
           "offset": 54007,
           "len": 1
         },
+        "properties": [],
         "rules": [
           {
             "type": "stylerule",
@@ -85722,6 +85742,7 @@ expression: result.output.unwrap()
           "offset": 54098,
           "len": 1
         },
+        "properties": [],
         "rules": [
           {
             "type": "stylerule",
@@ -86426,6 +86447,7 @@ expression: result.output.unwrap()
           "offset": 54519,
           "len": 1
         },
+        "properties": [],
         "rules": [
           {
             "type": "stylerule",
@@ -87080,6 +87102,7 @@ expression: result.output.unwrap()
           "offset": 54917,
           "len": 1
         },
+        "properties": [],
         "rules": [
           {
             "type": "stylerule",

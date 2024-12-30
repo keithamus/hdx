@@ -23,7 +23,7 @@ use css_lexer::KindSet;
 pub struct AtRule<'a> {
 	pub name: T![AtKeyword],
 	pub prelude: Option<ComponentValues<'a>>,
-	pub block: Block<'a>,
+	pub block: OptionalBlock<'a>,
 }
 
 impl<'a> Parse<'a> for AtRule<'a> {
@@ -32,12 +32,13 @@ impl<'a> Parse<'a> for AtRule<'a> {
 		let parsed = Self::parse_at_rule(p);
 		p.set_stop(stop);
 		let (name, prelude, block) = parsed?;
+		let semicolon = p.parse_if_peek::<T![;]>()?;
 		Ok(Self { name, prelude, block })
 	}
 }
 
 impl<'a> AtRuleTrait<'a> for AtRule<'a> {
-	type Block = Block<'a>;
+	type Block = OptionalBlock<'a>;
 	type Prelude = ComponentValues<'a>;
 }
 
@@ -48,6 +49,37 @@ impl ToCursors for AtRule<'_> {
 			ToCursors::to_cursors(prelude, s);
 		}
 		ToCursors::to_cursors(&self.block, s);
+	}
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+pub enum OptionalBlock<'a> {
+	Block(Block<'a>),
+	None(Option<T![;]>),
+}
+
+impl<'a> Parse<'a> for OptionalBlock<'a> {
+	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
+		if let Some(block) = p.parse_if_peek::<Block>()? {
+			Ok(Self::Block(block))
+		} else {
+			let semicolon = p.parse_if_peek::<T![;]>()?;
+			Ok(Self::None(semicolon))
+		}
+	}
+}
+
+impl ToCursors for OptionalBlock<'_> {
+	fn to_cursors(&self, s: &mut impl CursorSink) {
+		match self {
+			Self::Block(block) => ToCursors::to_cursors(block, s),
+			Self::None(semicolon) => {
+				if let Some(semicolon) = semicolon {
+					s.append(semicolon.into());
+				}
+			}
+		}
 	}
 }
 

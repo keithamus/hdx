@@ -1,5 +1,5 @@
 ---
-source: crates/hdx_ast/tests/postcss_snapshots.rs
+source: crates/css_ast/tests/postcss_snapshots.rs
 expression: result.output.unwrap()
 ---
 {
@@ -57,72 +57,76 @@ expression: result.output.unwrap()
         "len": 1
       },
       "declarations": [
-        {
-          "type": "property",
-          "name": {
-            "kind": "Ident",
-            "offset": 16,
-            "len": 7
+        [
+          {
+            "type": "property",
+            "name": {
+              "kind": "Ident",
+              "offset": 16,
+              "len": 7
+            },
+            "colon": {
+              "kind": "Colon",
+              "offset": 23,
+              "len": 1
+            },
+            "value": {
+              "values": [
+                {
+                  "kind": "Whitespace",
+                  "offset": 24,
+                  "len": 1
+                },
+                {
+                  "kind": "String",
+                  "offset": 25,
+                  "len": 12
+                }
+              ]
+            },
+            "important": null
           },
-          "colon": {
-            "kind": "Colon",
-            "offset": 23,
-            "len": 1
-          },
-          "value": {
-            "values": [
-              {
-                "kind": "Whitespace",
-                "offset": 24,
-                "len": 1
-              },
-              {
-                "kind": "String",
-                "offset": 25,
-                "len": 12
-              }
-            ]
-          },
-          "important": null,
-          "semicolon": {
+          {
             "kind": "Semicolon",
             "offset": 37,
             "len": 1
           }
-        },
-        {
-          "type": "property",
-          "name": {
-            "kind": "Ident",
-            "offset": 43,
-            "len": 7
+        ],
+        [
+          {
+            "type": "property",
+            "name": {
+              "kind": "Ident",
+              "offset": 43,
+              "len": 7
+            },
+            "colon": {
+              "kind": "Colon",
+              "offset": 50,
+              "len": 1
+            },
+            "value": {
+              "values": [
+                {
+                  "kind": "Whitespace",
+                  "offset": 51,
+                  "len": 1
+                },
+                {
+                  "kind": "String",
+                  "offset": 52,
+                  "len": 7
+                }
+              ]
+            },
+            "important": null
           },
-          "colon": {
-            "kind": "Colon",
-            "offset": 50,
-            "len": 1
-          },
-          "value": {
-            "values": [
-              {
-                "kind": "Whitespace",
-                "offset": 51,
-                "len": 1
-              },
-              {
-                "kind": "String",
-                "offset": 52,
-                "len": 7
-              }
-            ]
-          },
-          "important": null,
-          "semicolon": {
+          {
             "kind": "Semicolon",
             "offset": 59,
             "len": 1
           }
-        }
+        ]
       ],
       "rules": [],
       "close": {

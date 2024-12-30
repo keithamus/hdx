@@ -1,8 +1,75 @@
 ---
-source: crates/hdx_ast/tests/postcss_snapshots.rs
+source: crates/css_ast/tests/postcss_snapshots.rs
 expression: result.output.unwrap()
 ---
 {
   "type": "stylesheet",
-  "rules": []
+  "rules": [
+    {
+      "type": "stylerule",
+      "selectors": [
+        {
+          "components": [
+            {
+              "type": "tag",
+              "value": {
+                "Html": {
+                  "A": {
+                    "kind": "Ident",
+                    "offset": 0,
+                    "len": 1
+                  }
+                }
+              }
+            }
+          ],
+          "comma": null
+        }
+      ],
+      "type": "style-declaration",
+      "open": {
+        "kind": "LeftCurly",
+        "offset": 2,
+        "len": 1
+      },
+      "declarations": [
+        [
+          {
+            "type": "property",
+            "name": {
+              "kind": "Ident",
+              "offset": 10,
+              "len": 5
+            },
+            "colon": {
+              "kind": "Colon",
+              "offset": 15,
+              "len": 1
+            },
+            "value": {
+              "Named": {
+                "Black": {
+                  "kind": "Ident",
+                  "offset": 17,
+                  "len": 5
+                }
+              }
+            },
+            "important": null
+          },
+          {
+            "kind": "Semicolon",
+            "offset": 22,
+            "len": 1
+          }
+        ]
+      ],
+      "rules": [],
+      "close": {
+        "kind": "RightCurly",
+        "offset": 32,
+        "len": 1
+      }
+    }
+  ]
 }

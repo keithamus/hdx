@@ -1,5 +1,5 @@
 ---
-source: crates/hdx_ast/tests/postcss_snapshots.rs
+source: crates/css_ast/tests/postcss_snapshots.rs
 expression: result.output.unwrap()
 ---
 {
@@ -13,7 +13,7 @@ expression: result.output.unwrap()
             {
               "type": "pseudo-class",
               "value": {
-                "active": [
+                "fullscreen": [
                   {
                     "kind": "Colon",
                     "offset": 0,

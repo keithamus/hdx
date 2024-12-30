@@ -27767,6 +27767,7 @@ expression: result.output.unwrap()
           "offset": 17887,
           "len": 1
         },
+        "properties": [],
         "rules": [
           {
             "type": "stylerule",

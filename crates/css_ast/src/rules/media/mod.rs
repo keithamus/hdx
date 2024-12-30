@@ -1,11 +1,11 @@
 use bumpalo::collections::Vec;
 use css_lexer::{Cursor, Kind, Span};
 use css_parse::{
-	diagnostics, keyword_set, AtRule, Build, ConditionKeyword, CursorSink, FeatureConditionList, Parse, Parser, Peek,
-	PreludeList, Result as ParserResult, RuleList, ToCursors, T,
+	diagnostics, keyword_set, AtRule, Block, Build, ConditionKeyword, CursorSink, FeatureConditionList, Parse, Parser,
+	Peek, PreludeList, Result as ParserResult, ToCursors, T,
 };
 
-use crate::{stylesheet::Rule, Visit, Visitable};
+use crate::{stylesheet::Rule, Property, Visit, Visitable};
 
 mod features;
 use features::*;
@@ -56,24 +56,32 @@ impl<'a> Visitable<'a> for MediaRule<'a> {
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 pub struct MediaRules<'a> {
 	pub open: T!['{'],
+	pub properties: Vec<'a, (Property<'a>, Option<T![;]>)>,
 	pub rules: Vec<'a, Rule<'a>>,
 	pub close: Option<T!['}']>,
 }
 
 impl<'a> Parse<'a> for MediaRules<'a> {
 	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
-		let (open, rules, close) = Self::parse_rule_list(p)?;
-		Ok(Self { open, rules, close })
+		let (open, properties, rules, close) = Self::parse_block(p)?;
+		Ok(Self { open, properties, rules, close })
 	}
 }
 
-impl<'a> RuleList<'a> for MediaRules<'a> {
+impl<'a> Block<'a> for MediaRules<'a> {
+	type Declaration = Property<'a>;
 	type Rule = Rule<'a>;
 }
 
 impl<'a> ToCursors for MediaRules<'a> {
 	fn to_cursors(&self, s: &mut impl CursorSink) {
 		s.append(self.open.into());
+		for (property, semicolon) in &self.properties {
+			ToCursors::to_cursors(property, s);
+			if let Some(semicolon) = semicolon {
+				s.append(semicolon.into());
+			}
+		}
 		for rule in &self.rules {
 			ToCursors::to_cursors(rule, s);
 		}
@@ -438,7 +446,7 @@ mod tests {
 
 	#[test]
 	fn size_test() {
-		assert_eq!(std::mem::size_of::<MediaRule>(), 112);
+		assert_eq!(std::mem::size_of::<MediaRule>(), 144);
 		assert_eq!(std::mem::size_of::<MediaQueryList>(), 32);
 		assert_eq!(std::mem::size_of::<MediaQuery>(), 200);
 		assert_eq!(std::mem::size_of::<MediaCondition>(), 152);
@@ -465,6 +473,7 @@ mod tests {
 		assert_parse!(MediaRule, "@media(max-width:575.98px)and (prefers-reduced-motion:reduce){}");
 		// assert_parse!(MediaRule, "@media only screen and(max-device-width:800px),only screen and (device-width:1024px) and (device-height: 600px),only screen and (width:1280px) and (orientation:landscape), only screen and (device-width:800px), only screen and (max-width:767px) {}");
 		assert_parse!(MediaRule, "@media(grid){a{padding:4px}}");
+		assert_parse!(MediaRule, "@media(min-width:0){background:white}");
 		// assert_parse!(
 		// 	MediaRule,
 		// 	"@media(grid){a{color-scheme:light}}",

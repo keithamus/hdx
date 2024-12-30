@@ -1,5 +1,5 @@
 ---
-source: crates/hdx_ast/tests/postcss_snapshots.rs
+source: crates/css_ast/tests/postcss_snapshots.rs
 expression: result.output.unwrap()
 ---
 {
@@ -47,8 +47,7 @@ expression: result.output.unwrap()
                   }
                 ]
               },
-              "important": null,
-              "semicolon": null
+              "important": null
             },
             {
               "kind": "RightParen",
@@ -87,134 +86,165 @@ expression: result.output.unwrap()
               ]
             },
             "block": {
-              "type": "Block",
-              "start": 61,
-              "open_curly": {
-                "kind": "LeftCurly",
-                "offset": 62,
-                "len": 1
-              },
-              "declarations": [
-                {
-                  "type": "Declaration",
-                  "name": {
-                    "kind": "Ident",
-                    "offset": 72,
-                    "len": 4
-                  },
-                  "colon": null,
-                  "value": {
-                    "values": [
-                      {
-                        "kind": "Whitespace",
-                        "offset": 78,
-                        "len": 1
-                      },
-                      {
-                        "kind": "Whitespace",
-                        "offset": 79,
-                        "len": 12
-                      },
-                      {
-                        "kind": "Ident",
-                        "offset": 91,
-                        "len": 5
-                      },
-                      {
-                        "kind": "Colon",
-                        "offset": 96,
-                        "len": 1
-                      },
-                      {
-                        "kind": "Whitespace",
-                        "offset": 97,
-                        "len": 1
-                      },
-                      {
-                        "kind": "Ident",
-                        "offset": 98,
-                        "len": 5
-                      }
-                    ]
-                  },
-                  "important": null,
-                  "semicolon": {
-                    "kind": "Semicolon",
-                    "offset": 103,
-                    "len": 1
-                  }
-                }
-              ],
-              "rules": [],
-              "close_curly": {
-                "kind": "RightCurly",
-                "offset": 113,
-                "len": 1
-              }
-            }
-          },
-          {
-            "type": "stylerule",
-            "selectors": [
-              {
-                "components": [
+              "Block": {
+                "type": "Block",
+                "start": 61,
+                "open_curly": {
+                  "kind": "LeftCurly",
+                  "offset": 62,
+                  "len": 1
+                },
+                "declarations": [],
+                "rules": [
                   {
-                    "type": "tag",
-                    "value": {
-                      "Unknown": {
-                        "kind": "Ident",
-                        "offset": 123,
-                        "len": 2
+                    "type": "QualifiedRule",
+                    "type": "QualifiedRule",
+                    "prelude": {
+                      "values": [
+                        {
+                          "kind": "Whitespace",
+                          "offset": 63,
+                          "len": 9
+                        },
+                        {
+                          "kind": "Ident",
+                          "offset": 72,
+                          "len": 4
+                        }
+                      ]
+                    },
+                    "block": {
+                      "type": "Block",
+                      "start": 76,
+                      "open_curly": {
+                        "kind": "LeftCurly",
+                        "offset": 77,
+                        "len": 1
+                      },
+                      "declarations": [
+                        [
+                          {
+                            "type": "Declaration",
+                            "name": {
+                              "kind": "Ident",
+                              "offset": 91,
+                              "len": 5
+                            },
+                            "colon": {
+                              "kind": "Colon",
+                              "offset": 96,
+                              "len": 1
+                            },
+                            "value": {
+                              "values": [
+                                {
+                                  "kind": "Whitespace",
+                                  "offset": 97,
+                                  "len": 1
+                                },
+                                {
+                                  "kind": "Ident",
+                                  "offset": 98,
+                                  "len": 5
+                                }
+                              ]
+                            },
+                            "important": null
+                          },
+                          {
+                            "kind": "Semicolon",
+                            "offset": 103,
+                            "len": 1
+                          }
+                        ]
+                      ],
+                      "rules": [],
+                      "close_curly": {
+                        "kind": "RightCurly",
+                        "offset": 113,
+                        "len": 1
+                      }
+                    }
+                  },
+                  {
+                    "type": "QualifiedRule",
+                    "type": "QualifiedRule",
+                    "prelude": {
+                      "values": [
+                        {
+                          "kind": "Whitespace",
+                          "offset": 114,
+                          "len": 9
+                        },
+                        {
+                          "kind": "Ident",
+                          "offset": 123,
+                          "len": 2
+                        }
+                      ]
+                    },
+                    "block": {
+                      "type": "Block",
+                      "start": 125,
+                      "open_curly": {
+                        "kind": "LeftCurly",
+                        "offset": 126,
+                        "len": 1
+                      },
+                      "declarations": [
+                        [
+                          {
+                            "type": "Declaration",
+                            "name": {
+                              "kind": "Ident",
+                              "offset": 140,
+                              "len": 5
+                            },
+                            "colon": {
+                              "kind": "Colon",
+                              "offset": 145,
+                              "len": 1
+                            },
+                            "value": {
+                              "values": [
+                                {
+                                  "kind": "Whitespace",
+                                  "offset": 146,
+                                  "len": 1
+                                },
+                                {
+                                  "kind": "Ident",
+                                  "offset": 147,
+                                  "len": 5
+                                }
+                              ]
+                            },
+                            "important": null
+                          },
+                          null
+                        ]
+                      ],
+                      "rules": [],
+                      "close_curly": {
+                        "kind": "RightCurly",
+                        "offset": 161,
+                        "len": 1
                       }
                     }
                   }
                 ],
-                "comma": null
-              }
-            ],
-            "type": "style-declaration",
-            "open": {
-              "kind": "LeftCurly",
-              "offset": 126,
-              "len": 1
-            },
-            "declarations": [
-              {
-                "type": "property",
-                "name": {
-                  "kind": "Ident",
-                  "offset": 140,
-                  "len": 5
-                },
-                "colon": {
-                  "kind": "Colon",
-                  "offset": 145,
+                "close_curly": {
+                  "kind": "RightCurly",
+                  "offset": 167,
                   "len": 1
-                },
-                "value": {
-                  "Named": {
-                    "white": {
-                      "kind": "Ident",
-                      "offset": 147,
-                      "len": 5
-                    }
-                  }
-                },
-                "important": null,
-                "semicolon": null
+                }
               }
-            ],
-            "rules": [],
-            "close": {
-              "kind": "RightCurly",
-              "offset": 161,
-              "len": 1
             }
           }
         ],
         "close": {
           "kind": "RightCurly",
-          "offset": 167,
+          "offset": 169,
           "len": 1
         }
       }
@@ -234,7 +264,7 @@ expression: result.output.unwrap()
             "len": 1
           },
           {
-            "type": "Function",
+            "type": "FunctionBlock",
             "name": {
               "kind": "Function",
               "offset": 181,
@@ -261,102 +291,108 @@ expression: result.output.unwrap()
         ]
       },
       "block": {
-        "type": "Block",
-        "start": 205,
-        "open_curly": {
-          "kind": "LeftCurly",
-          "offset": 206,
-          "len": 1
-        },
-        "declarations": [
-          {
-            "type": "Declaration",
-            "name": {
-              "kind": "Ident",
-              "offset": 210,
-              "len": 1
-            },
-            "colon": {
-              "kind": "Colon",
-              "offset": 211,
-              "len": 1
-            },
-            "value": {
-              "values": [
-                {
+        "Block": {
+          "type": "Block",
+          "start": 205,
+          "open_curly": {
+            "kind": "LeftCurly",
+            "offset": 206,
+            "len": 1
+          },
+          "declarations": [
+            [
+              {
+                "type": "Declaration",
+                "name": {
                   "kind": "Ident",
-                  "offset": 212,
-                  "len": 13
-                }
-              ]
-            },
-            "important": null,
-            "semicolon": null
-          }
-        ],
-        "rules": [
-          {
-            "type": "QualifiedRule",
-            "type": "QualifiedRule",
-            "prelude": {
-              "values": []
-            },
-            "block": {
-              "type": "Block",
-              "start": 225,
-              "open_curly": {
-                "kind": "LeftCurly",
-                "offset": 226,
-                "len": 1
+                  "offset": 210,
+                  "len": 1
+                },
+                "colon": {
+                  "kind": "Colon",
+                  "offset": 211,
+                  "len": 1
+                },
+                "value": {
+                  "values": [
+                    {
+                      "kind": "Ident",
+                      "offset": 212,
+                      "len": 13
+                    }
+                  ]
+                },
+                "important": null
               },
-              "declarations": [
-                {
-                  "type": "Declaration",
-                  "name": {
-                    "kind": "Ident",
-                    "offset": 232,
-                    "len": 10
-                  },
-                  "colon": {
-                    "kind": "Colon",
-                    "offset": 242,
-                    "len": 1
-                  },
-                  "value": {
-                    "values": [
-                      {
-                        "kind": "Whitespace",
-                        "offset": 243,
+              null
+            ]
+          ],
+          "rules": [
+            {
+              "type": "QualifiedRule",
+              "type": "QualifiedRule",
+              "prelude": {
+                "values": []
+              },
+              "block": {
+                "type": "Block",
+                "start": 225,
+                "open_curly": {
+                  "kind": "LeftCurly",
+                  "offset": 226,
+                  "len": 1
+                },
+                "declarations": [
+                  [
+                    {
+                      "type": "Declaration",
+                      "name": {
+                        "kind": "Ident",
+                        "offset": 232,
+                        "len": 10
+                      },
+                      "colon": {
+                        "kind": "Colon",
+                        "offset": 242,
                         "len": 1
                       },
-                      {
-                        "kind": "Ident",
-                        "offset": 244,
-                        "len": 6
-                      }
-                    ]
-                  },
-                  "important": null,
-                  "semicolon": {
-                    "kind": "Semicolon",
-                    "offset": 250,
-                    "len": 1
-                  }
+                      "value": {
+                        "values": [
+                          {
+                            "kind": "Whitespace",
+                            "offset": 243,
+                            "len": 1
+                          },
+                          {
+                            "kind": "Ident",
+                            "offset": 244,
+                            "len": 6
+                          }
+                        ]
+                      },
+                      "important": null
+                    },
+                    {
+                      "kind": "Semicolon",
+                      "offset": 250,
+                      "len": 1
+                    }
+                  ]
+                ],
+                "rules": [],
+                "close_curly": {
+                  "kind": "RightCurly",
+                  "offset": 254,
+                  "len": 1
                 }
-              ],
-              "rules": [],
-              "close_curly": {
-                "kind": "RightCurly",
-                "offset": 254,
-                "len": 1
               }
             }
+          ],
+          "close_curly": {
+            "kind": "RightCurly",
+            "offset": 256,
+            "len": 1
           }
-        ],
-        "close_curly": {
-          "kind": "RightCurly",
-          "offset": 256,
-          "len": 1
         }
       }
     }

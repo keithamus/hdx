@@ -1,5 +1,5 @@
 ---
-source: crates/hdx_ast/tests/postcss_snapshots.rs
+source: crates/css_ast/tests/postcss_snapshots.rs
 expression: result.output.unwrap()
 ---
 {
@@ -33,85 +33,89 @@ expression: result.output.unwrap()
         "len": 1
       },
       "declarations": [
-        {
-          "type": "property",
-          "name": {
-            "kind": "Ident",
-            "offset": 63,
-            "len": 5
-          },
-          "colon": {
-            "kind": "Colon",
-            "offset": 68,
-            "len": 1
-          },
-          "value": {
-            "Named": {
-              "black": {
-                "kind": "Ident",
-                "offset": 70,
-                "len": 5
+        [
+          {
+            "type": "property",
+            "name": {
+              "kind": "Ident",
+              "offset": 63,
+              "len": 5
+            },
+            "colon": {
+              "kind": "Colon",
+              "offset": 68,
+              "len": 1
+            },
+            "value": {
+              "Named": {
+                "Black": {
+                  "kind": "Ident",
+                  "offset": 70,
+                  "len": 5
+                }
               }
-            }
+            },
+            "important": null
           },
-          "important": null,
-          "semicolon": {
+          {
             "kind": "Semicolon",
             "offset": 75,
             "len": 1
           }
-        },
-        {
-          "type": "property",
-          "name": {
-            "kind": "Ident",
-            "offset": 99,
-            "len": 13
+        ],
+        [
+          {
+            "type": "property",
+            "name": {
+              "kind": "Ident",
+              "offset": 99,
+              "len": 13
+            },
+            "colon": {
+              "kind": "Colon",
+              "offset": 112,
+              "len": 1
+            },
+            "value": {
+              "values": [
+                {
+                  "kind": "Whitespace",
+                  "offset": 113,
+                  "len": 1
+                },
+                {
+                  "kind": "Dimension",
+                  "offset": 114,
+                  "len": 3,
+                  "unit": "px"
+                },
+                {
+                  "kind": "Whitespace",
+                  "offset": 117,
+                  "len": 1
+                },
+                {
+                  "kind": "Delim",
+                  "offset": 118,
+                  "len": 1
+                },
+                {
+                  "kind": "Whitespace",
+                  "offset": 119,
+                  "len": 1
+                },
+                {
+                  "kind": "Dimension",
+                  "offset": 120,
+                  "len": 3,
+                  "unit": "px"
+                }
+              ]
+            },
+            "important": null
           },
-          "colon": {
-            "kind": "Colon",
-            "offset": 112,
-            "len": 1
-          },
-          "value": {
-            "values": [
-              {
-                "kind": "Whitespace",
-                "offset": 113,
-                "len": 1
-              },
-              {
-                "kind": "Dimension",
-                "offset": 114,
-                "len": 3,
-                "unit": "px"
-              },
-              {
-                "kind": "Whitespace",
-                "offset": 117,
-                "len": 1
-              },
-              {
-                "kind": "Delim",
-                "offset": 118,
-                "len": 1
-              },
-              {
-                "kind": "Whitespace",
-                "offset": 119,
-                "len": 1
-              },
-              {
-                "kind": "Dimension",
-                "offset": 120,
-                "len": 3,
-                "unit": "px"
-              }
-            ]
-          },
-          "important": null,
-          "semicolon": null
-        }
+          null
+        ]
       ],
       "rules": [],
       "close": {
@@ -148,34 +152,36 @@ expression: result.output.unwrap()
         "len": 1
       },
       "declarations": [
-        {
-          "type": "property",
-          "name": {
-            "kind": "Ident",
-            "offset": 157,
-            "len": 5
-          },
-          "colon": {
-            "kind": "Colon",
-            "offset": 162,
-            "len": 1
-          },
-          "value": {
-            "Named": {
-              "black": {
-                "kind": "Ident",
-                "offset": 164,
-                "len": 5
+        [
+          {
+            "type": "property",
+            "name": {
+              "kind": "Ident",
+              "offset": 157,
+              "len": 5
+            },
+            "colon": {
+              "kind": "Colon",
+              "offset": 162,
+              "len": 1
+            },
+            "value": {
+              "Named": {
+                "Black": {
+                  "kind": "Ident",
+                  "offset": 164,
+                  "len": 5
+                }
               }
-            }
+            },
+            "important": null
           },
-          "important": null,
-          "semicolon": {
+          {
             "kind": "Semicolon",
             "offset": 169,
             "len": 1
           }
-        }
+        ]
       ],
       "rules": [],
       "close": {
@@ -185,42 +191,50 @@ expression: result.output.unwrap()
       }
     },
     {
-      "type": "QualifiedRule",
-      "prelude": {
-        "values": [
-          {
-            "kind": "Whitespace",
-            "offset": 184,
-            "len": 2
-          },
-          {
-            "kind": "Delim",
-            "offset": 186,
-            "len": 1
-          },
-          {
-            "kind": "Ident",
-            "offset": 187,
-            "len": 2
-          },
-          {
-            "kind": "Ident",
-            "offset": 193,
-            "len": 4
-          }
-        ]
+      "type": "stylerule",
+      "selectors": [
+        {
+          "components": [
+            {
+              "type": "class",
+              "value": {
+                "type": "Class",
+                "dot": {
+                  "kind": "Delim",
+                  "offset": 186,
+                  "len": 1
+                },
+                "name": {
+                  "kind": "Ident",
+                  "offset": 187,
+                  "len": 2
+                }
+              }
+            },
+            {
+              "type": "tag",
+              "value": {
+                "Unknown": {
+                  "kind": "Ident",
+                  "offset": 193,
+                  "len": 4
+                }
+              }
+            }
+          ],
+          "comma": null
+        }
+      ],
+      "type": "style-declaration",
+      "open": {
+        "kind": "LeftCurly",
+        "offset": 198,
+        "len": 1
       },
-      "block": {
-        "type": "Block",
-        "start": 197,
-        "open_curly": {
-          "kind": "LeftCurly",
-          "offset": 198,
-          "len": 1
-        },
-        "declarations": [
+      "declarations": [
+        [
           {
-            "type": "Declaration",
+            "type": "property",
             "name": {
               "kind": "Ident",
               "offset": 202,
@@ -266,15 +280,17 @@ expression: result.output.unwrap()
                 }
               ]
             },
-            "important": null,
-            "semicolon": {
-              "kind": "Semicolon",
-              "offset": 226,
-              "len": 1
-            }
+            "important": null
           },
           {
-            "type": "Declaration",
+            "kind": "Semicolon",
+            "offset": 226,
+            "len": 1
+          }
+        ],
+        [
+          {
+            "type": "property",
             "name": {
               "kind": "Ident",
               "offset": 230,
@@ -309,20 +325,20 @@ expression: result.output.unwrap()
                 }
               ]
             },
-            "important": null,
-            "semicolon": {
-              "kind": "Semicolon",
-              "offset": 263,
-              "len": 1
-            }
+            "important": null
+          },
+          {
+            "kind": "Semicolon",
+            "offset": 263,
+            "len": 1
           }
-        ],
-        "rules": [],
-        "close_curly": {
-          "kind": "RightCurly",
-          "offset": 265,
-          "len": 1
-        }
+        ]
+      ],
+      "rules": [],
+      "close": {
+        "kind": "RightCurly",
+        "offset": 265,
+        "len": 1
       }
     }
   ]

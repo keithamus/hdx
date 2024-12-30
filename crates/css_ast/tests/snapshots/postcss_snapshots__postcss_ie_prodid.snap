@@ -1,5 +1,5 @@
 ---
-source: crates/hdx_ast/tests/postcss_snapshots.rs
+source: crates/css_ast/tests/postcss_snapshots.rs
 expression: result.output.unwrap()
 ---
 {
@@ -33,159 +33,161 @@ expression: result.output.unwrap()
         "len": 1
       },
       "declarations": [
-        {
-          "type": "property",
-          "name": {
-            "kind": "Ident",
-            "offset": 8,
-            "len": 6
-          },
-          "colon": {
-            "kind": "Colon",
-            "offset": 14,
-            "len": 1
-          },
-          "value": {
-            "values": [
-              {
-                "kind": "Whitespace",
-                "offset": 15,
-                "len": 1
-              },
-              {
-                "kind": "Ident",
-                "offset": 16,
-                "len": 6
-              },
-              {
-                "kind": "Colon",
-                "offset": 22,
-                "len": 1
-              },
-              {
-                "kind": "Ident",
-                "offset": 23,
-                "len": 16
-              },
-              {
-                "kind": "Delim",
-                "offset": 39,
-                "len": 1
-              },
-              {
-                "kind": "Ident",
-                "offset": 40,
-                "len": 9
-              },
-              {
-                "kind": "Delim",
-                "offset": 49,
-                "len": 1
-              },
-              {
-                "type": "Function",
-                "name": {
-                  "kind": "Function",
-                  "offset": 50,
-                  "len": 5
-                },
-                "values": [
-                  {
-                    "kind": "Ident",
-                    "offset": 55,
-                    "len": 11
-                  },
-                  {
-                    "kind": "Delim",
-                    "offset": 66,
-                    "len": 1
-                  },
-                  {
-                    "kind": "Number",
-                    "offset": 67,
-                    "len": 1
-                  }
-                ],
-                "close_paren": {
-                  "kind": "RightParen",
-                  "offset": 68,
+        [
+          {
+            "type": "property",
+            "name": {
+              "kind": "Ident",
+              "offset": 8,
+              "len": 6
+            },
+            "colon": {
+              "kind": "Colon",
+              "offset": 14,
+              "len": 1
+            },
+            "value": {
+              "values": [
+                {
+                  "kind": "Whitespace",
+                  "offset": 15,
                   "len": 1
-                }
-              },
-              {
-                "kind": "Whitespace",
-                "offset": 69,
-                "len": 1
-              },
-              {
-                "kind": "Ident",
-                "offset": 70,
-                "len": 6
-              },
-              {
-                "kind": "Colon",
-                "offset": 76,
-                "len": 1
-              },
-              {
-                "kind": "Ident",
-                "offset": 77,
-                "len": 16
-              },
-              {
-                "kind": "Delim",
-                "offset": 93,
-                "len": 1
-              },
-              {
-                "kind": "Ident",
-                "offset": 94,
-                "len": 9
-              },
-              {
-                "kind": "Delim",
-                "offset": 103,
-                "len": 1
-              },
-              {
-                "type": "Function",
-                "name": {
-                  "kind": "Function",
-                  "offset": 104,
+                },
+                {
+                  "kind": "Ident",
+                  "offset": 16,
                   "len": 6
                 },
-                "values": [
-                  {
-                    "kind": "Ident",
-                    "offset": 110,
-                    "len": 8
+                {
+                  "kind": "Colon",
+                  "offset": 22,
+                  "len": 1
+                },
+                {
+                  "kind": "Ident",
+                  "offset": 23,
+                  "len": 16
+                },
+                {
+                  "kind": "Delim",
+                  "offset": 39,
+                  "len": 1
+                },
+                {
+                  "kind": "Ident",
+                  "offset": 40,
+                  "len": 9
+                },
+                {
+                  "kind": "Delim",
+                  "offset": 49,
+                  "len": 1
+                },
+                {
+                  "type": "FunctionBlock",
+                  "name": {
+                    "kind": "Function",
+                    "offset": 50,
+                    "len": 5
                   },
-                  {
-                    "kind": "Delim",
-                    "offset": 118,
-                    "len": 1
-                  },
-                  {
-                    "kind": "Number",
-                    "offset": 119,
+                  "values": [
+                    {
+                      "kind": "Ident",
+                      "offset": 55,
+                      "len": 11
+                    },
+                    {
+                      "kind": "Delim",
+                      "offset": 66,
+                      "len": 1
+                    },
+                    {
+                      "kind": "Number",
+                      "offset": 67,
+                      "len": 1
+                    }
+                  ],
+                  "close_paren": {
+                    "kind": "RightParen",
+                    "offset": 68,
                     "len": 1
                   }
-                ],
-                "close_paren": {
-                  "kind": "RightParen",
-                  "offset": 120,
+                },
+                {
+                  "kind": "Whitespace",
+                  "offset": 69,
                   "len": 1
+                },
+                {
+                  "kind": "Ident",
+                  "offset": 70,
+                  "len": 6
+                },
+                {
+                  "kind": "Colon",
+                  "offset": 76,
+                  "len": 1
+                },
+                {
+                  "kind": "Ident",
+                  "offset": 77,
+                  "len": 16
+                },
+                {
+                  "kind": "Delim",
+                  "offset": 93,
+                  "len": 1
+                },
+                {
+                  "kind": "Ident",
+                  "offset": 94,
+                  "len": 9
+                },
+                {
+                  "kind": "Delim",
+                  "offset": 103,
+                  "len": 1
+                },
+                {
+                  "type": "FunctionBlock",
+                  "name": {
+                    "kind": "Function",
+                    "offset": 104,
+                    "len": 6
+                  },
+                  "values": [
+                    {
+                      "kind": "Ident",
+                      "offset": 110,
+                      "len": 8
+                    },
+                    {
+                      "kind": "Delim",
+                      "offset": 118,
+                      "len": 1
+                    },
+                    {
+                      "kind": "Number",
+                      "offset": 119,
+                      "len": 1
+                    }
+                  ],
+                  "close_paren": {
+                    "kind": "RightParen",
+                    "offset": 120,
+                    "len": 1
+                  }
                 }
-              }
-            ]
+              ]
+            },
+            "important": null
           },
-          "important": null,
-          "semicolon": {
+          {
             "kind": "Semicolon",
             "offset": 121,
             "len": 1
           }
-        }
+        ]
       ],
       "rules": [],
       "close": {

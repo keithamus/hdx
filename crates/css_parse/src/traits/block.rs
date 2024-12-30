@@ -6,13 +6,12 @@ use super::Peek;
 /// This trait provides an implementation for ["consuming a blocks contents"][1].
 ///
 /// ```md
-/// <comment>
-///              ╭──────────────────────────────────────────╮
-///  │├─ "{" ─╮─    ╯-╭─ (anything but "*" followed by "/") ─╮─╰─ "*/" ─╭─┤│
-///           │        ╰──────────────────────────────────────╯          │
-///           │            ╭───────────────────────────╮                 │
-///           ╰─    ───────╯-╭─ (anything but "\n") ─╮─╰─ "\n" ──────────╯
-///                      ╰───────────────────────╯
+/// <block>
+///          
+///  │├─ "{" ─╭──╮─╭─ <ws-*> ─╮╭─ ";" ─╮─╭─╮─ <rule> ────────╭─╮─ "}" ─┤│
+///           │  │ ╰──────────╯╰───────╯ │ ├─ <declaration> ─┤ │
+///           │  ╰───────────────────────╯ ╰─────────────────╯ │
+///           ╰────────────────────────────────────────────────╯
 /// ```
 ///
 /// [1]: https://drafts.csswg.org/css-syntax-3/#consume-block-contents
@@ -27,6 +26,9 @@ pub trait Block<'a>: Sized + Parse<'a> {
 		let mut declarations = Vec::new_in(p.bump());
 		let mut rules = Vec::new_in(p.bump());
 		loop {
+			if p.parse_if_peek::<T![;]>()?.is_some() {
+				continue;
+			}
 			if p.at_end() {
 				break;
 			}
