@@ -1,7 +1,6 @@
 use core::fmt;
 
 use crate::TokenHighlighter;
-use bumpalo::{collections::Vec, Bump};
 use css_lexer::{Cursor, Token};
 use css_parse::CursorSink;
 
