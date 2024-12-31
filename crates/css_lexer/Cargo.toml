@@ -8,6 +8,7 @@ homepage.workspace = true
 keywords.workspace = true
 license.workspace = true
 repository.workspace = true
+exclude = ["tests/*", "bench/*"]
 
 [lib]
 bench = false
@@ -19,7 +20,6 @@ bitmask-enum = { workspace = true }
 miette = { workspace = true, optional = true }
 serde = { workspace = true, features = ["derive"], optional = true }
 serde_json = { workspace = true, optional = true }
-smallvec = { workspace = true }
 
 [dev-dependencies]
 glob = { workspace = true }

@@ -1,7 +1,6 @@
-use css_lexer::{Cursor, KindSet};
+use css_lexer::KindSet;
 use css_parse::{
-	diagnostics, keyword_set, pseudo_class, Build, CursorSink, Parse, Parser, Peek, Result as ParserResult, ToCursors,
-	T,
+	diagnostics, keyword_set, pseudo_class, Build, CursorSink, Parse, Parser, Result as ParserResult, ToCursors, T,
 };
 use hdx_proc_macro::visit;
 

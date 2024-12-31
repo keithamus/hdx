@@ -1,5 +1,5 @@
 ---
-source: crates/hdx_ast/tests/postcss_snapshots.rs
+source: crates/css_ast/tests/postcss_snapshots.rs
 expression: result.output.unwrap()
 ---
 {
@@ -33,153 +33,161 @@ expression: result.output.unwrap()
         "len": 1
       },
       "declarations": [
-        {
-          "type": "property",
-          "name": {
-            "kind": "Ident",
-            "offset": 8,
-            "len": 10
-          },
-          "colon": {
-            "kind": "Colon",
-            "offset": 18,
-            "len": 1
-          },
-          "value": {
-            "values": [
-              {
-                "kind": "Whitespace",
-                "offset": 19,
-                "len": 1
-              },
-              {
-                "type": "Function",
-                "name": {
-                  "kind": "Function",
-                  "offset": 20,
-                  "len": 4
-                },
-                "values": [
-                  {
-                    "kind": "String",
-                    "offset": 24,
-                    "len": 8
-                  }
-                ],
-                "close_paren": {
-                  "kind": "RightParen",
-                  "offset": 32,
+        [
+          {
+            "type": "property",
+            "name": {
+              "kind": "Ident",
+              "offset": 8,
+              "len": 10
+            },
+            "colon": {
+              "kind": "Colon",
+              "offset": 18,
+              "len": 1
+            },
+            "value": {
+              "values": [
+                {
+                  "kind": "Whitespace",
+                  "offset": 19,
                   "len": 1
+                },
+                {
+                  "type": "FunctionBlock",
+                  "name": {
+                    "kind": "Function",
+                    "offset": 20,
+                    "len": 4
+                  },
+                  "values": [
+                    {
+                      "kind": "String",
+                      "offset": 24,
+                      "len": 8
+                    }
+                  ],
+                  "close_paren": {
+                    "kind": "RightParen",
+                    "offset": 32,
+                    "len": 1
+                  }
                 }
-              }
-            ]
+              ]
+            },
+            "important": null
           },
-          "important": null,
-          "semicolon": {
+          {
             "kind": "Semicolon",
             "offset": 33,
             "len": 1
           }
-        },
-        {
-          "type": "property",
-          "name": {
-            "kind": "Ident",
-            "offset": 39,
-            "len": 10
+        ],
+        [
+          {
+            "type": "property",
+            "name": {
+              "kind": "Ident",
+              "offset": 39,
+              "len": 10
+            },
+            "colon": {
+              "kind": "Colon",
+              "offset": 49,
+              "len": 1
+            },
+            "value": {
+              "values": [
+                {
+                  "kind": "Whitespace",
+                  "offset": 50,
+                  "len": 1
+                },
+                {
+                  "kind": "Url",
+                  "offset": 51,
+                  "len": 8
+                }
+              ]
+            },
+            "important": null
           },
-          "colon": {
-            "kind": "Colon",
-            "offset": 49,
-            "len": 1
-          },
-          "value": {
-            "values": [
-              {
-                "kind": "Whitespace",
-                "offset": 50,
-                "len": 1
-              },
-              {
-                "kind": "Url",
-                "offset": 51,
-                "len": 8
-              }
-            ]
-          },
-          "important": null,
-          "semicolon": {
+          {
             "kind": "Semicolon",
             "offset": 59,
             "len": 1
           }
-        },
-        {
-          "type": "property",
-          "name": {
-            "kind": "Ident",
-            "offset": 65,
-            "len": 10
+        ],
+        [
+          {
+            "type": "property",
+            "name": {
+              "kind": "Ident",
+              "offset": 65,
+              "len": 10
+            },
+            "colon": {
+              "kind": "Colon",
+              "offset": 75,
+              "len": 1
+            },
+            "value": {
+              "values": [
+                {
+                  "kind": "Whitespace",
+                  "offset": 76,
+                  "len": 1
+                },
+                {
+                  "kind": "Url",
+                  "offset": 77,
+                  "len": 8
+                }
+              ]
+            },
+            "important": null
           },
-          "colon": {
-            "kind": "Colon",
-            "offset": 75,
-            "len": 1
-          },
-          "value": {
-            "values": [
-              {
-                "kind": "Whitespace",
-                "offset": 76,
-                "len": 1
-              },
-              {
-                "kind": "Url",
-                "offset": 77,
-                "len": 8
-              }
-            ]
-          },
-          "important": null,
-          "semicolon": {
+          {
             "kind": "Semicolon",
             "offset": 85,
             "len": 1
           }
-        },
-        {
-          "type": "property",
-          "name": {
-            "kind": "Ident",
-            "offset": 91,
-            "len": 10
+        ],
+        [
+          {
+            "type": "property",
+            "name": {
+              "kind": "Ident",
+              "offset": 91,
+              "len": 10
+            },
+            "colon": {
+              "kind": "Colon",
+              "offset": 101,
+              "len": 1
+            },
+            "value": {
+              "values": [
+                {
+                  "kind": "Whitespace",
+                  "offset": 102,
+                  "len": 1
+                },
+                {
+                  "kind": "Ident",
+                  "offset": 103,
+                  "len": 3
+                }
+              ]
+            },
+            "important": null
           },
-          "colon": {
-            "kind": "Colon",
-            "offset": 101,
-            "len": 1
-          },
-          "value": {
-            "values": [
-              {
-                "kind": "Whitespace",
-                "offset": 102,
-                "len": 1
-              },
-              {
-                "kind": "Ident",
-                "offset": 103,
-                "len": 3
-              }
-            ]
-          },
-          "important": null,
-          "semicolon": {
+          {
             "kind": "Semicolon",
             "offset": 106,
             "len": 1
           }
-        }
+        ]
       ],
       "rules": [],
       "close": {
@@ -360,7 +368,7 @@ expression: result.output.unwrap()
             "len": 1
           },
           {
-            "type": "Function",
+            "type": "FunctionBlock",
             "name": {
               "kind": "Function",
               "offset": 151,
@@ -373,7 +381,7 @@ expression: result.output.unwrap()
                 "len": 1
               },
               {
-                "type": "Function",
+                "type": "FunctionBlock",
                 "name": {
                   "kind": "Function",
                   "offset": 156,
@@ -772,39 +780,41 @@ expression: result.output.unwrap()
         "len": 1
       },
       "declarations": [
-        {
-          "type": "property",
-          "name": {
-            "kind": "Ident",
-            "offset": 281,
-            "len": 5
+        [
+          {
+            "type": "property",
+            "name": {
+              "kind": "Ident",
+              "offset": 281,
+              "len": 5
+            },
+            "colon": {
+              "kind": "Colon",
+              "offset": 286,
+              "len": 1
+            },
+            "value": {
+              "values": [
+                {
+                  "kind": "Whitespace",
+                  "offset": 287,
+                  "len": 1
+                },
+                {
+                  "kind": "Ident",
+                  "offset": 288,
+                  "len": 2
+                }
+              ]
+            },
+            "important": null
           },
-          "colon": {
-            "kind": "Colon",
-            "offset": 286,
-            "len": 1
-          },
-          "value": {
-            "values": [
-              {
-                "kind": "Whitespace",
-                "offset": 287,
-                "len": 1
-              },
-              {
-                "kind": "Ident",
-                "offset": 288,
-                "len": 2
-              }
-            ]
-          },
-          "important": null,
-          "semicolon": {
+          {
             "kind": "Semicolon",
             "offset": 290,
             "len": 1
           }
-        }
+        ]
       ],
       "rules": [],
       "close": {
@@ -904,35 +914,37 @@ expression: result.output.unwrap()
         "len": 1
       },
       "declarations": [
-        {
-          "type": "property",
-          "name": {
-            "kind": "Ident",
-            "offset": 321,
-            "len": 8
+        [
+          {
+            "type": "property",
+            "name": {
+              "kind": "Ident",
+              "offset": 321,
+              "len": 8
+            },
+            "colon": {
+              "kind": "Colon",
+              "offset": 329,
+              "len": 1
+            },
+            "value": {
+              "values": [
+                {
+                  "kind": "Whitespace",
+                  "offset": 330,
+                  "len": 1
+                },
+                {
+                  "kind": "Ident",
+                  "offset": 331,
+                  "len": 3
+                }
+              ]
+            },
+            "important": null
           },
-          "colon": {
-            "kind": "Colon",
-            "offset": 329,
-            "len": 1
-          },
-          "value": {
-            "values": [
-              {
-                "kind": "Whitespace",
-                "offset": 330,
-                "len": 1
-              },
-              {
-                "kind": "Ident",
-                "offset": 331,
-                "len": 3
-              }
-            ]
-          },
-          "important": null,
-          "semicolon": null
-        }
+          null
+        ]
       ],
       "rules": [],
       "close": {

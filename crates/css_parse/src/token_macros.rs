@@ -1632,6 +1632,15 @@ impl PairWiseStart {
 	pub fn kind(&self) -> Kind {
 		self.0.kind()
 	}
+
+	pub fn end(&self) -> Kind {
+		match self.kind() {
+			Kind::LeftCurly => Kind::RightCurly,
+			Kind::LeftParen => Kind::RightParen,
+			Kind::LeftSquare => Kind::RightSquare,
+			k => k,
+		}
+	}
 }
 
 impl<'a> Peek<'a> for PairWiseStart {
@@ -1677,6 +1686,15 @@ impl From<&PairWiseEnd> for Token {
 impl PairWiseEnd {
 	pub fn kind(&self) -> Kind {
 		self.0.kind()
+	}
+
+	pub fn start(&self) -> Kind {
+		match self.kind() {
+			Kind::RightCurly => Kind::LeftCurly,
+			Kind::RightParen => Kind::LeftParen,
+			Kind::RightSquare => Kind::LeftSquare,
+			k => k,
+		}
 	}
 }
 

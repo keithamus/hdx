@@ -2,7 +2,8 @@ use crate::{properties::Property, selector::SelectorList};
 use bumpalo::collections::Vec;
 use css_lexer::Cursor;
 use css_parse::{
-	syntax::BadDeclaration, Block, CursorSink, Parse, Parser, QualifiedRule, Result as ParserResult, ToCursors, T,
+	syntax::BadDeclaration, Block, CursorSink, Parse, Parser, QualifiedRule, Result as ParserResult, State, ToCursors,
+	T,
 };
 use hdx_proc_macro::visit;
 
@@ -28,7 +29,7 @@ impl<'a> Parse<'a> for StyleRule<'a> {
 impl<'a> QualifiedRule<'a> for StyleRule<'a> {
 	type Block = StyleDeclaration<'a>;
 	type Prelude = SelectorList<'a>;
-	type BadDeclaration = BadDeclaration;
+	type BadDeclaration = BadDeclaration<'a>;
 }
 
 impl ToCursors for StyleRule<'_> {
@@ -126,6 +127,7 @@ macro_rules! nested_group_rule {
 			UnknownAt(UnknownAtRule<'a>),
 			Style(StyleRule<'a>),
 			Unknown(UnknownQualifiedRule<'a>),
+			BadDeclaration(BadDeclaration<'a>),
 		}
 	}
 }
@@ -159,7 +161,15 @@ impl<'a> Parse<'a> for NestedGroupRule<'a> {
 			Ok(Self::Style(rule))
 		} else {
 			p.rewind(checkpoint);
-			p.parse::<UnknownQualifiedRule>().map(Self::Unknown)
+			if let Ok(rule) = p.parse::<UnknownQualifiedRule>() {
+				Ok(Self::Unknown(rule))
+			} else {
+				p.rewind(checkpoint);
+				let state = p.set_state(State::Nested);
+				let declaration = p.parse::<BadDeclaration>();
+				p.set_state(state);
+				Ok(Self::BadDeclaration(declaration?))
+			}
 		}
 	}
 }
@@ -175,6 +185,7 @@ impl<'a> ToCursors for NestedGroupRule<'a> {
 					Self::UnknownAt(r) => ToCursors::to_cursors(r, s),
 					Self::Style(r) => ToCursors::to_cursors(r, s),
 					Self::Unknown(r) => ToCursors::to_cursors(r, s),
+					Self::BadDeclaration(r) => ToCursors::to_cursors(r, s),
 				}
 			}
 		}
@@ -193,6 +204,7 @@ impl<'a> Visitable<'a> for NestedGroupRule<'a> {
 						Self::UnknownAt(r) => Visitable::accept(r, v),
 						Self::Style(r) => Visitable::accept(r, v),
 						Self::Unknown(r) => Visitable::accept(r, v),
+						Self::BadDeclaration(_) => {},
 					};
 				}
 			}
@@ -221,5 +233,10 @@ mod tests {
 		assert_parse!(StyleRule, ".foo{--bar:(baz);}");
 		assert_parse!(StyleRule, ".foo{width: calc(1px + (var(--foo)) + 1px);}");
 		assert_parse!(StyleRule, ".foo{--bar:1}");
+		assert_parse!(StyleRule, ":root{--custom:{width:0;height:0;};}");
+		// Semicolons are "allowed" in geneirc preludes
+		assert_parse!(StyleRule, ":root{a;b{}}");
+		// Bad Declarations should be parsable.
+		assert_parse!(StyleRule, ":root{$(var)-size: 100%;}");
 	}
 }

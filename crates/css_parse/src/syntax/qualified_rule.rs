@@ -21,7 +21,7 @@ impl<'a> Parse<'a> for QualifiedRule<'a> {
 impl<'a> QualifiedRuleTrait<'a> for QualifiedRule<'a> {
 	type Block = Block<'a>;
 	type Prelude = ComponentValues<'a>;
-	type BadDeclaration = BadDeclaration;
+	type BadDeclaration = BadDeclaration<'a>;
 }
 
 impl<'a> ToCursors for QualifiedRule<'a> {

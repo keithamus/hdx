@@ -1,5 +1,5 @@
 ---
-source: crates/hdx_ast/tests/postcss_snapshots.rs
+source: crates/css_ast/tests/postcss_snapshots.rs
 expression: result.output.unwrap()
 ---
 {
@@ -45,41 +45,333 @@ expression: result.output.unwrap()
           "len": 1
         },
         "properties": [
-          {
-            "type": "property",
-            "name": {
-              "kind": "Ident",
-              "offset": 18,
-              "len": 10
+          [
+            {
+              "type": "property",
+              "name": {
+                "kind": "Ident",
+                "offset": 18,
+                "len": 10
+              },
+              "colon": {
+                "kind": "Colon",
+                "offset": 28,
+                "len": 1
+              },
+              "value": {
+                "values": [
+                  {
+                    "kind": "Whitespace",
+                    "offset": 29,
+                    "len": 1
+                  },
+                  {
+                    "kind": "Ident",
+                    "offset": 30,
+                    "len": 5
+                  }
+                ]
+              },
+              "important": null
             },
-            "colon": {
-              "kind": "Colon",
-              "offset": 28,
-              "len": 1
-            },
-            "value": {
-              "values": [
-                {
-                  "kind": "Whitespace",
-                  "offset": 29,
-                  "len": 1
-                },
-                {
-                  "kind": "Ident",
-                  "offset": 30,
-                  "len": 5
-                }
-              ]
-            },
-            "important": null,
-            "semicolon": null
-          }
+            null
+          ]
         ],
         "rules": [],
         "close": {
           "kind": "RightCurly",
           "offset": 36,
           "len": 1
+        }
+      }
+    },
+    {
+      "type": "MediaRule",
+      "at_keyword": {
+        "kind": "AtKeyword",
+        "offset": 39,
+        "len": 6
+      },
+      "query": [
+        {
+          "precondition": null,
+          "media_type": null,
+          "and": null,
+          "condition": {
+            "type": "Is",
+            "value": {
+              "type": "Width",
+              "Legacy": [
+                {
+                  "kind": "LeftParen",
+                  "offset": 45,
+                  "len": 1
+                },
+                {
+                  "MinWidth": {
+                    "kind": "Ident",
+                    "offset": 46,
+                    "len": 9
+                  }
+                },
+                {
+                  "kind": "Colon",
+                  "offset": 55,
+                  "len": 1
+                },
+                {
+                  "type": "zero",
+                  "value": {
+                    "kind": "Number",
+                    "offset": 57,
+                    "len": 1
+                  }
+                },
+                {
+                  "kind": "RightParen",
+                  "offset": 58,
+                  "len": 1
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "block": {
+        "open": {
+          "kind": "LeftCurly",
+          "offset": 60,
+          "len": 1
+        },
+        "properties": [
+          [
+            {
+              "type": "property",
+              "name": {
+                "kind": "Ident",
+                "offset": 66,
+                "len": 10
+              },
+              "colon": {
+                "kind": "Colon",
+                "offset": 76,
+                "len": 1
+              },
+              "value": {
+                "values": [
+                  {
+                    "kind": "Whitespace",
+                    "offset": 77,
+                    "len": 1
+                  },
+                  {
+                    "kind": "Ident",
+                    "offset": 78,
+                    "len": 5
+                  }
+                ]
+              },
+              "important": null
+            },
+            null
+          ]
+        ],
+        "rules": [],
+        "close": {
+          "kind": "RightCurly",
+          "offset": 84,
+          "len": 1
+        }
+      }
+    },
+    {
+      "type": "AtRule",
+      "name": {
+        "kind": "AtKeyword",
+        "offset": 87,
+        "len": 10
+      },
+      "prelude": null,
+      "block": {
+        "Block": {
+          "type": "Block",
+          "start": 97,
+          "open_curly": {
+            "kind": "LeftCurly",
+            "offset": 98,
+            "len": 1
+          },
+          "declarations": [
+            [
+              {
+                "type": "Declaration",
+                "name": {
+                  "kind": "Ident",
+                  "offset": 104,
+                  "len": 11
+                },
+                "colon": {
+                  "kind": "Colon",
+                  "offset": 115,
+                  "len": 1
+                },
+                "value": {
+                  "values": [
+                    {
+                      "kind": "Whitespace",
+                      "offset": 116,
+                      "len": 1
+                    },
+                    {
+                      "kind": "String",
+                      "offset": 117,
+                      "len": 10
+                    }
+                  ]
+                },
+                "important": null
+              },
+              {
+                "kind": "Semicolon",
+                "offset": 127,
+                "len": 1
+              }
+            ]
+          ],
+          "rules": [],
+          "close_curly": {
+            "kind": "RightCurly",
+            "offset": 129,
+            "len": 1
+          }
+        }
+      }
+    },
+    {
+      "type": "AtRule",
+      "name": {
+        "kind": "AtKeyword",
+        "offset": 132,
+        "len": 9
+      },
+      "prelude": null,
+      "block": {
+        "Block": {
+          "type": "Block",
+          "start": 141,
+          "open_curly": {
+            "kind": "LeftCurly",
+            "offset": 142,
+            "len": 1
+          },
+          "declarations": [
+            [
+              {
+                "type": "Declaration",
+                "name": {
+                  "kind": "Ident",
+                  "offset": 148,
+                  "len": 5
+                },
+                "colon": {
+                  "kind": "Colon",
+                  "offset": 153,
+                  "len": 1
+                },
+                "value": {
+                  "values": [
+                    {
+                      "kind": "Whitespace",
+                      "offset": 154,
+                      "len": 1
+                    },
+                    {
+                      "kind": "Dimension",
+                      "offset": 155,
+                      "len": 5,
+                      "unit": "px"
+                    }
+                  ]
+                },
+                "important": null
+              },
+              {
+                "kind": "Semicolon",
+                "offset": 160,
+                "len": 1
+              }
+            ]
+          ],
+          "rules": [],
+          "close_curly": {
+            "kind": "RightCurly",
+            "offset": 162,
+            "len": 1
+          }
+        }
+      }
+    },
+    {
+      "type": "AtRule",
+      "name": {
+        "kind": "AtKeyword",
+        "offset": 165,
+        "len": 13
+      },
+      "prelude": null,
+      "block": {
+        "Block": {
+          "type": "Block",
+          "start": 178,
+          "open_curly": {
+            "kind": "LeftCurly",
+            "offset": 179,
+            "len": 1
+          },
+          "declarations": [
+            [
+              {
+                "type": "Declaration",
+                "name": {
+                  "kind": "Ident",
+                  "offset": 185,
+                  "len": 5
+                },
+                "colon": {
+                  "kind": "Colon",
+                  "offset": 190,
+                  "len": 1
+                },
+                "value": {
+                  "values": [
+                    {
+                      "kind": "Whitespace",
+                      "offset": 191,
+                      "len": 1
+                    },
+                    {
+                      "kind": "Dimension",
+                      "offset": 192,
+                      "len": 5,
+                      "unit": "px"
+                    }
+                  ]
+                },
+                "important": null
+              },
+              {
+                "kind": "Semicolon",
+                "offset": 197,
+                "len": 1
+              }
+            ]
+          ],
+          "rules": [],
+          "close_curly": {
+            "kind": "RightCurly",
+            "offset": 199,
+            "len": 1
+          }
         }
       }
     }

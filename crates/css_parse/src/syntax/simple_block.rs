@@ -1,5 +1,5 @@
 use crate::{syntax::ComponentValues, CursorSink, Parse, Parser, Result as ParserResult, ToCursors, T};
-use css_lexer::{SourceOffset, Token};
+use css_lexer::{KindSet, SourceOffset, Token};
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type"))]
@@ -15,7 +15,10 @@ impl<'a> Parse<'a> for SimpleBlock<'a> {
 	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
 		let start = p.offset();
 		let open = p.parse::<T![PairWiseStart]>()?;
-		let values = p.parse::<ComponentValues>()?;
+		let stop = p.set_stop(KindSet::new(&[open.end()]));
+		let values = p.parse::<ComponentValues>();
+		p.set_stop(stop);
+		let values = values?;
 		if p.peek::<T![PairWiseEnd]>() {
 			return Ok(Self { start, open, values, close: p.parse::<T![PairWiseEnd]>().ok() });
 		}

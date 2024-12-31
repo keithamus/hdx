@@ -276,5 +276,7 @@ mod tests {
 		// Should still parse unknown properties
 		assert_parse!(Property, "dunno:like whatever");
 		assert_parse!(Property, "rotate:1.21gw");
+		assert_parse!(Property, "_background:black");
+		assert_parse!(Property, "--custom:{foo:{bar};baz:(bing);}");
 	}
 }

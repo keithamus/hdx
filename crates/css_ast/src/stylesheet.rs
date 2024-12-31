@@ -1,5 +1,5 @@
 use bumpalo::collections::Vec;
-use css_lexer::{Cursor, Span};
+use css_lexer::Cursor;
 use css_parse::{
 	syntax::{AtRule, QualifiedRule},
 	CursorSink, Parse, Parser, Result as ParserResult, StyleSheet as StyleSheetTrait, ToCursors, T,
@@ -232,5 +232,6 @@ mod tests {
 		assert_parse!(StyleSheet, "body,tr:nth-child(n-1){}");
 		assert_parse!(StyleSheet, "body{width:1px;}");
 		assert_parse!(StyleSheet, "body{width:1px;}.a{width:2px;}");
+		assert_parse!(StyleSheet, "one:1;a{two:2}");
 	}
 }

@@ -1,5 +1,5 @@
 use crate::{diagnostics, Parse, Parser, Result, State, T};
-use css_lexer::KindSet;
+use css_lexer::{Kind, KindSet};
 
 // A QualifiedRule represents a block with a prelude which may contain other rules.
 // Examples of QualifiedRules are StyleRule, KeyframeRule (no s!).
@@ -35,6 +35,7 @@ pub trait QualifiedRule<'a>: Sized + Parse<'a> {
 		if p.at_end() {
 			Err(diagnostics::UnexpectedEnd())?
 		}
+
 		// <}-token>
 		//   This is a parse error. If nested is true, return nothing. Otherwise, consume a token and append the result to rule’s prelude.
 		if p.is(State::Nested) && p.peek::<T!['}']>() {
@@ -62,9 +63,10 @@ pub trait QualifiedRule<'a>: Sized + Parse<'a> {
 		}
 
 		// Set the StopOn Curly to signify to prelude parsers that they shouldn't consume beyond the curly
-		let old_stop = p.set_stop(KindSet::LEFT_CURLY_OR_SEMICOLON);
+		let old_stop = p.set_stop(KindSet::new(&[Kind::LeftCurly]));
 		let prelude = p.parse::<Self::Prelude>();
 		p.set_stop(old_stop);
+		let prelude = prelude?;
 
 		// Otherwise, consume a block from input, and let child rules be the result.
 		// If the first item of child rules is a list of declarations,
@@ -72,7 +74,6 @@ pub trait QualifiedRule<'a>: Sized + Parse<'a> {
 		// If any remaining items of child rules are lists of declarations,
 		// replace them with nested declarations rules containing the list as its sole child.
 		// Assign child rules to rule’s child rules.
-		let prelude = prelude?;
 		Ok((prelude, p.parse::<Self::Block>()?))
 	}
 }

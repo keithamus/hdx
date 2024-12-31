@@ -11,6 +11,12 @@ pub struct ParserCheckpoint {
 	pub(crate) trivia_pos: u16,
 }
 
+impl From<ParserCheckpoint> for Cursor {
+	fn from(value: ParserCheckpoint) -> Self {
+		value.cursor
+	}
+}
+
 impl From<ParserCheckpoint> for Token {
 	fn from(value: ParserCheckpoint) -> Self {
 		value.cursor.token()

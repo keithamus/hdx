@@ -142,7 +142,7 @@ pub struct Keyframe<'a> {
 impl<'a> QualifiedRule<'a> for Keyframe<'a> {
 	type Block = KeyframeBlock<'a>;
 	type Prelude = KeyframeSelectors<'a>;
-	type BadDeclaration = BadDeclaration;
+	type BadDeclaration = BadDeclaration<'a>;
 }
 
 impl<'a> Parse<'a> for Keyframe<'a> {

@@ -8,6 +8,7 @@ homepage.workspace = true
 keywords.workspace = true
 license.workspace = true
 repository.workspace = true
+exclude = ["tests/*", "bench/*"]
 
 [lib]
 bench = false
