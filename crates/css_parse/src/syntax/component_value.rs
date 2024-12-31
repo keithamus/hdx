@@ -58,14 +58,9 @@ impl<'a> Parse<'a> for ComponentValue<'a> {
 			p.parse::<T![' ']>().map(Self::Whitespace)
 		} else if p.peek::<T![PairWiseStart]>() {
 			let old_state = p.set_state(State::Nested);
-			p.parse::<SimpleBlock>()
-				.inspect_err(|_| {
-					p.set_state(old_state);
-				})
-				.map(|b| {
-					p.set_state(old_state);
-					Self::SimpleBlock(b)
-				})
+			let block = p.parse::<SimpleBlock>();
+			p.set_state(old_state);
+			Ok(Self::SimpleBlock(block?))
 		} else if p.peek::<T![Function]>() {
 			p.parse::<FunctionBlock>().map(Self::Function)
 		} else if p.peek::<T![Number]>() {

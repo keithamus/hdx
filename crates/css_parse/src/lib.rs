@@ -258,6 +258,7 @@
 //!
 //! ```
 //! use css_parse::*;
+//! #[derive(Debug)]
 //! struct MyProperty {
 //!   ident: T![Ident],
 //!   colon: T![Colon],

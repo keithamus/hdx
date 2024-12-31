@@ -45,7 +45,9 @@ use css_lexer::{Cursor, KindSet};
 ///
 /// ```
 /// use css_parse::*;
-/// // A grammar like `@test foo {}`
+///
+/// /// A grammar like `@test foo {}`
+/// #[derive(Debug)]
 /// pub struct TestAtRule<'a> {
 ///   pub name: T![AtKeyword],
 ///   pub prelude: T![Ident],

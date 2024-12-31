@@ -1,8 +1,8 @@
 use crate::{diagnostics, Parse, Parser, Result, State, T};
 use css_lexer::{Kind, KindSet};
 
-// A QualifiedRule represents a block with a prelude which may contain other rules.
-// Examples of QualifiedRules are StyleRule, KeyframeRule (no s!).
+/// A QualifiedRule represents a block with a prelude which may contain other rules.
+/// Examples of QualifiedRules are StyleRule, KeyframeRule (no s!).
 pub trait QualifiedRule<'a>: Sized + Parse<'a> {
 	// Prelude MAY implement PreludeList if it accepts multiple values.
 	type Prelude: Parse<'a>;

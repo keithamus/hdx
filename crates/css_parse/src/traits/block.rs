@@ -26,7 +26,10 @@ pub trait Block<'a>: Sized + Parse<'a> {
 		let mut declarations = Vec::new_in(p.bump());
 		let mut rules = Vec::new_in(p.bump());
 		loop {
-			if p.parse_if_peek::<T![;]>()?.is_some() {
+			// While by default the parser will skip whitespace, the Declaration or Rule type may be a whitespace sensitive
+			// node, for example `ComponentValues`. As such whitespace needs to be consumed here, before Declarations and
+			// Rules are parsed.
+			if p.parse_if_peek::<T![' ']>()?.is_some() || p.parse_if_peek::<T![;]>()?.is_some() {
 				continue;
 			}
 			if p.at_end() {
