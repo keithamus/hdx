@@ -102,11 +102,6 @@ expression: result.output.unwrap()
                     "prelude": {
                       "values": [
                         {
-                          "kind": "Whitespace",
-                          "offset": 63,
-                          "len": 9
-                        },
-                        {
                           "kind": "Ident",
                           "offset": 72,
                           "len": 4
@@ -171,11 +166,6 @@ expression: result.output.unwrap()
                     "type": "QualifiedRule",
                     "prelude": {
                       "values": [
-                        {
-                          "kind": "Whitespace",
-                          "offset": 114,
-                          "len": 9
-                        },
                         {
                           "kind": "Ident",
                           "offset": 123,
@@ -336,7 +326,7 @@ expression: result.output.unwrap()
               },
               "block": {
                 "type": "Block",
-                "start": 225,
+                "start": 226,
                 "open_curly": {
                   "kind": "LeftCurly",
                   "offset": 226,

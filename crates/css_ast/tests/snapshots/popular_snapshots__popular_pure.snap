@@ -5509,11 +5509,6 @@ expression: result.output.unwrap()
               "prelude": {
                 "values": [
                   {
-                    "kind": "Whitespace",
-                    "offset": 8760,
-                    "len": 2
-                  },
-                  {
                     "kind": "Ident",
                     "offset": 8762,
                     "len": 5

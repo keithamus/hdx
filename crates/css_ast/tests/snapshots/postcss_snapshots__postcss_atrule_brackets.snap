@@ -125,11 +125,6 @@ expression: result.output.unwrap()
               "prelude": {
                 "values": [
                   {
-                    "kind": "Whitespace",
-                    "offset": 57,
-                    "len": 3
-                  },
-                  {
                     "type": "SimpleBlock",
                     "start": 60,
                     "open": {
@@ -299,11 +294,6 @@ expression: result.output.unwrap()
               "prelude": {
                 "values": [
                   {
-                    "kind": "Whitespace",
-                    "offset": 135,
-                    "len": 3
-                  },
-                  {
                     "kind": "Delim",
                     "offset": 138,
                     "len": 1
@@ -457,11 +447,6 @@ expression: result.output.unwrap()
               "prelude": {
                 "values": [
                   {
-                    "kind": "Whitespace",
-                    "offset": 192,
-                    "len": 3
-                  },
-                  {
                     "kind": "Delim",
                     "offset": 195,
                     "len": 1
@@ -614,11 +599,6 @@ expression: result.output.unwrap()
               "prelude": {
                 "values": [
                   {
-                    "kind": "Whitespace",
-                    "offset": 253,
-                    "len": 3
-                  },
-                  {
                     "kind": "Delim",
                     "offset": 256,
                     "len": 1
@@ -740,11 +720,6 @@ expression: result.output.unwrap()
               "type": "QualifiedRule",
               "prelude": {
                 "values": [
-                  {
-                    "kind": "Whitespace",
-                    "offset": 301,
-                    "len": 3
-                  },
                   {
                     "kind": "Delim",
                     "offset": 304,
@@ -877,11 +852,6 @@ expression: result.output.unwrap()
               "type": "QualifiedRule",
               "prelude": {
                 "values": [
-                  {
-                    "kind": "Whitespace",
-                    "offset": 346,
-                    "len": 3
-                  },
                   {
                     "kind": "Delim",
                     "offset": 349,
@@ -1035,11 +1005,6 @@ expression: result.output.unwrap()
               "type": "QualifiedRule",
               "prelude": {
                 "values": [
-                  {
-                    "kind": "Whitespace",
-                    "offset": 401,
-                    "len": 3
-                  },
                   {
                     "kind": "Delim",
                     "offset": 404,
@@ -1314,11 +1279,6 @@ expression: result.output.unwrap()
               "type": "QualifiedRule",
               "prelude": {
                 "values": [
-                  {
-                    "kind": "Whitespace",
-                    "offset": 480,
-                    "len": 3
-                  },
                   {
                     "kind": "Delim",
                     "offset": 483,
