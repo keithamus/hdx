@@ -9,13 +9,13 @@ struct Foo(pub types::CSSInt);
 impl<'a> ::css_parse::Peek<'a> for Foo {
     fn peek(p: &::css_parse::Parser<'a>, c: ::css_lexer::Cursor) -> bool {
         use ::css_parse::Peek;
-        p.peek::<types::CSSInt>()
+        <types::CSSInt>::peek(p, c)
     }
 }
 #[automatically_derived]
 impl<'a> ::css_parse::Parse<'a> for Foo {
     fn parse(p: &mut ::css_parse::Parser<'a>) -> ::css_parse::Result<Self> {
-        use ::css_parse::Parse;
+        use ::css_parse::{Parse, Peek};
         let val = p.parse::<types::CSSInt>()?;
         Ok(Self(val))
     }

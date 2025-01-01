@@ -13,15 +13,15 @@ struct Foo(
 impl<'a> ::css_parse::Peek<'a> for Foo {
     fn peek(p: &::css_parse::Parser<'a>, c: ::css_lexer::Cursor) -> bool {
         use ::css_parse::Peek;
-        p.peek::<types::CaretColorStyleValue>()
-            || p.peek::<types::CaretAnimationStyleValue>()
-            || p.peek::<types::CaretShapeStyleValue>()
+        <types::CaretColorStyleValue>::peek(p, c)
+            || <types::CaretAnimationStyleValue>::peek(p, c)
+            || <types::CaretShapeStyleValue>::peek(p, c)
     }
 }
 #[automatically_derived]
 impl<'a> ::css_parse::Parse<'a> for Foo {
     fn parse(p: &mut ::css_parse::Parser<'a>) -> ::css_parse::Result<Self> {
-        use ::css_parse::Parse;
+        use ::css_parse::{Parse, Peek};
         let mut val0 = None;
         let mut val1 = None;
         let mut val2 = None;

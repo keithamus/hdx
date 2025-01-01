@@ -12,18 +12,20 @@ enum Foo<'a> {
 impl<'a> ::css_parse::Peek<'a> for Foo<'a> {
     fn peek(p: &::css_parse::Parser<'a>, c: ::css_lexer::Cursor) -> bool {
         use ::css_parse::Peek;
-        p.peek::<types::Color>() || p.peek::<types::Image1D>()
+        <types::Color>::peek(p, c) || <types::Image1D>::peek(p, c)
     }
 }
 #[automatically_derived]
 impl<'a> ::css_parse::Parse<'a> for Foo<'a> {
     fn parse(p: &mut ::css_parse::Parser<'a>) -> ::css_parse::Result<Self> {
-        use ::css_parse::Parse;
-        if p.peek::<types::Color>() {
+        use ::css_parse::{Parse, Peek};
+        let c = p.peek_n(1);
+        if <types::Color>::peek(p, c) {
             let val = p.parse::<types::Color>()?;
             return Ok(Self::Color(val));
         }
-        if p.peek::<types::Image1D>() {
+        let c = p.peek_n(1);
+        if <types::Image1D>::peek(p, c) {
             let val = p.parse::<types::Image1D>()?;
             return Ok(Self::Image(val));
         }

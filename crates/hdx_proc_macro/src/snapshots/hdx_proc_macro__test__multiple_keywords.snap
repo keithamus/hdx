@@ -18,38 +18,37 @@ enum Foo {
 impl<'a> ::css_parse::Peek<'a> for Foo {
     fn peek(p: &::css_parse::Parser<'a>, c: ::css_lexer::Cursor) -> bool {
         use ::css_parse::Peek;
-        p.peek::<::css_parse::T![Ident]>()
+        <::css_parse::T![Ident]>::peek(p, c)
     }
 }
 #[automatically_derived]
 impl<'a> ::css_parse::Parse<'a> for Foo {
     fn parse(p: &mut ::css_parse::Parser<'a>) -> ::css_parse::Result<Self> {
-        use ::css_parse::Parse;
-        if p.peek::<::css_parse::T![Ident]>() {
-            let c = p.peek_n(1);
-            let keywords = p.parse::<FooKeywords>();
-            match keywords {
-                Ok(FooKeywords::Black(_)) => {
-                    return Ok(Self::Black(p.parse::<::css_parse::T![Ident]>()?));
+        use ::css_parse::{Parse, Peek};
+        if let Some(keyword) = p.parse_if_peek::<FooKeywords>()? {
+            use ::css_parse::Build;
+            match keyword {
+                FooKeywords::Black(c) => {
+                    return Ok(Self::Black(<::css_parse::T![Ident]>::build(p, c)));
                 }
-                Ok(FooKeywords::White(_)) => {
-                    return Ok(Self::White(p.parse::<::css_parse::T![Ident]>()?));
+                FooKeywords::White(c) => {
+                    return Ok(Self::White(<::css_parse::T![Ident]>::build(p, c)));
                 }
-                Ok(FooKeywords::LineThrough(_)) => {
-                    return Ok(Self::LineThrough(p.parse::<::css_parse::T![Ident]>()?));
+                FooKeywords::LineThrough(c) => {
+                    return Ok(Self::LineThrough(<::css_parse::T![Ident]>::build(p, c)));
                 }
-                Ok(FooKeywords::Pink(_)) => {
-                    return Ok(Self::Pink(p.parse::<::css_parse::T![Ident]>()?));
-                }
-                Err(_) => {
-                    Err(
-                        ::css_parse::diagnostics::UnexpectedIdent(
-                            p.parse_str(c).into(),
-                            c.into(),
-                        ),
-                    )?
+                FooKeywords::Pink(c) => {
+                    return Ok(Self::Pink(<::css_parse::T![Ident]>::build(p, c)));
                 }
             }
+        } else {
+            let c: ::css_lexer::Cursor = p.parse::<::css_parse::T![Any]>()?.into();
+            Err(
+                ::css_parse::diagnostics::UnexpectedIdent(
+                    p.parse_str(c).into(),
+                    c.into(),
+                ),
+            )?
         }
         let c: ::css_lexer::Cursor = p.parse::<::css_parse::T![Any]>()?.into();
         Err(::css_parse::diagnostics::Unexpected(c.into(), c.into()))?

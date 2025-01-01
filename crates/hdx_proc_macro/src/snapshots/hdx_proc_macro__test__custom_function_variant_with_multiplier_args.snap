@@ -20,26 +20,24 @@ enum Foo<'a> {
 impl<'a> ::css_parse::Peek<'a> for Foo<'a> {
     fn peek(p: &::css_parse::Parser<'a>, c: ::css_lexer::Cursor) -> bool {
         use ::css_parse::Peek;
-        p.peek::<::css_parse::T![Ident]>() || p.peek::<::css_parse::T![Function]>()
+        <::css_parse::T![Ident]>::peek(p, c) || <::css_parse::T![Function]>::peek(p, c)
     }
 }
 #[automatically_derived]
 impl<'a> ::css_parse::Parse<'a> for Foo<'a> {
     fn parse(p: &mut ::css_parse::Parser<'a>) -> ::css_parse::Result<Self> {
-        use ::css_parse::Parse;
-        if p.peek::<::css_parse::T![Ident]>() {
-            let c = p.peek_n(1);
-            let keywords = p.parse::<FooKeywords>();
-            match keywords {
-                Ok(FooKeywords::Normal(_)) => {
-                    return Ok(Self::Normal(p.parse::<::css_parse::T![Ident]>()?));
+        use ::css_parse::{Parse, Peek};
+        if let Some(keyword) = p.parse_if_peek::<FooKeywords>()? {
+            use ::css_parse::Build;
+            match keyword {
+                FooKeywords::Normal(c) => {
+                    return Ok(Self::Normal(<::css_parse::T![Ident]>::build(p, c)));
                 }
-                Err(_) => {}
             }
         }
         let function = p.parse::<::css_parse::T![Function]>()?;
         let c: css_lexer::Cursor = function.into();
-        if p.eq_ignore_ascii_case(c, "styleset") {
+        if !p.eq_ignore_ascii_case(c, "styleset") {
             return Err(
                 ::css_parse::diagnostics::UnexpectedFunction(
                     p.parse_str(c).into(),
