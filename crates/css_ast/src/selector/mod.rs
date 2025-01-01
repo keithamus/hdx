@@ -38,10 +38,18 @@ pub use webkit::*;
 
 use super::{Visit, Visitable};
 
+/// Represents a list of [CompoundSelectors][CompoundSelector], such as `body, dialog:modal`.
+///
+/// ```md
+/// <selector-list>
+///  │├─╭─ <compound-selector> ─╮─ "," ─╭─╮─┤│
+///     │                       ╰───────╯ │
+///     ╰─────────────────────────────────╯
+/// ```
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 #[visit]
-pub struct SelectorList<'a>(pub Vec<'a, CompoundSelector<'a>>);
+pub struct SelectorList<'a>(pub Vec<'a, (CompoundSelector<'a>, Option<T![,]>)>);
 
 impl<'a> SelectorListTrait<'a> for SelectorList<'a> {
 	type CompoundSelector = CompoundSelector<'a>;
@@ -55,8 +63,11 @@ impl<'a> Parse<'a> for SelectorList<'a> {
 
 impl<'a> ToCursors for SelectorList<'a> {
 	fn to_cursors(&self, s: &mut impl CursorSink) {
-		for selector in &self.0 {
+		for (selector, comma) in &self.0 {
 			ToCursors::to_cursors(selector, s);
+			if let Some(comma) = comma {
+				s.append(comma.into());
+			}
 		}
 	}
 }
@@ -64,7 +75,7 @@ impl<'a> ToCursors for SelectorList<'a> {
 impl<'a> Visitable<'a> for SelectorList<'a> {
 	fn accept<V: Visit<'a>>(&self, v: &mut V) {
 		v.visit_selector_list(&self);
-		for selector in &self.0 {
+		for (selector, _) in &self.0 {
 			Visitable::accept(selector, v);
 		}
 	}
@@ -73,10 +84,7 @@ impl<'a> Visitable<'a> for SelectorList<'a> {
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 #[visit]
-pub struct CompoundSelector<'a> {
-	pub components: Vec<'a, SelectorComponent<'a>>,
-	pub comma: Option<T![,]>,
-}
+pub struct CompoundSelector<'a>(pub Vec<'a, SelectorComponent<'a>>);
 
 impl<'a> CompoundSelectorTrait<'a> for CompoundSelector<'a> {
 	type SelectorComponent = SelectorComponent<'a>;
@@ -84,18 +92,14 @@ impl<'a> CompoundSelectorTrait<'a> for CompoundSelector<'a> {
 
 impl<'a> Parse<'a> for CompoundSelector<'a> {
 	fn parse(p: &mut Parser<'a>) -> ParserResult<Self> {
-		let (components, comma) = Self::parse_compound_selector(p)?;
-		Ok(Self { components, comma })
+		Ok(Self(Self::parse_compound_selector(p)?))
 	}
 }
 
 impl<'a> ToCursors for CompoundSelector<'a> {
 	fn to_cursors(&self, s: &mut impl CursorSink) {
-		for component in &self.components {
+		for component in &self.0 {
 			ToCursors::to_cursors(component, s);
-		}
-		if let Some(comma) = self.comma {
-			s.append(comma.into())
 		}
 	}
 }
@@ -103,7 +107,7 @@ impl<'a> ToCursors for CompoundSelector<'a> {
 impl<'a> Visitable<'a> for CompoundSelector<'a> {
 	fn accept<V: Visit<'a>>(&self, v: &mut V) {
 		v.visit_compound_selector(&self);
-		for component in &self.components {
+		for component in &self.0 {
 			Visitable::accept(component, v);
 		}
 	}

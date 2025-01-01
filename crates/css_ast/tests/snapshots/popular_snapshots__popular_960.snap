@@ -1,6 +1,7 @@
 ---
 source: crates/css_ast/tests/popular_snapshots.rs
 expression: result.output.unwrap()
+snapshot_kind: text
 ---
 {
   "type": "stylesheet",
@@ -8,8 +9,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -23,8 +24,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -76,8 +77,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -95,14 +96,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 433,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -120,8 +121,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -229,8 +230,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -248,14 +249,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 643,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -273,14 +274,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 652,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -298,14 +299,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 661,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -323,14 +324,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 670,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -348,14 +349,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 679,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -373,14 +374,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 688,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -398,14 +399,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 697,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -423,14 +424,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 706,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -448,14 +449,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 715,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -473,14 +474,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 725,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -498,14 +499,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 735,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -523,14 +524,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 745,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -548,14 +549,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 755,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -573,14 +574,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 765,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -598,14 +599,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 775,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -623,8 +624,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -771,8 +772,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -790,14 +791,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 875,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -815,14 +816,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 884,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -840,14 +841,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 893,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -865,14 +866,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 902,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -890,14 +891,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 911,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -915,14 +916,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 920,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -940,14 +941,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 929,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -965,14 +966,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 938,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -990,14 +991,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 947,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -1015,14 +1016,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 956,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -1040,14 +1041,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 965,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -1065,14 +1066,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 974,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -1090,14 +1091,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 983,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -1115,14 +1116,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 992,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -1140,14 +1141,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 1001,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -1165,14 +1166,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 1010,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -1190,14 +1191,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 1019,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -1215,14 +1216,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 1028,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -1240,14 +1241,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 1038,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -1265,14 +1266,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 1048,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -1290,14 +1291,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 1058,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -1315,14 +1316,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 1068,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -1340,14 +1341,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 1078,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -1365,14 +1366,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 1088,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -1390,14 +1391,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 1098,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -1415,14 +1416,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 1108,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -1440,14 +1441,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 1118,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -1465,14 +1466,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 1128,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -1490,14 +1491,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 1138,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -1515,8 +1516,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -1564,8 +1565,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -1609,14 +1610,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 1197,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -1660,8 +1661,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -1713,8 +1714,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -1758,14 +1759,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 1263,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -1809,8 +1810,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -1862,8 +1863,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -1907,14 +1908,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 1329,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -1958,8 +1959,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -2011,8 +2012,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -2056,14 +2057,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 1397,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -2107,8 +2108,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -2160,8 +2161,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -2179,8 +2180,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -2231,8 +2232,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -2250,8 +2251,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -2302,8 +2303,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -2347,8 +2348,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -2400,8 +2401,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -2445,8 +2446,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -2498,8 +2499,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -2543,8 +2544,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -2596,8 +2597,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -2641,8 +2642,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -2694,8 +2695,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -2739,8 +2740,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -2792,8 +2793,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -2837,8 +2838,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -2890,8 +2891,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -2935,8 +2936,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -2988,8 +2989,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -3033,8 +3034,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -3086,8 +3087,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -3131,8 +3132,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -3184,8 +3185,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -3229,8 +3230,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -3282,8 +3283,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -3327,8 +3328,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -3380,8 +3381,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -3425,8 +3426,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -3478,8 +3479,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -3523,8 +3524,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -3576,8 +3577,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -3621,8 +3622,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -3674,8 +3675,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -3719,8 +3720,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -3772,8 +3773,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -3817,8 +3818,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -3870,8 +3871,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -3915,8 +3916,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -3968,8 +3969,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -4013,8 +4014,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -4066,8 +4067,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -4111,8 +4112,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -4164,8 +4165,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -4209,8 +4210,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -4262,8 +4263,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -4307,14 +4308,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 2938,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -4358,8 +4359,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -4409,8 +4410,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -4454,14 +4455,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 3015,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -4505,8 +4506,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -4556,8 +4557,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -4601,14 +4602,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 3092,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -4652,8 +4653,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -4703,8 +4704,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -4748,8 +4749,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -4799,8 +4800,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -4844,8 +4845,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -4895,8 +4896,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -4940,8 +4941,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -4991,8 +4992,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -5036,8 +5037,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -5087,8 +5088,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -5132,8 +5133,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -5183,8 +5184,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -5228,8 +5229,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -5279,8 +5280,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -5324,8 +5325,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -5375,8 +5376,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -5420,8 +5421,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -5471,8 +5472,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -5516,8 +5517,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -5567,8 +5568,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -5612,8 +5613,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -5663,8 +5664,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -5708,8 +5709,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -5759,8 +5760,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -5804,8 +5805,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -5855,8 +5856,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -5900,8 +5901,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -5951,8 +5952,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -5996,8 +5997,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -6047,8 +6048,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -6092,8 +6093,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -6143,8 +6144,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -6188,8 +6189,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -6239,8 +6240,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -6284,8 +6285,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -6335,8 +6336,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -6380,8 +6381,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -6431,8 +6432,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -6476,8 +6477,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -6527,8 +6528,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -6572,8 +6573,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -6623,8 +6624,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -6668,14 +6669,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 4634,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -6719,8 +6720,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -6770,8 +6771,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -6815,14 +6816,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 4712,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -6866,8 +6867,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -6917,8 +6918,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -6962,14 +6963,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 4790,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -7013,8 +7014,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -7064,8 +7065,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -7109,8 +7110,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -7160,8 +7161,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -7205,8 +7206,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -7256,8 +7257,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -7301,8 +7302,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -7352,8 +7353,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -7397,8 +7398,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -7448,8 +7449,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -7493,8 +7494,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -7544,8 +7545,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -7589,8 +7590,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -7640,8 +7641,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -7685,8 +7686,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -7736,8 +7737,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -7781,8 +7782,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -7832,8 +7833,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -7877,8 +7878,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -7928,8 +7929,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -7973,8 +7974,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -8024,8 +8025,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -8069,8 +8070,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -8120,8 +8121,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -8165,8 +8166,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -8216,8 +8217,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -8261,8 +8262,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -8312,8 +8313,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -8357,8 +8358,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -8408,8 +8409,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -8453,8 +8454,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -8504,8 +8505,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -8549,8 +8550,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -8600,8 +8601,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -8645,8 +8646,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -8696,8 +8697,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -8741,8 +8742,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -8792,8 +8793,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -8837,8 +8838,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -8888,8 +8889,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -8933,8 +8934,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -8984,8 +8985,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -9029,14 +9030,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 6343,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -9080,8 +9081,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -9133,8 +9134,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -9178,14 +9179,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 6408,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -9229,8 +9230,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -9282,8 +9283,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -9327,14 +9328,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 6473,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -9378,8 +9379,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -9431,8 +9432,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -9476,8 +9477,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -9529,8 +9530,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -9574,8 +9575,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -9627,8 +9628,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -9672,8 +9673,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -9725,8 +9726,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -9770,8 +9771,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -9823,8 +9824,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -9868,8 +9869,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -9921,8 +9922,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -9966,8 +9967,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -10019,8 +10020,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -10064,8 +10065,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -10117,8 +10118,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -10162,8 +10163,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -10215,8 +10216,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -10260,8 +10261,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -10313,8 +10314,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -10358,8 +10359,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -10411,8 +10412,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -10456,8 +10457,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -10509,8 +10510,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -10554,8 +10555,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -10607,8 +10608,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -10652,8 +10653,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -10705,8 +10706,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -10750,8 +10751,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -10803,8 +10804,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -10848,8 +10849,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -10901,8 +10902,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -10946,8 +10947,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -10999,8 +11000,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -11044,8 +11045,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -11097,8 +11098,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -11142,8 +11143,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -11195,8 +11196,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -11240,8 +11241,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -11293,8 +11294,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -11338,8 +11339,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -11391,8 +11392,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -11436,14 +11437,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 7779,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -11487,8 +11488,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -11540,8 +11541,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -11585,14 +11586,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 7845,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -11636,8 +11637,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -11689,8 +11690,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -11734,14 +11735,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 7911,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -11785,8 +11786,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -11838,8 +11839,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -11883,8 +11884,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -11936,8 +11937,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -11981,8 +11982,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -12034,8 +12035,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -12079,8 +12080,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -12132,8 +12133,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -12177,8 +12178,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -12230,8 +12231,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -12275,8 +12276,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -12328,8 +12329,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -12373,8 +12374,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -12426,8 +12427,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -12471,8 +12472,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -12524,8 +12525,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -12569,8 +12570,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -12622,8 +12623,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -12667,8 +12668,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -12720,8 +12721,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -12765,8 +12766,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -12818,8 +12819,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -12863,8 +12864,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -12916,8 +12917,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -12961,8 +12962,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -13014,8 +13015,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -13059,8 +13060,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -13112,8 +13113,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -13157,8 +13158,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -13210,8 +13211,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -13255,8 +13256,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -13308,8 +13309,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -13353,8 +13354,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -13406,8 +13407,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -13451,8 +13452,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -13504,8 +13505,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -13549,8 +13550,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -13602,8 +13603,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -13647,8 +13648,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -13700,8 +13701,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -13745,8 +13746,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -13798,8 +13799,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -13817,8 +13818,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -14022,8 +14023,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -14058,14 +14059,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 9490,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -14100,14 +14101,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 9507,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -14142,14 +14143,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 9529,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -14184,14 +14185,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 9550,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -14226,14 +14227,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 9572,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -14268,8 +14269,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -14546,8 +14547,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -14582,14 +14583,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 9749,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -14624,14 +14625,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 9770,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -14666,8 +14667,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -14715,8 +14716,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -14734,14 +14735,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 9946,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -14759,14 +14760,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 9961,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -14784,8 +14785,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {

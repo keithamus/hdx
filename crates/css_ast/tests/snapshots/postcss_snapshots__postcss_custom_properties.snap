@@ -1,6 +1,7 @@
 ---
 source: crates/css_ast/tests/postcss_snapshots.rs
 expression: result.output.unwrap()
+snapshot_kind: text
 ---
 {
   "type": "stylesheet",
@@ -8,8 +9,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "pseudo-class",
               "value": {
@@ -28,8 +29,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -1015,8 +1016,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "pseudo-class",
               "value": {
@@ -1035,8 +1036,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -1082,8 +1083,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -1101,8 +1102,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -1142,8 +1143,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "class",
               "value": {
@@ -1161,8 +1162,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {

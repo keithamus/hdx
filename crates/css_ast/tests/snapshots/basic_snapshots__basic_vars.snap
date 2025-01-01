@@ -1,6 +1,7 @@
 ---
 source: crates/css_ast/tests/basic_snapshots.rs
 expression: result.output.unwrap()
+snapshot_kind: text
 ---
 {
   "type": "stylesheet",
@@ -8,8 +9,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -23,8 +24,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {

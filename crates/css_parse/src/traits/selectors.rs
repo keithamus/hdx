@@ -3,22 +3,34 @@ use css_lexer::{Kind, KindSet};
 
 use crate::{diagnostics, Build, Parse, Parser, Peek, Result, T};
 
-// Parses various "Selector Lists" into their units
-// https://drafts.csswg.org/selectors-4/#typedef-selector-list
-// https://drafts.csswg.org/selectors-4/#typedef-relative-selector-list
-// https://drafts.csswg.org/selectors-4/#typedef-complex-real-selector-list
-// https://drafts.csswg.org/selectors-4/#typedef-relative-real-selector-list
+/// Parses a "Selector Lists" into a comma separated list of nodes that implement [CompoundSelector].
+///
+/// ```md
+/// <selector-list>
+///  │├─╭─ <compound-selector> ─╮─ "," ─╭─╮─┤│
+///     │                       ╰───────╯ │
+///     ╰─────────────────────────────────╯
+/// ```
+///
+/// The various selectors lists can implement this trait, for example [Selector List][1], [Relative Selector List][2],
+/// [Complex Real Selector List][3], [Relative Real Selector List][4].
+///
+/// [1]: https://drafts.csswg.org/selectors-4/#typedef-selector-list
+/// [2]: https://drafts.csswg.org/selectors-4/#typedef-relative-selector-list
+/// [3]: https://drafts.csswg.org/selectors-4/#typedef-complex-real-selector-list
+/// [4]: https://drafts.csswg.org/selectors-4/#typedef-relative-real-selector-list
 pub trait SelectorList<'a>: Sized + Parse<'a> {
 	type CompoundSelector: Parse<'a> + CompoundSelector<'a>;
 
-	fn parse_selector_list(p: &mut Parser<'a>) -> Result<Vec<'a, Self::CompoundSelector>> {
+	fn parse_selector_list(p: &mut Parser<'a>) -> Result<Vec<'a, (Self::CompoundSelector, Option<T![,]>)>> {
 		let mut selectors = Vec::new_in(p.bump());
 		loop {
 			if p.at_end() || p.peek_n(1) == KindSet::LEFT_CURLY_RIGHT_PAREN_OR_SEMICOLON {
 				break;
 			}
 			let selector = p.parse::<Self::CompoundSelector>()?;
-			selectors.push(selector);
+			let comma = p.parse_if_peek::<T![,]>()?;
+			selectors.push((selector, comma));
 		}
 		Ok(selectors)
 	}
@@ -32,7 +44,7 @@ pub trait CompoundSelector<'a>: Sized + Parse<'a> {
 	// https://drafts.csswg.org/selectors-4/#typedef-pseudo-element-selector
 	type SelectorComponent: Parse<'a> + SelectorComponent<'a>;
 
-	fn parse_compound_selector(p: &mut Parser<'a>) -> Result<(Vec<'a, Self::SelectorComponent>, Option<T![,]>)> {
+	fn parse_compound_selector(p: &mut Parser<'a>) -> Result<Vec<'a, Self::SelectorComponent>> {
 		let mut components = Vec::new_in(p.bump());
 		// Trim leading whitespace
 		p.consume_trivia();
@@ -43,8 +55,7 @@ pub trait CompoundSelector<'a>: Sized + Parse<'a> {
 			}
 			components.push(p.parse::<Self::SelectorComponent>()?);
 		}
-		let comma = p.parse_if_peek::<T![,]>()?;
-		Ok((components, comma))
+		Ok(components)
 	}
 }
 

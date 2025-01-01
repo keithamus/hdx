@@ -1,6 +1,7 @@
 ---
 source: crates/css_ast/tests/popular_snapshots.rs
 expression: result.output.unwrap()
+snapshot_kind: text
 ---
 {
   "type": "stylesheet",
@@ -8,8 +9,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -23,14 +24,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 106,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -44,14 +45,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 112,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -65,14 +66,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 117,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -86,14 +87,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 123,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -107,14 +108,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 131,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -128,14 +129,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 139,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -149,14 +150,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 147,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -170,14 +171,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 151,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -191,14 +192,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 155,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -212,14 +213,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 159,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -233,14 +234,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 163,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -254,14 +255,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 167,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -275,14 +276,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 171,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -296,14 +297,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 174,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -317,14 +318,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 186,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -338,14 +339,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 191,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -359,14 +360,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 194,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -380,14 +381,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 200,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -401,14 +402,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 209,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -422,14 +423,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 218,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -443,14 +444,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 223,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -464,14 +465,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 229,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -485,14 +486,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 235,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -506,14 +507,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 240,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -527,14 +528,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 245,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -548,14 +549,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 249,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -569,14 +570,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 254,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -590,14 +591,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 259,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -611,14 +612,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 264,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -632,14 +633,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 267,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -653,14 +654,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 270,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -674,14 +675,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 276,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -695,14 +696,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 283,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -716,14 +717,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 291,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -737,14 +738,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 299,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -758,14 +759,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 304,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -779,14 +780,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 309,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -800,14 +801,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 313,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -821,14 +822,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 318,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -842,14 +843,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 321,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -863,14 +864,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 324,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -884,14 +885,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 327,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -905,14 +906,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 335,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -926,14 +927,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 339,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -947,14 +948,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 343,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -968,14 +969,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 347,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -989,14 +990,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 351,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -1010,14 +1011,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 355,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -1031,14 +1032,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 359,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -1052,14 +1053,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 369,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -1073,14 +1074,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 375,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -1094,14 +1095,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 382,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -1115,14 +1116,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 390,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -1136,14 +1137,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 397,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -1157,14 +1158,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 406,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -1178,14 +1179,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 413,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -1199,14 +1200,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 420,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -1220,14 +1221,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 427,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -1241,14 +1242,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 431,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -1262,14 +1263,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 435,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -1283,14 +1284,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 439,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -1304,14 +1305,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 448,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -1325,14 +1326,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 455,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -1346,14 +1347,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 463,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -1367,14 +1368,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 472,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -1388,14 +1389,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 479,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -1409,14 +1410,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 488,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -1430,14 +1431,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 500,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -1451,14 +1452,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 508,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -1472,14 +1473,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 516,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -1493,14 +1494,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 524,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -1514,14 +1515,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 531,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -1535,14 +1536,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 536,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -1556,14 +1557,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 544,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -1577,14 +1578,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 550,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -1598,14 +1599,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 559,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -1619,14 +1620,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 568,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -1640,14 +1641,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 574,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -1661,14 +1662,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 580,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -1682,14 +1683,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 587,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -1703,8 +1704,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -1927,8 +1928,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -1942,14 +1943,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 754,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -1963,14 +1964,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 761,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -1984,14 +1985,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 770,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -2005,14 +2006,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 782,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -2026,14 +2027,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 790,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -2047,14 +2048,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 799,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -2068,14 +2069,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 807,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -2089,14 +2090,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 815,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -2110,14 +2111,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 821,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -2131,14 +2132,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 826,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -2152,8 +2153,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -2208,8 +2209,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -2223,8 +2224,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -2279,8 +2280,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -2294,14 +2295,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 885,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -2315,8 +2316,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -2371,8 +2372,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -2386,14 +2387,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 923,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -2407,8 +2408,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -2463,8 +2464,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -2495,14 +2496,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 963,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -2533,14 +2534,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 981,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -2571,14 +2572,14 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": {
+          {
             "kind": "Comma",
             "offset": 991,
             "len": 1
           }
-        },
-        {
-          "components": [
+        ],
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -2609,8 +2610,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {
@@ -2700,8 +2701,8 @@ expression: result.output.unwrap()
     {
       "type": "stylerule",
       "selectors": [
-        {
-          "components": [
+        [
+          [
             {
               "type": "tag",
               "value": {
@@ -2715,8 +2716,8 @@ expression: result.output.unwrap()
               }
             }
           ],
-          "comma": null
-        }
+          null
+        ]
       ],
       "type": "style-declaration",
       "open": {

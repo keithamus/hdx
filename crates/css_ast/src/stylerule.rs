@@ -9,13 +9,26 @@ use hdx_proc_macro::visit;
 
 use super::{rules, UnknownAtRule, UnknownQualifiedRule, Visit, Visitable};
 
-// https://drafts.csswg.org/cssom-1/#the-cssstylerule-interface
+/// Represents a "Style Rule", such as `body { width: 100% }`. See also the CSS-OM [CSSStyleRule][1] interface.
+///
+/// The Style Rule is comprised of two child nodes: the [SelectorList] represents the selectors of the rule, and the
+/// [StyleDeclaration] represents the block, including the `{` and `}`.
+///
+/// ```md
+/// <style-rule>
+///  │├─ <selector-list> ─ <style-declaration> ─┤│
+///
+/// ```
+///
+/// [1]: https://drafts.csswg.org/cssom-1/#the-cssstylerule-interface
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(tag = "type", rename = "stylerule"))]
 #[visit]
 pub struct StyleRule<'a> {
+	/// The selectors this rule applies to.
 	pub selectors: SelectorList<'a>,
 	#[cfg_attr(feature = "serde", serde(flatten))]
+	/// The declaration of this rule.
 	pub style: StyleDeclaration<'a>,
 }
 
