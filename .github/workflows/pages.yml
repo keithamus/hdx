@@ -33,8 +33,8 @@ jobs:
         env:
           NODE_ENV: production
       - run: cargo doc --all-features
-      - run: mkdir -p ./website/doc/internal/
-      - run: cp -rf ./target/doc/* ./website/doc/internal/
+      - run: mkdir -p ./website/_site/doc/internal/
+      - run: cp -rf ./target/doc/* ./website/_site/doc/internal/
       - uses: actions/upload-pages-artifact@v3
         with:
           path: "website/_site"
