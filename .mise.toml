@@ -1,3 +1,52 @@
 [tools]
 rust = "1.83.0"
 deno = "2.1.4"
+
+[tasks.install]
+description = "Install necessary dependencies for development"
+run = [
+	"cargo install cargo-insta",
+	"cargo install cargo-expand",
+	"cargo install --locked samply",
+]
+
+[tasks.clean]
+description = "Clean all build artefacts"
+run = [
+	"cargo clean",
+	"rm ./tasks/generate-values/.*-cache.txt"
+]
+
+[tasks.build]
+description = "Build all project files"
+sources = ["Cargo.toml", "crates/**/*.toml", "crates/**/*.rs"]
+outputs = ["target/debug/hdx"]
+run = "cargo build --all-features"
+
+[tasks.test]
+description = "Run the test suite"
+sources = ["Cargo.toml", "crates/**/*.toml", "crates/**/*.rs"]
+run = "cargo test --all-features"
+
+[tasks.bench]
+description = "Run the benchmark suite"
+run = "cargo bench --all-features"
+
+[tasks.lint]
+depends = ["install"]
+description = "Lint all project files"
+run = [
+	"clippy --workspace --all-targets --all-features"
+]
+
+[tasks.generate-values]
+description = "Run code generation to build all CSS style values"
+dir = "./tasks/generate-values/"
+run = ["deno --allow-net --allow-read --allow-write mod.ts"]
+
+[tasks.profile]
+depends = ["install", "build --profile release-debug"]
+description = "Run a given file in the profiler to analyse performance"
+run = "samply record --rate=10000 ./target/release-debug/hdx build {{arg(name='css_file')}} --output /dev/null"
+
+
