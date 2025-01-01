@@ -8,7 +8,7 @@ const snake = (name: string) => name.replace(/([_-\s]\w)/g, (n) => `_${n.slice(1
 // Some properties should have lifetime annotations. It's a little tricky to detect which ones
 // so it's easier just to hardcode these as a list...
 const requiresAllocatorLifetime = new Map([
-	["anchor-position", new Set(["position-anchor"])],
+	["anchor-position", new Set([])],
 	["color-hdr", new Set(["dynamic-range-limit"])],
 	["ui", new Set(["outline"])],
 	["borders", new Set(["border-top-color", "border-bottom-color", "border-inline-color", "border-block-color"])],
@@ -222,7 +222,6 @@ async function getSpec(name: string, index: Record<string, number[]>) {
 		let trail = dataType == "enum" ? " {}" : ";";
 		let generics = "";
 		const lifetimes = requiresAllocatorLifetime.get(name);
-		console.log(lifetimes, name, lifetimes?.has(table.name));
 		if (
 			lifetimes?.has(table.name) ||
 			table.value.includes("<image>") ||
@@ -263,13 +262,12 @@ ${typeDefs.join("\n")}
 		throw new Error("supply a working draft name");
 	}
 	const rs = await getSpec(name, index);
-	// console.log(rs);
 	if (!rs) {
 		try {
-			await Deno.remove(`../../crates/hdx_ast/src/css/values/${snake(name)}/`, { recursive: true });
+			await Deno.remove(`../../crates/css_ast/src/values/${snake(name)}/`, { recursive: true });
 		} catch {}
 	} else {
-		await Deno.mkdir(`../../crates/hdx_ast/src/css/values/${snake(name)}/`, { recursive: true });
-		await Deno.writeTextFile(`../../crates/hdx_ast/src/css/values/${snake(name)}/mod.rs`, rs);
+		await Deno.mkdir(`../../crates/css_ast/src/values/${snake(name)}/`, { recursive: true });
+		await Deno.writeTextFile(`../../crates/css_ast/src/values/${snake(name)}/mod.rs`, rs);
 	}
 })(...Deno.args);
