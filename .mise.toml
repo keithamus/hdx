@@ -35,12 +35,19 @@ run = "cargo bench --all-features"
 [tasks.lint]
 depends = ["install"]
 description = "Lint all project files"
+sources = ["Cargo.toml", "crates/**/*.toml", "crates/**/*.rs"]
 run = [
 	"clippy --workspace --all-targets --all-features"
 ]
 
+[tasks.doc]
+description = "Generate library documentation"
+sources = ["Cargo.toml", "crates/**/*.toml", "crates/**/*.rs"]
+run = "cargo doc --all-features"
+
 [tasks.generate-values]
 description = "Run code generation to build all CSS style values"
+sources = ["./tasks/generate-values/.*-cache.txt", "./tasks/generate-values/mod.ts", "crates/css_ast/src/values/**/*.rs"]
 dir = "./tasks/generate-values/"
 run = ["deno --allow-net --allow-read --allow-write mod.ts"]
 
