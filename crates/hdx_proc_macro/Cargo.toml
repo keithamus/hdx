@@ -14,8 +14,7 @@ bench = false
 proc-macro = true
 
 [dependencies]
-hdx_atom.workspace = true
-hdx_lexer.workspace = true
+css_lexer.workspace = true
 
 syn = { workspace = true, features = ["extra-traits"] }
 quote = { workspace = true }

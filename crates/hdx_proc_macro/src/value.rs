@@ -36,11 +36,14 @@ pub fn generate(defs: Def, ast: DeriveInput) -> TokenStream {
 			return Error::new(ident.span(), "cannot create from_syntax on Union").into_compile_error();
 		}
 	}
+	let keyword_def = defs.generate_keyword_set(ident);
 	let def = defs.generate_definition(vis, ident, &mut ast.generics.clone());
 	let peek_impl = defs.generate_peek_trait_implementation(ident, &mut ast.generics.clone());
 	let parse_impl = defs.generate_parse_trait_implementation(ident, &mut ast.generics.clone());
 	let tocursors_impl = defs.generate_tocursors_trait_implementation(ident, &mut ast.generics.clone());
 	quote! {
+		#keyword_def
+
 		#(#attrs)*
 		#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 		#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]

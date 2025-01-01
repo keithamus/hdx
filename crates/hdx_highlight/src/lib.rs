@@ -1,6 +1,6 @@
 use bitmask_enum::bitmask;
 use core::fmt;
-use hdx_lexer::Span;
+use css_lexer::Span;
 use std::collections::HashMap;
 use strum::{Display, VariantNames};
 

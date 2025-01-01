@@ -6,23 +6,23 @@ expression: pretty
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 struct Foo<'a>(pub types::Image<'a>);
 #[automatically_derived]
-impl<'a> ::hdx_parser::Peek<'a> for Foo<'a> {
-    fn peek(p: &::hdx_parser::Parser<'a>) -> bool {
-        use ::hdx_parser::Peek;
-        p.peek::<types::Image>()
+impl<'a> ::css_parse::Peek<'a> for Foo<'a> {
+    fn peek(p: &::css_parse::Parser<'a>, c: ::css_lexer::Cursor) -> bool {
+        use ::css_parse::Peek;
+        <types::Image>::peek(p, c)
     }
 }
 #[automatically_derived]
-impl<'a> ::hdx_parser::Parse<'a> for Foo<'a> {
-    fn parse(p: &mut ::hdx_parser::Parser<'a>) -> ::hdx_parser::Result<Self> {
-        use ::hdx_parser::Parse;
+impl<'a> ::css_parse::Parse<'a> for Foo<'a> {
+    fn parse(p: &mut ::css_parse::Parser<'a>) -> ::css_parse::Result<Self> {
+        use ::css_parse::{Parse, Peek};
         let val = p.parse::<types::Image>()?;
         Ok(Self(val))
     }
 }
 #[automatically_derived]
-impl<'a> ::hdx_parser::ToCursors for Foo<'a> {
-    fn to_cursors(&self, s: &mut impl ::hdx_parser::CursorSink) {
-        ::hdx_parser::ToCursors::to_cursors(&self.0, s);
+impl<'a> ::css_parse::ToCursors for Foo<'a> {
+    fn to_cursors(&self, s: &mut impl ::css_parse::CursorSink) {
+        ::css_parse::ToCursors::to_cursors(&self.0, s);
     }
 }

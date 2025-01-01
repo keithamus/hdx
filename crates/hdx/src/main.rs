@@ -1,8 +1,8 @@
 use bumpalo::Bump;
 use clap::{crate_version, Parser, Subcommand};
-use hdx_ast::css::StyleSheet;
+use css_ast::StyleSheet;
+use css_parse::{CursorFmtSink, ToCursors};
 use hdx_lsp::{LSPService, Server};
-use hdx_parser::{CursorStream, ToCursors};
 use miette::{GraphicalReportHandler, GraphicalTheme, NamedSource};
 use std::io;
 use tracing::{level_filters::LevelFilter, trace};
@@ -73,6 +73,7 @@ enum Commands {
 
 fn main() {
 	let cli = Cli::parse();
+	let debug = cli.debug;
 
 	match &cli.command {
 		Commands::Check { input, fix } => {
@@ -84,9 +85,8 @@ fn main() {
 		Commands::DbgParse { input } => {
 			let source_text = std::fs::read_to_string(input).unwrap();
 			println!("{}", source_text);
-			let allocator = Bump::default();
-			let result = hdx_parser::Parser::new(&allocator, source_text.as_str(), hdx_parser::Features::default())
-				.parse_entirely::<StyleSheet>();
+			let bump = Bump::default();
+			let result = css_parse::Parser::new(&bump, source_text.as_str()).parse_entirely::<StyleSheet>();
 			if let Some(stylesheet) = &result.output {
 				println!("{:#?}", stylesheet);
 			} else {
@@ -107,18 +107,14 @@ fn main() {
 
 			let file_name = input.first().unwrap();
 			let source_text = std::fs::read_to_string(file_name).unwrap();
-			let allocator = Bump::default();
+			let bump = Bump::default();
 			let start = std::time::Instant::now();
-			let result = hdx_parser::Parser::new(&allocator, source_text.as_str(), hdx_parser::Features::default())
-				.parse_entirely::<StyleSheet>();
+			let result = css_parse::Parser::new(&bump, source_text.as_str()).parse_entirely::<StyleSheet>();
 			{
 				if result.output.is_some() {
 					let mut str = String::new();
-					let mut stream = CursorStream::new(&allocator);
+					let mut stream = CursorFmtSink::new(source_text.as_str(), &mut str);
 					result.to_cursors(&mut stream);
-					if let Err(e) = result.write(&mut stream, &mut str) {
-						println!("{}", e);
-					}
 					if let Some(file) = output {
 						std::fs::write(file, str.as_bytes()).unwrap();
 					} else {
@@ -142,7 +138,11 @@ fn main() {
 		}
 		Commands::Lsp {} => {
 			let server = Server::new(LSPService::new(crate_version!()));
-			let stderr_log = fmt::layer().with_writer(io::stderr).with_filter(LevelFilter::TRACE);
+			let stderr_log = fmt::layer().with_writer(io::stderr).with_filter(if debug {
+				LevelFilter::TRACE
+			} else {
+				LevelFilter::WARN
+			});
 			registry().with(stderr_log).with(server.tracer()).init();
 			let thread = server.listen_stdio().unwrap();
 			trace!("Listening on stdin/stdout");

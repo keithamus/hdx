@@ -13,8 +13,9 @@ repository.workspace = true
 bench = false
 
 [dependencies]
-hdx_parser = { workspace = true }
-hdx_ast = { workspace = true }
+css_parse = { workspace = true }
+css_ast = { workspace = true }
+css_lexer = { workspace = true }
 hdx_highlight = { workspace = true }
 
 bumpalo = { workspace = true, features = ["collections", "boxed"] }

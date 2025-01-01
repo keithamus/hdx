@@ -1,11 +1,12 @@
 use bumpalo::Bump;
 use crossbeam_channel::{bounded, Receiver, Sender};
+use css_ast::{StyleSheet, Visitable};
+use css_lexer::{Cursor, SourceOffset, Span, Token};
+use css_parse::{Parser, ParserReturn};
 use dashmap::DashMap;
-use hdx_ast::css::{StyleSheet, Visitable};
 use hdx_highlight::{Highlight, SemanticKind, SemanticModifier, TokenHighlighter};
-use hdx_parser::{Features, Parser, ParserReturn};
 use itertools::Itertools;
-use lsp_types::Uri;
+use lsp_types::{CompletionItemTag, Position, Uri};
 use ropey::Rope;
 use std::{
 	sync::{
@@ -15,7 +16,7 @@ use std::{
 	thread::{Builder, JoinHandle},
 };
 use strum::VariantNames;
-use tracing::{instrument, trace};
+use tracing::{instrument, trace, trace_span};
 
 use crate::{ErrorCode, Handler};
 
@@ -57,24 +58,25 @@ impl File {
 					let mut bump = Bump::default();
 					let mut string: String = "".into();
 					let mut result: ParserReturn<'_, StyleSheet<'_>> =
-						Parser::new(&bump, "", Features::default()).parse_entirely::<StyleSheet>();
+						Parser::new(&bump, "").parse_entirely::<StyleSheet>();
 					while let Ok(call) = read_receiver.recv() {
 						match call {
 							FileCall::RopeChange(rope) => {
-								trace!("Parsing document");
+								let span = trace_span!("Parsing document");
+								let _ = span.enter();
 								// TODO! we should be able to optimize this by parsing a subset of the tree and mutating in
 								// place. For now though a partial parse request re-parses it all.
 								drop(result);
 								bump.reset();
 								string = rope.clone().into();
-								result =
-									Parser::new(&bump, &string, Features::default()).parse_entirely::<StyleSheet>();
+								result = Parser::new(&bump, &string).parse_entirely::<StyleSheet>();
 								if let Some(stylesheet) = &result.output {
-									trace!("Sucessfully parsed stylesheet: {:#?}", &stylesheet);
+									// trace!("Sucessfully parsed stylesheet: {:#?}", &stylesheet);
 								}
 							}
 							FileCall::Highlight => {
-								trace!("Highlighting document");
+								let span = trace_span!("Highlighting document");
+								let _ = span.enter();
 								let mut highlighter = TokenHighlighter::new();
 								if let Some(stylesheet) = &result.output {
 									stylesheet.accept(&mut highlighter);
@@ -242,7 +244,7 @@ impl Handler for LSPService {
 					token_modifiers_bitset: highlight.modifier().bits() as u32,
 					delta_line,
 					delta_start,
-					length: highlight.span().size(),
+					length: highlight.span().len(),
 				})
 				.collect();
 			Ok(Some(lsp_types::SemanticTokensResult::Tokens(lsp_types::SemanticTokens { result_id: None, data })))

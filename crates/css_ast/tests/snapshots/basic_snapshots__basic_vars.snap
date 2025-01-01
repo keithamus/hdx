@@ -1,0 +1,217 @@
+---
+source: crates/css_ast/tests/basic_snapshots.rs
+expression: result.output.unwrap()
+---
+{
+  "type": "stylesheet",
+  "rules": [
+    {
+      "type": "stylerule",
+      "selectors": [
+        {
+          "components": [
+            {
+              "type": "tag",
+              "value": {
+                "Html": {
+                  "Hr": {
+                    "kind": "Ident",
+                    "offset": 0,
+                    "len": 2
+                  }
+                }
+              }
+            }
+          ],
+          "comma": null
+        }
+      ],
+      "type": "style-declaration",
+      "open": {
+        "kind": "LeftCurly",
+        "offset": 3,
+        "len": 1
+      },
+      "declarations": [
+        [
+          {
+            "type": "property",
+            "name": {
+              "kind": "Ident",
+              "offset": 7,
+              "len": 10
+            },
+            "colon": {
+              "kind": "Colon",
+              "offset": 17,
+              "len": 1
+            },
+            "value": {
+              "values": [
+                {
+                  "kind": "Whitespace",
+                  "offset": 18,
+                  "len": 1
+                },
+                {
+                  "type": "FunctionBlock",
+                  "name": {
+                    "kind": "Function",
+                    "offset": 19,
+                    "len": 16
+                  },
+                  "values": [
+                    {
+                      "kind": "Ident",
+                      "offset": 35,
+                      "len": 2
+                    },
+                    {
+                      "kind": "Whitespace",
+                      "offset": 37,
+                      "len": 1
+                    },
+                    {
+                      "kind": "Ident",
+                      "offset": 38,
+                      "len": 5
+                    },
+                    {
+                      "kind": "Comma",
+                      "offset": 43,
+                      "len": 1
+                    },
+                    {
+                      "kind": "Whitespace",
+                      "offset": 44,
+                      "len": 1
+                    },
+                    {
+                      "kind": "Ident",
+                      "offset": 45,
+                      "len": 11
+                    },
+                    {
+                      "kind": "Comma",
+                      "offset": 56,
+                      "len": 1
+                    },
+                    {
+                      "kind": "Whitespace",
+                      "offset": 57,
+                      "len": 1
+                    },
+                    {
+                      "type": "FunctionBlock",
+                      "name": {
+                        "kind": "Function",
+                        "offset": 58,
+                        "len": 4
+                      },
+                      "values": [
+                        {
+                          "kind": "Ident",
+                          "offset": 62,
+                          "len": 14
+                        }
+                      ],
+                      "close_paren": {
+                        "kind": "RightParen",
+                        "offset": 76,
+                        "len": 1
+                      }
+                    },
+                    {
+                      "kind": "Whitespace",
+                      "offset": 77,
+                      "len": 1
+                    },
+                    {
+                      "kind": "Dimension",
+                      "offset": 78,
+                      "len": 3,
+                      "unit": "%"
+                    },
+                    {
+                      "kind": "Comma",
+                      "offset": 81,
+                      "len": 1
+                    },
+                    {
+                      "kind": "Whitespace",
+                      "offset": 82,
+                      "len": 1
+                    },
+                    {
+                      "type": "FunctionBlock",
+                      "name": {
+                        "kind": "Function",
+                        "offset": 83,
+                        "len": 4
+                      },
+                      "values": [
+                        {
+                          "kind": "Ident",
+                          "offset": 87,
+                          "len": 14
+                        }
+                      ],
+                      "close_paren": {
+                        "kind": "RightParen",
+                        "offset": 101,
+                        "len": 1
+                      }
+                    },
+                    {
+                      "kind": "Whitespace",
+                      "offset": 102,
+                      "len": 1
+                    },
+                    {
+                      "kind": "Dimension",
+                      "offset": 103,
+                      "len": 3,
+                      "unit": "%"
+                    },
+                    {
+                      "kind": "Comma",
+                      "offset": 106,
+                      "len": 1
+                    },
+                    {
+                      "kind": "Whitespace",
+                      "offset": 107,
+                      "len": 1
+                    },
+                    {
+                      "kind": "Ident",
+                      "offset": 108,
+                      "len": 11
+                    }
+                  ],
+                  "close_paren": {
+                    "kind": "RightParen",
+                    "offset": 119,
+                    "len": 1
+                  }
+                }
+              ]
+            },
+            "important": null
+          },
+          {
+            "kind": "Semicolon",
+            "offset": 120,
+            "len": 1
+          }
+        ]
+      ],
+      "rules": [],
+      "close": {
+        "kind": "RightCurly",
+        "offset": 122,
+        "len": 1
+      }
+    }
+  ]
+}

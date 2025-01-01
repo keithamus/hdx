@@ -1,0 +1,44 @@
+[package]
+name = "css_lexer"
+version = "0.0.1"
+authors.workspace = true
+description.workspace = true
+edition.workspace = true
+homepage.workspace = true
+keywords.workspace = true
+license.workspace = true
+repository.workspace = true
+exclude = ["tests/*", "bench/*"]
+
+[lib]
+bench = false
+
+[dependencies]
+bumpalo = { workspace = true, features = ["boxed", "collections"] }
+bitmask-enum = { workspace = true }
+
+miette = { workspace = true, optional = true }
+serde = { workspace = true, features = ["derive"], optional = true }
+serde_json = { workspace = true, optional = true }
+
+[dev-dependencies]
+glob = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
+criterion = { workspace = true, features = ["html_reports"] }
+insta = { workspace = true, features = ["json"] }
+similar = { workspace = true }
+console = { workspace = true }
+
+[target.'cfg(target_family = "unix")'.dev-dependencies]
+pprof = { workspace = true, features = ["flamegraph", "criterion"] }
+
+[features]
+default = []
+# Provides `From<>` implementations for the [SourceSpan] into [miette::SourceSpan] and [Span] into [miette::Span]
+miette = ["dep:miette"]
+serde = ["dep:serde", "dep:serde_json", "bumpalo/serde", "miette/serde"]
+
+[[bench]]
+name = "lex_popular"
+harness = false

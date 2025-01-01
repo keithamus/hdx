@@ -1,0 +1,70 @@
+---
+source: crates/css_ast/tests/postcss_snapshots.rs
+expression: result.output.unwrap()
+---
+{
+  "type": "stylesheet",
+  "rules": [
+    {
+      "type": "stylerule",
+      "selectors": [
+        {
+          "components": [
+            {
+              "type": "tag",
+              "value": {
+                "Html": {
+                  "A": {
+                    "kind": "Ident",
+                    "offset": 0,
+                    "len": 1
+                  }
+                }
+              }
+            }
+          ],
+          "comma": null
+        }
+      ],
+      "type": "style-declaration",
+      "open": {
+        "kind": "LeftCurly",
+        "offset": 2,
+        "len": 1
+      },
+      "declarations": [],
+      "rules": [
+        {
+          "type": "AtRule",
+          "name": {
+            "kind": "AtKeyword",
+            "offset": 4,
+            "len": 7
+          },
+          "prelude": {
+            "values": [
+              {
+                "kind": "Whitespace",
+                "offset": 11,
+                "len": 1
+              },
+              {
+                "kind": "String",
+                "offset": 12,
+                "len": 7
+              }
+            ]
+          },
+          "block": {
+            "None": null
+          }
+        }
+      ],
+      "close": {
+        "kind": "RightCurly",
+        "offset": 20,
+        "len": 1
+      }
+    }
+  ]
+}

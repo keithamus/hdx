@@ -19,7 +19,7 @@ expression: actual
 <body>
 	<pre>
 		<code>
-		<span class="Tag">body</span>,<span class="Tag">dialog</span>,<span class="Tag unknown">madeup</span>,<span class="Tag deprecated">marquee</span>,<span class="Tag experimental vendor">portal</span>,<span class="Tag custom">custom-element</span><span class="Punctuation">{</span><span class="Punctuation">}</span>
-					</code>
-				</pre>
-			</body>
+			<span class="Tag">body</span>,<span class="Tag">dialog</span>,<span class="Tag unknown">madeup</span>,<span class="Tag">marquee</span>,<span class="Tag experimental vendor">portal</span>,<span class="Tag custom">custom-element</span><span class="Punctuation">{</span><span class="Punctuation">}</span>
+		</code>
+	</pre>
+</body>

@@ -3,8 +3,8 @@ macro_rules! assert_transform {
 	($transform: ident, $str: literal, $expected: literal) => {
 		{
 			use bumpalo::Bump;
-			use hdx_ast::css::{StyleSheet, visit::VisitableMut};
-			use hdx_parser::{Features, Parser};
+			use css_ast::css::{StyleSheet, visit::VisitableMut};
+			use css_parse::{Features, Parser};
 
 			let allocator = Bump::default();
 			let mut parser = Parser::new(&allocator, $str, Features::default());

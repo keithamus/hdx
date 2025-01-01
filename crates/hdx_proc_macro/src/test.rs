@@ -1,5 +1,4 @@
 use crate::{def::*, value::generate};
-use hdx_atom::{atom, Atom};
 use quote::quote;
 
 macro_rules! to_valuedef {
@@ -34,10 +33,7 @@ fn test_def_builds_type() {
 fn test_def_builds_quoted_type() {
 	assert_eq!(
 		::syn::parse2::<StrWrapped<Def>>(quote! { "<'some-prop'>" }).unwrap().0,
-		Def::Type(DefType::Custom(
-			DefIdent(Atom::from("SomePropStyleValue")),
-			DefIdent(Atom::from("SomePropStyleValue"))
-		))
+		Def::Type(DefType::Custom(DefIdent("SomePropStyleValue".into()), DefIdent("SomePropStyleValue".into())))
 	)
 }
 
@@ -65,8 +61,8 @@ fn test_def_builds_quoted_custom_type_with_count() {
 		::syn::parse2::<StrWrapped<Def>>(quote! { "<'animation-delay'>{1,3}" }).unwrap().0,
 		Def::Multiplier(
 			Box::new(Def::Type(DefType::Custom(
-				DefIdent(atom!("AnimationDelayStyleValue")),
-				DefIdent(atom!("AnimationDelayStyleValue"))
+				DefIdent("AnimationDelayStyleValue".into()),
+				DefIdent("AnimationDelayStyleValue".into())
 			))),
 			DefMultiplierStyle::Range(DefRange::Range(1.0..3.0))
 		)
@@ -78,7 +74,7 @@ fn def_builds_combinator_of_keywords() {
 	assert_eq!(
 		to_valuedef! { none | auto },
 		Def::Combinator(
-			vec![Def::Ident(DefIdent(atom!("none"))), Def::Ident(DefIdent(atom!("auto")))],
+			vec![Def::Ident(DefIdent("none".into())), Def::Ident(DefIdent("auto".into()))],
 			DefCombinatorStyle::Alternatives,
 		)
 	)
@@ -89,7 +85,7 @@ fn def_builds_ordered_combinator_of_keywords() {
 	assert_eq!(
 		to_valuedef! { none auto },
 		Def::Combinator(
-			vec![Def::Ident(DefIdent(atom!("none"))), Def::Ident(DefIdent(atom!("auto")))],
+			vec![Def::Ident(DefIdent("none".into())), Def::Ident(DefIdent("auto".into()))],
 			DefCombinatorStyle::Ordered,
 		)
 	)
@@ -100,7 +96,7 @@ fn test_def_builds_dashed_idents() {
 	assert_eq!(
 		to_valuedef!( length-percentage preserve-3d  ),
 		Def::Combinator(
-			vec![Def::Ident(DefIdent(atom!("length-percentage"))), Def::Ident(DefIdent(atom!("preserve-3d")))],
+			vec![Def::Ident(DefIdent("length-percentage".into())), Def::Ident(DefIdent("preserve-3d".into()))],
 			DefCombinatorStyle::Ordered,
 		)
 	)
@@ -114,12 +110,12 @@ fn def_builds_group_with_brackets() {
 			vec![
 				Def::Group(
 					Box::new(Def::Combinator(
-						vec![Def::Ident(DefIdent(atom!("block"))), Def::Ident(DefIdent(atom!("inline")))],
+						vec![Def::Ident(DefIdent("block".into())), Def::Ident(DefIdent("inline".into()))],
 						DefCombinatorStyle::Options,
 					)),
 					DefGroupStyle::None,
 				),
-				Def::Ident(DefIdent(atom!("none"))),
+				Def::Ident(DefIdent("none".into())),
 			],
 			DefCombinatorStyle::Alternatives,
 		)
@@ -132,9 +128,9 @@ fn def_builds_combinator_with_correct_precedence() {
 		to_valuedef! { none | underline || overline },
 		Def::Combinator(
 			vec![
-				Def::Ident(DefIdent(atom!("none"))),
+				Def::Ident(DefIdent("none".into())),
 				Def::Combinator(
-					vec![Def::Ident(DefIdent(atom!("underline"))), Def::Ident(DefIdent(atom!("overline")))],
+					vec![Def::Ident(DefIdent("underline".into())), Def::Ident(DefIdent("overline".into()))],
 					DefCombinatorStyle::Options,
 				),
 			],
@@ -150,10 +146,10 @@ fn def_builds_combinator_with_correct_precedence2() {
 		Def::Combinator(
 			vec![
 				Def::Combinator(
-					vec![Def::Ident(DefIdent(atom!("underline"))), Def::Ident(DefIdent(atom!("overline")))],
+					vec![Def::Ident(DefIdent("underline".into())), Def::Ident(DefIdent("overline".into()))],
 					DefCombinatorStyle::Options,
 				),
-				Def::Ident(DefIdent(atom!("none"))),
+				Def::Ident(DefIdent("none".into())),
 			],
 			DefCombinatorStyle::Alternatives,
 		)
@@ -167,17 +163,17 @@ fn def_builds_combinator_with_correct_precedence3() {
 		Def::Combinator(
 			vec![
 				Def::Combinator(
-					vec![Def::Ident(DefIdent(atom!("auto"))), Def::Ident(DefIdent(atom!("none")))],
+					vec![Def::Ident(DefIdent("auto".into())), Def::Ident(DefIdent("none".into()))],
 					DefCombinatorStyle::Ordered,
 				),
 				Def::Combinator(
 					vec![
-						Def::Ident(DefIdent(atom!("underline"))),
+						Def::Ident(DefIdent("underline".into())),
 						Def::Combinator(
 							vec![
-								Def::Ident(DefIdent(atom!("overline"))),
+								Def::Ident(DefIdent("overline".into())),
 								Def::Combinator(
-									vec![Def::Ident(DefIdent(atom!("block"))), Def::Ident(DefIdent(atom!("inline")))],
+									vec![Def::Ident(DefIdent("block".into())), Def::Ident(DefIdent("inline".into()))],
 									DefCombinatorStyle::Ordered,
 								),
 							],
@@ -197,7 +193,7 @@ fn def_builds_group_of_types_and_keywords() {
 	assert_eq!(
 		to_valuedef! { <length [1,]> | auto },
 		Def::Combinator(
-			vec![Def::Type(DefType::Length(DefRange::RangeFrom(1f32..))), Def::Ident(DefIdent(atom!("auto")))],
+			vec![Def::Type(DefType::Length(DefRange::RangeFrom(1f32..))), Def::Ident(DefIdent("auto".into()))],
 			DefCombinatorStyle::Alternatives,
 		)
 	)
@@ -257,7 +253,7 @@ fn def_builds_complex_combination_1() {
 				Def::Group(
 					Box::new(Def::Combinator(
 						vec![
-							Def::Optional(Box::new(Def::Ident(DefIdent(atom!("inset"))))),
+							Def::Optional(Box::new(Def::Ident(DefIdent("inset".into())))),
 							Def::Multiplier(
 								Box::new(Def::Type(DefType::Length(DefRange::None))),
 								DefMultiplierStyle::Range(DefRange::Range(2f32..4f32)),
@@ -268,7 +264,7 @@ fn def_builds_complex_combination_1() {
 					)),
 					DefGroupStyle::OneOrMore,
 				),
-				Def::Ident(DefIdent(atom!("none"))),
+				Def::Ident(DefIdent("none".into())),
 			],
 			DefCombinatorStyle::Alternatives,
 		)

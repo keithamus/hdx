@@ -13,10 +13,10 @@ repository.workspace = true
 bench = false
 
 [dependencies]
-hdx_ast = { workspace = true }
+css_ast = { workspace = true }
 
 [dev-dependencies]
-hdx_parser = { workspace = true }
+css_parse = { workspace = true }
 glob = { workspace = true }
 serde = { workspace = true, features = ["derive"] }
 serde_json = { workspace = true }

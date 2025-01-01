@@ -188,12 +188,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8334215b81e418a0a7bdb8ef0849474f40bb10c8b71f1c4ed315cff49f32494d"
 
 [[package]]
-name = "byteorder"
-version = "1.5.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1fd0f2584146f6f2ef48085050886acf353beff7305ebd1ae69500e27c67f64b"
-
-[[package]]
 name = "cast"
 version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -394,6 +388,89 @@ name = "crunchy"
 version = "0.2.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7a81dae078cea95a014a339291cec439d2f232ebe854a9d672b796c6afafa9b7"
+
+[[package]]
+name = "css_analysis"
+version = "0.0.0"
+dependencies = [
+ "bitmask-enum",
+ "bumpalo",
+ "console",
+ "criterion",
+ "css_lexer",
+ "css_parse",
+ "glob",
+ "grep-matcher",
+ "grep-regex",
+ "grep-searcher",
+ "hdx_proc_macro",
+ "insta",
+ "miette",
+ "phf",
+ "pprof",
+ "serde",
+ "serde_json",
+ "similar",
+ "smallvec",
+]
+
+[[package]]
+name = "css_ast"
+version = "0.0.0"
+dependencies = [
+ "bitmask-enum",
+ "bumpalo",
+ "console",
+ "criterion",
+ "css_lexer",
+ "css_parse",
+ "glob",
+ "grep-matcher",
+ "grep-regex",
+ "grep-searcher",
+ "hdx_proc_macro",
+ "insta",
+ "miette",
+ "phf",
+ "pprof",
+ "serde",
+ "serde_json",
+ "similar",
+ "smallvec",
+]
+
+[[package]]
+name = "css_lexer"
+version = "0.0.1"
+dependencies = [
+ "bitmask-enum",
+ "bumpalo",
+ "console",
+ "criterion",
+ "glob",
+ "insta",
+ "miette",
+ "pprof",
+ "serde",
+ "serde_json",
+ "similar",
+]
+
+[[package]]
+name = "css_parse"
+version = "0.0.1"
+dependencies = [
+ "bitmask-enum",
+ "bumpalo",
+ "css_lexer",
+ "glob",
+ "miette",
+ "phf",
+ "serde",
+ "serde_json",
+ "smallvec",
+ "thiserror 2.0.9",
+]
 
 [[package]]
 name = "dashmap"
@@ -599,57 +676,15 @@ version = "0.0.1"
 dependencies = [
  "bumpalo",
  "clap",
- "hdx_ast",
- "hdx_atom",
- "hdx_lexer",
+ "css_ast",
+ "css_lexer",
+ "css_parse",
  "hdx_lsp",
- "hdx_parser",
- "hdx_syntax",
  "miette",
  "serde",
  "serde_json",
  "tracing",
  "tracing-subscriber",
-]
-
-[[package]]
-name = "hdx_ast"
-version = "0.0.0"
-dependencies = [
- "bitmask-enum",
- "bumpalo",
- "console",
- "criterion",
- "glob",
- "grep-matcher",
- "grep-regex",
- "grep-searcher",
- "hdx_atom",
- "hdx_lexer",
- "hdx_parser",
- "hdx_proc_macro",
- "insta",
- "miette",
- "pprof",
- "serde",
- "serde_json",
- "similar",
- "smallvec",
-]
-
-[[package]]
-name = "hdx_atom"
-version = "0.0.0"
-dependencies = [
- "glob",
- "grep-matcher",
- "grep-regex",
- "grep-searcher",
- "hdx_syntax",
- "serde",
- "serde_json",
- "string_cache",
- "string_cache_codegen",
 ]
 
 [[package]]
@@ -659,32 +694,12 @@ dependencies = [
  "bitmask-enum",
  "bumpalo",
  "console",
- "hdx_ast",
- "hdx_lexer",
- "hdx_parser",
+ "css_ast",
+ "css_lexer",
+ "css_parse",
  "insta",
  "similar",
  "strum",
-]
-
-[[package]]
-name = "hdx_lexer"
-version = "0.0.1"
-dependencies = [
- "bitmask-enum",
- "bumpalo",
- "console",
- "criterion",
- "glob",
- "hdx_atom",
- "hdx_syntax",
- "insta",
- "miette",
- "pprof",
- "serde",
- "serde_json",
- "similar",
- "smallvec",
 ]
 
 [[package]]
@@ -696,11 +711,12 @@ dependencies = [
  "console",
  "criterion",
  "crossbeam-channel",
+ "css_ast",
+ "css_lexer",
+ "css_parse",
  "dashmap",
  "glob",
- "hdx_ast",
  "hdx_highlight",
- "hdx_parser",
  "httparse",
  "insta",
  "itertools 0.13.0",
@@ -718,28 +734,10 @@ dependencies = [
 ]
 
 [[package]]
-name = "hdx_parser"
-version = "0.0.1"
-dependencies = [
- "bitmask-enum",
- "bumpalo",
- "glob",
- "hdx_atom",
- "hdx_lexer",
- "hdx_syntax",
- "miette",
- "serde",
- "serde_json",
- "smallvec",
- "thiserror 2.0.9",
-]
-
-[[package]]
 name = "hdx_proc_macro"
 version = "0.0.0"
 dependencies = [
- "hdx_atom",
- "hdx_lexer",
+ "css_lexer",
  "insta",
  "itertools 0.13.0",
  "prettyplease",
@@ -749,18 +747,14 @@ dependencies = [
 ]
 
 [[package]]
-name = "hdx_syntax"
-version = "0.0.0"
-
-[[package]]
 name = "hdx_transform"
 version = "0.0.0"
 dependencies = [
  "bumpalo",
  "criterion",
+ "css_ast",
+ "css_parse",
  "glob",
- "hdx_ast",
- "hdx_parser",
  "pprof",
  "serde",
  "serde_json",
@@ -772,9 +766,9 @@ version = "0.0.0"
 dependencies = [
  "bumpalo",
  "console_error_panic_hook",
- "hdx_ast",
- "hdx_lexer",
- "hdx_parser",
+ "css_ast",
+ "css_lexer",
+ "css_parse",
  "miette",
  "serde",
  "serde-wasm-bindgen",
@@ -977,6 +971,7 @@ dependencies = [
  "cfg-if",
  "miette-derive",
  "owo-colors",
+ "serde",
  "supports-color",
  "supports-hyperlinks",
  "supports-unicode",
@@ -1015,12 +1010,6 @@ checksum = "e2d80299ef12ff69b16a84bb182e3b9df68b5a91574d3d4fa6e41b65deec4df1"
 dependencies = [
  "adler2",
 ]
-
-[[package]]
-name = "new_debug_unreachable"
-version = "1.0.6"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "650eef8c711430f1a879fdd01d4745a7deea475becfb90269c06775983bbf086"
 
 [[package]]
 name = "nix"
@@ -1119,20 +1108,43 @@ dependencies = [
 ]
 
 [[package]]
-name = "phf_generator"
-version = "0.10.0"
+name = "phf"
+version = "0.11.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5d5285893bb5eb82e6aaf5d59ee909a06a16737a8970984dd7746ba9283498d6"
+checksum = "ade2d8b8f33c7333b51bcf0428d37e217e9f32192ae4772156f65063b8ce03dc"
+dependencies = [
+ "phf_macros",
+ "phf_shared",
+]
+
+[[package]]
+name = "phf_generator"
+version = "0.11.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "48e4cc64c2ad9ebe670cb8fd69dd50ae301650392e81c05f9bfcb2d5bdbc24b0"
 dependencies = [
  "phf_shared",
  "rand",
 ]
 
 [[package]]
-name = "phf_shared"
-version = "0.10.0"
+name = "phf_macros"
+version = "0.11.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b6796ad771acdc0123d2a88dc428b5e38ef24456743ddb1744ed628f9815c096"
+checksum = "3444646e286606587e49f3bcf1679b8cef1dc2c5ecc29ddacaffc305180d464b"
+dependencies = [
+ "phf_generator",
+ "phf_shared",
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
+name = "phf_shared"
+version = "0.11.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "90fcb95eef784c2ac79119d1dd819e162b5da872ce6f3c3abe1e8ca1c082f72b"
 dependencies = [
  "siphasher",
 ]
@@ -1195,21 +1207,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "ppv-lite86"
-version = "0.2.20"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "77957b295656769bb8ad2b6a6b09d897d94f05c41b069aede1fcdaa675eaea04"
-dependencies = [
- "zerocopy",
-]
-
-[[package]]
-name = "precomputed-hash"
-version = "0.1.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "925383efa346730478fb4838dbe9137d2a47675ad789c546d150a6e1dd4ab31c"
-
-[[package]]
 name = "prettyplease"
 version = "0.2.25"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1252,18 +1249,6 @@ version = "0.8.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "34af8d1a0e25924bc5b7c43c079c942339d8f0a8b57c39049bef581b46327404"
 dependencies = [
- "libc",
- "rand_chacha",
- "rand_core",
-]
-
-[[package]]
-name = "rand_chacha"
-version = "0.3.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e6c10a63a0fa32252be49d21e7709d4d4baf8d231c2dbce1eaa8141b9b127d88"
-dependencies = [
- "ppv-lite86",
  "rand_core",
 ]
 
@@ -1272,9 +1257,6 @@ name = "rand_core"
 version = "0.6.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ec0be4795e2f6a28069bec0b5ff3e2ac9bafc99e6a9a7dc3547996c5c816922c"
-dependencies = [
- "getrandom",
-]
 
 [[package]]
 name = "rayon"
@@ -1512,32 +1494,6 @@ name = "str_stack"
 version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9091b6114800a5f2141aee1d1b9d6ca3592ac062dc5decb3764ec5895a47b4eb"
-
-[[package]]
-name = "string_cache"
-version = "0.8.7"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f91138e76242f575eb1d3b38b4f1362f10d3a43f47d182a5b359af488a02293b"
-dependencies = [
- "new_debug_unreachable",
- "once_cell",
- "parking_lot",
- "phf_shared",
- "precomputed-hash",
- "serde",
-]
-
-[[package]]
-name = "string_cache_codegen"
-version = "0.5.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6bb30289b722be4ff74a408c3cc27edeaad656e06cb1fe8fa9231fa59c728988"
-dependencies = [
- "phf_generator",
- "phf_shared",
- "proc-macro2",
- "quote",
-]
 
 [[package]]
 name = "strsim"
@@ -2057,7 +2013,6 @@ version = "0.7.35"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1b9b4fd18abc82b8136838da5d50bae7bdea537c574d8dc1a34ed098d6c166f0"
 dependencies = [
- "byteorder",
  "zerocopy-derive",
 ]
 

@@ -2,30 +2,30 @@
 source: crates/hdx_proc_macro/src/test.rs
 expression: pretty
 ---
+::css_parse::keyword_set!(FooKeywords { Auto : "auto", });
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 enum Foo {
-    Auto(::hdx_parser::T![Ident]),
+    Auto(::css_parse::T![Ident]),
     Colors(types::Color, types::Color),
 }
 #[automatically_derived]
-impl<'a> ::hdx_parser::Peek<'a> for Foo {
-    fn peek(p: &::hdx_parser::Parser<'a>) -> bool {
-        use ::hdx_parser::Peek;
-        p.peek::<::hdx_parser::T![Ident]>() || p.peek::<types::Color>()
+impl<'a> ::css_parse::Peek<'a> for Foo {
+    fn peek(p: &::css_parse::Parser<'a>, c: ::css_lexer::Cursor) -> bool {
+        use ::css_parse::Peek;
+        <::css_parse::T![Ident]>::peek(p, c) || <types::Color>::peek(p, c)
     }
 }
 #[automatically_derived]
-impl<'a> ::hdx_parser::Parse<'a> for Foo {
-    fn parse(p: &mut ::hdx_parser::Parser<'a>) -> ::hdx_parser::Result<Self> {
-        use ::hdx_parser::Parse;
-        if p.peek::<::hdx_parser::T![Ident]>() {
-            let c = p.peek_n(1);
-            match p.parse_atom_lower(c) {
-                ::hdx_atom::atom!("auto") => {
-                    return Ok(Self::Auto(p.parse::<::hdx_parser::T![Ident]>()?));
+impl<'a> ::css_parse::Parse<'a> for Foo {
+    fn parse(p: &mut ::css_parse::Parser<'a>) -> ::css_parse::Result<Self> {
+        use ::css_parse::{Parse, Peek};
+        if let Some(keyword) = p.parse_if_peek::<FooKeywords>()? {
+            use ::css_parse::Build;
+            match keyword {
+                FooKeywords::Auto(c) => {
+                    return Ok(Self::Auto(<::css_parse::T![Ident]>::build(p, c)));
                 }
-                atom => {}
             }
         }
         let val1 = p.parse::<types::Color>()?;
@@ -34,15 +34,15 @@ impl<'a> ::hdx_parser::Parse<'a> for Foo {
     }
 }
 #[automatically_derived]
-impl ::hdx_parser::ToCursors for Foo {
-    fn to_cursors(&self, s: &mut impl ::hdx_parser::CursorSink) {
+impl ::css_parse::ToCursors for Foo {
+    fn to_cursors(&self, s: &mut impl ::css_parse::CursorSink) {
         match self {
             Self::Auto(inner) => {
                 s.append(inner.into());
             }
             Self::Colors(inner1, inner2) => {
-                ::hdx_parser::ToCursors::to_cursors(inner1, s);
-                ::hdx_parser::ToCursors::to_cursors(inner2, s);
+                ::css_parse::ToCursors::to_cursors(inner1, s);
+                ::css_parse::ToCursors::to_cursors(inner2, s);
             }
         }
     }

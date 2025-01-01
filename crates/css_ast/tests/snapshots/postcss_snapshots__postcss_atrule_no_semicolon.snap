@@ -1,0 +1,77 @@
+---
+source: crates/css_ast/tests/postcss_snapshots.rs
+expression: result.output.unwrap()
+---
+{
+  "type": "stylesheet",
+  "rules": [
+    {
+      "type": "MediaRule",
+      "at_keyword": {
+        "kind": "AtKeyword",
+        "offset": 0,
+        "len": 6
+      },
+      "query": [
+        {
+          "precondition": null,
+          "media_type": {
+            "type": "Screen",
+            "kind": "Ident",
+            "offset": 7,
+            "len": 6
+          },
+          "and": null,
+          "condition": null
+        }
+      ],
+      "block": {
+        "open": {
+          "kind": "LeftCurly",
+          "offset": 14,
+          "len": 1
+        },
+        "properties": [],
+        "rules": [
+          {
+            "type": "AtRule",
+            "name": {
+              "kind": "AtKeyword",
+              "offset": 15,
+              "len": 8
+            },
+            "prelude": {
+              "values": []
+            },
+            "block": {
+              "None": null
+            }
+          }
+        ],
+        "close": {
+          "kind": "RightCurly",
+          "offset": 23,
+          "len": 1
+        }
+      }
+    },
+    {
+      "at_keyword": {
+        "kind": "AtKeyword",
+        "offset": 26,
+        "len": 8
+      },
+      "space": {
+        "kind": "Whitespace",
+        "offset": 34,
+        "len": 1
+      },
+      "string": {
+        "kind": "String",
+        "offset": 35,
+        "len": 7
+      },
+      "semicolon": null
+    }
+  ]
+}

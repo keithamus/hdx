@@ -2,30 +2,30 @@
 source: crates/hdx_proc_macro/src/test.rs
 expression: pretty
 ---
+::css_parse::keyword_set!(FooKeywords { None : "none", });
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 enum Foo {
-    None(::hdx_parser::T![Ident]),
+    None(::css_parse::T![Ident]),
     LengthPercentage(types::LengthPercentage),
 }
 #[automatically_derived]
-impl<'a> ::hdx_parser::Peek<'a> for Foo {
-    fn peek(p: &::hdx_parser::Parser<'a>) -> bool {
-        use ::hdx_parser::Peek;
-        p.peek::<::hdx_parser::T![Ident]>() || p.peek::<types::LengthPercentage>()
+impl<'a> ::css_parse::Peek<'a> for Foo {
+    fn peek(p: &::css_parse::Parser<'a>, c: ::css_lexer::Cursor) -> bool {
+        use ::css_parse::Peek;
+        <::css_parse::T![Ident]>::peek(p, c) || <types::LengthPercentage>::peek(p, c)
     }
 }
 #[automatically_derived]
-impl<'a> ::hdx_parser::Parse<'a> for Foo {
-    fn parse(p: &mut ::hdx_parser::Parser<'a>) -> ::hdx_parser::Result<Self> {
-        use ::hdx_parser::Parse;
-        if p.peek::<::hdx_parser::T![Ident]>() {
-            let c = p.peek_n(1);
-            match p.parse_atom_lower(c) {
-                ::hdx_atom::atom!("none") => {
-                    return Ok(Self::None(p.parse::<::hdx_parser::T![Ident]>()?));
+impl<'a> ::css_parse::Parse<'a> for Foo {
+    fn parse(p: &mut ::css_parse::Parser<'a>) -> ::css_parse::Result<Self> {
+        use ::css_parse::{Parse, Peek};
+        if let Some(keyword) = p.parse_if_peek::<FooKeywords>()? {
+            use ::css_parse::Build;
+            match keyword {
+                FooKeywords::None(c) => {
+                    return Ok(Self::None(<::css_parse::T![Ident]>::build(p, c)));
                 }
-                atom => {}
             }
         }
         let start = p.offset();
@@ -33,9 +33,9 @@ impl<'a> ::hdx_parser::Parse<'a> for Foo {
         let valf32: f32 = val.into();
         if 0f32 > valf32 {
             return Err(
-                ::hdx_parser::diagnostics::NumberTooSmall(
+                ::css_parse::diagnostics::NumberTooSmall(
                     0f32,
-                    ::hdx_lexer::Span::new(start, p.offset()),
+                    ::css_lexer::Span::new(start, p.offset()),
                 ),
             )?;
         }
@@ -43,14 +43,14 @@ impl<'a> ::hdx_parser::Parse<'a> for Foo {
     }
 }
 #[automatically_derived]
-impl ::hdx_parser::ToCursors for Foo {
-    fn to_cursors(&self, s: &mut impl ::hdx_parser::CursorSink) {
+impl ::css_parse::ToCursors for Foo {
+    fn to_cursors(&self, s: &mut impl ::css_parse::CursorSink) {
         match self {
             Self::None(inner) => {
                 s.append(inner.into());
             }
             Self::LengthPercentage(inner) => {
-                ::hdx_parser::ToCursors::to_cursors(inner, s);
+                ::css_parse::ToCursors::to_cursors(inner, s);
             }
         }
     }

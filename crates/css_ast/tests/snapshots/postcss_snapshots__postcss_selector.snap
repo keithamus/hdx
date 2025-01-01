@@ -1,0 +1,113 @@
+---
+source: crates/css_ast/tests/postcss_snapshots.rs
+expression: result.output.unwrap()
+---
+{
+  "type": "stylesheet",
+  "rules": [
+    {
+      "type": "stylerule",
+      "selectors": [
+        {
+          "components": [
+            {
+              "type": "tag",
+              "value": {
+                "Html": {
+                  "A": {
+                    "kind": "Ident",
+                    "offset": 1,
+                    "len": 1
+                  }
+                }
+              }
+            },
+            {
+              "type": "combinator",
+              "value": {
+                "descendant": {
+                  "kind": "Whitespace",
+                  "offset": 11,
+                  "len": 1
+                }
+              }
+            },
+            {
+              "type": "tag",
+              "value": {
+                "Html": {
+                  "B": {
+                    "kind": "Ident",
+                    "offset": 12,
+                    "len": 1
+                  }
+                }
+              }
+            }
+          ],
+          "comma": null
+        }
+      ],
+      "type": "style-declaration",
+      "open": {
+        "kind": "LeftCurly",
+        "offset": 14,
+        "len": 1
+      },
+      "declarations": [],
+      "rules": [],
+      "close": {
+        "kind": "RightCurly",
+        "offset": 15,
+        "len": 1
+      }
+    },
+    {
+      "type": "stylerule",
+      "selectors": [
+        {
+          "components": [
+            {
+              "type": "tag",
+              "value": {
+                "Html": {
+                  "A": {
+                    "kind": "Ident",
+                    "offset": 18,
+                    "len": 1
+                  }
+                }
+              }
+            },
+            {
+              "type": "tag",
+              "value": {
+                "Html": {
+                  "B": {
+                    "kind": "Ident",
+                    "offset": 29,
+                    "len": 1
+                  }
+                }
+              }
+            }
+          ],
+          "comma": null
+        }
+      ],
+      "type": "style-declaration",
+      "open": {
+        "kind": "LeftCurly",
+        "offset": 31,
+        "len": 1
+      },
+      "declarations": [],
+      "rules": [],
+      "close": {
+        "kind": "RightCurly",
+        "offset": 32,
+        "len": 1
+      }
+    }
+  ]
+}

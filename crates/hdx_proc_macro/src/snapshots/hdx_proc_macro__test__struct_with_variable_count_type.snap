@@ -7,24 +7,24 @@ expression: pretty
 struct Foo<'a>(
     pub ::bumpalo::collections::Vec<
         'a,
-        (types::AnimateableFeature, Option<::hdx_parser::T![,]>),
+        (types::AnimateableFeature, Option<::css_parse::T![,]>),
     >,
 );
 #[automatically_derived]
-impl<'a> ::hdx_parser::Peek<'a> for Foo<'a> {
-    fn peek(p: &::hdx_parser::Parser<'a>) -> bool {
-        use ::hdx_parser::Peek;
-        p.peek::<types::AnimateableFeature>()
+impl<'a> ::css_parse::Peek<'a> for Foo<'a> {
+    fn peek(p: &::css_parse::Parser<'a>, c: ::css_lexer::Cursor) -> bool {
+        use ::css_parse::Peek;
+        <types::AnimateableFeature>::peek(p, c)
     }
 }
 #[automatically_derived]
-impl<'a> ::hdx_parser::Parse<'a> for Foo<'a> {
-    fn parse(p: &mut ::hdx_parser::Parser<'a>) -> ::hdx_parser::Result<Self> {
-        use ::hdx_parser::Parse;
+impl<'a> ::css_parse::Parse<'a> for Foo<'a> {
+    fn parse(p: &mut ::css_parse::Parser<'a>) -> ::css_parse::Result<Self> {
+        use ::css_parse::{Parse, Peek};
         let mut items = ::bumpalo::collections::Vec::new_in(p.bump());
         loop {
             let item = p.parse::<types::AnimateableFeature>()?;
-            let comma = p.parse_if_peek::<::hdx_parser::T![,]>()?;
+            let comma = p.parse_if_peek::<::css_parse::T![,]>()?;
             items.push((item, comma));
             if comma.is_none() {
                 break;
@@ -34,11 +34,11 @@ impl<'a> ::hdx_parser::Parse<'a> for Foo<'a> {
     }
 }
 #[automatically_derived]
-impl<'a> ::hdx_parser::ToCursors for Foo<'a> {
-    fn to_cursors(&self, s: &mut impl ::hdx_parser::CursorSink) {
+impl<'a> ::css_parse::ToCursors for Foo<'a> {
+    fn to_cursors(&self, s: &mut impl ::css_parse::CursorSink) {
         for item in &self.0 {
             let (item, comma) = item;
-            ::hdx_parser::ToCursors::to_cursors(item, s);
+            ::css_parse::ToCursors::to_cursors(item, s);
             if let Some(comma) = comma {
                 s.append(comma.into());
             }

@@ -2,41 +2,41 @@
 source: crates/hdx_proc_macro/src/test.rs
 expression: pretty
 ---
+::css_parse::keyword_set!(FooKeywords { Auto : "auto", });
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 enum Foo<'a> {
-    Auto(::hdx_parser::T![Ident]),
+    Auto(::css_parse::T![Ident]),
     AnimateableFeatures(
         ::bumpalo::collections::Vec<
             'a,
-            (types::AnimateableFeature, Option<::hdx_parser::T![,]>),
+            (types::AnimateableFeature, Option<::css_parse::T![,]>),
         >,
     ),
 }
 #[automatically_derived]
-impl<'a> ::hdx_parser::Peek<'a> for Foo<'a> {
-    fn peek(p: &::hdx_parser::Parser<'a>) -> bool {
-        use ::hdx_parser::Peek;
-        p.peek::<::hdx_parser::T![Ident]>() || p.peek::<types::AnimateableFeature>()
+impl<'a> ::css_parse::Peek<'a> for Foo<'a> {
+    fn peek(p: &::css_parse::Parser<'a>, c: ::css_lexer::Cursor) -> bool {
+        use ::css_parse::Peek;
+        <::css_parse::T![Ident]>::peek(p, c) || <types::AnimateableFeature>::peek(p, c)
     }
 }
 #[automatically_derived]
-impl<'a> ::hdx_parser::Parse<'a> for Foo<'a> {
-    fn parse(p: &mut ::hdx_parser::Parser<'a>) -> ::hdx_parser::Result<Self> {
-        use ::hdx_parser::Parse;
-        if p.peek::<::hdx_parser::T![Ident]>() {
-            let c = p.peek_n(1);
-            match p.parse_atom_lower(c) {
-                ::hdx_atom::atom!("auto") => {
-                    return Ok(Self::Auto(p.parse::<::hdx_parser::T![Ident]>()?));
+impl<'a> ::css_parse::Parse<'a> for Foo<'a> {
+    fn parse(p: &mut ::css_parse::Parser<'a>) -> ::css_parse::Result<Self> {
+        use ::css_parse::{Parse, Peek};
+        if let Some(keyword) = p.parse_if_peek::<FooKeywords>()? {
+            use ::css_parse::Build;
+            match keyword {
+                FooKeywords::Auto(c) => {
+                    return Ok(Self::Auto(<::css_parse::T![Ident]>::build(p, c)));
                 }
-                atom => {}
             }
         }
         let mut val = ::bumpalo::collections::Vec::new_in(p.bump());
         loop {
             let item = p.parse::<types::AnimateableFeature>()?;
-            let comma = p.parse_if_peek::<::hdx_parser::T![,]>()?;
+            let comma = p.parse_if_peek::<::css_parse::T![,]>()?;
             val.push((item, comma));
             if comma.is_none() {
                 break;
@@ -46,8 +46,8 @@ impl<'a> ::hdx_parser::Parse<'a> for Foo<'a> {
     }
 }
 #[automatically_derived]
-impl<'a> ::hdx_parser::ToCursors for Foo<'a> {
-    fn to_cursors(&self, s: &mut impl ::hdx_parser::CursorSink) {
+impl<'a> ::css_parse::ToCursors for Foo<'a> {
+    fn to_cursors(&self, s: &mut impl ::css_parse::CursorSink) {
         match self {
             Self::Auto(inner) => {
                 s.append(inner.into());
@@ -55,7 +55,7 @@ impl<'a> ::hdx_parser::ToCursors for Foo<'a> {
             Self::AnimateableFeatures(inner) => {
                 for item in inner {
                     let (item, comma) = item;
-                    ::hdx_parser::ToCursors::to_cursors(item, s);
+                    ::css_parse::ToCursors::to_cursors(item, s);
                     if let Some(comma) = comma {
                         s.append(comma.into());
                     }

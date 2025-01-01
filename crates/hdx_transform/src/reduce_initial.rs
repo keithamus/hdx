@@ -1,4 +1,4 @@
-use hdx_ast::css::{
+use css_ast::css::{
 	properties::{Property, StyleValue},
 	visit::VisitMut,
 };

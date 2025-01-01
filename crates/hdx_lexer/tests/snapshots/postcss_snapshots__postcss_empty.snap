@@ -1,5 +1,0 @@
----
-source: crates/hdx_lexer/tests/postcss_snapshots.rs
-expression: tokens
----
-[]

@@ -15,12 +15,10 @@ repository = "https://github.com/keithamus/hdx"
 [workspace.dependencies]
 # Local packages
 hdx = { version = "0.0.1", path = "crates/hdx" }
-hdx_atom = { version = "0.0.0", path = "crates/hdx_atom" }
 hdx_proc_macro = { version = "0.0.0", path = "crates/hdx_proc_macro" }
-hdx_parser = { version = "0.0.1", path = "crates/hdx_parser" }
-hdx_lexer = { version = "0.0.1", path = "crates/hdx_lexer" }
-hdx_syntax = { version = "0.0.0", path = "crates/hdx_syntax" }
-hdx_ast = { version = "0.0.0", path = "crates/hdx_ast" }
+css_parse = { version = "0.0.1", path = "crates/css_parse" }
+css_lexer = { version = "0.0.1", path = "crates/css_lexer" }
+css_ast = { version = "0.0.0", path = "crates/css_ast" }
 hdx_transform = { version = "0.0.0", path = "crates/hdx_transform" }
 hdx_highlight = { version = "0.0.0", path = "crates/hdx_highlight" }
 hdx_lsp = { version = "0.0.0", path = "crates/hdx_lsp" }
@@ -34,6 +32,7 @@ itertools = { version = "0.13.0" }
 ropey = { version = "1.6.1" }
 smallvec = { version = "1.13.2" }
 strum = { version = "0.26.3" }
+phf = { version = "0.11.2" }
 
 # CLI
 clap = { version = "4.5.23" }

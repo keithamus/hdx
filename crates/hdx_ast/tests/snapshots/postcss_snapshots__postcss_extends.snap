@@ -1,8 +1,0 @@
----
-source: crates/hdx_ast/tests/postcss_snapshots.rs
-expression: result.output.unwrap()
----
-{
-  "type": "stylesheet",
-  "rules": []
-}

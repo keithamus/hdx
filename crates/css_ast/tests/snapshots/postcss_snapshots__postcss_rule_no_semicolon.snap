@@ -1,0 +1,71 @@
+---
+source: crates/css_ast/tests/postcss_snapshots.rs
+expression: result.output.unwrap()
+---
+{
+  "type": "stylesheet",
+  "rules": [
+    {
+      "type": "stylerule",
+      "selectors": [
+        {
+          "components": [
+            {
+              "type": "tag",
+              "value": {
+                "Html": {
+                  "A": {
+                    "kind": "Ident",
+                    "offset": 0,
+                    "len": 1
+                  }
+                }
+              }
+            }
+          ],
+          "comma": null
+        }
+      ],
+      "type": "style-declaration",
+      "open": {
+        "kind": "LeftCurly",
+        "offset": 1,
+        "len": 1
+      },
+      "declarations": [
+        [
+          {
+            "type": "property",
+            "name": {
+              "kind": "Ident",
+              "offset": 2,
+              "len": 5
+            },
+            "colon": {
+              "kind": "Colon",
+              "offset": 7,
+              "len": 1
+            },
+            "value": {
+              "Named": {
+                "Black": {
+                  "kind": "Ident",
+                  "offset": 8,
+                  "len": 5
+                }
+              }
+            },
+            "important": null
+          },
+          null
+        ]
+      ],
+      "rules": [],
+      "close": {
+        "kind": "RightCurly",
+        "offset": 13,
+        "len": 1
+      }
+    }
+  ]
+}

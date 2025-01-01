@@ -9,37 +9,39 @@ enum Foo<'a> {
     Image(types::Image1D<'a>),
 }
 #[automatically_derived]
-impl<'a> ::hdx_parser::Peek<'a> for Foo<'a> {
-    fn peek(p: &::hdx_parser::Parser<'a>) -> bool {
-        use ::hdx_parser::Peek;
-        p.peek::<types::Color>() || p.peek::<types::Image1D>()
+impl<'a> ::css_parse::Peek<'a> for Foo<'a> {
+    fn peek(p: &::css_parse::Parser<'a>, c: ::css_lexer::Cursor) -> bool {
+        use ::css_parse::Peek;
+        <types::Color>::peek(p, c) || <types::Image1D>::peek(p, c)
     }
 }
 #[automatically_derived]
-impl<'a> ::hdx_parser::Parse<'a> for Foo<'a> {
-    fn parse(p: &mut ::hdx_parser::Parser<'a>) -> ::hdx_parser::Result<Self> {
-        use ::hdx_parser::Parse;
-        if p.peek::<types::Color>() {
+impl<'a> ::css_parse::Parse<'a> for Foo<'a> {
+    fn parse(p: &mut ::css_parse::Parser<'a>) -> ::css_parse::Result<Self> {
+        use ::css_parse::{Parse, Peek};
+        let c = p.peek_n(1);
+        if <types::Color>::peek(p, c) {
             let val = p.parse::<types::Color>()?;
             return Ok(Self::Color(val));
         }
-        if p.peek::<types::Image1D>() {
+        let c = p.peek_n(1);
+        if <types::Image1D>::peek(p, c) {
             let val = p.parse::<types::Image1D>()?;
             return Ok(Self::Image(val));
         }
-        let c: ::hdx_lexer::Cursor = p.parse::<::hdx_parser::T![Any]>()?.into();
-        Err(::hdx_parser::diagnostics::Unexpected(c.into(), c.into()))?
+        let c: ::css_lexer::Cursor = p.parse::<::css_parse::T![Any]>()?.into();
+        Err(::css_parse::diagnostics::Unexpected(c.into(), c.into()))?
     }
 }
 #[automatically_derived]
-impl<'a> ::hdx_parser::ToCursors for Foo<'a> {
-    fn to_cursors(&self, s: &mut impl ::hdx_parser::CursorSink) {
+impl<'a> ::css_parse::ToCursors for Foo<'a> {
+    fn to_cursors(&self, s: &mut impl ::css_parse::CursorSink) {
         match self {
             Self::Color(inner) => {
-                ::hdx_parser::ToCursors::to_cursors(inner, s);
+                ::css_parse::ToCursors::to_cursors(inner, s);
             }
             Self::Image(inner) => {
-                ::hdx_parser::ToCursors::to_cursors(inner, s);
+                ::css_parse::ToCursors::to_cursors(inner, s);
             }
         }
     }
