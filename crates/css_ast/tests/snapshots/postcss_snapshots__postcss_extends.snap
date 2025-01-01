@@ -1,8 +1,180 @@
 ---
-source: crates/hdx_ast/tests/postcss_snapshots.rs
+source: crates/css_ast/tests/postcss_snapshots.rs
 expression: result.output.unwrap()
 ---
 {
   "type": "stylesheet",
-  "rules": []
+  "rules": [
+    {
+      "type": "QualifiedRule",
+      "prelude": {
+        "values": [
+          {
+            "kind": "Ident",
+            "offset": 0,
+            "len": 3
+          },
+          {
+            "kind": "Colon",
+            "offset": 3,
+            "len": 1
+          },
+          {
+            "kind": "Whitespace",
+            "offset": 4,
+            "len": 1
+          },
+          {
+            "kind": "Number",
+            "offset": 5,
+            "len": 1
+          },
+          {
+            "kind": "Semicolon",
+            "offset": 6,
+            "len": 1
+          },
+          {
+            "kind": "Whitespace",
+            "offset": 7,
+            "len": 2
+          },
+          {
+            "kind": "Ident",
+            "offset": 9,
+            "len": 1
+          },
+          {
+            "kind": "Whitespace",
+            "offset": 10,
+            "len": 1
+          }
+        ]
+      },
+      "block": {
+        "type": "Block",
+        "start": 11,
+        "open_curly": {
+          "kind": "LeftCurly",
+          "offset": 11,
+          "len": 1
+        },
+        "declarations": [
+          [
+            {
+              "type": "Declaration",
+              "name": {
+                "kind": "Ident",
+                "offset": 17,
+                "len": 3
+              },
+              "colon": {
+                "kind": "Colon",
+                "offset": 20,
+                "len": 1
+              },
+              "value": {
+                "values": [
+                  {
+                    "kind": "Whitespace",
+                    "offset": 21,
+                    "len": 1
+                  },
+                  {
+                    "kind": "Number",
+                    "offset": 22,
+                    "len": 1
+                  },
+                  {
+                    "kind": "Semicolon",
+                    "offset": 23,
+                    "len": 1
+                  },
+                  {
+                    "kind": "Whitespace",
+                    "offset": 24,
+                    "len": 5
+                  },
+                  {
+                    "kind": "Ident",
+                    "offset": 29,
+                    "len": 1
+                  },
+                  {
+                    "kind": "Whitespace",
+                    "offset": 30,
+                    "len": 1
+                  },
+                  {
+                    "type": "SimpleBlock",
+                    "start": 31,
+                    "open": {
+                      "kind": "LeftCurly",
+                      "len": 1
+                    },
+                    "values": {
+                      "values": [
+                        {
+                          "kind": "Whitespace",
+                          "offset": 32,
+                          "len": 9
+                        },
+                        {
+                          "kind": "Ident",
+                          "offset": 41,
+                          "len": 5
+                        },
+                        {
+                          "kind": "Colon",
+                          "offset": 46,
+                          "len": 1
+                        },
+                        {
+                          "kind": "Whitespace",
+                          "offset": 47,
+                          "len": 1
+                        },
+                        {
+                          "kind": "Number",
+                          "offset": 48,
+                          "len": 1
+                        },
+                        {
+                          "kind": "Semicolon",
+                          "offset": 49,
+                          "len": 1
+                        },
+                        {
+                          "kind": "Whitespace",
+                          "offset": 50,
+                          "len": 5
+                        }
+                      ]
+                    },
+                    "close": {
+                      "kind": "RightCurly",
+                      "len": 1
+                    }
+                  },
+                  {
+                    "kind": "Whitespace",
+                    "offset": 56,
+                    "len": 1
+                  }
+                ]
+              },
+              "important": null
+            },
+            null
+          ]
+        ],
+        "rules": [],
+        "close_curly": {
+          "kind": "RightCurly",
+          "offset": 57,
+          "len": 1
+        }
+      }
+    }
+  ]
 }

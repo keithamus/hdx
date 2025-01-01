@@ -358,11 +358,6 @@ expression: result.output.unwrap()
       "prelude": {
         "values": [
           {
-            "kind": "Whitespace",
-            "offset": 149,
-            "len": 1
-          },
-          {
             "kind": "Colon",
             "offset": 150,
             "len": 1
@@ -827,11 +822,6 @@ expression: result.output.unwrap()
       "type": "QualifiedRule",
       "prelude": {
         "values": [
-          {
-            "kind": "Whitespace",
-            "offset": 293,
-            "len": 2
-          },
           {
             "type": "SimpleBlock",
             "start": 295,

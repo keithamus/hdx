@@ -16,8 +16,9 @@ use css_lexer::Kind;
 ///
 /// ```md
 /// <style-sheet>
-///  │├─╭─ (Discard <cdcorcdo-token>) ─ <rule> ─╮─┤│
-///     ╰───────────────────────────────────────╯
+///  │├─╮─╭─ <ws*> ─╮─╭╮─╭─ <cdcorcdo-token> ─╮─╭─ <rule> ──┤│
+///     │ ╰─────────╯ ││ ╰────────────────────╯ │
+///     ╰─────────────╯╰────────────────────────╯
 /// ```
 ///
 pub trait StyleSheet<'a>: Sized + Parse<'a> {
@@ -26,7 +27,13 @@ pub trait StyleSheet<'a>: Sized + Parse<'a> {
 	fn parse_stylesheet(p: &mut Parser<'a>) -> Result<Vec<'a, Self::Rule>> {
 		let mut rules: Vec<'a, Self::Rule> = Vec::new_in(p.bump());
 		loop {
-			p.parse_if_peek::<T![CdcOrCdo]>()?;
+			// While by default the parser will skip whitespace, the Rule type may be a whitespace sensitive
+			// node, for example `ComponentValues`. As such whitespace needs to be consumed here, before Declarations and
+			// Rules are parsed.
+			if p.parse_if_peek::<T![' ']>()?.is_some() || p.parse_if_peek::<T![CdcOrCdo]>()?.is_some() {
+				continue;
+			}
+
 			// need to peek as last tokens may be whitespace.
 			if p.at_end() || p.peek_next() == Kind::Eof {
 				return Ok(rules);
