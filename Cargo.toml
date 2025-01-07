@@ -28,7 +28,7 @@ bumpalo = { version = "3.16.0" }
 
 # Data structure libraries/helpers
 bitmask-enum = { version = "2.2.5" }
-itertools = { version = "0.13.0" }
+itertools = { version = "0.14.0" }
 ropey = { version = "1.6.1" }
 smallvec = { version = "1.13.2" }
 strum = { version = "0.26.3" }
