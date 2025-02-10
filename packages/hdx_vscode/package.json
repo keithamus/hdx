@@ -120,7 +120,7 @@
 		"@typescript-eslint/eslint-plugin": "^8.16.0",
 		"@typescript-eslint/parser": "^8.16.0",
 		"@vscode/test-electron": "^2.4.1",
-		"esbuild": "^0.24.0",
+		"esbuild": "^0.25.0",
 		"mocha": "^11.0.0",
 		"oxlint": "^0.15.0",
 		"prettier": "^3.4.1",
