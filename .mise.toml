@@ -1,6 +1,6 @@
 [tools]
-rust = "1.84.1"
-deno = "2.1.10"
+rust = "1.85.0"
+deno = "2.2.1"
 
 [tasks.install]
 description = "Install necessary dependencies for development"
