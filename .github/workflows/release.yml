@@ -117,7 +117,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           registry-url: https://registry.npmjs.org/
-          node-version: 18.x
+          node-version: 22.x
           cache-dependency-path: ./website/package.json
           cache: "npm"
       - name: Download Artifacts
