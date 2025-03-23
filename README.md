@@ -4,10 +4,16 @@
   </picture>
 </p>
 
-## CSS Compiler
+## CSS Toolchain
 
 csskit is a suite of high performance tools for CSS, written in Rust,
 inspired by [the oxidation compiler][1].
+
+## Rename!
+
+csskit used to be called `hdx`, but thanks to
+[@sethvincent](https://github.com/sethvincent) it's now called `csskit`. Go
+give Seth a follow for being a gracious person and transferring the name!
 
 ## Goals
 
