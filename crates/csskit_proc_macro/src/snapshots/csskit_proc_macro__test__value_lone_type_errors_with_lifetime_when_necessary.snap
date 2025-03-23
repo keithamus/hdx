@@ -1,0 +1,7 @@
+---
+source: crates/csskit_proc_macro/src/test.rs
+expression: pretty
+---
+::core::compile_error! {
+    "this object needs the <'a> lifetime but it didn't have it. Add it"
+}

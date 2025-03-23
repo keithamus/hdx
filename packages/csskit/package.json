@@ -1,0 +1,16 @@
+{
+    "name": "csskit",
+    "version": "1.0.0",
+    "description": "Refreshing CSS",
+    "keywords": [],
+    "license": "MIT",
+    "author": "Keith Cirkel (https://keithcirkel.co.uk)",
+    "repository": "https://github.com/csskit/csskit",
+    "bin": "./bin/csskit",
+    "files": [
+        "./bin"
+    ],
+    "funding": {
+        "url": "https://github.com/sponsors/keithamus"
+    }
+}

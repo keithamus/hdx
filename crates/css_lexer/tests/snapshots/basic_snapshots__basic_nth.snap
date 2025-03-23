@@ -1,5 +1,5 @@
 ---
-source: crates/hdx_lexer/tests/basic_snapshots.rs
+source: crates/csskit_lexer/tests/basic_snapshots.rs
 expression: tokens
 ---
 [

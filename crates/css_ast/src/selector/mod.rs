@@ -4,7 +4,7 @@ use css_parse::{
 	Build, CompoundSelector as CompoundSelectorTrait, CursorSink, Parse, Parser, Peek, Result as ParserResult,
 	SelectorComponent as SelectorComponentTrait, SelectorList as SelectorListTrait, ToCursors, T,
 };
-use hdx_proc_macro::visit;
+use csskit_proc_macro::visit;
 
 mod attribute;
 mod class;

@@ -1,0 +1,47 @@
+---
+source: crates/csskit_proc_macro/src/test.rs
+expression: pretty
+---
+::css_parse::keyword_set!(FooKeywords { None : "none", });
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+enum Foo {
+    None(::css_parse::T![Ident]),
+    CalcSizeFunction(types::CalcSize),
+}
+#[automatically_derived]
+impl<'a> ::css_parse::Peek<'a> for Foo {
+    fn peek(p: &::css_parse::Parser<'a>, c: ::css_lexer::Cursor) -> bool {
+        use ::css_parse::Peek;
+        <::css_parse::T![Ident]>::peek(p, c) || <types::CalcSize>::peek(p, c)
+    }
+}
+#[automatically_derived]
+impl<'a> ::css_parse::Parse<'a> for Foo {
+    fn parse(p: &mut ::css_parse::Parser<'a>) -> ::css_parse::Result<Self> {
+        use ::css_parse::{Parse, Peek};
+        if let Some(keyword) = p.parse_if_peek::<FooKeywords>()? {
+            use ::css_parse::Build;
+            match keyword {
+                FooKeywords::None(c) => {
+                    return Ok(Self::None(<::css_parse::T![Ident]>::build(p, c)));
+                }
+            }
+        }
+        let val = p.parse::<types::CalcSize>()?;
+        Ok(Self::CalcSizeFunction(val))
+    }
+}
+#[automatically_derived]
+impl ::css_parse::ToCursors for Foo {
+    fn to_cursors(&self, s: &mut impl ::css_parse::CursorSink) {
+        match self {
+            Self::None(inner) => {
+                s.append(inner.into());
+            }
+            Self::CalcSizeFunction(inner) => {
+                ::css_parse::ToCursors::to_cursors(inner, s);
+            }
+        }
+    }
+}

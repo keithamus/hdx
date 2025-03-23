@@ -1,7 +1,7 @@
 [workspace]
 resolver = "2"
 members = ["crates/*"]
-exclude = ["packages/hdx_zed"]
+exclude = ["packages/csskit_zed"]
 
 [workspace.package]
 authors = ["Keith Cirkel (https://keithcirkel.co.uk)"]
@@ -10,18 +10,18 @@ edition = "2021"
 homepage = "https://hdx.rs"
 keywords = ["CSS", "parser"]
 license = "MIT"
-repository = "https://github.com/keithamus/hdx"
+repository = "https://github.com/csskit/csskit"
 
 [workspace.dependencies]
 # Local packages
-hdx = { version = "0.0.1", path = "crates/hdx" }
-hdx_proc_macro = { version = "0.0.0", path = "crates/hdx_proc_macro" }
+csskit = { version = "0.0.1", path = "crates/csskit" }
+csskit_proc_macro = { version = "0.0.0", path = "crates/csskit_proc_macro" }
 css_parse = { version = "0.0.1", path = "crates/css_parse" }
 css_lexer = { version = "0.0.1", path = "crates/css_lexer" }
 css_ast = { version = "0.0.0", path = "crates/css_ast" }
-hdx_transform = { version = "0.0.0", path = "crates/hdx_transform" }
-hdx_highlight = { version = "0.0.0", path = "crates/hdx_highlight" }
-hdx_lsp = { version = "0.0.0", path = "crates/hdx_lsp" }
+csskit_transform = { version = "0.0.0", path = "crates/csskit_transform" }
+csskit_highlight = { version = "0.0.0", path = "crates/csskit_highlight" }
+csskit_lsp = { version = "0.0.0", path = "crates/csskit_lsp" }
 
 # Memory
 bumpalo = { version = "3.16.0" }

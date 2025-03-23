@@ -1,7 +1,7 @@
 use bumpalo::collections::Vec;
 use css_lexer::Cursor;
 use css_parse::{diagnostics, CursorSink, Parse, Parser, Result as ParserResult, ToCursors, T};
-use hdx_proc_macro::visit;
+use csskit_proc_macro::visit;
 
 use crate::{Visit, Visitable};
 

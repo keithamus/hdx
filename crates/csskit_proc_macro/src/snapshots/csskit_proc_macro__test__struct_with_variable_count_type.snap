@@ -1,0 +1,47 @@
+---
+source: crates/csskit_proc_macro/src/test.rs
+expression: pretty
+---
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+struct Foo<'a>(
+    pub ::bumpalo::collections::Vec<
+        'a,
+        (types::AnimateableFeature, Option<::css_parse::T![,]>),
+    >,
+);
+#[automatically_derived]
+impl<'a> ::css_parse::Peek<'a> for Foo<'a> {
+    fn peek(p: &::css_parse::Parser<'a>, c: ::css_lexer::Cursor) -> bool {
+        use ::css_parse::Peek;
+        <types::AnimateableFeature>::peek(p, c)
+    }
+}
+#[automatically_derived]
+impl<'a> ::css_parse::Parse<'a> for Foo<'a> {
+    fn parse(p: &mut ::css_parse::Parser<'a>) -> ::css_parse::Result<Self> {
+        use ::css_parse::{Parse, Peek};
+        let mut items = ::bumpalo::collections::Vec::new_in(p.bump());
+        loop {
+            let item = p.parse::<types::AnimateableFeature>()?;
+            let comma = p.parse_if_peek::<::css_parse::T![,]>()?;
+            items.push((item, comma));
+            if comma.is_none() {
+                break;
+            }
+        }
+        return Ok(Self(items));
+    }
+}
+#[automatically_derived]
+impl<'a> ::css_parse::ToCursors for Foo<'a> {
+    fn to_cursors(&self, s: &mut impl ::css_parse::CursorSink) {
+        for item in &self.0 {
+            let (item, comma) = item;
+            ::css_parse::ToCursors::to_cursors(item, s);
+            if let Some(comma) = comma {
+                s.append(comma.into());
+            }
+        }
+    }
+}

@@ -3,7 +3,7 @@ use css_parse::{
 	diagnostics, function_set, pseudo_class, pseudo_element, CursorSink, Parse, Parser, Result as ParserResult,
 	ToCursors, T,
 };
-use hdx_proc_macro::visit;
+use csskit_proc_macro::visit;
 
 use crate::{Visit, Visitable};
 

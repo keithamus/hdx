@@ -1,0 +1,42 @@
+[package]
+name = "csskit_wasm"
+version = "0.0.0"
+publish = false
+authors.workspace = true
+edition.workspace = true
+keywords.workspace = true
+license.workspace = true
+
+[lib]
+bench = false
+crate-type = ["cdylib", "rlib"]
+
+[features]
+default = ["console_error_panic_hook", "serde", "fancy"]
+serde = ["css_lexer/serde", "css_ast/serde", "css_parse/serde", "bumpalo/serde"]
+fancy = ["miette/fancy-no-syscall"]
+
+[dependencies]
+css_lexer = { workspace = true }
+css_ast = { workspace = true }
+css_parse = { workspace = true }
+
+bumpalo = { workspace = true }
+miette = { workspace = true, features = ["derive"] }
+serde = { workspace = true, features = ["derive"] }
+
+wasm-bindgen = { workspace = true }
+serde-wasm-bindgen = { workspace = true }
+
+# The `console_error_panic_hook` crate provides better debugging of panics by
+# logging them with `console.error`. This is great for development, but requires
+# all the `std::fmt` and `std::panicking` infrastructure, so isn't great for
+# code size when deploying.
+console_error_panic_hook = { workspace = true, optional = true }
+
+[dev-dependencies]
+wasm-bindgen-test = "0.3.42"
+
+[package.metadata.wasm-pack.profile.release]
+wasm-opt = false
+# wasm-opt = ['-O4']
