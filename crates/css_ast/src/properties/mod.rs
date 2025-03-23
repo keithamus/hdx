@@ -4,7 +4,7 @@ use css_parse::{
 	keyword_set, syntax::BangImportant, syntax::ComponentValues, Build, CursorSink, Declaration, DeclarationValue,
 	Parse, Parser, Peek, Result as ParserResult, State, ToCursors, T,
 };
-use hdx_proc_macro::visit;
+use csskit_proc_macro::visit;
 use std::{fmt::Debug, hash::Hash};
 
 use super::{Visit, Visitable};

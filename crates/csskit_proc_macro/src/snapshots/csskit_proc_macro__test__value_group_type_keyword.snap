@@ -1,0 +1,57 @@
+---
+source: crates/csskit_proc_macro/src/test.rs
+expression: pretty
+---
+::css_parse::keyword_set!(FooKeywords { LineThrough : "line-through", });
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+enum Foo {
+    Length(types::Length),
+    LineThrough(::css_parse::T![Ident]),
+}
+#[automatically_derived]
+impl<'a> ::css_parse::Peek<'a> for Foo {
+    fn peek(p: &::css_parse::Parser<'a>, c: ::css_lexer::Cursor) -> bool {
+        use ::css_parse::Peek;
+        <types::Length>::peek(p, c) || <::css_parse::T![Ident]>::peek(p, c)
+    }
+}
+#[automatically_derived]
+impl<'a> ::css_parse::Parse<'a> for Foo {
+    fn parse(p: &mut ::css_parse::Parser<'a>) -> ::css_parse::Result<Self> {
+        use ::css_parse::{Parse, Peek};
+        if let Some(keyword) = p.parse_if_peek::<FooKeywords>()? {
+            use ::css_parse::Build;
+            match keyword {
+                FooKeywords::LineThrough(c) => {
+                    return Ok(Self::LineThrough(<::css_parse::T![Ident]>::build(p, c)));
+                }
+            }
+        }
+        let start = p.offset();
+        let val = p.parse::<types::Length>()?;
+        let valf32: f32 = val.into();
+        if 1f32 > valf32 {
+            return Err(
+                ::css_parse::diagnostics::NumberTooSmall(
+                    1f32,
+                    ::css_lexer::Span::new(start, p.offset()),
+                ),
+            )?;
+        }
+        Ok(Self::Length(val))
+    }
+}
+#[automatically_derived]
+impl ::css_parse::ToCursors for Foo {
+    fn to_cursors(&self, s: &mut impl ::css_parse::CursorSink) {
+        match self {
+            Self::Length(inner) => {
+                ::css_parse::ToCursors::to_cursors(inner, s);
+            }
+            Self::LineThrough(inner) => {
+                s.append(inner.into());
+            }
+        }
+    }
+}

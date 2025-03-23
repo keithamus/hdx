@@ -1,17 +1,17 @@
 {
-	"name": "hdx-website",
+	"name": "csskit-website",
 	"private": true,
 	"version": "0.0.0-development",
 	"scripts": {
 		"postinstall": "[ \"$NODE_ENV\" = \"production\" ] && npm run build || npm run build:dev",
-		"clean-old": "ls -t playground/ | grep hdx | tail -n +2 | xargs rm -f",
+		"clean-old": "ls -t playground/ | grep csskit | tail -n +2 | xargs rm -f",
 		"postbuild": "npm run clean-old",
 		"prestart": "npm run postinstall",
 		"postbuild:dev": "npm run clean-old",
 		"prebuild": "npm run wasm-build",
 		"prebuild:dev": "npm run wasm-build:dev",
-		"wasm-build:dev": "wasm-pack build --dev ../crates/hdx_wasm",
-		"wasm-build": "wasm-pack build --release ../crates/hdx_wasm",
+		"wasm-build:dev": "wasm-pack build --dev ../crates/csskit_wasm",
+		"wasm-build": "wasm-pack build --release ../crates/csskit_wasm",
 		"build:dev": "eleventy",
 		"build": "eleventy",
 		"start": "eleventy --serve"
@@ -26,7 +26,7 @@
 		"@codemirror/state": "^6.4.1",
 		"@codemirror/view": "^6.34.2",
 		"codemirror": "^6.0.1",
-		"hdx_wasm": "../crates/hdx_wasm/pkg/"
+		"csskit_wasm": "../crates/csskit_wasm/pkg/"
 	},
 	"devDependencies": {
 		"@11ty/eleventy": "^3.0.0",

@@ -1,0 +1,40 @@
+#!/usr/bin/env node
+const { platform, arch, env, version, release } = process;
+const { join } = require('path');
+
+const PLATFORMS = {
+  win32: {
+    x64: "csskit-win32-x64.exe",
+    arm64: "csskit-win32-arm64.exe",
+  },
+  darwin: {
+    x64: "csskit-darwin-x64",
+    arm64: "csskit-darwin-arm64",
+  },
+  linux: {
+    x64: "csskit-linux-x64",
+    arm64: "csskit-linux-arm64",
+  },
+};
+
+const binPath = PLATFORMS?.[platform]?.[arch];
+if (binPath) {
+  const result = require("child_process").spawnSync(
+    join(__dirname, binPath),
+    process.argv.slice(2),
+    {
+      shell: false,
+      stdio: "inherit",
+      env,
+    }
+  );
+
+  if (result.error) {
+    throw result.error;
+  }
+
+  process.exitCode = result.status;
+} else {
+  console.error(`Unsupported platform ${platform}-${arch}`);
+  process.exitCode = 1;
+}

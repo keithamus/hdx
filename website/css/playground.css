@@ -2,8 +2,8 @@ body {
 	height: 100vh;
 }
 
-hdx-editor,
-hdx-viewer {
+csskit-editor,
+csskit-viewer {
 	font-family: monospace;
 	font-size: 16px;
 	margin: 0;
@@ -31,8 +31,8 @@ body > row-stack > :first-child {
 	border-right: 1px solid var(--cyan-6);
 }
 
-hdx-editor,
-hdx-viewer {
+csskit-editor,
+csskit-viewer {
 	flex: 2;
 	overflow-y: auto;
 }

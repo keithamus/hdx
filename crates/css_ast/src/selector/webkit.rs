@@ -2,7 +2,7 @@ use css_lexer::Cursor;
 use css_parse::{
 	diagnostics, pseudo_class, pseudo_element, CursorSink, Parse, Parser, Result as ParserResult, ToCursors, T,
 };
-use hdx_proc_macro::visit;
+use csskit_proc_macro::visit;
 
 use crate::{Visit, Visitable};
 

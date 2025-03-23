@@ -4,7 +4,7 @@ use css_parse::{
 	atkeyword_set, diagnostics, keyword_set, AtRule, Build, CommaSeparatedPreludeList, CursorSink, DeclarationList,
 	DeclarationRuleList, NoPreludeAllowed, Parse, Parser, Peek, Result as ParserResult, ToCursors, T,
 };
-use hdx_proc_macro::visit;
+use csskit_proc_macro::visit;
 
 use crate::{
 	properties::Property,

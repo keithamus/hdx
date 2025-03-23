@@ -1,5 +1,5 @@
 ---
-source: crates/hdx_ast/tests/postcss_snapshots.rs
+source: crates/csskit_ast/tests/postcss_snapshots.rs
 expression: result.output.unwrap()
 ---
 {

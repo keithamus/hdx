@@ -19,9 +19,9 @@ import {
   matchBrackets,
   syntaxTree,
 } from "@codemirror/language";
-import { hdxLight } from "./theme.js";
+import { csskitLight } from "./theme.js";
 
-import { lex, minify, parse, parse_error_report } from "hdx_wasm";
+import { lex, minify, parse, parse_error_report } from "csskit_wasm";
 
 function createHighlightEffect(view, { start, end }) {
   let range = EditorSelection.range(start, end);
@@ -52,7 +52,7 @@ function createHighlightEffect(view, { start, end }) {
   });
   const effects = [addHighlight.of(range)];
   if (!view.state.field(highlightField, false)) {
-    effects.push(StateEffect.appendConfig.of([highlightField, hdxLight]));
+    effects.push(StateEffect.appendConfig.of([highlightField, csskitLight]));
   }
   view.dispatch({ effects });
 }
@@ -71,7 +71,7 @@ class EditorChangeEvent extends Event {
   }
 }
 
-class HdxDiagnosticEvent extends Event {
+class CsskitDiagnosticEvent extends Event {
   constructor(diagnostics) {
     super("diagnostic", { bubbles: true });
     this.diagnostics = diagnostics;
@@ -201,8 +201,8 @@ class EditorFocus extends Event {
   }
 }
 
-class HdxEditor extends HTMLElement {
-  static define(tagName = "hdx-editor") {
+class CsskitEditor extends HTMLElement {
+  static define(tagName = "csskit-editor") {
     customElements.define(tagName, this);
   }
 
@@ -215,7 +215,7 @@ class HdxEditor extends HTMLElement {
   extensions = [
     basicSetup,
     EditorView.lineWrapping,
-    hdxLight,
+    csskitLight,
     css(),
     lintGutter(),
     EditorView.domEventHandlers({
@@ -313,8 +313,8 @@ class ViewerHighlight extends Event {
   }
 }
 
-class HdxViewer extends HTMLElement {
-  static define(tagName = "hdx-viewer") {
+class CsskitViewer extends HTMLElement {
+  static define(tagName = "csskit-viewer") {
     customElements.define(tagName, this);
   }
 
@@ -323,7 +323,7 @@ class HdxViewer extends HTMLElement {
   compartment = new Compartment();
 
   extensions = [
-    hdxLight,
+    csskitLight,
     EditorView.editable.of(false),
     foldGutter(),
     EditorView.lineWrapping,
@@ -368,7 +368,7 @@ class HdxViewer extends HTMLElement {
               },
             }),
           );
-          this.dispatchEvent(new HdxDiagnosticEvent([]));
+          this.dispatchEvent(new CsskitDiagnosticEvent([]));
         } else if (this.format === "errors") {
           const start = performance.now();
           const { diagnostics } = parse(this.code);
@@ -383,7 +383,7 @@ class HdxViewer extends HTMLElement {
               },
             }),
           );
-          this.dispatchEvent(new HdxDiagnosticEvent(diagnostics));
+          this.dispatchEvent(new CsskitDiagnosticEvent(diagnostics));
         } else if (this.format === "minify") {
           const start = performance.now();
           const minified = minify(this.code);
@@ -402,7 +402,7 @@ class HdxViewer extends HTMLElement {
               },
             }),
           );
-          this.dispatchEvent(new HdxDiagnosticEvent([]));
+          this.dispatchEvent(new CsskitDiagnosticEvent([]));
         } else {
           const start = performance.now();
           const { ast, diagnostics } = parse(this.code);
@@ -418,7 +418,7 @@ class HdxViewer extends HTMLElement {
               },
             }),
           );
-          this.dispatchEvent(new HdxDiagnosticEvent(diagnostics));
+          this.dispatchEvent(new CsskitDiagnosticEvent(diagnostics));
         }
       } catch (e) {
         this.view.dispatch(
@@ -648,8 +648,8 @@ class WasmLoader extends HTMLElement {
 
   async connectedCallback() {
     MetricObserver.define();
-    HdxViewer.define();
-    HdxEditor.define();
+    CsskitViewer.define();
+    CsskitEditor.define();
     ViewOptions.define();
     ErrorDiagnosticCount.define();
     ExamplePicker.define();

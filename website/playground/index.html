@@ -5,7 +5,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<link rel="stylesheet" href="/css/base.css" />
 		<link rel="stylesheet" href="/css/playground.css" />
-		<title>hdx Playground</title>
+		<title>csskit Playground</title>
 	</head>
 	<body>
 		<script type="module" src="/script/index.js"></script>
@@ -67,11 +67,11 @@
 						</form>
 					</example-picker>
 				</row-stack>
-				<hdx-editor id="editor"
+				<csskit-editor id="editor"
 					>.card { border-radius: var(--radius-2); padding: var(--size-fluid-3);
 					box-shadow: var(--shadow-2); &:hover { box-shadow: var(--shadow-3); }
 					@media (--motionOK) { animation: var(--animation-fade-in); }
-					}</hdx-editor
+					}</csskit-editor
 				>
 				<row-stack class="status">
 					<metric-observer name="minify">Minified to</metric-observer>
@@ -104,11 +104,11 @@
 						</radiogroup>
 					</form>
 				</row-stack>
-				<hdx-viewer
+				<csskit-viewer
 					id="viewer"
 					for-editor="editor"
 					for-format="format"
-				></hdx-viewer>
+				></csskit-viewer>
 			</col-stack>
 		</row-stack>
 	</body>

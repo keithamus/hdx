@@ -1,0 +1,26 @@
+---
+source: crates/csskit_highlight/src/tests.rs
+expression: actual
+snapshot_kind: text
+---
+<!DOCTYPE html>
+<head>
+	<style>
+		:root { background: #22272E; color: hotpink }
+		.Tag { color: #8ddb8c }
+		.Punctuation { color: #d1d7e0 }
+		.Property { color: #6cb6ff }
+		.PseudoClass { color: #6cb6ff }
+
+		.unknown { color: grey }
+		.deprecated { text-decoration: line-through }
+		.experimental { text-decoration: wavy underline #bf4b8a 0.5px }
+	</style>
+</head>
+<body>
+	<pre>
+		<code>
+			<span class="Tag">body</span>:focus,<span class="Tag">dialog</span>:modal<span class="Punctuation">{</span><span class="Punctuation">}</span>
+		</code>
+	</pre>
+</body>

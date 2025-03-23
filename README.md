@@ -1,12 +1,12 @@
 <p align="center">
   <picture>
-    <img alt="HDX" src="./logo.png" width="890">
+    <img alt="csskit" src="./logo.png" width="890">
   </picture>
 </p>
 
 ## CSS Compiler
 
-hydroxide (hdx) is a suite of high performance tools for CSS, written in Rust,
+csskit is a suite of high performance tools for CSS, written in Rust,
 inspired by [the oxidation compiler][1].
 
 ## Goals

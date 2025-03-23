@@ -1,0 +1,75 @@
+---
+source: crates/csskit_proc_macro/src/test.rs
+expression: pretty
+---
+::css_parse::keyword_set!(
+    FooKeywords { Black : "black", White : "white", LineThrough : "line-through", Pink :
+    "pink", }
+);
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+enum Foo {
+    Black(::css_parse::T![Ident]),
+    White(::css_parse::T![Ident]),
+    LineThrough(::css_parse::T![Ident]),
+    Pink(::css_parse::T![Ident]),
+}
+#[automatically_derived]
+impl<'a> ::css_parse::Peek<'a> for Foo {
+    fn peek(p: &::css_parse::Parser<'a>, c: ::css_lexer::Cursor) -> bool {
+        use ::css_parse::Peek;
+        <::css_parse::T![Ident]>::peek(p, c)
+    }
+}
+#[automatically_derived]
+impl<'a> ::css_parse::Parse<'a> for Foo {
+    fn parse(p: &mut ::css_parse::Parser<'a>) -> ::css_parse::Result<Self> {
+        use ::css_parse::{Parse, Peek};
+        if let Some(keyword) = p.parse_if_peek::<FooKeywords>()? {
+            use ::css_parse::Build;
+            match keyword {
+                FooKeywords::Black(c) => {
+                    return Ok(Self::Black(<::css_parse::T![Ident]>::build(p, c)));
+                }
+                FooKeywords::White(c) => {
+                    return Ok(Self::White(<::css_parse::T![Ident]>::build(p, c)));
+                }
+                FooKeywords::LineThrough(c) => {
+                    return Ok(Self::LineThrough(<::css_parse::T![Ident]>::build(p, c)));
+                }
+                FooKeywords::Pink(c) => {
+                    return Ok(Self::Pink(<::css_parse::T![Ident]>::build(p, c)));
+                }
+            }
+        } else {
+            let c: ::css_lexer::Cursor = p.parse::<::css_parse::T![Any]>()?.into();
+            Err(
+                ::css_parse::diagnostics::UnexpectedIdent(
+                    p.parse_str(c).into(),
+                    c.into(),
+                ),
+            )?
+        }
+        let c: ::css_lexer::Cursor = p.parse::<::css_parse::T![Any]>()?.into();
+        Err(::css_parse::diagnostics::Unexpected(c.into(), c.into()))?
+    }
+}
+#[automatically_derived]
+impl ::css_parse::ToCursors for Foo {
+    fn to_cursors(&self, s: &mut impl ::css_parse::CursorSink) {
+        match self {
+            Self::Black(inner) => {
+                s.append(inner.into());
+            }
+            Self::White(inner) => {
+                s.append(inner.into());
+            }
+            Self::LineThrough(inner) => {
+                s.append(inner.into());
+            }
+            Self::Pink(inner) => {
+                s.append(inner.into());
+            }
+        }
+    }
+}

@@ -5,7 +5,7 @@ use css_parse::{
 	syntax::BadDeclaration, Block, CursorSink, Parse, Parser, QualifiedRule, Result as ParserResult, State, ToCursors,
 	T,
 };
-use hdx_proc_macro::visit;
+use csskit_proc_macro::visit;
 
 use super::{rules, UnknownAtRule, UnknownQualifiedRule, Visit, Visitable};
 

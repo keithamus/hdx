@@ -3,7 +3,7 @@ import { HighlightStyle, syntaxHighlighting } from "@codemirror/language";
 import { tags } from "@lezer/highlight";
 
 const config = {
-  name: "hdxLight",
+  name: "csskitLight",
   dark: false,
   background: "rgba(255, 255, 255, 0.95)",
   foreground: "var(--stone-10)",
@@ -29,7 +29,7 @@ const config = {
   highlight: "var(--lime-1)",
   regexp: "var(--blue-6)",
 };
-const hdxLightTheme = EditorView.theme(
+const csskitLightTheme = EditorView.theme(
   {
     "&": {
       height: "100%",
@@ -95,7 +95,7 @@ const hdxLightTheme = EditorView.theme(
   },
   { dark: config.dark }
 );
-const hdxLightHighlightStyle = HighlightStyle.define([
+const csskitLightHighlightStyle = HighlightStyle.define([
   { tag: tags.keyword, color: config.keyword },
   {
     tag: [tags.name, tags.deleted, tags.character, tags.macroName],
@@ -150,6 +150,6 @@ const hdxLightHighlightStyle = HighlightStyle.define([
   { tag: tags.invalid, color: config.invalid },
   { tag: tags.strikethrough, textDecoration: "line-through" },
 ]);
-const hdxLight = [hdxLightTheme, syntaxHighlighting(hdxLightHighlightStyle)];
+const csskitLight = [csskitLightTheme, syntaxHighlighting(csskitLightHighlightStyle)];
 
-export { config, hdxLight, hdxLightHighlightStyle, hdxLightTheme };
+export { config, csskitLight, csskitLightHighlightStyle, csskitLightTheme };

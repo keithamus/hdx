@@ -1,5 +1,5 @@
 use css_parse::{pseudo_class, pseudo_element};
-use hdx_proc_macro::visit;
+use csskit_proc_macro::visit;
 
 use crate::{Visit, Visitable};
 

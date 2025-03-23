@@ -5,7 +5,7 @@ use thiserror::{self, Error};
 #[derive(Debug, Error, Diagnostic)]
 #[error("The token at {0} cannot yet be parsed by the parser :(")]
 #[diagnostic(
-	help("This feature needs to be implemented within hdx. This file won't parse without it."),
+	help("This feature needs to be implemented within csskit. This file won't parse without it."),
 	code(css_parse::Unimplemented)
 )]
 pub struct Unimplemented(#[label("Didn't recognise this bit")] pub Span);

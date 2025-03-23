@@ -1,6 +1,6 @@
 use css_lexer::{Cursor, Span};
 use css_parse::{keyword_set, Build, Parser, Peek, T};
-use hdx_proc_macro::visit;
+use csskit_proc_macro::visit;
 
 use crate::{Visit, Visitable};
 

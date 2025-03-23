@@ -5,7 +5,7 @@ use css_parse::{
 	diagnostics, keyword_set, syntax::ComponentValues, AtRule, Build, CursorSink, Declaration, DeclarationList,
 	DeclarationValue, Parse, Parser, Peek, Result as ParserResult, ToCursors, T,
 };
-use hdx_proc_macro::visit;
+use csskit_proc_macro::visit;
 
 // https://drafts.csswg.org/cssom-1/#csspagerule
 // https://drafts.csswg.org/css-page-3/#at-page-rule

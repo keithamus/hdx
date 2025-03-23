@@ -1,0 +1,32 @@
+---
+source: crates/csskit_proc_macro/src/test.rs
+expression: pretty
+---
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+struct Foo(pub types::CaretColorStyleValue, pub Option<types::CaretAnimationStyleValue>);
+#[automatically_derived]
+impl<'a> ::css_parse::Peek<'a> for Foo {
+    fn peek(p: &::css_parse::Parser<'a>, c: ::css_lexer::Cursor) -> bool {
+        use ::css_parse::Peek;
+        <types::CaretColorStyleValue>::peek(p, c)
+    }
+}
+#[automatically_derived]
+impl<'a> ::css_parse::Parse<'a> for Foo {
+    fn parse(p: &mut ::css_parse::Parser<'a>) -> ::css_parse::Result<Self> {
+        use ::css_parse::{Parse, Peek};
+        let val0 = p.parse::<types::CaretColorStyleValue>()?;
+        let val1 = p.parse_if_peek::<types::CaretAnimationStyleValue>()?;
+        Ok(Self(val0, val1))
+    }
+}
+#[automatically_derived]
+impl ::css_parse::ToCursors for Foo {
+    fn to_cursors(&self, s: &mut impl ::css_parse::CursorSink) {
+        ::css_parse::ToCursors::to_cursors(&self.0, s);
+        if let Some(inner) = &self.1 {
+            ::css_parse::ToCursors::to_cursors(inner, s);
+        }
+    }
+}

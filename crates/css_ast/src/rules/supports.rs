@@ -5,7 +5,7 @@ use css_parse::{
 	diagnostics, function_set, syntax::ComponentValues, AtRule, Build, ConditionKeyword, CursorSink,
 	FeatureConditionList, Parse, Parser, Result as ParserResult, RuleList, ToCursors, T,
 };
-use hdx_proc_macro::visit;
+use csskit_proc_macro::visit;
 
 // https://drafts.csswg.org/css-conditional-3/#at-supports
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]

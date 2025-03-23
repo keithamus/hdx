@@ -22,6 +22,6 @@ Beyond the first major release, Issues and Pull Requests will only be accepted f
 
 ## Reporting a Vulnerability
 
-If you discover a security vulnerability within the software, please report using the GitHub Security Advisory tool: https://github.com/keithamus/hdx/security/advisories/new.
+If you discover a security vulnerability within the software, please report using the GitHub Security Advisory tool: https://github.com/csskit/csskit/security/advisories/new.
 
 Please do not raise a standard issue in the Issue tracker, as this information is public and may expose users to unecessary risk.

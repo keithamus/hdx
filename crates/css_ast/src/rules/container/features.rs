@@ -5,7 +5,7 @@ use css_parse::{
 	discrete_feature, keyword_set, ranged_feature, ConditionKeyword, CursorSink, FeatureConditionList, Parse, Parser,
 	Peek, RangedFeatureKeyword, Result as ParserResult, ToCursors,
 };
-use hdx_proc_macro::visit;
+use csskit_proc_macro::visit;
 
 keyword_set!(WidthContainerFeatureKeyword { Width: "width" });
 impl RangedFeatureKeyword for WidthContainerFeatureKeyword {}

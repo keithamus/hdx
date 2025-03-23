@@ -1,0 +1,11 @@
+id = "csskit"
+name = "csskit"
+version = "0.0.1"
+schema_version = 1
+authors = ["Keith Cirkel (https://keithcirkel.co.uk)", "Marais Rossouw (https://marais.io)"]
+description = "Refreshing CSS!"
+repository = "https://github.com/csskit/csskit"
+
+[language_servers.csskit]
+language = "CSS"
+name = "csskit Language Server"
