@@ -1,6 +1,6 @@
 <p align="center">
   <picture>
-    <img alt="csskit" src="./logo.png" width="890">
+    <img alt="csskit" src="./website/images/logo.svg" width="890">
   </picture>
 </p>
 

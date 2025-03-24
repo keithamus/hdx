@@ -3,8 +3,10 @@
 @import url("open-props/media.min.css");
 @import url("open-props/masks.edges.min.css");
 
+/*#000000  #1c0e2a  #381c55  #552a7f  #7138aa  #8d54c6  #aa7fd4  #c6a9e2  #e2d4f0  #ffffff*/
+
 html {
-	background: url("/images/background.svg") center/200px var(--sand-0);
+	background: url("/images/background.svg") top left 0/200px var(--sand-0);
 	font-family: sans-serif;
 }
 
