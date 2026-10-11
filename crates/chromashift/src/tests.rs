@@ -718,3 +718,37 @@ fn achromatic_colours_have_zero_hue_after_conversion() {
 	}
 	assert_eq!(Hsl::from(Oklch::new(1.0, 0.0, 0.0, 100.0)).to_string(), "hsl(0 0% 100%)");
 }
+
+#[test]
+fn out_of_range_srgb_round_trips_through_every_unbounded_space() {
+	macro_rules! assert_round_trips {
+		($($ty:ident),+) => {$(
+			for (red, green, blue) in [(2.2, 1.5, 1.1), (1.2, -0.1, 0.3), (-0.2, -0.05, -0.4), (1.3, 1.1, 1.3), (-0.5, 0.2, 0.2)] {
+				let via = $ty::from(Srgb::new(red, green, blue, 100.0));
+				let back = Srgb::from(via);
+				for (got, want) in [(back.red, red), (back.green, green), (back.blue, blue)] {
+					assert!(
+						(got - want).abs() < 1e-9,
+						"{red} {green} {blue} via {} {via:?} came back {back:?}",
+						stringify!($ty)
+					);
+				}
+			}
+		)+};
+	}
+	assert_round_trips!(
+		A98Rgb,
+		DisplayP3,
+		Hsl,
+		Hwb,
+		Lab,
+		Lch,
+		LinearRgb,
+		Oklab,
+		Oklch,
+		ProphotoRgb,
+		Rec2020,
+		XyzD50,
+		XyzD65
+	);
+}
