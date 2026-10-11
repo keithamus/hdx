@@ -1,4 +1,22 @@
-## [0.0.34] - 2026-09-29
+## [0.0.35] - 2026-10-07
+
+### Other Changes
+- Chore(deps): update dependencies to v1.49.0 (#1546) ([#1546](https://github.com/csskit/csskit/pull/1546))
+
+
+### Chromashift
+- chromashift: model RGB colour spaces as first class values (#1553) ([#1553](https://github.com/csskit/csskit/pull/1553))
+- chromashift: Align serialisation to CSS Spec (#1555) ([#1555](https://github.com/csskit/csskit/pull/1555))
+
+
+### Css_ast
+- Regenerate css_ast/src/values from csswg drafts (#1545) ([#1545](https://github.com/csskit/csskit/pull/1545))
+
+
+### Csskit_vscode
+- chore(deps): update dependency @types/vscode to v1.140.0 (#1548) ([#1548](https://github.com/csskit/csskit/pull/1548))
+
+## [0.0.34] - 2026-09-30
 
 ### Bytescan
 - chore(deps): update rust crate fearless_simd to v1 (#1530) ([#1530](https://github.com/csskit/csskit/pull/1530))
@@ -15,6 +33,7 @@
 
 ### Csskit
 - csskit: add bin back to pakcage.json (#1539) ([#1539](https://github.com/csskit/csskit/pull/1539))
+- Release v0.0.34 (#1525) ([#1525](https://github.com/csskit/csskit/pull/1525))
 
 
 ### Csskit_napi

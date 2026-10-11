@@ -1,6 +1,6 @@
 {
     "name": "csskit",
-    "version": "0.0.34",
+    "version": "0.0.35",
     "description": "Refreshing CSS",
     "keywords": [],
     "repository": "https://github.com/csskit/csskit",
@@ -48,11 +48,11 @@
         "test:wasm": "node --test tests/bundle.test.js"
     },
     "optionalDependencies": {
-        "csskit-darwin-arm64": "0.0.34",
-        "csskit-darwin-x64": "0.0.34",
-        "csskit-linux-arm64": "0.0.34",
-        "csskit-linux-x64": "0.0.34",
-        "csskit-win32-arm64": "0.0.34",
-        "csskit-win32-x64": "0.0.34"
+        "csskit-darwin-arm64": "0.0.35",
+        "csskit-darwin-x64": "0.0.35",
+        "csskit-linux-arm64": "0.0.35",
+        "csskit-linux-x64": "0.0.35",
+        "csskit-win32-arm64": "0.0.35",
+        "csskit-win32-x64": "0.0.35"
     }
 }
