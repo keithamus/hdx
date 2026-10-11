@@ -9,8 +9,7 @@ where
 	/// [according to WCAG 2.1](https://www.w3.org/WAI/WCAG21/Understanding/contrast-minimum.html)
 	fn relative_luminance(&self) -> f64 {
 		let Srgb { red, green, blue, .. } = (*self).into();
-		let channels = [red as f64 / 255.0, green as f64 / 255.0, blue as f64 / 255.0];
-		let [r, g, b] = Srgb::SPACE.transfer.decode_all(channels);
+		let [r, g, b] = Srgb::SPACE.transfer.decode_all([red, green, blue]);
 		WCAG_WEIGHTS[0] * r + WCAG_WEIGHTS[1] * g + WCAG_WEIGHTS[2] * b
 	}
 }
@@ -169,7 +168,7 @@ mod tests {
 	fn test_relative_luminance() {
 		assert_eq!(Named::White.relative_luminance(), 1.0);
 		assert_eq!(Named::Black.relative_luminance(), 0.0);
-		assert_eq!(Srgb::new(128, 128, 128, 100.0).relative_luminance(), 0.21586050011389923);
+		assert_eq!(Srgb::from_u8(128, 128, 128, 100.0).relative_luminance(), 0.21586050011389923);
 	}
 
 	#[test]

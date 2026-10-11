@@ -3,6 +3,16 @@ use core::fmt;
 
 macro_rules! rgb_color {
 	($(#[$meta:meta])* $ty:ident, $css:literal, $space:ident, $xyz:ident) => {
+		rgb_color!($(#[$meta])* $ty, $space, $xyz);
+
+		impl fmt::Display for $ty {
+			fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+				let Self { red, green, blue, alpha } = *self;
+				write!(f, concat!("color(", $css, " {} {} {}{})"), Number(red), Number(green), Number(blue), Alpha(alpha))
+			}
+		}
+	};
+	($(#[$meta:meta])* $ty:ident, $space:ident, $xyz:ident) => {
 		$(#[$meta])*
 		/// The components are:
 		/// - Red - a number between 0.0 and 1.0
@@ -35,13 +45,6 @@ macro_rules! rgb_color {
 			}
 		}
 
-		impl fmt::Display for $ty {
-			fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-				let Self { red, green, blue, alpha } = *self;
-				write!(f, concat!("color(", $css, " {} {} {}{})"), Number(red), Number(green), Number(blue), Alpha(alpha))
-			}
-		}
-
 		impl From<$xyz> for $ty {
 			fn from(value: $xyz) -> Self {
 				let $xyz { x, y, z, alpha } = value;
@@ -59,6 +62,13 @@ macro_rules! rgb_color {
 		}
 	};
 }
+
+rgb_color!(
+	/// A colour in the sRGB colour space.
+	Srgb,
+	SRGB,
+	XyzD65
+);
 
 rgb_color!(
 	/// A device independent expression of RGB: the sRGB primaries with no transfer function.

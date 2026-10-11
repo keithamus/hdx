@@ -205,9 +205,9 @@ impl crate::ToChromashift for ColorFunctionColor<'_> {
 
 		match space {
 			ColorSpace::Srgb(_) => {
-				let r = (channel_unit(c1)? * 255.0).round() as u8;
-				let g = (channel_unit(c2)? * 255.0).round() as u8;
-				let b = (channel_unit(c3)? * 255.0).round() as u8;
+				let r = channel_unit(c1)?;
+				let g = channel_unit(c2)?;
+				let b = channel_unit(c3)?;
 				Some(chromashift::Color::Srgb(Srgb::new(r, g, b, alpha)))
 			}
 			ColorSpace::SrgbLinear(_) => {
@@ -353,27 +353,24 @@ impl crate::ToChromashift for RgbFunctionParams<'_> {
 			Some(NoneOr::Some(_)) => return None,
 			None => 100.0,
 		};
-		let red = (match red {
+		let red = match red {
 			NoneOr::None(_) => 0.0,
-			NoneOr::Some(NumericValue::Literal(NumberOrPercentage::Number(red))) => red.value(),
-			NoneOr::Some(NumericValue::Literal(NumberOrPercentage::Percentage(red))) => red.value() / 100.0 * 255.0,
+			NoneOr::Some(NumericValue::Literal(NumberOrPercentage::Number(red))) => red.value() as f64 / 255.0,
+			NoneOr::Some(NumericValue::Literal(NumberOrPercentage::Percentage(red))) => red.value() as f64 / 100.0,
 			NoneOr::Some(_) => return None,
-		})
-		.round() as u8;
-		let green = (match green {
+		};
+		let green = match green {
 			NoneOr::None(_) => 0.0,
-			NoneOr::Some(NumericValue::Literal(NumberOrPercentage::Number(green))) => green.value(),
-			NoneOr::Some(NumericValue::Literal(NumberOrPercentage::Percentage(green))) => green.value() / 100.0 * 255.0,
+			NoneOr::Some(NumericValue::Literal(NumberOrPercentage::Number(green))) => green.value() as f64 / 255.0,
+			NoneOr::Some(NumericValue::Literal(NumberOrPercentage::Percentage(green))) => green.value() as f64 / 100.0,
 			NoneOr::Some(_) => return None,
-		})
-		.round() as u8;
-		let blue = (match blue {
+		};
+		let blue = match blue {
 			NoneOr::None(_) => 0.0,
-			NoneOr::Some(NumericValue::Literal(NumberOrPercentage::Number(blue))) => blue.value(),
-			NoneOr::Some(NumericValue::Literal(NumberOrPercentage::Percentage(blue))) => blue.value() / 100.0 * 255.0,
+			NoneOr::Some(NumericValue::Literal(NumberOrPercentage::Number(blue))) => blue.value() as f64 / 255.0,
+			NoneOr::Some(NumericValue::Literal(NumberOrPercentage::Percentage(blue))) => blue.value() as f64 / 100.0,
 			NoneOr::Some(_) => return None,
-		})
-		.round() as u8;
+		};
 		Some(chromashift::Color::Srgb(Srgb::new(red, green, blue, alpha)))
 	}
 }
@@ -481,7 +478,7 @@ impl crate::ToChromashift for HslFunctionParams<'_> {
 			Some(NoneOr::Some(_)) => return None,
 			None => 100.0,
 		};
-		Some(chromashift::Color::Hsl(Hsl::new(hue, saturation, lightness, alpha)))
+		Some(chromashift::Color::Hsl(Hsl::new(hue.into(), saturation.into(), lightness.into(), alpha)))
 	}
 }
 
@@ -537,7 +534,7 @@ impl crate::ToChromashift for HwbFunction<'_> {
 			Some(NoneOr::Some(_)) => return None,
 			None => 100.0,
 		};
-		Some(chromashift::Color::Hwb(Hwb::new(hue, whiteness, blackness, alpha)))
+		Some(chromashift::Color::Hwb(Hwb::new(hue.into(), whiteness.into(), blackness.into(), alpha)))
 	}
 }
 

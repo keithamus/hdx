@@ -701,9 +701,9 @@ mod chromashift_impl {
 	impl ChannelMap<RgbChannelKeyword> for Srgb {
 		fn channel(&self, kw: &RgbChannelKeyword) -> f32 {
 			match kw {
-				RgbChannelKeyword::R(_) => self.red as f32,
-				RgbChannelKeyword::G(_) => self.green as f32,
-				RgbChannelKeyword::B(_) => self.blue as f32,
+				RgbChannelKeyword::R(_) => (self.red * 255.0) as f32,
+				RgbChannelKeyword::G(_) => (self.green * 255.0) as f32,
+				RgbChannelKeyword::B(_) => (self.blue * 255.0) as f32,
 				RgbChannelKeyword::Alpha(_) => self.alpha,
 			}
 		}
@@ -712,9 +712,9 @@ mod chromashift_impl {
 	impl ChannelMap<HslChannelKeyword> for Hsl {
 		fn channel(&self, kw: &HslChannelKeyword) -> f32 {
 			match kw {
-				HslChannelKeyword::H(_) => self.hue,
-				HslChannelKeyword::S(_) => self.saturation,
-				HslChannelKeyword::L(_) => self.lightness,
+				HslChannelKeyword::H(_) => self.hue as f32,
+				HslChannelKeyword::S(_) => self.saturation as f32,
+				HslChannelKeyword::L(_) => self.lightness as f32,
 				HslChannelKeyword::Alpha(_) => self.alpha,
 			}
 		}
@@ -723,9 +723,9 @@ mod chromashift_impl {
 	impl ChannelMap<HwbChannelKeyword> for Hwb {
 		fn channel(&self, kw: &HwbChannelKeyword) -> f32 {
 			match kw {
-				HwbChannelKeyword::H(_) => self.hue,
-				HwbChannelKeyword::W(_) => self.whiteness,
-				HwbChannelKeyword::B(_) => self.blackness,
+				HwbChannelKeyword::H(_) => self.hue as f32,
+				HwbChannelKeyword::W(_) => self.whiteness as f32,
+				HwbChannelKeyword::B(_) => self.blackness as f32,
 				HwbChannelKeyword::Alpha(_) => self.alpha,
 			}
 		}
@@ -839,9 +839,9 @@ mod chromashift_impl {
 	fn rgb_relative_params_to_chromashift(params: &RgbRelativeParams<'_>) -> Option<Color> {
 		let origin = params.origin.color.to_chromashift()?;
 		let srgb = Srgb::from(origin);
-		let red = resolve_channel(&params.red, &srgb, 255.0)?.round() as u8;
-		let green = resolve_channel(&params.green, &srgb, 255.0)?.round() as u8;
-		let blue = resolve_channel(&params.blue, &srgb, 255.0)?.round() as u8;
+		let red = resolve_channel(&params.red, &srgb, 255.0)? as f64 / 255.0;
+		let green = resolve_channel(&params.green, &srgb, 255.0)? as f64 / 255.0;
+		let blue = resolve_channel(&params.blue, &srgb, 255.0)? as f64 / 255.0;
 		let alpha = params.alpha.as_ref().map_or(Some(100.0), |a| resolve_alpha(a, &srgb))?;
 		Some(Color::Srgb(Srgb::new(red, green, blue, alpha)))
 	}
@@ -865,7 +865,7 @@ mod chromashift_impl {
 		let saturation = resolve_channel(&params.saturation, &hsl, 100.0)?;
 		let lightness = resolve_channel(&params.lightness, &hsl, 100.0)?;
 		let alpha = params.alpha.as_ref().map_or(Some(100.0), |a| resolve_alpha(a, &hsl))?;
-		Some(Color::Hsl(Hsl::new(hue, saturation, lightness, alpha)))
+		Some(Color::Hsl(Hsl::new(hue.into(), saturation.into(), lightness.into(), alpha)))
 	}
 
 	impl ToChromashift for HslRelativeFunction<'_> {
@@ -888,7 +888,7 @@ mod chromashift_impl {
 			let whiteness = resolve_channel(&self.params.whiteness, &hwb, 100.0)?;
 			let blackness = resolve_channel(&self.params.blackness, &hwb, 100.0)?;
 			let alpha = self.params.alpha.as_ref().map_or(Some(100.0), |a| resolve_alpha(a, &hwb))?;
-			Some(Color::Hwb(Hwb::new(hue, whiteness, blackness, alpha)))
+			Some(Color::Hwb(Hwb::new(hue.into(), whiteness.into(), blackness.into(), alpha)))
 		}
 	}
 
@@ -947,9 +947,9 @@ mod chromashift_impl {
 
 			let unit_from_kw = |kw: &ColorChannelKeyword| -> f64 {
 				match kw {
-					ColorChannelKeyword::R(_) => Srgb::from(origin).red as f64 / 255.0,
-					ColorChannelKeyword::G(_) => Srgb::from(origin).green as f64 / 255.0,
-					ColorChannelKeyword::B(_) => Srgb::from(origin).blue as f64 / 255.0,
+					ColorChannelKeyword::R(_) => Srgb::from(origin).red,
+					ColorChannelKeyword::G(_) => Srgb::from(origin).green,
+					ColorChannelKeyword::B(_) => Srgb::from(origin).blue,
 					ColorChannelKeyword::X(_) => XyzD65::from(origin).x / 100.0,
 					ColorChannelKeyword::Y(_) => XyzD65::from(origin).y / 100.0,
 					ColorChannelKeyword::Z(_) => XyzD65::from(origin).z / 100.0,
@@ -991,12 +991,7 @@ mod chromashift_impl {
 			let alpha = self.params.alpha.as_ref().map_or(Some(100.0), resolve_a)?;
 
 			match space {
-				ColorSpace::Srgb(_) => Some(Color::Srgb(Srgb::new(
-					(c1 * 255.0).round() as u8,
-					(c2 * 255.0).round() as u8,
-					(c3 * 255.0).round() as u8,
-					alpha,
-				))),
+				ColorSpace::Srgb(_) => Some(Color::Srgb(Srgb::new(c1, c2, c3, alpha))),
 				ColorSpace::SrgbLinear(_) => Some(Color::LinearRgb(LinearRgb::new(c1, c2, c3, alpha))),
 				ColorSpace::DisplayP3(_) => Some(Color::DisplayP3(DisplayP3::new(c1, c2, c3, alpha))),
 				ColorSpace::A98Rgb(_) => Some(Color::A98Rgb(A98Rgb::new(c1, c2, c3, alpha))),

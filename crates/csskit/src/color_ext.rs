@@ -12,7 +12,7 @@ where
 {
 	use anstyle::Style;
 	let srgb: Srgb = color.into();
-	let color = anstyle::RgbColor(srgb.red, srgb.green, srgb.blue);
+	let color = anstyle::RgbColor::from(srgb);
 	let style = Style::new().fg_color(Some(color.into()));
 	format!("{style}{text}{style:#}")
 }
@@ -26,8 +26,8 @@ where
 	C: Into<Srgb>,
 {
 	use owo_colors::OwoColorize;
-	let srgb: Srgb = color.into();
-	format!("{}", text.truecolor(srgb.red, srgb.green, srgb.blue))
+	let [red, green, blue] = Into::<Srgb>::into(color).to_u8();
+	format!("{}", text.truecolor(red, green, blue))
 }
 
 /// Set background color on text using a chromashift color type
@@ -39,7 +39,7 @@ where
 {
 	use anstyle::Style;
 	let srgb: Srgb = color.into();
-	let color = anstyle::RgbColor(srgb.red, srgb.green, srgb.blue);
+	let color = anstyle::RgbColor::from(srgb);
 	let style = Style::new().bg_color(Some(color.into()));
 	format!("{style}{text}{style:#}")
 }
@@ -53,8 +53,8 @@ where
 	C: Into<Srgb>,
 {
 	use owo_colors::OwoColorize;
-	let srgb: Srgb = color.into();
-	format!("{}", text.on_truecolor(srgb.red, srgb.green, srgb.blue))
+	let [red, green, blue] = Into::<Srgb>::into(color).to_u8();
+	format!("{}", text.on_truecolor(red, green, blue))
 }
 
 #[cfg(feature = "anstyle")]

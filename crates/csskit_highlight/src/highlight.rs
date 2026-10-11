@@ -83,14 +83,10 @@ impl<'a> HighlighterState for CssHighlighterState<'a> {
 				};
 
 				// Convert to Srgb to get RGB components
-				let bg_srgb: Srgb = bg.into();
-				let fg_srgb: Srgb = fg.into();
+				let [bg_red, bg_green, bg_blue] = Srgb::from(bg).to_u8();
+				let [fg_red, fg_green, fg_blue] = Srgb::from(fg).to_u8();
 
-				Style::new().truecolor(fg_srgb.red, fg_srgb.green, fg_srgb.blue).on_truecolor(
-					bg_srgb.red,
-					bg_srgb.green,
-					bg_srgb.blue,
-				)
+				Style::new().truecolor(fg_red, fg_green, fg_blue).on_truecolor(bg_red, bg_green, bg_blue)
 			} else if let Some(highlight) = color {
 				// Use the theme to get the owo-colors style
 				self.theme.get_owo_style(highlight.kind(), highlight.modifier())

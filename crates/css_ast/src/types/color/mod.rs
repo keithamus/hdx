@@ -129,7 +129,7 @@ impl ToChromashift for Color<'_> {
 			Color::Hex(hex) => hex.to_chromashift(),
 
 			// Transparent is black with 0 alpha
-			Color::Transparent(_) => Some(chromashift::Color::Srgb(Srgb::new(0, 0, 0, 0.0))),
+			Color::Transparent(_) => Some(chromashift::Color::Srgb(Srgb::new(0.0, 0.0, 0.0, 0.0))),
 
 			// CurrentColor and System colors don't have fixed values
 			// They depend on context/system settings
@@ -242,7 +242,30 @@ mod tests {
 			assert_eq!(node.to_chromashift(), Some(chromashift::Color::Hex(Hex::new(0xFF0000FF))));
 		});
 		assert_parse!(CssAtomSet::ATOMS, Color, "rgb(255, 0, 0)", |node| {
-			assert_eq!(node.to_chromashift(), Some(chromashift::Color::Srgb(Srgb::new(255, 0, 0, 100.0))));
+			assert_eq!(node.to_chromashift(), Some(chromashift::Color::Srgb(Srgb::from_u8(255, 0, 0, 100.0))));
+		});
+	}
+
+	#[test]
+	#[cfg(feature = "chromashift")]
+	fn test_chromashift_preserves_extended_range() {
+		use super::ToChromashift;
+		use crate::CssAtomSet;
+		use chromashift::{LinearRgb, Srgb};
+		use css_parse::assert_parse;
+
+		assert_parse!(CssAtomSet::ATOMS, Color, "rgb(300 0 0)", |node| {
+			assert!(LinearRgb::from(node.to_chromashift().unwrap()).red > 1.0);
+		});
+		assert_parse!(CssAtomSet::ATOMS, Color, "color(srgb 1.25 -0.125 0.5)", |node| {
+			assert_eq!(node.to_chromashift(), Some(chromashift::Color::Srgb(Srgb::new(1.25, -0.125, 0.5, 100.0))));
+		});
+		assert_parse!(CssAtomSet::ATOMS, Color, "hsl(120 150% 50%)", |node| {
+			let Srgb { red, green, blue, .. } = Srgb::from(node.to_chromashift().unwrap());
+			assert!(red < 0.0 && green > 1.0 && blue < 0.0, "{red} {green} {blue}");
+		});
+		assert_parse!(CssAtomSet::ATOMS, Color, "rgb(12.5% 0 0)", |node| {
+			assert_eq!(node.to_chromashift(), Some(chromashift::Color::Srgb(Srgb::new(0.125, 0.0, 0.0, 100.0))));
 		});
 	}
 }
