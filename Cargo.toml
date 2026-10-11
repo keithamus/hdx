@@ -45,25 +45,25 @@ stable_type_layout_derive = { package = "stable-type-layout-derive", path = "cra
 visit_flow = { package = "visit-flow", path = "crates/visit_flow", version = "0.0.35" }                                              # @release
 # Memory
 allocator-api2 = { version = "0.4.0" }
-inventory = { version = "0.3.24" }
-libc = { version = "0.2.189" }
+inventory = { version = "0.3.25" }
+libc = { version = "0.2.190" }
 windows-sys = { version = "0.61.2" }
 self_cell = { version = "1.3.0" }
 
 # Data structure libraries/helpers
 bitmask-enum = { version = "2.2.5" }
 fnv = { version = "1.0.7" }
-fearless_simd = { version = "1.0.0" }
-indexmap = { version = "2.14.1" }
+fearless_simd = { version = "1.1.0" }
+indexmap = { version = "2.14.2" }
 itertools = { version = "0.15.0" }
 phf = { version = "0.14.0" }
 ropey = { version = "1.6.1" }
-smallvec = { version = "1.15.2" }
+smallvec = { version = "1.16.3" }
 strum = { version = "0.28.0" }
 
 anstyle = { version = "1.0.14" }
 # CLI
-clap = { version = "4.6.6" }
+clap = { version = "4.6.7" }
 glob = { version = "0.3.4" }
 owo-colors = { version = "4.4.0" }
 project-root = { version = "0.2.2" }
@@ -74,10 +74,10 @@ httparse = { version = "1.10.1" }
 lsp-types = { version = "0.97.0" }
 
 # Multithreading
-crossbeam-channel = { version = "0.5.16" }
+crossbeam-channel = { version = "0.5.17" }
 dashmap = { version = "6.2.1" }
 
-console = { version = "0.16.4" }
+console = { version = "0.16.6" }
 # Logging
 tracing = { version = "0.1.44" }
 tracing-subscriber = { version = "0.3.23" }
@@ -85,25 +85,25 @@ tracing-subscriber = { version = "0.3.23" }
 anyhow = { version = "1.0.104" }
 # Error handling
 miette = { version = "7.6.0", default-features = false }
-thiserror = { version = "2.0.20" }
+thiserror = { version = "2.0.21" }
 
 darling = { version = "0.24.1" }
 heck = { version = "0.5.0" }
 proc-macro2 = { version = "1.0.107" }
 quote = { version = "1.0.47" }
 # Procc Macro Tools
-syn = { version = "3.0.4" }
+syn = { version = "3.0.8" }
 synstructure = { version = "0.14.0" }
 
 # Serialization
 serde = { version = "1.0.229" }
-serde_json = { version = "1.0.151" }
-toml = { version = "1.1.4" }
+serde_json = { version = "1.0.154" }
+toml = { version = "1.1.8" }
 
 criterion = { version = "0.5.1" }    # Held back for pprof (https://github.com/tikv/pprof-rs/pull/271)
 dhat = { version = "0.3.3" }
 flate2 = { version = "1.1.10" }
-insta = { version = "1.48.0" }
+insta = { version = "1.49.0" }
 pprof = { version = "0.15.0" }
 prettyplease = { version = "0.3.0" }
 # Testing, benchmarking
@@ -114,24 +114,24 @@ grep-matcher = { version = "0.1.9" }
 grep-regex = { version = "0.1.14" }
 grep-searcher = { version = "0.1.17" }
 regex = { version = "1.13.1" }
-reqwest = { version = "0.13.4" }
+reqwest = { version = "0.13.5" }
 scraper = { version = "0.27.0" }
-tokio = { version = "1.53.1" }
+tokio = { version = "1.53.2" }
 
 console_error_panic_hook = { version = "0.1.7" }
 serde-wasm-bindgen = { version = "0.6.5" }
 # Wasm
-wasm-bindgen = { version = "0.2.127" }
-wasm-bindgen-test = { version = "0.3.77" }
-web-sys = { version = "0.3.104" }
+wasm-bindgen = { version = "0.2.129" }
+wasm-bindgen-test = { version = "0.3.79" }
+web-sys = { version = "0.3.106" }
 
 # NAPI (native object-model bindings)
-napi = { version = "3.12.2", features = ["napi9"] }
-napi-derive = { version = "3.6.3" }
-napi-build = { version = "2.4.1" }
+napi = { version = "3.14.2", features = ["napi9"] }
+napi-derive = { version = "3.6.12" }
+napi-build = { version = "2.6.0" }
 
 # CSS Feature Data packages
-browserslist-rs = { version = "0.20.0" }
+browserslist-rs = { version = "0.21.2" }
 chrono = { version = "0.4.45" }
 
 # For faster compiles during development, opt-level some dynamic libraries and limit debug generation

@@ -1,14 +1,14 @@
 [tools]
-rust = { version = "1.98.0", components = "rustfmt,clippy", targets = "wasm32-unknown-unknown" }
+rust = { version = "1.98.1", components = "rustfmt,clippy", targets = "wasm32-unknown-unknown" }
 node = "26.5.1"
 npm = "12.0.2"
 hyperfine = "latest"
 "cargo:cargo-insta" = "1.49.0"
-"cargo:cargo-expand" = "1.0.126"
+"cargo:cargo-expand" = "1.0.127"
 "cargo:cargo-edit" = "0.13.13"
-"cargo:git-cliff" = "2.14.1"
+"cargo:git-cliff" = "2.14.2"
 "cargo:samply" = "0.13.1"
-"cargo:wasm-bindgen-cli" = "0.2.127"
+"cargo:wasm-bindgen-cli" = "0.2.129"
 "aqua:WebAssembly/binaryen" = "131"
 "cargo:cargo-fuzz" = "0.13.2"
 
