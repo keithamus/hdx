@@ -41,7 +41,7 @@ impl From<Srgb> for Hsl {
 		let min = red.min(green).min(blue);
 		let lightness = (max + min) / 2.0;
 		let mut hue = value.hue();
-		let mut saturation = if max - min <= 1e-9 || lightness <= 0.0 || lightness >= 1.0 {
+		let mut saturation = if max - min <= 1e-9 || lightness == 0.0 || lightness == 1.0 {
 			0.0
 		} else {
 			(max - lightness) / lightness.min(1.0 - lightness)
