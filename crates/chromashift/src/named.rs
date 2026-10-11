@@ -622,7 +622,7 @@ impl From<Named> for Srgb {
 			Named::Yellow => (255, 255, 0),
 			Named::Yellowgreen => (154, 205, 50),
 		};
-		Srgb::new(red, green, blue, 100.0)
+		Srgb::from_u8(red, green, blue, 100.0)
 	}
 }
 
@@ -636,10 +636,10 @@ impl TryFrom<Srgb> for Named {
 	type Error = ToNamedError;
 
 	fn try_from(value: Srgb) -> Result<Named, Self::Error> {
-		let Srgb { red, green, blue, alpha } = value;
-		if alpha != 100.0 {
+		if value.alpha != 100.0 {
 			Err(ToNamedError::NotOpaque)?;
 		}
+		let [red, green, blue] = value.to_u8();
 		match (red, green, blue) {
 			(240, 248, 255) => Ok(Named::Aliceblue),
 			(250, 235, 215) => Ok(Named::Antiquewhite),

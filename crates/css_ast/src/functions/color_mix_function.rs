@@ -272,7 +272,7 @@ impl crate::ToChromashift for ColorMixFunction<'_> {
 
 		// Per spec: if the sum of all percentages is 0, return transparent black.
 		if stack.iter().map(|(_, p)| p).sum::<f64>() == 0.0 {
-			return Some(chromashift::Color::Srgb(chromashift::Srgb::new(0, 0, 0, 0.0)));
+			return Some(chromashift::Color::Srgb(chromashift::Srgb::new(0.0, 0.0, 0.0, 0.0)));
 		}
 
 		// Pairwise left-to-right reduction per the spec stack algorithm.

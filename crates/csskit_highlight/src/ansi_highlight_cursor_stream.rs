@@ -51,16 +51,12 @@ impl<'a, 'h, W: Write, T: AnsiTheme> SourceCursorSink<'a> for AnsiHighlightCurso
 				#[cfg(not(feature = "anstyle"))]
 				{
 					use chromashift::Srgb;
-					let bg_srgb: Srgb = bg.into();
-					let fg_srgb: Srgb = fg.into();
+					let [bg_red, bg_green, bg_blue] = Srgb::from(bg).to_u8();
+					let [fg_red, fg_green, fg_blue] = Srgb::from(fg).to_u8();
 					self.err = write!(
 						&mut self.writer,
 						"{}",
-						c.to_string().truecolor(fg_srgb.red, fg_srgb.green, fg_srgb.blue).on_truecolor(
-							bg_srgb.red,
-							bg_srgb.green,
-							bg_srgb.blue
-						)
+						c.to_string().truecolor(fg_red, fg_green, fg_blue).on_truecolor(bg_red, bg_green, bg_blue)
 					);
 				}
 			} else {

@@ -14,8 +14,8 @@ colors --format json
           "source": "#ffffff",
           "hex": "#fff",
           "srgb": "rgb(255, 255, 255)",
-          "hsl": "hsl(300 50% 100%)",
-          "oklch": "oklch(1 0 180)",
+          "hsl": "hsl(0 0% 100%)",
+          "oklch": "oklch(1 0 0)",
           "oklab": "oklab(1 0 0)"
         },
         {
@@ -26,7 +26,7 @@ colors --format json
           "source": "rgb(210, 180, 140)",
           "hex": "#d2b48c",
           "srgb": "rgb(210, 180, 140)",
-          "hsl": "hsl(34.285713 43.75% 68.62745%)",
+          "hsl": "hsl(34.285714 43.75% 68.627451%)",
           "oklch": "oklch(0.786187 0.063821 74.619021)",
           "oklab": "oklab(0.786187 0.016928 0.061535)"
         },

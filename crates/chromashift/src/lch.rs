@@ -39,7 +39,13 @@ impl From<Lab> for Lch {
 		let Lab { lightness, a, b, alpha } = value;
 		let chroma = (a * a + b * b).sqrt();
 		let hue = b.atan2(a).to_degrees();
-		let hue = if hue < 0.0 { hue + 360.0 } else { hue }; // Normalize to [0, 360)
+		let hue = if chroma <= 0.0015 {
+			0.0
+		} else if hue < 0.0 {
+			hue + 360.0
+		} else {
+			hue
+		};
 		Lch::new(lightness, chroma, hue, alpha)
 	}
 }

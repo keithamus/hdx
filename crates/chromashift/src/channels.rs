@@ -66,7 +66,7 @@ macro_rules! impl_channels {
 	};
 }
 
-impl_channels!(Srgb { red: u8, green: u8, blue: u8 });
+impl_channels!(Srgb { red: f64, green: f64, blue: f64 });
 impl_channels!(LinearRgb { red: f64, green: f64, blue: f64 });
 impl_channels!(A98Rgb { red: f64, green: f64, blue: f64 });
 impl_channels!(DisplayP3 { red: f64, green: f64, blue: f64 });
@@ -76,7 +76,7 @@ impl_channels!(Lab { lightness: f64, a: f64, b: f64 });
 impl_channels!(Oklab { lightness: f64, a: f64, b: f64 });
 impl_channels!(XyzD50 { x: f64, y: f64, z: f64 });
 impl_channels!(XyzD65 { x: f64, y: f64, z: f64 });
-impl_channels!(Hsl { hue: f32, saturation: f32, lightness: f32 }, polar = Some(0));
-impl_channels!(Hwb { hue: f32, whiteness: f32, blackness: f32 }, polar = Some(0));
+impl_channels!(Hsl { hue: f64, saturation: f64, lightness: f64 }, polar = Some(0));
+impl_channels!(Hwb { hue: f64, whiteness: f64, blackness: f64 }, polar = Some(0));
 impl_channels!(Lch { lightness: f64, chroma: f64, hue: f64 }, polar = Some(2));
 impl_channels!(Oklch { lightness: f64, chroma: f64, hue: f64 }, polar = Some(2));

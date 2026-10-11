@@ -244,9 +244,9 @@ mod tests {
 
 	#[test]
 	fn test_basic_mix() {
-		let red = Srgb::new(255, 0, 0, 100.0);
-		let blue = Srgb::new(0, 0, 255, 100.0);
-		assert_close_to!(Srgb::mix(red, blue, 50.0), Srgb::new(128, 0, 128, 100.0));
+		let red = Srgb::from_u8(255, 0, 0, 100.0);
+		let blue = Srgb::from_u8(0, 0, 255, 100.0);
+		assert_close_to!(Srgb::mix(red, blue, 50.0), Srgb::new(0.5, 0.0, 0.5, 100.0));
 	}
 
 	#[test]
@@ -276,13 +276,11 @@ mod tests {
 
 	#[test]
 	fn test_alpha_mixing() {
-		let color1 = Srgb::new(255, 0, 0, 80.0);
-		let color2 = Srgb::new(0, 0, 255, 40.0);
+		let color1 = Srgb::from_u8(255, 0, 0, 80.0);
+		let color2 = Srgb::from_u8(0, 0, 255, 40.0);
 
 		let mixed = Srgb::mix(color1, color2, 50.0);
-		assert_eq!(mixed.red, 170);
-		assert_eq!(mixed.green, 0);
-		assert_eq!(mixed.blue, 85);
+		assert_eq!(mixed.to_u8(), [170, 0, 85]);
 		assert_eq!(mixed.alpha, 60.0);
 	}
 
@@ -353,9 +351,9 @@ mod tests {
 	#[test]
 	fn test_none_channel_substitution() {
 		let first = [None, Some(0.0), Some(0.0), Some(100.0)];
-		let second: [Channel; 4] = Srgb::new(200, 0, 0, 100.0).into();
+		let second: [Channel; 4] = Srgb::from_u8(200, 0, 0, 100.0).into();
 		let out = mix_channels(first, second, 50.0, Srgb::HUE_INDEX, HueInterpolation::Shorter);
 		let mixed: Srgb = out.into();
-		assert_eq!(mixed, Srgb::new(200, 0, 0, 100.0));
+		assert_eq!(mixed, Srgb::from_u8(200, 0, 0, 100.0));
 	}
 }
