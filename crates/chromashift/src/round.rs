@@ -73,6 +73,7 @@ impl_perceptual_round!(Lab, lightness: 1, a: 1, b: 1);
 impl_perceptual_round!(Lch, lightness: 1, chroma: 1, hue: 1);
 
 // RGB 0–1 types: 3dp (4dp for srgb-linear due to near-black divergence at 3dp).
+impl_perceptual_round!(Srgb, red: 3, green: 3, blue: 3);
 impl_perceptual_round!(LinearRgb, red: 4, green: 4, blue: 4);
 impl_perceptual_round!(DisplayP3, red: 3, green: 3, blue: 3);
 impl_perceptual_round!(A98Rgb, red: 3, green: 3, blue: 3);
@@ -95,7 +96,7 @@ macro_rules! impl_perceptual_round_noop {
 	};
 }
 
-impl_perceptual_round_noop!(Srgb, Hex, Named, Hsv);
+impl_perceptual_round_noop!(Hex, Named, Hsv);
 
 impl PerceptualRound for Color {
 	fn round(self) -> Self {
@@ -171,7 +172,7 @@ mod tests {
 
 	#[test]
 	fn noop_types() {
-		assert_eq!(Srgb::new(102, 51, 153, 100.0).round(), Srgb::new(102, 51, 153, 100.0));
+		assert_eq!(Srgb::from_u8(102, 51, 153, 100.0).round(), Srgb::from_u8(102, 51, 153, 100.0));
 		assert_eq!(Hex::new(0x663399FF).round(), Hex::new(0x663399FF));
 		assert_eq!(Named::Rebeccapurple.round(), Named::Rebeccapurple);
 	}

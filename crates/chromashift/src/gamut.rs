@@ -151,7 +151,7 @@ macro_rules! impl_map_to_gamut_raytrace {
 	};
 }
 
-impl_map_to_gamut_raytrace!(LinearRgb, DisplayP3, A98Rgb, ProphotoRgb, Rec2020);
+impl_map_to_gamut_raytrace!(Srgb, LinearRgb, DisplayP3, A98Rgb, ProphotoRgb, Rec2020);
 
 /// CSS Color 4 13.2.6 "cast a ray" — ray–box intersection using the slab method.
 ///
@@ -225,8 +225,8 @@ fn in_unit(v: f64) -> bool {
 	(-GAMUT_EPSILON..=1.0 + GAMUT_EPSILON).contains(&v)
 }
 
-/// Helper: checks an f32 is in [0.0, 100.0]
-fn in_percent(v: f32) -> bool {
+/// Helper: checks an f64 is in [0.0, 100.0]
+fn in_percent(v: f64) -> bool {
 	(0.0..=100.0).contains(&v)
 }
 
@@ -248,25 +248,12 @@ macro_rules! impl_gamut_rgb_f64 {
 	};
 }
 
+impl_gamut_rgb_f64!(Srgb);
 impl_gamut_rgb_f64!(LinearRgb);
 impl_gamut_rgb_f64!(A98Rgb);
 impl_gamut_rgb_f64!(DisplayP3);
 impl_gamut_rgb_f64!(ProphotoRgb);
 impl_gamut_rgb_f64!(Rec2020);
-
-impl Gamut for Srgb {
-	fn in_gamut(&self) -> bool {
-		true
-	}
-
-	fn clamp_to_gamut(&self) -> Self {
-		*self
-	}
-
-	fn map_to_gamut(self) -> Self {
-		self.clamp_to_gamut()
-	}
-}
 
 impl Gamut for Hex {
 	fn in_gamut(&self) -> bool {

@@ -42,11 +42,10 @@ pub use mix::{ColorMix, ColorMixPolar, HueInterpolation, mix_channels};
 pub use named::{Named, ToNamedError};
 pub use oklab::Oklab;
 pub use oklch::Oklch;
-pub use rgb::{A98Rgb, DisplayP3, LinearRgb, ProphotoRgb, Rec2020};
+pub use rgb::{A98Rgb, DisplayP3, LinearRgb, ProphotoRgb, Rec2020, Srgb};
 pub use rgb_space::RgbSpace;
 pub(crate) use round::{Alpha, Number};
 pub use round::{PerceptualRound, round_dp};
-pub use srgb::Srgb;
 pub use transfer::Transfer;
 pub use wcag::{WcagColorContrast, WcagLevel};
 pub use xyz::{XyzD50, XyzD65};
@@ -98,12 +97,28 @@ macro_rules! color {
 			}
 		}
 
-		impl From<Color> for XyzD65 {
-			fn from(value: Color) -> Self {
-				match value {
+		impl Color {
+			fn convert<T>(self) -> T
+			where
+				$(T: From<$settable>,)+
+				$(T: From<$via_srgb>,)+
+			{
+				match self {
 					$(Color::$settable(c) => c.into(),)+
 					$(Color::$via_srgb(c) => c.into(),)+
 				}
+			}
+		}
+
+		$(impl From<Color> for $settable {
+			fn from(value: Color) -> Self {
+				value.convert()
+			}
+		})+
+
+		impl From<Color> for Hex {
+			fn from(value: Color) -> Self {
+				value.convert()
 			}
 		}
 

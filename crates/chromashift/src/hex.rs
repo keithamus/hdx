@@ -15,7 +15,7 @@ impl Hex {
 	}
 
 	pub fn can_use_3_digit(self) -> bool {
-		let Srgb { red, green, blue, .. } = self.into();
+		let [red, green, blue, _] = self.0.to_be_bytes();
 		!self.has_alpha() && is_shorthand_byte(red) && is_shorthand_byte(green) && is_shorthand_byte(blue)
 	}
 
@@ -52,18 +52,15 @@ impl fmt::Display for Hex {
 
 impl From<Hex> for Srgb {
 	fn from(value: Hex) -> Self {
-		let hex = value.0;
-		let r = ((hex >> 24) & 0xFF) as u8;
-		let g = ((hex >> 16) & 0xFF) as u8;
-		let b = ((hex >> 8) & 0xFF) as u8;
-		let alpha = (((hex & 0xFF) * 100) / 255) as f32;
-		Srgb::new(r, g, b, alpha)
+		let [red, green, blue, alpha] = value.0.to_be_bytes();
+		Srgb::from_u8(red, green, blue, alpha as f32 * 100.0 / 255.0)
 	}
 }
 
 impl From<Srgb> for Hex {
 	fn from(value: Srgb) -> Self {
-		let Srgb { red, green, blue, alpha } = value;
+		let [red, green, blue] = value.to_u8();
+		let alpha = value.alpha;
 		Hex::new(
 			((red as u32) << 24)
 				| ((green as u32) << 16)

@@ -25,8 +25,8 @@ where
 	/// ```
 	/// use chromashift::{Srgb, ColorDistance};
 	///
-	/// let red1 = Srgb::new(255, 0, 0, 100.0);
-	/// let red2 = Srgb::new(254, 1, 1, 100.0);
+	/// let red1 = Srgb::from_u8(255, 0, 0, 100.0);
+	/// let red2 = Srgb::from_u8(254, 1, 1, 100.0);
 	///
 	/// assert!(red1.close_to(red2, 2.0));
 	/// ```
@@ -51,8 +51,8 @@ where
 	/// ```
 	/// use chromashift::{Srgb, ColorDistance};
 	///
-	/// let red = Srgb::new(255, 0, 0, 100.0);
-	/// let blue = Srgb::new(0, 0, 255, 100.0);
+	/// let red = Srgb::from_u8(255, 0, 0, 100.0);
+	/// let blue = Srgb::from_u8(0, 0, 255, 100.0);
 	///
 	/// assert!(red.far_from(blue, 10.0));
 	/// ```
@@ -76,8 +76,8 @@ where
 	/// ```
 	/// use chromashift::{Srgb, Named, ColorDistance};
 	///
-	/// let red = Srgb::new(255, 0, 0, 100.0);
-	/// let green = Srgb::new(0, 255, 0, 100.0);
+	/// let red = Srgb::from_u8(255, 0, 0, 100.0);
+	/// let green = Srgb::from_u8(0, 255, 0, 100.0);
 	///
 	/// assert_eq!(red.delta_e(green).round(), 84.0);
 	///
@@ -185,15 +185,15 @@ mod tests {
 
 	#[test]
 	fn test_identical_colors() {
-		let red = Srgb::new(255, 0, 0, 100.0);
+		let red = Srgb::from_u8(255, 0, 0, 100.0);
 		assert!(red.close_to(red, 0.0));
 		assert_eq!(red.delta_e(red), 0.0);
 	}
 
 	#[test]
 	fn test_very_similar_colors() {
-		let red1 = Srgb::new(255, 0, 0, 100.0);
-		let red2 = Srgb::new(254, 1, 1, 100.0);
+		let red1 = Srgb::from_u8(255, 0, 0, 100.0);
+		let red2 = Srgb::from_u8(254, 1, 1, 100.0);
 
 		assert!(red1.close_to(red2, 2.0));
 		assert!(red1.delta_e(red2) < 2.0);
@@ -201,8 +201,8 @@ mod tests {
 
 	#[test]
 	fn test_different_colors() {
-		let red = Srgb::new(255, 0, 0, 100.0);
-		let blue = Srgb::new(0, 0, 255, 100.0);
+		let red = Srgb::from_u8(255, 0, 0, 100.0);
+		let blue = Srgb::from_u8(0, 0, 255, 100.0);
 
 		assert!(!red.close_to(blue, 10.0));
 		assert!(red.delta_e(blue) > 40.0);
@@ -210,7 +210,7 @@ mod tests {
 
 	#[test]
 	fn test_cross_color_space_comparison() {
-		let red_srgb = Srgb::new(255, 0, 0, 100.0);
+		let red_srgb = Srgb::from_u8(255, 0, 0, 100.0);
 		let red_hsl = Hsl::new(0.0, 100.0, 50.0, 100.0);
 
 		// These should be very close (same red color in different spaces)
@@ -219,8 +219,8 @@ mod tests {
 
 	#[test]
 	fn test_tolerance_levels() {
-		let color1 = Srgb::new(100, 100, 100, 100.0);
-		let color2 = Srgb::new(110, 105, 95, 100.0);
+		let color1 = Srgb::from_u8(100, 100, 100, 100.0);
+		let color2 = Srgb::from_u8(110, 105, 95, 100.0);
 
 		let distance = color1.delta_e(color2);
 
@@ -231,8 +231,8 @@ mod tests {
 
 	#[test]
 	fn test_alpha_ignored_in_distance() {
-		let color1 = Srgb::new(255, 0, 0, 100.0);
-		let color2 = Srgb::new(255, 0, 0, 50.0);
+		let color1 = Srgb::from_u8(255, 0, 0, 100.0);
+		let color2 = Srgb::from_u8(255, 0, 0, 50.0);
 
 		// Alpha should not affect color distance calculation
 		assert!(color1.close_to(color2, 0.1));

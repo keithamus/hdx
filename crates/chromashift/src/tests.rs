@@ -150,7 +150,7 @@ fn test_combos(
 #[test]
 fn rebeccapurple() {
 	test_combos(
-		Srgb::new(102, 51, 153, 100.0),
+		Srgb::from_u8(102, 51, 153, 100.0),
 		LinearRgb::new(0.13286832, 0.03310476, 0.31854683, 100.0),
 		Hex::new(0x663399FF),
 		Hsl::new(270.0, 50.0, 40.0, 100.0),
@@ -169,7 +169,7 @@ fn rebeccapurple() {
 #[test]
 fn cornflower_blue() {
 	test_combos(
-		Srgb::new(100, 149, 237, 100.0),
+		Srgb::from_u8(100, 149, 237, 100.0),
 		LinearRgb::new(0.12743768, 0.30054379, 0.84687323, 100.0),
 		Hex::new(0x6495EDFF),
 		Hsl::new(218.54015, 79.19075, 66.07843, 100.0),
@@ -188,7 +188,7 @@ fn cornflower_blue() {
 #[test]
 fn hex_123() {
 	test_combos(
-		Srgb::new(17, 34, 51, 100.0),
+		Srgb::from_u8(17, 34, 51, 100.0),
 		LinearRgb::new(0.00560539, 0.01599629, 0.03310477, 100.0),
 		Hex::new(0x112233FF),
 		Hsl::new(210.0, 50.0, 13.333333, 100.0),
@@ -215,8 +215,9 @@ fn text_hex_display() {
 
 #[test]
 fn display_serialises_per_css_color_4() {
-	assert_eq!(format!("{}", Srgb::new(218, 165, 32, 100.0)), "rgb(218, 165, 32)");
-	assert_eq!(format!("{}", Srgb::new(29, 164, 192, 95.0)), "rgba(29, 164, 192, 0.95)");
+	assert_eq!(format!("{}", Srgb::from_u8(218, 165, 32, 100.0)), "rgb(218, 165, 32)");
+	assert_eq!(format!("{}", Srgb::from_u8(29, 164, 192, 95.0)), "rgba(29, 164, 192, 0.95)");
+	assert_eq!(format!("{}", Srgb::new(1.2, -0.1, 0.5, 50.0)), "color(srgb 1.2 -0.1 0.5 / 0.5)");
 	assert_eq!(format!("{}", Hsl::new(270.0, 50.0, 40.0, 50.0)), "hsl(270 50% 40% / 0.5)");
 	assert_eq!(format!("{}", Hwb::new(20.0, 20.0, 30.0, 50.0)), "hwb(20 20% 30% / 0.5)");
 	assert_eq!(format!("{}", Hsv::new(210.0, 66.7, 20.0, 50.0)), "hsv(210 66.7 20 / 0.5)");
@@ -251,11 +252,11 @@ fn display_serialises_f32_channels_without_float_noise() {
 
 #[test]
 fn text_hex_alpha_conversion() {
-	assert_eq!(format!("{}", Hex::from(Srgb::new(255, 255, 255, 0.0))), "#fff0");
-	assert_eq!(Hex::from(Srgb::new(255, 255, 255, 0.0)), Hex::new(0xFFFFFF00));
-	assert_eq!(format!("{}", Hex::from(Srgb::new(255, 255, 255, 50.0))), "#ffffff80");
-	assert_eq!(Hex::from(Srgb::new(255, 255, 255, 50.0)), Hex::new(0xFFFFFF80));
-	let original = Srgb::new(255, 255, 255, 50.0);
+	assert_eq!(format!("{}", Hex::from(Srgb::from_u8(255, 255, 255, 0.0))), "#fff0");
+	assert_eq!(Hex::from(Srgb::from_u8(255, 255, 255, 0.0)), Hex::new(0xFFFFFF00));
+	assert_eq!(format!("{}", Hex::from(Srgb::from_u8(255, 255, 255, 50.0))), "#ffffff80");
+	assert_eq!(Hex::from(Srgb::from_u8(255, 255, 255, 50.0)), Hex::new(0xFFFFFF80));
+	let original = Srgb::from_u8(255, 255, 255, 50.0);
 	let hex = Hex::from(original);
 	let round_tripped = Srgb::from(hex);
 	assert!(
@@ -264,9 +265,9 @@ fn text_hex_alpha_conversion() {
 		original,
 		round_tripped
 	);
-	assert_eq!(Hex::from(Srgb::new(0, 0, 0, 25.0)), Hex::new(0x00000040));
-	assert_eq!(Hex::from(Srgb::new(0, 0, 0, 75.0)), Hex::new(0x000000BF));
-	assert_eq!(Hex::from(Srgb::new(0, 0, 0, 100.0)), Hex::new(0x000000FF));
+	assert_eq!(Hex::from(Srgb::from_u8(0, 0, 0, 25.0)), Hex::new(0x00000040));
+	assert_eq!(Hex::from(Srgb::from_u8(0, 0, 0, 75.0)), Hex::new(0x000000BF));
+	assert_eq!(Hex::from(Srgb::from_u8(0, 0, 0, 100.0)), Hex::new(0x000000FF));
 }
 
 #[test]
@@ -395,7 +396,7 @@ fn in_gamut_hsl_hwb() {
 #[test]
 fn in_gamut_always_in_gamut_types() {
 	// Srgb (u8), Hex (u32), and Hsv (clamps in constructor) are always in gamut
-	assert!(Srgb::new(255, 0, 128, 100.0).in_gamut());
+	assert!(Srgb::from_u8(255, 0, 128, 100.0).in_gamut());
 	assert!(Hex::new(0xFF00FFFF).in_gamut());
 	assert!(Hsv::new(180.0, 100.0, 100.0, 100.0).in_gamut());
 }
@@ -495,7 +496,7 @@ fn test_map_to_gamut_okclh_hex() {
 #[test]
 fn named_try_from_other_spaces() {
 	let named = Named::Rebeccapurple;
-	let srgb = Srgb::new(102, 51, 153, 100.0);
+	let srgb = Srgb::from_u8(102, 51, 153, 100.0);
 	assert_eq!(Named::try_from(srgb).unwrap(), named);
 	assert_eq!(Named::try_from(Hex::new(0x663399FF)).unwrap(), named);
 	assert_eq!(Named::try_from(Hsl::new(270.0, 50.0, 40.0, 100.0)).unwrap(), named);
@@ -556,7 +557,7 @@ fn color_space_contains() {
 #[test]
 fn in_gamut_of_srgb_for_srgb_native_colors() {
 	// sRGB-native Color variants should be in the sRGB gamut.
-	assert!(Color::Srgb(Srgb::new(255, 0, 0, 100.0)).in_gamut_of(ColorSpace::Srgb));
+	assert!(Color::Srgb(Srgb::from_u8(255, 0, 0, 100.0)).in_gamut_of(ColorSpace::Srgb));
 	assert!(Color::Hex(Hex::new(0xFF0000FF)).in_gamut_of(ColorSpace::Srgb));
 	assert!(Color::Named(Named::Red).in_gamut_of(ColorSpace::Srgb));
 	assert!(Color::Hsl(Hsl::new(0.0, 100.0, 50.0, 100.0)).in_gamut_of(ColorSpace::Srgb));
@@ -579,7 +580,7 @@ fn in_gamut_of_display_p3_wider_than_srgb() {
 #[test]
 fn in_gamut_of_srgb_color_fits_all_wider_gamuts() {
 	// Plain sRGB red should be in gamut for all wider RGB spaces.
-	let red = Color::Srgb(Srgb::new(255, 0, 0, 100.0));
+	let red = Color::Srgb(Srgb::from_u8(255, 0, 0, 100.0));
 	assert!(red.in_gamut_of(ColorSpace::Srgb));
 	assert!(red.in_gamut_of(ColorSpace::DisplayP3));
 	assert!(red.in_gamut_of(ColorSpace::A98Rgb));
@@ -655,22 +656,22 @@ fn transfer_functions_round_trip_through_zero() {
 
 #[test]
 fn wide_gamut_greys_stay_grey_in_srgb() {
-	assert_eq!(Srgb::from(DisplayP3::new(0.5, 0.5, 0.5, 100.0)), Srgb::new(128, 128, 128, 100.0));
-	assert_eq!(Srgb::from(DisplayP3::new(1.0, 1.0, 1.0, 100.0)), Srgb::new(255, 255, 255, 100.0));
-	assert_eq!(Srgb::from(Rec2020::new(1.0, 1.0, 1.0, 100.0)), Srgb::new(255, 255, 255, 100.0));
-	assert_eq!(Srgb::from(ProphotoRgb::new(1.0, 1.0, 1.0, 100.0)), Srgb::new(255, 255, 255, 100.0));
+	assert_eq!(Srgb::from(DisplayP3::new(0.5, 0.5, 0.5, 100.0)).to_u8(), [128, 128, 128]);
+	assert_eq!(Srgb::from(DisplayP3::new(1.0, 1.0, 1.0, 100.0)).to_u8(), [255, 255, 255]);
+	assert_eq!(Srgb::from(Rec2020::new(1.0, 1.0, 1.0, 100.0)).to_u8(), [255, 255, 255]);
+	assert_eq!(Srgb::from(ProphotoRgb::new(1.0, 1.0, 1.0, 100.0)).to_u8(), [255, 255, 255]);
 }
 
 #[test]
 #[cfg(not(feature = "rec2020-bt1886"))]
 fn rec2020_decodes_with_the_bt2020_oetf_by_default() {
-	assert_eq!(Srgb::from(Rec2020::new(0.5, 0.5, 0.5, 100.0)), Srgb::new(139, 139, 139, 100.0));
+	assert_eq!(Srgb::from(Rec2020::new(0.5, 0.5, 0.5, 100.0)).to_u8(), [139, 139, 139]);
 }
 
 #[test]
 #[cfg(feature = "rec2020-bt1886")]
 fn rec2020_decodes_with_the_bt1886_gamma_when_enabled() {
-	assert_eq!(Srgb::from(Rec2020::new(0.5, 0.5, 0.5, 100.0)), Srgb::new(120, 120, 120, 100.0));
+	assert_eq!(Srgb::from(Rec2020::new(0.5, 0.5, 0.5, 100.0)).to_u8(), [120, 120, 120]);
 }
 
 #[test]
@@ -688,4 +689,32 @@ fn srgb_transfer_matches_wcag_formula_for_every_8_bit_channel() {
 		let wcag = if value <= 0.03928 { value / 12.92 } else { ((value + 0.055) / 1.055).powf(2.4) };
 		assert_eq!(Transfer::Srgb.decode(value), wcag, "channel {channel}");
 	}
+}
+
+#[test]
+fn hex_alpha_round_trips_every_byte_through_color() {
+	for alpha in 0..=255u32 {
+		let hex = Hex::new(0xff00ff00 | alpha);
+		assert_eq!(Hex::from(Color::from(hex)), hex, "alpha byte {alpha}");
+	}
+}
+
+#[test]
+fn srgb_serialises_8_bit_alpha_with_legacy_rule() {
+	assert_eq!(Srgb::from(Hex::new(0xff00ffed)).to_string(), "rgba(255, 0, 255, 0.93)");
+	assert_eq!(Srgb::from(Hex::new(0xff00ffee)).to_string(), "rgba(255, 0, 255, 0.933)");
+	assert_eq!(Srgb::from_u8(255, 0, 255, 12.3456).to_string(), "rgba(255, 0, 255, 0.123456)");
+}
+
+#[test]
+fn achromatic_colours_have_zero_hue_after_conversion() {
+	for color in [Color::from(Named::White), Color::from(Hex::new(0x777777ff)), Color::from(Named::Black)] {
+		assert_eq!(Hsl::from(color).hue, 0.0, "{color} hsl");
+		assert_eq!(Hsl::from(color).saturation, 0.0, "{color} hsl");
+		assert_eq!(Hwb::from(color).hue, 0.0, "{color} hwb");
+		assert_eq!(Hsv::from(color).hue, 0.0, "{color} hsv");
+		assert_eq!(Lch::from(color).hue, 0.0, "{color} lch");
+		assert_eq!(Oklch::from(color).hue, 0.0, "{color} oklch");
+	}
+	assert_eq!(Hsl::from(Oklch::new(1.0, 0.0, 0.0, 100.0)).to_string(), "hsl(0 0% 100%)");
 }
