@@ -17,6 +17,134 @@ FAIL anchor/0003
 FAIL anchor/0004
 -@position-try --empty{}
 
+FAIL calc/0001
+-a{margin:calc(1px + 2px)calc(4px - 1px)}
++a{margin:3px}
+
+FAIL calc/0003
+-a{width:calc(calc(100% - 20px) + 10px)}
++a{width:calc(100% - 10px)}
+
+FAIL calc/0004
+-a{width:calc(100px*2)}
++a{width:200px}
+
+FAIL calc/0005
+-a{width:calc(50px + 50px)}
++a{width:100px}
+
+FAIL calc/0006
+-a{width:calc(((75.37% - 63.5px) - 900px) + (2*100px))}
++a{width:calc(75.37% - 763.5px)}
+
+FAIL calc/0007
+-.a{width:calc(100%/3)}.b{width:calc(100%/6)}.c{width:calc(100%/7)}.d{width:calc(100%/9)}.e{width:calc(100%/11)}.f{width:calc(100%/13)}.g{width:calc(100%/14)}
++.a{width:33.3333%}.b{width:16.6667%}.c{width:14.2857%}.d{width:11.1111%}.e{width:9.09091%}.f{width:7.69231%}.g{width:7.14286%}
+
+FAIL calc/0008
+-a{width:calc(100px*1)}
++a{width:100px}
+
+FAIL calc/0009
+-a{width:calc(100px + 0px)}
++a{width:100px}
+
+FAIL calc/0010
+-a{margin-left:calc(-1*(-10px));margin-right:calc(-10*(-10px))}
++a{margin-left:10px;margin-right:100px}
+
+FAIL calc/0011
+-a{width:calc(1/(1/50px))}
++a{width:50px}
+
+FAIL calc/0012
+-a{width:calc(calc(10px + 20px) + calc(30px + 40px))}
++a{width:100px}
+
+FAIL calc/0013
+-a{width:calc(2*3*10px)}
++a{width:60px}
+
+FAIL calc/0014
+-a{width:calc(2*(50px + 25px))}
++a{width:150px}
+
+FAIL calc/0015
+-a{width:calc(50% + 25%)}
++a{width:75%}
+
+FAIL calc/0016
+-a{line-height:calc(10/2)}
++a{line-height:5}
+
+FAIL calc/0017
+-a{width:calc(50px - 50px)}
++a{width:0}
+
+FAIL calc/0018
+-a{width:calc(100px*0)}
++a{width:0}
+
+FAIL calc/0019
+-a{width:calc(pi*100px)}
++a{width:314.159px}
+
+FAIL calc/0020
+-a{width:calc(e*100px)}
++a{width:271.828px}
+
+FAIL calc/0021
+-a{width:calc(1in + 0px)}
++a{width:96px}
+
+FAIL calc/0022
+-a{width:calc(100px)}
++a{width:100px}
+
+FAIL calc/0023
+-a{width:calc(100px/4)}
++a{width:25px}
+
+FAIL calc/0024
+-a{width:calc(100% - 50px + 0%)}
++a{width:calc(100% - 50px)}
+
+FAIL calc/0026
+-li{transition-delay:calc(sibling-index()*.25s)}
++li{transition-delay:calc(sibling-index()/4s)}
+
+FAIL calc/0027
+-a{width:calc(5px - 10px);margin:calc(5px - 10px)}
++a{width:0;margin:-5px}
+
+FAIL calc/0028
+-a{width:calc(-.5rem);margin:calc(-.5rem)}
++a{width:0;margin:-.5rem}
+
+FAIL calc/0029
+-a{width:calc(5px - 10px)}b{width:calc(-.5rem)}
++a,b{width:0}
+
+FAIL calc/0030
+-.a{width:calc(100%/1)}.b{width:calc(100%/2)}.c{width:calc(100%/4)}.d{width:calc(100%/5)}.e{width:calc(100%/8)}.f{width:calc(100%/10)}.g{width:calc(100%/16)}
++.a{width:100%}.b{width:50%}.c{width:25%}.d{width:20%}.e{width:12.5%}.f{width:10%}.g{width:6.25%}
+
+FAIL calc/0031
+-a{transition-duration:calc(1s - .2s)}
++a{transition-duration:.8s}
+
+FAIL calc/0032
+-a{margin:calc(100% - (25px - 4px) - 2px)}
++a{margin:calc(100% - 23px)}
+
+FAIL calc/0033
+-a{margin:calc((100% - 5em)/2)}
++a{margin:calc(50% - 2.5em)}
+
+FAIL calc/0034
+-a{margin:calc(-1*(1rem + 16px)/2)}
++a{margin:calc(-.5rem - 8px)}
+
 FAIL charset/0005
 -@charset "gbk";.foo:before{content:""}
 +@charset "gbk";.foo:before{content:"\e61d"}
@@ -109,16 +237,16 @@ FAIL container/0006
 +@container sidebar (width>=700px){a{color:red}}
 
 FAIL duplicates/0001
--a{color:red;color:blue}
-+a{color:#00f}
+-a{color:red;color:tan}
++a{color:tan}
 
 FAIL duplicates/0002
--a{color:red}a{color:blue}
-+a{color:#00f}
+-a{color:red}a{color:tan}
++a{color:tan}
 
 FAIL duplicates/0003
--a{color:red;font-size:16px}b{margin:0}a{color:blue;font-size:16px}
-+b{margin:0}a{color:#00f;font-size:16px}
+-a{color:red;font-size:16px}b{margin:0}a{color:tan;font-size:16px}
++b{margin:0}a{color:tan;font-size:16px}
 
 FAIL duplicates/0004
 -h1,h2,h3,h4,h5,h5{color:red}
@@ -133,8 +261,8 @@ FAIL duplicates/0007
 +a{color:red;font-size:16px}
 
 FAIL duplicates/0008
--a{-webkit-transform:rotate(45deg);transform:rotate(45deg)}
-+a{transform:rotate(45deg)}
+-p{scrollbar-gutter:auto;scrollbar-gutter:stable;scrollbar-gutter:stable both-edges}
++p{scrollbar-gutter:stable both-edges}
 
 FAIL duplicates/0009
 -.nav .item,.footer,.nav .item{color:red}
@@ -177,8 +305,8 @@ FAIL duplicates/0022
 +h2:before{content:"j"}
 
 FAIL duplicates/0024
--p{scrollbar-gutter:auto;scrollbar-gutter:stable;scrollbar-gutter:stable both-edges}
-+p{scrollbar-gutter:stable both-edges}
+-a{border:1px solid tan;border:1px solid var(--x);color:var(--a);color:red;color:var(--y);margin:var(--z);margin:10px;margin:var(--z)}
++a{border:1px solid var(--x);color:var(--y);margin:var(--z)}
 
 FAIL escaping/0013
 -[href="#"],[href="/"],[href="file.html"],[href=https\:\/\/example\.com]{color:red}
@@ -280,6 +408,38 @@ FAIL import/0005
 -@import url("foo.css") layer(base) supports(foo:bar);
 +@import"foo.css"layer(base)supports(foo:bar);
 
+FAIL initial/0001
+-a{background-clip:border-box}
++a{background-clip:initial}
+
+FAIL initial/0002
+-a{background-origin:padding-box}
++a{background-origin:initial}
+
+FAIL initial/0003
+-a{border-collapse:separate}
++a{border-collapse:initial}
+
+FAIL initial/0004
+-p{box-sizing:content-box}
++p{box-sizing:initial}
+
+FAIL initial/0005
+-a{mask-clip:border-box}
++a{mask-clip:initial}
+
+FAIL initial/0006
+-a{mask-origin:border-box}
++a{mask-origin:initial}
+
+FAIL initial/0007
+-a{vertical-align:baseline}
++a{vertical-align:initial}
+
+FAIL initial/0008
+-a{writing-mode:horizontal-tb}
++a{writing-mode:initial}
+
 FAIL keyframes/0001
 -@keyframes fade{0%{opacity:0}100%{opacity:1}}
 +@keyframes fade{0%{opacity:0}to{opacity:1}}
@@ -287,6 +447,34 @@ FAIL keyframes/0001
 FAIL keyframes/0002
 -@keyframes fade{from{opacity:0}50%{opacity:.5}100%{opacity:1}}
 +@keyframes fade{0%{opacity:0}50%{opacity:.5}to{opacity:1}}
+
+FAIL lang/0001
+-:lang("fr"){color:red}
++:lang(fr){color:red}
+
+FAIL lang/0002
+-:lang(de),:lang(ja){color:red}
++:lang(de,ja){color:red}
+
+FAIL lang/0003
+-:lang(DE){color:red}
++:lang(de){color:red}
+
+FAIL lang/0004
+-:lang("*-latn"){color:red}
++:lang(\*-latn){color:red}
+
+FAIL lang/0005
+-:lang(\*-\*-\*,fr){color:red}
++:lang("*-*-*",fr){color:red}
+
+FAIL lang/0006
+-:lang(tr) .foo em,:lang(zh-hant) .foo em{color:red}
++:lang(tr,zh-hant) .foo em{color:red}
+
+FAIL lang/0007
+-:lang(ar) .foo em{color:red}:lang(ru) .foo em{color:red}
++:lang(ar,ru) .foo em{color:red}
 
 FAIL layer/0001
 -@layer utilities;@layer utilities;a{color:red}
@@ -332,6 +520,10 @@ FAIL media/0010
 -@custom-media --modern (color),(hover);@media (--modern){a{color:red}}
 +@custom-media --modern (color),(hover);@media(--modern){a{color:red}}
 
+FAIL media/0013
+-@media(prefers-color-scheme:dark){a{color:red}}@media(prefers-color-scheme:dark){a{color:red}}
++@media(prefers-color-scheme:dark){a{color:red}}
+
 FAIL merging/0001
 -a{color:red}a{font-size:16px}
 +a{color:red;font-size:16px}
@@ -367,6 +559,26 @@ FAIL merging/0018
 FAIL merging/0019
 -.x{margin:1px}.y{color:red}.x{padding:1px}
 +.y{color:red}.x{margin:1px;padding:1px}
+
+FAIL merging/0020
+-.a{color:red}.a .x{color:tan}.b{color:red;padding:1px}.b .y{color:gold}
++.a{color:red;.x{color:tan}}.b{color:red;padding:1px;.y{color:gold}}
+
+FAIL merging/0021
+-.a{color:red!important}.b{color:tan}.a{color:tan}
++.a{color:red!important}.b{color:tan}
+
+FAIL merging/0022
+-.a{color:red}.b{color:gold}.a{color:tan!important}
++.b{color:gold}.a{color:tan!important}
+
+FAIL merging/0023
+-.a{color:red}.b{color:gold!important}.a{color:tan}
++.b{color:gold!important}.a{color:tan}
+
+FAIL merging/0024
+-.a{color:red!important}.b{color:gold!important}.a{color:tan!important}
++.b{color:gold!important}.a{color:tan!important}
 
 FAIL nesting/0007
 -.foo{color:red;&.bar{margin:0}}
@@ -456,6 +668,18 @@ FAIL nesting/0032
 -:is(#a,.b),.c{.d{color:red}}
 +#a,.b,.c{.d{color:red}}
 
+FAIL nesting/0035
+-.foo{.bar{input{&:active{&:hover{color:red}}}}}
++.foo .bar input:active:hover{color:red}
+
+FAIL nesting/0036
+-.a{color:red}.a .b{color:tan}
++.a{color:red;.b{color:tan}}
+
+FAIL nesting/0037
+-.a{color:red}.a .x{color:tan}.b{color:red;padding:1px}.b .x{color:tan}
++.a,.b{color:red;.x{color:tan}}.b{padding:1px}
+
 FAIL property/0002
 -@property --size{syntax:"<length>";inherits:true;initial-value:16px}
 +@property --size{syntax:"<length>";initial-value:16px}
@@ -470,6 +694,10 @@ FAIL property/0006
 FAIL property/0007
 -@property --foo{syntax:"<length> | <percentage>";inherits:false;initial-value:16px}
 +@property --foo{syntax:"<length>|<percentage>";inherits:false;initial-value:16px}
+
+FAIL property/0008
+-@property --brand-color{syntax:"<color>";inherits:false;initial-value:#000}a{--brand-color:rgb(0 0 0)}
++@property --brand-color{syntax:"<color>";inherits:false;initial-value:#000}a{--brand-color:#000}
 
 FAIL selectors-advanced/0001
 -:is(a,b){color:red}
@@ -647,6 +875,10 @@ FAIL shorthands-unsafe/0008
 -.a{font-kerning:none}.b{font-style:italic;font-weight:bold;font-size:16px;line-height:1.5;font-family:Arial,sans-serif}
 +.a{font-kerning:none}.b{font-style:italic;font-weight:700;font-size:16px;line-height:1.5;font-family:Arial,sans-serif}
 
+FAIL shorthands-unsafe/0010
+-.a{mask-border:url(mask.png)25/10px round}.b{mask-image:url(mask.svg);mask-position:center;mask-size:cover;mask-repeat:no-repeat;mask-origin:border-box;mask-clip:border-box;mask-composite:add;mask-mode:alpha}
++.a{mask-border:url(mask.png)25/10px round}.b{mask-image:url(mask.svg);mask-position:center;mask-size:cover;mask-repeat:no-repeat;mask-origin:initial;mask-clip:initial;mask-composite:add;mask-mode:alpha}
+
 FAIL shorthands/0001
 -a{overflow-x:hidden;overflow-y:hidden}
 +a{overflow:hidden}
@@ -765,7 +997,7 @@ FAIL shorthands/0033
 
 FAIL shorthands/0034
 -@property --pt{syntax:"<length>";inherits:false;initial-value:0px}@property --pr{syntax:"<length>";inherits:false;initial-value:0px}@property --pb{syntax:"<length>";inherits:false;initial-value:0px}@property --pl{syntax:"<length>";inherits:false;initial-value:0px}a{padding-top:var(--pt);padding-right:var(--pr);padding-bottom:var(--pb);padding-left:var(--pl)}
-+@property --pt{syntax:"<length>";inherits:false;initial-value:0px}@property --pr{syntax:"<length>";inherits:false;initial-value:0px}@property --pb{syntax:"<length>";inherits:false;initial-value:0px}@property --pl{syntax:"<length>";inherits:false;initial-value:0px}a{padding:var(--pt) var(--pr) var(--pb) var(--pl)}
++@property --pt{syntax:"<length>";inherits:false;initial-value:0px}@property --pr{syntax:"<length>";inherits:false;initial-value:0px}@property --pb{syntax:"<length>";inherits:false;initial-value:0px}@property --pl{syntax:"<length>";inherits:false;initial-value:0px}a{padding:var(--pt)var(--pr)var(--pb)var(--pl)}
 
 FAIL shorthands/0035
 -@property --bw{syntax:"<length>";inherits:false;initial-value:0px}@property --bs{syntax:"<custom-ident>";inherits:false;initial-value:none}@property --bc{syntax:"<color>";inherits:false;initial-value:red}a{border-width:var(--bw);border-style:var(--bs);border-color:var(--bc)}
@@ -816,8 +1048,8 @@ FAIL shorthands/0053
 +a{padding:10px 20px 10px 10px}b{padding:10000px;padding-right:200px}c{padding:20px 10px 10px}d{padding:1px 4px 3px}e{padding:inherit;padding-right:20px}f{padding:var(--padding);padding-right:20px}g{padding:10px;padding-right:20px!important}
 
 FAIL shorthands/0054
--a{border-top:1px solid red;border-right:2px dotted blue;border-bottom:1px solid red;border-left:2px dotted blue}
-+a{border-width:1px 2px;border-style:solid dotted;border-color:red blue}
+-a{border-top:1px solid red;border-right:2px dotted tan;border-bottom:1px solid red;border-left:2px dotted tan}
++a{border-width:1px 2px;border-style:solid dotted;border-color:red tan}
 
 FAIL shorthands/0055
 -a{column-width:auto;column-count:3;column-height:auto}
@@ -826,6 +1058,10 @@ FAIL shorthands/0055
 FAIL shorthands/0056
 -a{mask-position:10px;mask-image:url(mask.svg);mask-repeat:repeat-x}
 +a{mask:url(mask.svg)10px repeat-x}
+
+FAIL shorthands/0057
+-a{border-top-color:red;border-right-color:blue;border-bottom-color:red;border-left-color:blue}
++a{border-color:red#00f}
 
 FAIL supports/0001
 -@supports(hanging-punctuation:first){a{hanging-punctuation:first}}
@@ -896,20 +1132,20 @@ FAIL values/0003
 +a{background:url(image.png)}
 
 FAIL values/0014
--a{width:calc(calc(100% - 20px) + 10px)}
-+a{width:calc(100% - 10px)}
+-.a{background-image:url("no-spaces.png")}.b{mask-image:url("one space.svg")}.c{background-image:url("more than one space.png")}
++.a{background-image:url(no-spaces.png)}.b{mask-image:url(one\ space.svg)}.c{background-image:url("more than one space.png")}
 
 FAIL values/0015
--a{width:calc(100px*2)}
-+a{width:200px}
+-a{background-image:url(./folder/file.png)}
++a{background-image:url(folder/file.png)}
 
 FAIL values/0016
--a{width:calc(50px + 50px)}
-+a{width:100px}
+-.a{quotes:""""}.b{color:red}.c{quotes:""""""""}.d{color:tan}.e{quotes:none}
++.a{quotes:none}.b{color:red}.c{quotes:none}.d{color:tan}.e{quotes:none}
 
 FAIL values/0017
--a{width:calc(((75.37% - 63.5px) - 900px) + (2*100px))}
-+a{width:calc(75.37% - 763.5px)}
+-.a{quotes:"a";color:red}.b{quotes:"a" "b" "c";color:tan}
++.a{color:red}.b{color:tan}
 
 FAIL values/0019
 -a{grid-template-areas:"head  head""nav   main""foot  ...."}
@@ -980,140 +1216,80 @@ FAIL values/0038
 +a{background-repeat:repeat-y}
 
 FAIL values/0039
--a{width:calc(100px*1)}
-+a{width:100px}
+-.a{background-position:left}.b{background-position:center}.c{background-position:bottom}.d{background-position:left top}.e{background-position:center center}.f{background-position:right bottom}.g{background-position:10px top}.h{background-position:right 10% bottom 20%}
++.a{background-position:0}.b{background-position:50%}.c{background-position:bottom}.d{background-position:0 0}.e{background-position:50%}.f{background-position:100% 100%}.g{background-position:top 10px}.h{background-position:right 10% bottom 20%}
 
 FAIL values/0040
--a{width:calc(100px + 0px)}
-+a{width:100px}
+-.a{transition-duration:0s}.b{transition:color 99ms}.c{transition:color .1s}.d{transition-duration:2s}.e{transition-delay:1234ms}
++.a{transition-duration:0s}.b{transition:color 99ms}.c{transition:color .1s}.d{transition-duration:2s}.e{transition-delay:1.234s}
 
 FAIL values/0041
--a{margin-left:calc(-1*(-10px));margin-right:calc(-10*(-10px))}
-+a{margin-left:10px;margin-right:100px}
+-a{background-color:initial}
++a{background-color:#0000}
 
 FAIL values/0042
--a{width:calc(1/(1/50px))}
-+a{width:50px}
+-a{margin:initial}
++a{margin:0}
 
 FAIL values/0043
--a{width:calc(calc(10px + 20px) + calc(30px + 40px))}
-+a{width:100px}
-
-FAIL values/0044
--a{width:calc(2*3*10px)}
-+a{width:60px}
+-a{z-index:initial}
++a{z-index:auto}
 
 FAIL values/0045
--a{width:calc(2*(50px + 25px))}
-+a{width:150px}
+-a{opacity:initial}
++a{opacity:1}
 
 FAIL values/0046
--a{width:calc(50% + 25%)}
-+a{width:75%}
+-a{width:max(10px,20px)}
++a{width:20px}
 
 FAIL values/0047
--a{line-height:calc(10/2)}
-+a{line-height:5}
-
-FAIL values/0048
--a{width:calc(50px - 50px)}
-+a{width:0}
-
-FAIL values/0049
--a{width:calc(100px*0)}
-+a{width:0}
+-a{width:clamp(10px,10px,10px)}
++a{width:10px}
 
 FAIL values/0050
--a{width:calc(pi*100px)}
-+a{width:314.159px}
-
-FAIL values/0051
--a{width:calc(e*100px)}
-+a{width:271.828px}
+-a{background:url("8-).gif")}
++a{background:url(8-\).gif)}
 
 FAIL values/0052
 -a{width:min(10px,20px)}
 +a{width:10px}
 
 FAIL values/0053
--a{width:calc(1in + 0px)}
-+a{width:96px}
-
-FAIL values/0054
--a{width:calc(100px)}
-+a{width:100px}
-
-FAIL values/0055
--a{width:calc(100px/4)}
-+a{width:25px}
-
-FAIL values/0056
--a{width:calc(100% - 50px + 0%)}
-+a{width:calc(100% - 50px)}
-
-FAIL values/0057
--a{--brand-color:rgb(0 0 0)}
-+a{--brand-color: rgb(0 0 0)}
-
-FAIL values/0058
 -a{--foo:;color:var(--foo,red)}
 +a{--foo: ;color:var(--foo,red)}
 
-FAIL values/0062
--a{width:clamp(10px,10px,10px)}
-+a{width:10px}
+FAIL values/0054
+-a{--brand-color:rgb(0 0 0)}
++a{--brand-color: rgb(0 0 0)}
 
-FAIL values/0063
--a{width:max(10px,20px)}
-+a{width:20px}
+FAIL values/0055
+-a{hyphenate-limit-chars:auto auto auto}
++a{hyphenate-limit-chars:auto}
 
-FAIL values/0064
--a{opacity:initial}
-+a{opacity:1}
+FAIL values/0056
+-a{hyphenate-limit-chars:auto auto}
++a{hyphenate-limit-chars:auto}
 
-FAIL values/0066
--a{z-index:initial}
-+a{z-index:auto}
+FAIL values/0057
+-a{hyphenate-limit-chars:initial}
++a{hyphenate-limit-chars:auto}
 
-FAIL values/0067
--a{margin:initial}
-+a{margin:0}
+FAIL vendors/0001
+-a{-webkit-transform:rotate(45deg);-moz-transform:rotate(45deg);-ms-transform:rotate(45deg);-o-transform:rotate(45deg);transform:rotate(45deg)}
++a{transform:rotate(45deg)}
 
-FAIL values/0068
--a{background-color:initial}
-+a{background-color:#0000}
+FAIL vendors/0002
+-a{-webkit-box-flex:1;-ms-flex:1;flex:1}
++a{flex:1}
 
-FAIL values/0070
--@property --brand-color{syntax:"<color>";inherits:false;initial-value:#000}a{--brand-color:rgb(0 0 0)}
-+@property --brand-color{syntax:"<color>";inherits:false;initial-value:#000}a{--brand-color:#000}
-
-FAIL values/0071
--.a{transition-duration:0s}.b{transition:color 99ms}.c{transition:color .1s}.d{transition-duration:2s}.e{transition-delay:1234ms}
-+.a{transition-duration:0s}.b{transition:color 99ms}.c{transition:color .1s}.d{transition-duration:2s}.e{transition-delay:1.234s}
-
-FAIL values/0072
--.a{background-position:left}.b{background-position:center}.c{background-position:bottom}.d{background-position:left top}.e{background-position:center center}.f{background-position:right bottom}.g{background-position:10px top}.h{background-position:right 10% bottom 20%}
-+.a{background-position:0}.b{background-position:50%}.c{background-position:bottom}.d{background-position:0 0}.e{background-position:50%}.f{background-position:100% 100%}.g{background-position:top 10px}.h{background-position:right 10% bottom 20%}
-
-FAIL values/0074
--.a{quotes:"a";color:red}.b{quotes:"a" "b" "c";color:tan}
-+.a{color:red}.b{color:tan}
-
-FAIL values/0075
--.a{quotes:""""}.b{color:red}.c{quotes:""""""""}.d{color:tan}.e{quotes:none}
-+.a{quotes:none}.b{color:red}.c{quotes:none}.d{color:tan}.e{quotes:none}
-
-FAIL values/0076
--a{background-image:url(./folder/file.png)}
-+a{background-image:url(folder/file.png)}
-
-FAIL values/0077
--.a{background-image:url("no-spaces.png")}.b{mask-image:url("one space.svg")}.c{background-image:url("more than one space.png")}
-+.a{background-image:url(no-spaces.png)}.b{mask-image:url(one\ space.svg)}.c{background-image:url("more than one space.png")}
+FAIL vendors/0003
+-hr{-webkit-box-sizing:border-box;-moz-box-sizing:border-box;-ms-box-sizing:border-box;-o-box-sizing:border-box;box-sizing:border-box}
++hr{box-sizing:border-box}
 
 FAIL whitespace/0020
--:root{--dropShadow:.02em -.02em .015em #45A6,-.02em .02em .015em #45A6,-.02em -.02em .02em #DEFA,.02em .02em .03em #106A,.1em .1em .09em #246A}
-+:root{--dropShadow:.02em -.02em .015em #45A6, -.02em .02em .015em #45A6, -.02em -.02em .020em #DEFA, .02em .02em .030em #106A, .10em .10em .090em #246A}
+-:root{--dropShadow:.02em -.02em .015em #45a6,-.02em .02em .015em #45a6,-.02em -.02em .02em #defa,.02em .02em .03em #106a,.1em .1em .09em #246a}
++:root{--dropShadow:.02em -.02em .015em #45a6, -.02em .02em .015em #45a6, -.02em -.02em .02em #defa, .02em .02em .03em #106a, .1em .1em .09em #246a}
 
 FAIL whitespace/0021
 -a{--foo:(var(--bar,1.5) * 1em)}
