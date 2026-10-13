@@ -637,6 +637,7 @@ pub enum CssAtomSet {
 	Curve,
 	Custom,
 	CustomIdent,
+	CustomMedia,
 	Cw,
 	Cyan,
 	Cyclic,

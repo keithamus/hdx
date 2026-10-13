@@ -365,6 +365,7 @@ export declare class CurveCommand extends Node { static readonly tag: 'curve-com
 export declare class CurveTarget extends Node { static readonly tag: 'curve-target'; }
 export declare class CustomElementTag extends Node { static readonly tag: 'custom-element-tag'; }
 export declare class CustomIdent extends Node { static readonly tag: 'custom-ident'; }
+export declare class CustomMediaRule extends Node { static readonly tag: 'custom-media-rule'; }
 export declare class DashedIdent extends Node { static readonly tag: 'dashed-ident'; }
 export declare class Decibel extends Node { static readonly tag: 'decibel'; }
 export declare class DeviceAspectRatioMediaFeature extends Node { static readonly tag: 'device-aspect-ratio-media-feature'; }
@@ -733,6 +734,7 @@ export declare class MaxInlineSizeStyleValue extends Node { static readonly tag:
 export declare class MaxLinesStyleValue extends Node { static readonly tag: 'max-lines-style-value'; }
 export declare class MaxSizeStyleValue extends Node { static readonly tag: 'max-size-style-value'; }
 export declare class MaxWidthStyleValue extends Node { static readonly tag: 'max-width-style-value'; }
+export declare class MediaCondition extends Node { static readonly tag: 'media-condition'; }
 export declare class MediaPreCondition extends Node { static readonly tag: 'media-pre-condition'; }
 export declare class MediaRule extends Node { static readonly tag: 'media-rule'; }
 export declare class MediaType extends Node { static readonly tag: 'media-type'; }

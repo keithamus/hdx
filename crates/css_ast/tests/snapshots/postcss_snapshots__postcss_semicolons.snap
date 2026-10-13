@@ -1,6 +1,5 @@
 ---
 source: crates/css_ast/tests/postcss_snapshots.rs
-assertion_line: 168
 expression: result.output.unwrap()
 ---
 StyleSheet(
@@ -219,7 +218,7 @@ StyleSheet(
         offset: SourceOffset(63),
         len: 2,
       )),
-      prelude: ComponentValues(
+      prelude: UnknownAtRulePrelude(ComponentValues(
         values: [
           Whitespace(Cursor(
             kind: "Whitespace",
@@ -231,26 +230,14 @@ StyleSheet(
             offset: SourceOffset(66),
             len: 4,
           )),
-          Semicolon(Cursor(
-            kind: "Semicolon",
-            offset: SourceOffset(70),
-            len: 1,
-          )),
-          Whitespace(Cursor(
-            kind: "Whitespace",
-            offset: SourceOffset(71),
-            len: 1,
-          )),
-          Whitespace(Cursor(
-            kind: "Whitespace",
-            offset: SourceOffset(83),
-            len: 1,
-          )),
         ],
-      ),
-      block: ComponentValues(
-        values: [],
-      ),
+      )),
+      block: None,
+      semicolon: Some(Semicolon(Cursor(
+        kind: "Semicolon",
+        offset: SourceOffset(70),
+        len: 1,
+      ))),
     ),
   ],
 )

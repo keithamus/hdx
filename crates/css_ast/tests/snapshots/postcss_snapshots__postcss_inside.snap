@@ -1,7 +1,6 @@
 ---
 source: crates/css_ast/tests/postcss_snapshots.rs
 expression: result.output.unwrap()
-snapshot_kind: text
 ---
 StyleSheet(
   rules: [
@@ -30,7 +29,7 @@ StyleSheet(
                 offset: SourceOffset(4),
                 len: 7,
               )),
-              prelude: ComponentValues(
+              prelude: UnknownAtRulePrelude(ComponentValues(
                 values: [
                   Whitespace(Cursor(
                     kind: "Whitespace",
@@ -48,10 +47,9 @@ StyleSheet(
                     len: 1,
                   )),
                 ],
-              ),
-              block: ComponentValues(
-                values: [],
-              ),
+              )),
+              block: None,
+              semicolon: None,
             ),
           ],
           close_curly: Some(RightCurly(Cursor(

@@ -513,10 +513,6 @@ FAIL media/0009
 -@media(min-width:768px)and (max-width:1024px){a{color:red}}
 +@media(768px<=width<=1024px){a{color:red}}
 
-FAIL media/0010
--@custom-media --modern (color),(hover);@media (--modern){a{color:red}}
-+@custom-media --modern (color),(hover);@media(--modern){a{color:red}}
-
 FAIL media/0013
 -@media(prefers-color-scheme:dark){a{color:red}}@media(prefers-color-scheme:dark){a{color:red}}
 +@media(prefers-color-scheme:dark){a{color:red}}
