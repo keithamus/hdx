@@ -42,9 +42,9 @@ pub enum RangedForm {
 	/// `(feature: value)` — modern colon form.
 	Exact { value: Span },
 	/// `(min-feature: value)` — legacy min-prefixed colon form.
-	LegacyMin { value: Span },
+	LegacyMin { name: Span, colon: Span, value: Span },
 	/// `(max-feature: value)` — legacy max-prefixed colon form.
-	LegacyMax { value: Span },
+	LegacyMax { name: Span, colon: Span, value: Span },
 	/// `(feature op value)` — feature name on the left of the comparison.
 	Left { comparison: Comparison, value: Span },
 	/// `(value op feature)` — feature name on the right of the comparison.

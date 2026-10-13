@@ -64,11 +64,11 @@ pub fn derive(input: DeriveInput) -> Result<TokenStream> {
 			// ranged_feature! legacy min form
 			"Min" => {
 				arms.push(quote! {
-					Self::Min(_, _, _, value, _) => {
+					Self::Min(_, ident, colon, value, _) => {
 						use css_lexer::ToSpan;
 						crate::ConditionalFeature::Ranged {
 							name: #atom,
-							form: crate::RangedForm::LegacyMin { value: value.to_span() },
+							form: crate::RangedForm::LegacyMin { name: ident.to_span(), colon: colon.to_span(), value: value.to_span() },
 						}
 					}
 				});
@@ -76,11 +76,11 @@ pub fn derive(input: DeriveInput) -> Result<TokenStream> {
 			// ranged_feature! legacy max form
 			"Max" => {
 				arms.push(quote! {
-					Self::Max(_, _, _, value, _) => {
+					Self::Max(_, ident, colon, value, _) => {
 						use css_lexer::ToSpan;
 						crate::ConditionalFeature::Ranged {
 							name: #atom,
-							form: crate::RangedForm::LegacyMax { value: value.to_span() },
+							form: crate::RangedForm::LegacyMax { name: ident.to_span(), colon: colon.to_span(), value: value.to_span() },
 						}
 					}
 				});

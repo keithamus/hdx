@@ -227,7 +227,9 @@ AspectRatioContainerFeature: size=240 align=8
     0: Left
     1: Right
     2: Range
-    3: Exact
+    3: Min
+    4: Max
+    5: Exact
 AspectRatioMediaFeature: size=240 align=8
     0: Left
     1: Right
@@ -457,7 +459,9 @@ BlockSizeContainerFeature: size=128 align=4
     0: Left
     1: Right
     2: Range
-    3: Exact
+    3: Min
+    4: Max
+    5: Exact
 BlockSizeStyleValue: size=304 align=8 {
     0: 0
 }
@@ -5630,7 +5634,9 @@ HeightContainerFeature: size=128 align=4
     0: Left
     1: Right
     2: Range
-    3: Exact
+    3: Min
+    4: Max
+    5: Exact
 HeightMediaFeature: size=128 align=4
     0: Left
     1: Right
@@ -6080,7 +6086,9 @@ InlineSizeContainerFeature: size=128 align=4
     0: Left
     1: Right
     2: Range
-    3: Exact
+    3: Min
+    4: Max
+    5: Exact
 InlineSizeStyleValue: size=304 align=8 {
     0: 0
 }
@@ -11923,7 +11931,9 @@ WidthContainerFeature: size=128 align=4
     0: Left
     1: Right
     2: Range
-    3: Exact
+    3: Min
+    4: Max
+    5: Exact
 WidthMediaFeature: size=128 align=4
     0: Left
     1: Right

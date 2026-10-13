@@ -146,7 +146,7 @@ impl<'a> FeatureConditionList<'a> for ContainerQuery<'a> {
 }
 
 macro_rules! container_feature {
-	( $($name: ident($typ: ty))+ ) => {
+	( $($name: ident($typ: ty): $pat: pat,)+ ) => {
 		#[node]
 		#[derive(ToCursors, ToSpan, SemanticEq, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 		#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
@@ -208,11 +208,11 @@ impl<'a> Parse<'a> for ContainerFeature<'a> {
 		}
 		let mut c = p.peek_n(2);
 		macro_rules! match_feature {
-			( $($name: ident($typ: ty))+ ) => {
+			( $($name: ident($typ: ty): $pat: pat,)+ ) => {
 				// Only peek at the token as the underlying media feature parser needs to parse the leading keyword.
 				{
 					match p.to_atom::<CssAtomSet>(c) {
-						$(CssAtomSet::$name => {
+						$($pat => {
 							let value = <$typ>::parse(p)?;
 							Self::$name(value)
 						},)+
@@ -238,12 +238,12 @@ macro_rules! apply_container_features {
 	($macro: ident) => {
 		$macro! {
 			// https://drafts.csswg.org/css-conditional-5/#container-features
-			Width(WidthContainerFeature)
-			Height(HeightContainerFeature)
-			InlineSize(InlineSizeContainerFeature)
-			BlockSize(BlockSizeContainerFeature)
-			AspectRatio(AspectRatioContainerFeature<'a>)
-			Orientation(OrientationContainerFeature)
+			Width(WidthContainerFeature): CssAtomSet::Width | CssAtomSet::MinWidth | CssAtomSet::MaxWidth,
+			Height(HeightContainerFeature): CssAtomSet::Height | CssAtomSet::MinHeight | CssAtomSet::MaxHeight,
+			InlineSize(InlineSizeContainerFeature): CssAtomSet::InlineSize | CssAtomSet::MinInlineSize | CssAtomSet::MaxInlineSize,
+			BlockSize(BlockSizeContainerFeature): CssAtomSet::BlockSize | CssAtomSet::MinBlockSize | CssAtomSet::MaxBlockSize,
+			AspectRatio(AspectRatioContainerFeature<'a>): CssAtomSet::AspectRatio | CssAtomSet::MinAspectRatio | CssAtomSet::MaxAspectRatio,
+			Orientation(OrientationContainerFeature): CssAtomSet::Orientation,
 		}
 	};
 }
