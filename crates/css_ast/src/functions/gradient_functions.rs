@@ -37,8 +37,9 @@ pub enum Gradient<'a> {
 #[node]
 #[derive(Parse, Peek, ToCursors, ToSpan, SemanticEq, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-#[cfg_attr(feature = "visitable", derive(csskit_derives::Visitable), visit(self))]
+#[cfg_attr(feature = "visitable", derive(csskit_derives::Visitable), visit)]
 #[derive(csskit_derives::NodeWithMetadata)]
+#[metadata(value_kinds = Image)]
 pub struct LinearGradientFunction<'a> {
 	#[atom(CssAtomSet::LinearGradient)]
 	pub name: T![Function],
@@ -50,6 +51,7 @@ pub struct LinearGradientFunction<'a> {
 #[node]
 #[derive(Parse, Peek, ToCursors, ToSpan, SemanticEq, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+#[cfg_attr(feature = "visitable", derive(csskit_derives::Visitable))]
 #[derive(csskit_derives::NodeWithMetadata)]
 pub struct LinearGradientFunctionParams<'a> {
 	pub options: Option<LinearGradientOptions<'a>>,
@@ -67,8 +69,9 @@ pub struct LinearGradientFunctionParams<'a> {
 #[node]
 #[derive(Parse, Peek, ToCursors, ToSpan, SemanticEq, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-#[cfg_attr(feature = "visitable", derive(csskit_derives::Visitable), visit(self))]
+#[cfg_attr(feature = "visitable", derive(csskit_derives::Visitable), visit)]
 #[derive(csskit_derives::NodeWithMetadata)]
+#[metadata(value_kinds = Image)]
 pub struct RepeatingLinearGradientFunction<'a> {
 	#[atom(CssAtomSet::RepeatingLinearGradient)]
 	pub name: T![Function],
@@ -80,6 +83,7 @@ pub struct RepeatingLinearGradientFunction<'a> {
 #[node]
 #[derive(Parse, Peek, ToCursors, ToSpan, SemanticEq, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+#[cfg_attr(feature = "visitable", derive(csskit_derives::Visitable))]
 #[derive(csskit_derives::NodeWithMetadata)]
 pub struct RepeatingLinearGradientFunctionParams<'a> {
 	pub options: Option<LinearGradientOptions<'a>>,
@@ -96,6 +100,7 @@ pub struct RepeatingLinearGradientFunctionParams<'a> {
 #[node]
 #[derive(Parse, Peek, ToCursors, ToSpan, SemanticEq, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+#[cfg_attr(feature = "visitable", derive(csskit_derives::Visitable))]
 #[derive(csskit_derives::NodeWithMetadata)]
 #[parse(one_must_occur)]
 pub struct LinearGradientOptions<'a> {
@@ -111,8 +116,9 @@ pub struct LinearGradientOptions<'a> {
 #[node]
 #[derive(Parse, Peek, ToCursors, ToSpan, SemanticEq, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-#[cfg_attr(feature = "visitable", derive(csskit_derives::Visitable), visit(self))]
+#[cfg_attr(feature = "visitable", derive(csskit_derives::Visitable), visit)]
 #[derive(csskit_derives::NodeWithMetadata)]
+#[metadata(value_kinds = Image)]
 pub struct RadialGradientFunction<'a> {
 	#[atom(CssAtomSet::RadialGradient)]
 	pub name: T![Function],
@@ -124,6 +130,7 @@ pub struct RadialGradientFunction<'a> {
 #[node]
 #[derive(Parse, Peek, ToCursors, ToSpan, SemanticEq, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+#[cfg_attr(feature = "visitable", derive(csskit_derives::Visitable))]
 #[derive(csskit_derives::NodeWithMetadata)]
 pub struct RadialGradientFunctionParams<'a> {
 	pub options: Option<RadialGradientOptions<'a>>,
@@ -140,8 +147,9 @@ pub struct RadialGradientFunctionParams<'a> {
 #[node]
 #[derive(Parse, Peek, ToCursors, ToSpan, SemanticEq, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-#[cfg_attr(feature = "visitable", derive(csskit_derives::Visitable), visit(self))]
+#[cfg_attr(feature = "visitable", derive(csskit_derives::Visitable), visit)]
 #[derive(csskit_derives::NodeWithMetadata)]
+#[metadata(value_kinds = Image)]
 pub struct RepeatingRadialGradientFunction<'a> {
 	#[atom(CssAtomSet::RepeatingRadialGradient)]
 	pub name: T![Function],
@@ -153,6 +161,7 @@ pub struct RepeatingRadialGradientFunction<'a> {
 #[node]
 #[derive(Parse, Peek, ToCursors, ToSpan, SemanticEq, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+#[cfg_attr(feature = "visitable", derive(csskit_derives::Visitable))]
 #[derive(csskit_derives::NodeWithMetadata)]
 pub struct RepeatingRadialGradientFunctionParams<'a> {
 	pub options: Option<RadialGradientOptions<'a>>,
@@ -169,6 +178,7 @@ pub struct RepeatingRadialGradientFunctionParams<'a> {
 #[node]
 #[derive(Parse, Peek, ToCursors, ToSpan, SemanticEq, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+#[cfg_attr(feature = "visitable", derive(csskit_derives::Visitable))]
 #[derive(csskit_derives::NodeWithMetadata)]
 #[parse(one_must_occur)]
 pub struct RadialGradientOptions<'a> {
@@ -182,6 +192,7 @@ pub struct RadialGradientOptions<'a> {
 #[node]
 #[derive(Parse, Peek, ToCursors, ToSpan, SemanticEq, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+#[cfg_attr(feature = "visitable", derive(csskit_derives::Visitable))]
 #[derive(csskit_derives::NodeWithMetadata)]
 pub struct RadialGeometry<'a> {
 	pub ending_shape: Option<RadialEndingShape<'a>>,
@@ -194,6 +205,7 @@ pub struct RadialGeometry<'a> {
 #[node]
 #[derive(Parse, Peek, ToCursors, ToSpan, SemanticEq, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+#[cfg_attr(feature = "visitable", derive(csskit_derives::Visitable))]
 #[derive(csskit_derives::NodeWithMetadata)]
 #[parse(one_must_occur)]
 pub struct RadialEndingShape<'a> {
@@ -209,8 +221,9 @@ pub struct RadialEndingShape<'a> {
 #[node]
 #[derive(Parse, Peek, ToCursors, ToSpan, SemanticEq, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-#[cfg_attr(feature = "visitable", derive(csskit_derives::Visitable), visit(self))]
+#[cfg_attr(feature = "visitable", derive(csskit_derives::Visitable), visit)]
 #[derive(csskit_derives::NodeWithMetadata)]
+#[metadata(value_kinds = Image)]
 pub struct ConicGradientFunction<'a> {
 	#[atom(CssAtomSet::ConicGradient)]
 	pub name: T![Function],
@@ -222,6 +235,7 @@ pub struct ConicGradientFunction<'a> {
 #[node]
 #[derive(Parse, Peek, ToCursors, ToSpan, SemanticEq, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+#[cfg_attr(feature = "visitable", derive(csskit_derives::Visitable))]
 #[derive(csskit_derives::NodeWithMetadata)]
 pub struct ConicGradientFunctionParams<'a> {
 	pub options: Option<ConicGradientOptions<'a>>,
@@ -238,8 +252,9 @@ pub struct ConicGradientFunctionParams<'a> {
 #[node]
 #[derive(Parse, Peek, ToCursors, ToSpan, SemanticEq, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-#[cfg_attr(feature = "visitable", derive(csskit_derives::Visitable), visit(self))]
+#[cfg_attr(feature = "visitable", derive(csskit_derives::Visitable), visit)]
 #[derive(csskit_derives::NodeWithMetadata)]
+#[metadata(value_kinds = Image)]
 pub struct RepeatingConicGradientFunction<'a> {
 	#[atom(CssAtomSet::RepeatingConicGradient)]
 	pub name: T![Function],
@@ -251,6 +266,7 @@ pub struct RepeatingConicGradientFunction<'a> {
 #[node]
 #[derive(Parse, Peek, ToCursors, ToSpan, SemanticEq, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+#[cfg_attr(feature = "visitable", derive(csskit_derives::Visitable))]
 #[derive(csskit_derives::NodeWithMetadata)]
 pub struct RepeatingConicGradientFunctionParams<'a> {
 	pub options: Option<ConicGradientOptions<'a>>,
@@ -267,6 +283,7 @@ pub struct RepeatingConicGradientFunctionParams<'a> {
 #[node]
 #[derive(Parse, Peek, ToCursors, ToSpan, SemanticEq, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+#[cfg_attr(feature = "visitable", derive(csskit_derives::Visitable))]
 #[derive(csskit_derives::NodeWithMetadata)]
 #[parse(one_must_occur)]
 pub struct ConicGradientOptions<'a> {
@@ -280,6 +297,7 @@ pub struct ConicGradientOptions<'a> {
 #[node]
 #[derive(Parse, Peek, ToCursors, ToSpan, SemanticEq, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+#[cfg_attr(feature = "visitable", derive(csskit_derives::Visitable))]
 #[derive(csskit_derives::NodeWithMetadata)]
 pub struct ConicGeometry<'a> {
 	pub from: Option<ConicFrom<'a>>,
@@ -292,6 +310,7 @@ pub struct ConicGeometry<'a> {
 #[node]
 #[derive(Parse, Peek, ToCursors, ToSpan, SemanticEq, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+#[cfg_attr(feature = "visitable", derive(csskit_derives::Visitable))]
 #[derive(csskit_derives::NodeWithMetadata)]
 pub struct ConicFrom<'a> {
 	#[atom(CssAtomSet::From)]
@@ -319,6 +338,7 @@ pub enum NamedDirection {
 #[node]
 #[derive(Parse, Peek, ToSpan, ToCursors, SemanticEq, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+#[cfg_attr(feature = "visitable", derive(csskit_derives::Visitable))]
 #[derive(csskit_derives::NodeWithMetadata)]
 pub enum LinearDirection<'a> {
 	Angle(CalcableValue<'a, Angle>),
@@ -335,6 +355,7 @@ pub enum LinearDirection<'a> {
 #[node]
 #[derive(Peek, ToSpan, ToCursors, SemanticEq, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+#[cfg_attr(feature = "visitable", derive(csskit_derives::Visitable))]
 #[derive(csskit_derives::NodeWithMetadata)]
 pub enum RadialSize<'a> {
 	Extent(RadialExtent, Option<RadialExtent>),
@@ -408,6 +429,7 @@ pub enum RadialShape {
 #[node]
 #[derive(Parse, Peek, ToSpan, ToCursors, SemanticEq, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+#[cfg_attr(feature = "visitable", derive(csskit_derives::Visitable))]
 #[derive(csskit_derives::NodeWithMetadata)]
 pub enum ColorStopOrHint<'a> {
 	Hint(CalcableValue<'a, LengthPercentage>),
@@ -424,6 +446,7 @@ pub enum ColorStopOrHint<'a> {
 #[node]
 #[derive(Parse, Peek, ToSpan, ToCursors, SemanticEq, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+#[cfg_attr(feature = "visitable", derive(csskit_derives::Visitable))]
 #[derive(csskit_derives::NodeWithMetadata)]
 pub enum AngularColorStopOrHint<'a> {
 	Hint(CalcableValue<'a, AnglePercentage>),
@@ -443,6 +466,7 @@ mod tests {
 		assert_parse!(CssAtomSet::ATOMS, Gradient, "linear-gradient(to bottom,#fff,#fff 85%,#e6e6e6)");
 		assert_parse!(CssAtomSet::ATOMS, Gradient, "linear-gradient(45deg,#808080 25%,transparent 25%)");
 		assert_parse!(CssAtomSet::ATOMS, Gradient, "linear-gradient(to right,transparent,red 20%,red 80%,transparent)");
+		assert_parse!(CssAtomSet::ATOMS, Gradient, "linear-gradient(red 0% 40%,tan 0 70%,blue 0 100%)");
 		assert_parse!(
 			CssAtomSet::ATOMS,
 			Gradient,

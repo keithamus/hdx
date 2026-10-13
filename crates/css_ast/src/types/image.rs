@@ -49,7 +49,7 @@ mod tests {
 	fn test_visits() {
 		use crate::assert_visits;
 		assert_visits!("url('foo')", Image, Url);
-		assert_visits!("linear-gradient(red, blue)", Image, Gradient, LinearGradientFunction);
+		assert_visits!("linear-gradient(red, blue)", Image, Gradient, LinearGradientFunction, Color, Color);
 		assert_visits!("element(#foo)", Image, ElementFunction, Id);
 		assert_visits!("image-set(url(a)2x)", Image, ImageSetFunction);
 		assert_visits!("cross-fade(url(a))", Image, CrossFadeFunction, Image, Url);
