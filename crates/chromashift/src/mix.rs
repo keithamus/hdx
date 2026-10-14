@@ -82,7 +82,7 @@ pub fn interpolate_hue(h1: f64, h2: f64, t: f64, interpolation: HueInterpolation
 		}
 		HueInterpolation::Longer => {
 			let d = h2 - h1;
-			if d.abs() > 180.0 {
+			if d.abs() >= 180.0 {
 				d
 			} else if d > 0.0 {
 				d - 360.0
@@ -247,6 +247,14 @@ mod tests {
 		let red = Srgb::from_u8(255, 0, 0, 100.0);
 		let blue = Srgb::from_u8(0, 0, 255, 100.0);
 		assert_close_to!(Srgb::mix(red, blue, 50.0), Srgb::new(0.5, 0.0, 0.5, 100.0));
+	}
+
+	#[test]
+	fn longer_hue_keeps_a_half_turn_in_its_direction() {
+		assert_eq!(interpolate_hue(0.0, 180.0, 0.5, HueInterpolation::Longer), 90.0);
+		assert_eq!(interpolate_hue(180.0, 0.0, 0.5, HueInterpolation::Longer), 90.0);
+		assert_eq!(interpolate_hue(0.0, 90.0, 0.5, HueInterpolation::Longer), 225.0);
+		assert_eq!(interpolate_hue(90.0, 0.0, 0.5, HueInterpolation::Longer), 225.0);
 	}
 
 	#[test]
