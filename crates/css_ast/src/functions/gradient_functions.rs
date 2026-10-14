@@ -1,11 +1,12 @@
 use css_parse::Box;
 
 use super::prelude::*;
-use crate::{CalcableValue, LengthPercentage};
+use crate::{AngleOrZero, AnglePercentage, AtPosition, CalcableValue, ColorInterpolationMethod, LengthPercentage};
 
-/// <https://drafts.csswg.org/css-images-3/#typedef-gradient>
-/// ```text-ignore,
+/// <https://drafts.csswg.org/css-images-4/#typedef-gradient>
+/// ```text,ignore
 /// <gradient> = <linear-gradient()> | <repeating-linear-gradient()> | <radial-gradient()> | <repeating-radial-gradient()>
+///            | <conic-gradient()> | <repeating-conic-gradient()>
 /// ```
 #[node]
 #[derive(Parse, Peek, ToCursors, ToSpan, SemanticEq, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -21,12 +22,16 @@ pub enum Gradient<'a> {
 	RadialGradientFunction(Box<'a, RadialGradientFunction<'a>>),
 	#[atom(CssAtomSet::RepeatingRadialGradient)]
 	RepeatingRadialGradientFunction(Box<'a, RepeatingRadialGradientFunction<'a>>),
+	#[atom(CssAtomSet::ConicGradient)]
+	ConicGradientFunction(Box<'a, ConicGradientFunction<'a>>),
+	#[atom(CssAtomSet::RepeatingConicGradient)]
+	RepeatingConicGradientFunction(Box<'a, RepeatingConicGradientFunction<'a>>),
 }
 
-/// <https://drafts.csswg.org/css-images-3/#funcdef-linear-gradient>
+/// <https://drafts.csswg.org/css-images-4/#funcdef-linear-gradient>
 /// ```text,ignore
 /// <linear-gradient()> = linear-gradient( [ <linear-gradient-syntax> ] )
-/// <linear-gradient-syntax> = [ <angle> | <zero> | to <side-or-corner> ]? , <color-stop-list>
+/// <linear-gradient-syntax> = [ [ <angle> | <zero> | to <side-or-corner> ] || <color-interpolation-method> ]? , <color-stop-list>
 /// <side-or-corner> = [left | right] || [top | bottom]
 /// ```
 #[node]
@@ -46,16 +51,17 @@ pub struct LinearGradientFunction<'a> {
 #[derive(Parse, Peek, ToCursors, ToSpan, SemanticEq, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 #[derive(csskit_derives::NodeWithMetadata)]
-pub struct LinearGradientFunctionParams<'a>(
-	Option<LinearDirection<'a>>,
-	#[semantic_eq(skip)] Option<T![,]>,
-	CommaSeparated<'a, ColorStopOrHint<'a>>,
-);
+pub struct LinearGradientFunctionParams<'a> {
+	pub options: Option<LinearGradientOptions<'a>>,
+	#[semantic_eq(skip)]
+	pub comma: Option<T![,]>,
+	pub stops: CommaSeparated<'a, ColorStopOrHint<'a>>,
+}
 
-/// <https://drafts.csswg.org/css-images-3/#funcdef-repeating-linear-gradient>
+/// <https://drafts.csswg.org/css-images-4/#funcdef-repeating-linear-gradient>
 /// ```text,ignore
 /// <repeating-linear-gradient()> = repeating-linear-gradient( [ <linear-gradient-syntax> ] )
-/// <linear-gradient-syntax> = [ <angle> | <zero> | to <side-or-corner> ]? , <color-stop-list>
+/// <linear-gradient-syntax> = [ [ <angle> | <zero> | to <side-or-corner> ] || <color-interpolation-method> ]? , <color-stop-list>
 /// <side-or-corner> = [left | right] || [top | bottom]
 /// ```
 #[node]
@@ -75,19 +81,32 @@ pub struct RepeatingLinearGradientFunction<'a> {
 #[derive(Parse, Peek, ToCursors, ToSpan, SemanticEq, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 #[derive(csskit_derives::NodeWithMetadata)]
-pub struct RepeatingLinearGradientFunctionParams<'a>(
-	Option<LinearDirection<'a>>,
-	#[semantic_eq(skip)] Option<T![,]>,
-	CommaSeparated<'a, ColorStopOrHint<'a>>,
-);
+pub struct RepeatingLinearGradientFunctionParams<'a> {
+	pub options: Option<LinearGradientOptions<'a>>,
+	#[semantic_eq(skip)]
+	pub comma: Option<T![,]>,
+	pub stops: CommaSeparated<'a, ColorStopOrHint<'a>>,
+}
 
-/// <https://drafts.csswg.org/css-images-3/#funcdef-radial-gradient>
+/// The direction and interpolation method of a linear gradient, in either order.
+///
+/// ```text,ignore
+/// [ <angle> | <zero> | to <side-or-corner> ] || <color-interpolation-method>
+/// ```
+#[node]
+#[derive(Parse, Peek, ToCursors, ToSpan, SemanticEq, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+#[derive(csskit_derives::NodeWithMetadata)]
+#[parse(one_must_occur)]
+pub struct LinearGradientOptions<'a> {
+	pub direction: Option<LinearDirection<'a>>,
+	pub interpolation: Option<ColorInterpolationMethod>,
+}
+
+/// <https://drafts.csswg.org/css-images-4/#funcdef-radial-gradient>
 /// ```text,ignore
 /// <radial-gradient()> = radial-gradient( [ <radial-gradient-syntax> ] )
-/// <radial-gradient-syntax> = [ <radial-shape> || <radial-size> ]? [ at <position> ]? , <color-stop-list>
-/// <radial-size> = <radial-extent> | <length [0,∞]> | <length-percentage [0,∞]>{2}
-/// <radial-extent> = closest-corner | closest-side | farthest-corner | farthest-side
-/// <radial-shape> = circle | ellipse
+/// <radial-gradient-syntax> = [ [ [ <radial-shape> || <radial-size> ]? [ at <position> ]? ] || <color-interpolation-method> ]? , <color-stop-list>
 /// ```
 #[node]
 #[derive(Parse, Peek, ToCursors, ToSpan, SemanticEq, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -106,22 +125,17 @@ pub struct RadialGradientFunction<'a> {
 #[derive(Parse, Peek, ToCursors, ToSpan, SemanticEq, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 #[derive(csskit_derives::NodeWithMetadata)]
-pub struct RadialGradientFunctionParams<'a>(
-	Option<RadialSize<'a>>,
-	Option<RadialShape>,
-	Option<T![Ident]>,
-	Option<Position<'a>>,
-	#[semantic_eq(skip)] Option<T![,]>,
-	CommaSeparated<'a, ColorStopOrHint<'a>>,
-);
+pub struct RadialGradientFunctionParams<'a> {
+	pub options: Option<RadialGradientOptions<'a>>,
+	#[semantic_eq(skip)]
+	pub comma: Option<T![,]>,
+	pub stops: CommaSeparated<'a, ColorStopOrHint<'a>>,
+}
 
-/// <https://drafts.csswg.org/css-images-3/#funcdef-repeating-radial-gradient>
+/// <https://drafts.csswg.org/css-images-4/#funcdef-repeating-radial-gradient>
 /// ```text,ignore
 /// <repeating-radial-gradient()> = repeating-radial-gradient( [ <radial-gradient-syntax> ] )
-/// <radial-gradient-syntax> = [ <radial-shape> || <radial-size> ]? [ at <position> ]? , <color-stop-list>
-/// <radial-size> = <radial-extent> | <length [0,∞]> | <length-percentage [0,∞]>{2}
-/// <radial-extent> = closest-corner | closest-side | farthest-corner | farthest-side
-/// <radial-shape> = circle | ellipse
+/// <radial-gradient-syntax> = [ [ [ <radial-shape> || <radial-size> ]? [ at <position> ]? ] || <color-interpolation-method> ]? , <color-stop-list>
 /// ```
 #[node]
 #[derive(Parse, Peek, ToCursors, ToSpan, SemanticEq, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -140,14 +154,150 @@ pub struct RepeatingRadialGradientFunction<'a> {
 #[derive(Parse, Peek, ToCursors, ToSpan, SemanticEq, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 #[derive(csskit_derives::NodeWithMetadata)]
-pub struct RepeatingRadialGradientFunctionParams<'a>(
-	Option<RadialSize<'a>>,
-	Option<RadialShape>,
-	Option<T![Ident]>,
-	Option<Position<'a>>,
-	#[semantic_eq(skip)] Option<T![,]>,
-	CommaSeparated<'a, ColorStopOrHint<'a>>,
-);
+pub struct RepeatingRadialGradientFunctionParams<'a> {
+	pub options: Option<RadialGradientOptions<'a>>,
+	#[semantic_eq(skip)]
+	pub comma: Option<T![,]>,
+	pub stops: CommaSeparated<'a, ColorStopOrHint<'a>>,
+}
+
+/// The geometry and interpolation method of a radial gradient, in either order.
+///
+/// ```text,ignore
+/// [ [ <radial-shape> || <radial-size> ]? [ at <position> ]? ] || <color-interpolation-method>
+/// ```
+#[node]
+#[derive(Parse, Peek, ToCursors, ToSpan, SemanticEq, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+#[derive(csskit_derives::NodeWithMetadata)]
+#[parse(one_must_occur)]
+pub struct RadialGradientOptions<'a> {
+	pub geometry: Option<RadialGeometry<'a>>,
+	pub interpolation: Option<ColorInterpolationMethod>,
+}
+
+/// ```text,ignore
+/// [ <radial-shape> || <radial-size> ]? [ at <position> ]?
+/// ```
+#[node]
+#[derive(Parse, Peek, ToCursors, ToSpan, SemanticEq, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+#[derive(csskit_derives::NodeWithMetadata)]
+pub struct RadialGeometry<'a> {
+	pub ending_shape: Option<RadialEndingShape<'a>>,
+	pub at: Option<AtPosition<'a>>,
+}
+
+/// ```text,ignore
+/// <radial-shape> || <radial-size>
+/// ```
+#[node]
+#[derive(Parse, Peek, ToCursors, ToSpan, SemanticEq, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+#[derive(csskit_derives::NodeWithMetadata)]
+#[parse(one_must_occur)]
+pub struct RadialEndingShape<'a> {
+	pub shape: Option<RadialShape>,
+	pub size: Option<RadialSize<'a>>,
+}
+
+/// <https://drafts.csswg.org/css-images-4/#funcdef-conic-gradient>
+/// ```text,ignore
+/// <conic-gradient()> = conic-gradient( [ <conic-gradient-syntax> ] )
+/// <conic-gradient-syntax> = [ [ [ from [ <angle> | <zero> ] ]? [ at <position> ]? ] || <color-interpolation-method> ]? , <angular-color-stop-list>
+/// ```
+#[node]
+#[derive(Parse, Peek, ToCursors, ToSpan, SemanticEq, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+#[cfg_attr(feature = "visitable", derive(csskit_derives::Visitable), visit(self))]
+#[derive(csskit_derives::NodeWithMetadata)]
+pub struct ConicGradientFunction<'a> {
+	#[atom(CssAtomSet::ConicGradient)]
+	pub name: T![Function],
+	pub params: ConicGradientFunctionParams<'a>,
+	#[semantic_eq(skip)]
+	pub close: T![')'],
+}
+
+#[node]
+#[derive(Parse, Peek, ToCursors, ToSpan, SemanticEq, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+#[derive(csskit_derives::NodeWithMetadata)]
+pub struct ConicGradientFunctionParams<'a> {
+	pub options: Option<ConicGradientOptions<'a>>,
+	#[semantic_eq(skip)]
+	pub comma: Option<T![,]>,
+	pub stops: CommaSeparated<'a, AngularColorStopOrHint<'a>>,
+}
+
+/// <https://drafts.csswg.org/css-images-4/#funcdef-repeating-conic-gradient>
+/// ```text,ignore
+/// <repeating-conic-gradient()> = repeating-conic-gradient( [ <conic-gradient-syntax> ] )
+/// <conic-gradient-syntax> = [ [ [ from [ <angle> | <zero> ] ]? [ at <position> ]? ] || <color-interpolation-method> ]? , <angular-color-stop-list>
+/// ```
+#[node]
+#[derive(Parse, Peek, ToCursors, ToSpan, SemanticEq, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+#[cfg_attr(feature = "visitable", derive(csskit_derives::Visitable), visit(self))]
+#[derive(csskit_derives::NodeWithMetadata)]
+pub struct RepeatingConicGradientFunction<'a> {
+	#[atom(CssAtomSet::RepeatingConicGradient)]
+	pub name: T![Function],
+	pub params: RepeatingConicGradientFunctionParams<'a>,
+	#[semantic_eq(skip)]
+	pub close: T![')'],
+}
+
+#[node]
+#[derive(Parse, Peek, ToCursors, ToSpan, SemanticEq, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+#[derive(csskit_derives::NodeWithMetadata)]
+pub struct RepeatingConicGradientFunctionParams<'a> {
+	pub options: Option<ConicGradientOptions<'a>>,
+	#[semantic_eq(skip)]
+	pub comma: Option<T![,]>,
+	pub stops: CommaSeparated<'a, AngularColorStopOrHint<'a>>,
+}
+
+/// The geometry and interpolation method of a conic gradient, in either order.
+///
+/// ```text,ignore
+/// [ [ from [ <angle> | <zero> ] ]? [ at <position> ]? ] || <color-interpolation-method>
+/// ```
+#[node]
+#[derive(Parse, Peek, ToCursors, ToSpan, SemanticEq, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+#[derive(csskit_derives::NodeWithMetadata)]
+#[parse(one_must_occur)]
+pub struct ConicGradientOptions<'a> {
+	pub geometry: Option<ConicGeometry<'a>>,
+	pub interpolation: Option<ColorInterpolationMethod>,
+}
+
+/// ```text,ignore
+/// [ from [ <angle> | <zero> ] ]? [ at <position> ]?
+/// ```
+#[node]
+#[derive(Parse, Peek, ToCursors, ToSpan, SemanticEq, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+#[derive(csskit_derives::NodeWithMetadata)]
+pub struct ConicGeometry<'a> {
+	pub from: Option<ConicFrom<'a>>,
+	pub at: Option<AtPosition<'a>>,
+}
+
+/// ```text,ignore
+/// from [ <angle> | <zero> ]
+/// ```
+#[node]
+#[derive(Parse, Peek, ToCursors, ToSpan, SemanticEq, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+#[derive(csskit_derives::NodeWithMetadata)]
+pub struct ConicFrom<'a> {
+	#[atom(CssAtomSet::From)]
+	pub keyword: T![Ident],
+	pub angle: CalcableValue<'a, AngleOrZero>,
+}
 
 #[cfg_attr(feature = "visitable", derive(csskit_derives::Visitable))]
 #[node]
@@ -249,20 +399,42 @@ pub enum RadialShape {
 	Ellipse(T![Ident]),
 }
 
+/// <https://drafts.csswg.org/css-images-4/#typedef-color-stop-list>
+///
+/// ```text,ignore
+/// <linear-color-stop> = <color> <length-percentage>{1,2}?
+/// <linear-color-hint> = <length-percentage>
+/// ```
 #[node]
 #[derive(Parse, Peek, ToSpan, ToCursors, SemanticEq, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 #[derive(csskit_derives::NodeWithMetadata)]
 pub enum ColorStopOrHint<'a> {
 	Hint(CalcableValue<'a, LengthPercentage>),
-	Stop(Color<'a>, Option<CalcableValue<'a, LengthPercentage>>),
+	Stop(Color<'a>, Option<CalcableValue<'a, LengthPercentage>>, Option<CalcableValue<'a, LengthPercentage>>),
+}
+
+/// <https://drafts.csswg.org/css-images-4/#typedef-angular-color-stop-list>
+///
+/// ```text,ignore
+/// <angular-color-stop> = <color> <color-stop-angle>?
+/// <color-stop-angle> = [ <angle-percentage> | <zero> ]{1,2}
+/// <angular-color-hint> = <angle-percentage> | <zero>
+/// ```
+#[node]
+#[derive(Parse, Peek, ToSpan, ToCursors, SemanticEq, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+#[derive(csskit_derives::NodeWithMetadata)]
+pub enum AngularColorStopOrHint<'a> {
+	Hint(CalcableValue<'a, AnglePercentage>),
+	Stop(Color<'a>, Option<CalcableValue<'a, AnglePercentage>>, Option<CalcableValue<'a, AnglePercentage>>),
 }
 
 #[cfg(test)]
 mod tests {
 	use super::*;
 	use crate::CssAtomSet;
-	use css_parse::assert_parse;
+	use css_parse::{assert_parse, assert_parse_error};
 
 	#[test]
 	fn test_writes() {
@@ -284,5 +456,47 @@ mod tests {
 		assert_parse!(CssAtomSet::ATOMS, Gradient, "linear-gradient(calc(45deg),red,blue)");
 		assert_parse!(CssAtomSet::ATOMS, Gradient, "linear-gradient(red calc(20% + 5px),blue)");
 		assert_parse!(CssAtomSet::ATOMS, Gradient, "radial-gradient(calc(50px) circle,red,blue)");
+	}
+
+	#[test]
+	fn test_interpolation() {
+		assert_parse!(CssAtomSet::ATOMS, Gradient, "linear-gradient(in oklab,red,blue)");
+		assert_parse!(CssAtomSet::ATOMS, Gradient, "linear-gradient(45deg in oklch longer hue,red,blue)");
+		assert_parse!(CssAtomSet::ATOMS, Gradient, "linear-gradient(in srgb to right,red,blue)");
+		assert_parse!(CssAtomSet::ATOMS, Gradient, "radial-gradient(in oklab circle,red,blue)");
+		assert_parse!(CssAtomSet::ATOMS, Gradient, "radial-gradient(ellipse 10px 20px at 10% 20% in srgb,red,blue)");
+		assert_parse!(CssAtomSet::ATOMS, Gradient, "conic-gradient(in hsl shorter hue,red,blue)");
+	}
+
+	#[test]
+	fn test_radial_geometry() {
+		assert_parse!(CssAtomSet::ATOMS, Gradient, "radial-gradient(circle closest-side,red,blue)");
+		assert_parse!(CssAtomSet::ATOMS, Gradient, "radial-gradient(at center,red,blue)");
+		assert_parse!(CssAtomSet::ATOMS, Gradient, "radial-gradient(farthest-side at left top,red,blue)");
+		assert_parse!(CssAtomSet::ATOMS, Gradient, "repeating-radial-gradient(circle 10px at 0 0,red,blue 10%)");
+	}
+
+	#[test]
+	fn test_double_position_stops() {
+		assert_parse!(CssAtomSet::ATOMS, Gradient, "linear-gradient(red 10% 20%,blue)");
+		assert_parse!(CssAtomSet::ATOMS, Gradient, "repeating-linear-gradient(red 0 10px,blue 10px 20px)");
+	}
+
+	#[test]
+	fn test_conic() {
+		assert_parse!(CssAtomSet::ATOMS, Gradient, "conic-gradient(red,blue)");
+		assert_parse!(CssAtomSet::ATOMS, Gradient, "conic-gradient(from 45deg,red,blue)");
+		assert_parse!(CssAtomSet::ATOMS, Gradient, "conic-gradient(from 0,red,10%,blue)");
+		assert_parse!(CssAtomSet::ATOMS, Gradient, "conic-gradient(at 10% 20%,red 0deg,blue 50% 75%,green)");
+		assert_parse!(CssAtomSet::ATOMS, Gradient, "conic-gradient(from 0.25turn at center in oklab,red,blue)");
+		assert_parse!(CssAtomSet::ATOMS, Gradient, "repeating-conic-gradient(red 0 10%,blue 10% 20%)");
+	}
+
+	#[test]
+	fn test_errors() {
+		assert_parse_error!(CssAtomSet::ATOMS, Gradient, "radial-gradient(at center circle,red,blue)");
+		assert_parse_error!(CssAtomSet::ATOMS, Gradient, "conic-gradient(at center from 45deg,red,blue)");
+		assert_parse_error!(CssAtomSet::ATOMS, Gradient, "linear-gradient(in oklab in srgb,red,blue)");
+		assert_parse_error!(CssAtomSet::ATOMS, Gradient, "conic-gradient(red 10px,blue)");
 	}
 }

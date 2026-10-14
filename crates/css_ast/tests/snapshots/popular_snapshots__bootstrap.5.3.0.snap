@@ -144610,207 +144610,214 @@ StyleSheet(
                     offset: SourceOffset(123457),
                     len: 16,
                   )),
-                  params: LinearGradientFunctionParams(Some(Angle(Literal(Deg(Dimension(Cursor(
-                    kind: "Dimension",
-                    offset: SourceOffset(123473),
-                    len: 5,
-                  )))))), Some(Comma(Cursor(
-                    kind: "Comma",
-                    offset: SourceOffset(123478),
-                    len: 1,
-                  ))), [
-                    (Stop(Function(Rgba(RgbaFunction(
-                      name: Function(Cursor(
-                        kind: "Function",
-                        offset: SourceOffset(123480),
+                  params: LinearGradientFunctionParams(
+                    options: Some(LinearGradientOptions(
+                      direction: Some(Angle(Literal(Deg(Dimension(Cursor(
+                        kind: "Dimension",
+                        offset: SourceOffset(123473),
                         len: 5,
-                      )),
-                      params: RgbFunctionParams(r#Some(Literal(Number(Number(Cursor(
-                        kind: "Number",
-                        offset: SourceOffset(123485),
-                        len: 3,
-                      ))))), Some(Comma(Cursor(
-                        kind: "Comma",
-                        offset: SourceOffset(123488),
-                        len: 1,
-                      ))), r#Some(Literal(Number(Number(Cursor(
-                        kind: "Number",
-                        offset: SourceOffset(123490),
-                        len: 3,
-                      ))))), Some(Comma(Cursor(
-                        kind: "Comma",
-                        offset: SourceOffset(123493),
-                        len: 1,
-                      ))), r#Some(Literal(Number(Number(Cursor(
-                        kind: "Number",
-                        offset: SourceOffset(123495),
-                        len: 3,
-                      ))))), Some(CommaOrSlash(Cursor(
-                        kind: "Comma",
-                        offset: SourceOffset(123498),
-                        len: 1,
-                      ))), Some(r#Some(Literal(Number(Number(Cursor(
-                        kind: "Number",
-                        offset: SourceOffset(123500),
-                        len: 4,
-                      ))))))),
-                      close: RightParen(Cursor(
-                        kind: "RightParen",
-                        offset: SourceOffset(123504),
-                        len: 1,
-                      )),
-                    ))), Some(Literal(Percent(Percentage(Dimension(Cursor(
-                      kind: "Dimension",
-                      offset: SourceOffset(123506),
-                      len: 3,
-                    ))))))), Some(Comma(Cursor(
+                      )))))),
+                      interpolation: None,
+                    )),
+                    comma: Some(Comma(Cursor(
                       kind: "Comma",
-                      offset: SourceOffset(123509),
+                      offset: SourceOffset(123478),
                       len: 1,
-                    )))),
-                    (Stop(Transparent(Ident(Cursor(
-                      kind: "Ident",
-                      offset: SourceOffset(123511),
-                      len: 11,
-                    ))), Some(Literal(Percent(Percentage(Dimension(Cursor(
-                      kind: "Dimension",
-                      offset: SourceOffset(123523),
-                      len: 3,
-                    ))))))), Some(Comma(Cursor(
-                      kind: "Comma",
-                      offset: SourceOffset(123526),
-                      len: 1,
-                    )))),
-                    (Stop(Transparent(Ident(Cursor(
-                      kind: "Ident",
-                      offset: SourceOffset(123528),
-                      len: 11,
-                    ))), Some(Literal(Percent(Percentage(Dimension(Cursor(
-                      kind: "Dimension",
-                      offset: SourceOffset(123540),
-                      len: 3,
-                    ))))))), Some(Comma(Cursor(
-                      kind: "Comma",
-                      offset: SourceOffset(123543),
-                      len: 1,
-                    )))),
-                    (Stop(Function(Rgba(RgbaFunction(
-                      name: Function(Cursor(
-                        kind: "Function",
-                        offset: SourceOffset(123545),
-                        len: 5,
-                      )),
-                      params: RgbFunctionParams(r#Some(Literal(Number(Number(Cursor(
-                        kind: "Number",
-                        offset: SourceOffset(123550),
+                    ))),
+                    stops: [
+                      (Stop(Function(Rgba(RgbaFunction(
+                        name: Function(Cursor(
+                          kind: "Function",
+                          offset: SourceOffset(123480),
+                          len: 5,
+                        )),
+                        params: RgbFunctionParams(r#Some(Literal(Number(Number(Cursor(
+                          kind: "Number",
+                          offset: SourceOffset(123485),
+                          len: 3,
+                        ))))), Some(Comma(Cursor(
+                          kind: "Comma",
+                          offset: SourceOffset(123488),
+                          len: 1,
+                        ))), r#Some(Literal(Number(Number(Cursor(
+                          kind: "Number",
+                          offset: SourceOffset(123490),
+                          len: 3,
+                        ))))), Some(Comma(Cursor(
+                          kind: "Comma",
+                          offset: SourceOffset(123493),
+                          len: 1,
+                        ))), r#Some(Literal(Number(Number(Cursor(
+                          kind: "Number",
+                          offset: SourceOffset(123495),
+                          len: 3,
+                        ))))), Some(CommaOrSlash(Cursor(
+                          kind: "Comma",
+                          offset: SourceOffset(123498),
+                          len: 1,
+                        ))), Some(r#Some(Literal(Number(Number(Cursor(
+                          kind: "Number",
+                          offset: SourceOffset(123500),
+                          len: 4,
+                        ))))))),
+                        close: RightParen(Cursor(
+                          kind: "RightParen",
+                          offset: SourceOffset(123504),
+                          len: 1,
+                        )),
+                      ))), Some(Literal(Percent(Percentage(Dimension(Cursor(
+                        kind: "Dimension",
+                        offset: SourceOffset(123506),
                         len: 3,
-                      ))))), Some(Comma(Cursor(
+                      )))))), None), Some(Comma(Cursor(
                         kind: "Comma",
-                        offset: SourceOffset(123553),
+                        offset: SourceOffset(123509),
                         len: 1,
-                      ))), r#Some(Literal(Number(Number(Cursor(
-                        kind: "Number",
-                        offset: SourceOffset(123555),
+                      )))),
+                      (Stop(Transparent(Ident(Cursor(
+                        kind: "Ident",
+                        offset: SourceOffset(123511),
+                        len: 11,
+                      ))), Some(Literal(Percent(Percentage(Dimension(Cursor(
+                        kind: "Dimension",
+                        offset: SourceOffset(123523),
                         len: 3,
-                      ))))), Some(Comma(Cursor(
+                      )))))), None), Some(Comma(Cursor(
                         kind: "Comma",
-                        offset: SourceOffset(123558),
+                        offset: SourceOffset(123526),
                         len: 1,
-                      ))), r#Some(Literal(Number(Number(Cursor(
-                        kind: "Number",
-                        offset: SourceOffset(123560),
+                      )))),
+                      (Stop(Transparent(Ident(Cursor(
+                        kind: "Ident",
+                        offset: SourceOffset(123528),
+                        len: 11,
+                      ))), Some(Literal(Percent(Percentage(Dimension(Cursor(
+                        kind: "Dimension",
+                        offset: SourceOffset(123540),
                         len: 3,
-                      ))))), Some(CommaOrSlash(Cursor(
+                      )))))), None), Some(Comma(Cursor(
                         kind: "Comma",
-                        offset: SourceOffset(123563),
+                        offset: SourceOffset(123543),
                         len: 1,
-                      ))), Some(r#Some(Literal(Number(Number(Cursor(
-                        kind: "Number",
-                        offset: SourceOffset(123565),
-                        len: 4,
-                      ))))))),
-                      close: RightParen(Cursor(
-                        kind: "RightParen",
-                        offset: SourceOffset(123569),
-                        len: 1,
-                      )),
-                    ))), Some(Literal(Percent(Percentage(Dimension(Cursor(
-                      kind: "Dimension",
-                      offset: SourceOffset(123571),
-                      len: 3,
-                    ))))))), Some(Comma(Cursor(
-                      kind: "Comma",
-                      offset: SourceOffset(123574),
-                      len: 1,
-                    )))),
-                    (Stop(Function(Rgba(RgbaFunction(
-                      name: Function(Cursor(
-                        kind: "Function",
-                        offset: SourceOffset(123576),
-                        len: 5,
-                      )),
-                      params: RgbFunctionParams(r#Some(Literal(Number(Number(Cursor(
-                        kind: "Number",
-                        offset: SourceOffset(123581),
+                      )))),
+                      (Stop(Function(Rgba(RgbaFunction(
+                        name: Function(Cursor(
+                          kind: "Function",
+                          offset: SourceOffset(123545),
+                          len: 5,
+                        )),
+                        params: RgbFunctionParams(r#Some(Literal(Number(Number(Cursor(
+                          kind: "Number",
+                          offset: SourceOffset(123550),
+                          len: 3,
+                        ))))), Some(Comma(Cursor(
+                          kind: "Comma",
+                          offset: SourceOffset(123553),
+                          len: 1,
+                        ))), r#Some(Literal(Number(Number(Cursor(
+                          kind: "Number",
+                          offset: SourceOffset(123555),
+                          len: 3,
+                        ))))), Some(Comma(Cursor(
+                          kind: "Comma",
+                          offset: SourceOffset(123558),
+                          len: 1,
+                        ))), r#Some(Literal(Number(Number(Cursor(
+                          kind: "Number",
+                          offset: SourceOffset(123560),
+                          len: 3,
+                        ))))), Some(CommaOrSlash(Cursor(
+                          kind: "Comma",
+                          offset: SourceOffset(123563),
+                          len: 1,
+                        ))), Some(r#Some(Literal(Number(Number(Cursor(
+                          kind: "Number",
+                          offset: SourceOffset(123565),
+                          len: 4,
+                        ))))))),
+                        close: RightParen(Cursor(
+                          kind: "RightParen",
+                          offset: SourceOffset(123569),
+                          len: 1,
+                        )),
+                      ))), Some(Literal(Percent(Percentage(Dimension(Cursor(
+                        kind: "Dimension",
+                        offset: SourceOffset(123571),
                         len: 3,
-                      ))))), Some(Comma(Cursor(
+                      )))))), None), Some(Comma(Cursor(
                         kind: "Comma",
-                        offset: SourceOffset(123584),
+                        offset: SourceOffset(123574),
                         len: 1,
-                      ))), r#Some(Literal(Number(Number(Cursor(
-                        kind: "Number",
-                        offset: SourceOffset(123586),
+                      )))),
+                      (Stop(Function(Rgba(RgbaFunction(
+                        name: Function(Cursor(
+                          kind: "Function",
+                          offset: SourceOffset(123576),
+                          len: 5,
+                        )),
+                        params: RgbFunctionParams(r#Some(Literal(Number(Number(Cursor(
+                          kind: "Number",
+                          offset: SourceOffset(123581),
+                          len: 3,
+                        ))))), Some(Comma(Cursor(
+                          kind: "Comma",
+                          offset: SourceOffset(123584),
+                          len: 1,
+                        ))), r#Some(Literal(Number(Number(Cursor(
+                          kind: "Number",
+                          offset: SourceOffset(123586),
+                          len: 3,
+                        ))))), Some(Comma(Cursor(
+                          kind: "Comma",
+                          offset: SourceOffset(123589),
+                          len: 1,
+                        ))), r#Some(Literal(Number(Number(Cursor(
+                          kind: "Number",
+                          offset: SourceOffset(123591),
+                          len: 3,
+                        ))))), Some(CommaOrSlash(Cursor(
+                          kind: "Comma",
+                          offset: SourceOffset(123594),
+                          len: 1,
+                        ))), Some(r#Some(Literal(Number(Number(Cursor(
+                          kind: "Number",
+                          offset: SourceOffset(123596),
+                          len: 4,
+                        ))))))),
+                        close: RightParen(Cursor(
+                          kind: "RightParen",
+                          offset: SourceOffset(123600),
+                          len: 1,
+                        )),
+                      ))), Some(Literal(Percent(Percentage(Dimension(Cursor(
+                        kind: "Dimension",
+                        offset: SourceOffset(123602),
                         len: 3,
-                      ))))), Some(Comma(Cursor(
+                      )))))), None), Some(Comma(Cursor(
                         kind: "Comma",
-                        offset: SourceOffset(123589),
+                        offset: SourceOffset(123605),
                         len: 1,
-                      ))), r#Some(Literal(Number(Number(Cursor(
-                        kind: "Number",
-                        offset: SourceOffset(123591),
+                      )))),
+                      (Stop(Transparent(Ident(Cursor(
+                        kind: "Ident",
+                        offset: SourceOffset(123607),
+                        len: 11,
+                      ))), Some(Literal(Percent(Percentage(Dimension(Cursor(
+                        kind: "Dimension",
+                        offset: SourceOffset(123619),
                         len: 3,
-                      ))))), Some(CommaOrSlash(Cursor(
+                      )))))), None), Some(Comma(Cursor(
                         kind: "Comma",
-                        offset: SourceOffset(123594),
+                        offset: SourceOffset(123622),
                         len: 1,
-                      ))), Some(r#Some(Literal(Number(Number(Cursor(
-                        kind: "Number",
-                        offset: SourceOffset(123596),
-                        len: 4,
-                      ))))))),
-                      close: RightParen(Cursor(
-                        kind: "RightParen",
-                        offset: SourceOffset(123600),
-                        len: 1,
-                      )),
-                    ))), Some(Literal(Percent(Percentage(Dimension(Cursor(
-                      kind: "Dimension",
-                      offset: SourceOffset(123602),
-                      len: 3,
-                    ))))))), Some(Comma(Cursor(
-                      kind: "Comma",
-                      offset: SourceOffset(123605),
-                      len: 1,
-                    )))),
-                    (Stop(Transparent(Ident(Cursor(
-                      kind: "Ident",
-                      offset: SourceOffset(123607),
-                      len: 11,
-                    ))), Some(Literal(Percent(Percentage(Dimension(Cursor(
-                      kind: "Dimension",
-                      offset: SourceOffset(123619),
-                      len: 3,
-                    ))))))), Some(Comma(Cursor(
-                      kind: "Comma",
-                      offset: SourceOffset(123622),
-                      len: 1,
-                    )))),
-                    (Stop(Transparent(Ident(Cursor(
-                      kind: "Ident",
-                      offset: SourceOffset(123624),
-                      len: 11,
-                    ))), None), None),
-                  ]),
+                      )))),
+                      (Stop(Transparent(Ident(Cursor(
+                        kind: "Ident",
+                        offset: SourceOffset(123624),
+                        len: 11,
+                      ))), None, None), None),
+                    ],
+                  ),
                   close: RightParen(Cursor(
                     kind: "RightParen",
                     offset: SourceOffset(123635),
@@ -202646,87 +202653,94 @@ StyleSheet(
                     offset: SourceOffset(179133),
                     len: 16,
                   )),
-                  params: LinearGradientFunctionParams(Some(Angle(Literal(Deg(Dimension(Cursor(
-                    kind: "Dimension",
-                    offset: SourceOffset(179149),
-                    len: 6,
-                  )))))), Some(Comma(Cursor(
-                    kind: "Comma",
-                    offset: SourceOffset(179155),
-                    len: 1,
-                  ))), [
-                    (Stop(Hex(Hash(Cursor(
-                      kind: "Hash",
-                      offset: SourceOffset(179157),
-                      len: 4,
-                    ))), Some(Literal(Percent(Percentage(Dimension(Cursor(
-                      kind: "Dimension",
-                      offset: SourceOffset(179162),
-                      len: 3,
-                    ))))))), Some(Comma(Cursor(
+                  params: LinearGradientFunctionParams(
+                    options: Some(LinearGradientOptions(
+                      direction: Some(Angle(Literal(Deg(Dimension(Cursor(
+                        kind: "Dimension",
+                        offset: SourceOffset(179149),
+                        len: 6,
+                      )))))),
+                      interpolation: None,
+                    )),
+                    comma: Some(Comma(Cursor(
                       kind: "Comma",
-                      offset: SourceOffset(179165),
+                      offset: SourceOffset(179155),
                       len: 1,
-                    )))),
-                    (Stop(Function(Rgba(RgbaFunction(
-                      name: Function(Cursor(
-                        kind: "Function",
-                        offset: SourceOffset(179167),
-                        len: 5,
-                      )),
-                      params: RgbFunctionParams(r#Some(Literal(Number(Number(Cursor(
-                        kind: "Number",
-                        offset: SourceOffset(179172),
-                        len: 1,
-                      ))))), Some(Comma(Cursor(
-                        kind: "Comma",
-                        offset: SourceOffset(179173),
-                        len: 1,
-                      ))), r#Some(Literal(Number(Number(Cursor(
-                        kind: "Number",
-                        offset: SourceOffset(179175),
-                        len: 1,
-                      ))))), Some(Comma(Cursor(
-                        kind: "Comma",
-                        offset: SourceOffset(179176),
-                        len: 1,
-                      ))), r#Some(Literal(Number(Number(Cursor(
-                        kind: "Number",
-                        offset: SourceOffset(179178),
-                        len: 1,
-                      ))))), Some(CommaOrSlash(Cursor(
-                        kind: "Comma",
-                        offset: SourceOffset(179179),
-                        len: 1,
-                      ))), Some(r#Some(Literal(Number(Number(Cursor(
-                        kind: "Number",
-                        offset: SourceOffset(179181),
+                    ))),
+                    stops: [
+                      (Stop(Hex(Hash(Cursor(
+                        kind: "Hash",
+                        offset: SourceOffset(179157),
+                        len: 4,
+                      ))), Some(Literal(Percent(Percentage(Dimension(Cursor(
+                        kind: "Dimension",
+                        offset: SourceOffset(179162),
                         len: 3,
-                      ))))))),
-                      close: RightParen(Cursor(
-                        kind: "RightParen",
-                        offset: SourceOffset(179184),
+                      )))))), None), Some(Comma(Cursor(
+                        kind: "Comma",
+                        offset: SourceOffset(179165),
                         len: 1,
-                      )),
-                    ))), Some(Literal(Percent(Percentage(Dimension(Cursor(
-                      kind: "Dimension",
-                      offset: SourceOffset(179186),
-                      len: 3,
-                    ))))))), Some(Comma(Cursor(
-                      kind: "Comma",
-                      offset: SourceOffset(179189),
-                      len: 1,
-                    )))),
-                    (Stop(Hex(Hash(Cursor(
-                      kind: "Hash",
-                      offset: SourceOffset(179191),
-                      len: 4,
-                    ))), Some(Literal(Percent(Percentage(Dimension(Cursor(
-                      kind: "Dimension",
-                      offset: SourceOffset(179196),
-                      len: 3,
-                    ))))))), None),
-                  ]),
+                      )))),
+                      (Stop(Function(Rgba(RgbaFunction(
+                        name: Function(Cursor(
+                          kind: "Function",
+                          offset: SourceOffset(179167),
+                          len: 5,
+                        )),
+                        params: RgbFunctionParams(r#Some(Literal(Number(Number(Cursor(
+                          kind: "Number",
+                          offset: SourceOffset(179172),
+                          len: 1,
+                        ))))), Some(Comma(Cursor(
+                          kind: "Comma",
+                          offset: SourceOffset(179173),
+                          len: 1,
+                        ))), r#Some(Literal(Number(Number(Cursor(
+                          kind: "Number",
+                          offset: SourceOffset(179175),
+                          len: 1,
+                        ))))), Some(Comma(Cursor(
+                          kind: "Comma",
+                          offset: SourceOffset(179176),
+                          len: 1,
+                        ))), r#Some(Literal(Number(Number(Cursor(
+                          kind: "Number",
+                          offset: SourceOffset(179178),
+                          len: 1,
+                        ))))), Some(CommaOrSlash(Cursor(
+                          kind: "Comma",
+                          offset: SourceOffset(179179),
+                          len: 1,
+                        ))), Some(r#Some(Literal(Number(Number(Cursor(
+                          kind: "Number",
+                          offset: SourceOffset(179181),
+                          len: 3,
+                        ))))))),
+                        close: RightParen(Cursor(
+                          kind: "RightParen",
+                          offset: SourceOffset(179184),
+                          len: 1,
+                        )),
+                      ))), Some(Literal(Percent(Percentage(Dimension(Cursor(
+                        kind: "Dimension",
+                        offset: SourceOffset(179186),
+                        len: 3,
+                      )))))), None), Some(Comma(Cursor(
+                        kind: "Comma",
+                        offset: SourceOffset(179189),
+                        len: 1,
+                      )))),
+                      (Stop(Hex(Hash(Cursor(
+                        kind: "Hash",
+                        offset: SourceOffset(179191),
+                        len: 4,
+                      ))), Some(Literal(Percent(Percentage(Dimension(Cursor(
+                        kind: "Dimension",
+                        offset: SourceOffset(179196),
+                        len: 3,
+                      )))))), None), None),
+                    ],
+                  ),
                   close: RightParen(Cursor(
                     kind: "RightParen",
                     offset: SourceOffset(179199),
