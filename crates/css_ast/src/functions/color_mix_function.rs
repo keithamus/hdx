@@ -215,41 +215,52 @@ impl HueInterpolationDirection {
 }
 
 #[cfg(feature = "chromashift")]
+impl InterpolationColorSpace {
+	/// Converts this AST node to the chromashift space it selects, with the hue interpolation it selects for polar spaces.
+	pub fn to_chromashift(&self) -> chromashift::InterpolationSpace {
+		use chromashift::InterpolationSpace;
+		match self {
+			Self::Rectangular(space) => match space {
+				RectangularColorSpace::Srgb(_) => InterpolationSpace::Srgb,
+				RectangularColorSpace::SrgbLinear(_) => InterpolationSpace::SrgbLinear,
+				RectangularColorSpace::DisplayP3(_) => InterpolationSpace::DisplayP3,
+				RectangularColorSpace::A98Rgb(_) => InterpolationSpace::A98Rgb,
+				RectangularColorSpace::ProphotoRgb(_) => InterpolationSpace::ProphotoRgb,
+				RectangularColorSpace::Rec2020(_) => InterpolationSpace::Rec2020,
+				RectangularColorSpace::Lab(_) => InterpolationSpace::Lab,
+				RectangularColorSpace::Oklab(_) => InterpolationSpace::Oklab,
+				RectangularColorSpace::XyzD50(_) => InterpolationSpace::XyzD50,
+				RectangularColorSpace::Xyz(_) | RectangularColorSpace::XyzD65(_) => InterpolationSpace::XyzD65,
+			},
+			Self::Polar(space, hue) => {
+				let hue = hue.as_ref().map(|hue| hue.direction.to_hue_interpolation()).unwrap_or_default();
+				match space {
+					PolarColorSpace::Hsl(_) => InterpolationSpace::Hsl(hue),
+					PolarColorSpace::Hwb(_) => InterpolationSpace::Hwb(hue),
+					PolarColorSpace::Lch(_) => InterpolationSpace::Lch(hue),
+					PolarColorSpace::Oklch(_) => InterpolationSpace::Oklch(hue),
+				}
+			}
+		}
+	}
+}
+
+#[cfg(feature = "chromashift")]
 impl crate::ToChromashift for ColorMixFunction<'_> {
 	fn to_chromashift(&self) -> Option<chromashift::Color> {
-		use chromashift::{
-			A98Rgb, Channel, DisplayP3, Hsl, Hwb, Lab, Lch, LinearRgb, Oklab, Oklch, PolarLayout, ProphotoRgb, Rec2020,
-			Srgb, XyzD50, XyzD65, mix_channels,
+		use chromashift::{Channel, InterpolationSpace};
+
+		let space = self.interpolation.as_ref().map_or(InterpolationSpace::Oklab, |i| i.color_space.to_chromashift());
+		let channels = |color: &Color| {
+			let mut channels = space.channels(color.to_chromashift()?);
+			for (channel, missing) in channels.iter_mut().zip(color.missing_channels()) {
+				if missing {
+					*channel = None;
+				}
+			}
+			Some(channels)
 		};
 
-		/// Two-color mix in space `C`, returning the result as `chromashift::Color`.
-		fn mix_in<C>(
-			a: &Color<'_>,
-			b: &Color<'_>,
-			percentage: f64,
-			hue: chromashift::HueInterpolation,
-		) -> Option<chromashift::Color>
-		where
-			C: From<chromashift::Color>
-				+ Into<[Channel; 4]>
-				+ From<[Channel; 4]>
-				+ Into<chromashift::Color>
-				+ PolarLayout,
-		{
-			let fa = a.to_mix_channels::<C>()?;
-			let fb = b.to_mix_channels::<C>()?;
-			Some(C::from(mix_channels(fa, fb, percentage, C::HUE_INDEX, hue)).into())
-		}
-
-		let color_space = self.interpolation.as_ref().map(|i| &i.color_space);
-
-		let hue = match color_space {
-			Some(InterpolationColorSpace::Polar(_, Some(him))) => him.direction.to_hue_interpolation(),
-			_ => chromashift::HueInterpolation::Shorter,
-		};
-
-		// Collect (color, percentage) pairs, defaulting missing percentages to None.
-		// A substituted/unresolved percentage cannot be statically resolved, so bail.
 		let parts: std::vec::Vec<(&Color<'_>, Option<f64>)> = (&self.parts)
 			.into_iter()
 			.map(|(p, _)| {
@@ -262,180 +273,24 @@ impl crate::ToChromashift for ColorMixFunction<'_> {
 			})
 			.collect::<Option<_>>()?;
 
-		// Normalise percentages: fill missing as equal shares summing to 100.
-		let n = parts.len() as f64;
-		let default_pct = 100.0 / n;
-		let mut stack: std::vec::Vec<(chromashift::Color, f64)> = std::vec::Vec::with_capacity(parts.len());
+		let default_pct = 100.0 / parts.len() as f64;
+		let mut stack: std::vec::Vec<([Channel; 4], f64)> = std::vec::Vec::with_capacity(parts.len());
 		for (color, pct) in &parts {
-			let p = pct.unwrap_or(default_pct);
-			stack.push((color.to_chromashift()?, p));
+			stack.push((channels(color)?, pct.unwrap_or(default_pct)));
 		}
 
-		// Per spec: if the sum of all percentages is 0, return transparent black.
 		if stack.iter().map(|(_, p)| p).sum::<f64>() == 0.0 {
 			return Some(chromashift::Color::Srgb(chromashift::Srgb::new(0.0, 0.0, 0.0, 0.0)));
 		}
 
-		// Pairwise left-to-right reduction per the spec stack algorithm.
 		while stack.len() >= 2 {
-			let (color_b, pct_b) = stack.remove(1);
-			let (color_a, pct_a) = stack.remove(0);
+			let (b, pct_b) = stack.remove(1);
+			let (a, pct_a) = stack.remove(0);
 			let combined = pct_a + pct_b;
-			let progress = pct_b / combined;
-
-			// Get the source Color AST nodes for none-channel preservation.
-			let idx = parts.len() - stack.len() - 2;
-			let ast_a = parts[idx].0;
-			let ast_b = parts[idx + 1].0;
-
-			// We need to_mix_channels for none-aware mixing, but we have a resolved
-			// chromashift::Color for intermediate results. For intermediates (idx > 0),
-			// none channels are already resolved so we use the chromashift color directly.
-			let mixed = if idx == 0 {
-				let dispatch = |space: &InterpolationColorSpace| match space {
-					InterpolationColorSpace::Rectangular(s) => match s {
-						RectangularColorSpace::Srgb(_) => mix_in::<Srgb>(ast_a, ast_b, progress * 100.0, hue),
-						RectangularColorSpace::SrgbLinear(_) => {
-							mix_in::<LinearRgb>(ast_a, ast_b, progress * 100.0, hue)
-						}
-						RectangularColorSpace::DisplayP3(_) => mix_in::<DisplayP3>(ast_a, ast_b, progress * 100.0, hue),
-						RectangularColorSpace::A98Rgb(_) => mix_in::<A98Rgb>(ast_a, ast_b, progress * 100.0, hue),
-						RectangularColorSpace::ProphotoRgb(_) => {
-							mix_in::<ProphotoRgb>(ast_a, ast_b, progress * 100.0, hue)
-						}
-						RectangularColorSpace::Rec2020(_) => mix_in::<Rec2020>(ast_a, ast_b, progress * 100.0, hue),
-						RectangularColorSpace::Lab(_) => mix_in::<Lab>(ast_a, ast_b, progress * 100.0, hue),
-						RectangularColorSpace::Oklab(_) => mix_in::<Oklab>(ast_a, ast_b, progress * 100.0, hue),
-						RectangularColorSpace::XyzD50(_) => mix_in::<XyzD50>(ast_a, ast_b, progress * 100.0, hue),
-						RectangularColorSpace::Xyz(_) | RectangularColorSpace::XyzD65(_) => {
-							mix_in::<XyzD65>(ast_a, ast_b, progress * 100.0, hue)
-						}
-					},
-					InterpolationColorSpace::Polar(s, _) => match s {
-						PolarColorSpace::Hsl(_) => mix_in::<Hsl>(ast_a, ast_b, progress * 100.0, hue),
-						PolarColorSpace::Hwb(_) => mix_in::<Hwb>(ast_a, ast_b, progress * 100.0, hue),
-						PolarColorSpace::Lch(_) => mix_in::<Lch>(ast_a, ast_b, progress * 100.0, hue),
-						PolarColorSpace::Oklch(_) => mix_in::<Oklch>(ast_a, ast_b, progress * 100.0, hue),
-					},
-				};
-				// Default to oklab when no interpolation method specified.
-				if let Some(space) = color_space {
-					dispatch(space)
-				} else {
-					mix_in::<Oklab>(ast_a, ast_b, progress * 100.0, hue)
-				}
-			} else {
-				// Intermediate results have no none channels; mix directly in target space.
-				let mix_direct = |space: &InterpolationColorSpace| {
-					let fa: [Channel; 4] = match space {
-						InterpolationColorSpace::Rectangular(s) => match s {
-							RectangularColorSpace::Srgb(_) => Srgb::from(color_a).into(),
-							RectangularColorSpace::SrgbLinear(_) => LinearRgb::from(color_a).into(),
-							RectangularColorSpace::DisplayP3(_) => DisplayP3::from(color_a).into(),
-							RectangularColorSpace::A98Rgb(_) => A98Rgb::from(color_a).into(),
-							RectangularColorSpace::ProphotoRgb(_) => ProphotoRgb::from(color_a).into(),
-							RectangularColorSpace::Rec2020(_) => Rec2020::from(color_a).into(),
-							RectangularColorSpace::Lab(_) => Lab::from(color_a).into(),
-							RectangularColorSpace::Oklab(_) => Oklab::from(color_a).into(),
-							RectangularColorSpace::XyzD50(_) => XyzD50::from(color_a).into(),
-							RectangularColorSpace::Xyz(_) | RectangularColorSpace::XyzD65(_) => {
-								XyzD65::from(color_a).into()
-							}
-						},
-						InterpolationColorSpace::Polar(s, _) => match s {
-							PolarColorSpace::Hsl(_) => Hsl::from(color_a).into(),
-							PolarColorSpace::Hwb(_) => Hwb::from(color_a).into(),
-							PolarColorSpace::Lch(_) => Lch::from(color_a).into(),
-							PolarColorSpace::Oklch(_) => Oklch::from(color_a).into(),
-						},
-					};
-					let fb: [Channel; 4] = match space {
-						InterpolationColorSpace::Rectangular(s) => match s {
-							RectangularColorSpace::Srgb(_) => Srgb::from(color_b).into(),
-							RectangularColorSpace::SrgbLinear(_) => LinearRgb::from(color_b).into(),
-							RectangularColorSpace::DisplayP3(_) => DisplayP3::from(color_b).into(),
-							RectangularColorSpace::A98Rgb(_) => A98Rgb::from(color_b).into(),
-							RectangularColorSpace::ProphotoRgb(_) => ProphotoRgb::from(color_b).into(),
-							RectangularColorSpace::Rec2020(_) => Rec2020::from(color_b).into(),
-							RectangularColorSpace::Lab(_) => Lab::from(color_b).into(),
-							RectangularColorSpace::Oklab(_) => Oklab::from(color_b).into(),
-							RectangularColorSpace::XyzD50(_) => XyzD50::from(color_b).into(),
-							RectangularColorSpace::Xyz(_) | RectangularColorSpace::XyzD65(_) => {
-								XyzD65::from(color_b).into()
-							}
-						},
-						InterpolationColorSpace::Polar(s, _) => match s {
-							PolarColorSpace::Hsl(_) => Hsl::from(color_b).into(),
-							PolarColorSpace::Hwb(_) => Hwb::from(color_b).into(),
-							PolarColorSpace::Lch(_) => Lch::from(color_b).into(),
-							PolarColorSpace::Oklch(_) => Oklch::from(color_b).into(),
-						},
-					};
-					Some(match space {
-						InterpolationColorSpace::Rectangular(s) => match s {
-							RectangularColorSpace::Srgb(_) => {
-								Srgb::from(mix_channels(fa, fb, progress * 100.0, Srgb::HUE_INDEX, hue)).into()
-							}
-							RectangularColorSpace::SrgbLinear(_) => {
-								LinearRgb::from(mix_channels(fa, fb, progress * 100.0, LinearRgb::HUE_INDEX, hue))
-									.into()
-							}
-							RectangularColorSpace::DisplayP3(_) => {
-								DisplayP3::from(mix_channels(fa, fb, progress * 100.0, DisplayP3::HUE_INDEX, hue))
-									.into()
-							}
-							RectangularColorSpace::A98Rgb(_) => {
-								A98Rgb::from(mix_channels(fa, fb, progress * 100.0, A98Rgb::HUE_INDEX, hue)).into()
-							}
-							RectangularColorSpace::ProphotoRgb(_) => {
-								ProphotoRgb::from(mix_channels(fa, fb, progress * 100.0, ProphotoRgb::HUE_INDEX, hue))
-									.into()
-							}
-							RectangularColorSpace::Rec2020(_) => {
-								Rec2020::from(mix_channels(fa, fb, progress * 100.0, Rec2020::HUE_INDEX, hue)).into()
-							}
-							RectangularColorSpace::Lab(_) => {
-								Lab::from(mix_channels(fa, fb, progress * 100.0, Lab::HUE_INDEX, hue)).into()
-							}
-							RectangularColorSpace::Oklab(_) => {
-								Oklab::from(mix_channels(fa, fb, progress * 100.0, Oklab::HUE_INDEX, hue)).into()
-							}
-							RectangularColorSpace::XyzD50(_) => {
-								XyzD50::from(mix_channels(fa, fb, progress * 100.0, XyzD50::HUE_INDEX, hue)).into()
-							}
-							RectangularColorSpace::Xyz(_) | RectangularColorSpace::XyzD65(_) => {
-								XyzD65::from(mix_channels(fa, fb, progress * 100.0, XyzD65::HUE_INDEX, hue)).into()
-							}
-						},
-						InterpolationColorSpace::Polar(s, _) => match s {
-							PolarColorSpace::Hsl(_) => {
-								Hsl::from(mix_channels(fa, fb, progress * 100.0, Hsl::HUE_INDEX, hue)).into()
-							}
-							PolarColorSpace::Hwb(_) => {
-								Hwb::from(mix_channels(fa, fb, progress * 100.0, Hwb::HUE_INDEX, hue)).into()
-							}
-							PolarColorSpace::Lch(_) => {
-								Lch::from(mix_channels(fa, fb, progress * 100.0, Lch::HUE_INDEX, hue)).into()
-							}
-							PolarColorSpace::Oklch(_) => {
-								Oklch::from(mix_channels(fa, fb, progress * 100.0, Oklch::HUE_INDEX, hue)).into()
-							}
-						},
-					})
-				};
-				if let Some(space) = color_space {
-					mix_direct(space)
-				} else {
-					let fa: [Channel; 4] = Oklab::from(color_a).into();
-					let fb: [Channel; 4] = Oklab::from(color_b).into();
-					Some(Oklab::from(mix_channels(fa, fb, progress * 100.0, Oklab::HUE_INDEX, hue)).into())
-				}
-			}?;
-
-			stack.insert(0, (mixed, combined));
+			stack.insert(0, (space.mix(a, b, pct_b / combined * 100.0), combined));
 		}
 
-		stack.into_iter().next().map(|(c, _)| c)
+		stack.into_iter().next().map(|(channels, _)| space.color(channels))
 	}
 }
 

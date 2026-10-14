@@ -59,10 +59,21 @@ impl Color<'_> {
 	where
 		C: From<chromashift::Color> + Into<[chromashift::Channel; 4]>,
 	{
+		let none = self.missing_channels();
+		let mut ch: [chromashift::Channel; 4] = C::from(self.to_chromashift()?).into();
+		for i in 0..4 {
+			if none[i] {
+				ch[i] = None;
+			}
+		}
+		Some(ch)
+	}
+
+	/// Which channels are `none`, with alpha last.
+	pub fn missing_channels(&self) -> [bool; 4] {
 		use crate::{ColorFunction, NoneOr};
 
-		// Determine which channels are `none` in the AST.
-		let none = match self {
+		match self {
 			Color::Function(func) => match &**func {
 				ColorFunction::Rgb(f) => {
 					let p = &f.params;
@@ -157,15 +168,7 @@ impl Color<'_> {
 				_ => [false; 4],
 			},
 			_ => [false; 4],
-		};
-
-		let mut ch: [chromashift::Channel; 4] = C::from(self.to_chromashift()?).into();
-		for i in 0..4 {
-			if none[i] {
-				ch[i] = None;
-			}
 		}
-		Some(ch)
 	}
 }
 

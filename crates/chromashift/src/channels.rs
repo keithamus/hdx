@@ -17,14 +17,8 @@ pub trait ToAlpha: Sized {
 /// A generic single color channel value, which may be None
 ///
 /// `none` channels in `color-mix` adopt the analogous channel's value from the other color in the interpolation space
-/// (see [`crate::mix_channels`]).
+/// (see [`crate::InterpolationSpace::mix`]).
 pub type Channel = Option<f64>;
-
-/// Marks colour spaces with a polar (hue) channel.
-pub trait PolarLayout {
-	/// Index of the hue channel within the 3 colour components, or `None` for rectangular spaces.
-	const HUE_INDEX: Option<usize> = None;
-}
 
 use crate::{
 	A98Rgb, DisplayP3, Hsl, Hwb, Lab, Lch, LinearRgb, Oklab, Oklch, ProphotoRgb, Rec2020, Srgb, XyzD50, XyzD65,
@@ -35,9 +29,6 @@ macro_rules! impl_channels {
 	(@cast $v:expr, f64) => { $v };
 	(@cast $v:expr, f32) => { $v as f32 };
 	($ty:ident { $f1:ident: $t1:tt, $f2:ident: $t2:tt, $f3:ident: $t3:tt $(,)? }) => {
-		impl_channels!($ty { $f1: $t1, $f2: $t2, $f3: $t3 }, polar = None);
-	};
-	($ty:ident { $f1:ident: $t1:tt, $f2:ident: $t2:tt, $f3:ident: $t3:tt $(,)? }, polar = $hue:expr) => {
 		impl From<$ty> for [Channel; 4] {
 			fn from(c: $ty) -> Self {
 				[
@@ -59,10 +50,6 @@ macro_rules! impl_channels {
 				)
 			}
 		}
-
-		impl PolarLayout for $ty {
-			const HUE_INDEX: Option<usize> = $hue;
-		}
 	};
 }
 
@@ -76,7 +63,7 @@ impl_channels!(Lab { lightness: f64, a: f64, b: f64 });
 impl_channels!(Oklab { lightness: f64, a: f64, b: f64 });
 impl_channels!(XyzD50 { x: f64, y: f64, z: f64 });
 impl_channels!(XyzD65 { x: f64, y: f64, z: f64 });
-impl_channels!(Hsl { hue: f64, saturation: f64, lightness: f64 }, polar = Some(0));
-impl_channels!(Hwb { hue: f64, whiteness: f64, blackness: f64 }, polar = Some(0));
-impl_channels!(Lch { lightness: f64, chroma: f64, hue: f64 }, polar = Some(2));
-impl_channels!(Oklch { lightness: f64, chroma: f64, hue: f64 }, polar = Some(2));
+impl_channels!(Hsl { hue: f64, saturation: f64, lightness: f64 });
+impl_channels!(Hwb { hue: f64, whiteness: f64, blackness: f64 });
+impl_channels!(Lch { lightness: f64, chroma: f64, hue: f64 });
+impl_channels!(Oklch { lightness: f64, chroma: f64, hue: f64 });
