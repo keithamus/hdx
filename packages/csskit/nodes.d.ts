@@ -281,6 +281,7 @@ export declare class ComponentValues extends Node { static readonly tag: 'compon
 export declare class ComponentsValue extends Node { static readonly tag: 'components-value'; }
 export declare class CompositingOperator extends Node { static readonly tag: 'compositing-operator'; }
 export declare class CompoundSelector extends Node { static readonly tag: 'compound-selector'; }
+export declare class ConicGradientFunction extends Node { static readonly tag: 'conic-gradient-function'; }
 export declare class ContainIntrinsicBlockSizeStyleValue extends Node { static readonly tag: 'contain-intrinsic-block-size-style-value'; }
 export declare class ContainIntrinsicHeightStyleValue extends Node { static readonly tag: 'contain-intrinsic-height-style-value'; }
 export declare class ContainIntrinsicInlineSizeStyleValue extends Node { static readonly tag: 'contain-intrinsic-inline-size-style-value'; }
@@ -979,6 +980,7 @@ export declare class RelativeSize extends Node { static readonly tag: 'relative-
 export declare class RemFunction extends Node { static readonly tag: 'rem-function'; static parse(source: string): never; }
 export declare class RenderingIntentValue extends Node { static readonly tag: 'rendering-intent-value'; }
 export declare class RepeatStyle extends Node { static readonly tag: 'repeat-style'; }
+export declare class RepeatingConicGradientFunction extends Node { static readonly tag: 'repeating-conic-gradient-function'; }
 export declare class RepeatingLinearGradientFunction extends Node { static readonly tag: 'repeating-linear-gradient-function'; }
 export declare class RepeatingRadialGradientFunction extends Node { static readonly tag: 'repeating-radial-gradient-function'; }
 export declare class Repetition extends Node { static readonly tag: 'repetition'; }

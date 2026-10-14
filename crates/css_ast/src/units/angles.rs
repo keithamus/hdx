@@ -89,6 +89,44 @@ pub enum AngleOrNumber {
 	Number(T![Number]),
 }
 
+/// <https://drafts.csswg.org/css-values/#typedef-angle-percentage>
+///
+/// ```text,ignore
+/// <angle-percentage> = [ <angle> | <percentage> ]
+/// ```
+///
+/// Also admits `<zero>`, as every use in the gradient grammars does.
+#[node]
+#[derive(
+	IntoCursor, ToSpan, SemanticEq, Parse, Peek, ToCursors, Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash,
+)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+#[cfg_attr(feature = "visitable", derive(csskit_derives::Visitable), visit(children))]
+#[derive(csskit_derives::NodeWithMetadata)]
+pub enum AnglePercentage {
+	#[cfg_attr(feature = "visitable", visit(skip))]
+	Zero(Exact<T![Number], 0>),
+	Angle(Angle),
+	#[cfg_attr(feature = "visitable", visit(skip))]
+	Percent(crate::Percentage),
+}
+
+impl From<AnglePercentage> for f32 {
+	fn from(val: AnglePercentage) -> Self {
+		match val {
+			AnglePercentage::Zero(_) => 0.0,
+			AnglePercentage::Angle(f) => f.into(),
+			AnglePercentage::Percent(f) => f.into(),
+		}
+	}
+}
+
+impl ToNumberValue for AnglePercentage {
+	fn to_number_value(&self) -> Option<f32> {
+		Some((*self).into())
+	}
+}
+
 impl From<AngleOrZero> for f32 {
 	fn from(val: AngleOrZero) -> Self {
 		match val {

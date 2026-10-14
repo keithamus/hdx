@@ -78,9 +78,9 @@ pub struct LinearFunction<'a> {
 #[cfg_attr(feature = "visitable", derive(csskit_derives::Visitable), visit(self))]
 #[derive(csskit_derives::NodeWithMetadata)]
 pub struct LinearFunctionParams<'a>(
-	NumericValue<'a, T![Number]>,
-	Option<CalcableValue<'a, Percentage>>,
-	Option<CalcableValue<'a, Percentage>>,
+	pub NumericValue<'a, T![Number]>,
+	pub Option<CalcableValue<'a, Percentage>>,
+	pub Option<CalcableValue<'a, Percentage>>,
 );
 
 impl<'a> Parse<'a> for LinearFunctionParams<'a> {
@@ -116,16 +116,16 @@ pub struct CubicBezierFunction<'a> {
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 #[derive(csskit_derives::NodeWithMetadata)]
 pub struct CubicBezierFunctionParams<'a> {
-	x1: NumericValue<'a, T![Number]>,
+	pub x1: NumericValue<'a, T![Number]>,
 	#[semantic_eq(skip)]
-	c1: Option<T![,]>,
-	x2: NumericValue<'a, T![Number]>,
+	pub c1: Option<T![,]>,
+	pub y1: NumericValue<'a, T![Number]>,
 	#[semantic_eq(skip)]
-	c2: Option<T![,]>,
-	y1: NumericValue<'a, T![Number]>,
+	pub c2: Option<T![,]>,
+	pub x2: NumericValue<'a, T![Number]>,
 	#[semantic_eq(skip)]
-	c3: Option<T![,]>,
-	y2: NumericValue<'a, T![Number]>,
+	pub c3: Option<T![,]>,
+	pub y2: NumericValue<'a, T![Number]>,
 }
 
 #[node]
@@ -145,7 +145,11 @@ pub struct StepsFunction<'a> {
 #[derive(Parse, Peek, ToCursors, ToSpan, SemanticEq, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 #[derive(csskit_derives::NodeWithMetadata)]
-pub struct StepsFunctionParams<'a>(NumericValue<'a, CSSInt>, #[semantic_eq(skip)] Option<T![,]>, Option<StepPosition>);
+pub struct StepsFunctionParams<'a>(
+	pub NumericValue<'a, CSSInt>,
+	#[semantic_eq(skip)] pub Option<T![,]>,
+	pub Option<StepPosition>,
+);
 
 #[node]
 #[derive(Parse, Peek, ToCursors, ToSpan, SemanticEq, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]

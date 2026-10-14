@@ -6,6 +6,7 @@ pub(crate) const SIZED_TYPES: &[&str] = &[
 	"Angle",
 	"AngleOrNumber",
 	"AngleOrZero",
+	"AnglePercentage",
 	"AnimateableFeature",
 	"AnimationAction",
 	"AnimationType",
