@@ -610,6 +610,7 @@ impl_leaf_metadata!(
 	css_parse::token_macros::DashedIdent,
 	css_parse::token_macros::Whitespace,
 	css_parse::token_macros::RightParen,
+	crate::HexColor,
 	css_parse::Comparison,
 );
 

@@ -1679,7 +1679,7 @@ StyleSheet(
                   offset: SourceOffset(2298),
                   len: 1,
                 )),
-              )))), Literal(Hex(Hash(Cursor(
+              )))), Literal(Hex(HexColor(Cursor(
                 kind: "Hash",
                 offset: SourceOffset(2300),
                 len: 4,
@@ -1850,11 +1850,11 @@ StyleSheet(
                       offset: SourceOffset(2465),
                       len: 1,
                     )),
-                    value: ScrollbarColorStyleValue(r#Some((Literal(Hex(Hash(Cursor(
+                    value: ScrollbarColorStyleValue(r#Some((Literal(Hex(HexColor(Cursor(
                       kind: "Hash",
                       offset: SourceOffset(2467),
                       len: 7,
-                    )))), Literal(Hex(Hash(Cursor(
+                    )))), Literal(Hex(HexColor(Cursor(
                       kind: "Hash",
                       offset: SourceOffset(2475),
                       len: 7,
@@ -2010,11 +2010,11 @@ StyleSheet(
                       offset: SourceOffset(2622),
                       len: 1,
                     )),
-                    value: ScrollbarColorStyleValue(r#Some((Literal(Hex(Hash(Cursor(
+                    value: ScrollbarColorStyleValue(r#Some((Literal(Hex(HexColor(Cursor(
                       kind: "Hash",
                       offset: SourceOffset(2624),
                       len: 7,
-                    )))), Literal(Hex(Hash(Cursor(
+                    )))), Literal(Hex(HexColor(Cursor(
                       kind: "Hash",
                       offset: SourceOffset(2632),
                       len: 7,
@@ -2170,11 +2170,11 @@ StyleSheet(
                       offset: SourceOffset(2779),
                       len: 1,
                     )),
-                    value: ScrollbarColorStyleValue(r#Some((Literal(Hex(Hash(Cursor(
+                    value: ScrollbarColorStyleValue(r#Some((Literal(Hex(HexColor(Cursor(
                       kind: "Hash",
                       offset: SourceOffset(2781),
                       len: 7,
-                    )))), Literal(Hex(Hash(Cursor(
+                    )))), Literal(Hex(HexColor(Cursor(
                       kind: "Hash",
                       offset: SourceOffset(2789),
                       len: 7,
@@ -2330,11 +2330,11 @@ StyleSheet(
                       offset: SourceOffset(2936),
                       len: 1,
                     )),
-                    value: ScrollbarColorStyleValue(r#Some((Literal(Hex(Hash(Cursor(
+                    value: ScrollbarColorStyleValue(r#Some((Literal(Hex(HexColor(Cursor(
                       kind: "Hash",
                       offset: SourceOffset(2938),
                       len: 7,
-                    )))), Literal(Hex(Hash(Cursor(
+                    )))), Literal(Hex(HexColor(Cursor(
                       kind: "Hash",
                       offset: SourceOffset(2946),
                       len: 7,
@@ -2490,11 +2490,11 @@ StyleSheet(
                       offset: SourceOffset(3093),
                       len: 1,
                     )),
-                    value: ScrollbarColorStyleValue(r#Some((Literal(Hex(Hash(Cursor(
+                    value: ScrollbarColorStyleValue(r#Some((Literal(Hex(HexColor(Cursor(
                       kind: "Hash",
                       offset: SourceOffset(3095),
                       len: 7,
-                    )))), Literal(Hex(Hash(Cursor(
+                    )))), Literal(Hex(HexColor(Cursor(
                       kind: "Hash",
                       offset: SourceOffset(3103),
                       len: 7,
@@ -2650,11 +2650,11 @@ StyleSheet(
                       offset: SourceOffset(3250),
                       len: 1,
                     )),
-                    value: ScrollbarColorStyleValue(r#Some((Literal(Hex(Hash(Cursor(
+                    value: ScrollbarColorStyleValue(r#Some((Literal(Hex(HexColor(Cursor(
                       kind: "Hash",
                       offset: SourceOffset(3252),
                       len: 7,
-                    )))), Literal(Hex(Hash(Cursor(
+                    )))), Literal(Hex(HexColor(Cursor(
                       kind: "Hash",
                       offset: SourceOffset(3260),
                       len: 7,
@@ -3050,7 +3050,7 @@ StyleSheet(
                 offset: SourceOffset(3693),
                 len: 1,
               )),
-              value: ColorStyleValue(Literal(Hex(Hash(Cursor(
+              value: ColorStyleValue(Literal(Hex(HexColor(Cursor(
                 kind: "Hash",
                 offset: SourceOffset(3695),
                 len: 7,
@@ -3118,7 +3118,7 @@ StyleSheet(
                   attachment: None,
                   origin: None,
                   clip: None,
-                  color: Some(Hex(Hash(Cursor(
+                  color: Some(Hex(HexColor(Cursor(
                     kind: "Hash",
                     offset: SourceOffset(3745),
                     len: 4,
@@ -3283,7 +3283,7 @@ StyleSheet(
                         attachment: None,
                         origin: None,
                         clip: None,
-                        color: Some(Hex(Hash(Cursor(
+                        color: Some(Hex(HexColor(Cursor(
                           kind: "Hash",
                           offset: SourceOffset(3892),
                           len: 7,
@@ -3425,7 +3425,7 @@ StyleSheet(
                       offset: SourceOffset(4001),
                       len: 1,
                     )),
-                    value: ColorStyleValue(Literal(Hex(Hash(Cursor(
+                    value: ColorStyleValue(Literal(Hex(HexColor(Cursor(
                       kind: "Hash",
                       offset: SourceOffset(4003),
                       len: 7,
@@ -6034,7 +6034,7 @@ StyleSheet(
                 offset: SourceOffset(6861),
                 len: 1,
               )),
-              value: ColorStyleValue(Literal(Hex(Hash(Cursor(
+              value: ColorStyleValue(Literal(Hex(HexColor(Cursor(
                 kind: "Hash",
                 offset: SourceOffset(6863),
                 len: 4,
@@ -6164,7 +6164,7 @@ StyleSheet(
                       offset: SourceOffset(6954),
                       len: 1,
                     )),
-                    value: ColorStyleValue(Literal(Hex(Hash(Cursor(
+                    value: ColorStyleValue(Literal(Hex(HexColor(Cursor(
                       kind: "Hash",
                       offset: SourceOffset(6956),
                       len: 4,
@@ -6260,7 +6260,7 @@ StyleSheet(
                 offset: SourceOffset(7010),
                 len: 1,
               )),
-              value: ColorStyleValue(Literal(Hex(Hash(Cursor(
+              value: ColorStyleValue(Literal(Hex(HexColor(Cursor(
                 kind: "Hash",
                 offset: SourceOffset(7012),
                 len: 4,
@@ -6390,7 +6390,7 @@ StyleSheet(
                       offset: SourceOffset(7103),
                       len: 1,
                     )),
-                    value: ColorStyleValue(Literal(Hex(Hash(Cursor(
+                    value: ColorStyleValue(Literal(Hex(HexColor(Cursor(
                       kind: "Hash",
                       offset: SourceOffset(7105),
                       len: 4,
@@ -6486,7 +6486,7 @@ StyleSheet(
                 offset: SourceOffset(7159),
                 len: 1,
               )),
-              value: ColorStyleValue(Literal(Hex(Hash(Cursor(
+              value: ColorStyleValue(Literal(Hex(HexColor(Cursor(
                 kind: "Hash",
                 offset: SourceOffset(7161),
                 len: 4,
@@ -6616,7 +6616,7 @@ StyleSheet(
                       offset: SourceOffset(7252),
                       len: 1,
                     )),
-                    value: ColorStyleValue(Literal(Hex(Hash(Cursor(
+                    value: ColorStyleValue(Literal(Hex(HexColor(Cursor(
                       kind: "Hash",
                       offset: SourceOffset(7254),
                       len: 4,
@@ -6712,7 +6712,7 @@ StyleSheet(
                 offset: SourceOffset(7308),
                 len: 1,
               )),
-              value: ColorStyleValue(Literal(Hex(Hash(Cursor(
+              value: ColorStyleValue(Literal(Hex(HexColor(Cursor(
                 kind: "Hash",
                 offset: SourceOffset(7310),
                 len: 4,
@@ -6842,7 +6842,7 @@ StyleSheet(
                       offset: SourceOffset(7401),
                       len: 1,
                     )),
-                    value: ColorStyleValue(Literal(Hex(Hash(Cursor(
+                    value: ColorStyleValue(Literal(Hex(HexColor(Cursor(
                       kind: "Hash",
                       offset: SourceOffset(7403),
                       len: 4,
@@ -6938,7 +6938,7 @@ StyleSheet(
                 offset: SourceOffset(7457),
                 len: 1,
               )),
-              value: ColorStyleValue(Literal(Hex(Hash(Cursor(
+              value: ColorStyleValue(Literal(Hex(HexColor(Cursor(
                 kind: "Hash",
                 offset: SourceOffset(7459),
                 len: 4,
@@ -7068,7 +7068,7 @@ StyleSheet(
                       offset: SourceOffset(7550),
                       len: 1,
                     )),
-                    value: ColorStyleValue(Literal(Hex(Hash(Cursor(
+                    value: ColorStyleValue(Literal(Hex(HexColor(Cursor(
                       kind: "Hash",
                       offset: SourceOffset(7552),
                       len: 4,
@@ -7164,7 +7164,7 @@ StyleSheet(
                 offset: SourceOffset(7606),
                 len: 1,
               )),
-              value: ColorStyleValue(Literal(Hex(Hash(Cursor(
+              value: ColorStyleValue(Literal(Hex(HexColor(Cursor(
                 kind: "Hash",
                 offset: SourceOffset(7608),
                 len: 4,
@@ -7294,7 +7294,7 @@ StyleSheet(
                       offset: SourceOffset(7699),
                       len: 1,
                     )),
-                    value: ColorStyleValue(Literal(Hex(Hash(Cursor(
+                    value: ColorStyleValue(Literal(Hex(HexColor(Cursor(
                       kind: "Hash",
                       offset: SourceOffset(7701),
                       len: 4,
@@ -7390,7 +7390,7 @@ StyleSheet(
                 offset: SourceOffset(7759),
                 len: 1,
               )),
-              value: ColorStyleValue(Literal(Hex(Hash(Cursor(
+              value: ColorStyleValue(Literal(Hex(HexColor(Cursor(
                 kind: "Hash",
                 offset: SourceOffset(7761),
                 len: 4,
@@ -7520,7 +7520,7 @@ StyleSheet(
                       offset: SourceOffset(7856),
                       len: 1,
                     )),
-                    value: ColorStyleValue(Literal(Hex(Hash(Cursor(
+                    value: ColorStyleValue(Literal(Hex(HexColor(Cursor(
                       kind: "Hash",
                       offset: SourceOffset(7858),
                       len: 4,
@@ -7894,7 +7894,7 @@ StyleSheet(
                   offset: SourceOffset(8058),
                   len: 5,
                 ))))),
-                color: Some(Literal(Hex(Hash(Cursor(
+                color: Some(Literal(Hex(HexColor(Cursor(
                   kind: "Hash",
                   offset: SourceOffset(8064),
                   len: 9,
@@ -8125,7 +8125,7 @@ StyleSheet(
                         offset: SourceOffset(8253),
                         len: 5,
                       ))))),
-                      color: Some(Literal(Hex(Hash(Cursor(
+                      color: Some(Literal(Hex(HexColor(Cursor(
                         kind: "Hash",
                         offset: SourceOffset(8259),
                         len: 9,
@@ -8245,7 +8245,7 @@ StyleSheet(
                   offset: SourceOffset(8339),
                   len: 5,
                 ))))),
-                color: Some(Literal(Hex(Hash(Cursor(
+                color: Some(Literal(Hex(HexColor(Cursor(
                   kind: "Hash",
                   offset: SourceOffset(8345),
                   len: 9,
@@ -8476,7 +8476,7 @@ StyleSheet(
                         offset: SourceOffset(8525),
                         len: 5,
                       ))))),
-                      color: Some(Literal(Hex(Hash(Cursor(
+                      color: Some(Literal(Hex(HexColor(Cursor(
                         kind: "Hash",
                         offset: SourceOffset(8531),
                         len: 9,
@@ -9082,7 +9082,7 @@ StyleSheet(
                 offset: SourceOffset(8904),
                 len: 1,
               )),
-              value: BackgroundColorStyleValue(Literal(Hex(Hash(Cursor(
+              value: BackgroundColorStyleValue(Literal(Hex(HexColor(Cursor(
                 kind: "Hash",
                 offset: SourceOffset(8906),
                 len: 4,
@@ -9200,7 +9200,7 @@ StyleSheet(
                 offset: SourceOffset(9003),
                 len: 1,
               )),
-              value: ColorStyleValue(Literal(Hex(Hash(Cursor(
+              value: ColorStyleValue(Literal(Hex(HexColor(Cursor(
                 kind: "Hash",
                 offset: SourceOffset(9005),
                 len: 4,
@@ -9293,7 +9293,7 @@ StyleSheet(
                       offset: SourceOffset(9080),
                       len: 1,
                     )),
-                    value: BackgroundColorStyleValue(Literal(Hex(Hash(Cursor(
+                    value: BackgroundColorStyleValue(Literal(Hex(HexColor(Cursor(
                       kind: "Hash",
                       offset: SourceOffset(9082),
                       len: 7,
@@ -9945,7 +9945,7 @@ StyleSheet(
                 offset: SourceOffset(9461),
                 len: 1,
               )),
-              value: ColorStyleValue(Literal(Hex(Hash(Cursor(
+              value: ColorStyleValue(Literal(Hex(HexColor(Cursor(
                 kind: "Hash",
                 offset: SourceOffset(9463),
                 len: 7,
@@ -10005,7 +10005,7 @@ StyleSheet(
                 offset: SourceOffset(9517),
                 len: 1,
               )),
-              value: BackgroundColorStyleValue(Literal(Hex(Hash(Cursor(
+              value: BackgroundColorStyleValue(Literal(Hex(HexColor(Cursor(
                 kind: "Hash",
                 offset: SourceOffset(9519),
                 len: 7,
@@ -10327,7 +10327,7 @@ StyleSheet(
                       offset: SourceOffset(9798),
                       len: 1,
                     )),
-                    value: BackgroundColorStyleValue(Literal(Hex(Hash(Cursor(
+                    value: BackgroundColorStyleValue(Literal(Hex(HexColor(Cursor(
                       kind: "Hash",
                       offset: SourceOffset(9800),
                       len: 7,
@@ -10465,7 +10465,7 @@ StyleSheet(
                       offset: SourceOffset(9911),
                       len: 1,
                     )),
-                    value: ColorStyleValue(Literal(Hex(Hash(Cursor(
+                    value: ColorStyleValue(Literal(Hex(HexColor(Cursor(
                       kind: "Hash",
                       offset: SourceOffset(9913),
                       len: 4,
@@ -10561,7 +10561,7 @@ StyleSheet(
                 offset: SourceOffset(9969),
                 len: 1,
               )),
-              value: ColorStyleValue(Literal(Hex(Hash(Cursor(
+              value: ColorStyleValue(Literal(Hex(HexColor(Cursor(
                 kind: "Hash",
                 offset: SourceOffset(9971),
                 len: 7,
@@ -10621,7 +10621,7 @@ StyleSheet(
                 offset: SourceOffset(10025),
                 len: 1,
               )),
-              value: BackgroundColorStyleValue(Literal(Hex(Hash(Cursor(
+              value: BackgroundColorStyleValue(Literal(Hex(HexColor(Cursor(
                 kind: "Hash",
                 offset: SourceOffset(10027),
                 len: 7,
@@ -10943,7 +10943,7 @@ StyleSheet(
                       offset: SourceOffset(10307),
                       len: 1,
                     )),
-                    value: BackgroundColorStyleValue(Literal(Hex(Hash(Cursor(
+                    value: BackgroundColorStyleValue(Literal(Hex(HexColor(Cursor(
                       kind: "Hash",
                       offset: SourceOffset(10309),
                       len: 7,
@@ -11081,7 +11081,7 @@ StyleSheet(
                       offset: SourceOffset(10421),
                       len: 1,
                     )),
-                    value: ColorStyleValue(Literal(Hex(Hash(Cursor(
+                    value: ColorStyleValue(Literal(Hex(HexColor(Cursor(
                       kind: "Hash",
                       offset: SourceOffset(10423),
                       len: 4,
@@ -11177,7 +11177,7 @@ StyleSheet(
                 offset: SourceOffset(10481),
                 len: 1,
               )),
-              value: ColorStyleValue(Literal(Hex(Hash(Cursor(
+              value: ColorStyleValue(Literal(Hex(HexColor(Cursor(
                 kind: "Hash",
                 offset: SourceOffset(10483),
                 len: 7,
@@ -11237,7 +11237,7 @@ StyleSheet(
                 offset: SourceOffset(10537),
                 len: 1,
               )),
-              value: BackgroundColorStyleValue(Literal(Hex(Hash(Cursor(
+              value: BackgroundColorStyleValue(Literal(Hex(HexColor(Cursor(
                 kind: "Hash",
                 offset: SourceOffset(10539),
                 len: 7,
@@ -11559,7 +11559,7 @@ StyleSheet(
                       offset: SourceOffset(10821),
                       len: 1,
                     )),
-                    value: BackgroundColorStyleValue(Literal(Hex(Hash(Cursor(
+                    value: BackgroundColorStyleValue(Literal(Hex(HexColor(Cursor(
                       kind: "Hash",
                       offset: SourceOffset(10823),
                       len: 7,
@@ -11697,7 +11697,7 @@ StyleSheet(
                       offset: SourceOffset(10937),
                       len: 1,
                     )),
-                    value: ColorStyleValue(Literal(Hex(Hash(Cursor(
+                    value: ColorStyleValue(Literal(Hex(HexColor(Cursor(
                       kind: "Hash",
                       offset: SourceOffset(10939),
                       len: 4,
@@ -11793,7 +11793,7 @@ StyleSheet(
                 offset: SourceOffset(10995),
                 len: 1,
               )),
-              value: ColorStyleValue(Literal(Hex(Hash(Cursor(
+              value: ColorStyleValue(Literal(Hex(HexColor(Cursor(
                 kind: "Hash",
                 offset: SourceOffset(10997),
                 len: 7,
@@ -11853,7 +11853,7 @@ StyleSheet(
                 offset: SourceOffset(11051),
                 len: 1,
               )),
-              value: BackgroundColorStyleValue(Literal(Hex(Hash(Cursor(
+              value: BackgroundColorStyleValue(Literal(Hex(HexColor(Cursor(
                 kind: "Hash",
                 offset: SourceOffset(11053),
                 len: 7,
@@ -12175,7 +12175,7 @@ StyleSheet(
                       offset: SourceOffset(11333),
                       len: 1,
                     )),
-                    value: BackgroundColorStyleValue(Literal(Hex(Hash(Cursor(
+                    value: BackgroundColorStyleValue(Literal(Hex(HexColor(Cursor(
                       kind: "Hash",
                       offset: SourceOffset(11335),
                       len: 7,
@@ -12313,7 +12313,7 @@ StyleSheet(
                       offset: SourceOffset(11447),
                       len: 1,
                     )),
-                    value: ColorStyleValue(Literal(Hex(Hash(Cursor(
+                    value: ColorStyleValue(Literal(Hex(HexColor(Cursor(
                       kind: "Hash",
                       offset: SourceOffset(11449),
                       len: 4,
@@ -12409,7 +12409,7 @@ StyleSheet(
                 offset: SourceOffset(11516),
                 len: 1,
               )),
-              value: BackgroundColorStyleValue(Literal(Hex(Hash(Cursor(
+              value: BackgroundColorStyleValue(Literal(Hex(HexColor(Cursor(
                 kind: "Hash",
                 offset: SourceOffset(11518),
                 len: 7,
@@ -12585,7 +12585,7 @@ StyleSheet(
                       offset: SourceOffset(11683),
                       len: 1,
                     )),
-                    value: BackgroundColorStyleValue(Literal(Hex(Hash(Cursor(
+                    value: BackgroundColorStyleValue(Literal(Hex(HexColor(Cursor(
                       kind: "Hash",
                       offset: SourceOffset(11685),
                       len: 7,
@@ -12710,7 +12710,7 @@ StyleSheet(
                 offset: SourceOffset(11782),
                 len: 1,
               )),
-              value: BackgroundColorStyleValue(Literal(Hex(Hash(Cursor(
+              value: BackgroundColorStyleValue(Literal(Hex(HexColor(Cursor(
                 kind: "Hash",
                 offset: SourceOffset(11784),
                 len: 7,
@@ -12915,7 +12915,7 @@ StyleSheet(
                       offset: SourceOffset(11963),
                       len: 1,
                     )),
-                    value: BackgroundColorStyleValue(Literal(Hex(Hash(Cursor(
+                    value: BackgroundColorStyleValue(Literal(Hex(HexColor(Cursor(
                       kind: "Hash",
                       offset: SourceOffset(11965),
                       len: 7,
@@ -13040,7 +13040,7 @@ StyleSheet(
                 offset: SourceOffset(12061),
                 len: 1,
               )),
-              value: BackgroundColorStyleValue(Literal(Hex(Hash(Cursor(
+              value: BackgroundColorStyleValue(Literal(Hex(HexColor(Cursor(
                 kind: "Hash",
                 offset: SourceOffset(12063),
                 len: 7,
@@ -13245,7 +13245,7 @@ StyleSheet(
                       offset: SourceOffset(12241),
                       len: 1,
                     )),
-                    value: BackgroundColorStyleValue(Literal(Hex(Hash(Cursor(
+                    value: BackgroundColorStyleValue(Literal(Hex(HexColor(Cursor(
                       kind: "Hash",
                       offset: SourceOffset(12243),
                       len: 7,
@@ -13370,7 +13370,7 @@ StyleSheet(
                 offset: SourceOffset(12340),
                 len: 1,
               )),
-              value: BackgroundColorStyleValue(Literal(Hex(Hash(Cursor(
+              value: BackgroundColorStyleValue(Literal(Hex(HexColor(Cursor(
                 kind: "Hash",
                 offset: SourceOffset(12342),
                 len: 7,
@@ -13575,7 +13575,7 @@ StyleSheet(
                       offset: SourceOffset(12521),
                       len: 1,
                     )),
-                    value: BackgroundColorStyleValue(Literal(Hex(Hash(Cursor(
+                    value: BackgroundColorStyleValue(Literal(Hex(HexColor(Cursor(
                       kind: "Hash",
                       offset: SourceOffset(12523),
                       len: 7,
@@ -13688,7 +13688,7 @@ StyleSheet(
                   attachment: None,
                   origin: None,
                   clip: None,
-                  color: Some(Hex(Hash(Cursor(
+                  color: Some(Hex(HexColor(Cursor(
                     kind: "Hash",
                     offset: SourceOffset(12608),
                     len: 7,
@@ -13839,7 +13839,7 @@ StyleSheet(
                         attachment: None,
                         origin: None,
                         clip: None,
-                        color: Some(Hex(Hash(Cursor(
+                        color: Some(Hex(HexColor(Cursor(
                           kind: "Hash",
                           offset: SourceOffset(12725),
                           len: 7,
@@ -13985,7 +13985,7 @@ StyleSheet(
                   attachment: None,
                   origin: None,
                   clip: None,
-                  color: Some(Hex(Hash(Cursor(
+                  color: Some(Hex(HexColor(Cursor(
                     kind: "Hash",
                     offset: SourceOffset(12819),
                     len: 7,
@@ -14165,7 +14165,7 @@ StyleSheet(
                         attachment: None,
                         origin: None,
                         clip: None,
-                        color: Some(Hex(Hash(Cursor(
+                        color: Some(Hex(HexColor(Cursor(
                           kind: "Hash",
                           offset: SourceOffset(12950),
                           len: 7,
@@ -14311,7 +14311,7 @@ StyleSheet(
                   attachment: None,
                   origin: None,
                   clip: None,
-                  color: Some(Hex(Hash(Cursor(
+                  color: Some(Hex(HexColor(Cursor(
                     kind: "Hash",
                     offset: SourceOffset(13043),
                     len: 7,
@@ -14491,7 +14491,7 @@ StyleSheet(
                         attachment: None,
                         origin: None,
                         clip: None,
-                        color: Some(Hex(Hash(Cursor(
+                        color: Some(Hex(HexColor(Cursor(
                           kind: "Hash",
                           offset: SourceOffset(13173),
                           len: 7,
@@ -14637,7 +14637,7 @@ StyleSheet(
                   attachment: None,
                   origin: None,
                   clip: None,
-                  color: Some(Hex(Hash(Cursor(
+                  color: Some(Hex(HexColor(Cursor(
                     kind: "Hash",
                     offset: SourceOffset(13267),
                     len: 7,
@@ -14817,7 +14817,7 @@ StyleSheet(
                         attachment: None,
                         origin: None,
                         clip: None,
-                        color: Some(Hex(Hash(Cursor(
+                        color: Some(Hex(HexColor(Cursor(
                           kind: "Hash",
                           offset: SourceOffset(13398),
                           len: 7,
@@ -16049,7 +16049,7 @@ StyleSheet(
                   attachment: None,
                   origin: None,
                   clip: None,
-                  color: Some(Hex(Hash(Cursor(
+                  color: Some(Hex(HexColor(Cursor(
                     kind: "Hash",
                     offset: SourceOffset(14126),
                     len: 7,
@@ -16419,7 +16419,7 @@ StyleSheet(
                         attachment: None,
                         origin: None,
                         clip: None,
-                        color: Some(Hex(Hash(Cursor(
+                        color: Some(Hex(HexColor(Cursor(
                           kind: "Hash",
                           offset: SourceOffset(14829),
                           len: 7,
@@ -16767,7 +16767,7 @@ StyleSheet(
                         attachment: None,
                         origin: None,
                         clip: None,
-                        color: Some(Hex(Hash(Cursor(
+                        color: Some(Hex(HexColor(Cursor(
                           kind: "Hash",
                           offset: SourceOffset(15513),
                           len: 7,
@@ -17115,7 +17115,7 @@ StyleSheet(
                         attachment: None,
                         origin: None,
                         clip: None,
-                        color: Some(Hex(Hash(Cursor(
+                        color: Some(Hex(HexColor(Cursor(
                           kind: "Hash",
                           offset: SourceOffset(16197),
                           len: 7,
@@ -17463,7 +17463,7 @@ StyleSheet(
                         attachment: None,
                         origin: None,
                         clip: None,
-                        color: Some(Hex(Hash(Cursor(
+                        color: Some(Hex(HexColor(Cursor(
                           kind: "Hash",
                           offset: SourceOffset(16881),
                           len: 7,
@@ -17890,7 +17890,7 @@ StyleSheet(
               )),
               value: BoxShadowStyleValue([
                 (Literal(SpreadShadow(
-                  color: Some(Hex(Hash(Cursor(
+                  color: Some(Hex(HexColor(Cursor(
                     kind: "Hash",
                     offset: SourceOffset(17671),
                     len: 9,
@@ -18104,7 +18104,7 @@ StyleSheet(
                     )),
                     value: BoxShadowStyleValue([
                       (Literal(SpreadShadow(
-                        color: Some(Hex(Hash(Cursor(
+                        color: Some(Hex(HexColor(Cursor(
                           kind: "Hash",
                           offset: SourceOffset(17802),
                           len: 9,
@@ -18284,7 +18284,7 @@ StyleSheet(
               )),
               value: BoxShadowStyleValue([
                 (Literal(SpreadShadow(
-                  color: Some(Hex(Hash(Cursor(
+                  color: Some(Hex(HexColor(Cursor(
                     kind: "Hash",
                     offset: SourceOffset(17897),
                     len: 9,
@@ -18498,7 +18498,7 @@ StyleSheet(
                     )),
                     value: BoxShadowStyleValue([
                       (Literal(SpreadShadow(
-                        color: Some(Hex(Hash(Cursor(
+                        color: Some(Hex(HexColor(Cursor(
                           kind: "Hash",
                           offset: SourceOffset(18029),
                           len: 9,
@@ -18678,7 +18678,7 @@ StyleSheet(
               )),
               value: BoxShadowStyleValue([
                 (Literal(SpreadShadow(
-                  color: Some(Hex(Hash(Cursor(
+                  color: Some(Hex(HexColor(Cursor(
                     kind: "Hash",
                     offset: SourceOffset(18124),
                     len: 9,
@@ -18892,7 +18892,7 @@ StyleSheet(
                     )),
                     value: BoxShadowStyleValue([
                       (Literal(SpreadShadow(
-                        color: Some(Hex(Hash(Cursor(
+                        color: Some(Hex(HexColor(Cursor(
                           kind: "Hash",
                           offset: SourceOffset(18256),
                           len: 9,
@@ -19072,7 +19072,7 @@ StyleSheet(
               )),
               value: BoxShadowStyleValue([
                 (Literal(SpreadShadow(
-                  color: Some(Hex(Hash(Cursor(
+                  color: Some(Hex(HexColor(Cursor(
                     kind: "Hash",
                     offset: SourceOffset(18353),
                     len: 9,
@@ -19286,7 +19286,7 @@ StyleSheet(
                     )),
                     value: BoxShadowStyleValue([
                       (Literal(SpreadShadow(
-                        color: Some(Hex(Hash(Cursor(
+                        color: Some(Hex(HexColor(Cursor(
                           kind: "Hash",
                           offset: SourceOffset(18487),
                           len: 9,
@@ -19974,7 +19974,7 @@ StyleSheet(
                 offset: SourceOffset(18905),
                 len: 1,
               )),
-              value: ColorStyleValue(Literal(Hex(Hash(Cursor(
+              value: ColorStyleValue(Literal(Hex(HexColor(Cursor(
                 kind: "Hash",
                 offset: SourceOffset(18907),
                 len: 7,
@@ -20066,7 +20066,7 @@ StyleSheet(
                 offset: SourceOffset(18985),
                 len: 1,
               )),
-              value: ColorStyleValue(Literal(Hex(Hash(Cursor(
+              value: ColorStyleValue(Literal(Hex(HexColor(Cursor(
                 kind: "Hash",
                 offset: SourceOffset(18987),
                 len: 7,
@@ -20162,7 +20162,7 @@ StyleSheet(
                 offset: SourceOffset(19066),
                 len: 1,
               )),
-              value: ColorStyleValue(Literal(Hex(Hash(Cursor(
+              value: ColorStyleValue(Literal(Hex(HexColor(Cursor(
                 kind: "Hash",
                 offset: SourceOffset(19068),
                 len: 7,
@@ -20258,7 +20258,7 @@ StyleSheet(
                 offset: SourceOffset(19137),
                 len: 1,
               )),
-              value: ColorStyleValue(Literal(Hex(Hash(Cursor(
+              value: ColorStyleValue(Literal(Hex(HexColor(Cursor(
                 kind: "Hash",
                 offset: SourceOffset(19139),
                 len: 7,
@@ -20396,7 +20396,7 @@ StyleSheet(
                       offset: SourceOffset(19254),
                       len: 1,
                     )),
-                    value: ColorStyleValue(Literal(Hex(Hash(Cursor(
+                    value: ColorStyleValue(Literal(Hex(HexColor(Cursor(
                       kind: "Hash",
                       offset: SourceOffset(19256),
                       len: 7,
@@ -20488,7 +20488,7 @@ StyleSheet(
                       offset: SourceOffset(19338),
                       len: 1,
                     )),
-                    value: ColorStyleValue(Literal(Hex(Hash(Cursor(
+                    value: ColorStyleValue(Literal(Hex(HexColor(Cursor(
                       kind: "Hash",
                       offset: SourceOffset(19340),
                       len: 7,
@@ -20584,7 +20584,7 @@ StyleSheet(
                       offset: SourceOffset(19423),
                       len: 1,
                     )),
-                    value: ColorStyleValue(Literal(Hex(Hash(Cursor(
+                    value: ColorStyleValue(Literal(Hex(HexColor(Cursor(
                       kind: "Hash",
                       offset: SourceOffset(19425),
                       len: 7,
@@ -20680,7 +20680,7 @@ StyleSheet(
                       offset: SourceOffset(19498),
                       len: 1,
                     )),
-                    value: ColorStyleValue(Literal(Hex(Hash(Cursor(
+                    value: ColorStyleValue(Literal(Hex(HexColor(Cursor(
                       kind: "Hash",
                       offset: SourceOffset(19500),
                       len: 7,
@@ -20787,7 +20787,7 @@ StyleSheet(
                   offset: SourceOffset(19585),
                   len: 5,
                 ))))),
-                color: Some(Literal(Hex(Hash(Cursor(
+                color: Some(Literal(Hex(HexColor(Cursor(
                   kind: "Hash",
                   offset: SourceOffset(19575),
                   len: 9,
@@ -21052,7 +21052,7 @@ StyleSheet(
                         offset: SourceOffset(19780),
                         len: 5,
                       ))))),
-                      color: Some(Literal(Hex(Hash(Cursor(
+                      color: Some(Literal(Hex(HexColor(Cursor(
                         kind: "Hash",
                         offset: SourceOffset(19770),
                         len: 9,
@@ -21649,7 +21649,7 @@ StyleSheet(
                   attachment: None,
                   origin: None,
                   clip: None,
-                  color: Some(Hex(Hash(Cursor(
+                  color: Some(Hex(HexColor(Cursor(
                     kind: "Hash",
                     offset: SourceOffset(20164),
                     len: 7,
@@ -21856,7 +21856,7 @@ StyleSheet(
                         attachment: None,
                         origin: None,
                         clip: None,
-                        color: Some(Hex(Hash(Cursor(
+                        color: Some(Hex(HexColor(Cursor(
                           kind: "Hash",
                           offset: SourceOffset(20339),
                           len: 7,
@@ -22000,7 +22000,7 @@ StyleSheet(
               )),
               value: BoxShadowStyleValue([
                 (Literal(SpreadShadow(
-                  color: Some(Hex(Hash(Cursor(
+                  color: Some(Hex(HexColor(Cursor(
                     kind: "Hash",
                     offset: SourceOffset(20456),
                     len: 4,
@@ -22027,7 +22027,7 @@ StyleSheet(
                   len: 1,
                 )))),
                 (Literal(SpreadShadow(
-                  color: Some(Hex(Hash(Cursor(
+                  color: Some(Hex(HexColor(Cursor(
                     kind: "Hash",
                     offset: SourceOffset(20470),
                     len: 7,
@@ -22145,7 +22145,7 @@ StyleSheet(
                   attachment: None,
                   origin: None,
                   clip: None,
-                  color: Some(Hex(Hash(Cursor(
+                  color: Some(Hex(HexColor(Cursor(
                     kind: "Hash",
                     offset: SourceOffset(20546),
                     len: 7,
@@ -22375,7 +22375,7 @@ StyleSheet(
                         attachment: None,
                         origin: None,
                         clip: None,
-                        color: Some(Hex(Hash(Cursor(
+                        color: Some(Hex(HexColor(Cursor(
                           kind: "Hash",
                           offset: SourceOffset(20734),
                           len: 7,
@@ -22534,7 +22534,7 @@ StyleSheet(
                   attachment: None,
                   origin: None,
                   clip: None,
-                  color: Some(Hex(Hash(Cursor(
+                  color: Some(Hex(HexColor(Cursor(
                     kind: "Hash",
                     offset: SourceOffset(20852),
                     len: 7,
@@ -22727,7 +22727,7 @@ StyleSheet(
                         attachment: None,
                         origin: None,
                         clip: None,
-                        color: Some(Hex(Hash(Cursor(
+                        color: Some(Hex(HexColor(Cursor(
                           kind: "Hash",
                           offset: SourceOffset(21011),
                           len: 7,
@@ -22985,7 +22985,7 @@ StyleSheet(
                   attachment: None,
                   origin: None,
                   clip: None,
-                  color: Some(Hex(Hash(Cursor(
+                  color: Some(Hex(HexColor(Cursor(
                     kind: "Hash",
                     offset: SourceOffset(21191),
                     len: 7,
@@ -23192,7 +23192,7 @@ StyleSheet(
                         attachment: None,
                         origin: None,
                         clip: None,
-                        color: Some(Hex(Hash(Cursor(
+                        color: Some(Hex(HexColor(Cursor(
                           kind: "Hash",
                           offset: SourceOffset(21353),
                           len: 7,
@@ -23336,7 +23336,7 @@ StyleSheet(
               )),
               value: BoxShadowStyleValue([
                 (Literal(SpreadShadow(
-                  color: Some(Hex(Hash(Cursor(
+                  color: Some(Hex(HexColor(Cursor(
                     kind: "Hash",
                     offset: SourceOffset(21468),
                     len: 4,
@@ -23363,7 +23363,7 @@ StyleSheet(
                   len: 1,
                 )))),
                 (Literal(SpreadShadow(
-                  color: Some(Hex(Hash(Cursor(
+                  color: Some(Hex(HexColor(Cursor(
                     kind: "Hash",
                     offset: SourceOffset(21482),
                     len: 7,
@@ -23481,7 +23481,7 @@ StyleSheet(
                   attachment: None,
                   origin: None,
                   clip: None,
-                  color: Some(Hex(Hash(Cursor(
+                  color: Some(Hex(HexColor(Cursor(
                     kind: "Hash",
                     offset: SourceOffset(21558),
                     len: 7,
@@ -23665,7 +23665,7 @@ StyleSheet(
                         attachment: None,
                         origin: None,
                         clip: None,
-                        color: Some(Hex(Hash(Cursor(
+                        color: Some(Hex(HexColor(Cursor(
                           kind: "Hash",
                           offset: SourceOffset(21694),
                           len: 7,
@@ -24037,7 +24037,7 @@ StyleSheet(
                   attachment: None,
                   origin: None,
                   clip: None,
-                  color: Some(Hex(Hash(Cursor(
+                  color: Some(Hex(HexColor(Cursor(
                     kind: "Hash",
                     offset: SourceOffset(21961),
                     len: 7,
@@ -24112,7 +24112,7 @@ StyleSheet(
                   offset: SourceOffset(22019),
                   len: 5,
                 ))))),
-                color: Some(Literal(Hex(Hash(Cursor(
+                color: Some(Literal(Hex(HexColor(Cursor(
                   kind: "Hash",
                   offset: SourceOffset(22025),
                   len: 7,
@@ -24161,7 +24161,7 @@ StyleSheet(
               )),
               value: BoxShadowStyleValue([
                 (Literal(SpreadShadow(
-                  color: Some(Hex(Hash(Cursor(
+                  color: Some(Hex(HexColor(Cursor(
                     kind: "Hash",
                     offset: SourceOffset(22082),
                     len: 4,
@@ -24188,7 +24188,7 @@ StyleSheet(
                   len: 1,
                 )))),
                 (Literal(SpreadShadow(
-                  color: Some(Hex(Hash(Cursor(
+                  color: Some(Hex(HexColor(Cursor(
                     kind: "Hash",
                     offset: SourceOffset(22096),
                     len: 7,
@@ -24349,7 +24349,7 @@ StyleSheet(
                         attachment: None,
                         origin: None,
                         clip: None,
-                        color: Some(Hex(Hash(Cursor(
+                        color: Some(Hex(HexColor(Cursor(
                           kind: "Hash",
                           offset: SourceOffset(22201),
                           len: 7,
@@ -24499,7 +24499,7 @@ StyleSheet(
                   attachment: None,
                   origin: None,
                   clip: None,
-                  color: Some(Hex(Hash(Cursor(
+                  color: Some(Hex(HexColor(Cursor(
                     kind: "Hash",
                     offset: SourceOffset(22302),
                     len: 7,
@@ -24574,7 +24574,7 @@ StyleSheet(
                   offset: SourceOffset(22360),
                   len: 5,
                 ))))),
-                color: Some(Literal(Hex(Hash(Cursor(
+                color: Some(Literal(Hex(HexColor(Cursor(
                   kind: "Hash",
                   offset: SourceOffset(22366),
                   len: 7,
@@ -24623,7 +24623,7 @@ StyleSheet(
               )),
               value: BoxShadowStyleValue([
                 (Literal(SpreadShadow(
-                  color: Some(Hex(Hash(Cursor(
+                  color: Some(Hex(HexColor(Cursor(
                     kind: "Hash",
                     offset: SourceOffset(22423),
                     len: 4,
@@ -24650,7 +24650,7 @@ StyleSheet(
                   len: 1,
                 )))),
                 (Literal(SpreadShadow(
-                  color: Some(Hex(Hash(Cursor(
+                  color: Some(Hex(HexColor(Cursor(
                     kind: "Hash",
                     offset: SourceOffset(22437),
                     len: 7,
@@ -24811,7 +24811,7 @@ StyleSheet(
                         attachment: None,
                         origin: None,
                         clip: None,
-                        color: Some(Hex(Hash(Cursor(
+                        color: Some(Hex(HexColor(Cursor(
                           kind: "Hash",
                           offset: SourceOffset(22542),
                           len: 7,
@@ -24955,7 +24955,7 @@ StyleSheet(
               )),
               value: BoxShadowStyleValue([
                 (Literal(SpreadShadow(
-                  color: Some(Hex(Hash(Cursor(
+                  color: Some(Hex(HexColor(Cursor(
                     kind: "Hash",
                     offset: SourceOffset(22650),
                     len: 4,
@@ -24982,7 +24982,7 @@ StyleSheet(
                   len: 1,
                 )))),
                 (Literal(SpreadShadow(
-                  color: Some(Hex(Hash(Cursor(
+                  color: Some(Hex(HexColor(Cursor(
                     kind: "Hash",
                     offset: SourceOffset(22664),
                     len: 7,
@@ -25034,7 +25034,7 @@ StyleSheet(
                   offset: SourceOffset(22687),
                   len: 5,
                 ))))),
-                color: Some(Literal(Hex(Hash(Cursor(
+                color: Some(Literal(Hex(HexColor(Cursor(
                   kind: "Hash",
                   offset: SourceOffset(22693),
                   len: 4,
@@ -25135,7 +25135,7 @@ StyleSheet(
                   attachment: None,
                   origin: None,
                   clip: None,
-                  color: Some(Hex(Hash(Cursor(
+                  color: Some(Hex(HexColor(Cursor(
                     kind: "Hash",
                     offset: SourceOffset(22766),
                     len: 7,
@@ -25319,7 +25319,7 @@ StyleSheet(
                         attachment: None,
                         origin: None,
                         clip: None,
-                        color: Some(Hex(Hash(Cursor(
+                        color: Some(Hex(HexColor(Cursor(
                           kind: "Hash",
                           offset: SourceOffset(22895),
                           len: 7,
@@ -25478,7 +25478,7 @@ StyleSheet(
                   attachment: None,
                   origin: None,
                   clip: None,
-                  color: Some(Hex(Hash(Cursor(
+                  color: Some(Hex(HexColor(Cursor(
                     kind: "Hash",
                     offset: SourceOffset(22998),
                     len: 7,
@@ -25671,7 +25671,7 @@ StyleSheet(
                         attachment: None,
                         origin: None,
                         clip: None,
-                        color: Some(Hex(Hash(Cursor(
+                        color: Some(Hex(HexColor(Cursor(
                           kind: "Hash",
                           offset: SourceOffset(23142),
                           len: 7,
@@ -25830,7 +25830,7 @@ StyleSheet(
                   attachment: None,
                   origin: None,
                   clip: None,
-                  color: Some(Hex(Hash(Cursor(
+                  color: Some(Hex(HexColor(Cursor(
                     kind: "Hash",
                     offset: SourceOffset(23249),
                     len: 7,
@@ -26023,7 +26023,7 @@ StyleSheet(
                         attachment: None,
                         origin: None,
                         clip: None,
-                        color: Some(Hex(Hash(Cursor(
+                        color: Some(Hex(HexColor(Cursor(
                           kind: "Hash",
                           offset: SourceOffset(23393),
                           len: 7,
@@ -26151,7 +26151,7 @@ StyleSheet(
                 offset: SourceOffset(23478),
                 len: 1,
               )),
-              value: ColorStyleValue(Literal(Hex(Hash(Cursor(
+              value: ColorStyleValue(Literal(Hex(HexColor(Cursor(
                 kind: "Hash",
                 offset: SourceOffset(23480),
                 len: 7,
@@ -26281,7 +26281,7 @@ StyleSheet(
                       offset: SourceOffset(23567),
                       len: 1,
                     )),
-                    value: ColorStyleValue(Literal(Hex(Hash(Cursor(
+                    value: ColorStyleValue(Literal(Hex(HexColor(Cursor(
                       kind: "Hash",
                       offset: SourceOffset(23569),
                       len: 7,
@@ -26455,7 +26455,7 @@ StyleSheet(
                   attachment: None,
                   origin: None,
                   clip: None,
-                  color: Some(Hex(Hash(Cursor(
+                  color: Some(Hex(HexColor(Cursor(
                     kind: "Hash",
                     offset: SourceOffset(23672),
                     len: 7,
@@ -26519,7 +26519,7 @@ StyleSheet(
                 offset: SourceOffset(23721),
                 len: 1,
               )),
-              value: ColorStyleValue(Literal(Hex(Hash(Cursor(
+              value: ColorStyleValue(Literal(Hex(HexColor(Cursor(
                 kind: "Hash",
                 offset: SourceOffset(23723),
                 len: 4,
@@ -26722,7 +26722,7 @@ StyleSheet(
                       offset: SourceOffset(23871),
                       len: 1,
                     )),
-                    value: ColorStyleValue(Literal(Hex(Hash(Cursor(
+                    value: ColorStyleValue(Literal(Hex(HexColor(Cursor(
                       kind: "Hash",
                       offset: SourceOffset(23873),
                       len: 7,
@@ -26868,7 +26868,7 @@ StyleSheet(
                         attachment: None,
                         origin: None,
                         clip: None,
-                        color: Some(Hex(Hash(Cursor(
+                        color: Some(Hex(HexColor(Cursor(
                           kind: "Hash",
                           offset: SourceOffset(23973),
                           len: 7,
@@ -26976,7 +26976,7 @@ StyleSheet(
                   attachment: None,
                   origin: None,
                   clip: None,
-                  color: Some(Hex(Hash(Cursor(
+                  color: Some(Hex(HexColor(Cursor(
                     kind: "Hash",
                     offset: SourceOffset(24043),
                     len: 7,
@@ -27040,7 +27040,7 @@ StyleSheet(
                 offset: SourceOffset(24092),
                 len: 1,
               )),
-              value: ColorStyleValue(Literal(Hex(Hash(Cursor(
+              value: ColorStyleValue(Literal(Hex(HexColor(Cursor(
                 kind: "Hash",
                 offset: SourceOffset(24094),
                 len: 4,
@@ -27243,7 +27243,7 @@ StyleSheet(
                       offset: SourceOffset(24242),
                       len: 1,
                     )),
-                    value: ColorStyleValue(Literal(Hex(Hash(Cursor(
+                    value: ColorStyleValue(Literal(Hex(HexColor(Cursor(
                       kind: "Hash",
                       offset: SourceOffset(24244),
                       len: 7,
@@ -27389,7 +27389,7 @@ StyleSheet(
                         attachment: None,
                         origin: None,
                         clip: None,
-                        color: Some(Hex(Hash(Cursor(
+                        color: Some(Hex(HexColor(Cursor(
                           kind: "Hash",
                           offset: SourceOffset(24344),
                           len: 7,
@@ -27497,7 +27497,7 @@ StyleSheet(
                   attachment: None,
                   origin: None,
                   clip: None,
-                  color: Some(Hex(Hash(Cursor(
+                  color: Some(Hex(HexColor(Cursor(
                     kind: "Hash",
                     offset: SourceOffset(24414),
                     len: 7,
@@ -27561,7 +27561,7 @@ StyleSheet(
                 offset: SourceOffset(24463),
                 len: 1,
               )),
-              value: ColorStyleValue(Literal(Hex(Hash(Cursor(
+              value: ColorStyleValue(Literal(Hex(HexColor(Cursor(
                 kind: "Hash",
                 offset: SourceOffset(24465),
                 len: 4,
@@ -27764,7 +27764,7 @@ StyleSheet(
                       offset: SourceOffset(24613),
                       len: 1,
                     )),
-                    value: ColorStyleValue(Literal(Hex(Hash(Cursor(
+                    value: ColorStyleValue(Literal(Hex(HexColor(Cursor(
                       kind: "Hash",
                       offset: SourceOffset(24615),
                       len: 7,
@@ -27910,7 +27910,7 @@ StyleSheet(
                         attachment: None,
                         origin: None,
                         clip: None,
-                        color: Some(Hex(Hash(Cursor(
+                        color: Some(Hex(HexColor(Cursor(
                           kind: "Hash",
                           offset: SourceOffset(24715),
                           len: 7,
@@ -28117,7 +28117,7 @@ StyleSheet(
                 offset: SourceOffset(24848),
                 len: 1,
               )),
-              value: ColorStyleValue(Literal(Hex(Hash(Cursor(
+              value: ColorStyleValue(Literal(Hex(HexColor(Cursor(
                 kind: "Hash",
                 offset: SourceOffset(24850),
                 len: 7,
@@ -28297,7 +28297,7 @@ StyleSheet(
                       offset: SourceOffset(24990),
                       len: 1,
                     )),
-                    value: ColorStyleValue(Literal(Hex(Hash(Cursor(
+                    value: ColorStyleValue(Literal(Hex(HexColor(Cursor(
                       kind: "Hash",
                       offset: SourceOffset(24992),
                       len: 7,
@@ -28401,7 +28401,7 @@ StyleSheet(
                   attachment: None,
                   origin: None,
                   clip: None,
-                  color: Some(Hex(Hash(Cursor(
+                  color: Some(Hex(HexColor(Cursor(
                     kind: "Hash",
                     offset: SourceOffset(25054),
                     len: 7,
@@ -28476,7 +28476,7 @@ StyleSheet(
                   offset: SourceOffset(25110),
                   len: 5,
                 ))))),
-                color: Some(Literal(Hex(Hash(Cursor(
+                color: Some(Literal(Hex(HexColor(Cursor(
                   kind: "Hash",
                   offset: SourceOffset(25116),
                   len: 7,
@@ -28572,7 +28572,7 @@ StyleSheet(
                 offset: SourceOffset(25189),
                 len: 1,
               )),
-              value: ColorStyleValue(Literal(Hex(Hash(Cursor(
+              value: ColorStyleValue(Literal(Hex(HexColor(Cursor(
                 kind: "Hash",
                 offset: SourceOffset(25191),
                 len: 7,
@@ -28737,7 +28737,7 @@ StyleSheet(
                       offset: SourceOffset(25312),
                       len: 1,
                     )),
-                    value: ColorStyleValue(Literal(Hex(Hash(Cursor(
+                    value: ColorStyleValue(Literal(Hex(HexColor(Cursor(
                       kind: "Hash",
                       offset: SourceOffset(25314),
                       len: 7,
@@ -28886,7 +28886,7 @@ StyleSheet(
                         offset: SourceOffset(25418),
                         len: 5,
                       ))))),
-                      color: Some(Literal(Hex(Hash(Cursor(
+                      color: Some(Literal(Hex(HexColor(Cursor(
                         kind: "Hash",
                         offset: SourceOffset(25424),
                         len: 7,
@@ -29045,7 +29045,7 @@ StyleSheet(
                         attachment: None,
                         origin: None,
                         clip: None,
-                        color: Some(Hex(Hash(Cursor(
+                        color: Some(Hex(HexColor(Cursor(
                           kind: "Hash",
                           offset: SourceOffset(25536),
                           len: 7,
@@ -29268,7 +29268,7 @@ StyleSheet(
                   offset: SourceOffset(25675),
                   len: 5,
                 ))))),
-                color: Some(Literal(Hex(Hash(Cursor(
+                color: Some(Literal(Hex(HexColor(Cursor(
                   kind: "Hash",
                   offset: SourceOffset(25681),
                   len: 7,
@@ -29422,7 +29422,7 @@ StyleSheet(
                         offset: SourceOffset(25796),
                         len: 5,
                       ))))),
-                      color: Some(Literal(Hex(Hash(Cursor(
+                      color: Some(Literal(Hex(HexColor(Cursor(
                         kind: "Hash",
                         offset: SourceOffset(25802),
                         len: 7,
@@ -29858,7 +29858,7 @@ StyleSheet(
                   offset: SourceOffset(26122),
                   len: 5,
                 ))))),
-                color: Some(Literal(Hex(Hash(Cursor(
+                color: Some(Literal(Hex(HexColor(Cursor(
                   kind: "Hash",
                   offset: SourceOffset(26128),
                   len: 7,
@@ -30012,7 +30012,7 @@ StyleSheet(
                         offset: SourceOffset(26252),
                         len: 5,
                       ))))),
-                      color: Some(Literal(Hex(Hash(Cursor(
+                      color: Some(Literal(Hex(HexColor(Cursor(
                         kind: "Hash",
                         offset: SourceOffset(26258),
                         len: 7,
@@ -30132,7 +30132,7 @@ StyleSheet(
                   offset: SourceOffset(26342),
                   len: 5,
                 ))))),
-                color: Some(Literal(Hex(Hash(Cursor(
+                color: Some(Literal(Hex(HexColor(Cursor(
                   kind: "Hash",
                   offset: SourceOffset(26348),
                   len: 7,
@@ -30286,7 +30286,7 @@ StyleSheet(
                         offset: SourceOffset(26466),
                         len: 5,
                       ))))),
-                      color: Some(Literal(Hex(Hash(Cursor(
+                      color: Some(Literal(Hex(HexColor(Cursor(
                         kind: "Hash",
                         offset: SourceOffset(26472),
                         len: 7,
@@ -30427,7 +30427,7 @@ StyleSheet(
                 offset: SourceOffset(26572),
                 len: 1,
               )),
-              value: BackgroundColorStyleValue(Literal(Hex(Hash(Cursor(
+              value: BackgroundColorStyleValue(Literal(Hex(HexColor(Cursor(
                 kind: "Hash",
                 offset: SourceOffset(26574),
                 len: 7,
@@ -30589,7 +30589,7 @@ StyleSheet(
                       offset: SourceOffset(26711),
                       len: 1,
                     )),
-                    value: BackgroundColorStyleValue(Literal(Hex(Hash(Cursor(
+                    value: BackgroundColorStyleValue(Literal(Hex(HexColor(Cursor(
                       kind: "Hash",
                       offset: SourceOffset(26713),
                       len: 7,
@@ -30727,7 +30727,7 @@ StyleSheet(
                 offset: SourceOffset(26820),
                 len: 1,
               )),
-              value: BackgroundColorStyleValue(Literal(Hex(Hash(Cursor(
+              value: BackgroundColorStyleValue(Literal(Hex(HexColor(Cursor(
                 kind: "Hash",
                 offset: SourceOffset(26822),
                 len: 7,
@@ -30899,7 +30899,7 @@ StyleSheet(
                       offset: SourceOffset(26970),
                       len: 1,
                     )),
-                    value: BackgroundColorStyleValue(Literal(Hex(Hash(Cursor(
+                    value: BackgroundColorStyleValue(Literal(Hex(HexColor(Cursor(
                       kind: "Hash",
                       offset: SourceOffset(26972),
                       len: 7,
@@ -31046,7 +31046,7 @@ StyleSheet(
                 offset: SourceOffset(27089),
                 len: 1,
               )),
-              value: BackgroundColorStyleValue(Literal(Hex(Hash(Cursor(
+              value: BackgroundColorStyleValue(Literal(Hex(HexColor(Cursor(
                 kind: "Hash",
                 offset: SourceOffset(27091),
                 len: 4,
@@ -31227,7 +31227,7 @@ StyleSheet(
                       offset: SourceOffset(27243),
                       len: 1,
                     )),
-                    value: BackgroundColorStyleValue(Literal(Hex(Hash(Cursor(
+                    value: BackgroundColorStyleValue(Literal(Hex(HexColor(Cursor(
                       kind: "Hash",
                       offset: SourceOffset(27245),
                       len: 7,
@@ -31421,7 +31421,7 @@ StyleSheet(
                   attachment: None,
                   origin: None,
                   clip: None,
-                  color: Some(Hex(Hash(Cursor(
+                  color: Some(Hex(HexColor(Cursor(
                     kind: "Hash",
                     offset: SourceOffset(27403),
                     len: 7,
@@ -31594,7 +31594,7 @@ StyleSheet(
                         attachment: None,
                         origin: None,
                         clip: None,
-                        color: Some(Hex(Hash(Cursor(
+                        color: Some(Hex(HexColor(Cursor(
                           kind: "Hash",
                           offset: SourceOffset(27553),
                           len: 7,
@@ -31911,7 +31911,7 @@ StyleSheet(
                         attachment: None,
                         origin: None,
                         clip: None,
-                        color: Some(Hex(Hash(Cursor(
+                        color: Some(Hex(HexColor(Cursor(
                           kind: "Hash",
                           offset: SourceOffset(27810),
                           len: 7,
@@ -32069,7 +32069,7 @@ StyleSheet(
                         attachment: None,
                         origin: None,
                         clip: None,
-                        color: Some(Hex(Hash(Cursor(
+                        color: Some(Hex(HexColor(Cursor(
                           kind: "Hash",
                           offset: SourceOffset(27947),
                           len: 7,
@@ -32194,7 +32194,7 @@ StyleSheet(
                   attachment: None,
                   origin: None,
                   clip: None,
-                  color: Some(Hex(Hash(Cursor(
+                  color: Some(Hex(HexColor(Cursor(
                     kind: "Hash",
                     offset: SourceOffset(28049),
                     len: 7,
@@ -32684,7 +32684,7 @@ StyleSheet(
                 offset: SourceOffset(28450),
                 len: 1,
               )),
-              value: BackgroundColorStyleValue(Literal(Hex(Hash(Cursor(
+              value: BackgroundColorStyleValue(Literal(Hex(HexColor(Cursor(
                 kind: "Hash",
                 offset: SourceOffset(28452),
                 len: 7,
@@ -32744,7 +32744,7 @@ StyleSheet(
                 offset: SourceOffset(28506),
                 len: 1,
               )),
-              value: ColorStyleValue(Literal(Hex(Hash(Cursor(
+              value: ColorStyleValue(Literal(Hex(HexColor(Cursor(
                 kind: "Hash",
                 offset: SourceOffset(28508),
                 len: 4,
@@ -32840,7 +32840,7 @@ StyleSheet(
                 offset: SourceOffset(28578),
                 len: 1,
               )),
-              value: BackgroundColorStyleValue(Literal(Hex(Hash(Cursor(
+              value: BackgroundColorStyleValue(Literal(Hex(HexColor(Cursor(
                 kind: "Hash",
                 offset: SourceOffset(28580),
                 len: 7,
@@ -32900,7 +32900,7 @@ StyleSheet(
                 offset: SourceOffset(28634),
                 len: 1,
               )),
-              value: ColorStyleValue(Literal(Hex(Hash(Cursor(
+              value: ColorStyleValue(Literal(Hex(HexColor(Cursor(
                 kind: "Hash",
                 offset: SourceOffset(28636),
                 len: 4,
@@ -33038,7 +33038,7 @@ StyleSheet(
                       offset: SourceOffset(28741),
                       len: 1,
                     )),
-                    value: ColorStyleValue(Literal(Hex(Hash(Cursor(
+                    value: ColorStyleValue(Literal(Hex(HexColor(Cursor(
                       kind: "Hash",
                       offset: SourceOffset(28743),
                       len: 4,
@@ -33134,7 +33134,7 @@ StyleSheet(
                       offset: SourceOffset(28806),
                       len: 1,
                     )),
-                    value: ColorStyleValue(Literal(Hex(Hash(Cursor(
+                    value: ColorStyleValue(Literal(Hex(HexColor(Cursor(
                       kind: "Hash",
                       offset: SourceOffset(28808),
                       len: 4,
@@ -33280,7 +33280,7 @@ StyleSheet(
                       offset: SourceOffset(28928),
                       len: 1,
                     )),
-                    value: BackgroundColorStyleValue(Literal(Hex(Hash(Cursor(
+                    value: BackgroundColorStyleValue(Literal(Hex(HexColor(Cursor(
                       kind: "Hash",
                       offset: SourceOffset(28930),
                       len: 7,
@@ -33376,7 +33376,7 @@ StyleSheet(
                       offset: SourceOffset(29016),
                       len: 1,
                     )),
-                    value: BackgroundColorStyleValue(Literal(Hex(Hash(Cursor(
+                    value: BackgroundColorStyleValue(Literal(Hex(HexColor(Cursor(
                       kind: "Hash",
                       offset: SourceOffset(29018),
                       len: 7,
@@ -33541,7 +33541,7 @@ StyleSheet(
                 offset: SourceOffset(29170),
                 len: 1,
               )),
-              value: BackgroundColorStyleValue(Literal(Hex(Hash(Cursor(
+              value: BackgroundColorStyleValue(Literal(Hex(HexColor(Cursor(
                 kind: "Hash",
                 offset: SourceOffset(29172),
                 len: 7,
@@ -33775,7 +33775,7 @@ StyleSheet(
                       offset: SourceOffset(29379),
                       len: 1,
                     )),
-                    value: BackgroundColorStyleValue(Literal(Hex(Hash(Cursor(
+                    value: BackgroundColorStyleValue(Literal(Hex(HexColor(Cursor(
                       kind: "Hash",
                       offset: SourceOffset(29381),
                       len: 7,
@@ -34117,7 +34117,7 @@ StyleSheet(
                 offset: SourceOffset(29623),
                 len: 1,
               )),
-              value: BackgroundColorStyleValue(Literal(Hex(Hash(Cursor(
+              value: BackgroundColorStyleValue(Literal(Hex(HexColor(Cursor(
                 kind: "Hash",
                 offset: SourceOffset(29625),
                 len: 7,
@@ -34351,7 +34351,7 @@ StyleSheet(
                       offset: SourceOffset(29823),
                       len: 1,
                     )),
-                    value: BackgroundColorStyleValue(Literal(Hex(Hash(Cursor(
+                    value: BackgroundColorStyleValue(Literal(Hex(HexColor(Cursor(
                       kind: "Hash",
                       offset: SourceOffset(29825),
                       len: 7,
@@ -34632,7 +34632,7 @@ StyleSheet(
                 offset: SourceOffset(30031),
                 len: 1,
               )),
-              value: ColorStyleValue(Literal(Hex(Hash(Cursor(
+              value: ColorStyleValue(Literal(Hex(HexColor(Cursor(
                 kind: "Hash",
                 offset: SourceOffset(30033),
                 len: 7,
@@ -34775,7 +34775,7 @@ StyleSheet(
                       offset: SourceOffset(30154),
                       len: 1,
                     )),
-                    value: ColorStyleValue(Literal(Hex(Hash(Cursor(
+                    value: ColorStyleValue(Literal(Hex(HexColor(Cursor(
                       kind: "Hash",
                       offset: SourceOffset(30156),
                       len: 7,
@@ -34871,7 +34871,7 @@ StyleSheet(
                 offset: SourceOffset(30226),
                 len: 1,
               )),
-              value: BackgroundColorStyleValue(Literal(Hex(Hash(Cursor(
+              value: BackgroundColorStyleValue(Literal(Hex(HexColor(Cursor(
                 kind: "Hash",
                 offset: SourceOffset(30228),
                 len: 7,
@@ -34931,7 +34931,7 @@ StyleSheet(
                 offset: SourceOffset(30287),
                 len: 1,
               )),
-              value: ColorStyleValue(Literal(Hex(Hash(Cursor(
+              value: ColorStyleValue(Literal(Hex(HexColor(Cursor(
                 kind: "Hash",
                 offset: SourceOffset(30289),
                 len: 7,
@@ -35041,7 +35041,7 @@ StyleSheet(
                 offset: SourceOffset(30377),
                 len: 1,
               )),
-              value: BorderColorStyleValue(Left(Literal(Hex(Hash(Cursor(
+              value: BorderColorStyleValue(Left(Literal(Hex(HexColor(Cursor(
                 kind: "Hash",
                 offset: SourceOffset(30379),
                 len: 7,
@@ -35198,7 +35198,7 @@ StyleSheet(
                       offset: SourceOffset(30508),
                       len: 1,
                     )),
-                    value: BorderColorStyleValue(Left(Literal(Hex(Hash(Cursor(
+                    value: BorderColorStyleValue(Left(Literal(Hex(HexColor(Cursor(
                       kind: "Hash",
                       offset: SourceOffset(30510),
                       len: 7,
@@ -35336,7 +35336,7 @@ StyleSheet(
                       offset: SourceOffset(30614),
                       len: 1,
                     )),
-                    value: ColorStyleValue(Literal(Hex(Hash(Cursor(
+                    value: ColorStyleValue(Literal(Hex(HexColor(Cursor(
                       kind: "Hash",
                       offset: SourceOffset(30616),
                       len: 7,
@@ -35474,7 +35474,7 @@ StyleSheet(
                       offset: SourceOffset(30727),
                       len: 1,
                     )),
-                    value: BackgroundColorStyleValue(Literal(Hex(Hash(Cursor(
+                    value: BackgroundColorStyleValue(Literal(Hex(HexColor(Cursor(
                       kind: "Hash",
                       offset: SourceOffset(30729),
                       len: 7,
@@ -35589,7 +35589,7 @@ StyleSheet(
                 offset: SourceOffset(30836),
                 len: 1,
               )),
-              value: BackgroundColorStyleValue(Literal(Hex(Hash(Cursor(
+              value: BackgroundColorStyleValue(Literal(Hex(HexColor(Cursor(
                 kind: "Hash",
                 offset: SourceOffset(30838),
                 len: 7,
@@ -35850,7 +35850,7 @@ StyleSheet(
                       offset: SourceOffset(31075),
                       len: 1,
                     )),
-                    value: BackgroundColorStyleValue(Literal(Hex(Hash(Cursor(
+                    value: BackgroundColorStyleValue(Literal(Hex(HexColor(Cursor(
                       kind: "Hash",
                       offset: SourceOffset(31077),
                       len: 7,
@@ -35967,7 +35967,7 @@ StyleSheet(
                   attachment: None,
                   origin: None,
                   clip: None,
-                  color: Some(Hex(Hash(Cursor(
+                  color: Some(Hex(HexColor(Cursor(
                     kind: "Hash",
                     offset: SourceOffset(31173),
                     len: 9,
@@ -36126,7 +36126,7 @@ StyleSheet(
                   attachment: None,
                   origin: None,
                   clip: None,
-                  color: Some(Hex(Hash(Cursor(
+                  color: Some(Hex(HexColor(Cursor(
                     kind: "Hash",
                     offset: SourceOffset(31296),
                     len: 9,
@@ -36275,7 +36275,7 @@ StyleSheet(
                   offset: SourceOffset(31413),
                   len: 5,
                 ))))),
-                color: Some(Literal(Hex(Hash(Cursor(
+                color: Some(Literal(Hex(HexColor(Cursor(
                   kind: "Hash",
                   offset: SourceOffset(31419),
                   len: 7,
@@ -36371,7 +36371,7 @@ StyleSheet(
                 offset: SourceOffset(31495),
                 len: 1,
               )),
-              value: ColorStyleValue(Literal(Hex(Hash(Cursor(
+              value: ColorStyleValue(Literal(Hex(HexColor(Cursor(
                 kind: "Hash",
                 offset: SourceOffset(31497),
                 len: 7,
@@ -36501,7 +36501,7 @@ StyleSheet(
                       offset: SourceOffset(31594),
                       len: 1,
                     )),
-                    value: ColorStyleValue(Literal(Hex(Hash(Cursor(
+                    value: ColorStyleValue(Literal(Hex(HexColor(Cursor(
                       kind: "Hash",
                       offset: SourceOffset(31596),
                       len: 7,
@@ -36650,7 +36650,7 @@ StyleSheet(
                         offset: SourceOffset(31708),
                         len: 5,
                       ))))),
-                      color: Some(Literal(Hex(Hash(Cursor(
+                      color: Some(Literal(Hex(HexColor(Cursor(
                         kind: "Hash",
                         offset: SourceOffset(31714),
                         len: 7,
@@ -36923,7 +36923,7 @@ StyleSheet(
                       offset: SourceOffset(31920),
                       len: 1,
                     )),
-                    value: BackgroundColorStyleValue(Literal(Hex(Hash(Cursor(
+                    value: BackgroundColorStyleValue(Literal(Hex(HexColor(Cursor(
                       kind: "Hash",
                       offset: SourceOffset(31922),
                       len: 4,
@@ -37007,7 +37007,7 @@ StyleSheet(
                         offset: SourceOffset(31981),
                         len: 5,
                       ))))),
-                      color: Some(Literal(Hex(Hash(Cursor(
+                      color: Some(Literal(Hex(HexColor(Cursor(
                         kind: "Hash",
                         offset: SourceOffset(31987),
                         len: 4,
@@ -37213,7 +37213,7 @@ StyleSheet(
                       offset: SourceOffset(32129),
                       len: 1,
                     )),
-                    value: ColorStyleValue(Literal(Hex(Hash(Cursor(
+                    value: ColorStyleValue(Literal(Hex(HexColor(Cursor(
                       kind: "Hash",
                       offset: SourceOffset(32131),
                       len: 4,
@@ -37277,7 +37277,7 @@ StyleSheet(
                       offset: SourceOffset(32171),
                       len: 1,
                     )),
-                    value: ColorStyleValue(Literal(Hex(Hash(Cursor(
+                    value: ColorStyleValue(Literal(Hex(HexColor(Cursor(
                       kind: "Hash",
                       offset: SourceOffset(32173),
                       len: 4,
@@ -37341,7 +37341,7 @@ StyleSheet(
                       offset: SourceOffset(32229),
                       len: 1,
                     )),
-                    value: ColorStyleValue(Literal(Hex(Hash(Cursor(
+                    value: ColorStyleValue(Literal(Hex(HexColor(Cursor(
                       kind: "Hash",
                       offset: SourceOffset(32231),
                       len: 4,
@@ -37424,7 +37424,7 @@ StyleSheet(
                       offset: SourceOffset(32291),
                       len: 1,
                     )),
-                    value: BackgroundColorStyleValue(Literal(Hex(Hash(Cursor(
+                    value: BackgroundColorStyleValue(Literal(Hex(HexColor(Cursor(
                       kind: "Hash",
                       offset: SourceOffset(32293),
                       len: 7,
@@ -37475,7 +37475,7 @@ StyleSheet(
                       offset: SourceOffset(32322),
                       len: 1,
                     )),
-                    value: ColorStyleValue(Literal(Hex(Hash(Cursor(
+                    value: ColorStyleValue(Literal(Hex(HexColor(Cursor(
                       kind: "Hash",
                       offset: SourceOffset(32324),
                       len: 4,

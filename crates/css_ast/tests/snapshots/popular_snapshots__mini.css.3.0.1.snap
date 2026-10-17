@@ -43432,7 +43432,7 @@ StyleSheet(
                         attachment: None,
                         origin: None,
                         clip: None,
-                        color: Some(Hex(Hash(Cursor(
+                        color: Some(Hex(HexColor(Cursor(
                           kind: "Hash",
                           offset: SourceOffset(32277),
                           len: 7,
@@ -47845,7 +47845,7 @@ StyleSheet(
                 offset: SourceOffset(35575),
                 len: 1,
               )),
-              value: Color(Literal(Hex(Hash(Cursor(
+              value: Color(Literal(Hex(HexColor(Cursor(
                 kind: "Hash",
                 offset: SourceOffset(35577),
                 len: 7,
@@ -47924,7 +47924,7 @@ StyleSheet(
                 offset: SourceOffset(35635),
                 len: 1,
               )),
-              value: Color(Literal(Hex(Hash(Cursor(
+              value: Color(Literal(Hex(HexColor(Cursor(
                 kind: "Hash",
                 offset: SourceOffset(35637),
                 len: 7,

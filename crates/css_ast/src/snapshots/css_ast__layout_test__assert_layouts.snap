@@ -5647,6 +5647,9 @@ HeightMediaFeature: size=128 align=4
 HeightStyleValue: size=304 align=8 {
     0: 0
 }
+HexColor: size=12 align=4 {
+    0: 0
+}
 HighlightPseudoElement: size=60 align=4 {
     colons: 0
     function: 24

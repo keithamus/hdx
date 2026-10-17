@@ -129,6 +129,7 @@ pub(crate) const SIZED_TYPES: &[&str] = &[
 	"HackMediaFeature",
 	"HeightContainerFeature",
 	"HeightMediaFeature",
+	"HexColor",
 	"HighlightPseudoElement",
 	"HistoricalLigValues",
 	"HorizontalViewportSegmentsMediaFeature",
