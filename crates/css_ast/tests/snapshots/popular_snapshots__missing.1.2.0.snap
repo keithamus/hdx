@@ -37703,11 +37703,11 @@ StyleSheet(
                     kind: "Colon",
                     offset: SourceOffset(28172),
                     len: 1,
-                  )), Ch(Dimension(Cursor(
+                  )), Literal(Ch(Dimension(Cursor(
                     kind: "Dimension",
                     offset: SourceOffset(28174),
                     len: 4,
-                  ))), RightParen(Cursor(
+                  )))), RightParen(Cursor(
                     kind: "RightParen",
                     offset: SourceOffset(28178),
                     len: 1,
@@ -67038,11 +67038,11 @@ StyleSheet(
                     kind: "Colon",
                     offset: SourceOffset(49375),
                     len: 1,
-                  )), Px(Dimension(Cursor(
+                  )), Literal(Px(Dimension(Cursor(
                     kind: "Dimension",
                     offset: SourceOffset(49377),
                     len: 5,
-                  ))), RightParen(Cursor(
+                  )))), RightParen(Cursor(
                     kind: "RightParen",
                     offset: SourceOffset(49382),
                     len: 1,
@@ -67120,11 +67120,11 @@ StyleSheet(
                     kind: "Colon",
                     offset: SourceOffset(49428),
                     len: 1,
-                  )), Px(Dimension(Cursor(
+                  )), Literal(Px(Dimension(Cursor(
                     kind: "Dimension",
                     offset: SourceOffset(49430),
                     len: 6,
-                  ))), RightParen(Cursor(
+                  )))), RightParen(Cursor(
                     kind: "RightParen",
                     offset: SourceOffset(49436),
                     len: 1,
@@ -78682,11 +78682,11 @@ StyleSheet(
             kind: "Colon",
             offset: SourceOffset(56662),
             len: 1,
-          )), Px(Dimension(Cursor(
+          )), Literal(Px(Dimension(Cursor(
             kind: "Dimension",
             offset: SourceOffset(56664),
             len: 5,
-          ))), RightParen(Cursor(
+          )))), RightParen(Cursor(
             kind: "RightParen",
             offset: SourceOffset(56669),
             len: 1,
@@ -84324,11 +84324,11 @@ StyleSheet(
             kind: "Colon",
             offset: SourceOffset(60342),
             len: 1,
-          )), Px(Dimension(Cursor(
+          )), Literal(Px(Dimension(Cursor(
             kind: "Dimension",
             offset: SourceOffset(60344),
             len: 6,
-          ))), RightParen(Cursor(
+          )))), RightParen(Cursor(
             kind: "RightParen",
             offset: SourceOffset(60350),
             len: 1,

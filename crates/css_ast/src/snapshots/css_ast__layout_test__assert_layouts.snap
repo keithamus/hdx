@@ -455,7 +455,7 @@ BlockEllipsisStyleValue: size=32 align=8
     0: NoEllipsis
     1: Auto
     2: String
-BlockSizeContainerFeature: size=128 align=4
+BlockSizeContainerFeature: size=160 align=8
     0: Left
     1: Right
     2: Range
@@ -1081,7 +1081,7 @@ ColorGamutMediaFeatureKeyword: size=16 align=4
     0: Srgb
     1: P3
     2: Rec2020
-ColorIndexMediaFeature: size=120 align=4
+ColorIndexMediaFeature: size=160 align=8
     0: Left
     1: Right
     2: Range
@@ -1100,7 +1100,7 @@ ColorInterpolationStyleValue: size=32 align=8
     0: Auto
     1: Srgb
     2: Linearrgb
-ColorMediaFeature: size=120 align=4
+ColorMediaFeature: size=160 align=8
     0: Left
     1: Right
     2: Range
@@ -4675,14 +4675,14 @@ DeviceAspectRatioMediaFeature: size=240 align=8
     3: Min
     4: Max
     5: Exact
-DeviceHeightMediaFeature: size=128 align=4
+DeviceHeightMediaFeature: size=160 align=8
     0: Left
     1: Right
     2: Range
     3: Min
     4: Max
     5: Exact
-DeviceWidthMediaFeature: size=128 align=4
+DeviceWidthMediaFeature: size=160 align=8
     0: Left
     1: Right
     2: Range
@@ -5630,14 +5630,14 @@ HeadingPseudoFunction: size=64 align=8 {
     value: 24
     close: 48
 }
-HeightContainerFeature: size=128 align=4
+HeightContainerFeature: size=160 align=8
     0: Left
     1: Right
     2: Range
     3: Min
     4: Max
     5: Exact
-HeightMediaFeature: size=128 align=4
+HeightMediaFeature: size=160 align=8
     0: Left
     1: Right
     2: Range
@@ -5673,7 +5673,7 @@ HorizontalLineValue: size=40 align=8
     3: Right
     4: XStart
     5: XEnd
-HorizontalViewportSegmentsMediaFeature: size=120 align=4
+HorizontalViewportSegmentsMediaFeature: size=160 align=8
     0: Left
     1: Right
     2: Range
@@ -5968,15 +5968,15 @@ IdentFunction: size=56 align=8 {
     args: 16
     close: 40
 }
-IfCondition: size=240 align=8
+IfCondition: size=160 align=8
     0: Else
     1: Expr
-IfConditionExpr: size=232 align=8
+IfConditionExpr: size=152 align=8
     0: Is
     1: Not
     2: And
     3: Or
-IfTest: size=208 align=8
+IfTest: size=128 align=8
     0: SupportsDeclaration
     1: Supports
     2: Media
@@ -6085,7 +6085,7 @@ InitialLetterWrapStyleValue: size=40 align=8
     2: All
     3: Grid
     4: LengthPercentage
-InlineSizeContainerFeature: size=128 align=4
+InlineSizeContainerFeature: size=160 align=8
     0: Left
     1: Right
     2: Range
@@ -6827,12 +6827,12 @@ MaxSizeStyleValue: size=608 align=8 {
 MaxWidthStyleValue: size=304 align=8 {
     0: 0
 }
-MediaCondition: size=168 align=8
+MediaCondition: size=208 align=8
     0: Is
     1: Not
     2: And
     3: Or
-MediaFeature: size=144 align=8
+MediaFeature: size=184 align=8
     0: AnyHover
     1: AnyPointer
     2: AspectRatio
@@ -6892,7 +6892,7 @@ MediaFeature: size=144 align=8
 MediaPreCondition: size=16 align=4
     0: Not
     1: Only
-MediaQuery: size=216 align=8 {
+MediaQuery: size=256 align=8 {
     precondition: 0
     media_type: 16
     and: 32
@@ -6943,7 +6943,7 @@ MinmaxFunction: size=128 align=8 {
 MixBlendModeStyleValue: size=32 align=8
     0: BlendMode
     1: PlusLighter
-MonochromeMediaFeature: size=120 align=4
+MonochromeMediaFeature: size=160 align=8
     0: Left
     1: Right
     2: Range
@@ -6977,7 +6977,7 @@ MozDeviceOrientationMediaFeature: size=68 align=4
 MozDeviceOrientationMediaFeatureKeyword: size=16 align=4
     0: Portrait
     1: Landscape
-MozDevicePixelRatioMediaFeature: size=120 align=4
+MozDevicePixelRatioMediaFeature: size=160 align=8
     0: Left
     1: Right
     2: Range
@@ -7185,14 +7185,14 @@ MozUserSelectStyleValue: size=32 align=8
 MsBoxSizingStyleValue: size=32 align=8
     0: ContentBox
     1: BorderBox
-MsColumnCountMediaFeature: size=120 align=4
+MsColumnCountMediaFeature: size=160 align=8
     0: Left
     1: Right
     2: Range
     3: Min
     4: Max
     5: Exact
-MsDevicePixelRatioMediaFeature: size=120 align=4
+MsDevicePixelRatioMediaFeature: size=160 align=8
     0: Left
     1: Right
     2: Range
@@ -7651,7 +7651,7 @@ NumericSpacingValues: size=16 align=4
 OBoxSizingStyleValue: size=32 align=8
     0: ContentBox
     1: BorderBox
-ODevicePixelRatioMediaFeature: size=120 align=4
+ODevicePixelRatioMediaFeature: size=160 align=8
     0: Left
     1: Right
     2: Range
@@ -8674,7 +8674,7 @@ Resolution: size=16 align=4
     1: Dpcm
     2: Dppx
     3: X
-ResolutionMediaFeature: size=136 align=4
+ResolutionMediaFeature: size=176 align=8
     0: Left
     1: Right
     2: Range
@@ -11376,7 +11376,7 @@ VerticalLineValue: size=40 align=8
     3: Bottom
     4: YStart
     5: YEnd
-VerticalViewportSegmentsMediaFeature: size=120 align=4
+VerticalViewportSegmentsMediaFeature: size=160 align=8
     0: Left
     1: Right
     2: Range
@@ -11644,7 +11644,7 @@ WebkitColumnGapStyleValue: size=48 align=8
     0: Normal
     1: LengthPercentage
     2: LineWidth
-WebkitDevicePixelRatioMediaFeature: size=120 align=4
+WebkitDevicePixelRatioMediaFeature: size=160 align=8
     0: Left
     1: Right
     2: Range
@@ -11930,14 +11930,14 @@ WhiteSpaceTrimStyleValueOptions: size=72 align=8 {
 WidowsStyleValue: size=24 align=8 {
     0: 0
 }
-WidthContainerFeature: size=128 align=4
+WidthContainerFeature: size=160 align=8
     0: Left
     1: Right
     2: Range
     3: Min
     4: Max
     5: Exact
-WidthMediaFeature: size=128 align=4
+WidthMediaFeature: size=160 align=8
     0: Left
     1: Right
     2: Range

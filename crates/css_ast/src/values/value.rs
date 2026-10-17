@@ -190,6 +190,34 @@ pub enum KeywordSubstitutionFunction<'a, T> {
 	FirstValid(FirstValidFunction<'a, KeywordValue<'a, T>>),
 }
 
+/// Generic wrapper for values in media and container query features, which permit typed math
+/// functions (`calc()`, `min()`, `max()`, etc.) and `env()`, but no other substitution functions.
+///
+/// <https://drafts.csswg.org/mediaqueries-4/#mq-range-context>
+#[node]
+#[derive(Peek, ToCursors, ToSpan, SemanticEq, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+#[cfg_attr(feature = "visitable", derive(Visitable), visit(children))]
+pub enum QueryValue<'a, T> {
+	Literal(T),
+	Substituted(Box<'a, QuerySubstitutionFunction<'a, T>>),
+	#[peek(skip)]
+	Unresolved(Box<'a, Unresolved<'a>>),
+}
+
+impl_value_slot_parse!(QueryValue, QuerySubstitutionFunction, T);
+
+/// A math function or `env()` appearing in a [`QueryValue`] slot.
+#[node]
+#[derive(Peek, Parse, ToCursors, ToSpan, SemanticEq, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+#[cfg_attr(feature = "visitable", derive(Visitable), visit(children))]
+#[derive(csskit_derives::NodeWithMetadata)]
+pub enum QuerySubstitutionFunction<'a, T> {
+	Math(MathFunction<'a, T>),
+	Env(EnvFunction<'a, QueryValue<'a, T>>),
+}
+
 /// Generates the value-behaviour trait impls (`ToNumberValue`, `ToNormalisedValue`,
 /// `NodeWithMetadata`, `DeclarationValue`) shared verbatim by every value-slot enum.
 macro_rules! impl_value_slot_traits {
@@ -286,6 +314,7 @@ impl_value_slot_traits!(Value);
 impl_value_slot_traits!(CalcableValue);
 impl_value_slot_traits!(NumericValue);
 impl_value_slot_traits!(KeywordValue);
+impl_value_slot_traits!(QueryValue);
 
 #[cfg(test)]
 mod tests {
@@ -297,6 +326,7 @@ mod tests {
 	type CalcLength<'a> = CalcableValue<'a, Length>;
 	type NumericInt<'a> = NumericValue<'a, CSSInt>;
 	type KeywordIdent<'a> = KeywordValue<'a, css_parse::T![Ident]>;
+	type QueryLength<'a> = QueryValue<'a, Length>;
 
 	#[test]
 	fn value_literal() {
@@ -453,6 +483,28 @@ mod tests {
 			let KeywordSubstitutionFunction::Var(var) = &*sub else { panic!("expected Var") };
 			assert!(matches!(var.fallback.as_deref(), Some(KeywordValue::Literal(_))));
 		});
+	}
+
+	#[test]
+	fn query_math_and_env() {
+		assert_parse!(CssAtomSet::ATOMS, QueryLength, "48rem", |v| {
+			assert!(matches!(v, QueryValue::Literal(_)));
+		});
+		assert_parse!(CssAtomSet::ATOMS, QueryLength, "calc(48rem - 0.02px)", |v| {
+			let QueryValue::Substituted(sub) = v else { panic!() };
+			assert!(matches!(&*sub, QuerySubstitutionFunction::Math(_)));
+		});
+		assert_parse!(CssAtomSet::ATOMS, QueryLength, "env(safe-area-inset-top, 10px)", |v| {
+			let QueryValue::Substituted(sub) = v else { panic!() };
+			let QuerySubstitutionFunction::Env(env) = &*sub else { panic!() };
+			assert!(matches!(env.fallback.as_deref(), Some(QueryValue::Literal(_))));
+		});
+	}
+
+	#[test]
+	fn query_rejects_other_substitution_functions() {
+		assert_peek_false!(CssAtomSet::ATOMS, QueryLength, "var(--w)");
+		assert_peek_false!(CssAtomSet::ATOMS, QueryLength, "attr(data-w)");
 	}
 
 	#[test]

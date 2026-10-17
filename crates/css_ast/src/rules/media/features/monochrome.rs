@@ -3,13 +3,13 @@ use crate::units::CSSInt;
 
 ranged_feature!(
 	#[node]
-	#[derive(ToCursors, ToSpan, SemanticEq, Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+	#[derive(ToCursors, ToSpan, SemanticEq, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 	#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 	#[derive(csskit_derives::FeatureMetadata)]
 	#[feature_metadata(CssAtomSet::Monochrome)]
 	#[cfg_attr(feature = "visitable", derive(csskit_derives::Visitable), visit)]
 #[derive(csskit_derives::NodeWithMetadata)]
-	pub enum MonochromeMediaFeature{CssAtomSet::Monochrome | CssAtomSet::MinMonochrome | CssAtomSet::MaxMonochrome, CSSInt}
+	pub enum MonochromeMediaFeature<'a>{CssAtomSet::Monochrome | CssAtomSet::MinMonochrome | CssAtomSet::MaxMonochrome, QueryValue<'a, CSSInt>}
 );
 
 #[cfg(test)]

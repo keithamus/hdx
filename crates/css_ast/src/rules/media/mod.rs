@@ -227,11 +227,7 @@ impl<'a> Parse<'a> for MediaFeature<'a> {
 			Ok(value)
 		} else {
 			// Styles like (1em < width < 1em), (1em <= width <= 1em) or (1/1 <= aspect-ratio <= 2/1)
-			let mut n = 3;
-			while c != Kind::Ident && c != Kind::RightParen && n <= 7 {
-				c = p.peek_n(n);
-				n += 1;
-			}
+			c = css_parse::peek_ranged_feature_name(p);
 			if c != Kind::Ident {
 				c = p.next();
 				Err(Diagnostic::new(c, Diagnostic::unexpected))?
@@ -249,22 +245,22 @@ macro_rules! apply_medias {
 			AnyHover(AnyHoverMediaFeature): CssAtomSet::AnyHover,
 			AnyPointer(AnyPointerMediaFeature): CssAtomSet::AnyPointer,
 			AspectRatio(Box<'a, AspectRatioMediaFeature<'a>>): CssAtomSet::AspectRatio | CssAtomSet::MinAspectRatio | CssAtomSet::MaxAspectRatio,
-			Color(ColorMediaFeature): CssAtomSet::Color | CssAtomSet::MaxColor | CssAtomSet::MinColor,
+			Color(ColorMediaFeature<'a>): CssAtomSet::Color | CssAtomSet::MaxColor | CssAtomSet::MinColor,
 			ColorGamut(ColorGamutMediaFeature): CssAtomSet::ColorGamut,
-			ColorIndex(ColorIndexMediaFeature): CssAtomSet::ColorIndex | CssAtomSet::MaxColorIndex | CssAtomSet::MinColorIndex,
+			ColorIndex(ColorIndexMediaFeature<'a>): CssAtomSet::ColorIndex | CssAtomSet::MaxColorIndex | CssAtomSet::MinColorIndex,
 			DeviceAspectRatio(Box<'a, DeviceAspectRatioMediaFeature<'a>>): CssAtomSet::DeviceAspectRatio | CssAtomSet::MaxDeviceAspectRatio | CssAtomSet::MinDeviceAspectRatio,
-			DeviceHeight(DeviceHeightMediaFeature): CssAtomSet::DeviceHeight | CssAtomSet::MaxDeviceHeight | CssAtomSet::MinDeviceHeight,
-			DeviceWidth(DeviceWidthMediaFeature): CssAtomSet::DeviceWidth | CssAtomSet::MaxDeviceWidth | CssAtomSet::MinDeviceWidth,
+			DeviceHeight(DeviceHeightMediaFeature<'a>): CssAtomSet::DeviceHeight | CssAtomSet::MaxDeviceHeight | CssAtomSet::MinDeviceHeight,
+			DeviceWidth(DeviceWidthMediaFeature<'a>): CssAtomSet::DeviceWidth | CssAtomSet::MaxDeviceWidth | CssAtomSet::MinDeviceWidth,
 			DisplayMode(DisplayModeMediaFeature): CssAtomSet::DisplayMode,
 			DynamicRange(DynamicRangeMediaFeature): CssAtomSet::DynamicRange,
 			EnvironmentBlending(EnvironmentBlendingMediaFeature): CssAtomSet::EnvironmentBlending,
 			ForcedColors(ForcedColorsMediaFeature): CssAtomSet::ForcedColors,
 			Grid(GridMediaFeature): CssAtomSet::Grid,
-			Height(HeightMediaFeature): CssAtomSet::Height | CssAtomSet::MaxHeight | CssAtomSet::MinHeight,
-			HorizontalViewportSegments(HorizontalViewportSegmentsMediaFeature): CssAtomSet::HorizontalViewportSegments | CssAtomSet::MaxHorizontalViewportSegments | CssAtomSet::MinHorizontalViewportSegments,
+			Height(HeightMediaFeature<'a>): CssAtomSet::Height | CssAtomSet::MaxHeight | CssAtomSet::MinHeight,
+			HorizontalViewportSegments(HorizontalViewportSegmentsMediaFeature<'a>): CssAtomSet::HorizontalViewportSegments | CssAtomSet::MaxHorizontalViewportSegments | CssAtomSet::MinHorizontalViewportSegments,
 			Hover(HoverMediaFeature): CssAtomSet::Hover,
 			InvertedColors(InvertedColorsMediaFeature): CssAtomSet::InvertedColors,
-			Monochrome(MonochromeMediaFeature): CssAtomSet::Monochrome | CssAtomSet::MaxMonochrome | CssAtomSet::MinMonochrome,
+			Monochrome(MonochromeMediaFeature<'a>): CssAtomSet::Monochrome | CssAtomSet::MaxMonochrome | CssAtomSet::MinMonochrome,
 			NavControls(NavControlsMediaFeature): CssAtomSet::NavControls,
 			Orientation(OrientationMediaFeature): CssAtomSet::Orientation,
 			OverflowBlock(OverflowBlockMediaFeature): CssAtomSet::OverflowBlock,
@@ -275,18 +271,18 @@ macro_rules! apply_medias {
 			PrefersReducedData(PrefersReducedDataMediaFeature): CssAtomSet::PrefersReducedData,
 			PrefersReducedMotion(PrefersReducedMotionMediaFeature): CssAtomSet::PrefersReducedMotion,
 			PrefersReducedTransparency(PrefersReducedTransparencyMediaFeature): CssAtomSet::PrefersReducedTransparency,
-			Resolution(ResolutionMediaFeature): CssAtomSet::Resolution | CssAtomSet::MaxResolution | CssAtomSet::MinResolution,
+			Resolution(ResolutionMediaFeature<'a>): CssAtomSet::Resolution | CssAtomSet::MaxResolution | CssAtomSet::MinResolution,
 			Scan(ScanMediaFeature): CssAtomSet::Scan,
 			Scripting(ScriptingMediaFeature): CssAtomSet::Scripting,
 			Update(UpdateMediaFeature): CssAtomSet::Update,
-			VerticalViewportSegments(VerticalViewportSegmentsMediaFeature): CssAtomSet::VerticalViewportSegments | CssAtomSet::MaxVerticalViewportSegments | CssAtomSet::MinVerticalViewportSegments,
+			VerticalViewportSegments(VerticalViewportSegmentsMediaFeature<'a>): CssAtomSet::VerticalViewportSegments | CssAtomSet::MaxVerticalViewportSegments | CssAtomSet::MinVerticalViewportSegments,
 			VideoColorGamut(VideoColorGamutMediaFeature): CssAtomSet::VideoColorGamut,
 			VideoDynamicRange(VideoDynamicRangeMediaFeature): CssAtomSet::VideoDynamicRange,
-			Width(WidthMediaFeature): CssAtomSet::Width | CssAtomSet::MaxWidth | CssAtomSet::MinWidth,
+			Width(WidthMediaFeature<'a>): CssAtomSet::Width | CssAtomSet::MaxWidth | CssAtomSet::MinWidth,
 
 			// https://searchfox.org/wubkat/source/Source/WebCore/css/query/MediaQueryFeatures.cpp#192
 			WebkitAnimationMediaFeature(WebkitAnimationMediaFeature): CssAtomSet::_WebkitAnimation,
-			WebkitDevicePixelRatioMediaFeature(WebkitDevicePixelRatioMediaFeature): CssAtomSet::_WebkitDevicePixelRatio,
+			WebkitDevicePixelRatioMediaFeature(WebkitDevicePixelRatioMediaFeature<'a>): CssAtomSet::_WebkitDevicePixelRatio,
 			WebkitTransform2dMediaFeature(WebkitTransform2dMediaFeature): CssAtomSet::_WebkitTransform2d,
 			WebkitTransform3dMediaFeature(WebkitTransform3dMediaFeature): CssAtomSet::_WebkitTransform3d,
 			WebkitTransitionMediaFeature(WebkitTransitionMediaFeature): CssAtomSet::_WebkitTransition,
@@ -294,7 +290,7 @@ macro_rules! apply_medias {
 
 			// https://searchfox.org/mozilla-central/source/servo/components/style/gecko/media_features.rs#744
 			MozDeviceOrientationMediaFeature(MozDeviceOrientationMediaFeature): CssAtomSet::_MozDeviceOrientation,
-			MozDevicePixelRatioMediaFeature(MozDevicePixelRatioMediaFeature): CssAtomSet::_MozDevicePixelRatio | CssAtomSet::_MozMaxDevicePixelRatio | CssAtomSet::_MozMinDevicePixelRatio,
+			MozDevicePixelRatioMediaFeature(MozDevicePixelRatioMediaFeature<'a>): CssAtomSet::_MozDevicePixelRatio | CssAtomSet::_MozMaxDevicePixelRatio | CssAtomSet::_MozMinDevicePixelRatio,
 			MozMacGraphiteThemeMediaFeature(MozMacGraphiteThemeMediaFeature): CssAtomSet::_MozMacGraphiteTheme,
 			MozMaemoClassicMediaFeature(MozMaemoClassicMediaFeature): CssAtomSet::_MozMaemoClassicTheme,
 			MozImagesInMenusMediaFeature(MozImagesInMenusMediaFeature): CssAtomSet::_MozImagesInMenus,
@@ -304,11 +300,11 @@ macro_rules! apply_medias {
 			MsHighContrastMediaFeature(MsHighContrastMediaFeature): CssAtomSet::_MsHighContrast,
 			MsViewStateMediaFeature(MsViewStateMediaFeature): CssAtomSet::_MsViewState,
 			MsImeAlignMediaFeature(MsImeAlignMediaFeature): CssAtomSet::_MsImeAlign,
-			MsDevicePixelRatioMediaFeature(MsDevicePixelRatioMediaFeature): CssAtomSet::_MsDevicePixelRatio,
-			MsColumnCountMediaFeature(MsColumnCountMediaFeature): CssAtomSet::_MsColumnCount,
+			MsDevicePixelRatioMediaFeature(MsDevicePixelRatioMediaFeature<'a>): CssAtomSet::_MsDevicePixelRatio,
+			MsColumnCountMediaFeature(MsColumnCountMediaFeature<'a>): CssAtomSet::_MsColumnCount,
 
 			// https://github.com/search?q=%2F%5C(-o-%5B%5E)%3A%5D%2B%5B)%3A%5D%2F%20language%3ACSS&type=code
-			ODevicePixelRatioMediaFeature(ODevicePixelRatioMediaFeature): CssAtomSet::_ODevicePixelRatio,
+			ODevicePixelRatioMediaFeature(ODevicePixelRatioMediaFeature<'a>): CssAtomSet::_ODevicePixelRatio,
 		}
 	};
 }
@@ -416,6 +412,13 @@ mod tests {
 		assert_parse!(CssAtomSet::ATOMS, MediaRule, "@media print{}");
 		// assert_parse!(CssAtomSet::ATOMS, MediaRule, "@media print,(prefers-reduced-motion: reduce){}");
 		assert_parse!(CssAtomSet::ATOMS, MediaRule, "@media(min-width:1200px){}");
+		assert_parse!(CssAtomSet::ATOMS, MediaRule, "@media(max-width:calc(48rem - 0.02px)){}");
+		assert_parse!(
+			CssAtomSet::ATOMS,
+			MediaFeature,
+			"(calc(1px + 2px)<width<=max(40em,50vw))",
+			MediaFeature::Width(_)
+		);
 		assert_parse!(CssAtomSet::ATOMS, MediaRule, "@media(min-width:1200px){body{color:red;}}");
 		assert_parse!(CssAtomSet::ATOMS, MediaRule, "@media(min-width:1200px){@page{}}");
 		assert_parse!(CssAtomSet::ATOMS, MediaRule, "@media screen{body{color:black}}");

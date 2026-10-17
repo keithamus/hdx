@@ -40,7 +40,7 @@ pub enum IfTest<'a> {
 	/// `media( <media-feature> | <media-condition> )`
 	Media(
 		#[cfg_attr(feature = "visitable", visit(skip))] Function,
-		MediaCondition<'a>,
+		Box<'a, MediaCondition<'a>>,
 		#[cfg_attr(feature = "visitable", visit(skip))]
 		#[semantic_eq(skip)]
 		RightParen,
@@ -112,7 +112,7 @@ impl<'a> Parse<'a> for IfTest<'a> {
 			CssAtomSet::Media => {
 				let condition = p.parse::<MediaCondition>()?;
 				let close = p.parse::<RightParen>()?;
-				Ok(Self::Media(function, condition, close))
+				Ok(Self::Media(function, Box::new_in(p.alloc(), condition), close))
 			}
 			CssAtomSet::Style => {
 				let query = p.parse::<StyleQuery>()?;

@@ -365,11 +365,11 @@ StyleSheet(
             kind: "Colon",
             offset: SourceOffset(444),
             len: 1,
-          )), Px(Dimension(Cursor(
+          )), Literal(Px(Dimension(Cursor(
             kind: "Dimension",
             offset: SourceOffset(446),
             len: 5,
-          ))), RightParen(Cursor(
+          )))), RightParen(Cursor(
             kind: "RightParen",
             offset: SourceOffset(451),
             len: 1,
@@ -466,11 +466,11 @@ StyleSheet(
             kind: "Colon",
             offset: SourceOffset(511),
             len: 1,
-          )), Px(Dimension(Cursor(
+          )), Literal(Px(Dimension(Cursor(
             kind: "Dimension",
             offset: SourceOffset(513),
             len: 5,
-          ))), RightParen(Cursor(
+          )))), RightParen(Cursor(
             kind: "RightParen",
             offset: SourceOffset(518),
             len: 1,

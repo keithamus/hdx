@@ -69,11 +69,11 @@ discrete_feature!(
 
 ranged_feature!(
 	#[node]
-	#[derive(ToCursors, ToSpan, SemanticEq, Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+	#[derive(ToCursors, ToSpan, SemanticEq, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 	#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 	#[derive(csskit_derives::FeatureMetadata)]
 	#[feature_metadata(CssAtomSet::_WebkitDevicePixelRatio)]
 	#[cfg_attr(feature = "visitable", derive(csskit_derives::Visitable), visit)]
 #[derive(csskit_derives::NodeWithMetadata)]
-	pub enum WebkitDevicePixelRatioMediaFeature{CssAtomSet::_WebkitDevicePixelRatio | CssAtomSet::_WebkitMinDevicePixelRatio | CssAtomSet::_WebkitMaxDevicePixelRatio, CSSFloat}
+	pub enum WebkitDevicePixelRatioMediaFeature<'a>{CssAtomSet::_WebkitDevicePixelRatio | CssAtomSet::_WebkitMinDevicePixelRatio | CssAtomSet::_WebkitMaxDevicePixelRatio, QueryValue<'a, CSSFloat>}
 );

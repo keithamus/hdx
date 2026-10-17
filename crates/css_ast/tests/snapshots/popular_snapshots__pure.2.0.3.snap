@@ -20158,11 +20158,11 @@ StyleSheet(
             kind: "Colon",
             offset: SourceOffset(22353),
             len: 1,
-          )), Px(Dimension(Cursor(
+          )), Literal(Px(Dimension(Cursor(
             kind: "Dimension",
             offset: SourceOffset(22355),
             len: 5,
-          ))), RightParen(Cursor(
+          )))), RightParen(Cursor(
             kind: "RightParen",
             offset: SourceOffset(22360),
             len: 1,
