@@ -61,56 +61,106 @@ impl Color<'_> {
 	{
 		use crate::{ColorFunction, NoneOr};
 
-		// Determine which of the first three channels are `none` in the AST.
+		// Determine which channels are `none` in the AST.
 		let none = match self {
 			Color::Function(func) => match &**func {
 				ColorFunction::Rgb(f) => {
 					let p = &f.params;
-					[matches!(p.0, NoneOr::None(_)), matches!(p.2, NoneOr::None(_)), matches!(p.4, NoneOr::None(_))]
+					[
+						matches!(p.0, NoneOr::None(_)),
+						matches!(p.2, NoneOr::None(_)),
+						matches!(p.4, NoneOr::None(_)),
+						matches!(p.6, Some(NoneOr::None(_))),
+					]
 				}
 				ColorFunction::Rgba(f) => {
 					let p = &f.params;
-					[matches!(p.0, NoneOr::None(_)), matches!(p.2, NoneOr::None(_)), matches!(p.4, NoneOr::None(_))]
+					[
+						matches!(p.0, NoneOr::None(_)),
+						matches!(p.2, NoneOr::None(_)),
+						matches!(p.4, NoneOr::None(_)),
+						matches!(p.6, Some(NoneOr::None(_))),
+					]
 				}
 				ColorFunction::Hsl(f) => {
 					let p = &f.params;
-					[matches!(p.0, NoneOr::None(_)), matches!(p.2, NoneOr::None(_)), matches!(p.4, NoneOr::None(_))]
+					[
+						matches!(p.0, NoneOr::None(_)),
+						matches!(p.2, NoneOr::None(_)),
+						matches!(p.4, NoneOr::None(_)),
+						matches!(p.6, Some(NoneOr::None(_))),
+					]
 				}
 				ColorFunction::Hsla(f) => {
 					let p = &f.params;
-					[matches!(p.0, NoneOr::None(_)), matches!(p.2, NoneOr::None(_)), matches!(p.4, NoneOr::None(_))]
+					[
+						matches!(p.0, NoneOr::None(_)),
+						matches!(p.2, NoneOr::None(_)),
+						matches!(p.4, NoneOr::None(_)),
+						matches!(p.6, Some(NoneOr::None(_))),
+					]
 				}
 				ColorFunction::Hwb(f) => {
 					let p = &f.params;
-					[matches!(p.0, NoneOr::None(_)), matches!(p.1, NoneOr::None(_)), matches!(p.2, NoneOr::None(_))]
+					[
+						matches!(p.0, NoneOr::None(_)),
+						matches!(p.1, NoneOr::None(_)),
+						matches!(p.2, NoneOr::None(_)),
+						matches!(p.4, Some(NoneOr::None(_))),
+					]
 				}
 				ColorFunction::Lab(f) => {
 					let p = &f.params;
-					[matches!(p.0, NoneOr::None(_)), matches!(p.1, NoneOr::None(_)), matches!(p.2, NoneOr::None(_))]
+					[
+						matches!(p.0, NoneOr::None(_)),
+						matches!(p.1, NoneOr::None(_)),
+						matches!(p.2, NoneOr::None(_)),
+						matches!(p.4, Some(NoneOr::None(_))),
+					]
 				}
 				ColorFunction::Lch(f) => {
 					let p = &f.params;
-					[matches!(p.0, NoneOr::None(_)), matches!(p.1, NoneOr::None(_)), matches!(p.2, NoneOr::None(_))]
+					[
+						matches!(p.0, NoneOr::None(_)),
+						matches!(p.1, NoneOr::None(_)),
+						matches!(p.2, NoneOr::None(_)),
+						matches!(p.4, Some(NoneOr::None(_))),
+					]
 				}
 				ColorFunction::Oklab(f) => {
 					let p = &f.params;
-					[matches!(p.0, NoneOr::None(_)), matches!(p.1, NoneOr::None(_)), matches!(p.2, NoneOr::None(_))]
+					[
+						matches!(p.0, NoneOr::None(_)),
+						matches!(p.1, NoneOr::None(_)),
+						matches!(p.2, NoneOr::None(_)),
+						matches!(p.4, Some(NoneOr::None(_))),
+					]
 				}
 				ColorFunction::Oklch(f) => {
 					let p = &f.params;
-					[matches!(p.0, NoneOr::None(_)), matches!(p.1, NoneOr::None(_)), matches!(p.2, NoneOr::None(_))]
+					[
+						matches!(p.0, NoneOr::None(_)),
+						matches!(p.1, NoneOr::None(_)),
+						matches!(p.2, NoneOr::None(_)),
+						matches!(p.4, Some(NoneOr::None(_))),
+					]
 				}
 				ColorFunction::Color(f) => {
 					let p = &f.params;
-					[matches!(p.1, NoneOr::None(_)), matches!(p.2, NoneOr::None(_)), matches!(p.3, NoneOr::None(_))]
+					[
+						matches!(p.1, NoneOr::None(_)),
+						matches!(p.2, NoneOr::None(_)),
+						matches!(p.3, NoneOr::None(_)),
+						matches!(p.5, Some(NoneOr::None(_))),
+					]
 				}
-				_ => [false; 3],
+				_ => [false; 4],
 			},
-			_ => [false; 3],
+			_ => [false; 4],
 		};
 
 		let mut ch: [chromashift::Channel; 4] = C::from(self.to_chromashift()?).into();
-		for i in 0..3 {
+		for i in 0..4 {
 			if none[i] {
 				ch[i] = None;
 			}

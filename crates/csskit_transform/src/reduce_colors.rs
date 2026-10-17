@@ -648,6 +648,24 @@ mod tests {
 	}
 
 	#[test]
+	fn color_mix_none_alpha_adopts_other() {
+		assert_transform!(
+			CssMinifierFeature::ReduceColors,
+			CssAtomSet,
+			StyleSheet,
+			"a { color: color-mix(in srgb, color(srgb 0.4 0.4 0 / none), color(srgb 0.4 0 0.4 / 0.5)); }",
+			"a { color: #66333380; }"
+		);
+		assert_transform!(
+			CssMinifierFeature::ReduceColors,
+			CssAtomSet,
+			StyleSheet,
+			"a { color: color-mix(in srgb, rgb(100 100 0 / none), rgb(100 0 100 / 0.5)); }",
+			"a { color: #64323280; }"
+		);
+	}
+
+	#[test]
 	fn rgb_none_channel_resolves_to_zero() {
 		assert_transform!(
 			CssMinifierFeature::ReduceColors,
