@@ -68,22 +68,22 @@ discrete_feature!(
 
 ranged_feature!(
 	#[node]
-	#[derive(ToCursors, ToSpan, SemanticEq, Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+	#[derive(ToCursors, ToSpan, SemanticEq, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 	#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 	#[derive(csskit_derives::FeatureMetadata)]
 	#[feature_metadata(CssAtomSet::_MsDevicePixelRatio)]
 	#[cfg_attr(feature = "visitable", derive(csskit_derives::Visitable), visit)]
 #[derive(csskit_derives::NodeWithMetadata)]
-	pub enum MsDevicePixelRatioMediaFeature{CssAtomSet::_MsDevicePixelRatio | CssAtomSet::_MsMinDevicePixelRatio | CssAtomSet::_MsMaxDevicepixelRatio, CSSFloat}
+	pub enum MsDevicePixelRatioMediaFeature<'a>{CssAtomSet::_MsDevicePixelRatio | CssAtomSet::_MsMinDevicePixelRatio | CssAtomSet::_MsMaxDevicepixelRatio, QueryValue<'a, CSSFloat>}
 );
 
 ranged_feature!(
 	#[node]
-	#[derive(ToCursors, ToSpan, SemanticEq, Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+	#[derive(ToCursors, ToSpan, SemanticEq, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 	#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 	#[derive(csskit_derives::FeatureMetadata)]
 	#[feature_metadata(CssAtomSet::_MsColumnCount)]
 	#[cfg_attr(feature = "visitable", derive(csskit_derives::Visitable), visit)]
 #[derive(csskit_derives::NodeWithMetadata)]
-	pub enum MsColumnCountMediaFeature{CssAtomSet::_MsColumnCount | CssAtomSet::_MsMinColumnCount | CssAtomSet::_MsMaxColumnCount, CSSInt}
+	pub enum MsColumnCountMediaFeature<'a>{CssAtomSet::_MsColumnCount | CssAtomSet::_MsMinColumnCount | CssAtomSet::_MsMaxColumnCount, QueryValue<'a, CSSInt>}
 );

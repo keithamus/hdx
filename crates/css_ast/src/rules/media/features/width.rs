@@ -3,13 +3,13 @@ use crate::units::Length;
 
 ranged_feature!(
 	#[node]
-	#[derive(ToCursors, ToSpan, SemanticEq, Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+	#[derive(ToCursors, ToSpan, SemanticEq, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 	#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 	#[derive(csskit_derives::FeatureMetadata)]
 	#[feature_metadata(CssAtomSet::Width)]
 	#[cfg_attr(feature = "visitable", derive(csskit_derives::Visitable), visit)]
 	#[derive(csskit_derives::NodeWithMetadata)]
-	pub enum WidthMediaFeature{CssAtomSet::Width | CssAtomSet::MinWidth | CssAtomSet::MaxWidth, Length}
+	pub enum WidthMediaFeature<'a>{CssAtomSet::Width | CssAtomSet::MinWidth | CssAtomSet::MaxWidth, QueryValue<'a, Length>}
 );
 
 #[cfg(test)]
@@ -17,6 +17,20 @@ mod tests {
 	use super::*;
 	use crate::{CssAtomSet, FeatureMetadata, RangedForm};
 	use css_parse::{assert_parse, assert_parse_error};
+
+	#[test]
+	fn test_math_function_values() {
+		assert_parse!(CssAtomSet::ATOMS, WidthMediaFeature, "(max-width:calc(48rem - 0.02px))", |node| {
+			assert!(matches!(node, WidthMediaFeature::Max(_, _, _, QueryValue::Substituted(_), _)));
+		});
+		assert_parse!(CssAtomSet::ATOMS, WidthMediaFeature, "(width<=min(50vw,800px))");
+		assert_parse!(
+			CssAtomSet::ATOMS,
+			WidthMediaFeature,
+			"(calc(1px + 2px)<width<=env(viewport-segment-width 0 0,800px))"
+		);
+		assert_parse_error!(CssAtomSet::ATOMS, WidthMediaFeature, "(width:var(--w))");
+	}
 
 	#[test]
 	fn test_feature_metadata_exact() {

@@ -3,13 +3,13 @@ use crate::units::CSSInt;
 
 ranged_feature!(
 	#[node]
-	#[derive(ToCursors, ToSpan, SemanticEq, Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+	#[derive(ToCursors, ToSpan, SemanticEq, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 	#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 	#[derive(csskit_derives::FeatureMetadata)]
 	#[feature_metadata(CssAtomSet::VerticalViewportSegments)]
 	#[cfg_attr(feature = "visitable", derive(csskit_derives::Visitable), visit)]
 #[derive(csskit_derives::NodeWithMetadata)]
-	pub enum VerticalViewportSegmentsMediaFeature{CssAtomSet::VerticalViewportSegments | CssAtomSet::MaxVerticalViewportSegments | CssAtomSet::MinVerticalViewportSegments, CSSInt}
+	pub enum VerticalViewportSegmentsMediaFeature<'a>{CssAtomSet::VerticalViewportSegments | CssAtomSet::MaxVerticalViewportSegments | CssAtomSet::MinVerticalViewportSegments, QueryValue<'a, CSSInt>}
 );
 
 #[cfg(test)]

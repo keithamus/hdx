@@ -3,13 +3,13 @@ use crate::units::Length;
 
 ranged_feature!(
 	#[node]
-	#[derive(ToCursors, ToSpan, SemanticEq, Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+	#[derive(ToCursors, ToSpan, SemanticEq, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 	#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 	#[derive(csskit_derives::FeatureMetadata)]
 	#[feature_metadata(CssAtomSet::DeviceHeight)]
 	#[cfg_attr(feature = "visitable", derive(csskit_derives::Visitable), visit)]
 	#[derive(csskit_derives::NodeWithMetadata)]
-	pub enum DeviceHeightMediaFeature{CssAtomSet::DeviceHeight | CssAtomSet::MinDeviceHeight | CssAtomSet::MaxDeviceHeight, Length}
+	pub enum DeviceHeightMediaFeature<'a>{CssAtomSet::DeviceHeight | CssAtomSet::MinDeviceHeight | CssAtomSet::MaxDeviceHeight, QueryValue<'a, Length>}
 );
 
 #[cfg(test)]

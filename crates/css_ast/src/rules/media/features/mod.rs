@@ -85,7 +85,7 @@ pub use webkit::*;
 pub use width::*;
 
 mod prelude {
-	pub(crate) use crate::CssAtomSet;
+	pub(crate) use crate::{CssAtomSet, QueryValue};
 	pub(crate) use css_parse::{T, boolean_feature, discrete_feature, ranged_feature};
 	pub(crate) use csskit_derives::*;
 	pub(crate) use csskit_proc_macro::node;

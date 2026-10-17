@@ -179,7 +179,7 @@ impl<'a> Peek<'a> for ContainerFeature<'a> {
 		I: Iterator<Item = Cursor> + Clone,
 	{
 		let c2 = p.peek_n(2);
-		(c == Kind::LeftParen && c2 == KindSet::new(&[Kind::Ident, Kind::Dimension]))
+		(c == Kind::LeftParen && (c2 == Kind::Ident || <crate::QueryValue<'a, crate::Length>>::peek(p, c2)))
 			|| (c == Kind::Function
 				&& matches!(p.to_atom::<CssAtomSet>(c), CssAtomSet::Style | CssAtomSet::ScrollState))
 	}
@@ -225,10 +225,7 @@ impl<'a> Parse<'a> for ContainerFeature<'a> {
 			Ok(apply_container_features!(match_feature))
 		} else {
 			// Styles like (1em < width < 1em) or (1em <= width <= 1em)
-			c = p.peek_n(3);
-			if c != Kind::Ident {
-				c = p.peek_n(4)
-			}
+			c = css_parse::peek_ranged_feature_name(p);
 			Ok(apply_container_features!(match_feature))
 		}
 	}
@@ -238,10 +235,10 @@ macro_rules! apply_container_features {
 	($macro: ident) => {
 		$macro! {
 			// https://drafts.csswg.org/css-conditional-5/#container-features
-			Width(WidthContainerFeature): CssAtomSet::Width | CssAtomSet::MinWidth | CssAtomSet::MaxWidth,
-			Height(HeightContainerFeature): CssAtomSet::Height | CssAtomSet::MinHeight | CssAtomSet::MaxHeight,
-			InlineSize(InlineSizeContainerFeature): CssAtomSet::InlineSize | CssAtomSet::MinInlineSize | CssAtomSet::MaxInlineSize,
-			BlockSize(BlockSizeContainerFeature): CssAtomSet::BlockSize | CssAtomSet::MinBlockSize | CssAtomSet::MaxBlockSize,
+			Width(WidthContainerFeature<'a>): CssAtomSet::Width | CssAtomSet::MinWidth | CssAtomSet::MaxWidth,
+			Height(HeightContainerFeature<'a>): CssAtomSet::Height | CssAtomSet::MinHeight | CssAtomSet::MaxHeight,
+			InlineSize(InlineSizeContainerFeature<'a>): CssAtomSet::InlineSize | CssAtomSet::MinInlineSize | CssAtomSet::MaxInlineSize,
+			BlockSize(BlockSizeContainerFeature<'a>): CssAtomSet::BlockSize | CssAtomSet::MinBlockSize | CssAtomSet::MaxBlockSize,
 			AspectRatio(AspectRatioContainerFeature<'a>): CssAtomSet::AspectRatio | CssAtomSet::MinAspectRatio | CssAtomSet::MaxAspectRatio,
 			Orientation(OrientationContainerFeature): CssAtomSet::Orientation,
 		}
@@ -288,6 +285,13 @@ mod tests {
 		assert_parse!(CssAtomSet::ATOMS, ContainerFeature, "scroll-state(stuck:top)");
 		assert_parse!(CssAtomSet::ATOMS, ContainerFeature, "scroll-state(scrollable:y and snapped:block)");
 		assert_parse!(CssAtomSet::ATOMS, ContainerRule, "@container sticky scroll-state(stuck: top){}");
+	}
+
+	#[test]
+	fn test_math_function_values() {
+		assert_parse!(CssAtomSet::ATOMS, ContainerCondition, "(width>calc(30em - 1px))");
+		assert_parse!(CssAtomSet::ATOMS, ContainerCondition, "(calc(10em + 1px)<inline-size<=max(40em,50vw))");
+		assert_parse!(CssAtomSet::ATOMS, ContainerRule, "@container foo (min-width:calc(48rem - 0.02px)){}");
 	}
 
 	#[test]

@@ -171,6 +171,29 @@ pub trait RangedFeature<'a>: Sized {
 	}
 }
 
+/// Looks ahead from a ranged feature's opening `(` to its `<feature-name>`, skipping any leading `<value>`, including
+/// nested blocks such as the `calc()` in `(calc(1px + 2px) < width)`. Returns the cursor of the first top-level ident,
+/// or of the closing `)` or EOF when there is none.
+pub fn peek_ranged_feature_name<'a, I>(p: &Parser<'a, I>) -> Cursor
+where
+	I: Iterator<Item = Cursor> + Clone,
+{
+	let mut n = 2;
+	let mut depth = 0u32;
+	loop {
+		let c = p.peek_n(n);
+		if c == crate::Kind::Eof || (depth == 0 && (c == crate::Kind::Ident || c == crate::Kind::RightParen)) {
+			return c;
+		}
+		if c == crate::Kind::Function || c == crate::Kind::LeftParen {
+			depth += 1;
+		} else if c == crate::Kind::RightParen {
+			depth -= 1;
+		}
+		n += 1;
+	}
+}
+
 /// This macro expands to define an enum which already implements [Parse] and [RangedFeature], for a one-liner
 /// definition of a [RangedFeature].
 ///
@@ -277,7 +300,7 @@ macro_rules! ranged_feature {
 			where
 				Iter: Iterator<Item = $crate::Cursor> + Clone,
 			{
-				c == $crate::Kind::LeftParen && p.peek_n(2) == $crate::KindSet::new(&[$crate::Kind::Ident, $crate::Kind::Number, $crate::Kind::Dimension])
+				c == $crate::Kind::LeftParen && p.peek_n(2) == $crate::KindSet::new(&[$crate::Kind::Ident, $crate::Kind::Number, $crate::Kind::Dimension, $crate::Kind::Function])
 			}
 		}
 
