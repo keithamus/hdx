@@ -377,6 +377,11 @@ mod tests {
 	}
 
 	#[test]
+	fn ignores_invalid_hex_length() {
+		assert_no_transform!(CssMinifierFeature::ReduceColors, CssAtomSet, StyleSheet, "body { color: #F0000; }");
+	}
+
+	#[test]
 	fn prefers_named_over_rgb() {
 		assert_transform!(
 			CssMinifierFeature::ReduceColors,

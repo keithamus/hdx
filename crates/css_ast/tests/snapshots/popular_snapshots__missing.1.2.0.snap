@@ -1175,7 +1175,7 @@ StyleSheet(
                   offset: SourceOffset(845),
                   len: 5,
                 ))))),
-                color: Some(Literal(Hex(Hash(Cursor(
+                color: Some(Literal(Hex(HexColor(Cursor(
                   kind: "Hash",
                   offset: SourceOffset(851),
                   len: 7,
@@ -55892,7 +55892,7 @@ StyleSheet(
                   offset: SourceOffset(41576),
                   len: 1,
                 )),
-                value: AccentColorStyleValue(r#Some(Literal(Hex(Hash(Cursor(
+                value: AccentColorStyleValue(r#Some(Literal(Hex(HexColor(Cursor(
                   kind: "Hash",
                   offset: SourceOffset(41578),
                   len: 4,

@@ -1,3 +1,4 @@
+mod hex;
 mod named;
 mod system;
 
@@ -6,6 +7,7 @@ use css_parse::{Box, T};
 use csskit_derives::*;
 use csskit_proc_macro::node;
 
+pub use hex::*;
 pub use named::*;
 pub use system::*;
 
@@ -24,7 +26,7 @@ pub enum Color<'a> {
 	Transparent(T![Ident]),
 	System(SystemColor),
 	#[cfg_attr(feature = "visitable", visit(skip))]
-	Hex(T![Hash]),
+	Hex(HexColor),
 	#[cfg_attr(feature = "visitable", visit(skip))]
 	Named(NamedColor),
 	Function(Box<'a, ColorFunction<'a>>),
@@ -42,11 +44,9 @@ pub trait ToChromashift {
 }
 
 #[cfg(feature = "chromashift")]
-impl ToChromashift for T![Hash] {
+impl ToChromashift for HexColor {
 	fn to_chromashift(&self) -> Option<chromashift::Color> {
-		use chromashift::{Color, Hex};
-		use css_parse::Token;
-		Some(Color::Hex(Hex::new(Token::from(*self).hex_value())))
+		Some(chromashift::Color::Hex(chromashift::Hex::new(self.hex_value())))
 	}
 }
 
@@ -146,7 +146,7 @@ impl ToChromashift for Color<'_> {
 mod tests {
 	use super::*;
 	use crate::CssAtomSet;
-	use css_parse::{assert_parse, assert_parse_error};
+	use css_parse::{assert_parse, assert_parse_error, assert_peek_false};
 
 	#[test]
 	fn test_writes() {
@@ -213,6 +213,11 @@ mod tests {
 		assert_parse_error!(CssAtomSet::ATOMS, Color, "hsl(250, 255deg, 255)");
 		// Using degrees for wrong component in lch
 		assert_parse_error!(CssAtomSet::ATOMS, Color, "lch(250, 255deg, 255)");
+		assert_peek_false!(CssAtomSet::ATOMS, Color, "#F0000");
+		assert_peek_false!(CssAtomSet::ATOMS, Color, "#ff");
+		assert_peek_false!(CssAtomSet::ATOMS, Color, "#fffffff");
+		assert_peek_false!(CssAtomSet::ATOMS, Color, "#ggg");
+		assert_peek_false!(CssAtomSet::ATOMS, Color, "#gggg");
 	}
 
 	#[test]
@@ -240,6 +245,12 @@ mod tests {
 		});
 		assert_parse!(CssAtomSet::ATOMS, Color, "#f00", |node| {
 			assert_eq!(node.to_chromashift(), Some(chromashift::Color::Hex(Hex::new(0xFF0000FF))));
+		});
+		assert_parse!(CssAtomSet::ATOMS, Color, "#0000", |node| {
+			assert_eq!(node.to_chromashift(), Some(chromashift::Color::Hex(Hex::new(0))));
+		});
+		assert_parse!(CssAtomSet::ATOMS, Color, "#00000000", |node| {
+			assert_eq!(node.to_chromashift(), Some(chromashift::Color::Hex(Hex::new(0))));
 		});
 		assert_parse!(CssAtomSet::ATOMS, Color, "rgb(255, 0, 0)", |node| {
 			assert_eq!(node.to_chromashift(), Some(chromashift::Color::Srgb(Srgb::from_u8(255, 0, 0, 100.0))));

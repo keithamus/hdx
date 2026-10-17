@@ -996,6 +996,7 @@ expression: "matches.iter().map(|node|\nnode.input.to_token_stream().to_string()
   "pub struct HasPseudoFunction < \'a > { }",
   "pub struct HeadingPseudoFunction < \'a > { }",
   "pub struct HeightStyleValue < \'a > { }",
+  "pub struct HexColor { }",
   "pub struct HighlightPseudoElement { }",
   "pub struct HorizontalLineCommand < \'a > { }",
   "pub struct HostContextPseudoFunction < \'a > { }",

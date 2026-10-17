@@ -1544,7 +1544,7 @@ StyleSheet(
                   offset: SourceOffset(1171),
                   len: 5,
                 ))))),
-                color: Some(Literal(Hex(Hash(Cursor(
+                color: Some(Literal(Hex(HexColor(Cursor(
                   kind: "Hash",
                   offset: SourceOffset(1184),
                   len: 4,
@@ -4442,7 +4442,7 @@ StyleSheet(
                 offset: SourceOffset(3788),
                 len: 1,
               )),
-              value: ColorStyleValue(Literal(Hex(Hash(Cursor(
+              value: ColorStyleValue(Literal(Hex(HexColor(Cursor(
                 kind: "Hash",
                 offset: SourceOffset(3790),
                 len: 4,
