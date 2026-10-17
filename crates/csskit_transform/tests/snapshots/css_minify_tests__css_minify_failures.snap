@@ -221,9 +221,6 @@ FAIL comments/0003
 -a{color:red}
 +/*! important */a{color:red}
 
-FAIL container/0002
--@container(min-width:700px){}
-
 FAIL container/0004
 -@container(min-width:700px){a{color:red}}
 +@container(width>=700px){a{color:red}}

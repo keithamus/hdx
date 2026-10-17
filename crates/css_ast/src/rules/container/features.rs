@@ -10,7 +10,7 @@ ranged_feature!(
 	#[feature_metadata(CssAtomSet::Width)]
 	#[cfg_attr(feature = "visitable", derive(csskit_derives::Visitable), visit)]
 #[derive(csskit_derives::NodeWithMetadata)]
-	pub enum WidthContainerFeature{CssAtomSet::Width, Length}
+	pub enum WidthContainerFeature{CssAtomSet::Width | CssAtomSet::MinWidth | CssAtomSet::MaxWidth, Length}
 );
 
 ranged_feature!(
@@ -21,7 +21,7 @@ ranged_feature!(
 	#[feature_metadata(CssAtomSet::Height)]
 	#[cfg_attr(feature = "visitable", derive(csskit_derives::Visitable), visit)]
 #[derive(csskit_derives::NodeWithMetadata)]
-	pub enum HeightContainerFeature{CssAtomSet::Height, Length}
+	pub enum HeightContainerFeature{CssAtomSet::Height | CssAtomSet::MinHeight | CssAtomSet::MaxHeight, Length}
 );
 
 ranged_feature!(
@@ -32,7 +32,7 @@ ranged_feature!(
 	#[feature_metadata(CssAtomSet::InlineSize)]
 	#[cfg_attr(feature = "visitable", derive(csskit_derives::Visitable), visit)]
 #[derive(csskit_derives::NodeWithMetadata)]
-	pub enum InlineSizeContainerFeature{CssAtomSet::InlineSize, Length}
+	pub enum InlineSizeContainerFeature{CssAtomSet::InlineSize | CssAtomSet::MinInlineSize | CssAtomSet::MaxInlineSize, Length}
 );
 
 ranged_feature!(
@@ -43,7 +43,7 @@ ranged_feature!(
 	#[feature_metadata(CssAtomSet::BlockSize)]
 	#[cfg_attr(feature = "visitable", derive(csskit_derives::Visitable), visit)]
 #[derive(csskit_derives::NodeWithMetadata)]
-	pub enum BlockSizeContainerFeature{CssAtomSet::BlockSize, Length}
+	pub enum BlockSizeContainerFeature{CssAtomSet::BlockSize | CssAtomSet::MinBlockSize | CssAtomSet::MaxBlockSize, Length}
 );
 
 ranged_feature!(
@@ -54,7 +54,7 @@ ranged_feature!(
 	#[feature_metadata(CssAtomSet::AspectRatio)]
 	#[cfg_attr(feature = "visitable", derive(csskit_derives::Visitable), visit)]
 #[derive(csskit_derives::NodeWithMetadata)]
-	pub enum AspectRatioContainerFeature<'a>{CssAtomSet::AspectRatio, Ratio<'a>}
+	pub enum AspectRatioContainerFeature<'a>{CssAtomSet::AspectRatio | CssAtomSet::MinAspectRatio | CssAtomSet::MaxAspectRatio, Ratio<'a>}
 );
 
 #[node]
@@ -435,6 +435,11 @@ mod tests {
 		assert_parse!(CssAtomSet::ATOMS, HeightContainerFeature, "(height>=1400px)");
 		assert_parse!(CssAtomSet::ATOMS, HeightContainerFeature, "(100px<=height)");
 		assert_parse!(CssAtomSet::ATOMS, HeightContainerFeature, "(100px<=height>1400px)");
+		assert_parse!(CssAtomSet::ATOMS, WidthContainerFeature, "(min-width:360px)");
+		assert_parse!(CssAtomSet::ATOMS, HeightContainerFeature, "(max-height:360px)");
+		assert_parse!(CssAtomSet::ATOMS, InlineSizeContainerFeature, "(min-inline-size:30em)");
+		assert_parse!(CssAtomSet::ATOMS, BlockSizeContainerFeature, "(max-block-size:30em)");
+		assert_parse!(CssAtomSet::ATOMS, AspectRatioContainerFeature, "(min-aspect-ratio:16/9)");
 		assert_parse!(CssAtomSet::ATOMS, StyleQuery, "--x");
 		assert_parse!(CssAtomSet::ATOMS, StyleQuery, "--x:10px");
 		assert_parse!(CssAtomSet::ATOMS, StyleQuery, "--x and --y:20px");
