@@ -48,7 +48,7 @@ benchmark_tool() {
 		# Add metadata to the JSON
 		jq --arg tool "$tool_name" \
 			--arg output_size "$output_size" \
-			'. + {"tool": $tool, "output_size": ($output_size | tonumber)}' \
+			'del(.results[].measurements) + {"tool": $tool, "output_size": ($output_size | tonumber)}' \
 			"$json_file" >"$json_file.tmp" && mv "$json_file.tmp" "$json_file"
 
 		echo " Completed $tool_name benchmark"
@@ -170,7 +170,7 @@ EOF
 			local tool_json="$OUTPUT_DIR/${tool}_${basename}.json"
 			if [[ -f "$tool_json" ]] && jq -e '.results[0]' "$tool_json" >/dev/null 2>&1; then
 				local mean_time output_size compression_ratio
-				mean_time=$(jq -r '.results[0].mean' "$tool_json")
+				mean_time=$(jq -r '.results[0].summary.time_wall_clock.mean' "$tool_json")
 				output_size=$(jq -r '.output_size // 0' "$tool_json")
 
 				if [[ "$output_size" != "0" ]]; then

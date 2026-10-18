@@ -102,7 +102,7 @@ run_hyperfine_for_file() {
 			--arg input_size "$input_size" \
 			--arg output_size "$output_size" \
 			--arg compression_ratio "$compression_ratio" \
-			'.hyperfine_results[$file] = ($data + {
+			'.hyperfine_results[$file] = (($data | del(.results[].measurements)) + {
                "input_size": ($input_size | tonumber),
                "output_size": ($output_size | tonumber),
                "compression_ratio": ($compression_ratio | tonumber)
@@ -169,8 +169,25 @@ else
 fi
 
 # Add new results and trim to MAX_ENTRIES
+# One-off migration: remove once a nightly run has rewritten the history artifact.
 echo "$EXISTING_RESULTS" | jq --slurpfile new "$TEMP_FILE" \
-	'. + $new | sort_by(.timestamp) | reverse | .[:$MAX_ENTRIES]' \
+	'def v2:
+		if (.schema_version | not) and ((.results // []) | length > 0) then
+			{schema_version: 2, primary_metric: "time_wall_clock"} + .
+			| .results |= map({
+				command,
+				summary: ({
+					time_wall_clock: {unit: "second", count: (.times | length), mean, stddev, median, min, max},
+					time_user: {unit: "second", mean: .user},
+					time_system: {unit: "second", mean: .system}
+				} + if .memory_usage_byte then {
+					memory_peak_resident: (.memory_usage_byte | {unit: "byte", count: length, mean: (add / length), min: min, max: max})
+				} else {} end)
+			})
+		else del(.results[]?.measurements) end;
+	. + $new
+	| map(.hyperfine_results |= map_values(v2) | .alternative_tools.files |= map_values(.tools |= map_values(v2)))
+	| sort_by(.timestamp) | reverse | .[:$MAX_ENTRIES]' \
 	--argjson MAX_ENTRIES "$MAX_ENTRIES" >"$RESULTS_FILE"
 
 # Cleanup
