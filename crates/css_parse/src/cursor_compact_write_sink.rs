@@ -65,7 +65,8 @@ impl<'a, T: SourceCursorSink<'a>> CursorCompactWriteSink<'a, T> {
 	}
 
 	fn write(&mut self, c: SourceCursor<'a>) {
-		if c == Kind::Comment {
+		let kind = c.token().kind();
+		if kind == Kind::Comment {
 			let can_separate =
 				self.pending.is_none() && self.pending_comment.is_none() && !self.last_forbids_ws_after();
 			if can_separate {
@@ -74,14 +75,14 @@ impl<'a, T: SourceCursorSink<'a>> CursorCompactWriteSink<'a, T> {
 			return;
 		}
 		if self.pending_comment.take().is_some()
-			&& c != Kind::Whitespace
-			&& c != Kind::Eof
+			&& kind != Kind::Whitespace
+			&& kind != Kind::Eof
 			&& self.needs_separator(c.token())
 		{
 			self.emit(SourceCursor::EMPTY_COMMENT);
 		}
 
-		if c == Kind::Whitespace && self.pending.is_some_and(|c| c == Kind::Semicolon) {
+		if kind == Kind::Whitespace && self.pending.is_some_and(|c| c == Kind::Semicolon) {
 			return;
 		}
 
@@ -91,9 +92,9 @@ impl<'a, T: SourceCursorSink<'a>> CursorCompactWriteSink<'a, T> {
 		if let Some(prev) = self.pending.take() {
 			let keep = match prev.token().kind() {
 				Kind::Semicolon => {
-					c != REDUNDANT_SEMI_KINDSET && self.last_token.is_some_and(|t| t != REDUNDANT_SEMI_KINDSET)
+					kind != REDUNDANT_SEMI_KINDSET && self.last_token.is_some_and(|t| t != REDUNDANT_SEMI_KINDSET)
 				}
-				_ if suppress_separator || (!enforce_before && c == NO_WHITESPACE_BEFORE_KINDSET) => false,
+				_ if suppress_separator || (!enforce_before && kind == NO_WHITESPACE_BEFORE_KINDSET) => false,
 				_ => (significant_pending_whitespace && self.last_token.is_some()) || self.needs_separator(c.token()),
 			};
 			if keep {
@@ -101,16 +102,16 @@ impl<'a, T: SourceCursorSink<'a>> CursorCompactWriteSink<'a, T> {
 			}
 		}
 
-		if c == PENDING_KINDSET {
+		if kind == PENDING_KINDSET {
 			// Adjacent whitespace tokens collapse into one, which stays significant if either part was.
-			self.pending = Some(if significant_pending_whitespace && c == Kind::Whitespace {
+			self.pending = Some(if significant_pending_whitespace && kind == Kind::Whitespace {
 				c.with_significant_whitespace(true)
 			} else {
 				c
 			});
 			return;
 		}
-		if c == Kind::Eof {
+		if kind == Kind::Eof {
 			return;
 		}
 
@@ -118,7 +119,7 @@ impl<'a, T: SourceCursorSink<'a>> CursorCompactWriteSink<'a, T> {
 			self.sink.append(SourceCursor::SPACE);
 		}
 
-		let out = if c == Kind::String { c.with_quotes(QuoteStyle::Double).compact() } else { c.compact() };
+		let out = if kind == Kind::String { c.with_quotes(QuoteStyle::Double).compact() } else { c.compact() };
 		self.emit(out);
 	}
 }
