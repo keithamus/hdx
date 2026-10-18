@@ -577,8 +577,22 @@ pub enum Kind {
 	BadRightCurly = 0b11_1001,
 }
 
+const KINDS_BY_BITS: [Kind; 64] = {
+	let mut kinds = [Kind::Eof; 64];
+	let mut bits = 0;
+	while bits < kinds.len() {
+		kinds[bits] = Kind::decode_bits(bits as u8);
+		bits += 1;
+	}
+	kinds
+};
+
 impl Kind {
 	pub(crate) const fn from_bits(bits: u8) -> Self {
+		KINDS_BY_BITS[(bits & 0b11_1111) as usize]
+	}
+
+	const fn decode_bits(bits: u8) -> Self {
 		match bits {
 			0b0001 => Self::Whitespace,
 			0b0010 => Self::Comment,
