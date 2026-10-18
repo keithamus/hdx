@@ -200,7 +200,7 @@ impl crate::Visit for ControlFlowTestVisitor {}
 impl crate::NodeVisitor for ControlFlowTestVisitor {
 	fn consider_node(&self, node: crate::VisitNode) -> VisitFlow {
 		if let Some(filter_span) = self.span_filter {
-			let span = node.span;
+			let span = node.span();
 			// Prune if no overlap: span must share at least one byte with filter_span.
 			if span.start() >= filter_span.end() || filter_span.start() >= span.end() {
 				return VisitFlow::SKIP_CHILDREN;

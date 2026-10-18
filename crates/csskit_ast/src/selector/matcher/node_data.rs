@@ -22,7 +22,7 @@ impl NodeData {
 		Self {
 			node_id,
 			node_key,
-			span: node.span,
+			span: node.span(),
 			metadata: node.self_metadata(),
 			properties: PropertyValues::from_query(&node),
 		}

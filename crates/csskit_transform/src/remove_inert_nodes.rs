@@ -34,7 +34,7 @@ where
 
 	fn enter_node(&mut self, node: VisitNode) -> VisitFlow {
 		if node.self_metadata().is_inert() {
-			self.transformer.delete(node.span);
+			self.transformer.delete(node.span());
 			return VisitFlow::SKIP_CHILDREN;
 		}
 		VisitFlow::DESCEND

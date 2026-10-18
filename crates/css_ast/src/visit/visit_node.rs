@@ -6,6 +6,8 @@ use crate::{CssMetadata, PropertyKind};
 use super::NodeId;
 
 pub(crate) trait QueryNodeData {
+	/// The source span this node covers.
+	fn span(&self) -> Span;
 	/// Metadata for *this node only* (no subtree aggregation).
 	fn self_metadata(&self) -> CssMetadata;
 	/// Metadata for this node and its entire subtree.
@@ -33,7 +35,7 @@ impl NodeKey {
 /// The single node view passed to every [`Visit`](super::Visit) callback.
 #[derive(Clone, Copy)]
 pub struct VisitNode<'n> {
-	pub span: Span,
+	span: Span,
 	pub node_id: Option<NodeId>,
 	source: Option<&'n dyn QueryNodeData>,
 }
@@ -41,14 +43,20 @@ pub struct VisitNode<'n> {
 impl<'n> VisitNode<'n> {
 	/// Construct for a queryable node. For Nodes without `NodeId` or meta see [VisitNode::new_transparent].
 	#[inline]
-	pub(crate) fn new(span: Span, node_id: NodeId, source: &'n dyn QueryNodeData) -> Self {
-		Self { span, node_id: Some(node_id), source: Some(source) }
+	pub(crate) fn new(node_id: NodeId, source: &'n dyn QueryNodeData) -> Self {
+		Self { span: Span::DUMMY, node_id: Some(node_id), source: Some(source) }
 	}
 
 	/// Construct for a "transparent node" (no `NodeId`, no meta).
 	#[inline]
 	pub fn new_transparent(span: Span) -> Self {
 		Self { span, node_id: None, source: None }
+	}
+
+	/// The source span this node covers.
+	#[inline]
+	pub fn span(&self) -> Span {
+		self.source.map_or(self.span, QueryNodeData::span)
 	}
 
 	/// The identity of this queryable node, or `None` for a transparent node.
