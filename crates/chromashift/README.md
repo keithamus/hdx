@@ -15,6 +15,7 @@ A library for converting between various color formats and color spaces.
 - **XYZ**: CIE XYZ tristimulus values for device-independent color
 - **RgbSpace**: White point, RGB<->XYZ matrices and transfer function for each CSS Color 4 predefined RGB space (sRGB, Display P3, A98 RGB, ProPhoto RGB, Rec. 2020)
 - **Chromaticity / Matrix3 / Transfer**: The primitives those descriptors are built from - CIE xy chromaticities (with Bradford adaptation), 3x3 conversion matrices, and gamma encode/decode defined over the whole real line
+- **InterpolationSpace**: Each CSS `<color-interpolation-method>`, with its hue direction for polar spaces, and colour interpolation in it: missing and powerless channels, hue interpolation, and premultiplied alpha
 
 ## Optional Features
 
