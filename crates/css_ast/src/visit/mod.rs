@@ -5,8 +5,8 @@ use css_parse::Vec;
 use css_parse::{
 	AttributeOperator, Block, Box, CommaSeparated, Comparison, ComponentValue, ComponentValues, Cursor, Declaration,
 	DeclarationGroup, DeclarationList, DeclarationOrBad, DeclarationValue, Either, NoBlockAllowed, NodeMetadata,
-	NodeWithMetadata, Optionals2, Optionals3, Optionals4, Optionals5, Parse, Peek, QualifiedRule, RuleList, ToCursors,
-	ToSpan, syntax::BadDeclaration, token_macros,
+	NodeWithMetadata, Optionals2, Optionals3, Optionals4, Optionals5, Parse, Peek, QualifiedRule, RuleList, Span,
+	ToCursors, ToSpan, syntax::BadDeclaration, token_macros,
 };
 use visit_flow::{VisitFlow, try_visit};
 
@@ -161,20 +161,27 @@ pub(crate) trait QueryableNode: ToSpan + NodeWithMetadata<CssMetadata> {
 	where
 		Self: Sized,
 	{
-		VisitNode::new(self.to_span(), Self::NODE_ID, self)
+		VisitNode::new(Self::NODE_ID, self)
 	}
 }
 
 /// Blanket bridge so any [`QueryableNode`] can be held as a `&dyn` in [`VisitNode`].
 impl<T: QueryableNode> QueryNodeData for T {
 	#[inline]
+	fn span(&self) -> Span {
+		ToSpan::to_span(self)
+	}
+
+	#[inline]
 	fn self_metadata(&self) -> CssMetadata {
 		NodeWithMetadata::self_metadata(self)
 	}
+
 	#[inline]
 	fn subtree_metadata(&self) -> CssMetadata {
 		NodeWithMetadata::metadata(self)
 	}
+
 	#[inline]
 	fn get_property(&self, kind: PropertyKind) -> Option<Cursor> {
 		QueryableNode::get_property(self, kind)
@@ -465,7 +472,7 @@ where
 
 	fn visit_node(&self) -> VisitNode<'_> {
 		// Use T::NODE_ID so each declaration type has its own identity.
-		VisitNode::new(self.to_span(), T::NODE_ID, self)
+		VisitNode::new(T::NODE_ID, self)
 	}
 }
 

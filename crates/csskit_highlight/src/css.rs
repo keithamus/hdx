@@ -112,7 +112,7 @@ impl Visit for TokenHighlighter {
 		let kind = SemanticKind::from_node_id(node_id).unwrap_or(SemanticKind::None);
 
 		if !modifier.is_none() || kind != SemanticKind::None {
-			self.insert(query.span, kind, modifier);
+			self.insert(query.span(), kind, modifier);
 		}
 	}
 

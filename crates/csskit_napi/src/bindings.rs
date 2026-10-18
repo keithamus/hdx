@@ -37,7 +37,8 @@ impl JsSink<'_> {
 		}
 		let Some(id) = node.node_id else { return VisitFlow::DESCEND };
 		let node_key = node.key().expect("queryable nodes have identity");
-		let (start, end) = (node.span.start().0, node.span.end().0);
+		let span = node.span();
+		let (start, end) = (span.start().0, span.end().0);
 		if let Some(gate) = self.gate
 			&& !self.ast.contains(gate, node_key)
 		{
