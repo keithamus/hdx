@@ -62,7 +62,7 @@ script:
 {%- unless data.error -%}
 {%- assign avg_compression = avg_compression | plus: data.compression_ratio -%}
 {%- assign compression_count = compression_count | plus: 1 -%}
-{%- assign mean_time = data.results[0].mean -%}
+{%- assign mean_time = data.results[0].summary.time_wall_clock.mean -%}
 {%- assign throughput = data.input_size | divided_by: mean_time | divided_by: 1048576.0 -%}
 {%- assign avg_throughput = avg_throughput | plus: throughput -%}
 {%- assign throughput_count = throughput_count | plus: 1 -%}
@@ -125,8 +125,8 @@ command.
     					<span class="error-text">❌ Benchmark failed</span>
     				</td>
     			{% elsif data.output_size == 0 %}
-    				{% assign mean_time = data.results[0].mean %}
-    				{% assign stddev = data.results[0].stddev %}
+    				{% assign mean_time = data.results[0].summary.time_wall_clock.mean %}
+    				{% assign stddev = data.results[0].summary.time_wall_clock.stddev %}
     				{% assign throughput = data.input_size | divided_by: mean_time | divided_by: 1048576.0 %}
     				{% assign input_kb = data.input_size | divided_by: 1024.0 %}
 
@@ -141,8 +141,8 @@ command.
     					<span class="error-text">❌ Parse failed</span>
     				</td>
     			{% else %}
-    				{% assign mean_time = data.results[0].mean %}
-    				{% assign stddev = data.results[0].stddev %}
+    				{% assign mean_time = data.results[0].summary.time_wall_clock.mean %}
+    				{% assign stddev = data.results[0].summary.time_wall_clock.stddev %}
     				{% assign throughput = data.input_size | divided_by: mean_time | divided_by: 1048576.0 %}
     				{% assign compression_percent = 1 | minus: data.compression_ratio | times: 100 %}
     				{% assign input_kb = data.input_size | divided_by: 1024.0 %}

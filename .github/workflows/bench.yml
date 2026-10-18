@@ -69,11 +69,11 @@ jobs:
               $base_hyper[$file_name] // null | . as $base_result |
               $pr_hyper[$file_name] | . as $pr_result |
               if $base_result != null and ($base_result.results | length > 0) and ($pr_result.results | length > 0) then
-                ($pr_result.results[0].mean / $base_result.results[0].mean - 1) * 100 | . as $change |
+                ($pr_result.results[0].summary.time_wall_clock.mean / $base_result.results[0].summary.time_wall_clock.mean - 1) * 100 | . as $change |
                 ($change | if . > 5 then ":chart_with_upwards_trend:" elif . < -5 then ":chart_with_downwards_trend:" else ":left_right_arrow:" end) as $icon |
-                "- **\($file_name)**: \($pr_result.results[0].mean * 1000 | round / 1000)s (base: \($base_result.results[0].mean * 1000 | round / 1000)s) \($icon) **\($change * 100 | round / 100 / 100)%**"
+                "- **\($file_name)**: \($pr_result.results[0].summary.time_wall_clock.mean * 1000 | round / 1000)s (base: \($base_result.results[0].summary.time_wall_clock.mean * 1000 | round / 1000)s) \($icon) **\($change * 100 | round / 100 / 100)%**"
               elif ($pr_result.results | length > 0) then
-                "- **\($file_name)**: \($pr_result.results[0].mean * 1000 | round / 1000)s :sparkles: (new benchmark)"
+                "- **\($file_name)**: \($pr_result.results[0].summary.time_wall_clock.mean * 1000 | round / 1000)s :sparkles: (new benchmark)"
               else empty
               end] | join("\n")
           ')

@@ -454,7 +454,7 @@ function createTimeChart(entries) {
 					if (fileData && fileData.results && fileData.results[0]) {
 						return {
 							x: new Date(entry.timestamp).getTime(),
-							y: Math.round(fileData.results[0].mean * 1000000), // microseconds
+							y: Math.round(fileData.results[0].summary.time_wall_clock.mean * 1000000), // microseconds
 						};
 					}
 					return null;
@@ -698,7 +698,7 @@ function createThroughputChart(entries) {
 					.map((entry) => {
 						const fileData = entry.hyperfine_results[file];
 						if (fileData && fileData.results && fileData.results[0] && fileData.input_size) {
-							const throughputMBps = fileData.input_size / fileData.results[0].mean / (1024 * 1024);
+							const throughputMBps = fileData.input_size / fileData.results[0].summary.time_wall_clock.mean / (1024 * 1024);
 							return {
 								x: new Date(entry.timestamp).getTime(),
 								y: Math.round(throughputMBps * 10) / 10,
@@ -1186,7 +1186,7 @@ function createComparisonTimeChart(data) {
 				series[toolName].push(null);
 			} else {
 				// Convert seconds to milliseconds
-				const timeMs = toolData.results[0].mean * 1000;
+				const timeMs = toolData.results[0].summary.time_wall_clock.mean * 1000;
 				series[toolName].push(timeMs);
 			}
 		}
