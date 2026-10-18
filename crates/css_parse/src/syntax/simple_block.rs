@@ -14,6 +14,12 @@ impl<'a> Peek<'a> for SimpleBlock<'a> {
 	const PEEK_KINDSET: KindSet = KindSet::PAIRWISE_START;
 }
 
+impl<'a, M: NodeMetadata> NodeWithMetadata<M> for SimpleBlock<'a> {
+	fn metadata(&self) -> M {
+		M::default()
+	}
+}
+
 // https://drafts.csswg.org/css-syntax-3/#consume-a-simple-block
 impl<'a> Parse<'a> for SimpleBlock<'a> {
 	fn parse<Iter>(p: &mut Parser<'a, Iter>) -> Result<Self>

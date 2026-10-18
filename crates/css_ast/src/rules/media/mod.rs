@@ -127,7 +127,7 @@ impl<'a> Parse<'a> for MediaQuery<'a> {
 #[node]
 #[derive(ToCursors, ToSpan, SemanticEq, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-#[cfg_attr(feature = "visitable", derive(csskit_derives::Visitable))]
+#[cfg_attr(feature = "visitable", derive(csskit_derives::Visitable), visit)]
 #[derive(csskit_derives::NodeWithMetadata)]
 pub enum MediaCondition<'a> {
 	Is(MediaFeature<'a>),
@@ -190,6 +190,8 @@ macro_rules! media_feature {
 		pub enum MediaFeature<'a> {
 			$($name($typ),)+
 			#[cfg_attr(feature = "visitable", visit(skip))]
+			Custom(CustomMediaFeature),
+			#[cfg_attr(feature = "visitable", visit(skip))]
 			Hack(HackMediaFeature),
 		}
 	}
@@ -218,6 +220,9 @@ impl<'a> Parse<'a> for MediaFeature<'a> {
 					}
 				}
 			}
+		}
+		if c == Kind::Ident && c.token().is_dashed_ident() {
+			return p.parse::<CustomMediaFeature>().map(Self::Custom);
 		}
 		if c == Kind::Ident {
 			let value = apply_medias!(match_media).or_else(|err| {
@@ -325,6 +330,8 @@ mod tests {
 			MediaQuery { precondition: None, media_type: Some(MediaType::Print(_)), and: None, condition: None }
 		);
 		assert_parse!(CssAtomSet::ATOMS, MediaQueryList, "print, tv");
+		assert_parse!(CssAtomSet::ATOMS, MediaQueryList, "(--modern)");
+		assert_parse!(CssAtomSet::ATOMS, MediaQueryList, "screen and (--modern)");
 		assert_parse!(
 			CssAtomSet::ATOMS,
 			MediaQuery,
@@ -452,6 +459,7 @@ mod tests {
 		assert_visits!(
 			"@media (min-width: 768px) { body { color: red; } }",
 			MediaRule,
+			MediaCondition,
 			WidthMediaFeature,
 			Length,
 			StyleRule,
@@ -467,6 +475,7 @@ mod tests {
 			"@media screen and (min-width: 768px) { body { color: red; } }",
 			MediaRule,
 			MediaType,
+			MediaCondition,
 			WidthMediaFeature,
 			Length,
 			StyleRule,

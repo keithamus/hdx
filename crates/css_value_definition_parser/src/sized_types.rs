@@ -72,6 +72,7 @@ pub(crate) const SIZED_TYPES: &[&str] = &[
 	"CustomDimension",
 	"CustomElementTag",
 	"CustomIdent",
+	"CustomMediaFeature",
 	"DashedIdent",
 	"Decibel",
 	"DeclarationKind",

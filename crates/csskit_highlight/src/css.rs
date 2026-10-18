@@ -56,6 +56,7 @@ impl SemanticKind {
 			| NodeId::NamespaceRule
 			| NodeId::ColorProfileRule
 			| NodeId::ScopeRule
+			| NodeId::CustomMediaRule
 			| NodeId::StartingStyleRule => Some(SemanticKind::AtKeyword),
 
 			// Value types

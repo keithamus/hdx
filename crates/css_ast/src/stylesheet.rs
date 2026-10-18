@@ -3,7 +3,7 @@ use css_lexer::KindSet;
 use css_parse::Vec;
 use css_parse::{
 	Box, ComponentValues, Cursor, Diagnostic, NodeWithMetadata, Parse, Parser, Peek, QualifiedRule,
-	Result as ParserResult, RuleVariants, StyleSheet as StyleSheetTrait, T, UnknownRuleBlock,
+	Result as ParserResult, RuleVariants, SimpleBlock, StyleSheet as StyleSheetTrait, T, UnknownRuleBlock,
 };
 use csskit_derives::*;
 use csskit_proc_macro::node;
@@ -62,6 +62,7 @@ macro_rules! apply_rules {
 			ColorProfile(ColorProfileRule<'a>): CssAtomSet::ColorProfile,
 			Container(ContainerRule<'a>): CssAtomSet::Container,
 			CounterStyle(CounterStyleRule<'a>): CssAtomSet::CounterStyle,
+			CustomMedia(CustomMediaRule<'a>): CssAtomSet::CustomMedia,
 			FontFace(FontFaceRule<'a>): CssAtomSet::FontFace,
 			FontFeatureValues(FontFeatureValuesRule<'a>): CssAtomSet::FontFeatureValues,
 			FontPaletteValues(FontPaletteValuesRule<'a>): CssAtomSet::FontPaletteValues,
@@ -94,9 +95,18 @@ macro_rules! apply_rules {
 #[metadata(node_kinds = Unknown | Effective, property_kinds = Name)]
 pub struct UnknownAtRule<'a> {
 	name: T![AtKeyword],
-	prelude: ComponentValues<'a>,
-	block: ComponentValues<'a>,
+	prelude: UnknownAtRulePrelude<'a>,
+	block: Option<SimpleBlock<'a>>,
+	#[semantic_eq(skip)]
+	semicolon: Option<T![;]>,
 }
+
+#[node]
+#[derive(Parse, ToSpan, ToCursors, SemanticEq, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+#[parse(stop = KindSet::LEFT_CURLY_OR_SEMICOLON)]
+#[derive(csskit_derives::NodeWithMetadata)]
+pub struct UnknownAtRulePrelude<'a>(ComponentValues<'a>);
 
 #[cfg(feature = "visitable")]
 impl<'a> QueryableNode for UnknownAtRule<'a> {
@@ -241,5 +251,18 @@ mod tests {
 		assert_parse!(CssAtomSet::ATOMS, StyleSheet, "t% {90)");
 		assert_parse!(CssAtomSet::ATOMS, StyleSheet, "{--ty-2% {90)");
 		assert_parse!(CssAtomSet::ATOMS, StyleSheet, "%{]");
+	}
+
+	#[test]
+	fn unknown_at_rule_ends_at_semicolon_or_block() {
+		assert_parse!(CssAtomSet::ATOMS, StyleSheet, "@foo bar;@media screen{}", |sheet| {
+			assert!(matches!(sheet.rules[..], [Rule::UnknownAt(_), Rule::Media(_)]))
+		});
+		assert_parse!(CssAtomSet::ATOMS, StyleSheet, "@foo bar{baz}@media screen{}", |sheet| {
+			assert!(matches!(sheet.rules[..], [Rule::UnknownAt(_), Rule::Media(_)]))
+		});
+		assert_parse!(CssAtomSet::ATOMS, StyleSheet, "a{@foo bar;color:red}", |sheet| {
+			assert!(matches!(sheet.rules[..], [Rule::Style(_)]))
+		});
 	}
 }

@@ -36,12 +36,11 @@ StyleSheet(
               offset: SourceOffset(15),
               len: 8,
             )),
-            prelude: ComponentValues(
+            prelude: UnknownAtRulePrelude(ComponentValues(
               values: [],
-            ),
-            block: ComponentValues(
-              values: [],
-            ),
+            )),
+            block: None,
+            semicolon: None,
           ),
         ],
         close_curly: Some(RightCurly(Cursor(
