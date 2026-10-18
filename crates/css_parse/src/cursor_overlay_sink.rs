@@ -149,8 +149,9 @@ impl<'a, 'o, T: SourceCursorSink<'a>> CursorOverlaySink<'a, 'o, T> {
 
 impl<'a, 'o, T: SourceCursorSink<'a>> SourceCursorSink<'a> for CursorOverlaySink<'a, 'o, T> {
 	fn append(&mut self, c: SourceCursor<'a>) {
-		let cursor_start = c.to_span().start();
-		let cursor_end = c.to_span().end();
+		let span = c.to_span();
+		let cursor_start = span.start();
+		let cursor_end = span.end();
 
 		self.flush_segments_up_to(cursor_start, false);
 

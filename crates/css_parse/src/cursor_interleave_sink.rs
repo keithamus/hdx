@@ -45,7 +45,7 @@ impl<'a, S: CursorSink> CursorSink for CursorInterleaveSink<'a, S> {
 				self.current_index += 1;
 				break;
 			}
-			if associated_cursor.span().start() > c.span().start() {
+			if associated_cursor.offset() > c.offset() {
 				break;
 			}
 			self.current_index += 1;
