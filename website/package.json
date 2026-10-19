@@ -32,7 +32,7 @@
 		"openswatch": "^0.1.0"
 	},
 	"devDependencies": {
-		"@11ty/eleventy": "3.1.6",
+		"@11ty/eleventy": "3.1.7",
 		"@11ty/eleventy-plugin-rss": "3.1.0",
 		"@11ty/eleventy-plugin-syntaxhighlight": "5.0.2",
 		"@manustays/eleventy-plugin-generate-social-images": "4.1.0",
@@ -42,7 +42,7 @@
 		"glob": "13.0.6",
 		"html-minifier": "4.0.0",
 		"open-props": "1.7.23",
-		"postcss-import": "17.0.0",
+		"postcss-import": "17.0.1",
 		"postcss-jit-props": "1.0.16",
 		"postcss-preset-env": "11.4.0",
 		"sharp": "0.35.5"
