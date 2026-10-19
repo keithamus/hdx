@@ -2,13 +2,23 @@ use super::prelude::*;
 use crate::{AttrFunction, Counter};
 use css_parse::Box;
 
-/// One item in the alt-text portion of a `content` declaration.
+/// <https://drafts.csswg.org/css-content-3/#typedef-alt-text>
+///
+/// ```text,ignore
+/// <alt-text> = [ <string> | <counter> | <attr()> ]+
+/// ```
+#[node]
+#[derive(Parse, Peek, ToCursors, ToSpan, SemanticEq, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
+#[cfg_attr(feature = "visitable", derive(csskit_derives::Visitable), visit)]
+#[derive(csskit_derives::NodeWithMetadata)]
+pub struct AltText<'a>(pub Vec<'a, ContentAltItem<'a>>);
+
+/// One item of an [`AltText`].
 ///
 /// ```text,ignore
 /// <string> | <counter> | <attr()>
 /// ```
-///
-/// Used in: `content: <content-list> / <content-alt-item>+`
 #[node]
 #[derive(Parse, Peek, ToCursors, ToSpan, SemanticEq, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
@@ -30,6 +40,7 @@ mod tests {
 		assert_parse!(CssAtomSet::ATOMS, ContentAltItem, "\"hello\"");
 		assert_parse!(CssAtomSet::ATOMS, ContentAltItem, "counter(section)");
 		assert_parse!(CssAtomSet::ATOMS, ContentAltItem, "attr(foo)");
+		assert_parse!(CssAtomSet::ATOMS, AltText, "\"Chapter \" counter(chapter) attr(title)");
 	}
 
 	#[test]

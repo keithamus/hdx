@@ -47,6 +47,13 @@ mod tests {
 		assert_parse!(CssAtomSet::ATOMS, TimelineTriggerActiveRangeEndStyleValue, "auto");
 		assert_parse!(CssAtomSet::ATOMS, TimelineTriggerActiveRangeEndStyleValue, "normal");
 		assert_parse!(CssAtomSet::ATOMS, TimelineTriggerActiveRangeEndStyleValue, "0%");
+
+		assert_parse!(CssAtomSet::ATOMS, EventTriggerSourceStyleValue, "none");
+		assert_parse!(CssAtomSet::ATOMS, EventTriggerSourceStyleValue, "click() keypress(\"a\")");
+		assert_parse!(CssAtomSet::ATOMS, EventTriggerSourceStyleValue, "pointerenter()/pointerleave()");
+
+		assert_parse!(CssAtomSet::ATOMS, TimelineTriggerRangeStyleValue, "normal");
+		assert_parse!(CssAtomSet::ATOMS, TimelineTriggerRangeStyleValue, "50%/auto");
 	}
 
 	#[test]
@@ -56,5 +63,6 @@ mod tests {
 		assert_peek_false!(CssAtomSet::ATOMS, EventTriggerNameStyleValue, "auto");
 		assert_peek_false!(CssAtomSet::ATOMS, TimelineTriggerNameStyleValue, "auto");
 		assert_peek_false!(CssAtomSet::ATOMS, TriggerScopeStyleValue, "auto");
+		assert_peek_false!(CssAtomSet::ATOMS, EventTriggerSourceStyleValue, "click");
 	}
 }

@@ -13,6 +13,12 @@ timeline-trigger-source = "<single-animation-timeline>#"
 # background: uses awkward `<bg-layer>#? , <final-bg-layer>`
 background = "<bg-layer>#"
 
+[content]
+# https://drafts.csswg.org/css-content-3/#quotes
+# quotes: the draft currently spells `match-parent` as the placeholder `bikeshed-this`
+# while the keyword name is undecided; keep the shipped `match-parent` keyword.
+quotes = "auto | none | match-parent | [ <string> <string> ]+"
+
 [transforms]
 # https://drafts.csswg.org/css-transforms-1/#transform-origin-property
 # transform-origin: uses a really awkward syntax when it can be simplified using `<position-one>` and `<position-two>`

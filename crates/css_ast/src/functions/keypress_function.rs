@@ -1,9 +1,9 @@
 use super::prelude::*;
 
-/// <https://drafts.csswg.org/css-grid-2/#funcdef-grid-template-columns-fit-content>
+/// <https://drafts.csswg.org/animation-triggers-1/#funcdef-event-function-keypress>
 ///
 /// ```text
-/// keypress( <string> )
+/// keypress( <string>? )
 /// ```
 #[node]
 #[derive(Parse, Peek, ToCursors, ToSpan, SemanticEq, Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -13,7 +13,7 @@ use super::prelude::*;
 pub struct KeypressFunction {
 	#[atom(CssAtomSet::Keypress)]
 	pub name: T![Function],
-	pub params: T![String],
+	pub params: Option<T![String]>,
 	#[semantic_eq(skip)]
 	pub close: T![')'],
 }
@@ -27,5 +27,6 @@ mod tests {
 	#[test]
 	fn test_writes() {
 		assert_parse!(CssAtomSet::ATOMS, KeypressFunction, "keypress('a')");
+		assert_parse!(CssAtomSet::ATOMS, KeypressFunction, "keypress()");
 	}
 }

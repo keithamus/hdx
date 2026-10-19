@@ -19,10 +19,12 @@ mod tests {
 		assert_parse!(CssAtomSet::ATOMS, ContentStyleValue, "\"Chapter\" counter(chapter)");
 		assert_parse!(CssAtomSet::ATOMS, ContentStyleValue, "\"hello\" / \"alt text\"");
 		assert_parse!(CssAtomSet::ATOMS, ContentStyleValue, "url(img.png) / \"alt\"");
+		assert_parse!(CssAtomSet::ATOMS, QuotesStyleValue, "match-parent");
 	}
 
 	#[test]
 	fn test_errors() {
 		assert_peek_false!(CssAtomSet::ATOMS, ContentStyleValue, "invalid-keyword");
+		assert_peek_false!(CssAtomSet::ATOMS, QuotesStyleValue, "bikeshed-this");
 	}
 }

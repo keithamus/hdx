@@ -53,8 +53,8 @@ mod tests {
 		assert_parse!(CssAtomSet::ATOMS, GridTemplateAreasStyleValue, "none");
 		assert_parse!(CssAtomSet::ATOMS, GridTemplateAreasStyleValue, r#""foo""bar""#);
 
-		assert_parse!(CssAtomSet::ATOMS, FlowToleranceStyleValue, "infinite");
-		assert_parse!(CssAtomSet::ATOMS, FlowToleranceStyleValue, "30px");
+		assert_parse!(CssAtomSet::ATOMS, FitToleranceStyleValue, "infinite");
+		assert_parse!(CssAtomSet::ATOMS, FitToleranceStyleValue, "30px");
 	}
 
 	#[test]

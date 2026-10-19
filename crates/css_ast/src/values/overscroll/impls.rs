@@ -9,5 +9,7 @@ mod tests {
 		assert_parse!(CssAtomSet::ATOMS, OverscrollBehaviorStyleValue, "contain");
 		assert_parse!(CssAtomSet::ATOMS, OverscrollBehaviorStyleValue, "contain none");
 		assert_parse!(CssAtomSet::ATOMS, OverscrollBehaviorInlineStyleValue, "contain");
+		assert_parse!(CssAtomSet::ATOMS, OverscrollContainerTypeStyleValue, "push");
+		assert_parse!(CssAtomSet::ATOMS, OverscrollContainerTypeStyleValue, "overlay");
 	}
 }
