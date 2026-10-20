@@ -17,7 +17,7 @@ bench = false
 
 [dependencies]
 phf = { workspace = true, features = ["macros"] }
-browserslist-rs = { workspace = true, optional = true }
+browserslist-rs = { workspace = true, optional = true, features = ["deflate"] }
 chrono = { workspace = true }
 
 [features]
