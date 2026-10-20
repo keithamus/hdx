@@ -131,8 +131,8 @@ napi-derive = { version = "3.6.12" }
 napi-build = { version = "2.6.0" }
 
 # CSS Feature Data packages
-browserslist-rs = { version = "0.21.2" }
-chrono = { version = "0.4.45" }
+browserslist-rs = { version = "0.21.2", default-features = false }
+chrono = { version = "0.4.45", default-features = false }
 
 # For faster compiles during development, opt-level some dynamic libraries and limit debug generation
 
