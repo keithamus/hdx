@@ -49,12 +49,12 @@ macro_rules! nested_group_rule {
 		#[derive(csskit_derives::NodeWithMetadata)]
 		pub enum NestedGroupRule<'a> {
 			$(
-				$name(rules::$ty$(<$a>)?),
+				$name(Box<'a, rules::$ty$(<$a>)?>),
 			)+
 			Supports(Box<'a, rules::SupportsRule<'a>>),
-			UnknownAt(UnknownAtRule<'a>),
-			Style(StyleRule<'a>),
-			Unknown(UnknownQualifiedRule<'a>),
+			UnknownAt(Box<'a, UnknownAtRule<'a>>),
+			Style(Box<'a, StyleRule<'a>>),
+			Unknown(Box<'a, UnknownQualifiedRule<'a>>),
 			Declarations(DeclarationGroup<'a, StyleValue<'a>, CssMetadata>),
 		}
 	}
@@ -74,7 +74,7 @@ impl<'a> RuleVariants<'a> for NestedGroupRule<'a> {
 				$name: ident($ty: ident$(<$a: lifetime>)?): $str: pat,
 			)+ ) => {
 				match p.to_atom::<CssAtomSet>(name) {
-					$(CssAtomSet::$name => p.parse::<rules::$ty>().map(Self::$name),)+
+					$(CssAtomSet::$name => p.parse::<Box<rules::$ty>>().map(Self::$name),)+
 					CssAtomSet::Supports => p.parse::<rules::SupportsRule>().map(|r| Self::Supports(Box::new_in(p.alloc(), r))),
 					_ => Err(Diagnostic::new(name.into(), Diagnostic::unexpected_at_rule))?,
 				}
@@ -87,21 +87,21 @@ impl<'a> RuleVariants<'a> for NestedGroupRule<'a> {
 	where
 		I: Iterator<Item = Cursor> + Clone,
 	{
-		p.parse::<UnknownAtRule>().map(Self::UnknownAt)
+		p.parse::<Box<UnknownAtRule>>().map(Self::UnknownAt)
 	}
 
 	fn parse_qualified_rule<I>(p: &mut Parser<'a, I>, _name: Cursor) -> ParserResult<Self>
 	where
 		I: Iterator<Item = Cursor> + Clone,
 	{
-		p.parse::<StyleRule>().map(Self::Style)
+		p.parse::<Box<StyleRule>>().map(Self::Style)
 	}
 
 	fn parse_unknown_qualified_rule<I>(p: &mut Parser<'a, I>, _name: Cursor) -> ParserResult<Self>
 	where
 		I: Iterator<Item = Cursor> + Clone,
 	{
-		p.parse::<UnknownQualifiedRule>().map(Self::Unknown)
+		p.parse::<Box<UnknownQualifiedRule>>().map(Self::Unknown)
 	}
 
 	fn is_unknown(&self) -> bool {

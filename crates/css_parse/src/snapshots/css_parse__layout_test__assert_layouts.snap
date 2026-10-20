@@ -16,7 +16,7 @@ BangImportant: size=24 align=4 {
     bang: 0
     important: 12
 }
-ComponentValue: size=64 align=8
+ComponentValue: size=24 align=8
     0: SimpleBlock
     1: Function
     2: Whitespace

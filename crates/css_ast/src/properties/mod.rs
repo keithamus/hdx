@@ -4,7 +4,7 @@ use crate::{
 };
 use css_lexer::Kind;
 use css_parse::{
-	AtomSet, ComponentValues, Cursor, Declaration, DeclarationValue, Diagnostic, KindSet, NodeMetadata,
+	AtomSet, Box, ComponentValues, Cursor, Declaration, DeclarationValue, Diagnostic, KindSet, NodeMetadata,
 	NodeWithMetadata, Parser, Peek, Result as ParserResult, SemanticEq as SemanticEqTrait, State, T,
 };
 use csskit_derives::*;
@@ -59,7 +59,7 @@ macro_rules! style_value {
 			Unknown(Unknown<'a>),
 			$(
 				#[cfg_attr(feature = "serde", serde(untagged))]
-				$name(values::$ty$(<$a>)?),
+				$name(Box<'a, values::$ty$(<$a>)?>),
 			)+
 		}
 	}
@@ -375,7 +375,7 @@ impl<'a> DeclarationValue<'a, CssMetadata> for StyleValue<'a> {
 		macro_rules! parse_declaration_value {
 			( $( $name: ident: $ty: ident$(<$a: lifetime>)? = $atom: ident,)+ ) => {
 				match p.to_atom::<CssAtomSet>(name) {
-					$(CssAtomSet::$atom => p.parse::<values::$ty>().map(Self::$name),)+
+					$(CssAtomSet::$atom => p.parse::<Box<values::$ty>>().map(Self::$name),)+
 					_ => Err(Diagnostic::new(name, Diagnostic::unexpected))?,
 				}
 			}

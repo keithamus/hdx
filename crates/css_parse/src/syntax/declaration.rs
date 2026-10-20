@@ -1,5 +1,5 @@
 use super::prelude::*;
-use crate::{BangImportant, token_macros};
+use crate::{BangImportant, Box, token_macros};
 use std::marker::PhantomData;
 
 /// This is a generic type that can be used for AST nodes representing a [Declaration][1], aka "property". This is
@@ -35,7 +35,7 @@ where
 	pub name: token_macros::Ident,
 	pub colon: token_macros::Colon,
 	pub value: V,
-	pub important: Option<BangImportant>,
+	pub important: Option<Box<'a, BangImportant>>,
 	pub semicolon: Option<token_macros::Semicolon>,
 	#[cfg_attr(feature = "serde", serde(skip))]
 	meta: M,
@@ -133,7 +133,7 @@ where
 		let colon = p.parse::<T![:]>()?;
 		let c: Cursor = name.into();
 		let value = <V>::parse_declaration_value(p, c)?;
-		let important = p.parse_if_peek::<BangImportant>()?;
+		let important = p.parse_if_peek::<Box<'a, BangImportant>>()?;
 		let semicolon = p.parse_if_peek::<T![;]>()?;
 		let mut declaration =
 			Self { name, colon, value, important, semicolon, meta: M::default(), _phantom: PhantomData };
