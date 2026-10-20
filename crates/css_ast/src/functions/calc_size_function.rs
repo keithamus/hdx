@@ -19,10 +19,10 @@ use crate::{CalcSum, LengthPercentage};
 pub struct CalcSizeFunction<'a> {
 	#[atom(CssAtomSet::CalcSize)]
 	pub name: T![Function],
-	pub basis: CalcSizeBasis<'a>,
+	pub basis: Box<'a, CalcSizeBasis<'a>>,
 	#[semantic_eq(skip)]
 	pub comma: T![,],
-	pub calculation: CalcSum<'a, CalcSizeOperand>,
+	pub calculation: Box<'a, CalcSum<'a, CalcSizeOperand>>,
 	#[semantic_eq(skip)]
 	pub close: T![')'],
 }

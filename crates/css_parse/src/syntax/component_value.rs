@@ -1,5 +1,5 @@
 use super::prelude::*;
-use crate::{AssociatedWhitespaceRules, FunctionBlock, Result, SimpleBlock};
+use crate::{AssociatedWhitespaceRules, Box, FunctionBlock, Result, SimpleBlock};
 
 /// <https://drafts.csswg.org/css-syntax-3/#consume-component-value>
 ///
@@ -9,8 +9,8 @@ use crate::{AssociatedWhitespaceRules, FunctionBlock, Result, SimpleBlock};
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde(untagged))]
 pub enum ComponentValue<'a> {
-	SimpleBlock(SimpleBlock<'a>),
-	Function(FunctionBlock<'a>),
+	SimpleBlock(Box<'a, SimpleBlock<'a>>),
+	Function(Box<'a, FunctionBlock<'a>>),
 	Whitespace(T![Whitespace]),
 	Number(T![Number]),
 	Dimension(T![Dimension]),
@@ -70,11 +70,11 @@ impl<'a> Parse<'a> for ComponentValue<'a> {
 			Self::Whitespace(p.parse::<T![' ']>()?)
 		} else if <T![PairWiseStart]>::peek(p, c) {
 			let old_state = p.set_state(State::Nested);
-			let block = p.parse::<SimpleBlock>();
+			let block = p.parse::<Box<SimpleBlock>>();
 			p.set_state(old_state);
 			Self::SimpleBlock(block?)
 		} else if <T![Function]>::peek(p, c) {
-			Self::Function(p.parse::<FunctionBlock>()?)
+			Self::Function(p.parse::<Box<FunctionBlock>>()?)
 		} else if <T![Number]>::peek(p, c) {
 			Self::Number(p.parse::<T![Number]>()?)
 		} else if <T![Dimension]>::peek(p, c) {

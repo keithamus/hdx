@@ -2,7 +2,7 @@ use crate::{
 	CssMetadata,
 	specificity::{Specificity, ToSpecificity},
 };
-use css_parse::Vec;
+use css_parse::{Box, Vec};
 use css_parse::{
 	CompoundSelector as CompoundSelectorTrait, Cursor, NodeMetadata, NodeWithMetadata, Parse, Parser,
 	Result as ParserResult, SelectorComponent as SelectorComponentTrait, T, syntax::CommaSeparated,
@@ -129,13 +129,13 @@ pub enum SelectorComponent<'a> {
 	Tag(Tag),
 	Wildcard(Wildcard),
 	Combinator(Combinator),
-	Attribute(Attribute),
+	Attribute(Box<'a, Attribute>),
 	PseudoClass(PseudoClass),
 	PseudoElement(PseudoElement),
-	FunctionalPseudoElement(FunctionalPseudoElement<'a>),
+	FunctionalPseudoElement(Box<'a, FunctionalPseudoElement<'a>>),
 	LegacyPseudoElement(LegacyPseudoElement),
-	FunctionalPseudoClass(FunctionalPseudoClass<'a>),
-	Namespace(Namespace),
+	FunctionalPseudoClass(Box<'a, FunctionalPseudoClass<'a>>),
+	Namespace(Box<'a, Namespace>),
 }
 
 impl<'a> Parse<'a> for SelectorComponent<'a> {
@@ -180,11 +180,11 @@ impl<'a> SelectorComponentTrait<'a> for SelectorComponent<'a> {
 	type PseudoElement = PseudoElement;
 	type LegacyPseudoElement = LegacyPseudoElement;
 	type Class = Class;
-	type NsType = Namespace;
+	type NsType = Box<'a, Namespace>;
 	type Combinator = Combinator;
-	type Attribute = Attribute;
-	type FunctionalPseudoClass = FunctionalPseudoClass<'a>;
-	type FunctionalPseudoElement = FunctionalPseudoElement<'a>;
+	type Attribute = Box<'a, Attribute>;
+	type FunctionalPseudoClass = Box<'a, FunctionalPseudoClass<'a>>;
+	type FunctionalPseudoElement = Box<'a, FunctionalPseudoElement<'a>>;
 
 	fn build_wildcard(node: Wildcard) -> Self {
 		Self::Wildcard(node)
@@ -214,7 +214,7 @@ impl<'a> SelectorComponentTrait<'a> for SelectorComponent<'a> {
 		Self::LegacyPseudoElement(node)
 	}
 
-	fn build_ns_type(node: Namespace) -> Self {
+	fn build_ns_type(node: Box<'a, Namespace>) -> Self {
 		Self::Namespace(node)
 	}
 
@@ -222,15 +222,15 @@ impl<'a> SelectorComponentTrait<'a> for SelectorComponent<'a> {
 		Self::Combinator(node)
 	}
 
-	fn build_attribute(node: Attribute) -> Self {
+	fn build_attribute(node: Box<'a, Attribute>) -> Self {
 		Self::Attribute(node)
 	}
 
-	fn build_functional_pseudo_class(node: FunctionalPseudoClass<'a>) -> Self {
+	fn build_functional_pseudo_class(node: Box<'a, FunctionalPseudoClass<'a>>) -> Self {
 		Self::FunctionalPseudoClass(node)
 	}
 
-	fn build_functional_pseudo_element(node: FunctionalPseudoElement<'a>) -> Self {
+	fn build_functional_pseudo_element(node: Box<'a, FunctionalPseudoElement<'a>>) -> Self {
 		Self::FunctionalPseudoElement(node)
 	}
 }

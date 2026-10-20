@@ -462,7 +462,7 @@ BlockSizeContainerFeature: size=160 align=8
     3: Min
     4: Max
     5: Exact
-BlockSizeStyleValue: size=304 align=8 {
+BlockSizeStyleValue: size=104 align=8 {
     0: 0
 }
 BlockStepAlignStyleValue: size=32 align=8
@@ -859,7 +859,7 @@ BoxShadowSpreadStyleValue: size=24 align=8 {
 BoxShadowStyleValue: size=24 align=8 {
     0: 0
 }
-BoxSize: size=288 align=8
+BoxSize: size=88 align=8
     0: LengthPercentage
     1: Stretch
     2: Contain
@@ -943,12 +943,12 @@ CalcSizeBasis: size=120 align=8
     1: SizeKeyword
     2: Any
     3: Calculation
-CalcSizeFunction: size=280 align=8 {
+CalcSizeFunction: size=80 align=8 {
     name: 0
     basis: 16
-    comma: 136
-    calculation: 152
-    close: 264
+    comma: 32
+    calculation: 48
+    close: 64
 }
 CalcSizeOperand: size=24 align=4
     0: Size
@@ -5002,7 +5002,7 @@ FixedSize: size=136 align=8
 Flex: size=12 align=4 {
     0: 0
 }
-FlexBasisStyleValue: size=312 align=8
+FlexBasisStyleValue: size=112 align=8
     0: Content
     1: Width
 FlexDirectionStyleValue: size=32 align=8
@@ -5023,10 +5023,10 @@ FlexLineCountStyleValue: size=24 align=8 {
 FlexShrinkStyleValue: size=24 align=8 {
     0: 0
 }
-FlexStyleValue: size=368 align=8 {
+FlexStyleValue: size=168 align=8 {
     0: 0
 }
-FlexStyleValueOptions: size=360 align=8 {
+FlexStyleValueOptions: size=160 align=8 {
     flex_grow: 0
     flex_basis: 48
 }
@@ -5655,7 +5655,7 @@ HeightMediaFeature: size=160 align=8
     3: Min
     4: Max
     5: Exact
-HeightStyleValue: size=304 align=8 {
+HeightStyleValue: size=104 align=8 {
     0: 0
 }
 HexColor: size=12 align=4 {
@@ -6103,7 +6103,7 @@ InlineSizeContainerFeature: size=160 align=8
     3: Min
     4: Max
     5: Exact
-InlineSizeStyleValue: size=304 align=8 {
+InlineSizeStyleValue: size=104 align=8 {
     0: 0
 }
 InlineSizingStyleValue: size=32 align=8
@@ -6819,23 +6819,23 @@ MatrixFunctionParams: size=224 align=8 {
     9: 184
     10: 200
 }
-MaxBlockSizeStyleValue: size=304 align=8 {
+MaxBlockSizeStyleValue: size=104 align=8 {
     0: 0
 }
-MaxHeightStyleValue: size=304 align=8 {
+MaxHeightStyleValue: size=104 align=8 {
     0: 0
 }
-MaxInlineSizeStyleValue: size=304 align=8 {
+MaxInlineSizeStyleValue: size=104 align=8 {
     0: 0
 }
 MaxLinesStyleValue: size=32 align=8 {
     0: 0
 }
-MaxSizeStyleValue: size=608 align=8 {
+MaxSizeStyleValue: size=208 align=8 {
     0: 0
-    1: 304
+    1: 104
 }
-MaxWidthStyleValue: size=304 align=8 {
+MaxWidthStyleValue: size=104 align=8 {
     0: 0
 }
 MediaCondition: size=208 align=8
@@ -6926,23 +6926,23 @@ MediaType: size=16 align=4
     1: Print
     2: Screen
     3: Custom
-MinBlockSizeStyleValue: size=304 align=8 {
+MinBlockSizeStyleValue: size=104 align=8 {
     0: 0
 }
-MinHeightStyleValue: size=304 align=8 {
+MinHeightStyleValue: size=104 align=8 {
     0: 0
 }
-MinInlineSizeStyleValue: size=304 align=8 {
+MinInlineSizeStyleValue: size=104 align=8 {
     0: 0
 }
 MinIntrinsicSizingStyleValue: size=56 align=8
     0: Legacy
     1: ZeroIfScrollZeroIfExtrinsic
-MinSizeStyleValue: size=608 align=8 {
+MinSizeStyleValue: size=208 align=8 {
     0: 0
-    1: 304
+    1: 104
 }
-MinWidthStyleValue: size=304 align=8 {
+MinWidthStyleValue: size=104 align=8 {
     0: 0
 }
 MinmaxFunction: size=128 align=8 {
@@ -7259,13 +7259,13 @@ MsFlexPackStyleValue: size=32 align=8
 MsFlexPositiveStyleValue: size=24 align=8 {
     0: 0
 }
-MsFlexPreferredSizeStyleValue: size=312 align=8
+MsFlexPreferredSizeStyleValue: size=112 align=8
     0: Content
     1: Width
-MsFlexStyleValue: size=368 align=8 {
+MsFlexStyleValue: size=168 align=8 {
     0: 0
 }
-MsFlexStyleValueOptions: size=360 align=8 {
+MsFlexStyleValueOptions: size=160 align=8 {
     flex_grow: 0
     flex_basis: 48
 }
@@ -7577,7 +7577,7 @@ NegativeStyleValue: size=128 align=8 {
     0: 0
     1: 64
 }
-NestedGroupRule: size=224 align=16
+NestedGroupRule: size=32 align=8
     0: Container
     1: Layer
     2: Media
@@ -8888,7 +8888,7 @@ RubyPositionStyleValue: size=56 align=8
     0: Over
     1: Under
     2: InterCharacter
-Rule: size=224 align=16
+Rule: size=24 align=8
     0: Charset
     1: ColorProfile
     2: Container
@@ -9206,7 +9206,7 @@ ScrollbarWidthStyleValue: size=32 align=8
     0: Auto
     1: Thin
     2: None
-SelectorComponent: size=136 align=8
+SelectorComponent: size=56 align=8
     0: Id
     1: Class
     2: Tag
@@ -9486,9 +9486,9 @@ SizeKeyword: size=16 align=4
     7: WebkitMaxContent
     8: MozMinContent
     9: MozMaxContent
-SizeStyleValue: size=608 align=8 {
+SizeStyleValue: size=208 align=8 {
     0: 0
-    1: 304
+    1: 104
 }
 SkewFunction: size=112 align=8 {
     name: 0
@@ -9762,7 +9762,7 @@ StyleSheet: size=80 align=16 {
     rules: 0
     meta: 32
 }
-StyleValue: size=760 align=8
+StyleValue: size=40 align=8
     0: Initial
     1: Inherit
     2: Unset
@@ -11677,7 +11677,7 @@ WebkitDistrubutedFunctionalPseudoElement: size=80 align=8 {
 WebkitFilterStyleValue: size=40 align=8 {
     0: 0
 }
-WebkitFlexBasisStyleValue: size=312 align=8
+WebkitFlexBasisStyleValue: size=112 align=8
     0: Content
     1: Width
 WebkitFlexDirectionStyleValue: size=32 align=8
@@ -11692,10 +11692,10 @@ WebkitFlexFlowStyleValue: size=88 align=8 {
 WebkitFlexGrowStyleValue: size=24 align=8 {
     0: 0
 }
-WebkitFlexStyleValue: size=368 align=8 {
+WebkitFlexStyleValue: size=168 align=8 {
     0: 0
 }
-WebkitFlexStyleValueOptions: size=360 align=8 {
+WebkitFlexStyleValueOptions: size=160 align=8 {
     flex_grow: 0
     flex_basis: 48
 }
@@ -11961,7 +11961,7 @@ WidthMediaFeature: size=160 align=8
     3: Min
     4: Max
     5: Exact
-WidthStyleValue: size=304 align=8 {
+WidthStyleValue: size=104 align=8 {
     0: 0
 }
 Wildcard: size=12 align=4 {

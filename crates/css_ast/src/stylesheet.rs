@@ -148,15 +148,14 @@ macro_rules! rule {
 		#[derive(csskit_derives::NodeWithMetadata)]
 		pub enum Rule<'a> {
 			$(
-				$name(rules::$ty$(<$a>)?),
+				$name(Box<'a, rules::$ty$(<$a>)?>),
 			)+
-			// Boxed variants for rarely used rules
 			Import(Box<'a, rules::ImportRule<'a>>),
 			Supports(Box<'a, rules::SupportsRule<'a>>),
 
-			UnknownAt(UnknownAtRule<'a>),
-			Style(StyleRule<'a>),
-			Unknown(UnknownQualifiedRule<'a>)
+			UnknownAt(Box<'a, UnknownAtRule<'a>>),
+			Style(Box<'a, StyleRule<'a>>),
+			Unknown(Box<'a, UnknownQualifiedRule<'a>>)
 		}
 	}
 }
@@ -176,7 +175,7 @@ impl<'a> RuleVariants<'a> for Rule<'a> {
 				$name: ident($ty: ident$(<$a: lifetime>)?): $atoms: pat,
 			)+ ) => {
 				match p.to_atom::<CssAtomSet>(c) {
-					$($atoms => p.parse::<rules::$ty>().map(Self::$name),)+
+					$($atoms => p.parse::<Box<rules::$ty>>().map(Self::$name),)+
 					CssAtomSet::Import => p.parse::<rules::ImportRule>().map(|r| Self::Import(Box::new_in(p.alloc(), r))),
 					CssAtomSet::Supports => p.parse::<rules::SupportsRule>().map(|r| Self::Supports(Box::new_in(p.alloc(), r))),
 					_ => Err(Diagnostic::new(p.next(), Diagnostic::unexpected))?,
@@ -190,21 +189,21 @@ impl<'a> RuleVariants<'a> for Rule<'a> {
 	where
 		I: Iterator<Item = Cursor> + Clone,
 	{
-		p.parse::<UnknownAtRule>().map(Self::UnknownAt)
+		p.parse::<Box<UnknownAtRule>>().map(Self::UnknownAt)
 	}
 
 	fn parse_qualified_rule<I>(p: &mut Parser<'a, I>, _name: Cursor) -> ParserResult<Self>
 	where
 		I: Iterator<Item = Cursor> + Clone,
 	{
-		p.parse::<StyleRule>().map(Self::Style)
+		p.parse::<Box<StyleRule>>().map(Self::Style)
 	}
 
 	fn parse_unknown_qualified_rule<I>(p: &mut Parser<'a, I>, _name: Cursor) -> ParserResult<Self>
 	where
 		I: Iterator<Item = Cursor> + Clone,
 	{
-		p.parse::<UnknownQualifiedRule>().map(Self::Unknown)
+		p.parse::<Box<UnknownQualifiedRule>>().map(Self::Unknown)
 	}
 }
 
