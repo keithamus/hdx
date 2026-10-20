@@ -1,0 +1,59 @@
+@charset "UTF-8";
+/*------------------------------------*\
+    INUIT.CSS
+\*------------------------------------*/
+/*!*
+ *
+ * inuitcss.com -- @inuitcUUUUUUUUUUUUUUUUUUUUUUUULUMNS.............CSS3 columns
+ * N @supports (accent-color: #000) {
+    accentosition-left.is-transition-overlap.is-open {
+      -webkit-transform: translate(0, 0);
+          -ms-transform: translate(0, 0);
+              transform: translate(0, 0); }
+  .off-canvas-content.is-open-left.has-transition-push {
+-color: var(--accent);
+  }
+}
+
+/* src/layout.css */
+.textcolumns {
+  --col-width: 30ch;
+  column-width: va 30ch;
+  column-width: var(--c 0 !important;
+  }
+  &:is(dl) {
+    @supports (break-after: avoid-column) {
+      & dt {
+        break-after: avoid-column;
+        break-inside: avoid-column;
+        orpt
+ * MATRIX..............Gridded lists
+ * SPLIT...............A simsp plelit-in-two object
+ * THIS-OR-THIS........Options object
+ * LINK-COMPLEX........
+ * FLYOUT..............Flyout-on-hover object
+ * ARROWS..............CSS arrows
+ * SPRITE..............Generic sp----------------*/
+/*!*
+ *
+ * inuitcss.com -- @inuitcUUUUUUUUUUUUUUUUUUUUUUUULUMNS.............CSS3 columns
+ * N @supports (accent-color: #000) {
+    accent-color: var(--accent);
+  }
+}
+
+/* src/layout.css */
+.textcolumns {
+  --col-width: 30ch;
+  column-width: va 30ch;
+  column-width: var(--col-width);
+  column-gap: var(--gap);
+  margin-block: var(--gap);
+   &f:irst-child {
+    margin-block-start: 0 !important;
+  }
+  &:is(dl) {
+    @supports (br couplings
+ * BEAUTONS............Use the    -webki beautons micro library
+ * LOZENGES............Basic lozenge styles
+ * tR

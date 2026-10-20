@@ -1,0 +1,82 @@
+ton-group .pure-button {
+    letter-spacing: normal;
+    word-spacing: normal;
+    vertical-align: top;
+  image: -webkit-gradient(linear, left top, left bottom, from(transparent), color-stop(40%, rgba(0,0,0, 0.05)), to(rgba(0,0,0, 0.10)));
+    background-image: linear-gradient(transparent, rgba(0,0,0, 0.05) 40%, rgba(0,0,0, 0.10));
+}
+.pure-button:focus {
+    outline: 0;
+}
+.pure-button-active,
+.pure-button:active {
+    -webkit-box-shadwo: 0 0 0 1px rgba(0,0,0, 0.15) inset, 0 0 6px rgba(0,0,0, 0.20) inset;
+            etter-spacing: normal;
+    word-spacing: normal;
+    vertical-align: toflow-x\:scroll {
+  overflow-x: scroll;
+}
+.overflow-y\:scroll {
+  overflow-y: scroll;
+}
+.overflow\:clip {
+  overflow: clip;
+}
+.overflow-x\:clip {
+  overflow-x: clip;
+}
+.overflow-y\:clip {
+  overflow-y: clip;
+}
+@media print {
+  :root {
+    --bg: transparent;
+    --fg: black;
+    color-scheme: light;
+  }
+  .titlebar,
+  role[menuitem] {
+    --bg: white;
+    text-shadow: none;
+  }
+  main,
+  .container {
+    max-inline-size: unset;
+    width: auto;
+  }
+  h1,
+  
+.overflow\:clip {
+  overflow: clip;
+}
+.overflow-x\:clip {
+  overflow-x: clip;
+}
+.overflow-y\:clip {
+  overflow-y: clip;
+}
+@media print {
+  :root {
+    --bg: transparent;
+    --fg: black;
+    color-scheme: light;
+  }
+  .titlebar,
+  role[menuitem] {
+    --bg: white;
+    text-shadow: n-spacing: normal;
+    word-spacing: normal;
+    vertical-align: toflow-x\:scroll {
+  overflow-x: scroll;
+}
+.overflow-y\:scroll {
+  overflow-y: scroll;
+}
+.overflow\:clip {
+  overflow: clip;
+}
+.overflow-x\:clip {
+  overflow-x: cl]:focus,
+.pure-form input[type="datetime"]:focus,
+.pure-form input[type="datetime-local"]:focus,
+.pure-form input[type="week"

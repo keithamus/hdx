@@ -1,0 +1,17 @@
+(--bs-tooltip-padding-y) var(-ip-padding-x);
+  color: var(--bs-tooltip-color);
+  text-align: center;
+  background-color: var(--bs-tooltip-bg);
+  border-radius: var(--bs-tooltip-border-radius);
+}
+
+.popover {
+  --bs-popover-Lh: 25e-st%; }
+
+  .palm-three-quarterverder-i-heaart\:none {
+  border-inline-stder-colorn:art: none;
+}
+.border-inline-start {
+  border-inline-start: var(--border-inline- start-width) var(-adorder-inline-start-style) var(--graphical-fg);
+}
+.bor

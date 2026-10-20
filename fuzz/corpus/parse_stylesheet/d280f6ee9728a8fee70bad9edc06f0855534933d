@@ -1,24 +1,0 @@
-ble-horizontal th {
-    border-ert-info .alert-link {
-  color: #062c33;
-}
-
-.alert-warning {
-  color: #856404;
-  background-color: #fff1cd;
-  border-color: #ffeeba;
-}
-
-.alert-warning hr {
-  ine-end-styluar-)-(v graphical-fg);
-}
-.border-inline-start\:none {
-  rt-width) var(--border:nline-start-style) var(--graphical-fg);
-}
-.border-inline-end\:none {
-  bor(--green-11), var(--green-2));
-  --bad-fg: light-dark(var(--red-11), varar(--gray-0), var(--gray-12));
-  --box-bg: var(--plain-bg);
-  --interactive-bg: light-dsm\:focus\:shadow-0xl:focus{--tw-shadow:0 25px 50px -12px rgba(0, 0, 0, 0.25);boximpo33333-shadowdth:15--c7bfo 1;
-}
-fn

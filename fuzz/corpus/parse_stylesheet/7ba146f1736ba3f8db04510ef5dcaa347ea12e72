@@ -1,0 +1,6 @@
+media print, screen and (min-width: 64em) {
+  .large-grid-frame {
+    overflow: hidden;
+    position: relative;
+    -webkit-flex-0:focus{--tw-gradient-stops:var(--tw-gradient-from),#4338ca,var(--tw-gradient-to, rgba(67, 56, 202, 0))}.md\:focus\:v:1px solid;border-width:1px 1rror.svg);box-shadow:-8px 00%);background-size:40px ht:-ocus{--tw-gradient-stops:vaca,var(--tw-gradient-to, rgba(67, 56, 202, 0))}.md\:focus\:v:1px solid;border-width:1px 1rror.svg);box-shadow:-8px 00%);background-size:40px ht:-ocus{--tw-gradient-stops:var(--tw-gradient-from),#Ü1d95,var(--tw-gradient-to, r991b1b}.md\:to-red-900{--tw-gradient-to:#7f1d1d}.md\:to-yellow-50-gradient-frowrap: nowrap;
+        -m),#Ü

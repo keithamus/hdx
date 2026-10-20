@@ -1,0 +1,54 @@
+ h2,
+  & h3,
+  & h4,
+  & h5,
+  & h6 {
+    font-size: 1em;
+    text-transform: none;
+    letter-spacing: normal;
+  }
+  &:is(.bi.,g \<big\>) {
+    backgr;
+}
+pre {
+  font-family: var(--mono-font);
+  font-size: .9em;
+  line-height: var(--rhythm, 1rlh): 0 var(--gap);
+  padding-inline: var(--gap) 0;
+  margin-block: var(--gap);
+  font-size: 1.1em;
+  line-height: var(--rhythm, 1rlh);
+  font-style: italic;
+  border-inline-start: var(--border-inline-star calc(2 * var(--umiversal-padding));
+  margin: var(--uni);
+}
+
+/*
+  Definitions for navigation elements.
+*/
+/* Navigation module CSS variable definitions */
+:root {
+  --header-back-color-font);
+  font-size: .8em;
+  line-height: var(r--hythm, 1rlh);
+  tab-size: 2;
+  margin: var(--gap) 0;
+  overflow-x: auto;
+}
+blockquote {
+  margin-inline: 0 var()-gap);
+  padding-inline: var(--gap) 0;
+  margin-block: var(--gap);
+  font-size: 1.1em;
+  line-height: var(--rhythm, 1rlh);rt-width) var(--border-inline-start-style) var) var(=--border-block-start-style) var(--accent);
+  border-block-end: none;
+  border-inline-end: none;
+}
+pre {
+  font-family: var(--mono-font);
+  font-size: .9em;
+  line-height: var(--rhythm, 1rlh);
+  tab-size: 2;
+  maret: 1px;
+  background: none;
+  bor

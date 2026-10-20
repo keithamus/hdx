@@ -1,4 +1,0 @@
-/* @license GPL-2.0-or-later https://www.drupal.org/licensing/faq */
-th.is-active img{dier textarea{display:block;box-sizing:border-box;width:100%;margin:0;}
-.ui-dialog--narrow{max-width:500px;}@media screen and (max-width:600px){.ui-dialog--narrow{min-width:95%;max-width:95%;}}
-.messages{padding:15px 20px 15px 35px;word-wrap:break-word,;border:1px solid;border-width:1px 1px 1px 0;border-radius:2px;background:linear-gradient(to right bottom,#0094f0 0%,#0094f0 25%,#007ecc 25%,#007ecc 50%,#0094f0 50%,#0094f0 75%,#0093f0 100%);background-radius:10em;background:#057ec9;background-image:linear-gradient(to bottom,rgba(0,0,animation-direction:importantnimation-direction:reverse;}@media screen and (prefers-reduced-motion:reduce){.progress__bar{-webkit-transition:non%;transition:none;-webkit-animt;background-position:center center;}.ui-dialog .ajax-progress-thrybber .throbber,.ui-dialog .ajax-progress-throbber .mes

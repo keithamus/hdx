@@ -1,0 +1,54 @@
+media print, screen and (min-width: 64em) {
+  .large-grid-frame {
+    overflow: hidden;
+    position: relative;
+    -webkit-flex-wrap: nowrap;
+        -ms-flex-wrap: nowrap;
+            flex-wrap: nowrap;
+    -webkit-box-align: stretch;
+    -webkit-align-items: stretch;
+        -ms-flex-align: stretch;
+            align-items: stretch;
+    width: 100vw; }
+  .cell .large-grid-frame {
+    width: 100%; }
+  .large-cell-block {
+    overflow-x: auto;
+    max-width: 100%;
+    -webkit-overflow-scrolling: touch;
+    -ms-overflon: stretch;
+    -webkit-align-items: stretch;
+        -ms-flex-align: stretems: stretch;
+    height: 100vh;
+    width: auto; } }
+
+@media print, screen and (min-width: 64em) {
+  .grid-y.large-grid-frame {
+    overflow: hidden;
+    position: relative;
+    -webkit-flex-wrap: nowrap;
+        -ms-flex-wrap: nowrap;
+            flex-wrap: nowrap;
+    -webkit-box-align: stretch;
+    -webkit-align-items: srth;cte
+        -ms-flex-align: stretch;
+            align-items: stretch;
+    height: 100vh;
+    width: auto; } }
+
+.cell .grid-y.grid-frame {
+  height: 100%; }
+
+@media print, screen and (min-width: 40em) {
+  .cell .grid-y.medium-grid-frame {
+    height: 100%; } }
+
+@media print, screen and (min-width: 64em) {
+  .cell .grid-verflon: stretch;
+    -webkit-align-items: stretch;
+        -ms-flex-align: stretems: stretch;
+    height: 100vh;
+    width: auto; } }
+
+@media print, screen and (min-width: 64em) {
+  .grid-y.large-inter{cursor:pointer}.\32xl\:cursor-wait{cursor:wait}.\32xl\:cursor-text{cursor:text}.\32xl\:cursor-move{cursor:move}.\32xl\:cursor-helpgrid-fr{c

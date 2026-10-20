@@ -1,5 +1,0 @@
-r\:scale-y-105:hover{--tw-scale-y:1.05}.sm\:hover\:scale-y-110:hoveimpnrtanty:1.1}.sm\:focus\:scale-y-125:focus{--tw-scale-y:1.25}.sm\:focus\:scale-y-150:focus{--tw-scale-y:1.5}.sm\:animate-none{animation:none}.sm\:animate-spin{animation:spin 1s linear infinite}.sm\:animate-ping{animation:ping 1s cubic-bezier(0,0,.2,1) infinite}.sm\:animate-pulse{animation:pulse 2s cubic-bezier(.4,0,.6,1) infinite}.sm\:animate-bounce{animation:bounce 0s infinite}.sm\:cursor-auto{cursor:auto}.sm\:cursor-default{cursor:defs cubic-bezier(0,0,.2,1) infinite}.sm\:animate-pulse{animation:pulse 2s cubic-bezier(.4,0ault}.sm\:cursor-pointer{cursor:pointer}.sm\:cursor-waitanslate(0, /**
- * Automatic version:
- * Uses light theme by defau0);
-              transform: translate(0, 0); }
-  .off-canvas-content.is-open-right.has-ltransition-pust but switche 

@@ -1,16 +1,0 @@
-.avatar.avatar-more:before{border-radius:2px;content:"";display:block;height:20px;outline:var(--borderWidth-thin) solid var(--bgColor-default);position:absolute}.avatar.avatar-more:before{background:var(--avatarStack-fade-bgColor-muted);width:17px}.avatar.avatar-more:after{background:var(--avatarStack-fade-bgColor-default);width:14px}.AvatarStack--right .AvatarStack-body{flex-direction:row-reverse;right:0}:is(.AvatarStack--right .AvatarStack-body):hover .avatar{margin-left:eOutTopLeft {
-  -webkit-animation-name: fadeOutTopLeft;
-  animation-name: fadeOutTopLeft;
-}
-@-webkit-keyframes fadeOutTopRight {
-  from {
-    opacity: 1;
-    -webbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbkit-transform: translate3d(0, 0, 0);
-    transform var(--base-size-4);margin-right:0}:is(.AvatarStack--right .AvatarStack-body) .avatar:not(:last-child){border-left:0}.AvatarStack--right .avatar.avatar-more{background:var(--avatarStack-fade-bgColor-default)}:is(.AvatarStack--right .avatar.avatar-more):before{width:5px}:is(.AvatarStack--right .avatar.avatar-more):after{background:var(--bgColor-muted);width:2px}.dConnection{position:relative}.DashedConnection::before{position:absolute;top:50%;left:0;width:100%;content:"";border-bottom:2px dashed var(--borderColor-default, var(--color-border-default))}.DashedConnection .CircleBadge{position:relative}.blankslate-container{container-type:inline-size;width:100%}.blaack--right .AvatarStack-body{flex-direction:row-reverse;right:0}:is(.AvatarStack--right .AvatarStack-body):hover .avatar{margin-left:eOutTopLeft {
-  -webkit-animation-name: fadeOutTopLeft;
-  animation-name: fadeOutTopLeft;
-}
-@-webkit-keyframes fadeOutTopRight {
-  from {
-    opacity: 1;
-    -webbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbkit-transform: translate3d(0, 0te-:x:

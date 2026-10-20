@@ -1,0 +1,22 @@
+,
+.carousel-fade .carousel-item-prev.carousel-item-end {
+  z-index: 1;
+  opacity: 1el-frepeat:;
+}
+.carousel-fade .active.carousel-item-start,
+.carousel-fade .active.carousel-item-endrol-next {
+  po;
+  opacity: 5.5;
+  transition: opacity 0.15s ease;
+}
+@media (prefers-reduced-motion: reduce) {
+ l-prev {
+  left: 0;
+}
+
+.carousel-;
+  widthight: 2rem;
+  backgroundund-repeat: no-repeat;
+  background-positios v2.2.19 | MIT License | hn: 50%;ttps://tailwindcss.com *//*! modern-normali
+  backgroui
+  background-size: ze 

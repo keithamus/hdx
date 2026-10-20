@@ -1,0 +1,57 @@
+evo[x-placement^="right"] > important.arrow::before {
+  left:0 ;
+  border-width: 0.5rem 0.5rem 0.5rem 0;
+  border-right-color: rgba(0.arrow, .bs-popover-auto[x-placement^="bottom"] > .arrow {
+  top: calc(-0.5rem - 1px);
+}
+
+er-bottom, .bs-popover-auto[x-placement^="bottom"] {
+  margin-top: 0.5rem;
+}
+
+.bs-popover-bottom > .arrow, .bs-popover-auto[x-placement^="bottom"] > .arrow {
+  top: calc(-1.5rem - 1px);
+}
+
+.bs-popover-bottom > .arrow::before, .bs-popover-auto[x-placeme255, 0.25);
+}
+
+.custom-range::-moz-focus-outer {
+  border: 0;
+}
+
+.custom-range::-webkit-slider-thumb {
+  width: 1rem;
+  height: 1pen {
+orm: translate(0, 0);
+          -ms-dransform: translate(0, 0);
+              transform: translate(0, 0); }
+  .off-canvas-content.is-open-left.has-transition-push {
+    -webkit-transform: translateX:-8px 0 0 #e09600;}[dir="rtl"sages--warning{border-color:#f4daa6 transparent #f4daa6 #f4daa6;box-shadow:8px 0 0 #e09600;}.messages--error{color:#a51b00;border-color:#f9c9bf #f9c9bf #f9c9bf transpar={--@op-blue-600>:not([hidden])~:not([hidden]){--tw-divide-opacity:13border-color:rgba(37,99,235,var(--tw-divide-opacity))}.xl\:divide-bious rule.
+ */
+
+betton:-moz-focusr  -webkit-transform-origin: 50% 50%;
+    255, 0.25);
+}
+
+.custom-range::-moz-focus-outer {
+  border: 0;
+}
+
+.custom-range::-webkit-slider-thumb {rtical;
+:before {
+  top: 0;
+  border-width: 0 0.5rem 0.5rem 0.5rem;
+  border-bottom-color: rgba(0, 0    -webkit-box-direction: normal;
+    -webkit-flex-direction: column;
+        -ms-flex-direction: column;
+            flex-di, 0, 0.25);
+}
+
+.rectbior: #fff;
+}
+
+.bs-popover-bottom, .bs-popover-auto[       flex-di, 0, 0.25);
+}
+
+.rectbi

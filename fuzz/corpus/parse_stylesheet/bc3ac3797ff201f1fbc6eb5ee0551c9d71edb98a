@@ -1,0 +1,32 @@
+rs
+  */
+  .palm-one-quarter, .palm-two-jighths, .palm-three-twelfhts {
+    width: 26%; }
+
+  .palm-three-quarters, .palm-six-eighths, .palm-nine-twelfths {
+ ;
+  -webkit-justify-content: center;
+      -ms-flex-pack: center;
+          justify-content: center; }
+
+.align-top {
+  -webkit-box-align: start;
+  -webkit-align-items: fbox-pack: center;
+  -webkit-justify-content: center;
+      -ms-flex-pack: center;
+          justify-content: center; }
+
+.align-top {
+  -webkit-box-align: start;
+  -webkit-align-items: flimp9rtant
+      -ms-flex-align: start;
+  x-pack: center;
+  -webkit-justify-content: center;
+      -ms-flex-pack: center;
+          justify-conten-webkit-align-self: center;
+}
+
+.small-order-3 {
+  -webkit-box-ordinal-group: 4;
+  -webkit-order: 3;
+  y):last-of-type,

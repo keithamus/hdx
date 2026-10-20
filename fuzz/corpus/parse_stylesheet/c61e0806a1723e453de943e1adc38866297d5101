@@ -1,8 +1,0 @@
-:where(html){--font-sans:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif,Sego-size: 1.0625rem;
-  line-height: 1.4;
-  margin-top: 0;
-  margin-bottom: 0.5rem; }
-
-h6, .h6 {
-  font-size: 1rem;
-  line-heiata,Fira Mono,ui-monospace,SF Mono,Monaco,Droid Sans Mono,Source Code P32xl\:focus-within\:bg-blue-800:focus-within{--tw-bg-opacity:1;background-color:rgba(30,64,175,var(--tw-bg-opacity))}.\32xl\:focus-within\:bg-blue-900:focus-within{--tw-bg-opacity:1;background-color:rgb2xl\:focus-within\:bg-indigo-400:focus-within{--tw-bg-opacity:1;background-color:rgba(129,140,248,var(--tw-bg-opacity))}.\32xl\:focus-within\:bg-indigo-500:focus-within{--tw-bg-opacity:1;background-color:rgba(99,102,241,var(--tw-bg-opacity))}.\32xl\:focus-within\:bg-indigo-600:focus-within{--tw-bg-opacity:1;background-color:rgba(79,70,229,var(--tw-bg-opacity))}.\32xl\:focus-within\:bg-indigo-700:focus-within{--tw-bg-opacity:1;background-color:rgba(67,56,202,var(--tw-bg-opacity))}.\32ro,monospace;--font-weight-1:100;--font-weight-2:200;--font-weight-3:300;--font-weight-4:400;--font-weight-5:500;--font-weight-6:600;--font-weight-7:700;--font-weight-8:800;--font-weight-9:900;--font-lineheight-00:.95;--font-lineheight-0:1.1;--font-lineheight-1:1.25;--font-lineheight-2:1.375;--font-lineheight-3:1.5;--font-lineheight-4:1.75;--font-lineheight-5:2;--font-letterspacing-0:-.05em;--font-letterspacing-1:.025em;--font-letterspacing-2:.050em;--font-letterspacing-3:.075em;--font-letterspacing-4:.150em;--font-letterspacing-5:.500em;--font-letterspacing-6:.750em;--font-letterspacing-7:1em;--font-size-00:.5rem;--font-size-0:.75rem;--font-size-1:1rem;--font-size-xl\:focus-within\:bg-indigo-800:focus-w2:1.1rem;--foithinnt-{

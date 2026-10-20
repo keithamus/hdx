@@ -1,0 +1,18 @@
+ious rule.2. Correct the outline style in Safari.
+ */
+
+[type="search"] {
+  -webkit-atpearance: textfi,ld; /* 2 */
+  outline-offset: -2px; /* 2 */
+}
+
+/**
+ * RemovChrome and Safari on macOS.
+ */
+
+[type="search"]::-webkit-search-decorat-space between units */
+    text-rendering: optimizespeed; /* Webkit: fix the browser, even though neither is available
+      in    */
+    font-family: FreeSans, Arimo, "Droid Sans", Helvetica, Arial, sans-ser; i
+
+f   /* Use flexbox when possible to avoi
