@@ -139,6 +139,7 @@ pub(crate) use assert_visit_flow;
 #[macro_export]
 macro_rules! assert_feature_id {
 	($source: expr, $ty: ty, $id: literal) => {{
+		use ::css_feature_data::ToCSSFeature;
 		use css_lexer::Lexer;
 		use css_parse::{Arena, Parser};
 		let alloc = Arena::default();

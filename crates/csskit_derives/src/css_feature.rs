@@ -110,7 +110,7 @@ pub fn derive(input: DeriveInput) -> Result<TokenStream> {
 	let steps = if steps.is_empty() { by_feature_name(feature.to_string()) } else { steps };
 	Ok(quote! {
 		#[automatically_derived]
-		impl #impl_generics #ident #type_generics {
+		impl #impl_generics ::css_feature_data::ToCSSFeature for #ident #type_generics {
 			fn to_css_feature(&self) -> Option<&'static ::css_feature_data::CSSFeature> {
 				#steps
 			}
