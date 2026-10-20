@@ -4,15 +4,6 @@ const F: bool = false;
 #[repr(C, align(64))]
 pub struct Align64<T>(pub(crate) T);
 
-/// Lookup table for ASCII lowercase letters (a-z) and digits (0-9)
-/// Used in identifier parsing hot path to avoid branching
-pub const ASCII_LOWER_OR_DIGIT: Align64<[bool; 128]> = Align64([
-	F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F,
-	F, F, F, F, F, F, F, F, F, F, T, T, T, T, T, T, T, T, T, T, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F,
-	F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T,
-	T, T, T, T, T, T, T, T, T, F, F, F, F, F,
-]);
-
 /// Lookup table for ASCII identifier start characters (A-Z, a-z, _)
 pub const ASCII_START: Align64<[bool; 128]> = Align64([
 	F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F,

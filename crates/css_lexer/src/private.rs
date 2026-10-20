@@ -1,14 +1,11 @@
 use crate::{
 	CommentStyle, Feature, Lexer, QuoteStyle, Token, Whitespace,
 	constants::SINGLE_CHAR_TOKENS,
-	scan::{scan_bad_url, scan_ident, scan_line_comment, scan_string, scan_url},
+	scan::{scan_bad_url, scan_ident, scan_ident_non_lower, scan_line_comment, scan_string, scan_url},
 	small_str_buf::SmallStrBuf,
 	syntax::{
 		CR, EOF, FF, LF, SPACE, TAB,
-		identifier::{
-			is_ident, is_ident_ascii_lower_or_digit, is_ident_ascii_start, is_ident_byte, is_ident_start,
-			is_ident_start_sequence,
-		},
+		identifier::{is_ident, is_ident_ascii_start, is_ident_byte, is_ident_start, is_ident_start_sequence},
 		is_escape_sequence, is_non_printable, is_quote, is_url_ident, is_whitespace,
 		tables::{ASCII_NEWLINE, ASCII_WHITESPACE},
 	},
@@ -230,64 +227,38 @@ impl<'a> ByteCursor<'a> {
 			}
 		}
 
+		let start = self.pos;
 		let str = self.remaining_str();
-		let mut len: u32 = 0;
 		let mut small_ident = SmallStrBuf::<MAX_SMALL_IDENT_SIZE>::new();
 
 		loop {
+			let rest = self.remaining_str();
+			let (run, non_lower) = scan_ident_non_lower(rest.as_bytes());
+			small_ident.append_str(&rest[..run]);
+			self.advance_n(run);
+			contains_non_lower_ascii |= non_lower;
 			let c = self.peek_char();
-			if c == EOF && self.at_end() {
-				break;
-			}
-			// Most common case first: lowercase ASCII, digits, or dash (except leading dash)
-			if is_ident_ascii_lower_or_digit(c) || (c == '-' && len > 0) {
-				self.pos += 1; // ASCII, 1 byte
-				len += 1;
-				small_ident.append(c);
-			} else if len == 0 && c == '-' {
-				// Leading dash case - check for dashed ident
-				let next = self.peek_char_at(1);
-				self.pos += 1;
-				len += 1;
-				small_ident.append(c);
-				if next == '-' {
-					self.pos += 1;
-					len += 1;
-					dashed_ident = true;
-					small_ident.append(next);
-					continue;
-				}
-			} else if is_ident(c) {
-				let clen = c.len_utf8();
-				self.advance_n(clen);
-				len += clen as u32;
+			if is_ident(c) {
+				self.advance_n(c.len_utf8());
 				contains_non_lower_ascii = true;
 				small_ident.append(c);
-			} else {
-				let next = self.peek_char_at(c.len_utf8());
-				if is_escape_sequence(c, next) {
-					self.pos += 1; // skip the backslash
-					if small_ident.over_capacity() {
-						contains_escape = true;
-						len += self.consume_escape_sequence();
-						// no need to re-sync, pos is already advanced
-					} else {
-						let (ch, esc_len) = self.parse_escape_sequence();
-						small_ident.append(ch);
-						len += 1 + esc_len as u32;
-						contains_escape = true;
-					}
-					continue;
-				} else if c == '\0' && !self.at_end() {
-					self.pos += 1;
-					contains_escape = true;
-					len += 1;
-					small_ident.append(REPLACEMENT_CHARACTER);
+			} else if c == '\\' && is_escape_sequence(c, self.peek_char_at(1)) {
+				self.pos += 1;
+				contains_escape = true;
+				if small_ident.over_capacity() {
+					self.consume_escape_sequence();
 				} else {
-					break;
+					small_ident.append(self.parse_escape_sequence().0);
 				}
+			} else if c == '\0' && !self.at_end() {
+				self.pos += 1;
+				contains_escape = true;
+				small_ident.append(REPLACEMENT_CHARACTER);
+			} else {
+				break;
 			}
 		}
+		let len = (self.pos - start) as u32;
 		// The ident was small enough to be fully encoded into the small_ident buffer,
 		// so it should be used over the str slice as it will have parsed escape sequences
 		let (is_url, atom_bits) = if let Some(ident) = small_ident.as_str() {

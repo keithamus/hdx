@@ -11,6 +11,11 @@ byte_class! {
 }
 
 byte_class! {
+	/// ASCII identifier bytes that are not lowercase letters, digits or `-`: `A-Z` and `_`.
+	struct AsciiNonLowerIdent = b'A'..=b'Z' | b'_';
+}
+
+byte_class! {
 	/// Bytes that end the body of a CSS string token: the delimiter, `\`, a newline (`\n` `\r`
 	/// `\x0C`), NUL, or any non-ASCII byte.
 	struct StringEnd(delimiter) = delimiter | b'\\' | b'\n' | b'\r' | 0x0C | 0 | 0x80..=0xFF;
@@ -35,6 +40,11 @@ byte_class! {
 #[inline]
 pub(crate) fn scan_ident(bytes: &[u8]) -> (usize, bool) {
 	scan_until_and_mark(bytes, IdentEnd, AsciiUpper)
+}
+
+#[inline]
+pub(crate) fn scan_ident_non_lower(bytes: &[u8]) -> (usize, bool) {
+	scan_until_and_mark(bytes, IdentEnd, AsciiNonLowerIdent)
 }
 
 #[inline]
@@ -80,6 +90,24 @@ mod test {
 			(b"abcdefghijklmnopqrstuvwxyz0123456;", (33, false)),
 		] {
 			assert_eq!(scan_ident(s), want, "ident {s:?}");
+		}
+	}
+
+	#[test]
+	fn ident_non_lower() {
+		for (s, want) in [
+			(&b""[..], (0, false)),
+			(b"simple-1", (8, false)),
+			(b"--dashed\\:x", (8, false)),
+			(b"snake_case", (10, true)),
+			(b"Upper", (5, true)),
+			(b"a\\_b", (1, false)),
+			(b"cafe\xc3\xa9_", (4, false)),
+			(b"abcdefghijklmnop_", (17, true)),
+			(b"abcdefghijklmnop:_", (16, false)),
+			(b"abcdefghijklmnopqrstuvwxyz-0123456789_", (38, true)),
+		] {
+			assert_eq!(scan_ident_non_lower(s), want, "ident_non_lower {s:?}");
 		}
 	}
 
