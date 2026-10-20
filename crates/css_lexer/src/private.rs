@@ -176,30 +176,18 @@ impl<'a> ByteCursor<'a> {
 	}
 
 	fn consume_whitespace(&mut self) -> (u32, Whitespace) {
-		let mut i: u32 = 0;
+		let start = self.pos;
 		let mut style = Whitespace::none();
-		loop {
-			let remaining = self.remaining_bytes();
-			let non_space = remaining.iter().position(|&b| b != b' ').unwrap_or(remaining.len());
-			if non_space > 0 {
-				self.advance_n(non_space);
-				i += non_space as u32;
-				style |= Whitespace::Space;
-			}
-			let b = self.peek_byte(0);
-			if b == b'\t' {
-				self.pos += 1;
-				i += 1;
-				style |= Whitespace::Tab;
-			} else if b == b'\n' || b == b'\r' || b == 0x0C {
-				self.pos += 1;
-				i += 1;
-				style |= Whitespace::Newline;
-			} else {
-				break;
-			}
+		while let Some(&b) = self.bytes.get(self.pos) {
+			style |= match b {
+				b' ' => Whitespace::Space,
+				b'\t' => Whitespace::Tab,
+				b'\n' | b'\r' | 0x0C => Whitespace::Newline,
+				_ => break,
+			};
+			self.pos += 1;
 		}
-		(i, style)
+		((self.pos - start) as u32, style)
 	}
 
 	fn consume_ident_sequence(&mut self, atoms: &dyn DynAtomSet) -> (u32, bool, bool, bool, u32, bool) {
@@ -880,6 +868,9 @@ impl<'a> Lexer<'a> {
 			let token = SINGLE_CHAR_TOKENS[b as usize];
 			if token != Token::EOF {
 				return token;
+			}
+			if b == b' ' && !is_whitespace(cursor.peek_byte(1) as char) {
+				return Token::SPACE;
 			}
 			// fast path for identifiers
 			if is_ident_ascii_start(b as char) {
