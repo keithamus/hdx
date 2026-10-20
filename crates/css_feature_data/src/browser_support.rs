@@ -12,19 +12,54 @@ pub struct BrowserSupport {
 }
 
 impl BrowserSupport {
-	pub fn supports(&self, version: NamedBrowserVersion) -> bool {
-		match version {
-			NamedBrowserVersion::Chrome(ver) => ver >= self.chrome,
-			NamedBrowserVersion::ChromeAndroid(ver) => ver >= self.chrome_android,
-			NamedBrowserVersion::Edge(ver) => ver >= self.edge,
-			NamedBrowserVersion::Firefox(ver) => ver >= self.firefox,
-			NamedBrowserVersion::FirefoxAndroid(ver) => ver >= self.firefox_android,
-			NamedBrowserVersion::Safari(ver) => ver >= self.safari,
-			NamedBrowserVersion::SafariIos(ver) => ver >= self.safari_ios,
-			_ => {
-				dbg!(version);
-				false
-			}
+	/// Reports whether `browser` supports the feature. A browser this data does not cover reports `false`.
+	pub fn supports(&self, browser: NamedBrowserVersion) -> bool {
+		let (version, since) = match browser {
+			NamedBrowserVersion::Chrome(version) => (version, self.chrome),
+			NamedBrowserVersion::ChromeAndroid(version) => (version, self.chrome_android),
+			NamedBrowserVersion::Edge(version) => (version, self.edge),
+			NamedBrowserVersion::Firefox(version) => (version, self.firefox),
+			NamedBrowserVersion::FirefoxAndroid(version) => (version, self.firefox_android),
+			NamedBrowserVersion::Safari(version) => (version, self.safari),
+			NamedBrowserVersion::SafariIos(version) => (version, self.safari_ios),
+			_ => return false,
+		};
+		since != BrowserVersion(0, 0) && version >= since
+	}
+}
+
+#[cfg(test)]
+mod tests {
+	use super::*;
+
+	const NEVER: BrowserVersion = BrowserVersion(0, 0);
+
+	fn support() -> BrowserSupport {
+		BrowserSupport {
+			chrome: BrowserVersion(29, 0),
+			chrome_android: BrowserVersion(29, 0),
+			edge: BrowserVersion(12, 0),
+			firefox: BrowserVersion(28, 0),
+			firefox_android: BrowserVersion(28, 0),
+			safari: BrowserVersion(9, 1),
+			safari_ios: NEVER,
 		}
+	}
+
+	#[test]
+	fn supports_from_the_first_version() {
+		assert!(support().supports(NamedBrowserVersion::Chrome(BrowserVersion(29, 0))));
+		assert!(support().supports(NamedBrowserVersion::Safari(BrowserVersion(10, 0))));
+		assert!(!support().supports(NamedBrowserVersion::Safari(BrowserVersion(9, 0))));
+	}
+
+	#[test]
+	fn never_supported_stays_unsupported() {
+		assert!(!support().supports(NamedBrowserVersion::SafariIos(BrowserVersion(18, 0))));
+	}
+
+	#[test]
+	fn uncovered_browsers_are_unsupported() {
+		assert!(!support().supports(NamedBrowserVersion::Opera(BrowserVersion(120, 0))));
 	}
 }

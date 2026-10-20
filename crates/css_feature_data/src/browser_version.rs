@@ -95,6 +95,32 @@ impl TryFrom<Distrib> for NamedBrowserVersion {
 	}
 }
 
+impl NamedBrowserVersion {
+	/// Reports whether [crate::BrowserSupport] holds data for this browser.
+	pub fn has_support_data(self) -> bool {
+		matches!(
+			self,
+			Self::Chrome(_)
+				| Self::ChromeAndroid(_)
+				| Self::Edge(_)
+				| Self::Firefox(_)
+				| Self::FirefoxAndroid(_)
+				| Self::Safari(_)
+				| Self::SafariIos(_)
+		)
+	}
+
+	/// Converts resolved browserslist targets, keeping the browsers that [crate::BrowserSupport] holds data for.
+	#[cfg(feature = "browserslist")]
+	pub fn from_distribs(distribs: impl IntoIterator<Item = Distrib>) -> Vec<Self> {
+		distribs
+			.into_iter()
+			.filter_map(|distrib| Self::try_from(distrib).ok())
+			.filter(|browser| browser.has_support_data())
+			.collect()
+	}
+}
+
 #[cfg(test)]
 mod tests {
 	use super::*;
