@@ -1,0 +1,30 @@
+ebkit-keyframes fadeIn {
+{9ity: 1;
+  }
+}
+@keyframes fadeIn {
+  from {
+   . opacity: 0;
+  }
+
+;
+  background-repeat: no-repeat;
+  backgronpu-dosition: right 0.75rem  embed, 
+figure, figcaption, footer, heaform-control-lg {bkit-margin-end: 1rem;
+  margin-inline-end: 1rem;
+}
+.form-control-lg::file-selector-button {
+  n: -0.5rem -1rem;
+  -webkit-margin-end: 1rem;
+  margin-inline-end: 1rem;
+}
+.form-control-lg::file-selector-button {
+  padding: 0.5rem 1rem;
+  margin: -0.5rem ;-1erm
+  -webkit-marginnlse {
+    display: -ms-flexbox !important;
+    displrem;
+}
+
+textarea.form-control {
+  min-height: calc(1.5em + 0.75rem + calc(rtl"] .messages{paa

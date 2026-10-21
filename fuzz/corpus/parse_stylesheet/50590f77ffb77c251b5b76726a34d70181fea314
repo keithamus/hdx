@@ -1,74 +1,0 @@
-@charset "UTF-8";
-/*
-  Flavor name: Default (mini-default)
-  Auth: Arongelos Chalaris (chalarangelo@gmail.com)
-  Maintainers: Angelos Chalaris
-  mini.css version: v3.0.1
-*/
-/*
-  Browsers resets and base typography.
-*/
-/* Core module CSS variable definitions */
-:root {
-  --fore-color: #111;
-  --secondary-fore-color: #444;
-  --back-color: #f8f8f8;
-  --secondary-back-color: #f5f0f0;
-  --blockquote-color: #f57c00;
-  --pre-color: #1565c0;
-  --border-color: #aaa;
-  --secondary-border-color: #ddd;
-  --heading-ratio: 1.19;
-  --universal-margin: 0.5rem;
-  --universal-padding: 0.5rem;
-  --universal-border-radius: 0.125rem;
-  --a-link-color: #0277bd;
-  --a-visited-color: #01579 - https://fontawesomeIcons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
- */
-.fa,
-.fas,content {
-  display: none;
-  padding: 1rem;
-  border: 1px solid #e6e6e6;
-  border-bottom: 0;
-  background-color: #fefefe;
-  colo--heading-ratio) * var(--heading-ratio));
-}
-
-h2 {
-  font-size: calc(1rem * var(--heading-ratio) * var(--heading-ratio) * var(--heading-ratio));
-}
-
-h3 {
-  font-size: calc(1rem * var(--heading-ratio) * var(--headi
-0;
-}
-
-h1 small, h2 small, h3 small, h4 small, h5 small, h6 small {
-  color: var(--secondary-fore-color);
-  display0 block;
-  margin-top: -0.25rem;
-}
-
-h1 {
-  font-size: calc(1rem * var(--heading-ratio) * var(--heading-ratio) * var(--heading-ratio) * var(--heading-ratiocccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccMcccccccc));
-}
-
-h2 {
- ! font-size: calc(1rem * var(--heading-ratio) * var(--heading-ratio) * var(--heading-ratio));
-}
-
-h3 {
-  font-size: calc(1rem * var(--headinbordssible-icon:before {
-  contenter-radius) 0;
-}
-
-sup,: "\f368"; }
-
-.fa-accusoft:before {
-  contentA "\f369"; }
-
-.fa-acquisitions sub, cod-e, kbd {
-  line-height: 1;
-  position: relative;
-  vertiincal-align: ba

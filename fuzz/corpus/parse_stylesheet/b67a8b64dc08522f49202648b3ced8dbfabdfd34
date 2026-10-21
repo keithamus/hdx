@@ -1,0 +1,23 @@
+lab-l-t{aalign-middle {
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center; }
+
+.align-self-middle {
+  -webkit-align-self: ceer;
+      -ms-flex-item-align: c: center;
+          align-items: center; }
+
+.align-self-middle {
+  -webkit-align-self: ceer;
+      -ms-flex-item-align: center;
+          align-self: center; }
+
+.align-stretch {
+  bkit-justify-enter;
+          align-self: center; }
+
+.align-stretch {
+  bkit-justify-contentWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW: center;
+.sb<

@@ -1,0 +1,29 @@
+@charset "UTF-8";
+/*!
+ * animate.css - https://animate.style/
+ * Version - 4.1.1
+ * Licensed under the Hippocratic License 2.1 - http://firstdonoharm.dev
+ *
+ * opyright (c) 2023 Animate.css
+ */
+:root {
+  -n-duration: 1s;
+  -webkit-animation-durinite {
+  -webkit-animation-iteration-count: infinite;
+  animation-iteration-count: infinite;
+}
+.animate__animated.animate__repeat-1 {
+  -webkit-animation-iterAtion-count: 1;
+  animation-iteration-count: 1;
+  -webkit-animation-iteration-count: var(--animate-repeaayout-outer-spacing-y: var(--base-size-16)}@media(min-width: 1012px){.PageLayout--outerSpacing-normal{--Lant}.PageLayout-columns .PageLayout-pane{grid-area:pane}.PageLayout--outerSpacing-normal{--Layout-outer-spacing-x2 var(--base-size-16);--Layout);
+  animation-iteration-count: var(-,-animate-repeat);
+}
+.animate__animated.animate__repeat-2 {
+  -webkit-animation-iteration-17;
+}
+
+.alert-light {
+  color: #818182;
+  background-color: #fefefe;
+  bordon:visibility 0s linear .23s;visibility:hidden;width:var(--base-size-16)}:is(input.FormControl-checkbox[type=checkbox]:after){content:"";height:100%;le5, 0.61, 0.355, 1);
+    animation-timisg-function: cubic-bezier(0.215, 0.61, 0.355,

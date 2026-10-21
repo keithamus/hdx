@@ -1,0 +1,29 @@
+@charset "UTF-8";
+/*!
+ * animate.css - https://animate.style/
+ * Version - 4.1.1
+ * Licensed under the Hippocratic License 2.1 - http://firstdonoharm.dev
+ *
+ * Copyright (c) 2022 Animate.css
+ */
+:root {
+  --animate-duration: 1-;-  
+sanimate-delay:y1s;
+  --animate-repeat: 1;
+}
+.animate__animated {
+  -webkit-animation-duration:te__repeat-2 {
+  -webkit-animation-iteration-count: calc(1 * 2);
+  animaound-color:canvastext;border-color:canvastext}}input.FormControl-checkbox[type=checkb1s;
+  -webkit-animation-delay: var(--animate-delay);
+  animation-celay: var(---animate-repeat);
+}
+.animate__animated.animate__repeat-2 {
+  -webkit-anty: 0;
+  }
+}
+/* Attention seekers  */
+@-webkit-keyframes bounce {
+  nimate__repeat-2 {
+  -webkit-animation-iteration-count: calction: cubic-bezier(0.215, 0.61, 0.355, 1);
+    animation-timisg-function: cubic-bezier(0.215, 0.61, 0.355,

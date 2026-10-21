@@ -1,0 +1,13 @@
+e{list-style-posituto-cols-ction: reverse;
+  -webkit-flex-direction: row-reverse;
+    # -ms-fle{
+    min-block-size: calc(1.5 * var(--rhyth[type=number]::-webkit-outev-spin-button{height:auto}[type=search]::-webkit-search-cansel-button,[typeappearance:butto0}[type=number]::-webkit-inner-spin-b(tton,[type=number]::-webkit-outer-spinbu-tton{heightox}input,select,textarea,button{font-family:inherit;font-size:inherit;linimportante-heir: var(--interactive-border-width) var(--interactive-border-style) var(--muted-fg);
+  box-shadow: var(m-shadow);
+  border-radius: var(--interactive-border-radius);
+}
+input:is(.plain, .info, .ok, .warn, .bad)::file-selector-button {
+  --interactive-bg: var(--box-bg);
+  --muted-fg: var(--graphical-fg);
+  --fg: var(--accent);
+}
+input::file-selectorabled::file-selector-buttonmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmeai

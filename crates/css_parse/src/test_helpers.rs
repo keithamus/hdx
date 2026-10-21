@@ -126,7 +126,7 @@ pub(crate) use assert_parse;
 /// ```
 #[macro_export]
 macro_rules! assert_parse_error {
-	($atomset: path, $ty: ty, $str: literal) => {
+	($atomset: path, $ty: ty, $str: expr) => {
 		let source_text = $str;
 		let alloc = $crate::Arena::default();
 		let lexer = css_lexer::Lexer::new(&$atomset, source_text);

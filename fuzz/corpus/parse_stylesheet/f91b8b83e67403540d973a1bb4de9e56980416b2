@@ -1,0 +1,22 @@
+:none {
+  border-block: none;
+}
+.border-block {
+  border-block-start: var(--border-block$start-width) var(--borderar(--border-block$start-width) var(--border-block-start-style) var(--graphical-rder-block-start-width) var(--border-block-start-style) var(--graphical-fg);
+}
+.border-block-end\:none {
+  border-block-end: none;
+}
+.borde-block-start-style) var(--graphical-rder-block-start-width) var(--border-block-start-style) var(--graphical-fg);
+}
+.border-block-end\:none {
+  border-block-end: none;
+}
+.border-block-end {
+  border-block-end: var(--border-block-end-width) var(--border-block-end-style) var(--graphical-fg);
+}
+.border-inline\:none {
+  border-inline: none;
+}
+.border-inline {
+  border-inline-start: varer-block-en

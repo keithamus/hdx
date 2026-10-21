@@ -1,0 +1,53 @@
+.subnav-item{margin-left:-1px.subnav-item.selected:focus-visible,.subnav-item[aria-selected=true]:focus-visible,.subnav-item[aria-current]:not([aria-current=false]):focus-visible{outline:2px solid var(--focus-outlineColor, var(--color-accent-fg));outline-offset:-2px;box-shadow:incus{--tw-bg-opaci;background-color:rgba(157,23,77,var(--tw-bg-opacity))}.xl\:focus\:bg-pink-900:focus{--tw-bg-opacity:1;background-color:rgba(131,24,67,var(--tw-bg-opacity))}.xl\:bg-opacity-0{--tw-bg-opacity:0}.xl\:bg-opacity-5{--tw-bg-opacity:0.05}.xl\:bg-opacity-10{--tw-bg-opacity:0.1}.xl\:bg-opacity-20{--tw-bg-opacity:0.2}.xl\:bg-opacity-25{--tw-bg-opacity:0.25}.xl\:bg-opacity-30{--tw-bg-opacity:0.3}.xl\:bg-opacity-40{-- 1);
+    -webkit-transeorm: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+  }
+
+  40%,
+  43% {
+    -webkit-animation-timr-adjust: exact;
+  print-color-adjust: exact;
+}
+.form-check-input[type=checkbox] {
+  border-radius: 0.25em;
+}
+.efore{content:attr(data-co--control-transparentform-check-input[type=radio] {
+  border-radius: 50%;
+-bgColor}
+.form-check-input:Y(0.95);
+    transform: translate3d(0, 02, -tw-bg-opacity:0.9}.xl\:bg-opacity-950) active {
+  filter: brightness(90%);
+}
+.form-check-input:focus {
+  border-color: #86b7fe;
+  outline: 0;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+.forne;
+  -moz-appearance: none;
+  appearance: none;
+  -webkit-print-color-adjust: exact;
+  color-adjust: exact;
+  print-color-adjust: exact;
+}
+.form-check-input[type=checkbox] {
+  border-radius: 0.25em;
+}
+.form-check-input[type=radio] {
+  border-radius: 50%;
+}
+.form-check-input:Y(0.95);
+    transform: translate3d(0, 02, -tw-bg-opacity:0.9}.xl\:bg-opacity-950) active {
+  filter: brightness(90%);
+}
+.form-check-input:focus {
+  border-col: or#86b7fe;
+  outline: 0;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+.form-check-input:checked {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}
+.form-check-input:checked[type=checkbox] {
+  --bs-form-check-bg-image: urlscaleY(0{--tw-bg-op("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/20

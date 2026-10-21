@@ -173,7 +173,7 @@ pub trait RangedFeature<'a>: Sized {
 
 /// Looks ahead from a ranged feature's opening `(` to its `<feature-name>`, skipping any leading `<value>`, including
 /// nested blocks such as the `calc()` in `(calc(1px + 2px) < width)`. Returns the cursor of the first top-level ident,
-/// or of the closing `)` or EOF when there is none.
+/// or of the closing `)` or EOF when there is none. Lookahead stops at the `u8::MAX`th token, returning that cursor.
 pub fn peek_ranged_feature_name<'a, I>(p: &Parser<'a, I>) -> Cursor
 where
 	I: Iterator<Item = Cursor> + Clone,
@@ -190,7 +190,10 @@ where
 		} else if c == crate::Kind::RightParen {
 			depth -= 1;
 		}
-		n += 1;
+		let Some(next) = n.checked_add(1) else {
+			return c;
+		};
+		n = next;
 	}
 }
 

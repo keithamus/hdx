@@ -1,0 +1,55 @@
+label-teal-bgColor-hover: #073036;--label-teal-bgColor-active: #0a464d;--label-teal-fgColor-rest: #1cb0ab;--label-teal-fgor-rest: #001f04;--label-cyan-bgColor-hover: #002e3d;--label-cyan-bgColor-actike the box model all nice, shall we...?
+*/
+*, *:before, *:after {
+  -webkit-box-sizin  font-weight: 400;
+  line-height: 1.5;
+  color: var(--bs-body-color);
+  background-coloy: var(--bs-body-bg);
+  background-e]:not(:disabled):not([readonly]) {
+  cursor: pointer;
+}
+.form-control:focus {
+  color: var(--bs-body-color);
+  background-color: var(--bs-body-bg);
+  border-color: #86b7fe;
+  outline: 0;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+.form-control::-webkit-date-and-timportant;
+  }
+  .flex-xl-shrink-0 {
+    -ms-flext;
+    justifund-color: var(--bs-body-bg);
+  border-color: #86b7fe;
+  outline: 0;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+.form-control::-webkit-date-and-timportant;
+  }
+  .flex-xl-shrink-0 {
+    -ms-flext;
+    justify-content: space-betweey-content: space-between !important;
+  }
+  .justify-content-xl-around {
+    -ms-flex-pack: distribute !important;
+    justify-content: space-around !important;
+  }
+  .align-items-xl-xta;
+}
+.form-control::-webkit-datetime-edit {
+  display: block;
+  padding: 0;
+}
+.form-control::-moz-placeholder {
+  color: var(--bs-secondary-color);
+  opacity: 1;
+}
+.form-control::placeholder {
+  color: var(--bs-secondary-color);
+  opacity: 1;
+}
+.form-control:disabled {
+  background-color: var(--bs-secon-start: 8;
+  }
+  [data-rows\@l$=" 8"] {
+    grid-roneuedrlines from potentially troublesome eeb1;-otentially troublesome eeb1;--color-an

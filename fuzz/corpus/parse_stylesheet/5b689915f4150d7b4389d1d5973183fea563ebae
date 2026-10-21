@@ -1,0 +1,18 @@
+:none {
+  border-block: none;
+}
+.border-block {
+  border-block-start: var(--border-block-start-width) var(--border-block-start-style) var(--graphical-fg);
+  border-block-end: 15pt);
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+
+  ::-moz-.border-inline-start\:none {
+  borderselection {
+  background-color: #1c76c5;
+  background-color: var(--inline-start: none;
+}
+.border-inline-start {
+  -sbe

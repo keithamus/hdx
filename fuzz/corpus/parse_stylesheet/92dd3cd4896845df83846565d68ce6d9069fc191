@@ -1,0 +1,57 @@
+, table.horizontal th:first-child, table.horizontal td:first-child {
+    borderlarge-shrink {
+    width: auto; }
+  .grid-x > .large-0 {
+    width: 8.33333%; }
+  .grid-x > .large-2 {
+    width: 16.66667%; }
+  .grid-x > .large-3 {
+    width: 25%; }
+  .grid-x > .large-4 {
+    width: 33.33333%; }
+  .grid-x > .large-5 {
+    width: 41.6.grid-x > .medium-10 {
+    width: 83.33333%; }
+  .grid-x > .medium-11 {
+    width: 91.66667%; }
+  .grid-x > .medium-12 {
+    width: 100%; } }
+
+@media print, screen and (min-width: 64em) {
+  .grid-x > .large-auto {
+    -webkit-box-flex: 1;
+    -webkit-flex: 1 1tr:focus, table.hoverable tr:focus > td {
+  background: var(--table-body-hover-back-color);
+}
+
+@  background: var(--table-body-alt-back-color);
+}
+
+@media screen and (max-width: 768px) {
+  table.striped tr:nth-of-type(2n) {
+    background: var(--ta33.33333%; }
+  .grid-x > .large-5 {
+    width: 41.6.grid-x > .medium-10 {
+    width: 83.33333%; }
+  .grid-x > .medium-11 {
+    width: 91.66667%; }
+.grid-x > .large-auto {
+    -webkit-box-flex: 1;
+    -weble.hoverable tr:hover, table.hoverable tr:hover > td, table.hoverable tr:focus, table.hovnt;
+  text-decoration-color: RGBA(var(--bs-light-rgb), var(--bs-link-underline-opacity, 1)) !important;
+}
+.link-light:hover, .link-light:focus {
+  color: RGBA(249, 250, 251, var(--bs-link-opacity, 1)) !important;
+  -webkit-text-decoration-color: RGBA(249, 250, 251, var(--bs-link-underline-opacity, 1)) !important;
+  text-decoratise-in-out transform;
+}
+erable tr:focus @media> td {
+    background: var(--table-body-hover-back-color);
+  }
+}
+
+/ (prefers-reduced-motion: reduce) {
+  .icon-link > .bi {
+    *
+ transition: Definitions for contextual backgroun none;
+  }
