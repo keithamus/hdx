@@ -131,7 +131,7 @@ pub enum SelectorComponent<'a> {
 	Combinator(Combinator),
 	Attribute(Box<'a, Attribute>),
 	PseudoClass(PseudoClass),
-	PseudoElement(PseudoElement),
+	PseudoElement(Box<'a, PseudoElement>),
 	FunctionalPseudoElement(Box<'a, FunctionalPseudoElement<'a>>),
 	LegacyPseudoElement(LegacyPseudoElement),
 	FunctionalPseudoClass(Box<'a, FunctionalPseudoClass<'a>>),
@@ -177,7 +177,7 @@ impl<'a> SelectorComponentTrait<'a> for SelectorComponent<'a> {
 	type Id = Id;
 	type Type = Tag;
 	type PseudoClass = PseudoClass;
-	type PseudoElement = PseudoElement;
+	type PseudoElement = Box<'a, PseudoElement>;
 	type LegacyPseudoElement = LegacyPseudoElement;
 	type Class = Class;
 	type NsType = Box<'a, Namespace>;
@@ -206,7 +206,7 @@ impl<'a> SelectorComponentTrait<'a> for SelectorComponent<'a> {
 		Self::PseudoClass(node)
 	}
 
-	fn build_pseudo_element(node: PseudoElement) -> Self {
+	fn build_pseudo_element(node: Box<'a, PseudoElement>) -> Self {
 		Self::PseudoElement(node)
 	}
 

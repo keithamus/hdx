@@ -164,7 +164,7 @@ pub struct ClampFunction<'a, T> {
 	#[cfg_attr(feature = "visitable", visit(skip))]
 	#[atom(CssAtomSet::Clamp)]
 	pub name: Function,
-	pub min: NoneOr<CalcSum<'a, T>>,
+	pub min: NoneOr<Box<'a, CalcSum<'a, T>>>,
 	#[cfg_attr(feature = "visitable", visit(skip))]
 	#[semantic_eq(skip)]
 	pub comma_1: Comma,
@@ -172,7 +172,7 @@ pub struct ClampFunction<'a, T> {
 	#[cfg_attr(feature = "visitable", visit(skip))]
 	#[semantic_eq(skip)]
 	pub comma_2: Comma,
-	pub max: NoneOr<CalcSum<'a, T>>,
+	pub max: NoneOr<Box<'a, CalcSum<'a, T>>>,
 	#[cfg_attr(feature = "visitable", visit(skip))]
 	#[semantic_eq(skip)]
 	pub close: RightParen,
@@ -763,8 +763,8 @@ fn math_function_eq<'a, T: SemanticEq>(a: &MathFunction<'a, T>, b: &MathFunction
 }
 
 fn calc_sum_or_none_eq<'a, T: SemanticEq>(
-	a: &NoneOr<CalcSum<'a, T>>,
-	b: &NoneOr<CalcSum<'a, T>>,
+	a: &NoneOr<Box<'a, CalcSum<'a, T>>>,
+	b: &NoneOr<Box<'a, CalcSum<'a, T>>>,
 	source_text: &str,
 ) -> bool {
 	match (a, b) {
@@ -794,10 +794,10 @@ fn calc_sum_opt_eq<'a, T: SemanticEq>(
 #[derive(csskit_derives::NodeWithMetadata)]
 #[metadata(declaration_kinds = Computed)]
 pub enum CalcOperandSubstitutionFunction<'a, T> {
-	Math(MathFunction<'a, T>),
+	Math(Box<'a, MathFunction<'a, T>>),
 	Var(VarFunction<'a, CalcOperand<'a, T>>),
 	Env(EnvFunction<'a, CalcOperand<'a, T>>),
-	Attr(AttrFunction<'a>),
+	Attr(Box<'a, AttrFunction<'a>>),
 	If(IfFunction<'a, CalcOperand<'a, T>>),
 	FirstValid(FirstValidFunction<'a, CalcOperand<'a, T>>),
 }

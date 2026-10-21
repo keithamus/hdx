@@ -9230,7 +9230,7 @@ ScrollbarWidthStyleValue: size=32 align=8
     0: Auto
     1: Thin
     2: None
-SelectorComponent: size=56 align=8
+SelectorComponent: size=40 align=8
     0: Id
     1: Class
     2: Tag
