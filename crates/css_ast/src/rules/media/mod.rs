@@ -319,7 +319,7 @@ use apply_medias;
 mod tests {
 	use super::*;
 	use crate::CssAtomSet;
-	use css_parse::assert_parse;
+	use css_parse::{assert_parse, assert_parse_error};
 
 	#[test]
 	fn test_writes() {
@@ -441,6 +441,11 @@ mod tests {
 
 		// IE media hack
 		// assert_parse!(CssAtomSet::ATOMS, MediaRule, "@media (min-width: 0\\0) {\n\n}");
+	}
+
+	#[test]
+	fn fuzz_regression_ranged_feature_lookahead_overflow() {
+		assert_parse_error!(CssAtomSet::ATOMS, MediaFeature, &format!("({}", "a(".repeat(300)));
 	}
 
 	// #[test]
