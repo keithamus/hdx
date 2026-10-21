@@ -14,6 +14,7 @@ export declare class AlignItemsStyleValue extends Node { static readonly tag: 'a
 export declare class AlignSelfStyleValue extends Node { static readonly tag: 'align-self-style-value'; }
 export declare class AlignmentBaselineStyleValue extends Node { static readonly tag: 'alignment-baseline-style-value'; }
 export declare class AllStyleValue extends Node { static readonly tag: 'all-style-value'; }
+export declare class AltText extends Node { static readonly tag: 'alt-text'; }
 export declare class AnchorName extends Node { static readonly tag: 'anchor-name'; }
 export declare class AnchorNameStyleValue extends Node { static readonly tag: 'anchor-name-style-value'; }
 export declare class AnchorScopeStyleValue extends Node { static readonly tag: 'anchor-scope-style-value'; }
@@ -391,7 +392,7 @@ export declare class EllipseFunction extends Node { static readonly tag: 'ellips
 export declare class EmptyCellsStyleValue extends Node { static readonly tag: 'empty-cells-style-value'; }
 export declare class EnvFunction extends Node { static readonly tag: 'env-function'; static parse(source: string): never; }
 export declare class EnvironmentBlendingMediaFeature extends Node { static readonly tag: 'environment-blending-media-feature'; }
-export declare class EventTriggerEvent extends Node { static readonly tag: 'event-trigger-event'; }
+export declare class EventFunction extends Node { static readonly tag: 'event-function'; }
 export declare class EventTriggerNameStyleValue extends Node { static readonly tag: 'event-trigger-name-style-value'; }
 export declare class EventTriggerSourceStyleValue extends Node { static readonly tag: 'event-trigger-source-style-value'; }
 export declare class EventTriggerStyleValue extends Node { static readonly tag: 'event-trigger-style-value'; }
@@ -417,6 +418,7 @@ export declare class FilterValue extends Node { static readonly tag: 'filter-val
 export declare class FilterValueList extends Node { static readonly tag: 'filter-value-list'; }
 export declare class FirstValidFunction extends Node { static readonly tag: 'first-valid-function'; static parse(source: string): never; }
 export declare class FitContentFunction extends Node { static readonly tag: 'fit-content-function'; }
+export declare class FitToleranceStyleValue extends Node { static readonly tag: 'fit-tolerance-style-value'; }
 export declare class FixedSize extends Node { static readonly tag: 'fixed-size'; }
 export declare class Flex extends Node { static readonly tag: 'flex'; }
 export declare class FlexBasisStyleValue extends Node { static readonly tag: 'flex-basis-style-value'; }
@@ -435,7 +437,6 @@ export declare class FloodColorStyleValue extends Node { static readonly tag: 'f
 export declare class FloodOpacityStyleValue extends Node { static readonly tag: 'flood-opacity-style-value'; }
 export declare class FlowFromStyleValue extends Node { static readonly tag: 'flow-from-style-value'; }
 export declare class FlowIntoStyleValue extends Node { static readonly tag: 'flow-into-style-value'; }
-export declare class FlowToleranceStyleValue extends Node { static readonly tag: 'flow-tolerance-style-value'; }
 export declare class FontDisplayValue extends Node { static readonly tag: 'font-display-value'; }
 export declare class FontFaceAscentOverrideDescriptor extends Node { static readonly tag: 'font-face-ascent-override-descriptor'; }
 export declare class FontFaceDescentOverrideDescriptor extends Node { static readonly tag: 'font-face-descent-override-descriptor'; }
@@ -888,6 +889,7 @@ export declare class OverscrollBehaviorInlineStyleValue extends Node { static re
 export declare class OverscrollBehaviorStyleValue extends Node { static readonly tag: 'overscroll-behavior-style-value'; }
 export declare class OverscrollBehaviorXStyleValue extends Node { static readonly tag: 'overscroll-behavior-x-style-value'; }
 export declare class OverscrollBehaviorYStyleValue extends Node { static readonly tag: 'overscroll-behavior-y-style-value'; }
+export declare class OverscrollContainerTypeStyleValue extends Node { static readonly tag: 'overscroll-container-type-style-value'; }
 export declare class PadStyleValue extends Node { static readonly tag: 'pad-style-value'; }
 export declare class PaddingBlockEndStyleValue extends Node { static readonly tag: 'padding-block-end-style-value'; }
 export declare class PaddingBlockStartStyleValue extends Node { static readonly tag: 'padding-block-start-style-value'; }
@@ -1247,6 +1249,7 @@ export declare class TimelineTriggerActiveRangeEndStyleValue extends Node { stat
 export declare class TimelineTriggerActiveRangeStartStyleValue extends Node { static readonly tag: 'timeline-trigger-active-range-start-style-value'; }
 export declare class TimelineTriggerActiveRangeStyleValue extends Node { static readonly tag: 'timeline-trigger-active-range-style-value'; }
 export declare class TimelineTriggerNameStyleValue extends Node { static readonly tag: 'timeline-trigger-name-style-value'; }
+export declare class TimelineTriggerRangeStyleValue extends Node { static readonly tag: 'timeline-trigger-range-style-value'; }
 export declare class TimelineTriggerSourceStyleValue extends Node { static readonly tag: 'timeline-trigger-source-style-value'; }
 export declare class TimelineTriggerStyleValue extends Node { static readonly tag: 'timeline-trigger-style-value'; }
 export declare class TopStyleValue extends Node { static readonly tag: 'top-style-value'; }

@@ -100,7 +100,7 @@ pub(crate) const SIZED_TYPES: &[&str] = &[
 	"EnvironmentBlendingMediaFeature",
 	"EnvironmentBlendingMediaFeatureKeyword",
 	"Error",
-	"EventTriggerEvent",
+	"EventFunction",
 	"Exact",
 	"FallbackStyleValue",
 	"FeatureCondition",

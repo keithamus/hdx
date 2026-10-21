@@ -6,7 +6,6 @@
 "DisplayOutsideDisplayInside" = "DisplayOutsideInside"
 "SpellOutDigitsLiteralPunctuationNoPunctuation" = "SpellOutOrDigits"
 "FilledOpenDotCircleDoubleCircleTriangleSesame" = "FillShape"
-"StringCounterAttrFunction" = "ContentAltItem"
 "ClipEllipsisStringFadeFadeFunction" = "TextOverflowSingleAxis"
 "LeftCenterRightTopBottomLengthPercentage" = "PositionOne"
 "LightDarkCustomIdent" = "ColorSchemeName"

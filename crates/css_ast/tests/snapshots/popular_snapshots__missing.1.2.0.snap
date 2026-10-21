@@ -38864,13 +38864,13 @@ StyleSheet(
                                 kind: "Delim",
                                 offset: SourceOffset(28964),
                                 len: 1,
-                              ))), [
+                              ))), Literal(AltText([
                                 String(String(Cursor(
                                   kind: "String",
                                   offset: SourceOffset(28966),
                                   len: 2,
                                 ))),
-                              ]))),
+                              ]))))),
                               important: None,
                               semicolon: Some(Semicolon(Cursor(
                                 kind: "Semicolon",
