@@ -106,7 +106,7 @@ impl_value_slot_parse!(CalcableValue, CalcableSubstitutionFunction, T);
 #[cfg_attr(feature = "visitable", derive(Visitable), visit(children))]
 #[derive(csskit_derives::NodeWithMetadata)]
 pub enum CalcableSubstitutionFunction<'a, T> {
-	Math(MathFunction<'a, T>),
+	Math(Box<'a, MathFunction<'a, T>>),
 	Var(VarFunction<'a, CalcableValue<'a, T>>),
 	Env(EnvFunction<'a, CalcableValue<'a, T>>),
 	Attr(Box<'a, AttrFunction<'a>>),
@@ -143,7 +143,7 @@ impl_value_slot_parse!(NumericValue, NumericSubstitutionFunction, T);
 #[derive(csskit_derives::NodeWithMetadata)]
 pub enum NumericSubstitutionFunction<'a, T> {
 	TreeCounting(TreeCountingFunction),
-	Math(MathFunction<'a, T>),
+	Math(Box<'a, MathFunction<'a, T>>),
 	Var(VarFunction<'a, NumericValue<'a, T>>),
 	Env(EnvFunction<'a, NumericValue<'a, T>>),
 	Attr(Box<'a, AttrFunction<'a>>),
