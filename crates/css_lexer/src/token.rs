@@ -171,6 +171,12 @@ use std::char::REPLACEMENT_CHARACTER;
 /// that this restriction means that ID selectors have a much tigher limit than other tokens, such as strings or
 /// idents, but it's very unlikely to see a 16million character ID in CSS (String, maybe).
 ///
+/// ### Value Data for [Kind::Delim] and single character tokens
+///
+/// If the [Kind] is [Kind::Delim] (which includes the single character tokens [Kind::Colon]->[Kind::RightCurly]),
+/// Value Data stores the [Kind] the [char] resolves to, XORed with [Kind::Delim]. A plain [Kind::Delim] has empty Value
+/// Data, so [Token::kind()] resolves single character tokens without looking at the [char].
+///
 /// ### Value Data for [Kind::Url]
 ///
 /// If the [Kind] is [Kind::Url], Value Data represents the "leading length" and "trailing length" of the URL. This
@@ -421,7 +427,19 @@ impl Token {
 	/// Creates a "Dummy" token with no additional data, just the [Kind].
 	#[inline]
 	pub const fn dummy(kind: Kind) -> Self {
-		Self((kind as u32) << 24, 0).with_bad_flag()
+		let char = match kind {
+			Kind::Colon => ':',
+			Kind::Semicolon => ';',
+			Kind::Comma => ',',
+			Kind::LeftSquare => '[',
+			Kind::RightSquare => ']',
+			Kind::LeftParen => '(',
+			Kind::RightParen => ')',
+			Kind::LeftCurly => '{',
+			Kind::RightCurly => '}',
+			_ => return Self((kind as u32) << 24, 0).with_bad_flag(),
+		};
+		Self::new_delim(char).with_bad_flag()
 	}
 
 	/// Creates a "Dummy" token with no additional data, just [Kind::Ident].
@@ -613,14 +631,23 @@ impl Token {
 	#[inline]
 	pub(crate) const fn new_delim(char: char) -> Self {
 		let flags: u32 = Kind::Delim as u32;
-		Self((flags << 24) & KIND_MASK, char as u32)
+		Self((flags << 24) & KIND_MASK | Self::delim_value_data(char), char as u32)
 	}
 
 	/// Creates a new [Kind::Delim] token with associated whitespace.
 	#[inline]
 	pub(crate) const fn new_delim_with_associated_whitespace(char: char, rules: AssociatedWhitespaceRules) -> Self {
 		let flags: u32 = Kind::Delim as u32 | ((rules.to_bits() as u32) << 5);
-		Self((flags << 24) & KIND_MASK, char as u32)
+		Self((flags << 24) & KIND_MASK | Self::delim_value_data(char), char as u32)
+	}
+
+	const fn delim_value_data(char: char) -> u32 {
+		let code_point = char as usize;
+		if code_point < SINGLE_CHAR_KINDS.len() {
+			(SINGLE_CHAR_KINDS[code_point] as u32) ^ (Kind::Delim as u32)
+		} else {
+			0
+		}
 	}
 
 	/// \[private\]
@@ -642,13 +669,8 @@ impl Token {
 	/// Returns the [Kind].
 	#[inline]
 	pub const fn kind(&self) -> Kind {
-		let kind_bits = if self.kind_bits() & 0b1111 == Kind::Delim as u8 {
-			let c = self.char().unwrap() as usize;
-			if c < 127 { SINGLE_CHAR_KINDS[c] as u8 } else { Kind::Delim as u8 }
-		} else {
-			self.kind_bits()
-		};
-		Kind::from_bits(if self.is_bad() { kind_bits | 0b1_0000 } else { kind_bits })
+		let delim_value_data = if self.is_delim_like() { self.0 as u8 } else { 0 };
+		Kind::from_bits(self.kind_bits() ^ delim_value_data)
 	}
 
 	/// Check if the TF upper-most bit is set.
@@ -1428,6 +1450,33 @@ fn test_new_delim() {
 	assert_eq!(Token::new_delim('💣').len(), 4);
 	assert_eq!(Token::new_delim('💣').len(), 4);
 	assert_eq!(Token::new_delim('💣').len(), 4);
+}
+
+#[test]
+fn test_delim_like_kinds() {
+	for (char, kind, bad_kind) in [
+		(':', Kind::Colon, Kind::BadColon),
+		(';', Kind::Semicolon, Kind::BadSemicolon),
+		(',', Kind::Comma, Kind::BadComma),
+		('[', Kind::LeftSquare, Kind::BadLeftSquare),
+		(']', Kind::RightSquare, Kind::BadRightSquare),
+		('(', Kind::LeftParen, Kind::BadLeftParen),
+		(')', Kind::RightParen, Kind::BadRightParen),
+		('{', Kind::LeftCurly, Kind::BadLeftCurly),
+		('}', Kind::RightCurly, Kind::BadRightCurly),
+		('\0', Kind::Delim, Kind::BadDelim),
+		('>', Kind::Delim, Kind::BadDelim),
+		('\x7f', Kind::Delim, Kind::BadDelim),
+		('💣', Kind::Delim, Kind::BadDelim),
+	] {
+		let token = Token::new_delim(char);
+		assert_eq!(token.kind(), kind);
+		assert_eq!(token.with_bad_flag().kind(), bad_kind);
+		assert_eq!(Token::dummy(kind).kind(), bad_kind);
+		let spaced = token.with_associated_whitespace(AssociatedWhitespaceRules::EnforceBefore);
+		assert_eq!(spaced.kind(), kind);
+		assert_eq!(spaced, char);
+	}
 }
 
 #[test]
