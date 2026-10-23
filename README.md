@@ -13,6 +13,11 @@
   <a href="https://github.com/csskit/csskit/blob/main/LICENSE">
 		<img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License">
 	</a>
+	<a href="https://github.com/keithamus/homebrew-tap/blob/main/Formula/csskit.rb">
+		<img src="https://img.shields.io/badge/dynamic/regex?url=https%3A%2F%2Fraw.githubusercontent.com%2Fkeithamus%2Fhomebrew-tap%2Fmain%2FFormula%2Fcsskit.rb&search=%2Fv(%5Cd%2B%5C.%5Cd%2B%5C.%5Cd%2B)%2F&replace=v%241&label=brew" alt="csskit on Homebrew">
+	</a><a href="https://aur.archlinux.org/packages/csskit-bin">
+		<img src="https://img.shields.io/aur/version/csskit-bin" alt="csskit on the AUR">
+	</a>
 </p>
 
 > [!WARNING]
