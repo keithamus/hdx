@@ -1,4 +1,63 @@
-## [0.0.35] - 2026-10-07
+## [0.0.36] - 2026-10-24
+
+### Other Changes
+- Chore(deps): update dependencies (patch) (#1585) ([#1585](https://github.com/csskit/csskit/pull/1585))
+- README: Add homebrew/aur badges (#1596) ([#1596](https://github.com/csskit/csskit/pull/1596))
+
+
+### Chromashift
+- chromashift: Preserve saturation for out-of-range lightness in Hsl (#1558) ([#1558](https://github.com/csskit/csskit/pull/1558))
+- chromashift: Keep a half turn's direction for longer hue interpolation (#1566) ([#1566](https://github.com/csskit/csskit/pull/1566))
+- chromashift/css_ast: Add InterpolationSpace, deduplicate colour mixing (#1577) ([#1577](https://github.com/csskit/csskit/pull/1577))
+
+
+### Css_ast
+- css_ast: Add conic gradients, new gradient syntax (#1567) ([#1567](https://github.com/csskit/csskit/pull/1567))
+- css_ast: Parse legacy min/max container size features (#1569) ([#1569](https://github.com/csskit/csskit/pull/1569))
+- css_ast: Ensure invalid Hex Colors don't parse (#1570) ([#1570](https://github.com/csskit/csskit/pull/1570))
+- css_ast/csskit_transform: Preserve "none" alpha when mixing colours (#1571) ([#1571](https://github.com/csskit/csskit/pull/1571))
+- css_parse/css_ast: Allow math functions and env() in query feature values (#1572) ([#1572](https://github.com/csskit/csskit/pull/1572))
+- css_parse/css_ast: Add custom media queries (#1573) ([#1573](https://github.com/csskit/csskit/pull/1573))
+- css_ast: Mark color-mix() as a Color value kind (#1575) ([#1575](https://github.com/csskit/csskit/pull/1575))
+- css_ast: Lazily call spans for non-transparent VisitNode (#1579) ([#1579](https://github.com/csskit/csskit/pull/1579))
+- css_ast: Visit gradient children (#1582) ([#1582](https://github.com/csskit/csskit/pull/1582))
+- css_parse/css_ast: Arena-box large enum variants (#1590) ([#1590](https://github.com/csskit/csskit/pull/1590))
+- css_feature_data/csskit_derives: Report unsupported browsers and features (#1592) ([#1592](https://github.com/csskit/csskit/pull/1592))
+- Regenerate css_ast/src/values from csswg drafts (#1584) ([#1584](https://github.com/csskit/csskit/pull/1584))
+- css_ast: Box more types (#1593) ([#1593](https://github.com/csskit/csskit/pull/1593))
+- css_parse/css_ast: Bound ranged feature name lookahead to u8::MAX tokens (#1589) ([#1589](https://github.com/csskit/csskit/pull/1589))
+
+
+### Css_feature_data
+- css_feature_data: drop Chrono/browserslist-rs default features (#1591) ([#1591](https://github.com/csskit/csskit/pull/1591))
+
+
+### Css_lexer
+- css_lexer: Use a LUT for Kind::from_bits (#1578) ([#1578](https://github.com/csskit/csskit/pull/1578))
+- css_lexer: Resolve delim token kinds from value data (#1594) ([#1594](https://github.com/csskit/csskit/pull/1594))
+
+
+### Css_parse
+- css_parse: Stop recomputing cursor spans in overlay and interleave sinks (#1580) ([#1580](https://github.com/csskit/csskit/pull/1580))
+- css_parse: Hoist token kind CursorCompactWriteSink::write (#1583) ([#1583](https://github.com/csskit/csskit/pull/1583))
+
+
+### Csskit
+- chore(deps): update dependencies (patch) (#1507) ([#1507](https://github.com/csskit/csskit/pull/1507))
+
+
+### Csskit_transform
+- coverage: update css-minify-tests (#1565) ([#1565](https://github.com/csskit/csskit/pull/1565))
+
+
+### Csskit_vscode
+- fix(deps): update dependency vscode-languageclient to v11 (#1595) ([#1595](https://github.com/csskit/csskit/pull/1595))
+
+
+### Source_tools
+- source_tools: Fix empty Vec to_span (#1581) ([#1581](https://github.com/csskit/csskit/pull/1581))
+
+## [0.0.35] - 2026-10-11
 
 ### Other Changes
 - Chore(deps): update dependencies to v1.49.0 (#1546) ([#1546](https://github.com/csskit/csskit/pull/1546))
@@ -7,10 +66,15 @@
 ### Chromashift
 - chromashift: model RGB colour spaces as first class values (#1553) ([#1553](https://github.com/csskit/csskit/pull/1553))
 - chromashift: Align serialisation to CSS Spec (#1555) ([#1555](https://github.com/csskit/csskit/pull/1555))
+- chromashift: Simplify srgb by storing as f64s, allowing extended ranges (#1557) ([#1557](https://github.com/csskit/csskit/pull/1557))
 
 
 ### Css_ast
 - Regenerate css_ast/src/values from csswg drafts (#1545) ([#1545](https://github.com/csskit/csskit/pull/1545))
+
+
+### Csskit
+- Release v0.0.35 (#1552) ([#1552](https://github.com/csskit/csskit/pull/1552))
 
 
 ### Csskit_vscode
