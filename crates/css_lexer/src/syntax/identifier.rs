@@ -1,6 +1,6 @@
 use super::{
 	is_escape_sequence,
-	tables::{ASCII_LOWER_OR_DIGIT, ASCII_START, BYTE_IS_IDENT},
+	tables::{ASCII_START, BYTE_IS_IDENT},
 };
 
 #[inline(always)]
@@ -37,11 +37,6 @@ pub fn is_ident(c: char) -> bool {
 		return is_ident_byte(c as u8);
 	}
 	is_non_ascii(c)
-}
-
-#[inline(always)]
-pub const fn is_ident_ascii_lower_or_digit(c: char) -> bool {
-	c.is_ascii() && ASCII_LOWER_OR_DIGIT.0[c as usize]
 }
 
 #[inline(always)]

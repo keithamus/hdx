@@ -19,6 +19,16 @@ impl<const N: usize> SmallStrBuf<N> {
 	}
 
 	#[inline]
+	pub fn append_str(&mut self, s: &str) {
+		let n = self.0 as usize;
+		let end = n + s.len();
+		if let Some(dst) = self.1.get_mut(n..end) {
+			dst.copy_from_slice(s.as_bytes());
+		}
+		self.0 = end.min(u8::MAX as usize) as u8;
+	}
+
+	#[inline]
 	pub const fn over_capacity(&self) -> bool {
 		self.0 >= N as u8
 	}

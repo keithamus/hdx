@@ -1472,6 +1472,43 @@ fn tokenizes_atoms_correctly() {
 }
 
 #[test]
+fn tokenizes_escaped_idents_from_plain_runs_and_escapes() {
+	#[derive(DeriveAtomSet, Debug, Default, PartialEq, Copy, Clone)]
+	enum CustomAtom {
+		#[default]
+		Empty,
+		Foo,
+		Bar,
+		Baz,
+	}
+
+	static CUSTOM_ATOMS: CustomAtom = CustomAtom::Empty;
+	for (source, atom, lower, dashed) in [
+		("f\\6f o", CustomAtom::Foo, true, false),
+		("b\\61r", CustomAtom::Bar, true, false),
+		("\\62 az", CustomAtom::Baz, true, false),
+		("ba\\z", CustomAtom::Baz, true, false),
+		("b\\41r", CustomAtom::Bar, true, false),
+		("Ba\\r", CustomAtom::Bar, false, false),
+		("a\\:b_c", CustomAtom::Empty, false, false),
+		("a\\:b-c", CustomAtom::Empty, true, false),
+		("--a\\:b", CustomAtom::Empty, true, true),
+		("sm\\:hover\\:bg-blue-500", CustomAtom::Empty, true, false),
+		("caf\u{e9}\\:x", CustomAtom::Empty, false, false),
+	] {
+		let mut lexer = Lexer::new(&CUSTOM_ATOMS, source);
+		let token = lexer.advance();
+		assert_eq!(token, Kind::Ident, "{source:?}");
+		assert_eq!(token.len() as usize, source.len(), "{source:?}");
+		assert!(token.contains_escape_chars(), "{source:?}");
+		assert_eq!(CustomAtom::from_bits(token.atom_bits()), atom, "{source:?}");
+		assert_eq!(token.is_lower_case(), lower, "{source:?}");
+		assert_eq!(token.is_dashed_ident(), dashed, "{source:?}");
+		assert_eq!(lexer.advance(), Kind::Eof, "{source:?}");
+	}
+}
+
+#[test]
 fn tokenizes_escaped_dimensions_into_token_bytes() {
 	#[derive(DeriveAtomSet, Debug, Default, PartialEq, Copy, Clone)]
 	enum CustomAtom {
