@@ -38,6 +38,7 @@ pub(crate) const SIZED_TYPES: &[&str] = &[
 	"CalcProductOperator",
 	"CalcSizeOperand",
 	"CalcSumOperator",
+	"Channel",
 	"CharsetRule",
 	"Class",
 	"ClipSource",
