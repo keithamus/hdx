@@ -24,10 +24,10 @@ pub struct SnapInlineFunction<'a> {
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 #[derive(csskit_derives::NodeWithMetadata)]
 pub struct SnapInlineFunctionParams<'a>(
-	CalcableValue<'a, LengthPercentage>,
-	#[semantic_eq(skip)] Option<T![,]>,
-	Option<SnapInlineKeyword>,
-	#[semantic_eq(skip)] Option<T![,]>,
+	pub CalcableValue<'a, LengthPercentage>,
+	#[semantic_eq(skip)] pub Option<T![,]>,
+	pub Option<SnapInlineKeyword>,
+	#[semantic_eq(skip)] pub Option<T![,]>,
 );
 
 #[node]

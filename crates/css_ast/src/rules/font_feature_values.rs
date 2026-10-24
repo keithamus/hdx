@@ -45,7 +45,7 @@ pub struct FontFeatureValuesPrelude<'a>(pub CommaSeparated<'a, FontFamilyName<'a
 #[cfg_attr(feature = "visitable", derive(csskit_derives::Visitable), visit(children))]
 #[derive(csskit_derives::NodeWithMetadata)]
 pub struct FontFeatureValuesRuleBlock<'a>(
-	Block<'a, FontFeatureValuesRuleStyleValue<'a>, FontFeatureValueTypeRule<'a>, CssMetadata>,
+	pub Block<'a, FontFeatureValuesRuleStyleValue<'a>, FontFeatureValueTypeRule<'a>, CssMetadata>,
 );
 
 /// The descriptors allowed directly inside an [`FontFeatureValuesRule`] block.
@@ -202,7 +202,7 @@ impl<'a> Parse<'a> for FontFeatureValueTypeRule<'a> {
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 #[cfg_attr(feature = "visitable", derive(csskit_derives::Visitable), visit(children))]
 #[derive(csskit_derives::NodeWithMetadata)]
-pub struct FontFeatureValueBlock<'a>(DeclarationList<'a, FontFeatureValue<'a>, CssMetadata>);
+pub struct FontFeatureValueBlock<'a>(pub DeclarationList<'a, FontFeatureValue<'a>, CssMetadata>);
 
 /// The block of `@character-variant`, each declaration of which takes one or two `<font-feature-index>`es.
 #[node]
@@ -210,7 +210,7 @@ pub struct FontFeatureValueBlock<'a>(DeclarationList<'a, FontFeatureValue<'a>, C
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 #[cfg_attr(feature = "visitable", derive(csskit_derives::Visitable), visit(children))]
 #[derive(csskit_derives::NodeWithMetadata)]
-pub struct FontFeatureValuePairBlock<'a>(DeclarationList<'a, FontFeatureValuePair<'a>, CssMetadata>);
+pub struct FontFeatureValuePairBlock<'a>(pub DeclarationList<'a, FontFeatureValuePair<'a>, CssMetadata>);
 
 /// The block of `@styleset`, each declaration of which takes any number of `<font-feature-index>`es.
 #[node]
@@ -218,7 +218,7 @@ pub struct FontFeatureValuePairBlock<'a>(DeclarationList<'a, FontFeatureValuePai
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 #[cfg_attr(feature = "visitable", derive(csskit_derives::Visitable), visit(children))]
 #[derive(csskit_derives::NodeWithMetadata)]
-pub struct FontFeatureValueListBlock<'a>(DeclarationList<'a, FontFeatureValueList<'a>, CssMetadata>);
+pub struct FontFeatureValueListBlock<'a>(pub DeclarationList<'a, FontFeatureValueList<'a>, CssMetadata>);
 
 /// ```text,ignore
 /// <font-feature-index> = <integer [0,∞]>

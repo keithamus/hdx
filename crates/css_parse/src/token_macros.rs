@@ -319,7 +319,7 @@ macro_rules! custom_double_delim {
 		$(#[$meta])*
 		#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 		#[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
-		pub struct $ident($crate::T![Delim], pub $crate::T![Delim]);
+		pub struct $ident(pub $crate::T![Delim], pub $crate::T![Delim]);
 
 		impl $ident {
 			pub const fn dummy() -> Self {

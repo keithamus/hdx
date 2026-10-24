@@ -14,7 +14,7 @@ use crate::StripesFunction;
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 #[cfg_attr(feature = "visitable", derive(csskit_derives::Visitable), visit)]
 #[derive(csskit_derives::NodeWithMetadata)]
-pub struct Image1d<'a>(StripesFunction<'a>);
+pub struct Image1d<'a>(pub StripesFunction<'a>);
 
 #[cfg(test)]
 mod tests {

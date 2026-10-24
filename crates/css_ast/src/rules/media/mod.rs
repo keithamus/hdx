@@ -75,11 +75,11 @@ pub enum MediaPreCondition {
 #[cfg_attr(feature = "visitable", derive(csskit_derives::Visitable))]
 #[derive(csskit_derives::NodeWithMetadata)]
 pub struct MediaQuery<'a> {
-	precondition: Option<MediaPreCondition>,
-	media_type: Option<MediaType>,
+	pub precondition: Option<MediaPreCondition>,
+	pub media_type: Option<MediaType>,
 	#[cfg_attr(feature = "visitable", visit(skip))]
-	and: Option<T![Ident]>,
-	condition: Option<MediaCondition<'a>>,
+	pub and: Option<T![Ident]>,
+	pub condition: Option<MediaCondition<'a>>,
 }
 
 impl<'a> Peek<'a> for MediaQuery<'a> {

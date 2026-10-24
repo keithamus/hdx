@@ -70,7 +70,7 @@ impl ColorProfilePrelude {
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 #[cfg_attr(feature = "visitable", derive(csskit_derives::Visitable))]
 #[derive(csskit_derives::NodeWithMetadata)]
-pub struct ColorProfileRuleBlock<'a>(DeclarationList<'a, ColorProfileRuleStyleValue<'a>, CssMetadata>);
+pub struct ColorProfileRuleBlock<'a>(pub DeclarationList<'a, ColorProfileRuleStyleValue<'a>, CssMetadata>);
 
 #[node]
 #[derive(ToSpan, ToCursors, SemanticEq, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -89,7 +89,7 @@ pub enum ColorProfileRuleStyleValue<'a> {
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 #[cfg_attr(feature = "visitable", derive(csskit_derives::Visitable), visit)]
 #[derive(csskit_derives::NodeWithMetadata)]
-pub struct ColorProfileSrcValue(Url);
+pub struct ColorProfileSrcValue(pub Url);
 
 #[node]
 #[derive(

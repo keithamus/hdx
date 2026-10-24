@@ -26,10 +26,10 @@ pub struct AttrFunction<'a> {
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 #[derive(csskit_derives::NodeWithMetadata)]
 pub struct AttrFunctionParams<'a>(
-	AttrName,
-	Option<AttrType<'a>>,
-	#[semantic_eq(skip)] Option<T![,]>,
-	Option<ComponentValues<'a>>,
+	pub AttrName,
+	pub Option<AttrType<'a>>,
+	#[semantic_eq(skip)] pub Option<T![,]>,
+	pub Option<ComponentValues<'a>>,
 );
 
 /// ```text,ignore

@@ -32,7 +32,7 @@ pub struct LayerNameList<'a>(pub CommaSeparated<'a, LayerName<'a>, 0>);
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 #[cfg_attr(feature = "visitable", derive(csskit_derives::Visitable), visit(self))]
 #[derive(csskit_derives::NodeWithMetadata)]
-pub struct LayerName<'a>(T![Ident], Vec<'a, (T![.], T![Ident])>);
+pub struct LayerName<'a>(pub T![Ident], pub Vec<'a, (T![.], T![Ident])>);
 
 impl<'a> Parse<'a> for LayerName<'a> {
 	fn parse<I>(p: &mut Parser<'a, I>) -> ParserResult<Self>

@@ -7,7 +7,7 @@ use csskit_derives::*;
 #[derive(Parse, Peek, ToCursors, ToSpan, SemanticEq, Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 #[derive(csskit_derives::NodeWithMetadata)]
-pub struct CustomMediaFeature(T!['('], T![DashedIdent], #[semantic_eq(skip)] T![')']);
+pub struct CustomMediaFeature(pub T!['('], pub T![DashedIdent], #[semantic_eq(skip)] pub T![')']);
 
 #[cfg(test)]
 mod tests {
