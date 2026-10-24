@@ -46,7 +46,7 @@ impl TestVisitor {
 #[cfg(feature = "visitable")]
 macro_rules! visit_mut_trait {
 	( $(
-		$name: ident$(<$($gen:tt),+>)?($obj: ident$(<$($ogen:tt),+>)?),
+		$name: ident$(<$($gen:tt),+>)?($obj: ident$(<$($ogen:tt),+>)?) [$($tp: ident),*],
 	)+ ) => {
 		impl $crate::VisitMut for TestVisitor {
 			$(
