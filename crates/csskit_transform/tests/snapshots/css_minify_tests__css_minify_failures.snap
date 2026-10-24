@@ -221,17 +221,9 @@ FAIL color-rounding/0006
 -a{color:lch(54.3 100.5 274.5/.746);background-color:lab(54.3 -60.5 70.8)}
 +a{color:lch(54.3 100.5 274.5/.746);background-color:lab(54.3-60.5 70.8)}
 
-FAIL color-rounding/0014
--a{color:oklch(70 .312 150)}
-+a{color:oklch(.7 .312 150)}
-
 FAIL color-rounding/0015
--a{color:oklch(.7 120 150.1)}
+-a{color:oklch(.7 .32 150.1)}
 +a{color:oklch(.7 80%150.1)}
-
-FAIL color-rounding/0016
--a{color:oklch(.7 150 150.1)}
-+a{color:oklch(.7 .4 150.1)}
 
 FAIL colors/0029
 -a{color:color-mix(in oklch,rgba(255,255,255,1),var(--foo))}
@@ -272,10 +264,6 @@ FAIL colors/0055
 FAIL colors/0056
 -a{--red:#f01;--h:10;color:hsl(from var(--red) calc(var(--h)) calc(s * 2) calc(l + 1) / .6)}
 +a{--red:#f01;--h:10;color:hsl(from var(--red)calc(var(--h))calc(s*2)calc(l + 1)/.6)}
-
-FAIL colors/0067
--.b{color:oklch(62.796 .258 29.2);background:oklch(78.619 .064 74.6)}
-+.b{color:red;background:tan}
 
 FAIL combined/0001
 -div,span,:where(td):where(.error){border:1px dashed red;color:red}:is(div,span){border-color:red;border-style:dashed;border-width:1px;color:red}

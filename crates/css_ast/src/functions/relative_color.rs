@@ -778,7 +778,7 @@ mod chromashift_impl {
 	fn resolve_channel<K, O: ChannelMap<K>>(
 		v: &RelativeChannelValue<'_, K>,
 		origin: &O,
-		pct_scale: f32,
+		from_percent: fn(f64) -> f64,
 	) -> Option<f32> {
 		match v {
 			RelativeChannelValue::Keyword(kw) => Some(origin.channel(kw)),
@@ -787,7 +787,7 @@ mod chromashift_impl {
 				Some(n.value())
 			}
 			RelativeChannelValue::Value(NoneOr::Some(NumericValue::Literal(NumberOrPercentage::Percentage(p)))) => {
-				Some(p.value() / 100.0 * pct_scale)
+				Some(from_percent(p.value() as f64) as f32)
 			}
 			RelativeChannelValue::Value(NoneOr::Some(_)) => None,
 		}
@@ -839,9 +839,9 @@ mod chromashift_impl {
 	fn rgb_relative_params_to_chromashift(params: &RgbRelativeParams<'_>) -> Option<Color> {
 		let origin = params.origin.color.to_chromashift()?;
 		let srgb = Srgb::from(origin);
-		let red = resolve_channel(&params.red, &srgb, 255.0)? as f64 / 255.0;
-		let green = resolve_channel(&params.green, &srgb, 255.0)? as f64 / 255.0;
-		let blue = resolve_channel(&params.blue, &srgb, 255.0)? as f64 / 255.0;
+		let red = resolve_channel(&params.red, &srgb, |percent| percent / 100.0 * 255.0)? as f64 / 255.0;
+		let green = resolve_channel(&params.green, &srgb, |percent| percent / 100.0 * 255.0)? as f64 / 255.0;
+		let blue = resolve_channel(&params.blue, &srgb, |percent| percent / 100.0 * 255.0)? as f64 / 255.0;
 		let alpha = params.alpha.as_ref().map_or(Some(100.0), |a| resolve_alpha(a, &srgb))?;
 		Some(Color::Srgb(Srgb::new(red, green, blue, alpha)))
 	}
@@ -862,8 +862,8 @@ mod chromashift_impl {
 		let origin = params.origin.color.to_chromashift()?;
 		let hsl = Hsl::from(origin);
 		let hue = resolve_hue_channel(&params.hue, &hsl)?;
-		let saturation = resolve_channel(&params.saturation, &hsl, 100.0)?;
-		let lightness = resolve_channel(&params.lightness, &hsl, 100.0)?;
+		let saturation = resolve_channel(&params.saturation, &hsl, |percent| percent)?;
+		let lightness = resolve_channel(&params.lightness, &hsl, |percent| percent)?;
 		let alpha = params.alpha.as_ref().map_or(Some(100.0), |a| resolve_alpha(a, &hsl))?;
 		Some(Color::Hsl(Hsl::new(hue.into(), saturation.into(), lightness.into(), alpha)))
 	}
@@ -885,8 +885,8 @@ mod chromashift_impl {
 			let origin = self.params.origin.color.to_chromashift()?;
 			let hwb = Hwb::from(origin);
 			let hue = resolve_hue_channel(&self.params.hue, &hwb)?;
-			let whiteness = resolve_channel(&self.params.whiteness, &hwb, 100.0)?;
-			let blackness = resolve_channel(&self.params.blackness, &hwb, 100.0)?;
+			let whiteness = resolve_channel(&self.params.whiteness, &hwb, |percent| percent)?;
+			let blackness = resolve_channel(&self.params.blackness, &hwb, |percent| percent)?;
 			let alpha = self.params.alpha.as_ref().map_or(Some(100.0), |a| resolve_alpha(a, &hwb))?;
 			Some(Color::Hwb(Hwb::new(hue.into(), whiteness.into(), blackness.into(), alpha)))
 		}
@@ -896,9 +896,9 @@ mod chromashift_impl {
 		fn to_chromashift(&self) -> Option<Color> {
 			let origin = self.params.origin.color.to_chromashift()?;
 			let lab = Lab::from(origin);
-			let l = resolve_channel(&self.params.l, &lab, 100.0)? as f64;
-			let a = resolve_channel(&self.params.a, &lab, 125.0)? as f64;
-			let b = resolve_channel(&self.params.b, &lab, 125.0)? as f64;
+			let l = resolve_channel(&self.params.l, &lab, Lab::lightness_from_percent)? as f64;
+			let a = resolve_channel(&self.params.a, &lab, Lab::ab_from_percent)? as f64;
+			let b = resolve_channel(&self.params.b, &lab, Lab::ab_from_percent)? as f64;
 			let alpha = self.params.alpha.as_ref().map_or(Some(lab.alpha), |ch| resolve_alpha(ch, &lab))?;
 			Some(Color::Lab(Lab::new(l, a, b, alpha)))
 		}
@@ -908,8 +908,8 @@ mod chromashift_impl {
 		fn to_chromashift(&self) -> Option<Color> {
 			let origin = self.params.origin.color.to_chromashift()?;
 			let lch = Lch::from(origin);
-			let lightness = resolve_channel(&self.params.lightness, &lch, 100.0)? as f64;
-			let chroma = resolve_channel(&self.params.chroma, &lch, 150.0)? as f64;
+			let lightness = resolve_channel(&self.params.lightness, &lch, Lch::lightness_from_percent)? as f64;
+			let chroma = resolve_channel(&self.params.chroma, &lch, Lch::chroma_from_percent)? as f64;
 			let hue = resolve_hue_channel(&self.params.hue, &lch)? as f64;
 			let alpha = self.params.alpha.as_ref().map_or(Some(lch.alpha), |ch| resolve_alpha(ch, &lch))?;
 			Some(Color::Lch(Lch::new(lightness, chroma, hue, alpha)))
@@ -920,9 +920,9 @@ mod chromashift_impl {
 		fn to_chromashift(&self) -> Option<Color> {
 			let origin = self.params.origin.color.to_chromashift()?;
 			let oklab = Oklab::from(origin);
-			let l = resolve_channel(&self.params.l, &oklab, 1.0)? as f64;
-			let a = resolve_channel(&self.params.a, &oklab, 0.4)? as f64;
-			let b = resolve_channel(&self.params.b, &oklab, 0.4)? as f64;
+			let l = resolve_channel(&self.params.l, &oklab, Oklab::lightness_from_percent)? as f64;
+			let a = resolve_channel(&self.params.a, &oklab, Oklab::ab_from_percent)? as f64;
+			let b = resolve_channel(&self.params.b, &oklab, Oklab::ab_from_percent)? as f64;
 			let alpha = self.params.alpha.as_ref().map_or(Some(oklab.alpha), |ch| resolve_alpha(ch, &oklab))?;
 			Some(Color::Oklab(Oklab::new(l, a, b, alpha)))
 		}
@@ -932,8 +932,8 @@ mod chromashift_impl {
 		fn to_chromashift(&self) -> Option<Color> {
 			let origin = self.params.origin.color.to_chromashift()?;
 			let oklch = Oklch::from(origin);
-			let lightness = resolve_channel(&self.params.lightness, &oklch, 1.0)? as f64;
-			let chroma = resolve_channel(&self.params.chroma, &oklch, 0.4)? as f64;
+			let lightness = resolve_channel(&self.params.lightness, &oklch, Oklch::lightness_from_percent)? as f64;
+			let chroma = resolve_channel(&self.params.chroma, &oklch, Oklch::chroma_from_percent)? as f64;
 			let hue = resolve_hue_channel(&self.params.hue, &oklch)? as f64;
 			let alpha = self.params.alpha.as_ref().map_or(Some(oklch.alpha), |ch| resolve_alpha(ch, &oklch))?;
 			Some(Color::Oklch(Oklch::new(lightness, chroma, hue, alpha)))

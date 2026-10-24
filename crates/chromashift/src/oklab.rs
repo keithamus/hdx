@@ -3,9 +3,9 @@ use core::fmt;
 
 /// A more adequate expression of LAB, in the CIE colour space.
 /// The components are:
-/// - L - a number between 0.0 and 100.0
-/// - A - a number between -128.0 and +127.0
-/// - B - a number between -128.0 and +127.0
+/// - L - a number between 0.0 and 1.0
+/// - A - a number between -0.4 and +0.4
+/// - B - a number between -0.4 and +0.4
 /// - Alpha - a number between 0.0 and 100.0
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Oklab {
@@ -18,6 +18,20 @@ pub struct Oklab {
 impl Oklab {
 	pub fn new(lightness: f64, a: f64, b: f64, alpha: f32) -> Self {
 		Self { lightness, a, b, alpha: alpha.clamp(0.0, 100.0) }
+	}
+
+	/// Converts a CSS `<percentage>` lightness to a lightness, where `100%` is `1.0`.
+	///
+	/// <https://drafts.csswg.org/css-color-4/#specifying-oklab-oklch>
+	pub fn lightness_from_percent(percent: f64) -> f64 {
+		percent / 100.0
+	}
+
+	/// Converts a CSS `<percentage>` `a` or `b` axis to an axis value, where `100%` is `0.4` and `-100%` is `-0.4`.
+	///
+	/// <https://drafts.csswg.org/css-color-4/#specifying-oklab-oklch>
+	pub fn ab_from_percent(percent: f64) -> f64 {
+		percent / 100.0 * 0.4
 	}
 }
 

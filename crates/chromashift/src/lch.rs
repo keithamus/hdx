@@ -19,6 +19,20 @@ impl Lch {
 	pub fn new(lightness: f64, chroma: f64, hue: f64, alpha: f32) -> Self {
 		Self { lightness, chroma, hue: hue.rem_euclid(360.0), alpha: alpha.clamp(0.0, 100.0) }
 	}
+
+	/// Converts a CSS `<percentage>` lightness to a lightness, where `100%` is `100.0`.
+	///
+	/// <https://drafts.csswg.org/css-color-4/#specifying-lab-lch>
+	pub fn lightness_from_percent(percent: f64) -> f64 {
+		Lab::lightness_from_percent(percent)
+	}
+
+	/// Converts a CSS `<percentage>` chroma to a chroma, where `100%` is `150.0`.
+	///
+	/// <https://drafts.csswg.org/css-color-4/#specifying-lab-lch>
+	pub fn chroma_from_percent(percent: f64) -> f64 {
+		percent / 100.0 * 150.0
+	}
 }
 
 impl ToAlpha for Lch {

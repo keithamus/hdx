@@ -24,6 +24,20 @@ impl Lab {
 	pub fn new(lightness: f64, a: f64, b: f64, alpha: f32) -> Self {
 		Self { lightness, a, b, alpha: alpha.clamp(0.0, 100.0) }
 	}
+
+	/// Converts a CSS `<percentage>` lightness to a lightness, where `100%` is `100.0`.
+	///
+	/// <https://drafts.csswg.org/css-color-4/#specifying-lab-lch>
+	pub fn lightness_from_percent(percent: f64) -> f64 {
+		percent
+	}
+
+	/// Converts a CSS `<percentage>` `a` or `b` axis to an axis value, where `100%` is `125.0` and `-100%` is `-125.0`.
+	///
+	/// <https://drafts.csswg.org/css-color-4/#specifying-lab-lch>
+	pub fn ab_from_percent(percent: f64) -> f64 {
+		percent / 100.0 * 125.0
+	}
 }
 
 impl ToAlpha for Lab {
