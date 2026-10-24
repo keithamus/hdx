@@ -94,11 +94,11 @@ macro_rules! apply_rules {
 #[derive(csskit_derives::NodeWithMetadata)]
 #[metadata(node_kinds = Unknown | Effective, property_kinds = Name)]
 pub struct UnknownAtRule<'a> {
-	name: T![AtKeyword],
-	prelude: UnknownAtRulePrelude<'a>,
-	block: Option<SimpleBlock<'a>>,
+	pub name: T![AtKeyword],
+	pub prelude: UnknownAtRulePrelude<'a>,
+	pub block: Option<SimpleBlock<'a>>,
 	#[semantic_eq(skip)]
-	semicolon: Option<T![;]>,
+	pub semicolon: Option<T![;]>,
 }
 
 #[node]
@@ -106,7 +106,7 @@ pub struct UnknownAtRule<'a> {
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 #[parse(stop = KindSet::LEFT_CURLY_OR_SEMICOLON)]
 #[derive(csskit_derives::NodeWithMetadata)]
-pub struct UnknownAtRulePrelude<'a>(ComponentValues<'a>);
+pub struct UnknownAtRulePrelude<'a>(pub ComponentValues<'a>);
 
 #[cfg(feature = "visitable")]
 impl<'a> QueryableNode for UnknownAtRule<'a> {
@@ -127,7 +127,7 @@ impl<'a> QueryableNode for UnknownAtRule<'a> {
 #[derive(csskit_derives::NodeWithMetadata)]
 #[metadata(node_kinds = Unknown | Effective)]
 pub struct UnknownQualifiedRule<'a>(
-	QualifiedRule<
+	pub  QualifiedRule<
 		'a,
 		UnknownRuleBlock<'a>,
 		StyleValue<'a>,

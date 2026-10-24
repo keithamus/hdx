@@ -24,10 +24,10 @@ pub struct SnapBlockFunction<'a> {
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 #[derive(csskit_derives::NodeWithMetadata)]
 pub struct SnapBlockFunctionParams<'a>(
-	CalcableValue<'a, LengthPercentage>,
-	#[semantic_eq(skip)] Option<T![,]>,
-	Option<SnapBlockKeyword>,
-	#[semantic_eq(skip)] Option<T![,]>,
+	pub CalcableValue<'a, LengthPercentage>,
+	#[semantic_eq(skip)] pub Option<T![,]>,
+	pub Option<SnapBlockKeyword>,
+	#[semantic_eq(skip)] pub Option<T![,]>,
 );
 
 #[node]

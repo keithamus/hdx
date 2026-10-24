@@ -47,7 +47,7 @@ pub struct CounterStyleName(T![Ident]);
 #[cfg_attr(feature = "visitable", derive(csskit_derives::Visitable))]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 #[derive(csskit_derives::NodeWithMetadata)]
-pub struct CounterStyleRuleBlock<'a>(DeclarationList<'a, CounterStyleRuleStyleValue<'a>, CssMetadata>);
+pub struct CounterStyleRuleBlock<'a>(pub DeclarationList<'a, CounterStyleRuleStyleValue<'a>, CssMetadata>);
 
 #[node]
 #[derive(ToSpan, ToCursors, SemanticEq, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -123,7 +123,7 @@ pub struct AdditiveSymbolsStyleValue<'a>;
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 #[cfg_attr(feature = "visitable", derive(csskit_derives::Visitable), visit)]
 #[derive(csskit_derives::NodeWithMetadata)]
-pub struct FallbackStyleValue(CounterStyleName);
+pub struct FallbackStyleValue(pub CounterStyleName);
 
 #[syntax(" <symbol> <symbol>? ")]
 #[derive(

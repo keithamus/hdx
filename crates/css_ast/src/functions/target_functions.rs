@@ -77,11 +77,11 @@ pub struct TargetCounterFunction<'a> {
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 #[derive(csskit_derives::NodeWithMetadata)]
 pub struct TargetCounterParams<'a>(
-	TargetCounterKind,
-	#[semantic_eq(skip)] Option<T![,]>,
-	T![Ident],
-	#[semantic_eq(skip)] Option<T![,]>,
-	Option<CounterStyle<'a>>,
+	pub TargetCounterKind,
+	#[semantic_eq(skip)] pub Option<T![,]>,
+	pub T![Ident],
+	#[semantic_eq(skip)] pub Option<T![,]>,
+	pub Option<CounterStyle<'a>>,
 );
 
 #[node]
@@ -102,13 +102,13 @@ pub struct TargetCountersFunction<'a> {
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 #[derive(csskit_derives::NodeWithMetadata)]
 pub struct TargetCountersParams<'a>(
-	TargetCounterKind,
-	#[semantic_eq(skip)] Option<T![,]>,
-	T![Ident],
-	#[semantic_eq(skip)] Option<T![,]>,
-	T![String],
-	#[semantic_eq(skip)] Option<T![,]>,
-	Option<CounterStyle<'a>>,
+	pub TargetCounterKind,
+	#[semantic_eq(skip)] pub Option<T![,]>,
+	pub T![Ident],
+	#[semantic_eq(skip)] pub Option<T![,]>,
+	pub T![String],
+	#[semantic_eq(skip)] pub Option<T![,]>,
+	pub Option<CounterStyle<'a>>,
 );
 
 #[node]
@@ -128,7 +128,11 @@ pub struct TargetTextFunction {
 #[derive(Parse, Peek, ToSpan, ToCursors, SemanticEq, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 #[derive(csskit_derives::NodeWithMetadata)]
-pub struct TargetTextParams(TargetCounterKind, #[semantic_eq(skip)] Option<T![,]>, Option<TextFunctionContent>);
+pub struct TargetTextParams(
+	pub TargetCounterKind,
+	#[semantic_eq(skip)] pub Option<T![,]>,
+	pub Option<TextFunctionContent>,
+);
 
 #[cfg(test)]
 mod tests {

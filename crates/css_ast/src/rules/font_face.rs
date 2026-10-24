@@ -25,7 +25,7 @@ pub struct FontFaceRule<'a> {
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 #[cfg_attr(feature = "visitable", derive(csskit_derives::Visitable), visit(children))]
 #[derive(csskit_derives::NodeWithMetadata)]
-pub struct FontFaceRuleBlock<'a>(DeclarationList<'a, FontFaceRuleStyleValue<'a>, CssMetadata>);
+pub struct FontFaceRuleBlock<'a>(pub DeclarationList<'a, FontFaceRuleStyleValue<'a>, CssMetadata>);
 
 /// The descriptors allowed inside a [`FontFaceRule`] block.
 #[node]

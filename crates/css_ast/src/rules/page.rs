@@ -93,7 +93,7 @@ impl ToSpecificity for PagePseudoClass {
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 #[cfg_attr(feature = "visitable", derive(csskit_derives::Visitable), visit(children))]
 #[derive(csskit_derives::NodeWithMetadata)]
-pub struct PageRuleBlock<'a>(Block<'a, StyleValue<'a>, MarginRule<'a>, CssMetadata>);
+pub struct PageRuleBlock<'a>(pub Block<'a, StyleValue<'a>, MarginRule<'a>, CssMetadata>);
 
 /// <https://drafts.csswg.org/cssom-1/#cssmarginrule>
 #[node]
@@ -194,7 +194,7 @@ impl<'a> RuleVariants<'a> for MarginRule<'a> {
 #[derive(Parse, Peek, ToSpan, ToCursors, SemanticEq, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize), serde())]
 #[cfg_attr(feature = "visitable", derive(csskit_derives::Visitable), visit(children))]
-pub struct MarginRuleBlock<'a>(DeclarationList<'a, StyleValue<'a>, CssMetadata>);
+pub struct MarginRuleBlock<'a>(pub DeclarationList<'a, StyleValue<'a>, CssMetadata>);
 
 #[cfg(test)]
 mod tests {

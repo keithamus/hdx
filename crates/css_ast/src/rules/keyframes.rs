@@ -80,7 +80,13 @@ pub struct KeyframesRuleBlock<'a>(pub RuleList<'a, Keyframe<'a>, CssMetadata>);
 #[derive(csskit_derives::NodeWithMetadata)]
 pub struct Keyframe<'a>(
 	#[metadata(block)]
-	QualifiedRule<'a, KeyframeSelectors<'a>, StyleValue<'a>, NoBlockAllowed<StyleValue<'a>, CssMetadata>, CssMetadata>,
+	pub  QualifiedRule<
+		'a,
+		KeyframeSelectors<'a>,
+		StyleValue<'a>,
+		NoBlockAllowed<StyleValue<'a>, CssMetadata>,
+		CssMetadata,
+	>,
 );
 
 #[node]
