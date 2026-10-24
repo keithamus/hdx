@@ -95,7 +95,10 @@ impl<'a> Parse<'a> for MediaQuery<'a> {
 		let mut media_type = None;
 		let mut and = None;
 		let mut condition = None;
-		if p.peek::<T!['(']>() {
+		let c = p.peek_n(1);
+		if p.peek::<T!['(']>()
+			|| (c == Kind::Ident && p.equals_atom(c, &CssAtomSet::Not) && p.peek_n(2) == Kind::LeftParen)
+		{
 			condition = Some(p.parse::<MediaCondition<'a>>()?);
 			return Ok(Self { precondition, media_type, and, condition });
 		}
@@ -341,6 +344,17 @@ mod tests {
 				media_type: Some(MediaType::Custom(_)),
 				and: None,
 				condition: None
+			}
+		);
+		assert_parse!(
+			CssAtomSet::ATOMS,
+			MediaQuery,
+			"not (prefers-color-scheme:dark)",
+			MediaQuery {
+				precondition: None,
+				media_type: None,
+				and: None,
+				condition: Some(MediaCondition::Not(_, MediaFeature::PrefersColorScheme(_)))
 			}
 		);
 		assert_parse!(
