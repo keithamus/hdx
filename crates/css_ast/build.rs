@@ -198,9 +198,10 @@ fn main() {
 			let visit_method_name = format_ident!("visit_{}", method_name);
 			let exit_method_name = format_ident!("exit_{}", method_name);
 			let (impl_generics, ty_generics, _) = node.generics().split_for_impl();
+			let type_params = node.generics().type_params().map(|param| &param.ident).collect::<Vec<_>>();
 			[
-				quote! { #visit_method_name #impl_generics (#ident #ty_generics) },
-				quote! { #exit_method_name #impl_generics (#ident #ty_generics) },
+				quote! { #visit_method_name #impl_generics (#ident #ty_generics) [#(#type_params),*] },
+				quote! { #exit_method_name #impl_generics (#ident #ty_generics) [#(#type_params),*] },
 			]
 		});
 		let source = quote! {

@@ -8,12 +8,12 @@ use css_parse::{
 	NodeWithMetadata, Optionals2, Optionals3, Optionals4, Optionals5, Parse, Peek, QualifiedRule, RuleList, Span,
 	ToCursors, ToSpan, syntax::BadDeclaration, token_macros,
 };
-use visit_flow::{VisitFlow, try_visit};
+use visit_flow::try_visit;
 
 /// The `#[visitor]` attribute: observer methods without a return type
 /// auto-descend. Re-exported so visitor consumers need only depend on `css_ast`.
 pub use csskit_derives::visitor;
-pub use visit_flow::{VisitAction, VisitBreak, VisitFlowExt};
+pub use visit_flow::{VisitAction, VisitBreak, VisitFlow, VisitFlowExt};
 
 mod root;
 mod visit_node;
@@ -25,7 +25,7 @@ use crate::*;
 
 macro_rules! visit_mut_trait {
 	( $(
-		$name: ident$(<$($gen:tt),+>)?($obj: ty),
+		$name: ident$(<$($gen:tt),+>)?($obj: ty) [$($tp: ident),*],
 	)+ ) => {
 		pub trait VisitMut: Sized {
 			fn visit_declaration<'a, T: DeclarationValue<'a, CssMetadata>>(&mut self, _rule: &mut Declaration<'a, T, CssMetadata>) {}
@@ -85,7 +85,7 @@ impl Visit for &mut (dyn NodeVisitor + '_) {}
 
 macro_rules! visit_trait {
 	( $(
-		$name: ident$(<$($gen:tt),+>)?($obj: ty),
+		$name: ident$(<$($gen:tt),+>)?($obj: ty) [$($tp: ident),*],
 	)+ ) => {
 		pub trait Visit: NodeVisitor + Sized {
 
@@ -118,7 +118,7 @@ macro_rules! visit_trait {
 			fn exit_feature<T: FeatureMetadata>(&mut self, _node: &T) {}
 
 			$(
-				fn $name$(<$($gen),+>)?(&mut self, _rule: &$obj) -> VisitFlow {
+				fn $name$(<$($gen),+>)?(&mut self, _rule: &$obj) -> VisitFlow where $($tp: Visitable + ToSpan,)* {
 					VisitFlow::DESCEND
 				}
 			)+
