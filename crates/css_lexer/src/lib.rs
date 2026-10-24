@@ -278,6 +278,25 @@ fn test_smallstr_buf_overflow() {
 	}
 }
 
+#[test]
+fn whitespace_runs_report_length_and_style() {
+	for (source, len, style) in [
+		(" ", 1, Whitespace::Space),
+		(" a", 1, Whitespace::Space),
+		("  a", 2, Whitespace::Space),
+		(" \ta", 2, Whitespace::Space | Whitespace::Tab),
+		("\t a", 2, Whitespace::Tab | Whitespace::Space),
+		(" \r\n  a", 5, Whitespace::Space | Whitespace::Newline),
+		("\u{c}\n", 2, Whitespace::Newline),
+		(" \u{a0}", 1, Whitespace::Space),
+	] {
+		let token = Lexer::new(&EmptyAtomSet::ATOMS, source).advance();
+		assert_eq!(token, Kind::Whitespace, "{source:?}");
+		assert_eq!(token.len(), len, "{source:?}");
+		assert_eq!(token.whitespace_style(), style, "{source:?}");
+	}
+}
+
 #[cfg(test)]
 mod iterator_tests {
 	use super::*;
